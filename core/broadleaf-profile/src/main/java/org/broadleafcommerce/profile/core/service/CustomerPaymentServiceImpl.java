@@ -101,6 +101,17 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
 
     @Override
     @Transactional("blTransactionManager")
+    public void clearDefaultPaymentStatus(Customer customer) {
+        CustomerPayment oldDefault = findDefaultPaymentForCustomer(customer);
+
+        if (oldDefault != null) {
+            oldDefault.setIsDefault(false);
+            saveCustomerPayment(oldDefault);
+        }
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
     public Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment) {
         List<CustomerPayment> payments = customer.getCustomerPayments();
         for (CustomerPayment customerPayment : payments) {
