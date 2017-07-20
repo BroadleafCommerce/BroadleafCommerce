@@ -44,6 +44,11 @@ public class DefaultOverridePreCacheServiceImpl implements OverridePreCacheServi
     }
 
     @Override
+    public boolean isActiveIsolatedSiteForType(Long siteId, String entityType) {
+        return false;
+    }
+
+    @Override
     public void groomCacheBySiteOverride(String entityType, Long cloneId, boolean isRemove) {
         //do nothing
     }
