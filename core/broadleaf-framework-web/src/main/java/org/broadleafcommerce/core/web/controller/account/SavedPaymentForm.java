@@ -17,18 +17,28 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
+
 import java.io.Serializable;
 
 /**
+ * @author Chris Kittrell (ckittrell)
  * @author Jacob Mitash
  */
-public class SavePaymentForm implements Serializable {
+public class SavedPaymentForm implements Serializable {
 
     protected String paymentName;
-    protected boolean defaultMethod;
-    protected String lastFourDigits;
-    protected String expiration;
-    protected String personName;
+    protected boolean isDefault;
+    protected String paymentToken;
+    protected Address address = new AddressImpl();
+
+    public SavedPaymentForm() {
+        address.setPhonePrimary(new PhoneImpl());
+        address.setPhoneSecondary(new PhoneImpl());
+        address.setPhoneFax(new PhoneImpl());
+    }
 
     public String getPaymentName() {
         return paymentName;
@@ -38,35 +48,27 @@ public class SavePaymentForm implements Serializable {
         this.paymentName = paymentName;
     }
 
-    public boolean isDefaultMethod() {
-        return defaultMethod;
+    public boolean getIsDefault() {
+        return isDefault;
     }
 
-    public void setDefaultMethod(boolean defaultMethod) {
-        this.defaultMethod = defaultMethod;
+    public void setIsDefault(boolean isDefault) {
+        this.isDefault = isDefault;
     }
 
-    public String getLastFourDigits() {
-        return lastFourDigits;
+    public String getPaymentToken() {
+        return paymentToken;
     }
 
-    public void setLastFourDigits(String lastFourDigits) {
-        this.lastFourDigits = lastFourDigits;
+    public void setPaymentToken(String paymentToken) {
+        this.paymentToken = paymentToken;
     }
 
-    public String getExpiration() {
-        return expiration;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setExpiration(String expiration) {
-        this.expiration = expiration;
-    }
-
-    public String getPersonName() {
-        return personName;
-    }
-
-    public void setPersonName(String personName) {
-        this.personName = personName;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }
