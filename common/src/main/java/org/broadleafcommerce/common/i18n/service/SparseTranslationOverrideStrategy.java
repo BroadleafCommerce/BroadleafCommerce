@@ -123,6 +123,17 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     @Value("${precached.sparse.override.translation.template.enabled:true}")
     protected boolean templateEnabled = true;
 
+    /**
+     * Whether or not to restrict the template search to the catalog/site of an associated item. For example, restrict
+     * the translation of name for a Sku to the catalog of the Sku. Or, restrict
+     * the translation of StructuredContent property to the site discriminator of the StructuredContent.
+     * </p>
+     * This value is false by default. Change the 'precached.sparse.override.translation.template.search.restrict.association' to
+     * true to enable.
+     */
+    @Value("${precached.sparse.override.translation.template.search.restrict.association:false}")
+    protected boolean restrictAssociation = false;
+
     @Override
     public LocalePair getLocaleBasedOverride(String property, TranslatedEntity entityType, String entityId,
                                              String localeCode, String localeCountryCode, String basicCacheKey) {
@@ -258,6 +269,14 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         this.templateEnabled = templateEnabled;
     }
 
+    public boolean isRestrictAssociation() {
+        return restrictAssociation;
+    }
+
+    public void setRestrictAssociation(boolean restrictAssociation) {
+        this.restrictAssociation = restrictAssociation;
+    }
+
     protected List<Translation> getTemplateTranslations(TranslatedEntity entityType, String entityId, String property, String localeCode) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
@@ -269,14 +288,17 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         restrictions.add(builder.equal(root.get("fieldName"), property));
         restrictions.add(builder.like(root.get("localeCode").as(String.class),localeCode + "%"));
         try {
-            Object testObject;
-            try {
-                SessionFactory sessionFactory = ((CriteriaBuilderImpl) em.getCriteriaBuilder()).getEntityManagerFactory().getSessionFactory();
-                Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(Class.forName(entityType.getType()), sessionFactory, true, true);
-                //This should already be in level 1 cache and this should not cause a hit to the database.
-                testObject = em.find(entities[entities.length-1], Long.parseLong(entityId));
-            } catch (ClassNotFoundException e) {
-                throw ExceptionHelper.refineException(e);
+            Object testObject = null;
+            if (restrictAssociation) {
+                try {
+                    Class<?> type = Class.forName(entityType.getType());
+                    SessionFactory sessionFactory = ((CriteriaBuilderImpl) em.getCriteriaBuilder()).getEntityManagerFactory().getSessionFactory();
+                    Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(type, sessionFactory, true, true);
+                    //This should already be in level 1 cache and this should not cause a hit to the database.
+                    testObject = em.find(entities[entities.length - 1], Long.parseLong(entityId));
+                } catch (ClassNotFoundException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
             }
             if (extensionManager != null) {
                 extensionManager.setup(TranslationImpl.class);
