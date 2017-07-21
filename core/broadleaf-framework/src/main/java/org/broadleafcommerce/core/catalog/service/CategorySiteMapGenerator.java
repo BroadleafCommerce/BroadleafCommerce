@@ -61,13 +61,14 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
-        CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
+        if (CategorySiteMapGeneratorConfiguration.class.isAssignableFrom(smgc.getClass())) {
+            CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
 
-        // Recursively construct the category SiteMap URLs
-        Long rootCategoryId = categorySMGC.getRootCategory().getId();
-        Category rootCategory = categoryDao.readCategoryById(rootCategoryId);
-        addCategorySiteMapEntries(rootCategory, 0, categorySMGC, siteMapBuilder);
-        
+            // Recursively construct the category SiteMap URLs
+            Long rootCategoryId = categorySMGC.getRootCategory().getId();
+            Category rootCategory = categoryDao.readCategoryById(rootCategoryId);
+            addCategorySiteMapEntries(rootCategory, 0, categorySMGC, siteMapBuilder);
+        }
     }
 
     protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder) {
