@@ -51,8 +51,8 @@ public class SelectizeCollectionUtils {
 	    if (a == null || b == null) {
 	        return Collections.EMPTY_LIST;
         }
-        Iterable iterableA = a instanceof Iterable ? (Iterable) a : Collections.singletonList(a);
-        Iterable iterableB = b instanceof Iterable ? (Iterable) b : Collections.singletonList(b);
+        Iterable iterableA = a instanceof Iterable ? (Iterable) a : Collections.singletonList(String.valueOf(a));
+        Iterable iterableB = b instanceof Iterable ? (Iterable) b : Collections.singletonList(String.valueOf(b));
         return intersectIterable(iterableA, iterableB);
 	}
 
