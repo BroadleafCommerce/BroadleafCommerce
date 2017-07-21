@@ -584,6 +584,18 @@
                                         }
                                     }
                                 });
+
+                                if ( ! queryData["name"] ) {
+                                    var data = $selectize.$input.attr("data-hydrate");
+                                    var dataHydrate = BLCAdmin.stringToArray(data);
+                                    for (var k = 0; k < dataHydrate.length; k++) {
+                                        var item = dataHydrate[k];
+                                        if ($selectize.getOption(item).length === 0) {
+                                            $selectize.addOption({id: item, label: item});
+                                        }
+                                    }
+                                }
+
                                 callback(data);
                             });
                         } else {
