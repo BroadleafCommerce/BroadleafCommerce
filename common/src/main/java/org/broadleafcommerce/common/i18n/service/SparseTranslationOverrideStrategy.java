@@ -26,13 +26,17 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.extension.ItemStatus;
+import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.extension.StandardCacheItem;
 import org.broadleafcommerce.common.extension.TemplateOnlyQueryExtensionManager;
+import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.QueryHints;
 import org.hibernate.ejb.criteria.CriteriaBuilderImpl;
@@ -70,6 +74,11 @@ import javax.persistence.criteria.Root;
  * such a strategy may provide little to no benefit over the out-of-the-box {@link ThresholdCacheTranslationOverrideStrategy}.
  * See the {@link #templateEnabled} property for more information.
  * </p>
+ * This strategy also works best when there are few standard sites with isolated values (i.e. the value was created in the standard
+ * site and was not inherited from a profile or catalog). This is because the strategy can utilize an optimized template
+ * query that is portable across sites if it doesn't have to take into account the standard site. The strategy uses
+ * {@link OverridePreCacheService#isActiveIsolatedSiteForType(Long, String)} to figure out this state.
+ * </p>
  * This strategy is disabled by default. Please see the javadoc for com.broadleafcommerce.tenant.service.cache.SparseOverridePreCacheServiceImpl (MultiTenant only)
  * for more information on how to enable this strategy via configuration of that service.
  *
@@ -90,6 +99,9 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
+    @Resource(name = "blTranslationDao")
+    protected TranslationDao dao;
+
     DynamicDaoHelper helper = new DynamicDaoHelperImpl();
 
     /**
@@ -104,6 +116,9 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
      * option.
      * </p>
      * The default value is true. Set the 'precached.sparse.override.translation.template.enabled' property to change the value.
+     * </p>
+     * This value is meaningless if the current standard site is found to contain active isolated values for translations.
+     * Review the documentation in com.broadleafcommerce.tenant.service.cache.SparseOverridePreCacheServiceImpl for more information.
      */
     @Value("${precached.sparse.override.translation.template.enabled:true}")
     protected boolean templateEnabled = true;
@@ -154,30 +169,47 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
                                                   String entityId, String localeCode, String localeCountryCode,
                                                   String specificPropertyKey, String generalPropertyKey) {
         LocalePair override = null;
-        if (preCachedSparseOverrideService.isActiveForType(Translation.class.getName()) && templateEnabled) {
-            override = new LocalePair();
-            List<Translation> templateVals = getTemplateTranslations(entityType, entityId, property, localeCode);
-            List<String> codesToMatch = new ArrayList<String>();
-            if (specificPropertyKey.endsWith(localeCountryCode) && generalPropertyKey.endsWith(localeCountryCode)) {
-                codesToMatch.add(localeCountryCode);
-            } else if (specificPropertyKey.endsWith(localeCode) && generalPropertyKey.endsWith(localeCode)) {
-                codesToMatch.add(localeCode);
-            } else {
-                codesToMatch.add(localeCountryCode);
-                codesToMatch.add(localeCode);
+        if (preCachedSparseOverrideService.isActiveForType(Translation.class.getName())) {
+            Site currentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            boolean isIsolatedActive = false;
+            if (currentSite != null) {
+                isIsolatedActive = preCachedSparseOverrideService.isActiveIsolatedSiteForType(currentSite.getId(), TranslationImpl.class.getName());
             }
-            for (String code : codesToMatch) {
-                for (Translation templateVal : templateVals) {
-                    if (templateVal.getLocaleCode().equals(code)) {
-                        StandardCacheItem cacheItem = new StandardCacheItem();
-                        cacheItem.setItemStatus(ItemStatus.NORMAL);
-                        cacheItem.setCacheItem(templateVal);
-                        override.setSpecificItem(cacheItem);
-                        break;
+            if (isIsolatedActive || templateEnabled) {
+                override = new LocalePair();
+                List<Translation> templateVals;
+                if (!isIsolatedActive) {
+                    templateVals = getTemplateTranslations(entityType, entityId, property, localeCode);
+                } else {
+                    //We need to include the standard site catalog in the query, so don't try to use an optimized template query
+                    templateVals = new ArrayList<Translation>();
+                    Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY);
+                    if (translation != null) {
+                        templateVals.add(translation);
                     }
                 }
-                if (override.getSpecificItem() != null) {
-                    break;
+                List<String> codesToMatch = new ArrayList<String>();
+                if (specificPropertyKey.endsWith(localeCountryCode) && generalPropertyKey.endsWith(localeCountryCode)) {
+                    codesToMatch.add(localeCountryCode);
+                } else if (specificPropertyKey.endsWith(localeCode) && generalPropertyKey.endsWith(localeCode)) {
+                    codesToMatch.add(localeCode);
+                } else {
+                    codesToMatch.add(localeCountryCode);
+                    codesToMatch.add(localeCode);
+                }
+                for (String code : codesToMatch) {
+                    for (Translation templateVal : templateVals) {
+                        if (templateVal.getLocaleCode().equals(code)) {
+                            StandardCacheItem cacheItem = new StandardCacheItem();
+                            cacheItem.setItemStatus(ItemStatus.NORMAL);
+                            cacheItem.setCacheItem(templateVal);
+                            override.setSpecificItem(cacheItem);
+                            break;
+                        }
+                    }
+                    if (override.getSpecificItem() != null) {
+                        break;
+                    }
                 }
             }
         }

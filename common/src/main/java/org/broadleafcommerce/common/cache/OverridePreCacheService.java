@@ -43,6 +43,17 @@ public interface OverridePreCacheService {
     List<StandardCacheItem> findElements(String... cacheKeys);
 
     /**
+     * Assuming the passed in site is a standard site, determine whether or not the standard site has any
+     * isolated values (i.e. not inherited) for the given type. This information is generally useful when making
+     * optimized query determinations for whether or not the standard site should be included in the query.
+     *
+     * @param siteId
+     * @param entityType
+     * @return
+     */
+    boolean isActiveIsolatedSiteForType(Long siteId, String entityType);
+
+    /**
      * Whether or not the cache is active for the specified type
      *
      * @param type the entity type to check
