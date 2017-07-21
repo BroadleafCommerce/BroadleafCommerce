@@ -61,7 +61,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
-        if (smgc instanceof CategorySiteMapGeneratorConfiguration) {
+        if (CategorySiteMapGeneratorConfiguration.class.isAssignableFrom(smgc.getClass())) {
             CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
 
             // Recursively construct the category SiteMap URLs
