@@ -90,6 +90,13 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
         }
     };
 
+    public static final ExtensionManagerOperation filterResults = new ExtensionManagerOperation() {
+            @Override
+            public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((TemplateOnlyQueryExtensionHandler) handler).filterResults((Class<?>) params[0], params[1], (List) params[2]);
+        }
+    };
+
     public TemplateOnlyQueryExtensionManager() {
         super(TemplateOnlyQueryExtensionHandler.class);
     }
@@ -132,5 +139,10 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
     @Override
     public ExtensionResultStatusType buildStatus(Object entity, ExtensionResultHolder<ItemStatus> response) {
         return execute(buildStatus, entity, response);
+    }
+
+    @Override
+    public ExtensionResultStatusType filterResults(Class<?> type, Object testObject, List results) {
+        return execute(filterResults, type, testObject, results);
     }
 }
