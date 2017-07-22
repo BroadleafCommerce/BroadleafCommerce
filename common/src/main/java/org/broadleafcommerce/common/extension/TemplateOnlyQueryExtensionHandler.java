@@ -103,4 +103,19 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
 
     ExtensionResultStatusType buildStatus(Object entity, ExtensionResultHolder<ItemStatus> response);
 
+    /**
+     * Validate and filter the results. This can be interesting when you have restricted the query with a test object and
+     * need to confirm the validity of the results. A nuanced example of this would be translations associated with a profile
+     * entity (e.g. StructuredContent). If you filter by the StructuredContent, you will be filtering translations by owning
+     * site. However, the resulting translations are not profile entities and will not available necessarily to the requesting
+     * site. As a result, we filter here and check the translations based on catalog visibility (Translations are dual
+     * discriminated). This is primarily to handle edge cases and will generally have no impact on the results.
+     *
+     * @param type
+     * @param testObject
+     * @param results
+     * @return
+     */
+    ExtensionResultStatusType filterResults(Class<?> type, Object testObject, List results);
+
 }

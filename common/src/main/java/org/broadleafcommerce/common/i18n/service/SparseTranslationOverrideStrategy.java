@@ -311,7 +311,11 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
                 extensionManager.refineQuery(TranslationImpl.class, testObject, query);
             }
             query.setHint(QueryHints.HINT_CACHEABLE, true);
-            return query.getResultList();
+            List response = query.getResultList();
+            if (extensionManager != null) {
+                extensionManager.filterResults(TranslationImpl.class, testObject, response);
+            }
+            return response;
         } finally {
             extensionManager.breakdown(TranslationImpl.class);
         }
