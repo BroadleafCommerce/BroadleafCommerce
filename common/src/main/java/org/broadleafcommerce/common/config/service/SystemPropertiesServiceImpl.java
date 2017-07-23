@@ -91,7 +91,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         }
 
         if (result != null) {
-            return result;
+            return result.equals(NULL_RESPONSE)?null:result;
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
