@@ -20,12 +20,10 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.controller.account.validator.SavedPaymentFormValidator;
 import org.broadleafcommerce.core.web.payment.service.SavedPaymentService;
 import org.broadleafcommerce.core.web.service.InitBinderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -36,6 +34,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -72,25 +72,19 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
 
 
     public String viewCustomerPayments(HttpServletRequest request, Model model, SavedPaymentForm savedPaymentForm) {
-        Customer customer = CustomerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer();
 
         if (customer == null) {
             throw new SecurityException("Customer is not found but tried to access account page");
         }
 
-        List<CustomerPayment> savedPaymentList = customerPaymentService.readCustomerPaymentsByCustomerId(customer.getId());
-        List<CustomerAddress> customerAddresses = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
-
-        model.addAttribute("customerAddresses", customerAddresses);
-        model.addAttribute("savedPayments", savedPaymentList);
-        model.addAttribute("billingInfoForm", new BillingInfoForm());
-        model.addAttribute("managePaymentMethods", true);
-
+        setModelAttributes(model);
         return getCustomerPaymentView();
     }
 
     public String addCustomerPayment(HttpServletRequest request, Model model,
             SavedPaymentForm savedPaymentForm, BindingResult bindingResult) {
+        Customer customer = CustomerState.getCustomer();
 
         addressService.populateAddressISOCountrySub(savedPaymentForm.getAddress());
         savedPaymentFormValidator.validate(savedPaymentForm, bindingResult);
@@ -109,10 +103,10 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
                 savedPaymentForm.getAddress().setPhoneFax(null);
             }
 
-            Customer customer = CustomerState.getCustomer();
             savedPaymentService.addSavedPayment(customer, savedPaymentForm);
         }
 
+        setModelAttributes(model);
         return getCustomerPaymentView();
     }
 
@@ -125,13 +119,40 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
 
         customerPaymentService.setAsDefaultPayment(customerPayment);
 
+        setModelAttributes(model);
         return getCustomerPaymentView();
     }
 
     public String removeCustomerPayment(HttpServletRequest request, Model model, Long customerPaymentId) {
         customerPaymentService.deleteCustomerPaymentById(customerPaymentId);
 
+        setModelAttributes(model);
         return getCustomerPaymentView();
+    }
+
+    protected void setModelAttributes(Model model) {
+        Customer customer = CustomerState.getCustomer();
+
+        List<CustomerPayment> savedPayments = customerPaymentService.readCustomerPaymentsByCustomerId(customer.getId());
+        sortSavedPaymentsByDefault(savedPayments);
+
+        model.addAttribute("savedPayments", savedPayments);
+        
+    }
+
+    protected void sortSavedPaymentsByDefault(List<CustomerPayment> savedPayments) {
+        Collections.sort(savedPayments, new Comparator<CustomerPayment>() {
+            @Override
+            public int compare(CustomerPayment sp1, CustomerPayment sp2) {
+                if (sp1.isDefault()) {
+                    return -1;
+                } else if (sp2.isDefault()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
     }
 
     public String getCustomerPaymentView() {
