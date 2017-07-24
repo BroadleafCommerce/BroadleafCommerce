@@ -122,7 +122,8 @@ public class OfferCodeImpl implements OfferCode {
     protected Date offerCodeEndDate;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order = 5000)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order = 5000,
+            tooltip = "OfferCodeGenerationInfoImpl_MaxUses_tooltip")
     protected Integer maxUses;
 
     @Column(name = "USES")
