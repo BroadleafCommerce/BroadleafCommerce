@@ -42,6 +42,8 @@ public interface CustomerPaymentService {
 
     CustomerPayment setAsDefaultPayment(CustomerPayment payment);
 
+    void clearDefaultPaymentStatus(Customer customer);
+
     Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment);
 
 }

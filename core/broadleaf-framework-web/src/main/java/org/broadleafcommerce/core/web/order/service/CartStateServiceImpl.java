@@ -90,7 +90,7 @@ public class CartStateServiceImpl implements CartStateService {
     }
 
     protected OrderPayment getTemporaryCCFromCart() {
-        OrderPayment unconfirmedCC = null;
+        OrderPayment temporaryCC = null;
 
         Order cart = CartState.getCart();
         for (OrderPayment payment : CollectionUtils.emptyIfNull(cart.getPayments())) {
@@ -98,10 +98,10 @@ public class CartStateServiceImpl implements CartStateService {
             boolean isTemporaryPaymentGateway = PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType());
 
             if (payment.isActive() && (isCreditCartPayment && !isTemporaryPaymentGateway)) {
-                unconfirmedCC = payment;
+                temporaryCC = payment;
             }
         }
-        return unconfirmedCC;
+        return temporaryCC;
     }
 
 }
