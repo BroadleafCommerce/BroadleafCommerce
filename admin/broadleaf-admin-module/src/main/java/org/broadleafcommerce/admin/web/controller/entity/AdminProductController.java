@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
@@ -76,7 +77,9 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminProductController extends AdminBasicEntityController {
     
     public static final String SECTION_KEY = "product";
-    
+    public static final String DEFAULT_SKU_NAME = "defaultSku.name";
+    public static final String SELECTIZE_NAME_PROPERTY = "name";
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
     
@@ -252,10 +255,18 @@ public class AdminProductController extends AdminBasicEntityController {
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars)
-                .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams))
                 .withCustomCriteria(getCustomCriteria(requestParams));
+
+        FilterAndSortCriteria[] fascs = getCriteria(requestParams);
+        for(FilterAndSortCriteria fasc : fascs) {
+            if (SELECTIZE_NAME_PROPERTY.equals(fasc.getPropertyId())) {
+                fasc.setPropertyId(DEFAULT_SKU_NAME);
+                break;
+            }
+        }
+        ppr.withFilterAndSortCriteria(fascs);
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
