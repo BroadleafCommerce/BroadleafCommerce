@@ -584,6 +584,21 @@
                                         }
                                     }
                                 });
+
+                                // On load, selectize returns a page of 50-100 results back
+                                // If the name you are searching for is not in this page, the field will be blank
+                                // So if the name is blank, we add options from the data-hydrate
+                                if (!queryData["name"]) {
+                                    var data = $selectize.$input.attr("data-hydrate");
+                                    var dataHydrate = BLCAdmin.stringToArray(data);
+                                    for (var k = 0; k < dataHydrate.length; k++) {
+                                        var item = dataHydrate[k];
+                                        if ($selectize.getOption(item).length === 0) {
+                                            $selectize.addOption({id: item, label: item});
+                                        }
+                                    }
+                                }
+
                                 callback(data);
                             });
                         } else {
