@@ -314,11 +314,17 @@
                 var currentHeader = $($columnHeaders[index])[0];
                 var $currentHeaderText = $(currentHeader).find('.listgrid-title span');
 
-                var nextHeader = $($columnHeaders[index+1])[0];
+                var nextHeader = $($columnHeaders[index + 1])[0];
                 var $nextHeaderText = $(nextHeader).find('.listgrid-title span');
 
-                $currentHeaderText.outerWidth($(currentHeader).outerWidth() - CONTROL_WIDTH);
-                $nextHeaderText.outerWidth($(nextHeader).outerWidth() - CONTROL_WIDTH);
+                var newCurrentHeaderWidth = ($(currentHeader).outerWidth() - CONTROL_WIDTH);
+                var newNextHeaderWidth = ($(nextHeader).outerWidth() - CONTROL_WIDTH);
+
+                newCurrentHeaderWidth = newCurrentHeaderWidth > MIN_WIDTH ? newCurrentHeaderWidth : MIN_WIDTH;
+                newNextHeaderWidth = newNextHeaderWidth > MIN_WIDTH ? newNextHeaderWidth : MIN_WIDTH;
+
+                $currentHeaderText.outerWidth(newCurrentHeaderWidth);
+                $nextHeaderText.outerWidth(newNextHeaderWidth);
             });
         },
         
