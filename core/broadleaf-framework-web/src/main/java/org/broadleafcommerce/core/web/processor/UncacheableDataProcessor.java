@@ -20,12 +20,15 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
+import org.broadleafcommerce.core.inventory.service.InventoryServiceExtensionHandler;
+import org.broadleafcommerce.core.inventory.service.InventoryServiceExtensionManager;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
@@ -84,6 +87,9 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
 
     @Resource(name = "blUncacheableDataProcessorExtensionManager")
     protected UncacheableDataProcessorExtensionManager extensionManager;
+
+    @Resource(name = "blInventoryServiceExtensionManager"   )
+    protected InventoryServiceExtensionManager inventoryServiceExtensionManager;
 
     private String defaultCallbackFunction = "updateUncacheableData(params)";
 
@@ -152,6 +158,14 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
                     Boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
                     if (qtyAvailable != null && !qtyAvailable) {
                         outOfStockProducts.add(product.getId());
+                    } else {
+                        InventoryServiceExtensionHandler handler = inventoryServiceExtensionManager.getProxy();
+                        ExtensionResultHolder<Boolean> holder = new ExtensionResultHolder<>();
+                        handler.isProductBundleAvailable(product, 1, holder);
+                        Boolean available = holder.getResult();
+                        if (available != null && !available) {
+                            outOfStockProducts.add(product.getId());
+                        }
                     }
                 }
             }
