@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.inventory.service;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
 import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
@@ -75,5 +76,12 @@ public interface InventoryServiceExtensionHandler extends ExtensionHandler {
      * @throws InventoryUnavailableException
      */
     public ExtensionResultStatusType reconcileChangeOrderInventory(Map<Sku, Integer> decrementSkuQuantities, Map<Sku, Integer> incrementSkuQuantities, Map<String, Object> context) throws InventoryUnavailableException;
-    
+
+    /**
+     * Usually invoked via the AdvancedProduct to determine the availability of product bundle.
+     * @param product contains Product
+     * @param quantity
+     * @param holder
+     */
+    ExtensionResultStatusType isProductBundleAvailable(Product product, int quantity, ExtensionResultHolder<Boolean> holder);
 }
