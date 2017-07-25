@@ -51,11 +51,9 @@ public class SelectizeCollectionUtils {
 	    if (a == null || b == null) {
 	        return Collections.EMPTY_LIST;
         }
-		if (a instanceof String) {
-			return intersectString((String) a, (Iterable<String>) b);
-		} else {
-			return intersectIterable((Iterable) a, (Iterable) b);
-		}
+        Iterable iterableA = a instanceof Iterable ? (Iterable) a : Collections.singletonList(String.valueOf(a));
+        Iterable iterableB = b instanceof Iterable ? (Iterable) b : Collections.singletonList(String.valueOf(b));
+        return intersectIterable(iterableA, iterableB);
 	}
 
     private static Collection intersectIterable(final Iterable a, final Iterable b) {
@@ -85,12 +83,6 @@ public class SelectizeCollectionUtils {
                 temp.add((String) alist.getValue());
             }
         }
-        return CollectionUtils.intersection(temp, b);
-    }
-
-    private static Collection<String> intersectString(final String a, final Iterable<String> b) {
-        List<String> temp = new ArrayList<>();
-        temp.add(a);
         return CollectionUtils.intersection(temp, b);
     }
 
