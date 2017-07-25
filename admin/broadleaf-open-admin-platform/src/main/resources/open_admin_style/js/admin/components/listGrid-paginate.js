@@ -927,6 +927,9 @@
                 scrollEasing: "linear",
                 scrollInertia: 500,
                 mouseWheelPixels: trHeight,
+                advanced:{
+                    autoScrollOnFocus: false,
+                },
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;

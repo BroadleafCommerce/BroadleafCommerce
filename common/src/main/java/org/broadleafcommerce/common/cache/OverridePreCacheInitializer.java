@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * broadleaf-multitenant-singleschema
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,11 +15,32 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.extension;
+package org.broadleafcommerce.common.cache;
+
+import org.broadleafcommerce.common.extension.StandardCacheItem;
 
 /**
+ * Performs cache item initialization for a specific entity type.
+ *
  * @author Jeff Fischer
  */
-public enum ItemStatus {
-    DELETED,NORMAL,NONE
+public interface OverridePreCacheInitializer {
+
+    /**
+     * Whether or not this initializer is qualified to work on the given entity type
+     *
+     * @param type
+     * @return
+     */
+    boolean isOverrideQualified(Class<?> type);
+
+    /**
+     * Perform any initialization tasks (e.g. exercising a lazy collection) and returns
+     * a StandardCacheItem instance.
+     *
+     * @param entity
+     * @return
+     */
+    StandardCacheItem initializeOverride(Object entity);
+
 }
