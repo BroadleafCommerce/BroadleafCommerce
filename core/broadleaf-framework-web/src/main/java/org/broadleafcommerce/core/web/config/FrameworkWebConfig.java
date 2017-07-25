@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.springframework.boot.web.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mobile.device.DeviceResolver;
+import org.springframework.mobile.device.LiteDeviceResolver;
 import org.springframework.web.filter.RequestContextFilter;
 
 /**
@@ -40,6 +42,11 @@ public class FrameworkWebConfig {
         OrderedRequestContextFilter filter = new OrderedRequestContextFilter();
         filter.setOrder(FilterOrdered.PRE_SECURITY_HIGH - 1000);
         return filter;
+    }
+    
+    @Bean
+    public DeviceResolver blDeviceResolver() {
+        return new LiteDeviceResolver();
     }
 
 }
