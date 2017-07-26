@@ -73,9 +73,9 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_requestDevice")
                 .name("properties['currentDevice']")
-                .operators(RuleOperatorType.TEXT)
-                .options(RuleOptionType.EMPTY_COLLECTION)
-                .type(SupportedFieldType.STRING)
+                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
+                .options(RuleOptionType.WEB_REQUEST_DEVICE_TYPE)
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .skipValidation(true)
                 .build());
     }
