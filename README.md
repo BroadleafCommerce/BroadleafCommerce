@@ -1,5 +1,7 @@
 # BroadleafCommerce
 
+[![Gitter chat](https://badges.gitter.im/BroadleafCommerce/BroadleafCommerce.png)](https://gitter.im/BroadleafCommerce/BroadleafCommerce)
+
 ## Introduction
 Broadleaf Commerce is an open-source, e-commerce framework written entirely in Java on top of the Spring framework. It is targeted at facilitating the development of enterprise-class, commerce-driven sites by providing a robust data model, services and specialized tooling that take care of most of the "heavy lifting" work. To accomplish this goal, we have developed our platform based on the key feature sets required by world-class online retailers - and we're committed to continually expanding our feature offering. We've also taken extra steps to guarantee interoperability with today's enterprise by utilizing standards wherever possible and incorporating best-of-breed, open-source software libraries from the community.
 
@@ -7,7 +9,7 @@ This repository does not encapsulate all of the functionality that Broadleaf pro
 
 # Getting Started
 
-Unless you are sending a pull request or making core changes to Broadleaf, this is likely not the best place to get started. Check out the [Getting Started guide](http://docs.broadleafcommerce.org/current/Getting-Started.html) to quickly kick off your Broadleaf-enabled website.
+The best place to get started with Broadleaf is to [check out the Heat Clinic demo site project](https://github.com/BroadleafCommerce/DemoSite). We also have a [guided getting started section on our docs](https://www.broadleafcommerce.com/docs/core/current/getting-started/running-locally) that can help with installing pre-requisites, etc.
 
 ## Local Development
 
@@ -33,18 +35,18 @@ mvn clean install -Pblc-development -DskipTests
 
 > Note: all contributed code must have passing tests via Maven
 
-If you need to use a specific version of Broadleaf, simply check out that version using either the branch or tag. All releases are tagged 'broadleaf-<version>' whereas all active development versions are tagged 'BroadleafCommerce-<major.minor>.x'. For instance, if you would like to actively develop on the Broadleaf 2.2 line in order for your changes to be in the next GA patch release of Broadleaf 2.2, you would check out the 'BroadleafCommerce-2.2.x' branch.
+If you need to use a specific version of Broadleaf, simply check out that version using either the branch or tag. All releases are tagged `broadleaf-<version>` whereas all active development versions are tagged either 'BroadleafCommerce-<major.minor>.x` (for all versions before 5.0) or `develop-<major.minor>.x` (all versions later than 5.0). For instance, if you would like to actively develop on the Broadleaf 5.2 line in order for your changes to be in the next GA patch release of Broadleaf 5.2, you would check out the 'develop-5.2.x' branch.
 
 ```sh
 git clone git@github.com:BroadleafCommerce/BroadleafCommerce
 cd BroadleafCommerce
 
-# use 4.0.x-SNAPSHOT
-git checkout BroadleafCommerce-4.0.x
+# use 5.2.x-SNAPSHOT
+git checkout develop-5.2.x
 mvn clean install -Pblc-development
 
 # switch to a GA version
-git checkout broadleaf-4.0.21-GA
+git checkout broadleaf-5.2.0-GA
 mvn clean install -Pblc-development
 ```
 
