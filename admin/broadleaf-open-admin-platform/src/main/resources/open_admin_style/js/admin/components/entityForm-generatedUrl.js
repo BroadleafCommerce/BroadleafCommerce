@@ -77,10 +77,17 @@
         },
         
         convertToUrlFragment : function convertToUrlFragment(val, options) {
+            var valPostFix = "";
+            if (val.endsWith(".html") || val.endsWith(".css") || val.endsWith(".js")) {
+                var valFragments = val.split('.');
+                valPostFix = valFragments[valFragments.length - 1];
+                val = val.substring(0,val.length - valPostFix.length)
+            }
+
             if (options != null && options.allowSlash) {
-                return val = val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase();
+                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase();
             } else {
-                return val = val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
+                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
             }
         }
 
