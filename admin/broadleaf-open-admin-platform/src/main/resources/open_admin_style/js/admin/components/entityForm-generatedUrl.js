@@ -78,7 +78,7 @@
         
         convertToUrlFragment : function convertToUrlFragment(val, options) {
             var valPostFix = "";
-            if (val.endsWith(".html") || val.endsWith(".css") || val.endsWith(".js")) {
+            if (val.toString().indexOf('.') != -1) {
                 var valFragments = val.split('.');
                 valPostFix = valFragments[valFragments.length - 1];
                 val = val.substring(0,val.length - valPostFix.length)
