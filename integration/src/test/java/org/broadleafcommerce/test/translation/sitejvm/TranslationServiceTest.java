@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -36,7 +37,7 @@ import javax.annotation.Resource;
  *
  * @author Jeff Fischer
  */
-public class TranslationServiceTest extends BaseTest {
+public class TranslationServiceTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private TranslationService translationService;
