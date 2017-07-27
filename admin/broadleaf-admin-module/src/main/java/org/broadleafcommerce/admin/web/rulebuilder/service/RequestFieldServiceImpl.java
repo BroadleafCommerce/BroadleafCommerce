@@ -69,6 +69,15 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
+        
+        fields.add(new FieldData.Builder()
+                .label("rule_requestDevice")
+                .name("properties['currentDevice']")
+                .operators(RuleOperatorType.SELECTIZE_ENUMERATION)
+                .options(RuleOptionType.WEB_REQUEST_DEVICE_TYPE)
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .skipValidation(true)
+                .build());
     }
 
     @Override
