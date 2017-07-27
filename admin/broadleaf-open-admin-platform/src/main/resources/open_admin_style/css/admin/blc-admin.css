@@ -343,9 +343,6 @@ circle {
 .empty-section-tabs ul {
     display: none;
 }
-.nav-tabs {
-    white-space: nowrap;
-}
 .tabError {
     text-align: center;
     color: #DE3A2E;
