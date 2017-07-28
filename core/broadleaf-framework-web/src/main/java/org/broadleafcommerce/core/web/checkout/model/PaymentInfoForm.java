@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.controller.account;
+package org.broadleafcommerce.core.web.checkout.model;
 
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
@@ -27,17 +27,71 @@ import java.io.Serializable;
  * @author Chris Kittrell (ckittrell)
  * @author Jacob Mitash
  */
-public class SavedPaymentForm implements Serializable {
+public class PaymentInfoForm implements Serializable {
+
+    protected Address address = new AddressImpl();
+    protected boolean useShippingAddress = false;
+    protected Long customerPaymentId;
+    protected boolean saveNewPayment = true;
+    protected boolean useCustomerPayment = false;
+    protected String emailAddress;
 
     protected String paymentName;
-    protected boolean isDefault;
+    protected boolean isDefault = false;
     protected String paymentToken;
-    protected Address address = new AddressImpl();
 
-    public SavedPaymentForm() {
+    public PaymentInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
         address.setPhoneSecondary(new PhoneImpl());
         address.setPhoneFax(new PhoneImpl());
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public boolean getUseShippingAddress() {
+        return useShippingAddress;
+    }
+
+    public void setUseShippingAddress(boolean useShippingAddress) {
+        this.useShippingAddress = useShippingAddress;
+    }
+
+    public Long getCustomerPaymentId() {
+        return customerPaymentId;
+    }
+
+    public void setCustomerPaymentId(Long customerPaymentId) {
+        this.customerPaymentId = customerPaymentId;
+    }
+
+    public boolean getSaveNewPayment() {
+        return saveNewPayment;
+    }
+
+    public void setSaveNewPayment(boolean saveNewPayment) {
+        this.saveNewPayment = saveNewPayment;
+    }
+
+    public boolean getUseCustomerPayment() {
+        return useCustomerPayment;
+    }
+
+    public void setUseCustomerPayment(boolean useCustomerPayment) {
+        this.useCustomerPayment = useCustomerPayment;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getPaymentName() {
@@ -62,13 +116,5 @@ public class SavedPaymentForm implements Serializable {
 
     public void setPaymentToken(String paymentToken) {
         this.paymentToken = paymentToken;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
     }
 }
