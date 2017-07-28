@@ -24,14 +24,19 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
+import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.core.web.order.service.CartStateService;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
+import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -41,6 +46,9 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 
+/**
+ * @author Chris Kittrell (ckittrell)
+ */
 @Service("blCheckoutFormService")
 public class CheckoutFormServiceImpl implements CheckoutFormService {
 
@@ -49,6 +57,15 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
 
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
+
+    @Resource(name = "blCustomerPaymentService")
+    protected CustomerPaymentService customerPaymentService;
+
+    @Resource(name = "blOrderPaymentService")
+    protected OrderPaymentService orderPaymentService;
+
+    @Resource(name = "blCartStateService")
+    protected CartStateService cartStateService;
 
     @Override
     public OrderInfoForm prePopulateOrderInfoForm(OrderInfoForm orderInfoForm, Order cart) {
@@ -86,23 +103,8 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
 
     @Override
     public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, ShippingInfoForm shippingInfoForm, Order cart) {
-        Customer customer = CustomerState.getCustomer();
-
-        if (cart.getEmailAddress() != null) {
-            billingInfoForm.setEmailAddress(cart.getEmailAddress());
-        } else if (customer != null && customer.getEmailAddress() != null) {
-            billingInfoForm.setEmailAddress(customer.getEmailAddress());
-        }
-
-        List<OrderPayment> orderPayments = cart.getPayments();
-        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
-            boolean isCreditCardPaymentType = PaymentType.CREDIT_CARD.equals(payment.getType());
-            boolean paymentHasBillingAddress = (payment.getBillingAddress() != null);
-
-            if (isCreditCardPaymentType && paymentHasBillingAddress) {
-                billingInfoForm.setAddress(payment.getBillingAddress());
-            }
-        }
+        Address orderPaymentBillingAddress = getAddressFromCCOrderPayment(cart);
+        billingInfoForm.setAddress(orderPaymentBillingAddress);
 
         boolean shippingAddressUsedForBilling = addressesContentsAreEqual(shippingInfoForm.getAddress(), billingInfoForm.getAddress());
         billingInfoForm.setUseShippingAddress(shippingAddressUsedForBilling);
@@ -111,14 +113,118 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
     }
 
     @Override
-    public void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm) {
-        Order cart = CartState.getCart();
-        prePopulateShippingInfoForm(shippingInfoForm, cart);
-        prePopulateBillingInfoForm(billingInfoForm, shippingInfoForm, cart);
+    public PaymentInfoForm prePopulatePaymentInfoForm(PaymentInfoForm paymentInfoForm, ShippingInfoForm shippingInfoForm, Order cart) {
+        Customer customer = CustomerState.getCustomer();
+        String emailAddress = getKnownEmailAddress(cart, customer);
+        paymentInfoForm.setEmailAddress(emailAddress);
+
+        Address orderPaymentBillingAddress = getAddressFromCCOrderPayment(cart);
+        if (orderPaymentBillingAddress != null) {
+            paymentInfoForm.setAddress(orderPaymentBillingAddress);
+        }
+
+        CustomerPayment customerPaymentUsedForOrder = getCustomerPaymentUsedForOrder();
+        Long customerPaymentId = (customerPaymentUsedForOrder == null) ? null : customerPaymentUsedForOrder.getId();
+        paymentInfoForm.setCustomerPaymentId(customerPaymentId);
+
+
+        boolean useCustomerPaymentDefaultValue = getUseCustomerPaymentDefaultValue(customerPaymentUsedForOrder);
+        paymentInfoForm.setUseCustomerPayment(useCustomerPaymentDefaultValue);
+
+        boolean useShippingAddressDefaultValue = getUseShippingAddressDefaultValue(customerPaymentUsedForOrder, paymentInfoForm, shippingInfoForm);
+        paymentInfoForm.setUseShippingAddress(useShippingAddressDefaultValue);
+
+        boolean saveNewPaymentDefaultValue = getSaveNewPaymentDefaultValue();
+        paymentInfoForm.setSaveNewPayment(saveNewPaymentDefaultValue);
+
+        return paymentInfoForm;
+    }
+
+    /**
+     * A temporary credit card {@link OrderPayment} will only be added to the cart if the customer has opted out
+     *  of saving their credit card for future payments.
+     * @param customerPaymentUsedForOrder
+     */
+    protected boolean getUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
+        boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
+        boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
+
+        return orderUsingCustomerPayment || !cartHasTemporaryCreditCard;
+    }
+
+    protected String getKnownEmailAddress(Order cart, Customer customer) {
+        String emailAddress = null;
+
+        if (cart.getEmailAddress() != null) {
+            emailAddress = cart.getEmailAddress();
+        } else if (customer != null && customer.getEmailAddress() != null) {
+            emailAddress = customer.getEmailAddress();
+        }
+
+        return emailAddress;
+    }
+
+    protected Address getAddressFromCCOrderPayment(Order cart) {
+        List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
+
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
+            boolean isCreditCardPaymentType = PaymentType.CREDIT_CARD.equals(payment.getType());
+            boolean paymentHasBillingAddress = (payment.getBillingAddress() != null);
+
+            if (payment.isActive() && isCreditCardPaymentType && paymentHasBillingAddress) {
+                return payment.getBillingAddress();
+            }
+        }
+
+        return null;
+    }
+
+    protected CustomerPayment getCustomerPaymentUsedForOrder() {
+        Customer customer = CustomerState.getCustomer();
+
+        List<CustomerPayment> customerPayments = customerPaymentService.readCustomerPaymentsByCustomerId(customer.getId());
+        for (CustomerPayment customerPayment : customerPayments) {
+            if (cartStateService.cartHasCreditCardPaymentWithSameToken(customerPayment.getPaymentToken())) {
+                return customerPayment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A temporary credit card {@link OrderPayment} will only be added to the cart if the customer has opted out
+     *  of saving their credit card for future payments.
+     */
+    protected boolean getSaveNewPaymentDefaultValue() {
+        boolean customerOptedOutOfSavingCard = !cartStateService.cartHasTemporaryCreditCard();
+
+        return customerOptedOutOfSavingCard;
+    }
+
+    /**
+     * A temporary credit card {@link OrderPayment} will only be added to the cart if the customer has opted out
+     *  of saving their credit card for future payments.
+     * @param customerPaymentUsedForOrder
+     * @param paymentInfoForm
+     * @param shippingInfoForm
+     */
+    protected boolean getUseShippingAddressDefaultValue(CustomerPayment customerPaymentUsedForOrder, PaymentInfoForm paymentInfoForm,
+            ShippingInfoForm shippingInfoForm) {
+        boolean orderIsNotUsingCustomerPayment = (customerPaymentUsedForOrder == null);
+        boolean shippingAddressEqualToBillingAddress = addressesContentsAreEqual(paymentInfoForm.getAddress(), shippingInfoForm.getAddress());
+
+        return orderIsNotUsingCustomerPayment && shippingAddressEqualToBillingAddress;
     }
 
     @Override
-    public void determineIfSavedAddressIsSelected(Model model, ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm) {
+    public void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, PaymentInfoForm paymentInfoForm) {
+        Order cart = CartState.getCart();
+        prePopulateShippingInfoForm(shippingInfoForm, cart);
+        prePopulatePaymentInfoForm(paymentInfoForm, shippingInfoForm, cart);
+    }
+
+    @Override
+    public void determineIfSavedAddressIsSelected(Model model, ShippingInfoForm shippingInfoForm, PaymentInfoForm paymentInfoForm) {
         Customer customer = CustomerState.getCustomer();
         boolean isSavedShippingAddress = false;
         boolean isSavedBillingAddress = false;
@@ -131,7 +237,7 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         }
 
         for (CustomerAddress customerAddress : customer.getCustomerAddresses()) {
-            if (addressesContentsAreEqual(billingInfoForm.getAddress(), customerAddress.getAddress())) {
+            if (addressesContentsAreEqual(paymentInfoForm.getAddress(), customerAddress.getAddress())) {
                 isSavedBillingAddress = true;
                 break;
             }
@@ -148,7 +254,6 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
                 Objects.equals(address2.getStateProvinceRegion(), address1.getStateProvinceRegion()) &&
                 Objects.equals(address2.getPostalCode(), address1.getPostalCode()) &&
                 Objects.equals(address2.getIsoCountryAlpha2(), address1.getIsoCountryAlpha2()) &&
-                Objects.equals(address2.getIsoCountrySubdivision(), address1.getIsoCountrySubdivision()) &&
-                Objects.equals(address2.getPhonePrimary().getPhoneNumber(), address1.getPhonePrimary().getPhoneNumber());
+                Objects.equals(address2.getIsoCountrySubdivision(), address1.getIsoCountrySubdivision());
     }
 }

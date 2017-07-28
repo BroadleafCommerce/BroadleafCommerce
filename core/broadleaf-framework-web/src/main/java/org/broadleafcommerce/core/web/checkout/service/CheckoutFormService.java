@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.web.checkout.service;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
+import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.springframework.ui.Model;
 
@@ -31,7 +32,9 @@ public interface CheckoutFormService {
 
     BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, ShippingInfoForm shippingInfoForm, Order cart);
 
-    void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm);
+    PaymentInfoForm prePopulatePaymentInfoForm(PaymentInfoForm paymentInfoForm, ShippingInfoForm shippingInfoForm, Order cart);
 
-    void determineIfSavedAddressIsSelected(Model model, ShippingInfoForm shippingInfoForm, BillingInfoForm billingInfoForm);
+    void prePopulateInfoForms(ShippingInfoForm shippingInfoForm, PaymentInfoForm paymentInfoForm);
+
+    void determineIfSavedAddressIsSelected(Model model, ShippingInfoForm shippingInfoForm, PaymentInfoForm paymentInfoForm);
 }
