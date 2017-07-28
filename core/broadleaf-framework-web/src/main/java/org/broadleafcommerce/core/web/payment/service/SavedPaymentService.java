@@ -17,14 +17,14 @@
  */
 package org.broadleafcommerce.core.web.payment.service;
 
-import org.broadleafcommerce.core.web.controller.account.SavedPaymentForm;
+import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface SavedPaymentService {
 
-    Long addSavedPayment(Customer customer, SavedPaymentForm savedPaymentForm);
+    Long addSavedPayment(Customer customer, PaymentInfoForm paymentInfoForm);
 
-    Long updateSavedPayment(Customer customer, SavedPaymentForm savedPaymentForm);
+    Long updateSavedPayment(Customer customer, PaymentInfoForm paymentInfoForm);
 
     void deleteSavedPayment(Customer customer, String nonce);
 
