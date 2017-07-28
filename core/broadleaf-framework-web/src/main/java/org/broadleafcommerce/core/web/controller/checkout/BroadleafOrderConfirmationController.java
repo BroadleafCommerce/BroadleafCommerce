@@ -66,7 +66,7 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
                 return getOrderConfirmationView();
             }
         }
-        return null;
+        return "redirect:/";
     }
 
     public String getOrderConfirmationView() {
