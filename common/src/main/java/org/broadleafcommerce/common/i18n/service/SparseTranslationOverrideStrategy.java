@@ -36,13 +36,18 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.ejb.QueryHints;
 import org.hibernate.ejb.criteria.CriteriaBuilderImpl;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
+import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -293,7 +298,13 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
                     SessionFactory sessionFactory = ((CriteriaBuilderImpl) em.getCriteriaBuilder()).getEntityManagerFactory().getSessionFactory();
                     Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(type, sessionFactory, true, true);
                     //This should already be in level 1 cache and this should not cause a hit to the database.
-                    testObject = em.find(entities[entities.length - 1], Long.parseLong(entityId));
+                    Map<String, Object> idMetadata = helper.getIdMetadata(entities[entities.length - 1], (HibernateEntityManager) em);
+                    Type idType = (Type) idMetadata.get("type");
+                    if (idType instanceof StringType) {
+                        testObject = em.find(entities[entities.length - 1], entityId);
+                    } else if (idType instanceof LongType) {
+                        testObject = em.find(entities[entities.length - 1], Long.parseLong(entityId));
+                    }
                 } catch (ClassNotFoundException e) {
                     throw ExceptionHelper.refineException(e);
                 }
