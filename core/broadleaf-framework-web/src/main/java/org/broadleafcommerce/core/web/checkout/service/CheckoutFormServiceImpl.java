@@ -140,18 +140,6 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         return paymentInfoForm;
     }
 
-    /**
-     * A temporary credit card {@link OrderPayment} will only be added to the cart if the customer has opted out
-     *  of saving their credit card for future payments.
-     * @param customerPaymentUsedForOrder
-     */
-    protected boolean getUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
-        boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
-        boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
-
-        return orderUsingCustomerPayment || !cartHasTemporaryCreditCard;
-    }
-
     protected String getKnownEmailAddress(Order cart, Customer customer) {
         String emailAddress = null;
 
@@ -189,6 +177,18 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
             }
         }
         return null;
+    }
+
+    /**
+     * A temporary credit card {@link OrderPayment} will only be added to the cart if the customer has opted out
+     *  of saving their credit card for future payments.
+     * @param customerPaymentUsedForOrder
+     */
+    protected boolean getUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
+        boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
+        boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
+
+        return orderUsingCustomerPayment || !cartHasTemporaryCreditCard;
     }
 
     /**
