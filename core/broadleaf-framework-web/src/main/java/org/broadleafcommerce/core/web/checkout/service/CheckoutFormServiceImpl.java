@@ -128,14 +128,14 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         paymentInfoForm.setCustomerPaymentId(customerPaymentId);
 
 
-        boolean useCustomerPaymentDefaultValue = getUseCustomerPaymentDefaultValue(customerPaymentUsedForOrder);
-        paymentInfoForm.setUseCustomerPayment(useCustomerPaymentDefaultValue);
+        boolean shouldUseCustomerPaymentDefaultValue = getShouldUseCustomerPaymentDefaultValue(customerPaymentUsedForOrder);
+        paymentInfoForm.setShouldUseCustomerPayment(shouldUseCustomerPaymentDefaultValue);
 
-        boolean useShippingAddressDefaultValue = getUseShippingAddressDefaultValue(customerPaymentUsedForOrder, paymentInfoForm, shippingInfoForm);
-        paymentInfoForm.setUseShippingAddress(useShippingAddressDefaultValue);
+        boolean shouldUseShippingAddressDefaultValue = getShouldUseShippingAddressDefaultValue(customerPaymentUsedForOrder, paymentInfoForm, shippingInfoForm);
+        paymentInfoForm.setShouldUseShippingAddress(shouldUseShippingAddressDefaultValue);
 
-        boolean saveNewPaymentDefaultValue = getSaveNewPaymentDefaultValue();
-        paymentInfoForm.setSaveNewPayment(saveNewPaymentDefaultValue);
+        boolean shouldSaveNewPaymentDefaultValue = getShouldSaveNewPaymentDefaultValue();
+        paymentInfoForm.setShouldSaveNewPayment(shouldSaveNewPaymentDefaultValue);
 
         return paymentInfoForm;
     }
@@ -184,7 +184,7 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      *  of saving their credit card for future payments.
      * @param customerPaymentUsedForOrder
      */
-    protected boolean getUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
+    protected boolean getShouldUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
         boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
         boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
 
@@ -195,7 +195,7 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      * A temporary credit card {@link OrderPayment} will only be added to the cart if the customer has opted out
      *  of saving their credit card for future payments.
      */
-    protected boolean getSaveNewPaymentDefaultValue() {
+    protected boolean getShouldSaveNewPaymentDefaultValue() {
         boolean customerOptedOutOfSavingCard = !cartStateService.cartHasTemporaryCreditCard();
 
         return customerOptedOutOfSavingCard;
@@ -208,7 +208,7 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      * @param paymentInfoForm
      * @param shippingInfoForm
      */
-    protected boolean getUseShippingAddressDefaultValue(CustomerPayment customerPaymentUsedForOrder, PaymentInfoForm paymentInfoForm,
+    protected boolean getShouldUseShippingAddressDefaultValue(CustomerPayment customerPaymentUsedForOrder, PaymentInfoForm paymentInfoForm,
             ShippingInfoForm shippingInfoForm) {
         boolean orderIsNotUsingCustomerPayment = (customerPaymentUsedForOrder == null);
         boolean shippingAddressEqualToBillingAddress = addressesContentsAreEqual(paymentInfoForm.getAddress(), shippingInfoForm.getAddress());

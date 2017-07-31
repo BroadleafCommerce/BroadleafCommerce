@@ -69,18 +69,18 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
         paymentInfoFormValidator.validate(paymentForm, result);
 
         if (!result.hasErrors()) {
-            if (paymentForm.getSaveNewPayment() && !paymentForm.getUseCustomerPayment()) {
+            if (paymentForm.getShouldSaveNewPayment() && !paymentForm.getShouldUseCustomerPayment()) {
                 if (paymentForm.getCustomerPaymentId() != null){
                     savedPaymentService.updateSavedPayment(customer, paymentForm);
                 } else if (paymentForm.getCustomerPaymentId() == null) {
                     Long customerPaymentId = savedPaymentService.addSavedPayment(customer, paymentForm);
 
                     paymentForm.setCustomerPaymentId(customerPaymentId);
-                    paymentForm.setUseCustomerPayment(true);
+                    paymentForm.setShouldUseCustomerPayment(true);
                 }
             }
 
-            if (paymentForm.getUseCustomerPayment()) {
+            if (paymentForm.getShouldUseCustomerPayment()) {
                 CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(paymentForm.getCustomerPaymentId());
 
                 if (!cartStateService.cartHasCreditCardPaymentWithSameToken(customerPayment.getPaymentToken())) {
@@ -151,11 +151,11 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
     }
 
     protected void preProcessBillingAddress(PaymentInfoForm paymentForm, Order cart) {
-        if (paymentForm.getUseShippingAddress()){
+        if (paymentForm.getShouldUseShippingAddress()){
             copyShippingAddressToBillingAddress(cart, paymentForm);
         }
 
-        Boolean useCustomerPayment = paymentForm.getUseCustomerPayment();
+        Boolean useCustomerPayment = paymentForm.getShouldUseCustomerPayment();
         if (useCustomerPayment && paymentForm.getCustomerPaymentId() != null) {
             copyCustomerPaymentAddressToBillingAddress(paymentForm);
         }

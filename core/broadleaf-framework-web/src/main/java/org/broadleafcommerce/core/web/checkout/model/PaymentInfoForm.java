@@ -30,10 +30,10 @@ import java.io.Serializable;
 public class PaymentInfoForm implements Serializable {
 
     protected Address address = new AddressImpl();
-    protected boolean useShippingAddress = false;
+    protected boolean shouldUseShippingAddress = false;
     protected Long customerPaymentId;
-    protected boolean saveNewPayment = true;
-    protected boolean useCustomerPayment = false;
+    protected boolean shouldSaveNewPayment = true;
+    protected boolean shouldUseCustomerPayment = false;
     protected String emailAddress;
 
     protected String paymentName;
@@ -54,12 +54,12 @@ public class PaymentInfoForm implements Serializable {
         this.address = address;
     }
 
-    public boolean getUseShippingAddress() {
-        return useShippingAddress;
+    public boolean getShouldUseShippingAddress() {
+        return shouldUseShippingAddress;
     }
 
-    public void setUseShippingAddress(boolean useShippingAddress) {
-        this.useShippingAddress = useShippingAddress;
+    public void setShouldUseShippingAddress(boolean shouldUseShippingAddress) {
+        this.shouldUseShippingAddress = shouldUseShippingAddress;
     }
 
     public Long getCustomerPaymentId() {
@@ -70,20 +70,20 @@ public class PaymentInfoForm implements Serializable {
         this.customerPaymentId = customerPaymentId;
     }
 
-    public boolean getSaveNewPayment() {
-        return saveNewPayment;
+    public boolean getShouldSaveNewPayment() {
+        return shouldSaveNewPayment;
     }
 
-    public void setSaveNewPayment(boolean saveNewPayment) {
-        this.saveNewPayment = saveNewPayment;
+    public void setShouldSaveNewPayment(boolean shouldSaveNewPayment) {
+        this.shouldSaveNewPayment = shouldSaveNewPayment;
     }
 
-    public boolean getUseCustomerPayment() {
-        return useCustomerPayment;
+    public boolean getShouldUseCustomerPayment() {
+        return shouldUseCustomerPayment;
     }
 
-    public void setUseCustomerPayment(boolean useCustomerPayment) {
-        this.useCustomerPayment = useCustomerPayment;
+    public void setShouldUseCustomerPayment(boolean shouldUseCustomerPayment) {
+        this.shouldUseCustomerPayment = shouldUseCustomerPayment;
     }
 
     public String getEmailAddress() {

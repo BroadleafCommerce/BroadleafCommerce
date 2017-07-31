@@ -15,7 +15,7 @@ public class CheckoutPaymentInfoFormValidator extends PaymentInfoFormValidator {
     public void validate(Object obj, Errors errors) {
         PaymentInfoForm paymentInfoForm = (PaymentInfoForm) obj;
 
-        if (paymentInfoForm.getUseCustomerPayment()) {
+        if (paymentInfoForm.getShouldUseCustomerPayment()) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "customerPaymentId", "checkout.paymentMethod.customerPaymentId.required");
         } else {
             super.validate(obj, errors);
