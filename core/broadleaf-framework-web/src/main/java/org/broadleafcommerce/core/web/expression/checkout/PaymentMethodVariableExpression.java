@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.expression.checkout;
 
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCPaymentMethodUtils;
@@ -26,6 +27,7 @@ import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstrac
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
 import org.broadleafcommerce.core.web.order.CartState;
@@ -65,25 +67,8 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         return isNullOrder(cart) ? null : orderToPaymentRequestDTOService.translateOrder(cart);
     }
 
-    /**
-     * A helper method used to construct a list of Credit Card Expiration Months
-     * Useful for expiration dropdown menus.
-     * Will use locale to determine language if a locale is available.
-     *
-     * @return List containing expiration months of the form "01 - January"
-     */
-    public List<String> getExpirationMonthOptions() {
-        return BLCPaymentMethodUtils.getExpirationMonthOptions();
-    }
-
-    /**
-     * A helper method used to construct a list of Credit Card Expiration Years
-     * Useful for expiration dropdown menus.
-     *
-     * @return List of the next ten years starting with the current year.
-     */
-    public List<String> getExpirationYearOptions() {
-        return BLCPaymentMethodUtils.getExpirationYearOptions();
+    protected boolean isNullOrder(Order cart) {
+        return cart == null || (cart instanceof NullOrderImpl);
     }
 
     public boolean cartContainsThirdPartyPayment() {
@@ -117,6 +102,53 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
     }
 
     /**
+     * A helper method used to construct a list of Credit Card Expiration Months
+     * Useful for expiration dropdown menus.
+     * Will use locale to determine language if a locale is available.
+     *
+     * @return List containing expiration months of the form "01 - January"
+     */
+    public List<String> getExpirationMonthOptions() {
+        return BLCPaymentMethodUtils.getExpirationMonthOptions();
+    }
+
+    /**
+     * A helper method used to construct a list of Credit Card Expiration Years
+     * Useful for expiration dropdown menus.
+     *
+     * @return List of the next ten years starting with the current year.
+     */
+    public List<String> getExpirationYearOptions() {
+        return BLCPaymentMethodUtils.getExpirationYearOptions();
+    }
+
+    public String getCreditCardTypeFromCart() {
+        return getCartOrderPaymentProperty(PaymentAdditionalFieldType.CARD_TYPE.getType());
+    }
+
+    public String getCreditCardLastFourFromCart() {
+        return getCartOrderPaymentProperty(PaymentAdditionalFieldType.LAST_FOUR.getType());
+    }
+
+    public String getCreditCardExpDateFromCart() {
+        return getCartOrderPaymentProperty(PaymentAdditionalFieldType.EXP_DATE.getType());
+    }
+
+    protected String getCartOrderPaymentProperty(String propertyName) {
+        Order cart = CartState.getCart();
+        List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
+        for (OrderPayment orderPayment : orderPayments) {
+            if (orderPayment.isActive() && PaymentType.CREDIT_CARD.equals(orderPayment.getType())) {
+                List<PaymentTransaction> transactions = orderPayment.getTransactions();
+                for (PaymentTransaction transaction : transactions) {
+                    return transaction.getAdditionalFields().get(propertyName);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * This method is responsible for gathering any Payment Processing Errors that may have been stored
      * as a Redirect Attribute when attempting to checkout.
      */
@@ -125,10 +157,6 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         HttpServletRequest request = blcContext.getRequest();
 
         return request.getParameter(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR);
-    }
-
-    protected boolean isNullOrder(Order cart) {
-        return cart == null || (cart instanceof NullOrderImpl);
     }
 
 }
