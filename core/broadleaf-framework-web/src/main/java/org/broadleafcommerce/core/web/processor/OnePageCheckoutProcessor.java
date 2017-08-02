@@ -408,7 +408,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
      * @return boolean indicating whether or not the order has valid info
      */
     protected boolean hasPopulatedOrderInfo(Order cart) {
-        return cartStateService.hasPopulatedOrderInfo();
+        return cartStateService.cartHasPopulatedOrderInfo();
     }
 
     /**
@@ -418,7 +418,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
      * @return boolean indicating whether or not the CREDIT_CARD order payment on the order has an address
      */
     protected boolean hasPopulatedBillingAddress(Order cart) {
-        return cartStateService.hasPopulatedBillingAddress();
+        return cartStateService.cartHasPopulatedBillingAddress();
     }
 
     /**
@@ -428,7 +428,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
      * @return boolean indicating whether or not the fulfillment groups on the cart have addresses.
      */
     protected boolean hasPopulatedShippingAddress(Order cart) {
-        return cartStateService.hasPopulatedShippingAddress();
+        return cartStateService.cartHasPopulatedShippingAddress();
     }
 
     /**

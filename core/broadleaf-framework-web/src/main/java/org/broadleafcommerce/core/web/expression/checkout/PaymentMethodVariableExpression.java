@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.web.expression.checkout;
 
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.util.BLCPaymentMethodUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -24,6 +26,9 @@ import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.service.CartStateService;
@@ -45,6 +50,9 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
     @Resource(name = "blCartStateService")
     protected CartStateService cartStateService;
 
+    @Resource(name = "blOrderPaymentService")
+    protected OrderPaymentService orderPaymentService;
+
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService orderToPaymentRequestDTOService;
 
@@ -57,6 +65,40 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         Order cart = CartState.getCart();
 
         return isNullOrder(cart) ? null : orderToPaymentRequestDTOService.translateOrder(cart);
+    }
+
+    protected boolean isNullOrder(Order cart) {
+        return cart == null || (cart instanceof NullOrderImpl);
+    }
+
+    public boolean cartContainsThirdPartyPayment() {
+        return cartStateService.cartHasThirdPartyPayment();
+    }
+
+    public boolean cartContainsTemporaryCreditCard() {
+        return cartStateService.cartHasTemporaryCreditCard();
+    }
+
+    public boolean orderContainsCODPayment(Order order) {
+        return orderContainsPaymentOfType(order, PaymentType.COD);
+    }
+
+    public boolean orderContainsCreditCardPayment(Order order) {
+        return orderContainsPaymentOfType(order, PaymentType.CREDIT_CARD);
+    }
+
+    protected boolean orderContainsPaymentOfType(Order order, PaymentType paymentType) {
+        List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(order);
+
+        for (OrderPayment payment : orderPayments) {
+            boolean isActive = payment.isActive();
+            boolean isOfCorrectType = paymentType.equals(payment.getType());
+
+            if (isActive && isOfCorrectType) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -80,8 +122,30 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         return BLCPaymentMethodUtils.getExpirationYearOptions();
     }
 
-    public boolean orderContainsThirdPartyPayment() {
-        return cartStateService.orderContainsThirdPartyPayment();
+    public String getCreditCardTypeFromCart() {
+        return getCartOrderPaymentProperty(PaymentAdditionalFieldType.CARD_TYPE.getType());
+    }
+
+    public String getCreditCardLastFourFromCart() {
+        return getCartOrderPaymentProperty(PaymentAdditionalFieldType.LAST_FOUR.getType());
+    }
+
+    public String getCreditCardExpDateFromCart() {
+        return getCartOrderPaymentProperty(PaymentAdditionalFieldType.EXP_DATE.getType());
+    }
+
+    protected String getCartOrderPaymentProperty(String propertyName) {
+        Order cart = CartState.getCart();
+        List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
+        for (OrderPayment orderPayment : orderPayments) {
+            if (orderPayment.isActive() && PaymentType.CREDIT_CARD.equals(orderPayment.getType())) {
+                List<PaymentTransaction> transactions = orderPayment.getTransactions();
+                for (PaymentTransaction transaction : transactions) {
+                    return transaction.getAdditionalFields().get(propertyName);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -93,10 +157,6 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         HttpServletRequest request = blcContext.getRequest();
 
         return request.getParameter(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR);
-    }
-
-    protected boolean isNullOrder(Order cart) {
-        return cart == null || (cart instanceof NullOrderImpl);
     }
 
 }

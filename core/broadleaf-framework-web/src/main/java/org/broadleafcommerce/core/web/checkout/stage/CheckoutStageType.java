@@ -32,9 +32,8 @@ public class CheckoutStageType implements Serializable, BroadleafEnumerationType
 
     private static final Map<String, CheckoutStageType> TYPES = new LinkedHashMap<>();
     public static final CheckoutStageType SHIPPING_INFO = new CheckoutStageType("SHIPPING_INFO", "Shipping Info", 1000);
-    public static final CheckoutStageType BILLING_INFO = new CheckoutStageType("BILLING_INFO", "Billing Info", 2000);
-    public static final CheckoutStageType PAYMENT_INFO = new CheckoutStageType("PAYMENT_INFO", "Payment Info", 3000);
-    public static final CheckoutStageType REVIEW = new CheckoutStageType("REVIEW", "Review", 4000);
+    public static final CheckoutStageType PAYMENT_INFO = new CheckoutStageType("PAYMENT_INFO", "Payment Info", 2000);
+    public static final CheckoutStageType REVIEW = new CheckoutStageType("REVIEW", "Review", 3000);
 
     public static CheckoutStageType getInstance(final String type) {
         return TYPES.get(type);
