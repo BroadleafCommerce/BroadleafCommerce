@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -119,6 +120,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 return Integer.valueOf(o1.getOrder()).compareTo(Integer.valueOf(o2.getOrder()));
             }
         });
+        honorExplicitPersistenceHandlerSorting();
+
     }
 
     @Override
@@ -896,5 +899,51 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     public void setModules(PersistenceModule[] modules) {
         this.modules = modules;
+    }
+
+    /**
+     * Honor ordering for those CPH instances that have explicitly declared a order other than the default order
+     * This achieves several goals:
+     * 1. We leave the general CPH population in its established order, which is the best for backwards compatibility
+     * 2. Those items that are intended to get explicit ordering still achieve their goal
+     */
+    protected void honorExplicitPersistenceHandlerSorting() {
+        List<CustomPersistenceHandler> exceptions = new ArrayList<>(customPersistenceHandlers.size());
+        List<CustomPersistenceHandler> sorted = new ArrayList<>(customPersistenceHandlers.size());
+        for (CustomPersistenceHandler handler : customPersistenceHandlers) {
+            if (CustomPersistenceHandler.DEFAULT_ORDER == handler.getOrder()) {
+                sorted.add(handler);
+            } else {
+                exceptions.add(handler);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptions)) {
+            Integer position = 0;
+            Map<Integer, List<CustomPersistenceHandler>> positions = new HashMap<>();
+            for (CustomPersistenceHandler handler : sorted) {
+                if (CollectionUtils.isEmpty(exceptions)) {
+                    break;
+                }
+                Iterator<CustomPersistenceHandler> itr = exceptions.iterator();
+                while (itr.hasNext()) {
+                    CustomPersistenceHandler exception = itr.next();
+                    if (exception.getOrder() <= handler.getOrder()) {
+                        List<CustomPersistenceHandler> items = positions.get(position);
+                        if (items == null) {
+                            items = new ArrayList<>();
+                            positions.put(position, items);
+                        }
+                        items.add(exception);
+                        itr.remove();
+                    }
+                }
+            }
+            for (Map.Entry<Integer, List<CustomPersistenceHandler>> entry : positions.entrySet()) {
+                for (CustomPersistenceHandler handler : entry.getValue()) {
+                    sorted.add(entry.getKey(), handler);
+                }
+            }
+            customPersistenceHandlers = sorted;
+        }
     }
 }
