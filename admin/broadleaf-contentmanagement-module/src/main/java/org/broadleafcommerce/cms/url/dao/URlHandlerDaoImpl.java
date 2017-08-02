@@ -23,9 +23,6 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -34,6 +31,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ppatel.
@@ -65,6 +64,13 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
     public List<URLHandler> findAllRegexURLHandlers() {
         TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_ALL_REGEX_HANDLERS", URLHandler.class);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<URLHandler> findURLHandlersByDestination(String uri) {
+        TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_BY_DESTINATION_URL", URLHandler.class);
+        query.setParameter("newURL", uri);
         return query.getResultList();
     }
 

@@ -25,24 +25,16 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 
@@ -77,7 +69,20 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     protected Long id;
 
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = GroupName.General, prominent = true,
-            helpText = "urlHandlerIncoming_help", defaultValue = "")
+            helpText = "urlHandlerIncoming_help",
+            validationConfigurations = {
+                    @ValidationConfiguration(validationImplementation = "blUriPropertyValidator"),
+                    @ValidationConfiguration(
+                            validationImplementation = "blUniqueValueValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(
+                                            itemName = ConfigurationItem.ERROR_MESSAGE,
+                                            itemValue = "This URL is already in use. Please provide a unique URL."
+                                    )
+                            }
+                    )
+            }
+    )
     @Column(name = "INCOMING_URL", nullable = false)
     @Index(name = "INCOMING_URL_INDEX", columnNames = {"INCOMING_URL"})
     protected String incomingURL;

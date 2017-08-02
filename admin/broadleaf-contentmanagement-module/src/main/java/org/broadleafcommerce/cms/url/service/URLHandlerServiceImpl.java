@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.cms.url.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,16 +34,11 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 
 /**
@@ -130,6 +128,11 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     @Override
     public List<URLHandler> findAllURLHandlers() {
         return urlHandlerDao.findAllURLHandlers();
+    }
+
+    @Override
+    public List<URLHandler> findURLHandlersByDestination(String uri) {
+        return urlHandlerDao.findURLHandlersByDestination(uri);
     }
 
     @Override

@@ -43,4 +43,10 @@ public interface URLHandlerDao {
 
     public List<URLHandler> findAllRegexURLHandlers();
 
+    /**
+     * Loads URLHandlers from the database with the given URI as a destination
+     * @param uri the URI to search for as a destination
+     * @return list of URLHandlers in DB with <code>uri</code> as destination
+     */
+    List<URLHandler> findURLHandlersByDestination(String uri);
 }

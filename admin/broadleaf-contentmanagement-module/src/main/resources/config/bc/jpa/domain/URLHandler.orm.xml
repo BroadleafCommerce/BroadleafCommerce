@@ -39,5 +39,13 @@
         </query>
     </named-query>
 
+    <named-query name="BC_READ_BY_DESTINATION_URL">
+        <query>SELECT handler
+            FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
+            WHERE
+            handler.newURL = :newURL
+        </query>
+    </named-query>
+
 
 </entity-mappings>

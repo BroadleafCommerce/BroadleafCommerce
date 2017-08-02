@@ -45,6 +45,13 @@ public interface URLHandlerService {
     public List<URLHandler> findAllURLHandlers();
 
     /**
+     * Finds URLHandlers that have the destination as the given URI
+     * @param uri the destination to search for
+     * @return list of all URLHandlers with the given URI as a destination
+     */
+    public List<URLHandler> findURLHandlersByDestination(String uri);
+
+    /**
      * Persists the URLHandler to the DB.
      *
      * @param handler
