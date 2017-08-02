@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.config;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.core.web.seo.BasicSeoPropertyGeneratorImpl;
 import org.broadleafcommerce.core.web.seo.SeoPropertyGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +57,7 @@ public class FrameworkWebConfig {
     }
 
     @Bean
-    @Autowired
+    @ConditionalOnTemplating
     public List<SeoPropertyGenerator> blSeoPropertyGenerators(@Qualifier("blBasicSeoPropertyGenerator") BasicSeoPropertyGeneratorImpl basicSeo) {
         List<SeoPropertyGenerator> generators = new ArrayList<>();
         generators.add(basicSeo);
