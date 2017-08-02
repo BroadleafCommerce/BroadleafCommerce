@@ -96,19 +96,24 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
     }
 
     protected Category findCategoryUsingIdParam(BroadleafRequestContext context) throws ServletRequestBindingException {
-        Long categoryId = ServletRequestUtils.getLongParameter(context.getRequest(), "categoryId");
-        if (categoryId != null) {
-            Category category = catalogService.findCategoryById(categoryId);
-            if (category != null && LOG.isDebugEnabled()) {
-                LOG.debug("Obtained the category using ID=" + categoryId);
+        if (context.getRequest() != null) {
+            Long categoryId = ServletRequestUtils.getLongParameter(context.getRequest(), "categoryId");
+            if (categoryId != null) {
+                Category category = catalogService.findCategoryById(categoryId);
+                if (category != null && LOG.isDebugEnabled()) {
+                    LOG.debug("Obtained the category using ID=" + categoryId);
+                }
+                return category;
             }
-            return category;
         }
         return null;
     }
 
     protected Category findCategoryUsingUrl(BroadleafRequestContext context)
             throws ServletRequestBindingException, UnsupportedEncodingException {
+        if (context.getRequestURIWithoutContext() == null) {
+            return null;
+        }
         String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
         Category category = catalogService.findCategoryByURI(requestUri);
         if (category != null && LOG.isDebugEnabled()) {
