@@ -18,12 +18,19 @@
 package org.broadleafcommerce.core.web.config;
 
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.broadleafcommerce.core.web.seo.BasicSeoPropertyGeneratorImpl;
+import org.broadleafcommerce.core.web.seo.SeoPropertyGenerator;
+import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mobile.device.DeviceResolver;
 import org.springframework.mobile.device.LiteDeviceResolver;
 import org.springframework.web.filter.RequestContextFilter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -47,6 +54,14 @@ public class FrameworkWebConfig {
     @Bean
     public DeviceResolver blDeviceResolver() {
         return new LiteDeviceResolver();
+    }
+
+    @Bean
+    @ConditionalOnTemplating
+    public List<SeoPropertyGenerator> blSeoPropertyGenerators(@Qualifier("blBasicSeoPropertyGenerator") BasicSeoPropertyGeneratorImpl basicSeo) {
+        List<SeoPropertyGenerator> generators = new ArrayList<>();
+        generators.add(basicSeo);
+        return generators;
     }
 
 }
