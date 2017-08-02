@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
@@ -103,4 +104,5 @@ public interface OrderPaymentService {
      */
     public void populateCustomerPaymentToken(CustomerPayment customerPayment, PaymentTransaction transaction);
 
+    void deleteOrderPaymentsByType(Order order, PaymentType paymentType);
 }

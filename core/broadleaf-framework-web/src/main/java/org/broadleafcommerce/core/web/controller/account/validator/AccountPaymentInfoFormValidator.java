@@ -17,30 +17,20 @@
  */
 package org.broadleafcommerce.core.web.controller.account.validator;
 
-import org.broadleafcommerce.common.web.form.BroadleafFormType;
-import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
-import org.broadleafcommerce.core.web.controller.account.SavedPaymentForm;
+import org.broadleafcommerce.core.web.checkout.validator.PaymentInfoFormValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
 /**
  * @author Chris Kittrell (ckittrell)
- * @author Jacob Mitash
  */
-@Component("blSavedPaymentFormValidator")
-public class SavedPaymentFormValidator extends BroadleafCommonAddressValidator implements Validator {
-
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return SavedPaymentForm.class.isAssignableFrom(clazz);
-    }
+@Component("blAccountPaymentInfoFormValidator")
+public class AccountPaymentInfoFormValidator extends PaymentInfoFormValidator {
 
     @Override
     public void validate(Object obj, Errors errors) {
-        SavedPaymentForm savedPaymentForm = (SavedPaymentForm) obj;
-        super.validate(BroadleafFormType.SAVED_PAYMENT_FORM, savedPaymentForm.getAddress(), errors);
+        super.validate(obj, errors);
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "paymentName", "savedPayments.paymentName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "paymentToken", "savedPayments.paymentToken.required");

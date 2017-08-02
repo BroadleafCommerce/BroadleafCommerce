@@ -174,5 +174,16 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         }
     }
 
+    @Override
+    @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public void deleteOrderPaymentsByType(Order order, PaymentType paymentType) {
+        List<OrderPayment> orderPayments = readPaymentsForOrder(order);
+
+        for (OrderPayment orderPayment : orderPayments) {
+            if (orderPayment.isActive() && paymentType.equals(orderPayment.getType())) {
+                delete(orderPayment);
+            }
+        }
+    }
 }
 

@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * broadleaf-enterprise
  * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
@@ -15,17 +15,27 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.payment.service;
+package org.broadleafcommerce.core.web.seo;
 
-import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 
-public interface SavedPaymentService {
+import java.util.Map;
 
-    Long addSavedPayment(Customer customer, PaymentInfoForm paymentInfoForm);
+/**
+ * A {@link SeoPropertyGenerator} understands how to gather a specific set of SEO properties for the given domain object
+ * 
+ * @author Chris Kittrell (ckittrell)
+ */
+public interface SeoPropertyGenerator {
+    
+    Map<String, String> filterForSeoProperties(Map<String, String> properties);
 
-    Long updateSavedPayment(Customer customer, PaymentInfoForm paymentInfoForm);
+    Map<String, String> gatherSeoProperties(Category category);
 
-    void deleteSavedPayment(Customer customer, String nonce);
+    Map<String, String> gatherSeoProperties(Product product);
+
+    Map<String, String> gatherSeoProperties(PageDTO page);
 
 }

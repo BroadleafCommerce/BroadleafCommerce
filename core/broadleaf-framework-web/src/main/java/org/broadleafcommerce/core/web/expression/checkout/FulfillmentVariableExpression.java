@@ -89,7 +89,7 @@ public class FulfillmentVariableExpression implements BroadleafVariableExpressio
     public FulfillmentEstimationResponse getFulfillmentEstimateResponse() {
         Order cart = CartState.getCart();
 
-        if (!isNullOrder(cart) && cart.getFulfillmentGroups().size() > 0 && cartStateService.hasPopulatedShippingAddress()) {
+        if (!isNullOrder(cart) && cart.getFulfillmentGroups().size() > 0 && cartStateService.cartHasPopulatedShippingAddress()) {
             try {
                 List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
                 FulfillmentGroup firstShippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);

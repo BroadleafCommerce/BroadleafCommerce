@@ -41,7 +41,6 @@ public class BillingInfoForm implements Serializable {
     protected Boolean saveNewPayment = true;
     protected Boolean useCustomerPayment = false;
     protected String paymentName;
-    protected String emailAddress;
 
     public BillingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -103,13 +102,5 @@ public class BillingInfoForm implements Serializable {
 
     public void setPaymentName(String paymentName) {
         this.paymentName = paymentName;
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
     }
 }

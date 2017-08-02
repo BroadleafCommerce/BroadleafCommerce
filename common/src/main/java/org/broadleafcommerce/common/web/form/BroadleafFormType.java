@@ -33,7 +33,7 @@ public class BroadleafFormType implements Serializable, BroadleafEnumerationType
 
     public static final BroadleafFormType BILLING_FORM = new BroadleafFormType("BILLING_FORM", "Billing Form");
     public static final BroadleafFormType SHIPPING_FORM = new BroadleafFormType("SHIPPING_FORM", "Shipping Form");
-    public static final BroadleafFormType SAVED_PAYMENT_FORM = new BroadleafFormType("SAVED_PAYMENT_FORM", "Saved Payment Form");
+    public static final BroadleafFormType PAYMENT_FORM = new BroadleafFormType("PAYMENT_FORM", "Payment Form");
     public static final BroadleafFormType CUSTOMER_ADDRESS_FORM = new BroadleafFormType("CUSTOMER_ADDRESS_FORM", "Customer Address Form");
 
     public static BroadleafFormType getInstance(final String type) {
