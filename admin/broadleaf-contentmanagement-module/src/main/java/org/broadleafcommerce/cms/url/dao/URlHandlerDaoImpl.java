@@ -24,10 +24,7 @@ import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -96,6 +93,22 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
 
     public URLHandler saveURLHandler(URLHandler handler) {
         return em.merge(handler);
+    }
+
+    @Override
+    public void savePartialURLHandler(URLHandler handler) {
+        Query query = em.createNamedQuery("BC_PARTIAL_UPDATE_BY_ID");
+        query.setParameter("id", handler.getId())
+                .setParameter("incomingURL", handler.getIncomingURL())
+                .setParameter("newURL", handler.getNewURL());
+        query.executeUpdate();
+    }
+
+    @Override
+    public void deleteURLHandler(URLHandler urlHandler) {
+        Query query = em.createNamedQuery("BC_DELETE_BY_ID");
+        query.setParameter("id", urlHandler.getId());
+        query.executeUpdate();
     }
 
 }

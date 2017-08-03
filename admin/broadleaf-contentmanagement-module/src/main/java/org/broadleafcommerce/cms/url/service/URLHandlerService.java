@@ -60,6 +60,13 @@ public interface URLHandlerService {
     public URLHandler saveURLHandler(URLHandler handler);
 
     /**
+     * Persists only the URLs of a URLHandler by its ID. This is necessary because the entity may be replaced
+     * with a DTO representing the URLHandler which cannot be persisted as an entity.
+     * @param handler the handler to persist
+     */
+    void savePartialURLHandler(URLHandler handler);
+
+    /**
      * Finds a URLHandler by its ID.
      *
      * @param id
@@ -80,4 +87,9 @@ public interface URLHandlerService {
 
     public Boolean removeURLHandlerFromCache(String mapKey);
 
+    /**
+     * Deletes a saved URLHandler
+     * @param urlHandler The URLHandler to delete
+     */
+    void deleteURLHandler(URLHandler urlHandler);
 }

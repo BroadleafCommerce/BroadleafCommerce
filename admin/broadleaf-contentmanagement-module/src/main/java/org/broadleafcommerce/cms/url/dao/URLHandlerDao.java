@@ -39,6 +39,10 @@ public interface URLHandlerDao {
 
     public URLHandler saveURLHandler(URLHandler handler);
 
+    void savePartialURLHandler(URLHandler handler);
+
+    void deleteURLHandler(URLHandler urlHandler);
+
     public URLHandler findURLHandlerById(Long id);
 
     public List<URLHandler> findAllRegexURLHandlers();

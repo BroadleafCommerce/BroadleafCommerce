@@ -105,7 +105,10 @@ public class URLHandlerServiceImpl implements URLHandlerService {
                 handler = NULL_URL_HANDLER;
             } else if (!(URLHandlerDTO.class.isAssignableFrom(handler.getClass()))) {
                 //Create a non-entity instance of the DTO to cache.
-                handler = new URLHandlerDTO(handler.getNewURL(), handler.getUrlRedirectType());
+                handler = new URLHandlerDTO(handler.getId(),
+                        handler.getIncomingURL(),
+                        handler.getNewURL(),
+                        handler.getUrlRedirectType());
             }
 
             if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
@@ -146,6 +149,18 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         return urlHandlerDao.saveURLHandler(handler);
     }
 
+    @Override
+    @Transactional("blTransactionManager")
+    public void savePartialURLHandler(URLHandler handler) {
+        urlHandlerDao.savePartialURLHandler(handler);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void deleteURLHandler(URLHandler urlHandler) {
+        urlHandlerDao.deleteURLHandler(urlHandler);
+    }
+
     protected URLHandler checkForMatches(String requestURI) {
         URLHandler currentHandler = null;
         try {
@@ -174,7 +189,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
             if (currentHandler != null) {
                 // We don't want an invalid regex to cause tons of logging                
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Error parsing URL Handler (incoming =" + currentHandler.getIncomingURL() + "), outgoing = ( "
+                    LOG.warn("Error parsing URL Handler incoming = (" + currentHandler.getIncomingURL() + "), outgoing = ("
                             + currentHandler.getNewURL() + "), " + requestURI);
                 }
             }
