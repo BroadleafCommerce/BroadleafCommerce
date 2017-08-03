@@ -88,8 +88,9 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
+    @Index(name = "NEW_URL_INDEX", columnNames = {"NEW_URL"})
     @AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = GroupName.General, prominent = true,
-            helpText = "urlHandlerNew_help", defaultValue = "")
+            helpText = "urlHandlerNew_help")
     protected String newURL;
 
     @Column(name = "URL_REDIRECT_TYPE")
