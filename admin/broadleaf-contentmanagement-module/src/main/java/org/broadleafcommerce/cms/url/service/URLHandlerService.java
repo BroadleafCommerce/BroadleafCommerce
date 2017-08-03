@@ -34,7 +34,7 @@ public interface URLHandlerService {
      * @param uri
      * @return
      */
-    public URLHandler findURLHandlerByURI(String uri);
+    URLHandler findURLHandlerByURI(String uri);
 
     /**
      * Be cautious when calling this.  If there are a large number of records, this can cause performance and
@@ -42,14 +42,14 @@ public interface URLHandlerService {
      *
      * @return
      */
-    public List<URLHandler> findAllURLHandlers();
+    List<URLHandler> findAllURLHandlers();
 
     /**
      * Finds URLHandlers that have the destination as the given URI
      * @param uri the destination to search for
      * @return list of all URLHandlers with the given URI as a destination
      */
-    public List<URLHandler> findURLHandlersByDestination(String uri);
+    List<URLHandler> findURLHandlersByDestination(String uri);
 
     /**
      * Persists the URLHandler to the DB.
@@ -57,7 +57,7 @@ public interface URLHandlerService {
      * @param handler
      * @return
      */
-    public URLHandler saveURLHandler(URLHandler handler);
+    URLHandler saveURLHandler(URLHandler handler);
 
     /**
      * Persists only the URLs of a URLHandler by its ID. This is necessary because the entity may be replaced
@@ -72,7 +72,7 @@ public interface URLHandlerService {
      * @param id
      * @return
      */
-    public URLHandler findURLHandlerById(Long id);
+    URLHandler findURLHandlerById(Long id);
 
     /**
      * This is assumed to be a relatively small list of regex URLHandlers (perhaps in the dozens or hundreds of
@@ -81,11 +81,11 @@ public interface URLHandlerService {
      *
      * @return
      */
-    public List<URLHandler> findAllRegexURLHandlers();
+    List<URLHandler> findAllRegexURLHandlers();
 
-    public String buildURLHandlerCacheKey(Site site, String requestUri);
+    String buildURLHandlerCacheKey(Site site, String requestUri);
 
-    public Boolean removeURLHandlerFromCache(String mapKey);
+    Boolean removeURLHandlerFromCache(String mapKey);
 
     /**
      * Deletes a saved URLHandler
