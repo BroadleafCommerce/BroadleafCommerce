@@ -47,17 +47,4 @@
         </query>
     </named-query>
 
-    <named-query name="BC_DELETE_BY_ID">
-        <query>DELETE FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
-            WHERE handler.id = :id
-        </query>
-    </named-query>
-
-    <named-query name="BC_PARTIAL_UPDATE_BY_ID">
-        <query>UPDATE org.broadleafcommerce.cms.url.domain.URLHandler handler
-            SET handler.incomingURL = :incomingURL, handler.newURL = :newURL
-            WHERE handler.id = :id
-        </query>
-    </named-query>
-
 </entity-mappings>
