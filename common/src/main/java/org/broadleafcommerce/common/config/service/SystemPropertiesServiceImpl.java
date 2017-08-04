@@ -47,6 +47,8 @@ import javax.annotation.Resource;
 @Service("blSystemPropertiesService")
 public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
+    private static final String NULL_RESPONSE = "*NULL_RESPONSE*";
+
     protected Cache systemPropertyCache;
 
     @Resource(name="blSystemPropertiesDao")
@@ -89,7 +91,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         }
 
         if (result != null) {
-            return result;
+            return result.equals(NULL_RESPONSE)?null:result;
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
@@ -103,10 +105,11 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             }
         }
 
-        if (result != null) {
-            addPropertyToCache(name, result);
+        if (result == null) {
+            result = NULL_RESPONSE;
         }
-        return result;
+        addPropertyToCache(name, result);
+        return result.equals(NULL_RESPONSE)?null:result;
     }
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {
