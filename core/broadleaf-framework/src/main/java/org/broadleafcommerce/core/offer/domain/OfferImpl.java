@@ -121,7 +121,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Name",
         group = GroupName.Description, order = FieldOrder.Name,
-        prominent = true, gridOrder = 1,
+        prominent = true, gridOrder = 1, translatable = true,
         defaultValue = "New Offer")
     protected String name;
 
