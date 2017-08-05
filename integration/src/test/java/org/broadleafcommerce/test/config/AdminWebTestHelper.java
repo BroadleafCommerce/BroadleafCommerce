@@ -52,7 +52,7 @@ public class AdminWebTestHelper {
             try {
                 pause(wait);
                 runnable.run();
-            } catch (RuntimeException e) {
+            } catch (AssertionError e) {
                 if (count > retryCount) {
                     throw e;
                 }
