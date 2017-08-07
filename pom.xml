@@ -1524,6 +1524,10 @@
                         <groupId>xalan</groupId>
                         <artifactId>xalan</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <!--update xalan dependency for esapi for a xalan security vulnerability-->
