@@ -1,5 +1,5 @@
 <label th:for="*{fields['__${field.name}__'].value}">
-    <span th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}"></span>
+    <span th:utext="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}"></span>
     <span th:replace="components/fieldTooltip"></span>
     <div th:replace="components/fieldTranslation"></div>
 </label>

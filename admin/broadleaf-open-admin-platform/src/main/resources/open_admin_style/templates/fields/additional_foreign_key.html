@@ -1,6 +1,6 @@
 <th:block th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-        <span th:text="#{${field.friendlyName}}"></span>
+        <span th:utext="#{${field.friendlyName}}"></span>
 <span th:replace="components/fieldTooltip" ></span>
     </label>
 
@@ -26,7 +26,7 @@
     <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
 
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-        <span th:text="#{${field.friendlyName}}"></span>
+        <span th:utext="#{${field.friendlyName}}"></span>
 <span th:replace="components/fieldTooltip" ></span>
     </label>
 
