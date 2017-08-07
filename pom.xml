@@ -732,6 +732,7 @@
                 <version>2.8.2</version>
                 <scope>import</scope>
                 <type>pom</type>
+                <optional>true</optional>
             </dependency>
 
             <!--Email System Libraries -->
