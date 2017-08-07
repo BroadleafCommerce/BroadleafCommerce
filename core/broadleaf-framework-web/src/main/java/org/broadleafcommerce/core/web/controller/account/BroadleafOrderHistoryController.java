@@ -24,9 +24,10 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
@@ -36,9 +37,36 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected static String orderHistoryView = "account/orderHistory";
     protected static String orderDetailsView = "account/partials/orderDetails";
     protected static String orderDetailsRedirectView = "account/partials/orderDetails";
-    
+    protected static String orderHistoryPageParameter = "page";
+    protected static String orderHistoryDateStartParameter = "dateStart";
+    protected static String orderHistoryDateEndParameter = "dateEnd";
+    protected static int itemsPerPage = 10;
+
     public String viewOrderHistory(HttpServletRequest request, Model model) {
-        List<Order> orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
+
+        String pageNumber = request.getParameter(orderHistoryPageParameter);
+        String dateStartParam = request.getParameter(orderHistoryDateStartParameter);
+        String dateEndParam = request.getParameter(orderHistoryDateEndParameter);
+        int page;
+        if (pageNumber == null) {
+            page = 1;
+        } else {
+            page = Integer.parseInt(pageNumber);
+        }
+
+
+        List<Order> orders;
+
+        if (dateStartParam != null && dateEndParam != null && CustomerState.getCustomer() != null && CustomerState.getCustomer().getId() != null) {
+            orders = orderService.findOrdersForCustomersInDateRange(Collections.singletonList(CustomerState.getCustomer().getId()), new Date(), new Date());
+        } else {
+            orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
+        }
+
+        if (!orders.isEmpty() && page > 0 && page <= orders.size() / itemsPerPage + 1) {
+            orders = orders.subList((page - 1) * 10, Math.min(orders.size(), page * 10));
+        }
+
         model.addAttribute("orders", orders);
         return getOrderHistoryView();
     }
