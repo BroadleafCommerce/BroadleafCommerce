@@ -33,7 +33,7 @@ public interface LinkedDataService {
     /**
      * Determines whether or not this LinkedDataService can handle the incoming {@link LinkedDataDestinationType}
      * @param destination
-     * @return
+     * @return whether or not to handle the destination type
      */
     Boolean canHandle(LinkedDataDestinationType destination);
 

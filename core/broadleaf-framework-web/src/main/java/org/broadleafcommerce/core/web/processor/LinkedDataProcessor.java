@@ -17,12 +17,10 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
-import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -40,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +50,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Jacob Mitash
  */
 @Component("blLinkedDataProcessor")
-public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcessor
-{
+public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcessor {
     private final Log LOG = LogFactory.getLog(LinkedDataProcessor.class);
 
     @Autowired
