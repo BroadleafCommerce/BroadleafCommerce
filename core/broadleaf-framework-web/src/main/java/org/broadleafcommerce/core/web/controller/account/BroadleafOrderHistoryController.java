@@ -25,6 +25,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.InvalidParameterException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -40,13 +44,13 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected static String orderHistoryPageParameter = "page";
     protected static String orderHistoryDateStartParameter = "dateStart";
     protected static String orderHistoryDateEndParameter = "dateEnd";
+    protected static String orderHistoryDateFilterParameter = "dateFilter";
+    protected static DateFormat filterDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     protected static int itemsPerPage = 10;
 
     public String viewOrderHistory(HttpServletRequest request, Model model) {
 
         String pageNumber = request.getParameter(orderHistoryPageParameter);
-        String dateStartParam = request.getParameter(orderHistoryDateStartParameter);
-        String dateEndParam = request.getParameter(orderHistoryDateEndParameter);
         int page;
         if (pageNumber == null) {
             page = 1;
@@ -57,8 +61,23 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
 
         List<Order> orders;
 
-        if (dateStartParam != null && dateEndParam != null && CustomerState.getCustomer() != null && CustomerState.getCustomer().getId() != null) {
-            orders = orderService.findOrdersForCustomersInDateRange(Collections.singletonList(CustomerState.getCustomer().getId()), new Date(), new Date());
+        String filterParameter = request.getParameter(orderHistoryDateFilterParameter);
+        if (filterParameter != null) {
+            String dateStartParam = request.getParameter(orderHistoryDateStartParameter);
+            String dateEndParam = request.getParameter(orderHistoryDateEndParameter);
+            if(dateStartParam == null || dateEndParam == null) {
+                throw new InvalidParameterException("Start and end date parameters were null");
+            }
+            if(CustomerState.getCustomer() == null || CustomerState.getCustomer().getId() == null) {
+                throw new SecurityException("Unknown customer tried to access order history");
+            }
+            try {
+                Date startDate = filterDateFormat.parse(dateStartParam + " 00:00:00"); //Start of day
+                Date endDate = filterDateFormat.parse(dateEndParam + " 23:59:59"); //Last second of the day
+                orders = orderService.findOrdersForCustomersInDateRange(Collections.singletonList(CustomerState.getCustomer().getId()), startDate, endDate);
+            } catch (ParseException p) {
+                throw new InvalidParameterException("The start/end date was specified in an invalid format");
+            }
         } else {
             orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
         }
