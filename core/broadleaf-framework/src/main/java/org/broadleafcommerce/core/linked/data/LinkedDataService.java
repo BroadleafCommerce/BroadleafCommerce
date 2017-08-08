@@ -30,12 +30,17 @@ import java.util.List;
  */
 public interface LinkedDataService {
 
-
+    /**
+     * Determines whether or not this LinkedDataService can handle the incoming {@link LinkedDataDestinationType}
+     * @param destination
+     * @return
+     */
     Boolean canHandle(LinkedDataDestinationType destination);
 
     /**
      * Gets the linked data for default pages
-     *
+     * @param url
+     * @param products
      * @return string JSON representation of linked data
      */
     String getLinkedData(String url, List<Product> products) throws JSONException;
