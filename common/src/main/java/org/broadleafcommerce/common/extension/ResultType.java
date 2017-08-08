@@ -27,5 +27,5 @@ package org.broadleafcommerce.common.extension;
  * @author Jeff Fischer
  */
 public enum ResultType {
-    STANDARD,STANDARD_CACHE,TEMPLATE,TEMPLATE_CACHE,IGNORE
+    STANDARD,STANDARD_CACHE,TEMPLATE,TEMPLATE_CACHE,IGNORE, CATALOG_ONLY
 }

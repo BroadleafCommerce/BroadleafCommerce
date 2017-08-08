@@ -123,6 +123,10 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
         }
     }
 
+    public Sku unwrap(){
+        return delegate;
+    }
+
     public void reset() {
         delegate = null;
         retailPrice = null;
