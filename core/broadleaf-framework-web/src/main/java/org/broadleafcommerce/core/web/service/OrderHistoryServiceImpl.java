@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -60,6 +59,11 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
 
     @Override
     public List<Order> getOrderHistory(Map<String, String[]> parameterMap, Map<String, Object> modelAttributes) {
+        return getOrderHistory(parameterMap, modelAttributes, null);
+    }
+
+    @Override
+    public List<Order> getOrderHistory(Map<String, String[]> parameterMap, Map<String, Object> modelAttributes, List<Order> startingOrders) {
         Map<String, String> parameters = singleValueParameterMap(parameterMap);
 
         int page = getCurrentPage(parameters.get(orderHistoryPageParameter));
@@ -72,8 +76,10 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
         String dateEndParam = parameters.get(orderHistoryDateEndParameter);
 
         //Date filtering
-        if (isDateFiltered(dateFilter, dateStartParam, dateEndParam)) {
-            orders = filterDates(dateStartParam, dateEndParam);
+        if(startingOrders != null && isDateFiltered(dateFilter, dateStartParam, dateEndParam)) {
+            orders = filterDates(startingOrders, dateStartParam, dateEndParam);
+        } else if (startingOrders == null && isDateFiltered(dateFilter, dateStartParam, dateEndParam)) {
+            orders = findFilteredDates(dateStartParam, dateEndParam);
         } else {
             orders = orderService.findOrdersForCustomer(CustomerState.getCustomer());
         }
@@ -115,19 +121,6 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
         modelAttributes.put(orderHistoryPageParameter, page);
 
         return orders;
-    }
-
-    @Override
-    public List<Order> filterOrdersByStatus(List<Order> orders, List<OrderStatus> orderStatuses) {
-        List<Order> filteredOrders = new ArrayList<>(orders);
-        for(Iterator<Order> iterator = orders.iterator(); iterator.hasNext();) {
-            Order order = iterator.next();
-            validateCustomerOwnedData(order);
-            if(!orderStatuses.contains(order.getStatus())) {
-                iterator.remove();
-            }
-        }
-        return filteredOrders;
     }
 
     @Override
@@ -203,15 +196,32 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
         return matchingOrders;
     }
 
-    protected List<Order> filterDates(String dateStartParam, String dateEndParam) {
-        try {
-            Date startDate = filterDateFormat.parse(dateStartParam + " 00:00:00"); //Start of day
-            Date endDate = filterDateFormat.parse(dateEndParam + " 23:59:59"); //Last second of the day
+    protected List<Order> findFilteredDates(String dateStartParam, String dateEndParam) {
+        Date startDate = getDateFromString(dateStartParam, true);
+        Date endDate = getDateFromString(dateEndParam, false);
+        return orderService.findOrdersForCustomersInDateRange(Collections.singletonList(CustomerState.getCustomer().getId()), startDate, endDate);
+    }
 
-            return orderService.findOrdersForCustomersInDateRange(Collections.singletonList(CustomerState.getCustomer().getId()), startDate, endDate);
-        } catch (ParseException p) {
-            throw new InvalidParameterException("The start/end date was specified in an invalid format");
+    protected List<Order> filterDates(List<Order> orders, String dateStartParam, String dateEndParam) {
+        Date startDate = getDateFromString(dateStartParam, true);
+        Date endDate = getDateFromString(dateEndParam, false);
+        List<Order> filteredOrders = new ArrayList<>();
+        for(Order order : orders) {
+            if(order.getSubmitDate().after(startDate) && order.getSubmitDate().before(endDate)) {
+                filteredOrders.add(order);
+            }
         }
+        return filteredOrders;
+    }
+
+    protected Date getDateFromString(String stringDate, boolean startOfDay) {
+        Date date;
+        try {
+            date = filterDateFormat.parse(stringDate + (startOfDay ? " 00:00:00" : "23:59:59"));
+        } catch (ParseException e) {
+            throw new InvalidParameterException("The start/end date '" + stringDate + "' was specified in an invalid format");
+        }
+        return date;
     }
 
     protected Map<String, String> singleValueParameterMap(Map<String, String[]> parameterMap) {

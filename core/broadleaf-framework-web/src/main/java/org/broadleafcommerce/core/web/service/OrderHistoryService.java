@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.web.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ public interface OrderHistoryService {
 
     List<Order> getOrderHistory(Map<String, String[]> parameterMap, Map<String, Object> modelAttributes);
 
-    List<Order> filterOrdersByStatus(List<Order> orders, List<OrderStatus> orderStatuses);
+    List<Order> getOrderHistory(Map<String, String[]> parameterMap, Map<String, Object> modelAttributes, List<Order> startingOrders);
 
     void validateCustomerOwnedData(Order order);
 
