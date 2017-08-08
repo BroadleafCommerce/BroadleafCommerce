@@ -17,25 +17,17 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.search.domain.SearchResult;
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.web.service.OrderHistoryService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.security.InvalidParameterException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
@@ -45,128 +37,28 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected static String orderHistoryView = "account/orderHistory";
     protected static String orderDetailsView = "account/partials/orderDetails";
     protected static String orderDetailsRedirectView = "account/partials/orderDetails";
-    protected static String orderHistoryPageParameter = "page";
-    protected static String orderHistoryQueryParameter = "query";
-    protected static String orderHistoryDateStartParameter = "dateStart";
-    protected static String orderHistoryDateEndParameter = "dateEnd";
-    protected static String orderHistoryDateFilterParameter = "dateFilter";
-    protected static String orderHistoryResultParameter = "result";
-    protected static DateFormat filterDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    protected static int itemsPerPage = 10;
+
+    @Resource(name = "blOrderHistoryService")
+    protected OrderHistoryService orderHistoryService;
 
     public String viewOrderHistory(HttpServletRequest request, Model model) {
+        if (CustomerState.getCustomer() == null) {
+            throw new SecurityException("Null customer tried to access order history");
+        }
+        Map<String, Object> modelAttributes = new HashMap<>();
+        List<Order> orders = orderHistoryService.getOrderHistory(request.getParameterMap(), modelAttributes);
 
-        String pageNumber = request.getParameter(orderHistoryPageParameter);
-        int page;
-        if (pageNumber == null) {
-            page = 1;
-        } else {
-            page = Integer.parseInt(pageNumber);
+        for (Order order : orders) {
+            orderHistoryService.validateCustomerOwnedData(order);
         }
 
-
-        List<Order> orders;
-
-        //Date filtering
-        String filterParameter = request.getParameter(orderHistoryDateFilterParameter);
-        String dateStartParam = request.getParameter(orderHistoryDateStartParameter);
-        String dateEndParam = request.getParameter(orderHistoryDateEndParameter);
-        if (filterParameter != null) {
-
-            if(dateStartParam == null || dateEndParam == null) {
-                throw new InvalidParameterException("Start and end date parameters were null");
-            }
-            if(CustomerState.getCustomer() == null || CustomerState.getCustomer().getId() == null) {
-                throw new SecurityException("Unknown customer tried to access order history");
-            }
-            try {
-                Date startDate = filterDateFormat.parse(dateStartParam + " 00:00:00"); //Start of day
-                Date endDate = filterDateFormat.parse(dateEndParam + " 23:59:59"); //Last second of the day
-
-
-
-                orders = orderService.findOrdersForCustomersInDateRange(Collections.singletonList(CustomerState.getCustomer().getId()), startDate, endDate);
-            } catch (ParseException p) {
-                throw new InvalidParameterException("The start/end date was specified in an invalid format");
-            }
-        } else {
-            orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
-        }
-
-        //Query filtering
-        String query = request.getParameter(orderHistoryQueryParameter);
-        if(query != null && !query.trim().isEmpty()) {
-            List<Order> matchingOrders = new ArrayList<>();
-            if(query.matches("[0-9]+")) {
-                //SKU or order ID
-                for(Order order : orders) {
-                    boolean match = order.getOrderNumber().equals(query);
-                    if(!match) {
-                        for(DiscreteOrderItem orderItem : order.getDiscreteOrderItems()) {
-                            if(orderItem.getSku().getId().equals(Long.parseLong(query))) {
-                                match = true;
-                                break;
-                            }
-                        }
-                    }
-                    if(match) {
-                        matchingOrders.add(order);
-                    }
-                }
-            } else {
-                //Product name
-                for(Order order : orders) {
-                    for(OrderItem orderItem : order.getOrderItems()) {
-                        if(orderItem.getName().toLowerCase().contains(query.toLowerCase())) {
-                            matchingOrders.add(order);
-                        }
-                    }
-                }
-            }
-            orders = matchingOrders;
-        }
-
-        final int totalOrders = orders.size();
-        if (!orders.isEmpty() && page > 0 && page <= orders.size() / itemsPerPage + 1) {
-            orders = orders.subList((page - 1) * itemsPerPage, Math.min(orders.size(), page * itemsPerPage));
-        }
-
-        model.addAttribute(orderHistoryDateFilterParameter, filterParameter);
-        model.addAttribute(orderHistoryQueryParameter, query);
-        model.addAttribute(orderHistoryDateStartParameter, dateStartParam);
-        model.addAttribute(orderHistoryDateEndParameter, dateEndParam);
-        model.addAttribute(orderHistoryPageParameter, page);
-
-        final List<Order> finalOrders = orders;
-        SearchResult result = new SearchResult() {
-            @Override
-            public Integer getStartResult() {
-                return itemsPerPage * (page - 1) + (finalOrders.isEmpty() ? 0 : 1);
-            }
-
-            @Override
-            public Integer getTotalPages() {
-                return totalOrders / itemsPerPage + 1;
-            }
-        };
-        result.setPage(page);
-        result.setPageSize(itemsPerPage);
-        result.setTotalResults(totalOrders);
-        model.addAttribute(orderHistoryResultParameter, result);
-
+        model.addAllAttributes(modelAttributes);
         model.addAttribute("orders", orders);
         return getOrderHistoryView();
     }
 
     public String viewOrderDetails(HttpServletRequest request, Model model, String orderNumber) {
-        Order order = orderService.findOrderByOrderNumber(orderNumber);
-        if (order == null) {
-            throw new IllegalArgumentException("The orderNumber provided is not valid");
-        }
-
-        validateCustomerOwnedData(order);
-
-        model.addAttribute("order", order);
+        orderHistoryService.viewOrderDetails(request, model, orderNumber);
         return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
     }
 
@@ -180,16 +72,5 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
 
     public String getOrderDetailsRedirectView() {
         return orderDetailsRedirectView;
-    }
-
-    protected void validateCustomerOwnedData(Order order) {
-        if (validateCustomerOwnedData) {
-            Customer activeCustomer = CustomerState.getCustomer();
-            if (activeCustomer != null && !(activeCustomer.equals(order.getCustomer()))) {
-                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
-            } else if (activeCustomer == null && order.getCustomer() != null) {
-                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
-            }
-        }
     }
 }
