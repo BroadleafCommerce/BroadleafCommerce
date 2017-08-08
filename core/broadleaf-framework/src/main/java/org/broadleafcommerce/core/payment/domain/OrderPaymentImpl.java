@@ -249,7 +249,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     public void addTransaction(PaymentTransaction transaction) {
         getTransactions().add(transaction);
     }
-    
+
     @Override
     public List<PaymentTransaction> getTransactionsForType(PaymentTransactionType type) {
         List<PaymentTransaction> result = new ArrayList<PaymentTransaction>();
@@ -265,6 +265,17 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     public PaymentTransaction getInitialTransaction() {
         for (PaymentTransaction tx : getTransactions()) {
             if (tx.getParentTransaction() == null) {
+                return tx;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public PaymentTransaction getAuthorizeTransaction() {
+        for (PaymentTransaction tx : getTransactions()){
+            if (PaymentTransactionType.AUTHORIZE.equals(tx.getType())
+                    || PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())){
                 return tx;
             }
         }

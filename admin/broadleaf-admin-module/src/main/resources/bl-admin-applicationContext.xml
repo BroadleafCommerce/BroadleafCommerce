@@ -231,7 +231,8 @@
                 <ref bean="blTimeOptionsExtensionListener" />
                 <ref bean="blInventoryTypeOptionsExtensionListener" />
                 <ref bean="blFulfillmentTypeOptionsExtensionListener" />
-                <ref bean="blTemplateTypeOptionsExtensionListener" />                
+                <ref bean="blTemplateTypeOptionsExtensionListener" />       
+                <ref bean="blWebRequestDeviceTypeEnumOptionsExtensionListener" />
             </list>
         </property>
     </bean>

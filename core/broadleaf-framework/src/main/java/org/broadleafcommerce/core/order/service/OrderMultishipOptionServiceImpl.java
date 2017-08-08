@@ -199,15 +199,15 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     
     protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, DiscreteOrderItem item, Integer quantity) {
         List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
-        if (!fulfillmentGroupService.isShippable(item.getSku().getFulfillmentType())) {
+        if (!fulfillmentGroupService.isShippable(item.getSku().getFulfillmentType()) || quantity == 0) {
             return orderMultishipOptions;
         }
-        for (int i = 0; i < quantity; i++) {
+//        for (int i = 0; i < quantity; i++) {
             OrderMultishipOption orderMultishipOption = new OrderMultishipOptionImpl();
             orderMultishipOption.setOrder(order);
             orderMultishipOption.setOrderItem(item);
             orderMultishipOptions.add(orderMultishipOption);
-        }
+//        }
         return orderMultishipOptions;
     }
 }

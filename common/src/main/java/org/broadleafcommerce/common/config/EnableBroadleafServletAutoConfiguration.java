@@ -64,6 +64,6 @@ public @interface EnableBroadleafServletAutoConfiguration {
     }, reader = FrameworkXmlBeanDefinitionReader.class)
     class BroadleafServletAutoConfiguration {}
     
-    @ImportResource("classpath:/override-contexts/servlet-autoconfiguration-overrides.xml")
+    @ImportResource("classpath:/override-contexts/autoconfiguration-servlet-overrides.xml")
     class BroadleafServletAutoConfigurationOverrides { }
 }

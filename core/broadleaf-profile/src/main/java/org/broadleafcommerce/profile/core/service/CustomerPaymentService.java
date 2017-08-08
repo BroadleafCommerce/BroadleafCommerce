@@ -24,22 +24,26 @@ import java.util.List;
 
 public interface CustomerPaymentService {
 
-    public CustomerPayment saveCustomerPayment(CustomerPayment customerPayment);
+    CustomerPayment saveCustomerPayment(CustomerPayment customerPayment);
 
-    public List<CustomerPayment> readCustomerPaymentsByCustomerId(Long customerId);
+    List<CustomerPayment> readCustomerPaymentsByCustomerId(Long customerId);
 
-    public CustomerPayment readCustomerPaymentById(Long customerPaymentId);
+    CustomerPayment readCustomerPaymentById(Long customerPaymentId);
 
-    public CustomerPayment readCustomerPaymentByToken(String token);
+    CustomerPayment readCustomerPaymentByToken(String token);
 
-    public void deleteCustomerPaymentById(Long customerPaymentId);
+    void deleteCustomerPaymentById(Long customerPaymentId);
 
-    public CustomerPayment create();
+    void deleteCustomerPaymentByToken(String token);
 
-    public CustomerPayment findDefaultPaymentForCustomer(Customer customer);
+    CustomerPayment create();
 
-    public CustomerPayment setAsDefaultPayment(CustomerPayment payment);
+    CustomerPayment findDefaultPaymentForCustomer(Customer customer);
 
-    public Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment);
+    CustomerPayment setAsDefaultPayment(CustomerPayment payment);
+
+    void clearDefaultPaymentStatus(Customer customer);
+
+    Customer deleteCustomerPaymentFromCustomer(Customer customer, CustomerPayment payment);
 
 }

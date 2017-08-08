@@ -105,7 +105,7 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     public void populateAddressInfo(AddressDTO<PaymentResponseDTO> dto, Address address) {
         address.setFirstName(dto.getAddressFirstName());
         address.setLastName(dto.getAddressLastName());
-        address.setFullName(dto.getAddressFirstName() + " " + dto.getAddressLastName());
+        address.setFullName(dto.getAddressFullName());
         address.setAddressLine1(dto.getAddressLine1());
         address.setAddressLine2(dto.getAddressLine2());
         address.setCity(dto.getAddressCityLocality());

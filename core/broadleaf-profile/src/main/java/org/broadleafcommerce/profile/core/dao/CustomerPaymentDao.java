@@ -23,16 +23,18 @@ import java.util.List;
 
 public interface CustomerPaymentDao {
 
-    public List<CustomerPayment> readCustomerPaymentsByCustomerId(Long customerId);
+    List<CustomerPayment> readCustomerPaymentsByCustomerId(Long customerId);
 
-    public CustomerPayment save(CustomerPayment customerPayment);
+    CustomerPayment save(CustomerPayment customerPayment);
 
-    public CustomerPayment readCustomerPaymentById(Long customerPaymentId);
+    CustomerPayment readCustomerPaymentById(Long customerPaymentId);
 
-    public CustomerPayment readCustomerPaymentByToken(String token);
+    CustomerPayment readCustomerPaymentByToken(String token);
 
-    public void deleteCustomerPaymentById(Long customerPaymentId);
+    void deleteCustomerPaymentById(Long customerPaymentId);
 
-    public CustomerPayment create();
+    void deleteCustomerPaymentByToken(String token);
+
+    CustomerPayment create();
 
 }
