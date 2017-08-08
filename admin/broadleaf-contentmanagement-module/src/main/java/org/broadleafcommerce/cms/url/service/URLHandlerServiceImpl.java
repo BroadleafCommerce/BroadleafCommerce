@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.cms.url.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,11 +31,16 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 /**
@@ -147,12 +149,6 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     @Transactional("blTransactionManager")
     public URLHandler saveURLHandler(URLHandler handler) {
         return urlHandlerDao.saveURLHandler(handler);
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public void savePartialURLHandler(URLHandler handler) {
-        urlHandlerDao.savePartialURLHandler(handler);
     }
 
     @Override

@@ -60,13 +60,6 @@ public interface URLHandlerService {
     URLHandler saveURLHandler(URLHandler handler);
 
     /**
-     * Persists only the URLs of a URLHandler by its ID. This is necessary because the entity may be replaced
-     * with a DTO representing the URLHandler which cannot be persisted as an entity.
-     * @param handler the handler to persist
-     */
-    void savePartialURLHandler(URLHandler handler);
-
-    /**
      * Finds a URLHandler by its ID.
      *
      * @param id

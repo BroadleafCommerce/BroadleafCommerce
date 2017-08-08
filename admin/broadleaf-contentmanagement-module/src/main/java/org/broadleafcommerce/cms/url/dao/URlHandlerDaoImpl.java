@@ -101,15 +101,6 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
     }
 
     @Override
-    public void savePartialURLHandler(URLHandler handler) {
-        Query query = em.createNamedQuery("BC_PARTIAL_UPDATE_BY_ID");
-        query.setParameter("id", handler.getId())
-                .setParameter("incomingURL", handler.getIncomingURL())
-                .setParameter("newURL", handler.getNewURL());
-        query.executeUpdate();
-    }
-
-    @Override
     public void deleteURLHandler(URLHandler urlHandler) {
         Query query = em.createNamedQuery("BC_DELETE_BY_ID");
         query.setParameter("id", urlHandler.getId());

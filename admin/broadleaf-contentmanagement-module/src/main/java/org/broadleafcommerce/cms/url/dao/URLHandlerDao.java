@@ -39,8 +39,6 @@ public interface URLHandlerDao {
 
     URLHandler saveURLHandler(URLHandler handler);
 
-    void savePartialURLHandler(URLHandler handler);
-
     void deleteURLHandler(URLHandler urlHandler);
 
     URLHandler findURLHandlerById(Long id);
