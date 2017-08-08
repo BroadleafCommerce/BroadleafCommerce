@@ -19,13 +19,13 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -52,19 +52,19 @@ public class UriPropertyValidator extends ValidationConfigurationBasedPropertyVa
     protected String ERROR_KEY_CANNOT_END_WITH_SLASH = "uriPropertyValidatorCannotEndWithSlashError";
     protected String ERROR_KEY_CANNOT_CONTAIN_SPACES = "uriPropertyValidatorCannotContainSpacesError";
 
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
+    @Autowired
+    protected Environment env;
 
     protected boolean getIgnoreFullUrls() {
-        return systemPropertiesService.resolveBooleanSystemProperty("uriPropertyValidator.ignoreFullUrls");
+        return env.getProperty("uriPropertyValidator.ignoreFullUrls", Boolean.class, true);
     }
 
     protected boolean getRequireLeadingSlash() {
-        return systemPropertiesService.resolveBooleanSystemProperty("uriPropertyValidator.requireLeadingSlash");
+        return env.getProperty("uriPropertyValidator.requireLeadingSlash", Boolean.class, true);
     }
 
     protected boolean getAllowTrailingSlash() {
-        return systemPropertiesService.resolveBooleanSystemProperty("uriPropertyValidator.allowTrailingSlash");
+        return env.getProperty("uriPropertyValidator.allowTrailingSlash", Boolean.class, false);
     }
 
     public boolean isFullUrl(String url) {
