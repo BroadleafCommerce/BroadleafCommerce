@@ -58,7 +58,7 @@
         <groovy.version>2.4.11</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
         <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
-        <lombok.version>1.16.16</lombok.version>
+        <lombok.version>1.16.18</lombok.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
