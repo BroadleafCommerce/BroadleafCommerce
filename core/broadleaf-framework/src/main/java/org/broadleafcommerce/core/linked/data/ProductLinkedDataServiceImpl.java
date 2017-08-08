@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -28,11 +29,13 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This service generates metadata unique to product pages. The metadata includes the product and it's relevant
@@ -40,31 +43,33 @@ import java.util.List;
  *
  * @author Jacob Mitash
  */
+@Service(value = "blProductLinkedDataServiceImpl")
 public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
     protected final static DateFormat ISO_8601_FORMAT = new SimpleDateFormat("YYYY-MM-DD");
 
-    protected final Product product;
-
+    @Resource(name = "blRatingService")
     protected RatingService ratingService;
 
-        ProductLinkedDataServiceImpl(Environment environment, RatingService ratingService, String url, Product product) {
-        super(environment, null, url);
-        this.product = product;
-        this.ratingService = ratingService;
+    @Override
+    public Boolean canHandle(LinkedDataDestinationType destination) {
+        return LinkedDataDestinationType.PRODUCT.equals(destination);
     }
 
     @Override
-    protected JSONArray getLinkedDataJson() throws JSONException {
+    protected JSONArray getLinkedDataJson(String url, List<Product> products) throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
-        JSONObject productData = getProductLinkedData(product, url);
-        addReviewData(product, productData);
+        if (CollectionUtils.isNotEmpty(products)) {
+            Product product = products.get(0);
+            JSONObject productData = getProductLinkedData(product, url);
+            addReviewData(product, productData);
 
-        schemaObjects.put(productData);
-        schemaObjects.put(getBreadcrumbList(product, url));
-        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
-        schemaObjects.put(LinkedDataUtil.getDefaultWebSite(environment, url));
+            schemaObjects.put(productData);
+            schemaObjects.put(getBreadcrumbList(product, url));
+            schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
+            schemaObjects.put(LinkedDataUtil.getDefaultWebSite(environment, url));
+        }
 
         return schemaObjects;
     }

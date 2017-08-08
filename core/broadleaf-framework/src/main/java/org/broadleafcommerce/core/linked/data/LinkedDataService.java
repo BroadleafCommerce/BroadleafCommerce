@@ -17,7 +17,10 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.codehaus.jettison.json.JSONException;
+
+import java.util.List;
 
 /**
  * This linked data service provides metadata relevant to
@@ -27,11 +30,14 @@ import org.codehaus.jettison.json.JSONException;
  */
 public interface LinkedDataService {
 
+
+    Boolean canHandle(LinkedDataDestinationType destination);
+
     /**
      * Gets the linked data for default pages
      *
      * @return string JSON representation of linked data
      */
-    String getLinkedData() throws JSONException;
+    String getLinkedData(String url, List<Product> products) throws JSONException;
 
 }

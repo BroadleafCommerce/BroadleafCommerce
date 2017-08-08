@@ -18,9 +18,16 @@
 package org.broadleafcommerce.core.linked.data;
 
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * This service generates metadata for pages that are not specialized. It includes the organization, website, and
@@ -28,21 +35,21 @@ import org.springframework.core.env.Environment;
  *
  * @author Jacob Mitash
  */
+@Service(value = "blDefaultLinkedDataServiceImpl")
 public class DefaultLinkedDataServiceImpl implements LinkedDataService {
 
-    protected String url;
-
+    @Autowired
     protected Environment environment;
 
+    @Autowired
     protected BreadcrumbService breadcrumbService;
 
-    public DefaultLinkedDataServiceImpl(Environment environment, BreadcrumbService breadcrumbService, String url) {
-        this.environment = environment;
-        this.breadcrumbService = breadcrumbService;
-        this.url = url;
+    @Override
+    public Boolean canHandle(LinkedDataDestinationType destination) {
+        return LinkedDataDestinationType.DEFAULT.equals(destination);
     }
 
-    protected JSONArray getLinkedDataJson() throws JSONException {
+    protected JSONArray getLinkedDataJson(String url, List<Product> products) throws JSONException {
         JSONArray schemaObjects = new JSONArray();
 
         schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
@@ -55,7 +62,7 @@ public class DefaultLinkedDataServiceImpl implements LinkedDataService {
     }
 
     @Override
-    public String getLinkedData() throws JSONException {
-        return getLinkedDataJson().toString();
+    public String getLinkedData(String url, List<Product> products) throws JSONException {
+        return getLinkedDataJson(url, products).toString();
     }
 }

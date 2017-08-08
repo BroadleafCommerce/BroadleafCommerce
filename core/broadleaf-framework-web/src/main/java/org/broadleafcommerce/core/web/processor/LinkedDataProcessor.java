@@ -17,12 +17,18 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCArrayUtils;
+import org.broadleafcommerce.common.util.StringUtil;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.linked.data.*;
+import org.broadleafcommerce.core.linked.data.LinkedDataDestinationType;
+import org.broadleafcommerce.core.linked.data.LinkedDataService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
@@ -30,13 +36,15 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.codehaus.jettison.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This processor replaces linkedData tags with metadata for search engine optimization. The
@@ -50,12 +58,12 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
     private final Log LOG = LogFactory.getLog(LinkedDataProcessor.class);
     protected enum Destination { PRODUCT, CATEGORY, HOME, DEFAULT }
 
-    @Resource(name = "blLinkedDataServiceFactory")
-    protected LinkedDataServiceFactory linkedDataServiceFactory;
+    @Autowired
+    protected List<LinkedDataService> linkedDataServices;
 
     @Override
     public BroadleafTemplateModel getReplacementModel(String s, Map<String, String> map, BroadleafTemplateContext context) {
-        Destination destination = resolveDestination(context.getRequest());
+        LinkedDataDestinationType destination = resolveDestination(context.getRequest());
 
         String linkedDataText = "<script type=\"application/ld+json\">\n" +
                 getDataForDestination(context.getRequest(), destination) +
@@ -73,15 +81,15 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
      * @param request the user HttpServletRequest
      * @return the destination page type
      */
-    protected Destination resolveDestination(HttpServletRequest request) {
+    protected LinkedDataDestinationType resolveDestination(HttpServletRequest request) {
         if(request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME) != null) {
-            return Destination.PRODUCT;
+            return LinkedDataDestinationType.PRODUCT;
         } else if(request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME) != null) {
-            return Destination.CATEGORY;
+            return LinkedDataDestinationType.CATEGORY;
         } else if(request.getRequestURI().equals("/")) {
-            return Destination.HOME;
+            return LinkedDataDestinationType.HOME;
         } else {
-            return Destination.DEFAULT;
+            return LinkedDataDestinationType.DEFAULT;
         }
     }
 
@@ -91,35 +99,33 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
      * @param destination the type of page trying to be visited
      * @return the JSON string representation of the linked data
      */
-    protected String getDataForDestination(HttpServletRequest request, Destination destination) {
+    protected String getDataForDestination(HttpServletRequest request, LinkedDataDestinationType destination) {
         try {
+            List<Product> products = new ArrayList<>();
+            String requestUrl = request.getRequestURL().toString();
 
-            if(destination == Destination.PRODUCT) {
+            if(LinkedDataDestinationType.PRODUCT.equals(destination)) {
                 Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-                return linkedDataServiceFactory
-                        .productLinkedDataService(request.getRequestURL().toString(), product).getLinkedData();
-
-            } else if(destination == Destination.CATEGORY) {
+                products.add(product);
+            } else if(LinkedDataDestinationType.CATEGORY.equals(destination)) {
                 Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
-                List<CategoryProductXref> productXrefs = category.getActiveProductXrefs();
-                List<Product> products = new ArrayList<>(productXrefs.size());
-                for(CategoryProductXref productXref : productXrefs) {
-                    products.add(productXref.getProduct());
-                }
-                return linkedDataServiceFactory
-                        .categoryLinkedDataService(request.getRequestURL().toString(), products).getLinkedData();
-            } else if(destination == Destination.HOME) {
-                return linkedDataServiceFactory
-                        .homepageLinkedDataService(request.getRequestURL().toString()).getLinkedData();
-            } else {
-                return linkedDataServiceFactory
-                        .defaultLinkedDataService(request.getRequestURL().toString()).getLinkedData();
+                products = BLCArrayUtils.collect(category.getActiveProductXrefs().toArray(), new TypedTransformer<Product>() {
+                    @Override
+                    public Product transform(Object input) {
+                        return ((CategoryProductXref) input).getProduct();
+                    }
+                });
             }
 
+            for (LinkedDataService linkedDataService : linkedDataServices) {
+                if (linkedDataService.canHandle(destination)) {
+                    return linkedDataService.getLinkedData(requestUrl, products);
+                }
+            }
         } catch (JSONException e) {
             LOG.error("A JSON exception occurred while generating LinkedData", e);
-            return "";
         }
+        return StringUtils.EMPTY;
     }
 
     @Override

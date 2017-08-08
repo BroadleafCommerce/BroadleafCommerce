@@ -17,12 +17,11 @@
  */
 package org.broadleafcommerce.core.linked.data;
 
-import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -31,18 +30,17 @@ import java.util.List;
  *
  * @author Jacob Mitash
  */
+@Service(value = "blCategoryLinkedDataServiceImpl")
 public class CategoryLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
-    final protected List<Product> products;
-
-    CategoryLinkedDataServiceImpl(Environment environment, BreadcrumbService breadcrumbService, String url, List<Product> products) {
-        super(environment, breadcrumbService, url);
-        this.products = products;
+    @Override
+    public Boolean canHandle(LinkedDataDestinationType destination) {
+        return LinkedDataDestinationType.CATEGORY.equals(destination);
     }
 
     @Override
-    protected JSONArray getLinkedDataJson() throws JSONException {
-        JSONArray schemaObjects = super.getLinkedDataJson();
+    protected JSONArray getLinkedDataJson(String url, List<Product> products) throws JSONException {
+        JSONArray schemaObjects = super.getLinkedDataJson(url, products);
 
         JSONObject categoryData = new JSONObject();
         categoryData.put("@context", "http://schema.org");
