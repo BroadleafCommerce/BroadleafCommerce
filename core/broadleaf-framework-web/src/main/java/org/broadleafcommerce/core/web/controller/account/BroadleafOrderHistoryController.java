@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -29,6 +31,7 @@ import java.security.InvalidParameterException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -88,15 +91,48 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
             orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
         }
 
-        model.addAttribute(orderHistoryDateFilterParameter, filterParameter);
-        model.addAttribute(orderHistoryQueryParameter, request.getParameter(orderHistoryQueryParameter));
-        model.addAttribute(orderHistoryDateStartParameter, dateStartParam);
-        model.addAttribute(orderHistoryDateEndParameter, dateEndParam);
-        model.addAttribute(orderHistoryPageParameter, page);
+        //Query filtering
+        String query = request.getParameter(orderHistoryQueryParameter);
+        if(query != null && !query.trim().isEmpty()) {
+            List<Order> matchingOrders = new ArrayList<>();
+            if(query.matches("[0-9]+")) {
+                //SKU or order ID
+                for(Order order : orders) {
+                    boolean match = order.getOrderNumber().equals(query);
+                    if(!match) {
+                        for(DiscreteOrderItem orderItem : order.getDiscreteOrderItems()) {
+                            if(orderItem.getSku().getId().equals(Long.parseLong(query))) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(match) {
+                        matchingOrders.add(order);
+                    }
+                }
+            } else {
+                //Product name
+                for(Order order : orders) {
+                    for(OrderItem orderItem : order.getOrderItems()) {
+                        if(orderItem.getName().toLowerCase().contains(query.toLowerCase())) {
+                            matchingOrders.add(order);
+                        }
+                    }
+                }
+            }
+            orders = matchingOrders;
+        }
 
         if (!orders.isEmpty() && page > 0 && page <= orders.size() / itemsPerPage + 1) {
             orders = orders.subList((page - 1) * itemsPerPage, Math.min(orders.size(), page * itemsPerPage));
         }
+
+        model.addAttribute(orderHistoryDateFilterParameter, filterParameter);
+        model.addAttribute(orderHistoryQueryParameter, query);
+        model.addAttribute(orderHistoryDateStartParameter, dateStartParam);
+        model.addAttribute(orderHistoryDateEndParameter, dateEndParam);
+        model.addAttribute(orderHistoryPageParameter, page);
 
         model.addAttribute("orders", orders);
         return getOrderHistoryView();
