@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,7 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected static String orderHistoryDateStartParameter = "dateStart";
     protected static String orderHistoryDateEndParameter = "dateEnd";
     protected static String orderHistoryDateFilterParameter = "dateFilter";
+    protected static String orderHistoryResultParameter = "result";
     protected static DateFormat filterDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     protected static int itemsPerPage = 10;
 
@@ -124,6 +126,7 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
             orders = matchingOrders;
         }
 
+        final int totalOrders = orders.size();
         if (!orders.isEmpty() && page > 0 && page <= orders.size() / itemsPerPage + 1) {
             orders = orders.subList((page - 1) * itemsPerPage, Math.min(orders.size(), page * itemsPerPage));
         }
@@ -133,6 +136,23 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         model.addAttribute(orderHistoryDateStartParameter, dateStartParam);
         model.addAttribute(orderHistoryDateEndParameter, dateEndParam);
         model.addAttribute(orderHistoryPageParameter, page);
+
+        final List<Order> finalOrders = orders;
+        SearchResult result = new SearchResult() {
+            @Override
+            public Integer getStartResult() {
+                return itemsPerPage * (page - 1) + (finalOrders.isEmpty() ? 0 : 1);
+            }
+
+            @Override
+            public Integer getTotalPages() {
+                return totalOrders / itemsPerPage + 1;
+            }
+        };
+        result.setPage(page);
+        result.setPageSize(itemsPerPage);
+        result.setTotalResults(totalOrders);
+        model.addAttribute(orderHistoryResultParameter, result);
 
         model.addAttribute("orders", orders);
         return getOrderHistoryView();
