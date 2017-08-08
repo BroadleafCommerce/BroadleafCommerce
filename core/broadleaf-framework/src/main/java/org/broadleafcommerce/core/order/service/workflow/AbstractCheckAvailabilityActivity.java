@@ -25,11 +25,13 @@ import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -42,6 +44,12 @@ public abstract class AbstractCheckAvailabilityActivity extends BaseActivity<Pro
 
     @Resource(name = "blInventoryService")
     protected ContextualInventoryService inventoryService;
+
+    @Override
+    public boolean shouldExecute(ProcessContext<CartOperationRequest> context) {
+        Order order = context.getSeedData().getOrder();
+        return order != null && !Objects.equals(order.getStatus(), OrderStatus.NAMED);
+    }
     
     protected void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
         // First check if this Sku is available
