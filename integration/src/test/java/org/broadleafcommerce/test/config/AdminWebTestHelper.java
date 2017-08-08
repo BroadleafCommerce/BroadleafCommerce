@@ -37,7 +37,6 @@ public class AdminWebTestHelper {
     @Qualifier("blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
-
     public void pause(Long wait) {
         try {
             Thread.sleep(wait);
@@ -67,6 +66,7 @@ public class AdminWebTestHelper {
         boolean isEntityManagerInView = TransactionSynchronizationManager.hasResource(emf);
         if (!isEntityManagerInView) {
             EntityManager em = emf.createEntityManager();
+            em.clear();
             EntityManagerHolder emHolder = new EntityManagerHolder(em);
             TransactionSynchronizationManager.bindResource(emf, emHolder);
         }
