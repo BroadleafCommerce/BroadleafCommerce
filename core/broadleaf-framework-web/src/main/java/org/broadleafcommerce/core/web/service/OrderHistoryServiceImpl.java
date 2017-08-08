@@ -76,12 +76,18 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
         String dateEndParam = parameters.get(orderHistoryDateEndParameter);
 
         //Date filtering
-        if(startingOrders != null && isDateFiltered(dateFilter, dateStartParam, dateEndParam)) {
-            orders = filterDates(startingOrders, dateStartParam, dateEndParam);
-        } else if (startingOrders == null && isDateFiltered(dateFilter, dateStartParam, dateEndParam)) {
-            orders = findFilteredDates(dateStartParam, dateEndParam);
+        if(startingOrders != null) {
+            if(isDateFiltered(dateFilter, dateStartParam, dateEndParam)) {
+                orders = filterDates(startingOrders, dateStartParam, dateEndParam);
+            } else {
+                orders = startingOrders;
+            }
         } else {
-            orders = orderService.findOrdersForCustomer(CustomerState.getCustomer());
+            if (isDateFiltered(dateFilter, dateStartParam, dateEndParam)) {
+                orders = findFilteredDates(dateStartParam, dateEndParam);
+            } else {
+                orders = orderService.findOrdersForCustomer(CustomerState.getCustomer());
+            }
         }
 
         //Query filtering

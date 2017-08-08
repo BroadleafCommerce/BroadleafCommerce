@@ -18,6 +18,8 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.web.service.OrderHistoryService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,12 +43,17 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     @Resource(name = "blOrderHistoryService")
     protected OrderHistoryService orderHistoryService;
 
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
+
     public String viewOrderHistory(HttpServletRequest request, Model model) {
         if (CustomerState.getCustomer() == null) {
             throw new SecurityException("Null customer tried to access order history");
         }
+        List<Order> orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
+
         Map<String, Object> modelAttributes = new HashMap<>();
-        List<Order> orders = orderHistoryService.getOrderHistory(request.getParameterMap(), modelAttributes);
+        orders = orderHistoryService.getOrderHistory(request.getParameterMap(), modelAttributes, orders);
 
         for (Order order : orders) {
             orderHistoryService.validateCustomerOwnedData(order);
