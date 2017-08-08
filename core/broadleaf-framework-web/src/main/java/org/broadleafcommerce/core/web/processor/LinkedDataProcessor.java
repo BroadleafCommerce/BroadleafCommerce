@@ -56,7 +56,6 @@ import javax.servlet.http.HttpServletRequest;
 public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcessor
 {
     private final Log LOG = LogFactory.getLog(LinkedDataProcessor.class);
-    protected enum Destination { PRODUCT, CATEGORY, HOME, DEFAULT }
 
     @Autowired
     protected List<LinkedDataService> linkedDataServices;
