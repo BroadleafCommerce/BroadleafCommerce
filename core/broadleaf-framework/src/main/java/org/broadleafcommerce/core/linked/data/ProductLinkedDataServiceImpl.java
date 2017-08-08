@@ -177,13 +177,11 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
         JSONArray itemListElement = new JSONArray();
 
-        int i;
-        for(i = 0; i < categoryXrefs.size(); i++) {
-            CategoryProductXref categoryXref = categoryXrefs.get(i);
-
+        int index = 1;
+        for (CategoryProductXref categoryXref : categoryXrefs) {
             JSONObject listItem = new JSONObject();
             listItem.put("@type", "ListItem");
-            listItem.put("position", i + 1);
+            listItem.put("position", index);
 
             JSONObject item = new JSONObject();
             item.put("@id", homepageNoSlash + categoryXref.getCategory().getUrl());
@@ -191,12 +189,13 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
             listItem.put("item", item);
             itemListElement.put(listItem);
+            index++;
         }
 
-        //Add the product last
+        // Add the product last
         JSONObject listItem = new JSONObject();
         listItem.put("@type", "ListItem");
-        listItem.put("position", i + 1);
+        listItem.put("position", index);
 
         JSONObject item = new JSONObject();
         item.put("@id", homepageNoSlash + product.getUrl());
