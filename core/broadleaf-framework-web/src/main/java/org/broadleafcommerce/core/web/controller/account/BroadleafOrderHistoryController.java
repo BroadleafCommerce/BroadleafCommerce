@@ -42,6 +42,7 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected static String orderDetailsView = "account/partials/orderDetails";
     protected static String orderDetailsRedirectView = "account/partials/orderDetails";
     protected static String orderHistoryPageParameter = "page";
+    protected static String orderHistoryQueryParameter = "query";
     protected static String orderHistoryDateStartParameter = "dateStart";
     protected static String orderHistoryDateEndParameter = "dateEnd";
     protected static String orderHistoryDateFilterParameter = "dateFilter";
@@ -61,10 +62,12 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
 
         List<Order> orders;
 
+        //Date filtering
         String filterParameter = request.getParameter(orderHistoryDateFilterParameter);
+        String dateStartParam = request.getParameter(orderHistoryDateStartParameter);
+        String dateEndParam = request.getParameter(orderHistoryDateEndParameter);
         if (filterParameter != null) {
-            String dateStartParam = request.getParameter(orderHistoryDateStartParameter);
-            String dateEndParam = request.getParameter(orderHistoryDateEndParameter);
+
             if(dateStartParam == null || dateEndParam == null) {
                 throw new InvalidParameterException("Start and end date parameters were null");
             }
@@ -74,6 +77,9 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
             try {
                 Date startDate = filterDateFormat.parse(dateStartParam + " 00:00:00"); //Start of day
                 Date endDate = filterDateFormat.parse(dateEndParam + " 23:59:59"); //Last second of the day
+
+
+
                 orders = orderService.findOrdersForCustomersInDateRange(Collections.singletonList(CustomerState.getCustomer().getId()), startDate, endDate);
             } catch (ParseException p) {
                 throw new InvalidParameterException("The start/end date was specified in an invalid format");
@@ -82,8 +88,14 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
             orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
         }
 
+        model.addAttribute(orderHistoryDateFilterParameter, filterParameter);
+        model.addAttribute(orderHistoryQueryParameter, request.getParameter(orderHistoryQueryParameter));
+        model.addAttribute(orderHistoryDateStartParameter, dateStartParam);
+        model.addAttribute(orderHistoryDateEndParameter, dateEndParam);
+        model.addAttribute(orderHistoryPageParameter, page);
+
         if (!orders.isEmpty() && page > 0 && page <= orders.size() / itemsPerPage + 1) {
-            orders = orders.subList((page - 1) * 10, Math.min(orders.size(), page * 10));
+            orders = orders.subList((page - 1) * itemsPerPage, Math.min(orders.size(), page * itemsPerPage));
         }
 
         model.addAttribute("orders", orders);
