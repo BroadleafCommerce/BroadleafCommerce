@@ -17,12 +17,10 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.springframework.ui.Model;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+
+import org.broadleafcommerce.core.order.domain.Order;
 
 /**
  * Service for retrieving filtered (by search query and date) order history
@@ -30,12 +28,30 @@ import java.util.Map;
  */
 public interface OrderHistoryService {
 
-    List<Order> getOrderHistory(Map<String, String[]> parameterMap, Map<String, Object> modelAttributes);
-
+    /**
+     * Gets the orders that should be displayed after pagination, date filtering, and search filtering
+     * @param parameterMap the parameters from the web request
+     * @param modelAttributes a map that holds attributes that should be added to the model
+     * @param startingOrders the starting orders to filter from
+     * @return the filtered ordes from <code>startingOrders</code>
+     */
     List<Order> getOrderHistory(Map<String, String[]> parameterMap, Map<String, Object> modelAttributes, List<Order> startingOrders);
 
+    /**
+     * Throws an exception if the customer tries to access an order they don't have access to
+     * @param order the order to check ownership of
+     */
     void validateCustomerOwnedData(Order order);
 
-    void viewOrderDetails(HttpServletRequest request, Model model, String orderNumber);
+    /**
+     * Loads a single order
+     * @param orderNumber the order number of the order to retrieve
+     */
+    Order getOrderDetails(String orderNumber);
 
+    /**
+     * Gets the number of items per page
+     * @return number of items per page
+     */
+    int getItemsPerPage();
 }
