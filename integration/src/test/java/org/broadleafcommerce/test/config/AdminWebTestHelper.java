@@ -29,6 +29,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 /**
+ * Helper class for working with MockMVC and {@link AdminWebTestContextConfiguration} based integration tests.
+ *
  * @author Jeff Fischer
  */
 public class AdminWebTestHelper {
@@ -37,6 +39,11 @@ public class AdminWebTestHelper {
     @Qualifier("blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
+    /**
+     * Simple pause
+     *
+     * @param wait
+     */
     public void pause(Long wait) {
         try {
             Thread.sleep(wait);
@@ -45,6 +52,15 @@ public class AdminWebTestHelper {
         }
     }
 
+    /**
+     * Try a test assertion repeatedly encapsulated in a Runnable. This is useful for
+     * checking state of an async operation. In enterprise, this is useful for checking on the
+     * finish state of a admin promotion or deployment.
+     *
+     * @param retryCount
+     * @param wait
+     * @param runnable
+     */
     public void tryWithPause(Integer retryCount, Long wait, Runnable runnable) {
         int count = 0;
         while (count < retryCount) {
@@ -61,6 +77,12 @@ public class AdminWebTestHelper {
         }
     }
 
+    /**
+     * Useful to start an EntityManager-In-View. This allows test operations that want to read directly from the database
+     * to work without lazy init exceptions, etc... This is not needed for MockMVC#perform operations, since those
+     * requests will include the OpenEntityManagerInView filter as part of their flow. At the completion of the test
+     * operation, the {@link #endView()} method should be called to end the scope of the view.
+     */
     public void startView() {
         EntityManagerFactory emf = ((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory();
         boolean isEntityManagerInView = TransactionSynchronizationManager.hasResource(emf);
@@ -72,6 +94,9 @@ public class AdminWebTestHelper {
         }
     }
 
+    /**
+     * Complete the scope of the EntityManager-In-View operation. See {@link #startView()}.
+     */
     public void endView() {
         EntityManagerFactory emf = ((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory();
         boolean isEntityManagerInView = TransactionSynchronizationManager.hasResource(emf);
