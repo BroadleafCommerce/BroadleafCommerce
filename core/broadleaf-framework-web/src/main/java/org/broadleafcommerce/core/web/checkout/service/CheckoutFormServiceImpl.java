@@ -190,7 +190,7 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
         boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
 
-        return orderUsingCustomerPayment && !cartHasTemporaryCreditCard;
+        return orderUsingCustomerPayment || !cartHasTemporaryCreditCard;
     }
 
     /**
