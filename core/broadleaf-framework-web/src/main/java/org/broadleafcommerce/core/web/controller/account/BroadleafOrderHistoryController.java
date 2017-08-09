@@ -54,7 +54,7 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         orders = orderHistoryService.getOrderHistory(request.getParameterMap(), modelAttributes, orders);
 
         for (Order order : orders) {
-            orderHistoryService.validateCustomerOwnedData(order);
+            validateCustomerOwnedData(order);
         }
 
         model.addAllAttributes(modelAttributes);
@@ -78,5 +78,9 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
 
     public String getOrderDetailsRedirectView() {
         return orderDetailsRedirectView;
+    }
+
+    protected void validateCustomerOwnedData(Order order) {
+        orderHistoryService.validateCustomerOwnedData(order);
     }
 }
