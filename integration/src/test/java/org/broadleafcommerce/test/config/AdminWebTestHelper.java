@@ -25,6 +25,8 @@ import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Stack;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -91,6 +93,11 @@ public class AdminWebTestHelper {
             em.clear();
             EntityManagerHolder emHolder = new EntityManagerHolder(em);
             TransactionSynchronizationManager.bindResource(emf, emHolder);
+            Stack<Integer> stack = new Stack<>();
+            TransactionSynchronizationManager.bindResource("emStack", stack);
+        } else {
+            Stack<Integer> stack = (Stack<Integer>) TransactionSynchronizationManager.getResource("emStack");
+            stack.push(1);
         }
     }
 
@@ -101,8 +108,14 @@ public class AdminWebTestHelper {
         EntityManagerFactory emf = ((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory();
         boolean isEntityManagerInView = TransactionSynchronizationManager.hasResource(emf);
         if (isEntityManagerInView) {
-            EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.unbindResource(emf);
-            EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
+            Stack<Integer> stack = (Stack<Integer>) TransactionSynchronizationManager.getResource("emStack");
+            if (stack.empty()) {
+                EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.unbindResource(emf);
+                EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
+                TransactionSynchronizationManager.unbindResource("emStack");
+            } else {
+                stack.pop();
+            }
         }
     }
 
