@@ -31,6 +31,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
@@ -85,6 +86,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
             prominent = true,
             group = GroupName.General,
             tooltip = "IndexFieldImpl_searchable_tooltip")
+    @Index(name="INDEX_FIELD_SEARCHABLE_INDEX", columnNames={"SEARCHABLE"})
     protected Boolean searchable;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
