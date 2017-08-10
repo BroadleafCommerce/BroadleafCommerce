@@ -160,4 +160,13 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
         newAdjustment.appliedToSalePrice = appliedToSalePrice;
         return newAdjustment;
     }
+
+    @Override
+    public void addToAdjustmentValues(Money val) {
+        saleAdjustmentValue = saleAdjustmentValue.add(val);
+        retailAdjustmentValue = retailAdjustmentValue.add(val);
+        if (adjustmentValue != null) {
+            adjustmentValue = adjustmentValue.add(val);
+        }
+    }
 }

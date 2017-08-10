@@ -39,6 +39,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     protected List<PromotionDiscount> promotionDiscounts = new ArrayList<PromotionDiscount>();
     protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
     protected int quantity;
+    protected boolean isOverride = false;
     protected boolean useSaleAdjustments = false;
     protected boolean adjustmentsFinalized = false;
     protected Money adjustedTotal;
@@ -489,7 +490,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             offerIds.add(offerId);
         }
         Collections.sort(offerIds);
-        return promotableOrderItem.getOrderItem().toString() + offerIds.toString() + useSaleAdjustments;
+        return promotableOrderItem.getOrderItem().toString() + offerIds.toString() + useSaleAdjustments + (isOverride ? isOverride : "");
     }
 
     @Override
@@ -593,6 +594,16 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     @Override
     public boolean useSaleAdjustments() {
         return useSaleAdjustments;
+    }
+
+    @Override
+    public void setOverride(boolean isOverride) {
+        this.isOverride = isOverride;
+    }
+
+    @Override
+    public boolean isOverride() {
+        return isOverride;
     }
 
 }

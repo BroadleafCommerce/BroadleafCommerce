@@ -152,4 +152,14 @@ public class PromotableOrderItemPriceDetailWrapper implements PromotableOrderIte
         return detail.copyWithFinalizedData();
     }
 
+    @Override
+    public void setOverride(boolean isOverride) {
+        detail.setOverride(isOverride);
+    }
+
+    @Override
+    public boolean isOverride() {
+        return detail.isOverride();
+    }
+
 }

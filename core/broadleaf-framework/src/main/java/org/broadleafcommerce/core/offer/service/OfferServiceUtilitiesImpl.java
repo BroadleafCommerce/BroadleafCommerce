@@ -294,8 +294,18 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         }
         itemOffer.setItemsApplied(itemsApplied);
         if (CollectionUtils.isNotEmpty(confirmedDetails)) {
+            Money amountApplied = new Money(BigDecimal.ZERO);
             for (PromotableOrderItemPriceDetail detail : confirmedDetails) {
                 applyOrderItemAdjustment(itemOffer, detail);
+                for (PromotableOrderItemPriceDetailAdjustment adjustment : detail.getCandidateItemAdjustments()) {
+                    if (adjustment.getOfferId().equals(itemOffer.getOffer().getId())) {
+                        // Since it's an amount off it doesn't matter which one is used. The sale and retail should be the same
+                        amountApplied = amountApplied.add(adjustment.getRetailAdjustmentValue().multiply(detail.getQuantity()));
+                    }
+                }
+            }
+            if (amountApplied.lessThan(confirmedDetails.get(0).getPromotableOrderItem().getOrderItem().getOrder().getSubTotal())) {
+                fixRounding(itemOffer, amountApplied, confirmedDetails);
             }
         }
     }
@@ -364,7 +374,84 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         }
         return confirmedDetails;
     }
-
+    
+    /**
+     * Method used for fixing rounding errors when splitting an offer between multiple matching order items
+     * 
+     * i.e $5 split offer for 3 items. Discount for each item is $1.6666... rounded to $1.67. $1.67 * 3 = $5.01
+     * to fix this issue we manually adjust the adjustment for one or more adjustments so that the sum of the discounts
+     * equal the original discount
+     * 
+     * @param itemOffer
+     * @param amountApplied
+     * @param confirmedDetails
+     */
+    protected void fixRounding(PromotableCandidateItemOffer itemOffer, Money amountApplied, List<PromotableOrderItemPriceDetail> confirmedDetails) {
+        Money totalValue = new Money(itemOffer.getOffer().getValue());
+        Money amountDifference = totalValue.subtract(amountApplied);
+        boolean add = amountDifference.greaterThan(BigDecimal.ZERO);
+        int pennies = amountDifference.multiply(100).abs().getAmount().intValue();
+        Map<PromotableOrderItemPriceDetail, PromotableOrderItemPriceDetailAdjustment> distributionMap = new HashMap<>();
+        int i = 0;
+        while (pennies > 0) {
+            if (i >= confirmedDetails.size()) {
+                i = 0;
+            }
+            PromotableOrderItemPriceDetail detail = confirmedDetails.get(i);
+            PromotableOrderItemPriceDetailAdjustment adjust = distributionMap.get(detail);
+            if (adjust == null) {
+                if (detail.getQuantity() > 1) {
+                    adjust = splitAdjustmentForRounding(detail, itemOffer);
+                } else {
+                    for (PromotableOrderItemPriceDetailAdjustment modifiableAdjustment : detail.getCandidateItemAdjustments()) {
+                        if (modifiableAdjustment.getOfferId().equals(itemOffer.getOffer().getId())) {
+                            adjust = modifiableAdjustment;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // This shouldn't be null anymore but we'll check to make sure
+            if (adjust != null) {
+                Money modifyAmount = add ? new Money(.01) : new Money(-.01);
+                adjust.addToAdjustmentValues(modifyAmount);
+                distributionMap.put(detail, adjust);
+            }
+            i++;
+            pennies--;
+        }
+    }
+    
+    /**
+     * Splits the given detail by lowering the number of quantities the given detail is applied to and creating a new detail
+     * that applies to one quantity. This is used for creating a separate detail to modify for adding/subtracting pennies
+     * to compensate for rounding errors
+     * 
+     * @param detail
+     * @param itemOffer
+     * @return
+     */
+    protected PromotableOrderItemPriceDetailAdjustment splitAdjustmentForRounding(PromotableOrderItemPriceDetail detail, PromotableCandidateItemOffer itemOffer) {
+        PromotableOrderItemPriceDetail pennyDetail = promotableItemFactory.createPromotableOrderItemPriceDetail(detail.getPromotableOrderItem(), 1);
+        pennyDetail.setOverride(true);
+        detail.getPromotableOrderItem().getPromotableOrderItemPriceDetails().add(pennyDetail);
+        OfferItemCriteria criteria = null;
+        for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
+            if (discount.getPromotion().getId().equals(itemOffer.getOffer().getId())) {
+                criteria = discount.getItemCriteria();
+                // set the quantity to one less while we're here
+                discount.setQuantity(discount.getQuantity() - 1);
+                break;
+            }
+        }
+        pennyDetail.addPromotionDiscount(itemOffer, criteria, 1);
+        PromotableOrderItemPriceDetailAdjustment pennyAdjustment = promotableItemFactory.createPromotableOrderItemPriceDetailAdjustment(itemOffer, pennyDetail);
+        pennyDetail.addCandidateItemPriceDetailAdjustment(pennyAdjustment);
+        detail.setQuantity(detail.getQuantity() - 1);
+        return pennyAdjustment;
+    }
+    
     /**
      * The adjustment might not be better than the sale price.
      * @param itemOffer
@@ -386,7 +473,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         }
         return false;
     }
-
+    
     @Override
     public void applyOrderItemAdjustment(PromotableCandidateItemOffer itemOffer,
             PromotableOrderItemPriceDetail itemPriceDetail) {

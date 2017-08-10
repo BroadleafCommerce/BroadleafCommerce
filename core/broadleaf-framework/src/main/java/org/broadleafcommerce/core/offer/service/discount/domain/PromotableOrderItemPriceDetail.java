@@ -208,5 +208,9 @@ public interface PromotableOrderItemPriceDetail {
      * @return
      */
     PromotableOrderItemPriceDetail copyWithFinalizedData();
+    
+    void setOverride(boolean isOverride);
+    
+    boolean isOverride();
 
 }

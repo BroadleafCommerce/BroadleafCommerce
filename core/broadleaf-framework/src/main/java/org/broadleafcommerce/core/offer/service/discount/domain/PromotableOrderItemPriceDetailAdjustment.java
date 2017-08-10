@@ -98,5 +98,7 @@ public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
      * @return
      */
     public PromotableOrderItemPriceDetailAdjustment copy();
+    
+    public void addToAdjustmentValues(Money val);
 
 }
