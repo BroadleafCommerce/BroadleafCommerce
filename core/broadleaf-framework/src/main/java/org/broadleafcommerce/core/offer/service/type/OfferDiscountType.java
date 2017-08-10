@@ -36,6 +36,7 @@ public class OfferDiscountType implements Serializable, BroadleafEnumerationType
     public static final OfferDiscountType PERCENT_OFF = new OfferDiscountType("PERCENT_OFF", "Percent Off");
     public static final OfferDiscountType AMOUNT_OFF = new OfferDiscountType("AMOUNT_OFF", "Amount Off");
     public static final OfferDiscountType FIX_PRICE = new OfferDiscountType("FIX_PRICE", "Fixed Price");
+    public static final OfferDiscountType SPLIT_AMOUNT_OFF = new OfferDiscountType("SPLIT_AMOUNT_OFF", "Split Amount Off");
 
     public static OfferDiscountType getInstance(final String type) {
         return TYPES.get(type);

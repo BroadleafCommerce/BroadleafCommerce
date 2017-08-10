@@ -54,6 +54,15 @@ public class PromotableOfferUtility {
             adjustmentValue = new Money(offerUnitValue, currency);
         }
         
+        if (OfferDiscountType.SPLIT_AMOUNT_OFF.equals(discountType)) {
+            BigDecimal offerValue = offerUnitValue;
+            
+            if (rounding.isRoundOfferValues()) {
+                offerValue = offerValue.setScale(rounding.getRoundingScale(), rounding.getRoundingMode());
+            }
+            adjustmentValue = new Money(offerValue, currency, 5);
+        }
+        
         if (OfferDiscountType.FIX_PRICE.equals(discountType)) {
             adjustmentValue = currentPriceDetailValue.subtract(new Money(offerUnitValue, currency));
         }
@@ -107,6 +116,11 @@ public class PromotableOfferUtility {
                 } else {
                     return BigDecimal.ZERO;
                 }
+            }
+        }
+        if (OfferDiscountType.SPLIT_AMOUNT_OFF.equals(offer.getDiscountType())) {
+            if (promotableCandidateItemOffer.getItemsApplied() > 0) {
+                return offer.getValue().divide(new BigDecimal(promotableCandidateItemOffer.getItemsApplied()), 5, RoundingMode.HALF_EVEN);
             }
         }
         return offer.getValue();

@@ -39,6 +39,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected BigDecimal weightedPercentSaved;
     protected Money originalPrice;
     protected int uses = 0;
+    protected int itemsActivelyAppliedTo = 0;
     
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap =
             new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
@@ -73,6 +74,25 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
         BigDecimal offerUnitValue = PromotableOfferUtility.determineOfferUnitValue(offer, this);
         savings = PromotableOfferUtility.computeAdjustmentValue(originalPrice, offerUnitValue, this, this);
         return savings.multiply(qtyToReceiveSavings);
+    }
+    
+    @Override
+    public int calcuateMaximumOrderItemsForSplitOffer(PromotableOrderItem orderItem) {
+        originalPrice = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
+        Money salePrice = orderItem.getSalePriceBeforeAdjustments();
+        if (salePrice != null) {
+            if (salePrice.greaterThan(originalPrice)) {
+                // doesn't matter how many
+                return Integer.MAX_VALUE;
+            }
+            BigDecimal savingsNeeded = originalPrice.subtract(salePrice).getAmount();
+            savingsNeeded = savingsNeeded.multiply(new BigDecimal(orderItem.getQuantity()));
+            if (savingsNeeded.intValue() == 0) {
+                return Integer.MAX_VALUE;
+            }
+            return offer.getValue().divide(savingsNeeded).intValue();
+        }
+        return Integer.MAX_VALUE;
     }
 
     /**
@@ -205,6 +225,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public void resetUses() {
         uses = 0;
+        itemsActivelyAppliedTo = 0;
     }
 
     @Override
@@ -264,5 +285,15 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
         } else {
             return minimumTargetsRequired;
         }
+    }
+
+    @Override
+    public void setItemsApplied(int numApplied) {
+        this.itemsActivelyAppliedTo = numApplied;
+    }
+
+    @Override
+    public int getItemsApplied() {
+        return itemsActivelyAppliedTo;
     }
 }

@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.BankersRounding;
@@ -35,6 +37,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfil
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.springframework.stereotype.Service;
@@ -55,8 +58,14 @@ import java.util.Map;
 @Service("blFulfillmentGroupOfferProcessor")
 public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl implements FulfillmentGroupOfferProcessor {
 
+    private static final Log LOG = LogFactory.getLog(FulfillmentGroupOfferProcessorImpl.class);
+    
     @Override
     public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer) {
+        if (OfferDiscountType.SPLIT_AMOUNT_OFF.equals(offer.getDiscountType().getType())) {
+            LOG.warn("Offers of type FULFILLMENT_GROUP may not have a discount type of SPLIT_AMOUNT_OFF. Ignoring fulfillment group offer (name=" + offer.getName() + ")");
+            return;
+        }
         for (PromotableFulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             boolean fgLevelQualification = false;
             fgQualification: {

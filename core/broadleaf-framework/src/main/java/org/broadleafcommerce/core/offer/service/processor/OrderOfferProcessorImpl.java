@@ -23,14 +23,12 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferServiceUtilities;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
@@ -83,6 +81,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
         if (offer.getDiscountType().getType().equals(OfferDiscountType.FIX_PRICE.getType())) {
             LOG.warn("Offers of type ORDER may not have a discount type of FIX_PRICE. Ignoring order offer (name=" + offer.getName() + ")");
+            return;
+        }
+        if (OfferDiscountType.SPLIT_AMOUNT_OFF.equals(offer.getDiscountType().getType())) {
+            LOG.warn("Offers of type ORDER may not have a discount type of SPLIT_AMOUNT_OFF. Ignoring order offer (name=" + offer.getName() + ")");
             return;
         }
         boolean orderLevelQualification = false;

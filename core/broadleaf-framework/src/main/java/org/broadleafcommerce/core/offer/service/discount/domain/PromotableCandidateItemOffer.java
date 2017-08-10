@@ -52,6 +52,8 @@ public interface PromotableCandidateItemOffer extends Serializable {
      * Public only for unit testing - not intended to be called
      */
     public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings);
+    
+    public int calcuateMaximumOrderItemsForSplitOffer(PromotableOrderItem orderItem);
 
     public int calculateMaximumNumberOfUses();
     
@@ -112,5 +114,9 @@ public interface PromotableCandidateItemOffer extends Serializable {
      * @return
      */
     public int getMinimumRequiredTargetQuantity();
+    
+    public void setItemsApplied(int numApplied);
+    
+    public int getItemsApplied();
 
 }

@@ -423,22 +423,26 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 Offer offer = itemOffer.getOffer();
                 BigDecimal calculatedWeightedPercent = new BigDecimal(0);
                 markQualifiersAndTargets(order, itemOffer);
-                for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
-                    PromotableOrderItem item = detail.getPromotableOrderItem();
-                    for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
-                        Money itemSavings = calculatePotentialSavingsForOrderItem(itemOffer, item, discount.getQuantity());
-                        potentialSavings = potentialSavings.add(itemSavings);
-                        if (useCalculatePercent(offer)) {
-                            BigDecimal discountPercent = calculatePercent(item.calculateTotalWithoutAdjustments(), itemSavings);
-                            calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
-                        } else if (hasQualifierAndQualifierRestricted(offer)) {
-                            BigDecimal discountPercent = calculateWeightedPercent(discount, item, itemSavings);
-                            calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
+                if (OfferDiscountType.SPLIT_AMOUNT_OFF.equals(offer.getDiscountType())) {
+                    potentialSavings = new Money(offer.getValue(), order.getOrderCurrency());
+                } else {
+                    for (PromotableOrderItemPriceDetail detail : order.getAllPromotableOrderItemPriceDetails()) {
+                        PromotableOrderItem item = detail.getPromotableOrderItem();
+                        for (PromotionDiscount discount : detail.getPromotionDiscounts()) {
+                            Money itemSavings = calculatePotentialSavingsForOrderItem(itemOffer, item, discount.getQuantity());
+                            potentialSavings = potentialSavings.add(itemSavings);
+                            if (useCalculatePercent(offer)) {
+                                BigDecimal discountPercent = calculatePercent(item.calculateTotalWithoutAdjustments(), itemSavings);
+                                calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
+                            } else if (hasQualifierAndQualifierRestricted(offer)) {
+                                BigDecimal discountPercent = calculateWeightedPercent(discount, item, itemSavings);
+                                calculatedWeightedPercent = calculatedWeightedPercent.add(discountPercent);
+                            }
                         }
+                        // Reset state back for next offer
+                        detail.getPromotionDiscounts().clear();
+                        detail.getPromotionQualifiers().clear();
                     }
-                    // Reset state back for next offer
-                    detail.getPromotionDiscounts().clear();
-                    detail.getPromotionQualifiers().clear();
                 }
                 itemOffer.setPotentialSavings(potentialSavings);
                 if (usePercentOffValue(offer)) {

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -28,13 +29,13 @@ import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferMarkTargets;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
@@ -43,6 +44,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.dto.OrderItemHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -249,22 +251,118 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Override
     public void applyAdjustmentsForItemPriceDetails(PromotableCandidateItemOffer itemOffer, List<PromotableOrderItemPriceDetail> itemPriceDetails) {
+        boolean waitToApplyItems = OfferDiscountType.SPLIT_AMOUNT_OFF.equals(itemOffer.getOffer().getDiscountType());
+        List<PromotableOrderItemPriceDetail> applicableDetails = new ArrayList<>();
         for (PromotableOrderItemPriceDetail itemPriceDetail : itemPriceDetails) {
             for (PromotionDiscount discount : itemPriceDetail.getPromotionDiscounts()) {
                 if (discount.getPromotion().equals(itemOffer.getOffer())) {
-                    if (itemOffer.getOffer().isTotalitarianOffer() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
-                        // We've decided to apply this adjustment but if it doesn't actually reduce
-                        // the value of the item
-                        if (adjustmentIsNotGoodEnoughToBeApplied(itemOffer, itemPriceDetail)) {
-                            break;
+                    if (waitToApplyItems) {
+                        applicableDetails.add(itemPriceDetail);
+                    } else {
+                        if (itemOffer.getOffer().isTotalitarianOffer() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                            // We've decided to apply this adjustment but if it doesn't actually reduce
+                            // the value of the item
+                            if (adjustmentIsNotGoodEnoughToBeApplied(itemOffer, itemPriceDetail)) {
+                                break;
+                            }
+                            
                         }
-
+                        applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                     }
-                    applyOrderItemAdjustment(itemOffer, itemPriceDetail);
                     break;
                 }
             }
         }
+        if (waitToApplyItems) {
+            applyAdjustmentsForSplitOffer(itemOffer, applicableDetails);
+        }
+    }
+    
+    /**
+     * Special method for applying details for a split offer. This is special because the criteria on if the offer can be applied depends on how many
+     * items it's being applied to
+     * 
+     * @param itemOffer
+     * @param applicableDetails
+     */
+    protected void applyAdjustmentsForSplitOffer(PromotableCandidateItemOffer itemOffer, List<PromotableOrderItemPriceDetail> applicableDetails) {
+        Map<Integer, List<PromotableOrderItemPriceDetail>> maxItemAllowedMap = buildMaxItemAllowedMap(itemOffer, applicableDetails);
+        List<PromotableOrderItemPriceDetail> confirmedDetails = buildOptimalSplitOfferItemList(maxItemAllowedMap);
+        int itemsApplied = 0;
+        for (PromotableOrderItemPriceDetail det : confirmedDetails) {
+            itemsApplied += det.getQuantity();
+        }
+        itemOffer.setItemsApplied(itemsApplied);
+        if (CollectionUtils.isNotEmpty(confirmedDetails)) {
+            for (PromotableOrderItemPriceDetail detail : confirmedDetails) {
+                applyOrderItemAdjustment(itemOffer, detail);
+            }
+        }
+    }
+    
+    /**
+     * Builds a map of int to list of order item price details where the key is the maximum number of items
+     * that the split offer can apply to for the list of promotable order item price details to have a better
+     * price with the promo than without it. This is only relevant when the offer can't apply to the sale price.
+     * 
+     * i.e. $5 split offer amount 2 line items. The split amount would $2.50 for each item. If this offer only applies
+     * to the retail price but one of the line items has a sale price of $7 and the retail is $10 then the map would look
+     * like
+     * {
+     *  MAX_INT : {item with no sale price},
+     *  1 : {item with sale price}
+     *  }
+     *  since the offer would only make the price of the item with a sale price better if the offer only applied to it 
+     * 
+     * @return
+     */
+    protected Map<Integer, List<PromotableOrderItemPriceDetail>> buildMaxItemAllowedMap(PromotableCandidateItemOffer itemOffer, List<PromotableOrderItemPriceDetail> applicableDetails) {
+        Map<Integer, List<PromotableOrderItemPriceDetail>> maxItemAllowedMap = new HashMap<>();
+        if (!itemOffer.getOffer().getApplyDiscountToSalePrice()) {
+            for (PromotableOrderItemPriceDetail detail : applicableDetails) {
+                Integer num = itemOffer.calcuateMaximumOrderItemsForSplitOffer(detail.getPromotableOrderItem());
+                if (maxItemAllowedMap.containsKey(num)) {
+                    maxItemAllowedMap.get(num).add(detail);
+                } else {
+                    List<PromotableOrderItemPriceDetail> details = new ArrayList<>();
+                    details.add(detail);
+                    maxItemAllowedMap.put(num, details);
+                }
+            }
+        } else {
+            List<PromotableOrderItemPriceDetail> details = new ArrayList<>(applicableDetails);
+            maxItemAllowedMap.put(Integer.MAX_VALUE, details);
+        }
+        return maxItemAllowedMap;
+    }
+    
+    /**
+     * Given a map of int to list of promotable order item price details where the key is maxium number of items that the split
+     * offer can be applied to for the list of promotable order item price details to have the offer applied to them since it'll
+     * make the price better, this method returns the list of items that the offer should be applied to
+     * 
+     * @param maxItemAllowedMap
+     * @return
+     */
+    protected List<PromotableOrderItemPriceDetail> buildOptimalSplitOfferItemList(Map<Integer, List<PromotableOrderItemPriceDetail>> maxItemAllowedMap) {
+        ArrayList<Integer> orderedKeys = new ArrayList<>(maxItemAllowedMap.keySet());
+        Collections.sort(orderedKeys, Collections.reverseOrder());
+        int itemsApplied = 0;
+        List<PromotableOrderItemPriceDetail> confirmedDetails = new ArrayList<>();
+        for (Integer key : orderedKeys) {
+            if (key > itemsApplied) {
+                List<PromotableOrderItemPriceDetail> values = maxItemAllowedMap.get(key);
+                for (PromotableOrderItemPriceDetail val : values) {
+                    if ((val.getQuantity() + itemsApplied) < key) {
+                        confirmedDetails.add(val);
+                        itemsApplied += val.getQuantity();
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        return confirmedDetails;
     }
 
     /**
