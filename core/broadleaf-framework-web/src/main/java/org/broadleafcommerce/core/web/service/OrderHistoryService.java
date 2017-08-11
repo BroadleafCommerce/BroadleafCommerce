@@ -17,41 +17,28 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 
 /**
- * Service for retrieving filtered (by search query and date) order history
+ * Service for gathering previously completed orders
+ *
  * @author Jacob Mitash
  */
 public interface OrderHistoryService {
 
     /**
-     * Gets the orders that should be displayed after pagination, date filtering, and search filtering
-     * @param parameterMap the parameters from the web request
-     * @param modelAttributes a map that holds attributes that should be added to the model
-     * @param startingOrders the starting orders to filter from
-     * @return the filtered ordes from <code>startingOrders</code>
-     */
-    List<Order> getOrderHistory(Map<String, String[]> parameterMap, Map<String, Object> modelAttributes, List<Order> startingOrders);
-
-    /**
-     * Throws an exception if the customer tries to access an order they don't have access to
-     * @param order the order to check ownership of
-     */
-    void validateCustomerOwnedData(Order order);
-
-    /**
-     * Loads a single order
-     * @param orderNumber the order number of the order to retrieve
+     * Gathers an {@link Order} based on the given {@param orderNumber} value
+     *
+     * If `validate.customer.owned.data` is true, then we must throw an exception to avoid giving the currently logged in
+     *  {@link Customer} access to an order that they do not own.
      */
     Order getOrderDetails(String orderNumber);
 
     /**
-     * Gets the number of items per page
-     * @return number of items per page
+     * If is validation is enabled via the `validate.customer.owned.data` property, a {@link SecurityException} should be thrown if the current customer
+     *  ({@link CustomerState#getCustomer()}) is not associated to the given {@param order}.
      */
-    int getItemsPerPage();
+    void validateCustomerOwnedData(Order order) throws SecurityException;
 }

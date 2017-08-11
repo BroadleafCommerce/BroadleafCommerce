@@ -17,13 +17,6 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -31,6 +24,11 @@ import org.broadleafcommerce.core.web.service.OrderHistoryService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
@@ -50,20 +48,13 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     public String viewOrderHistory(HttpServletRequest request, Model model) {
         List<Order> orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
 
-        Map<String, Object> modelAttributes = new HashMap<>();
-        orders = orderHistoryService.getOrderHistory(request.getParameterMap(), modelAttributes, orders);
-
-        for (Order order : orders) {
-            validateCustomerOwnedData(order);
-        }
-
-        model.addAllAttributes(modelAttributes);
         model.addAttribute("orders", orders);
         return getOrderHistoryView();
     }
 
     public String viewOrderDetails(HttpServletRequest request, Model model, String orderNumber) {
         Order order = orderHistoryService.getOrderDetails(orderNumber);
+
         model.addAttribute("order", order);
         return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
     }
