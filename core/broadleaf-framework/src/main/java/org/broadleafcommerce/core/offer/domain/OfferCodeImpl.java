@@ -123,7 +123,7 @@ public class OfferCodeImpl implements OfferCode {
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order = 5000,
-            tooltip = "OfferCodeGenerationInfoImpl_MaxUses_tooltip")
+            tooltip = "OfferCodeImpl_Code_Max_Uses_Tooltip")
     protected Integer maxUses;
 
     @Column(name = "USES")
