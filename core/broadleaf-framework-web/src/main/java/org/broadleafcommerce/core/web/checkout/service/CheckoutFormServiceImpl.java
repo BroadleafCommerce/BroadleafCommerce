@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.service.CartStateService;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
@@ -104,8 +105,9 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
     @Override
     public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, ShippingInfoForm shippingInfoForm, Order cart) {
         Address orderPaymentBillingAddress = getAddressFromCCOrderPayment(cart);
-        billingInfoForm.setAddress(orderPaymentBillingAddress);
-
+        if (orderPaymentBillingAddress != null) {
+            billingInfoForm.setAddress(orderPaymentBillingAddress);
+        }
         boolean shippingAddressUsedForBilling = addressesContentsAreEqual(shippingInfoForm.getAddress(), billingInfoForm.getAddress());
         billingInfoForm.setUseShippingAddress(shippingAddressUsedForBilling);
 
@@ -248,7 +250,8 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
     }
 
     protected boolean addressesContentsAreEqual(Address address1, Address address2) {
-        return Objects.equals(address2.getAddressLine1(), address1.getAddressLine1()) &&
+        return address1 != null && address2 != null &&
+                Objects.equals(address2.getAddressLine1(), address1.getAddressLine1()) &&
                 Objects.equals(address2.getAddressLine2(), address1.getAddressLine2()) &&
                 Objects.equals(address2.getCity(), address1.getCity()) &&
                 Objects.equals(address2.getStateProvinceRegion(), address1.getStateProvinceRegion()) &&
