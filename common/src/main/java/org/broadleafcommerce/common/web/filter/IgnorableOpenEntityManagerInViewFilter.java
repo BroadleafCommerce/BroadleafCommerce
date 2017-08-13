@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.web.filter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.springframework.core.Ordered;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -35,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Jeff Fischer
  */
-public class IgnorableOpenEntityManagerInViewFilter extends OpenEntityManagerInViewFilter {
+public class IgnorableOpenEntityManagerInViewFilter extends OpenEntityManagerInViewFilter implements Ordered {
 
     private static final Log LOG = LogFactory.getLog(IgnorableOpenEntityManagerInViewFilter.class);
 
@@ -57,5 +58,10 @@ public class IgnorableOpenEntityManagerInViewFilter extends OpenEntityManagerInV
     protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(httpServletRequest, httpServletResponse));
         return isUriSecurityIgnored;
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.PRE_SECURITY_HIGH;
     }
 }

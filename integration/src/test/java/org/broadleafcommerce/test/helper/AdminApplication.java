@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Integration
+ * Reference Site Admin
  * %%
  * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
@@ -15,29 +15,34 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
-package org.broadleafcommerce.test.config;
+package org.broadleafcommerce.test.helper;
+
 
 import org.broadleafcommerce.common.config.EnableBroadleafAdminAutoConfiguration;
+import org.broadleafcommerce.test.junit.JUnitSpringBootAdminIntegrationSetup;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 
 /**
- * Configuration class that instantiates all of the Broadleaf Admin beans. This is not generally used outside of the
- * {@link BroadleafAdminIntegrationTest} annotation but it can be used to compose other contexts outside of that
- * annotation.
- * 
- * @see EnableBroadleafAdminAutoConfiguration
+ * Useful starting point for a admin Spring Boot integration test. See docs in {@link JUnitSpringBootAdminIntegrationSetup}
+ * for more information on creating a Spring Boot integration test for the admin.
+ *
  * @author Jeff Fischer
  */
-@Configuration
-@EnableBroadleafAdminAutoConfiguration
-@ImportResource(value = {
-    "classpath:bl-applicationContext-test.xml",
-    "classpath:blc-config/admin/bl-thymeleaf3-presentation-admin-applicationContext.xml"
-})
-public class AdminWebTestContextConfiguration {
-    
+@SpringBootApplication
+@EnableAutoConfiguration
+public class AdminApplication {
+
+    @Configuration
+    @EnableBroadleafAdminAutoConfiguration
+    public static class BroadleafFrameworkConfiguration {
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(AdminApplication.class, args);
+    }
+
 }
+

@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.test.config;
+package org.broadleafcommerce.test.helper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
@@ -36,8 +36,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Stack;
 
@@ -46,11 +49,16 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 
 /**
- * Helper class for working with MockMVC and {@link AdminWebTestContextConfiguration} based integration tests.
+ * Helper class for working with admin related integration tests. The main focus is for enabling direct persistence layer
+ * interaction with a running admin application. This could be used to validate data state during or after admin
+ * operations that are being performed as part of a MockMVC test.
+ * </p>
+ * In enterprise context, refer to EnterpriseAdminTestHelper for additional admin related helper methods for performing
+ * promotions and deployments in a MockMVC test.
  *
  * @author Jeff Fischer
  */
-public class AdminWebTestHelper {
+public class AdminTestHelper {
 
     public static final String DEFAULT_SB = "Default";
 
@@ -93,6 +101,7 @@ public class AdminWebTestHelper {
                 pause(wait);
                 runnable.run();
             } catch (AssertionError e) {
+                endView();
                 if (count > retryCount) {
                     throw e;
                 }
@@ -102,10 +111,18 @@ public class AdminWebTestHelper {
         }
     }
 
+    /**
+     * see {@link #startView(Long, String)}. Allows avoiding providing a side and sandbox.
+     */
     public void startView() {
         startView(null, null);
     }
 
+    /**
+     * see {@link #startView(Long, String)}. Allows avoiding providing a sandbox.
+     *
+     * @param siteId
+     */
     public void startView(Long siteId) {
         startView(siteId, null);
     }
@@ -115,6 +132,12 @@ public class AdminWebTestHelper {
      * to work without lazy init exceptions, etc... This is not needed for MockMVC#perform operations, since those
      * requests will include the OpenEntityManagerInView filter as part of their flow. At the completion of the test
      * operation, the {@link #endView()} method should be called to end the scope of the view.
+     * </p>
+     * This view scope is also aware of nested views against the same persistence unit, so you don't need to worry
+     * about coding carefully to avoid nesting calls to startView.
+     *
+     * @param siteId
+     * @param sandBoxName
      */
     public void startView(Long siteId, String sandBoxName) {
         EntityManagerFactory emf = ((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory();
@@ -124,7 +147,7 @@ public class AdminWebTestHelper {
             em.clear();
             EntityManagerHolder emHolder = new EntityManagerHolder(em);
             TransactionSynchronizationManager.bindResource(emf, emHolder);
-            Stack<Integer> stack = new Stack<>();
+            Stack<String> stack = new Stack<>();
             TransactionSynchronizationManager.bindResource("emStack", stack);
             if (siteId != null) {
                 Site site = siteService.retrievePersistentSiteById(siteId);
@@ -134,14 +157,17 @@ public class AdminWebTestHelper {
                 context.setDeployBehavior(DeployBehavior.CLONE_PARENT);
                 context.setAdmin(true);
                 if (!StringUtils.isEmpty(sandBoxName)) {
-                    SandBox sb = findSandBox(sandBoxName, em);
+                    SandBox sb = findSandBox(siteId, sandBoxName, false);
                     context.setSandBox(sb);
                 }
             }
-        } else {
-            Stack<Integer> stack = (Stack<Integer>) TransactionSynchronizationManager.getResource("emStack");
-            stack.push(1);
         }
+        Stack<String> stack = (Stack<String>) TransactionSynchronizationManager.getResource("emStack");
+        RuntimeException trace = new RuntimeException();
+        StringWriter writer = new StringWriter();
+        PrintWriter pw = new PrintWriter(writer);
+        trace.printStackTrace(pw);
+        stack.push(writer.toString());
     }
 
     /**
@@ -152,7 +178,7 @@ public class AdminWebTestHelper {
         boolean isEntityManagerInView = TransactionSynchronizationManager.hasResource(emf);
         if (isEntityManagerInView) {
             Stack<Integer> stack = (Stack<Integer>) TransactionSynchronizationManager.getResource("emStack");
-            if (stack.empty()) {
+            if (stack.size() <= 1) {
                 EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.unbindResource(emf);
                 EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
                 TransactionSynchronizationManager.unbindResource("emStack");
@@ -163,50 +189,59 @@ public class AdminWebTestHelper {
         }
     }
 
+    /**
+     * Find the user sandbox based on the provided site and sandbox name.
+     *
+     * @param siteId
+     * @param sandBoxName
+     * @return
+     */
     public SandBox findSandBox(Long siteId, String sandBoxName) {
-        if (DEFAULT_SB.equals(sandBoxName)) {
-            return getDefaultSandBox(siteId);
-        } else {
-            startView(siteId, sandBoxName);
-            try {
-                EntityManagerFactory emf = ((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory();
+        return findSandBox(siteId, sandBoxName, true);
+    }
 
+    private SandBox findSandBox(Long siteId, String sandBoxName, boolean initialize) {
+        if (initialize) {
+            startView(siteId, sandBoxName);
+        }
+        try {
+            if (DEFAULT_SB.equals(sandBoxName)) {
+                return getDefaultSandBox(siteId);
+            } else {
+                EntityManagerFactory emf = ((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory();
                 EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.getResource(emf);
                 return findSandBox(sandBoxName, emHolder.getEntityManager());
-            } finally {
+            }
+        } finally {
+            if (initialize) {
                 endView();
             }
         }
     }
 
     private SandBox getDefaultSandBox(Long siteId) {
-        startView(siteId);
-        try {
-            return IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<SandBox, RuntimeException>() {
-                @Override
-                public SandBox execute() {
-                    List<SandBox> defaultSandBoxes = sandBoxService.retrieveSandBoxesByType(SandBoxType.DEFAULT);
-                    if (defaultSandBoxes.size() > 1) {
-                        throw new IllegalStateException("Only one sandbox should be configured as default");
-                    }
-
-                    SandBox defaultSandBox;
-                    if (defaultSandBoxes.size() == 1) {
-                        defaultSandBox = defaultSandBoxes.get(0);
-                    } else {
-                        defaultSandBox = sandBoxService.createDefaultSandBox();
-                    }
-
-                    SandBox sandBox = sandBoxService.retrieveUserSandBoxForParent(-1L, defaultSandBox.getId());
-                    if (sandBox == null) {
-                        sandBox = sandBoxService.createUserSandBox(-1L, defaultSandBox);
-                    }
-                    return sandBox;
+        return IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<SandBox, RuntimeException>() {
+            @Override
+            public SandBox execute() {
+                List<SandBox> defaultSandBoxes = sandBoxService.retrieveSandBoxesByType(SandBoxType.DEFAULT);
+                if (defaultSandBoxes.size() > 1) {
+                    throw new IllegalStateException("Only one sandbox should be configured as default");
                 }
-            }, siteService.retrievePersistentSiteById(siteId));
-        } finally {
-            endView();
-        }
+
+                SandBox defaultSandBox;
+                if (defaultSandBoxes.size() == 1) {
+                    defaultSandBox = defaultSandBoxes.get(0);
+                } else {
+                    defaultSandBox = sandBoxService.createDefaultSandBox();
+                }
+
+                SandBox sandBox = sandBoxService.retrieveUserSandBoxForParent(-1L, defaultSandBox.getId());
+                if (sandBox == null) {
+                    sandBox = sandBoxService.createUserSandBox(-1L, defaultSandBox);
+                }
+                return sandBox;
+            }
+        }, siteService.retrievePersistentSiteById(siteId));
     }
 
     private SandBox findSandBox(String sandBoxName, EntityManager em) {
