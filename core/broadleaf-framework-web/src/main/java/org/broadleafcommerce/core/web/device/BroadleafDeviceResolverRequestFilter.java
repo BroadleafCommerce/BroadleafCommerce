@@ -19,8 +19,10 @@ package org.broadleafcommerce.core.web.device;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.common.web.device.WebRequestDeviceType;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceResolver;
@@ -29,9 +31,7 @@ import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +46,8 @@ import javax.servlet.http.HttpServletResponse;
 @ConditionalOnNotAdmin
 public class BroadleafDeviceResolverRequestFilter extends DeviceResolverRequestFilter implements Ordered {
 
-    @Resource(name = "blDeviceResolver")
+    @Autowired
+    @Qualifier("blDeviceResolver")
     private DeviceResolver deviceResolver;
 
     /**
