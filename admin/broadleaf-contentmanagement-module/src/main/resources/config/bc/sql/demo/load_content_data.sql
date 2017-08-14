@@ -82,7 +82,7 @@ INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUE
 INSERT INTO BLC_SC (SC_ID, CONTENT_NAME, OFFLINE_FLAG, PRIORITY, LOCALE_CODE, SC_TYPE_ID) VALUES (-110, 'Home Page Snippet - Aficionado', FALSE, 5, 'en', 2);
 
 -- Fields
-INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (-9, 'htmlContent', '<h2>HOT SAUCE AFICIONADO?</h2> Click to join our Heat Clinic Frequent Care Program. The place to get all the deals on burn treatment.');
+INSERT INTO BLC_SC_FLD (SC_FLD_ID, FLD_KEY, VALUE) VALUES (-9, 'htmlContent', '<h2>HOT SAUCE AFICIONADO?</h2> Start an account to join our Heat Clinic Frequent Care Program. The place to get all the deals on burn treatment.');
 
 -- Field XREF
 INSERT INTO BLC_SC_FLD_MAP (BLC_SC_SC_FIELD_ID, SC_ID, SC_FLD_ID, MAP_KEY) VALUES (-164, -110, -9, 'htmlContent');
