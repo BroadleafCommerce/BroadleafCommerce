@@ -35,7 +35,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * Module implementations should be registered in a {@code spring.factories} file like so:
  * 
  * <pre>
- * org.broadlefacommerce.common.condition.BroadleafModuleRegistration=com.broadleafcommerce.mymodule.registration.MyModuleRegistration
+ * org.broadleafcommerce.common.condition.BroadleafModuleRegistration=com.broadleafcommerce.mymodule.registration.MyModuleRegistration
  * </pre>
  * 
  * <p>
