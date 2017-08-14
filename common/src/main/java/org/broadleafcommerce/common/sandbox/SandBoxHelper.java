@@ -89,6 +89,31 @@ public interface SandBoxHelper {
     Long getCascadedProductionStateId(Class<?> linkedObjectType, Long requestedParent);
 
     /**
+     * Find the production version of an entity in the current catalog. The idVal supplied is presumably from a parent
+     * catalog from which the current catalog is derived. This is different than {@link #getCascadedProductionStateId(Class, Long)}
+     * in that the other is only targeting the production state existing as an override in a standard site. However, in contrast,
+     * this method will find the current production version in the current catalog related to a parent catalog version id, regardless
+     * if the current catalog belongs to a standard site or a template site.
+     *
+     * @param ceilingImpl
+     * @param requestedParent
+     * @param em
+     * @return
+     */
+    Long retrieveCascadedState(Class<?> ceilingImpl, Long requestedParent, EntityManager em);
+
+    /**
+     * Determine if the current entity is related via propagation inheritance to any of the candidate primary key
+     * values. If you have one of more parent catalog primary key values for the current entity type, then this is a
+     * convenient way to determine if the current entity directly inherits from one or more of them.
+     *
+     * @param entity
+     * @param candidateRelatedIds
+     * @return
+     */
+    boolean isRelatedToParentCatalogIds(Object entity, Long... candidateRelatedIds);
+
+    /**
      * Return the original id for the requested id. Will return the passed in id if
      * the type is not sandboxable. Will return null if the passed in id
      * is not a sandbox record, or if it's a sandbox add.
