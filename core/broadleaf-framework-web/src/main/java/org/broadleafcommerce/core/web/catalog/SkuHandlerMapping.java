@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.core.web.catalog;
 
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,32 +39,35 @@ import javax.servlet.http.HttpServletRequest;
  * @see CatalogService
  */
 public class SkuHandlerMapping extends BLCAbstractHandlerMapping {
-    
-    private String controllerName="blSkuController";
-
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-    
-    @Resource(name = "blCatalogService")
-    private CatalogService catalogService;
-
-    protected String defaultTemplateName = "catalog/sku";
 
     public static final String CURRENT_SKU_ATTRIBUTE_NAME = "currentSku";
 
+    protected String defaultTemplateName = "catalog/sku";
+
+    private String controllerName="blSkuController";
+
+    @Resource(name = "blCatalogService")
+    private CatalogService catalogService;
+
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-        if(!useSku) {
+        if (!useSku) {
             return null;
         }
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getRequestURIWithoutContext() != null) {
-            Sku sku = catalogService.findSkuByURI(context.getRequestURIWithoutContext());
+
+        String requestURIWithoutContext = BLCRequestUtils.getRequestURIWithoutContext(request);
+        if (requestURIWithoutContext != null) {
+            Sku sku = catalogService.findSkuByURI(requestURIWithoutContext);
+
             if (sku != null) {
-                context.getRequest().setAttribute(CURRENT_SKU_ATTRIBUTE_NAME, sku);
+                request.setAttribute(CURRENT_SKU_ATTRIBUTE_NAME, sku);
                 return controllerName;
             }
         }
+
         return null;
     }
 
