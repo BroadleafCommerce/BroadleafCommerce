@@ -122,6 +122,21 @@ public class CartStateServiceImpl implements CartStateService {
     }
 
     @Override
+    public boolean cartHasCreditCardPayment() {
+        Order cart = CartState.getCart();
+
+        List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
+            boolean isCreditCartPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
+
+            if (payment.isActive() && isCreditCartPayment) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean cartHasThirdPartyPayment() {
         Order cart = CartState.getCart();
 
