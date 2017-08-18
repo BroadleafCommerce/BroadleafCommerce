@@ -32,13 +32,14 @@ import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.service.CartStateService;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -67,6 +68,10 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
 
     @Resource(name = "blCartStateService")
     protected CartStateService cartStateService;
+
+    @Autowired
+    protected Environment env;
+
 
     @Override
     public OrderInfoForm prePopulateOrderInfoForm(OrderInfoForm orderInfoForm, Order cart) {
@@ -187,10 +192,11 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      * @param customerPaymentUsedForOrder
      */
     protected boolean getShouldUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
+        boolean customerSavedPaymentsAreEnabled = areCustomerSavedPaymentsEnabled();
         boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
         boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
 
-        return orderUsingCustomerPayment && !cartHasTemporaryCreditCard;
+        return customerSavedPaymentsAreEnabled && (orderUsingCustomerPayment || !cartHasTemporaryCreditCard);
     }
 
     /**
@@ -198,9 +204,14 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      *  of saving their credit card for future payments.
      */
     protected boolean getShouldSaveNewPaymentDefaultValue() {
+        boolean customerSavedPaymentsAreEnabled = areCustomerSavedPaymentsEnabled();
         boolean customerOptedOutOfSavingCard = !cartStateService.cartHasTemporaryCreditCard();
 
-        return customerOptedOutOfSavingCard;
+        return customerSavedPaymentsAreEnabled && customerOptedOutOfSavingCard;
+    }
+
+    protected boolean areCustomerSavedPaymentsEnabled() {
+        return env.getProperty("saved.customer.payments.enabled", boolean.class, true);
     }
 
     /**
