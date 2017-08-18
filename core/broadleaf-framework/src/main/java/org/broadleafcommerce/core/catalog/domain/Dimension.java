@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
@@ -30,7 +33,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Dimension implements Serializable {
+public class Dimension implements Serializable, MultiTenantCloneable<Dimension> {
 
     private static final long serialVersionUID = 1L;
 
@@ -147,6 +150,26 @@ public class Dimension implements Serializable {
         if (dimensionUnitOfMeasure != null) {
             this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
         }
+    }
+
+    @Override
+    public <G extends Dimension> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        Dimension clone = createResponse.getClone();
+        if (container != null) {
+            clone.setContainer(getContainer());
+        }
+        clone.setWidth(width);
+        clone.setDepth(depth);
+        clone.setGirth(girth);
+        clone.setHeight(height);
+        if (size != null) {
+            clone.setSize(getSize());
+        }
+        if (dimensionUnitOfMeasure != null) {
+            clone.setDimensionUnitOfMeasure(getDimensionUnitOfMeasure());
+        }
+        return createResponse;
     }
 
     @Override

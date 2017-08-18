@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
@@ -33,7 +36,7 @@ import javax.persistence.Embeddable;
  *
  */
 @Embeddable
-public class Weight implements Serializable {
+public class Weight implements Serializable, MultiTenantCloneable<Weight> {
 
     private static final long serialVersionUID = 1L;
 
@@ -67,6 +70,17 @@ public class Weight implements Serializable {
 
     public void setWeight(BigDecimal weight) {
         this.weight = weight;
+    }
+
+    @Override
+    public <G extends Weight> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        Weight clone = createResponse.getClone();
+        clone.setWeight(weight);
+        if (weightUnitOfMeasure != null) {
+            clone.setWeightUnitOfMeasure(getWeightUnitOfMeasure());
+        }
+        return createResponse;
     }
 
     @Override
