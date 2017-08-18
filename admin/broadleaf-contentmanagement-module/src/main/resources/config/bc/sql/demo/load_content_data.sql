@@ -23,15 +23,15 @@ INSERT INTO BLC_STATIC_ASSET (STATIC_ASSET_ID, MIME_TYPE, STORAGE_TYPE, FULL_URL
 -----------------------------------------------------------------------------------------------------------------------------------
 
 -- Create an about-us page with "test-content" as the body of the page.
-INSERT INTO BLC_PAGE (PAGE_ID, DESCRIPTION, PAGE_TMPLT_ID, FULL_URL) VALUES (1, 'About Us', 1, '/about_us');
+INSERT INTO BLC_PAGE (PAGE_ID, DESCRIPTION, META_TITLE, PAGE_TMPLT_ID, FULL_URL) VALUES (1, 'About Us', 'About Us', 2, '/about_us');
 
 -- This creates an empty FAQ Page (you can go to localhost/{contextPath}/faq to see this page.
-INSERT INTO BLC_PAGE (PAGE_ID, DESCRIPTION, PAGE_TMPLT_ID, FULL_URL) VALUES (2, 'FAQ', 1, '/faq');
+INSERT INTO BLC_PAGE (PAGE_ID, DESCRIPTION, META_TITLE, PAGE_TMPLT_ID, FULL_URL) VALUES (2, 'Frequently Asked Questions', 'FAQ', 2, '/faq');
 
-INSERT INTO BLC_PAGE (PAGE_ID, DESCRIPTION, PAGE_TMPLT_ID, FULL_URL) VALUES (3, 'New to Hot Sauce', 1, '/new-to-hot-sauce');
+INSERT INTO BLC_PAGE (PAGE_ID, DESCRIPTION, META_TITLE, PAGE_TMPLT_ID, FULL_URL) VALUES (3, 'New to Hot Sauce', 'New to Hot Sauce', 1, '/new-to-hot-sauce');
 
 INSERT INTO BLC_PAGE_FLD(PAGE_FLD_ID, FLD_KEY, VALUE, PAGE_ID) VALUES (1, 'body', 'test content', 1);
-INSERT INTO BLC_PAGE_FLD(PAGE_FLD_ID, FLD_KEY, VALUE, PAGE_ID) VALUES (2, 'title', '', 1);
+INSERT INTO BLC_PAGE_FLD(PAGE_FLD_ID, FLD_KEY, VALUE, PAGE_ID) VALUES (2, 'title', 'About Us', 1);
 INSERT INTO BLC_PAGE_FLD(PAGE_FLD_ID, FLD_KEY, VALUE, PAGE_ID) VALUES (3, 'body', '<h2 style="text-align:center;">This is an example of a content-managed page.</h2><h4 style="text-align:center;"><a href="http://www.broadleafcommerce.com/features/content">Click Here</a> to see more about Content Management in Broadleaf.</h4>', 2);
 INSERT INTO BLC_PAGE_FLD(PAGE_FLD_ID, FLD_KEY, VALUE, PAGE_ID) VALUES (4, 'body', '<h2 style="text-align:center;">This is an example of a content-managed page.</h2>', 3);
 
