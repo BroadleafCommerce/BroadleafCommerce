@@ -60,4 +60,12 @@ public interface ProductOptionDao {
     public List<AssignedProductOptionDTO> findAssignedProductOptionsByProduct(Product product);
 
     Long countAllowedValuesForProductOptionById(Long productOptionId);
+
+    /**
+     * Returns a list of Products that are using the passed in ProductOption ID
+     *
+     * @param productOptionId
+     * @return
+     */
+    public List<Product> findProductsUsingProductOptionById(Long productOptionId);
 }

@@ -26,6 +26,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.hibernate.Criteria;
@@ -45,6 +47,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -128,6 +131,31 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         TypedQuery<Long> query = em.createQuery(criteria);
         return query.getSingleResult();
+    }
+
+    @Override
+    public List<Product> findProductsUsingProductOptionById(Long productOptionId) {
+
+        // Set up the criteria query that specifies we want to return Products
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
+
+        // The root of our search is ProductOption
+        Root<ProductOptionXrefImpl> productOptionXref = criteria.from(ProductOptionXrefImpl.class);
+        Join<ProductOptionXref, Product> product = productOptionXref.join("product");
+        Join<ProductOptionXref, ProductOption> productOption = productOptionXref.join("productOption");
+
+        // Product objects are what we want back
+        criteria.select(product);
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(productOption.get("id").in(sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId)));
+
+        // Execute the query with the restrictions
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        TypedQuery<Product> typedQuery = em.createQuery(criteria);
+
+        return typedQuery.getResultList();
+
     }
 
 }

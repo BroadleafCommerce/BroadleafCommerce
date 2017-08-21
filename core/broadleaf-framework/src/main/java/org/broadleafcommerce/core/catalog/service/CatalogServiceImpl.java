@@ -424,4 +424,9 @@ public class CatalogServiceImpl implements CatalogService {
         return productOptionDao.findAssignedProductOptionsByProduct(product);
     }
 
+    @Override
+    public List<Product> findProductsUsingProductOptionById(Long productId) {
+        return productOptionDao.findProductsUsingProductOptionById(productId);
+    }
+
 }
