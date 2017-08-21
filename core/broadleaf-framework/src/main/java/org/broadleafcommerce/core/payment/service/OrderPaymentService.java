@@ -104,5 +104,4 @@ public interface OrderPaymentService {
      */
     public void populateCustomerPaymentToken(CustomerPayment customerPayment, PaymentTransaction transaction);
 
-    void deleteOrderPaymentsByType(Order order, PaymentType paymentType);
 }

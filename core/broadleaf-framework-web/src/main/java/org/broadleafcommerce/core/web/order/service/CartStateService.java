@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.order.service;
 
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
@@ -55,7 +56,14 @@ public interface CartStateService {
     boolean cartHasCreditCardPaymentWithSameToken(String paymentToken);
 
     /**
-     * A helper method used to determine whether or not the {@link CartState#getCart()} is using a third party payment
+     * A helper method used to determine whether or not the {@link CartState#getCart()} is using a payment of type {@link PaymentType#CREDIT_CARD}
+     *
+     * @return boolean
+     */
+    boolean cartHasCreditCardPayment();
+
+    /**
+     * A helper method used to determine whether or not the {@link CartState#getCart()} is using a payment of type {@link PaymentType#THIRD_PARTY_ACCOUNT}
      *
      * @return boolean
      */

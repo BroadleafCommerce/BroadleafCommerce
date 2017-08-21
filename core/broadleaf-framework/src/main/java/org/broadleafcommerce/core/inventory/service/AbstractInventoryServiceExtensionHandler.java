@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.inventory.service;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.Collection;
@@ -45,6 +46,11 @@ public abstract class AbstractInventoryServiceExtensionHandler extends AbstractE
 
     @Override
     public ExtensionResultStatusType reconcileChangeOrderInventory(Map<Sku, Integer> decrementSkuQuantities, Map<Sku, Integer> incrementSkuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType isProductBundleAvailable(Product product, int quantity, ExtensionResultHolder<Boolean> holder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }

@@ -99,6 +99,11 @@ public class ShippingInfoForm implements Serializable {
         return personalMessage;
     }
 
+    @Deprecated
+    public boolean isUseBillingAddress() {
+        return useBillingAddress;
+    }
+
     public boolean shouldUseBillingAddress() {
         return useBillingAddress;
     }

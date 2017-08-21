@@ -781,22 +781,25 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             property.setIsDirty(true);
         }
 
-        //remove the current list of product option values from the Sku
-        if (adminInstance.getProductOptionValueXrefs().size() > 0) {
-            Iterator<SkuProductOptionValueXref> iterator = adminInstance.getProductOptionValueXrefs().iterator();
-            while (iterator.hasNext()) {
-                dynamicEntityDao.remove(iterator.next());
+        // Only process associations if product option value changes came in via the form
+        if (CollectionUtils.isNotEmpty(productOptionValueIds)) {
+            //remove the current list of product option values from the Sku
+            if (adminInstance.getProductOptionValueXrefs().size() > 0) {
+                Iterator<SkuProductOptionValueXref> iterator = adminInstance.getProductOptionValueXrefs().iterator();
+                while (iterator.hasNext()) {
+                    dynamicEntityDao.remove(iterator.next());
+                }
+                dynamicEntityDao.merge(adminInstance);
             }
-            dynamicEntityDao.merge(adminInstance);
-        }
 
-        //Associate the product option values from the form with the Sku
-        for (Long id : productOptionValueIds) {
-            //Simply find the changed ProductOptionValues directly - seems to work better with sandboxing code
-            ProductOptionValue pov = (ProductOptionValue) dynamicEntityDao.find(ProductOptionValueImpl.class, id);
-            SkuProductOptionValueXref xref = new SkuProductOptionValueXrefImpl(adminInstance, pov);
-            xref = dynamicEntityDao.merge(xref);
-            adminInstance.getProductOptionValueXrefs().add(xref);
+            //Associate the product option values from the form with the Sku
+            for (Long id : productOptionValueIds) {
+                //Simply find the changed ProductOptionValues directly - seems to work better with sandboxing code
+                ProductOptionValue pov = (ProductOptionValue) dynamicEntityDao.find(ProductOptionValueImpl.class, id);
+                SkuProductOptionValueXref xref = new SkuProductOptionValueXrefImpl(adminInstance, pov);
+                xref = dynamicEntityDao.merge(xref);
+                adminInstance.getProductOptionValueXrefs().add(xref);
+            }
         }
     }
 

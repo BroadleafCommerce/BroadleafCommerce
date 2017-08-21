@@ -92,19 +92,24 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     }
 
     protected Product findProductUsingIdParam(BroadleafRequestContext context) throws ServletRequestBindingException {
-        Long productId = ServletRequestUtils.getLongParameter(context.getRequest(), "productId");
-        if (productId != null) {
-            Product product = catalogService.findProductById(productId);
-            if (product != null && LOG.isDebugEnabled()) {
-                LOG.debug("Obtained the product using id=" + productId);
+        if (context.getRequest() != null) {
+            Long productId = ServletRequestUtils.getLongParameter(context.getRequest(), "productId");
+            if (productId != null) {
+                Product product = catalogService.findProductById(productId);
+                if (product != null && LOG.isDebugEnabled()) {
+                    LOG.debug("Obtained the product using id=" + productId);
+                }
+                return product;
             }
-            return product;
         }
         return null;
     }
 
     protected Product findProductUsingUrl(BroadleafRequestContext context)
             throws ServletRequestBindingException, UnsupportedEncodingException {
+        if (context.getRequestURIWithoutContext() == null) {
+            return null;
+        }
         String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
         Product product = catalogService.findProductByURI(requestUri);
         if (product != null && LOG.isDebugEnabled()) {

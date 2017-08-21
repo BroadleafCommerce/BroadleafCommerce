@@ -72,7 +72,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
                 response.setContentType("text/plain");
             }
         }
-        
+
         String templatePath = page.getTemplatePath();
         
         // Allow extension managers to override the path.

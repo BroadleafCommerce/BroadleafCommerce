@@ -38,6 +38,8 @@ import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -66,6 +68,10 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
 
     @Resource(name = "blCartStateService")
     protected CartStateService cartStateService;
+
+    @Autowired
+    protected Environment env;
+
 
     @Override
     public OrderInfoForm prePopulateOrderInfoForm(OrderInfoForm orderInfoForm, Order cart) {
@@ -104,8 +110,9 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
     @Override
     public BillingInfoForm prePopulateBillingInfoForm(BillingInfoForm billingInfoForm, ShippingInfoForm shippingInfoForm, Order cart) {
         Address orderPaymentBillingAddress = getAddressFromCCOrderPayment(cart);
-        billingInfoForm.setAddress(orderPaymentBillingAddress);
-
+        if (orderPaymentBillingAddress != null) {
+            billingInfoForm.setAddress(orderPaymentBillingAddress);
+        }
         boolean shippingAddressUsedForBilling = addressesContentsAreEqual(shippingInfoForm.getAddress(), billingInfoForm.getAddress());
         billingInfoForm.setUseShippingAddress(shippingAddressUsedForBilling);
 
@@ -185,10 +192,11 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      * @param customerPaymentUsedForOrder
      */
     protected boolean getShouldUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
+        boolean customerSavedPaymentsAreEnabled = areCustomerSavedPaymentsEnabled();
         boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
         boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
 
-        return orderUsingCustomerPayment || !cartHasTemporaryCreditCard;
+        return customerSavedPaymentsAreEnabled && (orderUsingCustomerPayment || !cartHasTemporaryCreditCard);
     }
 
     /**
@@ -196,9 +204,14 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      *  of saving their credit card for future payments.
      */
     protected boolean getShouldSaveNewPaymentDefaultValue() {
+        boolean customerSavedPaymentsAreEnabled = areCustomerSavedPaymentsEnabled();
         boolean customerOptedOutOfSavingCard = !cartStateService.cartHasTemporaryCreditCard();
 
-        return customerOptedOutOfSavingCard;
+        return customerSavedPaymentsAreEnabled && customerOptedOutOfSavingCard;
+    }
+
+    protected boolean areCustomerSavedPaymentsEnabled() {
+        return env.getProperty("saved.customer.payments.enabled", boolean.class, true);
     }
 
     /**
@@ -248,7 +261,8 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
     }
 
     protected boolean addressesContentsAreEqual(Address address1, Address address2) {
-        return Objects.equals(address2.getAddressLine1(), address1.getAddressLine1()) &&
+        return address1 != null && address2 != null &&
+                Objects.equals(address2.getAddressLine1(), address1.getAddressLine1()) &&
                 Objects.equals(address2.getAddressLine2(), address1.getAddressLine2()) &&
                 Objects.equals(address2.getCity(), address1.getCity()) &&
                 Objects.equals(address2.getStateProvinceRegion(), address1.getStateProvinceRegion()) &&

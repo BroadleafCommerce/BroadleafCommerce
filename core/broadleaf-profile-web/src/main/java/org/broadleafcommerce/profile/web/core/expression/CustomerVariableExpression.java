@@ -23,8 +23,11 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -43,6 +46,9 @@ public class CustomerVariableExpression implements BroadleafVariableExpression {
 
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
+
+    @Autowired
+    protected Environment env;
     
     @Override
     public String getName() {
@@ -53,11 +59,18 @@ public class CustomerVariableExpression implements BroadleafVariableExpression {
         return CustomerState.getCustomer();
     }
 
+    public boolean savedPaymentsAreEnabled() {
+        return env.getProperty("saved.customer.payments.enabled", boolean.class, true);
+    }
+
     public List<CustomerPayment> getCustomerPayments() {
         Customer customer = CustomerState.getCustomer();
+        List<CustomerPayment> customerPayments = new ArrayList<>();
 
-        List<CustomerPayment> customerPayments = customerPaymentService.readCustomerPaymentsByCustomerId(customer.getId());
-        sortCustomerPaymentsByDefault(customerPayments);
+        if (savedPaymentsAreEnabled()) {
+            customerPayments = customerPaymentService.readCustomerPaymentsByCustomerId(customer.getId());
+            sortCustomerPaymentsByDefault(customerPayments);
+        }
 
         return customerPayments;
     }

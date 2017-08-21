@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.order.service;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -49,7 +50,8 @@ public class CartStateServiceImpl implements CartStateService {
 
     @Override
     public boolean cartHasPopulatedOrderInfo() {
-        return cartHasThirdPartyPayment() || cartHasUnconfirmedCreditCard();
+        Order cart = CartState.getCart();
+        return StringUtils.isNotBlank(cart.getEmailAddress());
     }
 
     @Override
@@ -113,6 +115,21 @@ public class CartStateServiceImpl implements CartStateService {
             boolean isTemporaryPaymentGateway = PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType());
 
             if (payment.isActive() && isCreditCartPayment && isTemporaryPaymentGateway) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean cartHasCreditCardPayment() {
+        Order cart = CartState.getCart();
+
+        List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
+            boolean isCreditCartPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
+
+            if (payment.isActive() && isCreditCartPayment) {
                 return true;
             }
         }

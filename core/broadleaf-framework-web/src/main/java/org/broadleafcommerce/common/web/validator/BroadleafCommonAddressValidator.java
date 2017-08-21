@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.web.form.BroadleafFormType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
+
 import javax.annotation.Resource;
 
 /**
@@ -56,6 +57,10 @@ public class BroadleafCommonAddressValidator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.addressLine1", "addressLine1.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.city", "city.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.stateProvinceRegion", "state.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.postalCode", "postalCode.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.phonePrimary.phoneNumber", "phonePrimary.required");
+
         if (isValidateFullNameOnly()) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.fullName", "fullName.required");
         } else {

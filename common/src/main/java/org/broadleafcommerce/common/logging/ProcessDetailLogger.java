@@ -30,35 +30,34 @@ import java.util.Collection;
  * logging, since this logging would likely be noisy in that context. Review of this log is useful to recreate complex
  * user scenarios, replicate error conditions and fix otherwise difficult to find bugs.
  * <p/>
- * Configuration should be made in your implementation's log4j.xml file (or other logging system config file,
- * if applicable). A sample log4j configuration would be the following, which sets up a daily rolling log.
+ * Configuration should be made in your implementation's logback.xml file (or other logging system config file,
+ * if applicable). A sample logback configuration would be the following, which sets up a daily rolling log.
  * <p/>
  * {@code
- * <?xml version="1.0" encoding="UTF-8" ?>
- * <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
- * <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
- * <appender name="console" class="org.apache.log4j.ConsoleAppender">
- * <param name="Target" value="System.out" />
- * <layout class="org.apache.log4j.PatternLayout">
- * <param name="ConversionPattern" value="[%5p] %d$&#123;HH:mm:ss$&#125; %c$&#123;1$&#125; - %m%n" />
- * </layout>
+ * <?xml version="1.0" encoding="UTF-8"?>
+ * <configuration>
+ * <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+ * <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+ * <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+ * <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+ * <root level="INFO">
+ * <appender-ref ref="CONSOLE" />
+ * <appender-ref ref="FILE" />
+ * </root>
+ * <appender name="rollingDailyEnterpriseWorkflow" class="ch.qos.logback.core.rolling.RollingFileAppender">
+ * <file>${WORKFLOW_LOG_FILE}</file>
+ * <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+ * <fileNamePattern>${WORKFLOW_LOG_FILE}.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+ * <maxHistory>30</maxHistory>
+ * </rollingPolicy>
+ * <encoder>
+ * <pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+ * </encoder>
  * </appender>
- * <appender name="rollingDailyEnterpriseWorkflow" class="org.apache.log4j.DailyRollingFileAppender">
- * <param name="file" value="workflow.log" />
- * <param name="DatePattern" value="'.'yyyy-MM-dd" />
- * <layout class="org.apache.log4j.PatternLayout">
- * <param name="ConversionPattern" value="[%5p] %d$&#123;HH:mm:ss$&#125; %c$&#123;1$&#125; - %m%n" />
- * </layout>
- * </appender>
- * <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" additivity="false">
- * <level value="debug"/>
+ * <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" level="DEBUG">
  * <appender-ref ref="rollingDailyEnterpriseWorkflow"/>
  * </logger>
- * <root>
- * <priority value="warn" />
- * <appender-ref ref="console" />
- * </root>
- * </log4j:configuration>
+ * </configuration>
  * }
  *
  * If you duplicated the sample configuration exactly, you would provide the logger name "com.broadleafcommerce.enterprise.workflow.process.detail"

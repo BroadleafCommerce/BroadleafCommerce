@@ -356,6 +356,12 @@ $(document).ready(function() {
                     BLCAdmin.assetGrid.initialize($assetGrid);
 
                     $(this).find('.asset-grid-container').replaceWith($assetGrid);
+
+                    // We never know when the last image loads, so resize on EVERY image load
+                    $(this).find('.asset-grid-container .asset-item img').on('load', function(e) {
+                        var $container = $(this).parents('.asset-grid-container');
+                        BLCAdmin.assetGrid.paginate.updateGridSize($container);
+                    })
                 });
 
                 hideTabSpinner($tab, $tabBody);
@@ -435,7 +441,7 @@ $(document).ready(function() {
             $('body').click(); // Defocus any current elements in case they need to act prior to form submission
             var $form = BLCAdmin.getForm($submitButton);
 
-            BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.content-area-title-bar.entity-form-actions'));
+            BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.entity-form-actions'));
 
             // This is a save, we need to enable the page to be reloaded (in the case of an initial save)
             if (BLCAdmin.entityForm.status) {
@@ -449,6 +455,7 @@ $(document).ready(function() {
             }
 
             event.preventDefault();
+            event.stopPropagation();
         }
     });
 

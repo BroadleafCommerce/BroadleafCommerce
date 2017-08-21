@@ -114,13 +114,15 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
                 sectionId = getSectionKey(true);
             }
 
-            if (!sectionId.startsWith("/")) {
-                sectionId = "/" + sectionId;
-            }
-            for (AdminSection section : sections) {
-                if (sectionId.equals(section.getUrl())) {
-                    returnSection = section;
-                    break;
+            if (sectionId != null) {
+                if (!sectionId.startsWith("/")) {
+                    sectionId = "/" + sectionId;
+                }
+                for (AdminSection section : sections) {
+                    if (sectionId.equals(section.getUrl())) {
+                        returnSection = section;
+                        break;
+                    }
                 }
             }
 

@@ -23,7 +23,9 @@ import org.apache.log4j.LogManager;
 /**
  * Specific implementation used with a Log4j dependency
  * @author Elbert Bautista (elbertbautista)
+ * @deprecated in favor of {@link Log4j2StatisticsServiceLogAdapter} (following Apache's EOL declaration for log4j 1.x)
  */
+@Deprecated
 public class Log4jStatisticsServiceLogAdapter implements StatisticsServiceLogAdapter {
 
     @Override

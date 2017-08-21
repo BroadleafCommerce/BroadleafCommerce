@@ -28,7 +28,8 @@ INSERT INTO BLC_LOCALE (LOCALE_CODE, DEFAULT_FLAG, FRIENDLY_NAME, CURRENCY_CODE)
 -- a LOCALE_CODE.   In the example below, there is only one JSP template "basic".   The full
 -- path to the template is .../WEB_INF/jsp/templates/basic.jsp.
 --
-INSERT INTO BLC_PAGE_TMPLT (PAGE_TMPLT_ID, TMPLT_NAME, TMPLT_DESCR, TMPLT_PATH) VALUES (1, 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content and title.', 'content/default') ;
+INSERT INTO BLC_PAGE_TMPLT (PAGE_TMPLT_ID, TMPLT_NAME, TMPLT_DESCR, TMPLT_PATH) VALUES (1, 'Default Template', 'This template provides the default layout with header and footer surrounding the content and title. This template also includes featured products below the page content.', 'content/default') ;
+INSERT INTO BLC_PAGE_TMPLT (PAGE_TMPLT_ID, TMPLT_NAME, TMPLT_DESCR, TMPLT_PATH) VALUES (2, 'Plain Template', 'This template provides a plain layout with header and footer surrounding the content and title.', 'content/plain') ;
 
 --
 -- Field groups define a list of dynamic fields.    Field groups can be associated with page
