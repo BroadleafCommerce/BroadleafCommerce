@@ -75,6 +75,10 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         return cartStateService.cartHasThirdPartyPayment();
     }
 
+    public boolean cartContainsCreditCardPayment() {
+        return cartStateService.cartHasCreditCardPayment();
+    }
+
     public boolean cartContainsTemporaryCreditCard() {
         return cartStateService.cartHasTemporaryCreditCard();
     }
@@ -85,6 +89,10 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
 
     public boolean orderContainsCreditCardPayment(Order order) {
         return orderContainsPaymentOfType(order, PaymentType.CREDIT_CARD);
+    }
+
+    public boolean orderContainsThirdPartyPayment(Order order) {
+        return orderContainsPaymentOfType(order, PaymentType.THIRD_PARTY_ACCOUNT);
     }
 
     protected boolean orderContainsPaymentOfType(Order order, PaymentType paymentType) {
