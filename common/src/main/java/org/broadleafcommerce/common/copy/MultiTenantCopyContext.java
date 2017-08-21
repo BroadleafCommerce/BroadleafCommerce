@@ -34,7 +34,9 @@ import com.google.common.collect.HashBiMap;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Embeddable;
@@ -52,6 +54,7 @@ public class MultiTenantCopyContext {
     protected Map<Integer, Object> currentCloneMap = new HashMap<Integer, Object>();
     protected Map<String, Map<Object, Object>> equivalentsMap;
     protected GenericEntityService genericEntityService;
+    protected List<DeferredOperation> deferredOperations = new ArrayList<DeferredOperation>();
     
     public MultiTenantCopyContext(Catalog fromCatalog, Catalog toCatalog, Site fromSite, Site toSite, 
             GenericEntityService genericEntityService, MultiTenantCopierExtensionManager extensionManager) {
@@ -182,6 +185,18 @@ public class MultiTenantCopyContext {
             previousClone = getClonedVersion(instanceClass, originalId);
         }
         return previousClone;
+    }
+
+    public void addDeferredOperation(DeferredOperation operation) {
+        deferredOperations.add(operation);
+    }
+
+    public void addDeferredOperations(List<DeferredOperation> operations) {
+        deferredOperations.addAll(operations);
+    }
+
+    public List<DeferredOperation> getDeferredOperations() {
+        return deferredOperations;
     }
 
     protected boolean checkCloneStatus(Object instance) {

@@ -288,6 +288,31 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     }
 
     @Override
+    public <G extends SearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SearchFacet cloned = createResponse.getClone();
+        cloned.setCanMultiselect(canMultiselect);
+        cloned.setLabel(label);
+        cloned.setRequiresAllDependentFacets(requiresAllDependentFacets);
+        cloned.setShowOnSearch(showOnSearch);
+        cloned.setFieldType(fieldType.createOrRetrieveCopyInstance(context).getClone());
+        for(RequiredFacet entry : requiredFacets){
+            RequiredFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getRequiredFacets().add(clonedEntry);
+        }
+        cloned.setSearchDisplayPriority(searchDisplayPriority);
+        for(SearchFacetRange entry : searchFacetRanges){
+            SearchFacetRange clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getSearchFacetRanges().add(clonedEntry);
+        }
+
+        return createResponse;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             SearchFacetImpl other = (SearchFacetImpl) obj;

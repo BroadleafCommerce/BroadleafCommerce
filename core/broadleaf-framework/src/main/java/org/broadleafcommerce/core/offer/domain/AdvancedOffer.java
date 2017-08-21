@@ -63,13 +63,13 @@ public interface AdvancedOffer extends Serializable {
      * Returns the {@link OfferTimeZoneType}
      * @return
      */
-    public OfferTimeZoneType getOfferTimeZoneType();
+    OfferTimeZoneType getOfferTimeZoneType();
 
     /**
      * Sets the {@link OfferTimeZoneType}
      * @param offerTimeZoneType
      */
-    public void setOfferTimeZoneType(OfferTimeZoneType offerTimeZoneType);
+    void setOfferTimeZoneType(OfferTimeZoneType offerTimeZoneType);
 
     /**
      * Returns the {@link OfferProrationType} of this offer
