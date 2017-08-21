@@ -207,6 +207,15 @@
     <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
     <bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />
     
+    <!-- This bean only exists for compatibility reasons between Broadleaf 5.0, 5.1 and 5.2. This provides no meaning in
+        Broadleaf 5.0 and 5.1 since nothing actually uses this list, but provides a merge point for 5.0/5.1-compatible
+        modules that is required for Broadleaf 5.2 -->
+    <bean id="blMessageSourceBaseNames" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
     
     <!-- Resource Resolver Chains  -->
     <bean id="blSiteResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
