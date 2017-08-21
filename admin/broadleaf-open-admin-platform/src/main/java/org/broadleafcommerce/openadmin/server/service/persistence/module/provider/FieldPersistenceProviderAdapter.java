@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -68,7 +69,8 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
 
     protected boolean checkDirtyState(PopulateValueRequest request, Object instance, Object checkValue) throws Exception {
         boolean dirty = isFieldDirty(request, instance, checkValue);
-        return !request.getPreAdd() && dirty;
+        boolean isDefaultValue = !StringUtils.isEmpty(request.getMetadata().getDefaultValue());
+        return (!request.getPreAdd() || isDefaultValue) && dirty;
     }
 
     protected boolean isFieldDirty(PopulateValueRequest request, Object instance, Object checkValue) throws IllegalAccessException, FieldNotAvailableException {
