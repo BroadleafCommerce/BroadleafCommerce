@@ -36,27 +36,28 @@ import java.util.Collection;
  * {@code
  * <?xml version="1.0" encoding="UTF-8"?>
  * <configuration>
- * <include resource="org/springframework/boot/logging/logback/defaults.xml" />
- * <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
- * <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
- * <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
- * <root level="INFO">
- * <appender-ref ref="CONSOLE" />
- * <appender-ref ref="FILE" />
- * </root>
- * <appender name="rollingDailyEnterpriseWorkflow" class="ch.qos.logback.core.rolling.RollingFileAppender">
- * <file>${WORKFLOW_LOG_FILE}</file>
- * <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
- * <fileNamePattern>${WORKFLOW_LOG_FILE}.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
- * <maxHistory>30</maxHistory>
- * </rollingPolicy>
- * <encoder>
- * <pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
- * </encoder>
- * </appender>
- * <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" level="DEBUG">
- * <appender-ref ref="rollingDailyEnterpriseWorkflow"/>
- * </logger>
+ *  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+ *  <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+ *  <property name="WORKFLOW_LOG_FILE" value="${WORKFLOW_LOG_FILE:-${java.io.tmpdir:-/tmp}/blc-logs/workflow.log}"/>
+ *  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+ *  <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+ *  <root level="INFO">
+ *      <appender-ref ref="CONSOLE" />
+ *      <appender-ref ref="FILE" />
+ *  </root>
+ *  <appender name="rollingDailyEnterpriseWorkflow" class="ch.qos.logback.core.rolling.RollingFileAppender">
+ *      <file>${WORKFLOW_LOG_FILE}</file>
+ *      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+ *          <fileNamePattern>${WORKFLOW_LOG_FILE}.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+ *          <maxHistory>30</maxHistory>
+ *      </rollingPolicy>
+ *      <encoder>
+ *          <pattern>[%-5level] %d{MM-dd-yyyy HH:mm:ss} %logger{35} - %message%n</pattern>
+ *      </encoder>
+ *  </appender>
+ *  <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" level="DEBUG">
+ *      <appender-ref ref="rollingDailyEnterpriseWorkflow"/>
+ *  </logger>
  * </configuration>
  * }
  *
@@ -152,7 +153,7 @@ public class ProcessDetailLogger {
                         "<maxHistory>30</maxHistory>\n" +
                         "</rollingPolicy>\n" +
                         "<encoder>\n" +
-                        "<pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>\n" +
+                        "<pattern>[%-5level] %d{MM-dd-yyyy HH:mm:ss} %logger{35} - %message%n</pattern>\n" +
                         "</encoder>\n" +
                         "</appender>\n" +
                         "<logger name=\"com.broadleafcommerce.enterprise.workflow.process.detail\" level=\"DEBUG\">\n" +
