@@ -60,6 +60,7 @@
         <project.uri>${project.baseUri}</project.uri>
         <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
         <lombok.version>1.16.18</lombok.version>
+        <database.starter.version>1.0.1-SNAPSHOT</database.starter.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
