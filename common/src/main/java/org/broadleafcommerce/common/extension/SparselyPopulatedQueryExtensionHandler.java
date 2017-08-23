@@ -158,6 +158,15 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     ExtensionResultStatusType getCacheKey(String qualifier, ResultType resultType, ExtensionResultHolder<String> response);
 
     /**
+     * Build a list of cache keys that are related to a TEMPLATE template site
+     *
+     * @param qualifier the suffix for the cache key
+     * @param response the response container
+     * @return the status of the extension operation
+     */
+    ExtensionResultStatusType getCacheKeyListForTemplateSite(String qualifier, ExtensionResultHolder<List<String>> response);
+
+    /**
      * Convert the list of query results into a list that denotes not only the query results, but also whether or not each member
      * represents a deleted/archived item, or an active/normal item.
      *
