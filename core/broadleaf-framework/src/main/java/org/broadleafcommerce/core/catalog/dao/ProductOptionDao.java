@@ -61,11 +61,15 @@ public interface ProductOptionDao {
 
     Long countAllowedValuesForProductOptionById(Long productOptionId);
 
+    public Long countProductsUsingProductOptionById(Long productOptionId);
+
     /**
-     * Returns a list of Product Ids that are using the passed in ProductOption ID
+     * Returns a paginated list of Product Ids that are using the passed in ProductOption ID
      *
      * @param productOptionId
+     * @param start
+     * @param pageSize
      * @return
      */
-    public List<Long> findProductIdsUsingProductOptionById(Long productOptionId);
+    public List<Long> findProductIdsUsingProductOptionById(Long productOptionId, int start, int pageSize);
 }

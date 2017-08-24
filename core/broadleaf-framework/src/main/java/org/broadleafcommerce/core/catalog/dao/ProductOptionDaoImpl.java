@@ -36,6 +36,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.ejb.QueryHints;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
@@ -138,8 +139,23 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
     }
 
     @Override
-    public List<Long> findProductIdsUsingProductOptionById(Long productOptionId) {
+    public Long countProductsUsingProductOptionById(Long productOptionId) {
+        TypedQuery<Long> query = getProductIdsUsingProductOptionByIdQuery(productOptionId, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getSingleResult();
+    }
 
+    @Override
+    public List<Long> findProductIdsUsingProductOptionById(Long productOptionId, int start, int pageSize) {
+        TypedQuery<Long> query = getProductIdsUsingProductOptionByIdQuery(productOptionId, false);
+        query.setFirstResult(start);
+        query.setMaxResults(pageSize);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+
+    }
+
+    private TypedQuery<Long> getProductIdsUsingProductOptionByIdQuery(Long productOptionId, boolean count) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
@@ -149,8 +165,13 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         Join<ProductOptionXref, Product> product = productOptionXref.join("product");
         Join<ProductOptionXref, ProductOption> productOption = productOptionXref.join("productOption");
 
-        // Product objects are what we want back
-        criteria.select(product.get("id").as(Long.class));
+        if (count) {
+            criteria.select(builder.count(product));
+        } else {
+            // Product IDs are what we want back
+            criteria.select(product.get("id").as(Long.class));
+        }
+
         if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
             criteria.distinct(true);
         }
@@ -159,10 +180,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        TypedQuery<Long> query = em.createQuery(criteria);
-
-        return query.getResultList();
-
+        return em.createQuery(criteria);
     }
 
 }
