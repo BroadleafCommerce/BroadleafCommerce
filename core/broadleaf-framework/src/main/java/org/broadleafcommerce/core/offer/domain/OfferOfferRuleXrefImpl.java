@@ -129,7 +129,6 @@ public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
         this.key = key;
     }
 
-    @Nonnull
     @Override
     public String getMatchRule() {
         createEntityInstance();

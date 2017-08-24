@@ -21,22 +21,23 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 
 /**
- * For internal usage. Allows extending API calls without subclassing the entity.
+ * Special case - Handle propagated state for rules. This only applies in the presence of the enterprise module.
  *
  * @author Jeff Fischer
  */
-public interface RuleFieldPersistenceProviderExtensionHandler extends ExtensionHandler {
+public interface RuleFieldPersistenceProviderCascadeExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType transformId(Object rule, ExtensionResultHolder<Long> resultHolder);
-
-    ExtensionResultStatusType postAdd(Object rule, ExtensionResultHolder resultHolder);
-
-    ExtensionResultStatusType postUpdate(Object rule);
-
-    ExtensionResultStatusType establishDirtyState(Object rule, ExtensionResultHolder<Boolean> resultHolder);
-
-    public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
+    /**
+     * Setup proper prod record enterprise state for a propagated rule addition.
+     *
+     * @param rule
+     * @param dataDTO
+     * @param resultHolder
+     * @return
+     */
+    ExtensionResultStatusType postCascadeAdd(Object rule, DataDTO dataDTO, ExtensionResultHolder resultHolder);
 
 }

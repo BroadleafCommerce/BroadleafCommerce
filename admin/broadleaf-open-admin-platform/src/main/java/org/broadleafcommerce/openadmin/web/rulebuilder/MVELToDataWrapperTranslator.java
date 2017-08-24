@@ -52,8 +52,11 @@ public class MVELToDataWrapperTranslator {
     protected GroupingTranslator groupingTranslator = new GroupingTranslator();
     protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 
-    public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty, String idProperty,
-            RuleBuilderFieldService fieldService) {
+    public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty, String idProperty, RuleBuilderFieldService fieldService) {
+        return createRuleData(entities, mvelProperty, quantityProperty, idProperty, null, fieldService);
+    }
+
+    public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty, String idProperty, String containedProperty, RuleBuilderFieldService fieldService) {
         if (entities == null || entities.length == 0 || mvelProperty == null) {
             return null;
         }
@@ -64,6 +67,7 @@ public class MVELToDataWrapperTranslator {
             for (Entity e : entities) {
                 Integer qty = null;
                 Long id = null;
+                Long containedId = null;
                 for (Property p : e.getProperties()) {
                     if (mvelProperty.equals(p.getName())){
                         mvel = p.getValue();
@@ -76,6 +80,10 @@ public class MVELToDataWrapperTranslator {
                     if (idProperty != null && idProperty.equals(p.getName())) {
                         id = Long.parseLong(p.getValue());
                     }
+
+                    if (containedProperty != null && containedProperty.equals(p.getName())) {
+                        containedId = Long.parseLong(p.getValue());
+                    }
                 }
 
                 if (mvel != null) {
@@ -83,6 +91,7 @@ public class MVELToDataWrapperTranslator {
                     DataDTO dataDTO = createRuleDataDTO(null, group, fieldService);
                     if (dataDTO != null) {
                         dataDTO.setPk(id);
+                        dataDTO.setContainedPk(containedId);
                         dataDTO.setQuantity(qty);
                         dataWrapper.getData().add(dataDTO);
                         if (group.getSubGroups().size() > 0) {
