@@ -634,7 +634,7 @@
             }
             var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
 
-            var $filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']')[0];
+            var $filterButton = $($('.filter-button[data-hiddenid=' + hiddenId + ']')[0]);
             var $tbody = $('.list-grid-table[data-hiddenid=' + hiddenId + ']:not([id$=-header])');
             var $filterFields = $tbody.closest('.listgrid-body-wrapper').prev().find('.filter-fields');
 
