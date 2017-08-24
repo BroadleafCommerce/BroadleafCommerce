@@ -425,8 +425,8 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<Product> findProductsUsingProductOptionById(Long productId) {
-        return productOptionDao.findProductsUsingProductOptionById(productId);
+    public List<Long> findProductIdsUsingProductOptionById(Long productId) {
+        return productOptionDao.findProductIdsUsingProductOptionById(productId);
     }
 
 }
