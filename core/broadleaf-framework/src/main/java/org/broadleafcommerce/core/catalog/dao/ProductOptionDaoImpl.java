@@ -21,7 +21,6 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
-import org.broadleafcommerce.common.util.DialectHelper;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
@@ -64,9 +63,6 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-
-    @Resource(name = "blDialectHelper")
-    protected DialectHelper dialectHelper;
     
     @Override
     public List<ProductOption> readAllProductOptions() {
@@ -171,10 +167,8 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
             // Product IDs are what we want back
             criteria.select(product.get("id").as(Long.class));
         }
+        criteria.distinct(true);
 
-        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
-            criteria.distinct(true);
-        }
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(productOption.get("id").in(sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId)));
 
