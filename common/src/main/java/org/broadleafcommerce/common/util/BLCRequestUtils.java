@@ -127,4 +127,24 @@ public class BLCRequestUtils {
         }
         return serverPrefix.toString();
     }
+
+    public static String getRequestURIWithoutContext(HttpServletRequest request) {
+        String requestURIWithoutContext = null;
+
+        if (request != null && request.getRequestURI() != null) {
+            if (request.getContextPath() != null) {
+                requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
+            } else {
+                requestURIWithoutContext = request.getRequestURI();
+            }
+
+            // Remove JSESSION-ID or other modifiers
+            int pos = requestURIWithoutContext.indexOf(";");
+            if (pos >= 0) {
+                requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
+            }
+        }
+
+        return requestURIWithoutContext;
+    }
 }
