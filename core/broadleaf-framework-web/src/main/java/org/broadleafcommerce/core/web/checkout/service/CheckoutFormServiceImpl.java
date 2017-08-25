@@ -193,10 +193,12 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
      */
     protected boolean getShouldUseCustomerPaymentDefaultValue(CustomerPayment customerPaymentUsedForOrder) {
         boolean customerSavedPaymentsAreEnabled = areCustomerSavedPaymentsEnabled();
+        boolean customerHasSavedPayments = CollectionUtils.isNotEmpty(CustomerState.getCustomer().getCustomerPayments());
         boolean orderUsingCustomerPayment = (customerPaymentUsedForOrder != null);
         boolean cartHasTemporaryCreditCard = cartStateService.cartHasTemporaryCreditCard();
 
-        return customerSavedPaymentsAreEnabled && (orderUsingCustomerPayment || !cartHasTemporaryCreditCard);
+        return customerSavedPaymentsAreEnabled
+                && (orderUsingCustomerPayment || (!cartHasTemporaryCreditCard && customerHasSavedPayments));
     }
 
     /**
