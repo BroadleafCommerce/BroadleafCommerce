@@ -27,15 +27,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The BasicSeoTagGeneratorImpl knows how to generate DOM Elements for the following basic SEO tags:
- * 
+ * The BasicSeoPropertyGeneratorImpl knows how to generate properties for the following basic SEO elements:
+ *
+ *
  * <ul>
  *     <li>Title</li>
  *     <li>Meta-Description</li>
+ *     <li>Canonical URLs</li>
  * </ul>
  * 
  * @author Chris Kittrell (ckittrell)
- * @author Andre Azzolini (apazzolini)
  */
 @Component("blBasicSeoPropertyGenerator")
 @ConditionalOnTemplating
