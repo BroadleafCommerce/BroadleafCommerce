@@ -17,16 +17,16 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
-import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.hibernate.Criteria;
@@ -39,7 +39,6 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -49,6 +48,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -56,7 +56,7 @@ import javax.persistence.criteria.Root;
 public class ProductOptionDaoImpl implements ProductOptionDao {
 
     private static final int IN_CLAUSE_LIMIT = 999;
-    
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
@@ -146,7 +146,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // restrict archived values
-        predicates.add(cb.or(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'), 
+        predicates.add(cb.or(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'),
                              cb.isNull(root.get("sku").get("archiveStatus").get("archived"))));
 
         // restrict to skus that match the product
@@ -190,6 +190,49 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
             }
         }
         return predicate;
+    }
+
+    @Override
+    public Long countProductsUsingProductOptionById(Long productOptionId) {
+        TypedQuery<Long> query = getProductIdsUsingProductOptionByIdQuery(productOptionId, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getSingleResult();
+    }
+
+    @Override
+    public List<Long> findProductIdsUsingProductOptionById(Long productOptionId, int start, int pageSize) {
+        TypedQuery<Long> query = getProductIdsUsingProductOptionByIdQuery(productOptionId, false);
+        query.setFirstResult(start);
+        query.setMaxResults(pageSize);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+
+    }
+
+    private TypedQuery<Long> getProductIdsUsingProductOptionByIdQuery(Long productOptionId, boolean count) {
+        // Set up the criteria query that specifies we want to return Products
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+
+        // The root of our search is ProductOptionXref
+        Root<ProductOptionXrefImpl> productOptionXref = criteria.from(ProductOptionXrefImpl.class);
+        Join<ProductOptionXref, Product> product = productOptionXref.join("product");
+        Join<ProductOptionXref, ProductOption> productOption = productOptionXref.join("productOption");
+
+        if (count) {
+            criteria.select(builder.count(product));
+        } else {
+            // Product IDs are what we want back
+            criteria.select(product.get("id").as(Long.class));
+        }
+        criteria.distinct(true);
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(productOption.get("id").in(sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId)));
+
+        // Execute the query with the restrictions
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        return em.createQuery(criteria);
     }
 
 }
