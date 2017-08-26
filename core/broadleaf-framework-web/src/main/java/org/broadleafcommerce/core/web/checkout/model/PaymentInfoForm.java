@@ -32,14 +32,14 @@ public class PaymentInfoForm implements Serializable {
     protected Address address = new AddressImpl();
     protected boolean shouldUseShippingAddress = false;
     protected Long customerPaymentId;
+    protected Long customerAddressId;
     protected boolean shouldSaveNewPayment = true;
     protected boolean shouldUseCustomerPayment = false;
     protected String emailAddress;
-
     protected String paymentName;
+
     protected boolean isDefault = false;
     protected String paymentToken;
-
     public PaymentInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
         address.setPhoneSecondary(new PhoneImpl());
@@ -68,6 +68,14 @@ public class PaymentInfoForm implements Serializable {
 
     public void setCustomerPaymentId(Long customerPaymentId) {
         this.customerPaymentId = customerPaymentId;
+    }
+
+    public Long getCustomerAddressId() {
+        return customerAddressId;
+    }
+
+    public void setCustomerAddressId(Long customerAddressId) {
+        this.customerAddressId = customerAddressId;
     }
 
     public boolean getShouldSaveNewPayment() {

@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.web.controller.account.validator.AccountPaymen
 import org.broadleafcommerce.core.web.payment.service.SavedPaymentService;
 import org.broadleafcommerce.core.web.service.InitBinderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -81,6 +82,15 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     public String addCustomerPayment(HttpServletRequest request, Model model,
             PaymentInfoForm paymentInfoForm, BindingResult bindingResult) {
         Customer customer = CustomerState.getCustomer();
+
+        //Set address if a saved one was selected
+        if(!paymentInfoForm.getShouldUseShippingAddress() && paymentInfoForm.getCustomerAddressId() != null) {
+            CustomerAddress address = customerAddressService
+                    .readCustomerAddressById(paymentInfoForm.getCustomerAddressId());
+            if(address != null && address.getCustomer().equals(customer)) {
+                paymentInfoForm.setAddress(address.getAddress());
+            }
+        }
 
         addressService.populateAddressISOCountrySub(paymentInfoForm.getAddress());
         paymentInfoFormValidator.validate(paymentInfoForm, bindingResult);

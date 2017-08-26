@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.payment.service.SavedPaymentService;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
@@ -64,6 +65,15 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
                                  PaymentInfoForm paymentForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
         Customer customer = CustomerState.getCustomer();
+
+        //Set address if a saved one was selected
+        if(!paymentForm.getShouldUseShippingAddress() && paymentForm.getCustomerAddressId() != null) {
+            CustomerAddress address = customerAddressService
+                    .readCustomerAddressById(paymentForm.getCustomerAddressId());
+            if(address != null && address.getCustomer().equals(customer)) {
+                paymentForm.setAddress(address.getAddress());
+            }
+        }
 
         preProcessBillingAddress(paymentForm, cart);
         paymentInfoFormValidator.validate(paymentForm, result);
