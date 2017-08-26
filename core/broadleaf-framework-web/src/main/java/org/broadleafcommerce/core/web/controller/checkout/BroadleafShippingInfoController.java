@@ -108,9 +108,16 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     public String saveSingleShip(HttpServletRequest request, HttpServletResponse response, Model model,
                                  ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
+        Customer customer = CustomerState.getCustomer();
 
         if (shippingForm.shouldUseBillingAddress()){
             copyBillingAddressToShippingAddress(cart, shippingForm);
+        } else if(shippingForm.getCustomerAddressId() != null) {
+            //Fill in saved address
+            CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(shippingForm.getCustomerAddressId());
+            if(customerAddress != null && customerAddress.getCustomer().equals(customer)) {
+                shippingForm.setAddress(customerAddress.getAddress());
+            }
         }
 
         addressService.populateAddressISOCountrySub(shippingForm.getAddress());
@@ -132,7 +139,6 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             shippingForm.getAddress().setPhoneFax(null);
         }
 
-        Customer customer = CustomerState.getCustomer();
         if (!customer.isAnonymous() && shippingForm.isSaveAsDefault()) {
             Address address = addressService.saveAddress(shippingForm.getAddress());
             CustomerAddress customerAddress = customerAddressService.create();

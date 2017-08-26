@@ -40,11 +40,11 @@ public class ShippingInfoForm implements Serializable {
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;
+    protected Long customerAddressId;
     protected PersonalMessage personalMessage = new PersonalMessageImpl();
     protected String deliveryMessage;
     protected boolean useBillingAddress = false;
     protected boolean saveAsDefault = false;
-
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
         address.setPhoneSecondary(new PhoneImpl());
@@ -54,17 +54,25 @@ public class ShippingInfoForm implements Serializable {
     public Long getFulfillmentOptionId() {
         return fulfillmentOptionId;
     }
-    
+
     public void setFulfillmentOptionId(Long fulfillmentOptionId) {
         this.fulfillmentOptionId = fulfillmentOptionId;
     }
-    
+
     public FulfillmentOption getFulfillmentOption() {
         return fulfillmentOption;
     }
 
     public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
         this.fulfillmentOption = fulfillmentOption;
+    }
+
+    public Long getCustomerAddressId() {
+        return customerAddressId;
+    }
+
+    public void setCustomerAddressId(Long customerAddressId) {
+        this.customerAddressId = customerAddressId;
     }
 
     public Address getAddress() {
