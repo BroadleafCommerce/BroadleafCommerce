@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUserDetails;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
@@ -27,12 +26,10 @@ import org.broadleafcommerce.openadmin.server.security.external.AdminExternalLog
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
 /**
@@ -50,6 +47,9 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
 
     @Resource(name = "blAdminExternalLoginExtensionManager")
     protected AdminExternalLoginUserExtensionManager adminExternalLoginExtensionManager;
+
+    @Resource(name="blAdminSecurityHelper")
+    protected AdminSecurityHelper adminSecurityHelper;
 
     protected Map<String, String[]> roleNameSubstitutions;
 
@@ -85,18 +85,7 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
             for (AdminRole role : adminRoles) {
                 if (newRoles.contains(role.getName())) {
                     grantedRoles.add(role);
-                    Set<AdminPermission> permissions = role.getAllPermissions();
-                    if (permissions != null && !permissions.isEmpty()) {
-                        for (AdminPermission permission : permissions) {
-                            if (permission.isFriendly()) {
-                                for (AdminPermission childPermission : permission.getAllChildPermissions()) {
-                                    newAuthorities.add(new SimpleGrantedAuthority(childPermission.getName()));
-                                }
-                            } else {
-                                newAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
-                            }
-                        }
-                    }
+                    adminSecurityHelper.addAllPermissionsToAuthorities(newAuthorities, role.getAllPermissions());
                 }
             }
         }
