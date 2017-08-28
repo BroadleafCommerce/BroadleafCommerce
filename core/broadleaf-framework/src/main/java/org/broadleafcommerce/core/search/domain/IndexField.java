@@ -27,7 +27,7 @@ import java.util.List;
  * 
  * @author Chad Harchar (charchar)
  */
-public interface IndexField extends Serializable {
+public interface IndexField extends Serializable, MultiTenantCloneable<IndexField>  {
 
     /**
      * Gets the id for this search field

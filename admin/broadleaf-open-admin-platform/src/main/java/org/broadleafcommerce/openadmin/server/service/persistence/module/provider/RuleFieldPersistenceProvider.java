@@ -487,8 +487,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             //Update Existing Criteria
                             for (QuantityBasedRule quantityBasedRule : criteriaList) {
                                 //make compatible with enterprise module
-                                Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
-                                boolean isMatch = dto.getPk().equals(id) || dto.getPk().equals(quantityBasedRule.getId());
+                                boolean isParentRelated = sandBoxHelper.isRelatedToParentCatalogIds(quantityBasedRule, dto.getPk());
+                                boolean isMatch = isParentRelated || dto.getPk().equals(quantityBasedRule.getId());
                                 if (isMatch){
                                     String mvel;
                                     //don't update if the data has not changed
