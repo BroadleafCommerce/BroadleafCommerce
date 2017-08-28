@@ -17,14 +17,6 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +36,14 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -216,9 +216,19 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
                 ExtensionResultHolder<ResultType> response = new ExtensionResultHolder<ResultType>();
                 extensionManager.getProxy().getResultType(translation, response);
                 resultType = response.getResult();
+                if (ResultType.STANDARD == resultType) {
+                    String key = getCacheKey(resultType, translation.getEntityType());
+                    LOG.debug("Removing key [" + key + "] for STANDARD site");
+                    getCache().remove(key);
+                } else {
+                    List<String> cacheKeysList =
+                            getCacheKeyListForTemplateSite(translation.getEntityType().getFriendlyType());
+                    for (String key: cacheKeysList) {
+                        LOG.debug("Removing key [" + key + "] for TEMPLATE site");
+                        getCache().remove(key);
+                    }
+                }
             }
-            String key = getCacheKey(resultType, translation.getEntityType());
-            getCache().remove(key);
         }
     }
 
@@ -391,6 +401,20 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
             }
         }
         return cacheKey;
+    }
+
+    @Override
+    public List<String> getCacheKeyListForTemplateSite(String propertyName) {
+        List<String> cacheKeyList = new ArrayList<>();
+        String cacheKey = StringUtils.join(new String[] {propertyName}, "|");
+        if (extensionManager != null) {
+            ExtensionResultHolder<List<String>> result = new ExtensionResultHolder<List<String>>();
+            extensionManager.getProxy().getCacheKeyListForTemplateSite(cacheKey, result);
+            if (result.getResult() != null) {
+                cacheKeyList = result.getResult();
+            }
+        }
+        return cacheKeyList;
     }
 
     @Override

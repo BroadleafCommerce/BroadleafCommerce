@@ -17,14 +17,15 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Cache;
-
 import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.extension.StandardCacheItem;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 
+import java.util.List;
 import java.util.Map;
+
+import net.sf.ehcache.Cache;
 
 /**
  * {@link TranslationService} functionality, primarily in support of {@link TranslationOverrideStrategy} instances.
@@ -49,6 +50,15 @@ public interface TranslationSupport {
      * @return
      */
     Cache getCache();
+
+    /**
+     *
+     * Returns a list of cacheKeys for a template site
+     *
+     * @param propertyName
+     * @return
+     */
+    List<String> getCacheKeyListForTemplateSite(String propertyName);
 
     /**
      * Retrieve the threshold under which the full list of standard site translation overrides are cached. See
