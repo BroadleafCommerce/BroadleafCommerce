@@ -627,7 +627,7 @@ var BLCAdmin = (function($) {
                     replaceDivs : false,
                     buttonSource: true,
                     paragraphize: false,
-                    minHeight: 600,
+                    minHeight: 300,
                     tabKey: true,
                     tabsAsSpaces: 4,
                     deniedTags: [],
