@@ -221,7 +221,8 @@ public abstract class JUnitSpringBootAdminIntegrationSetup {
     }
 
     /**
-     * Override to add or change roles
+     * Override to add or change roles. These roles are important for anywhere in an admin flow where the
+     * HttpServletRequest#isUserInRole API is used.
      *
      * @param basicRoles
      * @return
