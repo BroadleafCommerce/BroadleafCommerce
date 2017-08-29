@@ -326,27 +326,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     }
                     if (dirty) {
                         updateSimpleRule(populateValueRequest, mvel, persist, rule);
+
                         EntityManager em = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
-                        Long id = (Long) em.unwrap(Session.class).getIdentifier(rule);
-                        if (extensionManager != null) {
-                            ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
-                            ExtensionResultStatusType result = extensionManager.getProxy().transformId(rule, resultHolder);
-                            if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
-                                id = resultHolder.getResult();
-                            }
-                        }
-                        Long containedId = null;
-                        Object contained = findContainedRuleIfApplicable(rule);
-                        if (contained != null) {
-                            containedId = (Long) em.unwrap(Session.class).getIdentifier(contained);
-                            if (extensionManager != null) {
-                                ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
-                                ExtensionResultStatusType result = extensionManager.getProxy().transformId(contained, resultHolder);
-                                if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
-                                    containedId = resultHolder.getResult();
-                                }
-                            }
-                        }
+                        Long id = getRuleId(rule, em);
+                        Long containedId = getContainedRuleId(rule, em);
+
                         DataDTO dto = dw.getData().get(0);
                         if (persist && cascadeExtensionManager != null) {
                             ExtensionResultHolder resultHolder = new ExtensionResultHolder();
@@ -367,6 +351,35 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             }
         }
         return dirty;
+    }
+
+    protected Long getRuleId(SimpleRule rule, EntityManager em) {
+        Long id = (Long) em.unwrap(Session.class).getIdentifier(rule);
+        id = transformId(id, rule);
+        return id;
+    }
+
+    protected Long getContainedRuleId(SimpleRule simpleRule, EntityManager em) {
+        Long containedId = null;
+
+        Object containedRule = findContainedRuleIfApplicable(simpleRule);
+        if (containedRule != null) {
+            containedId = (Long) em.unwrap(Session.class).getIdentifier(containedRule);
+            containedId = transformId(containedId, containedRule);
+        }
+
+        return containedId;
+    }
+
+    protected Long transformId(Long id, Object rule) {
+        if (extensionManager != null) {
+            ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
+            ExtensionResultStatusType result = extensionManager.getProxy().transformId(rule, resultHolder);
+            if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                id = resultHolder.getResult();
+            }
+        }
+        return id;
     }
 
     /**
@@ -474,42 +487,29 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         String matchRule = simpleRule.getMatchRule();
         Entity[] matchCriteria = new Entity[1];
         Property[] properties = new Property[3];
+
         Property mvelProperty = new Property();
         mvelProperty.setName("matchRule");
         mvelProperty.setValue(matchRule == null ? "" : matchRule);
         properties[0] = mvelProperty;
+
         Entity criteria = new Entity();
         criteria.setProperties(properties);
         matchCriteria[0] = criteria;
+
         EntityManager em = PersistenceManagerFactory.getDefaultPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
-        Long id = (Long) em.unwrap(Session.class).getIdentifier(simpleRule);
-        if (extensionManager != null) {
-            ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
-            ExtensionResultStatusType result = extensionManager.getProxy().transformId(simpleRule, resultHolder);
-            if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
-                id = resultHolder.getResult();
-            }
-        }
+        Long id = getRuleId(simpleRule, em);
         Property idProperty = new Property();
         idProperty.setName("id");
         idProperty.setValue(String.valueOf(id));
         properties[1] = idProperty;
-        Object containedRule = findContainedRuleIfApplicable(simpleRule);
-        Long containedId = null;
-        if (containedRule != null) {
-            containedId = (Long) em.unwrap(Session.class).getIdentifier(containedRule);
-            if (extensionManager != null) {
-                ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
-                ExtensionResultStatusType result = extensionManager.getProxy().transformId(containedRule, resultHolder);
-                if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
-                    containedId = resultHolder.getResult();
-                }
-            }
-        }
+
+        Long containedId = getContainedRuleId(simpleRule, em);
         Property containedIdProperty = new Property();
         containedIdProperty.setName("containedId");
         containedIdProperty.setValue(String.valueOf(containedId));
         properties[2] = containedIdProperty;
+
         String json;
         try {
             DataWrapper orderWrapper = translator.createRuleData(matchCriteria, "matchRule", null, "id", "containedId", ruleBuilderFieldServiceFactory.createInstance(fieldService));
@@ -531,38 +531,31 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         Entity[] targetItemCriterias = new Entity[quantityBasedRules.size()];
         for (QuantityBasedRule quantityBasedRule : quantityBasedRules) {
             Property[] properties = new Property[4];
+
             Property mvelProperty = new Property();
             mvelProperty.setName("matchRule");
             mvelProperty.setValue(quantityBasedRule.getMatchRule());
+
             Property quantityProperty = new Property();
             quantityProperty.setName("quantity");
             quantityProperty.setValue(quantityBasedRule.getQuantity().toString());
+
             Property idProperty = new Property();
             idProperty.setName("id");
             Long id = quantityBasedRule.getId();
-            if (extensionManager != null) {
-                ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
-                ExtensionResultStatusType result = extensionManager.getProxy().transformId(quantityBasedRule, resultHolder);
-                if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
-                    id = resultHolder.getResult();
-                }
-            }
+            id = transformId(id, quantityBasedRule);
             idProperty.setValue(String.valueOf(id));
+
             Property containedIdProperty = new Property();
             containedIdProperty.setName("containedId");
             Object containedRule = findContainedRuleIfApplicable(quantityBasedRule);
             if (containedRule != null) {
                 EntityManager em = PersistenceManagerFactory.getDefaultPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
                 Long containedId = (Long) em.unwrap(Session.class).getIdentifier(containedRule);
-                if (extensionManager != null) {
-                    ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
-                    ExtensionResultStatusType result = extensionManager.getProxy().transformId(containedRule, resultHolder);
-                    if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
-                        containedId = resultHolder.getResult();
-                    }
-                }
+                containedId = transformId(containedId, containedRule);
                 containedIdProperty.setValue(String.valueOf(containedId));
             }
+
             properties[0] = mvelProperty;
             properties[1] = quantityProperty;
             properties[2] = idProperty;
