@@ -109,7 +109,7 @@ import javax.servlet.Filter;
  *    &lt;/dependency&gt;
  * </pre>
  * </p>
- * Finally, an example test will look something like this:
+ * An example test will look something like this:
  * <pre>
  *   public class MyIT extends JUnitSpringBootAdminIntegrationSetup {
  *
@@ -147,6 +147,12 @@ import javax.servlet.Filter;
  *        }
  *   }
  * </pre>
+ *</p>
+ * Finally, a warning. When the spring-boot-starter-test dependency is on the classpath, MockitoPostProcessor is automatically
+ * included, which causes class scanning while looking for {@literal @}Configuration classes. This ends up loading some
+ * domain classes in the classloader at startup that interferes with normal Load Time Weaving operations in Broadleaf. As a
+ * result, {@link AdminSpringBootTestConfiguration} automatically configures a no-op implementation of MockitoPostProcessor
+ * to avoid the scanning, at the cost of removing Mockito support in the Spring Boot test.
  *
  * @author Jeff Fischer
  */
