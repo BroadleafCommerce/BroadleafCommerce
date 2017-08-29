@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,30 +15,16 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.search.domain;
-
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.core.search.domain.solr.FieldType;
-
-import java.io.Serializable;
+package org.broadleafcommerce.common.copy;
 
 /**
- * This interface is used for representing a {@link FieldType} for an {@link IndexField}
+ * Encapsulates a block of code that should be run at a later time, usually in order to guarantee the proper state
+ * or conditions for its execution.
  *
- * @author Nick Crum (ncrum)
+ * @author Jeff Fischer
  */
-public interface IndexFieldType extends Serializable, MultiTenantCloneable<IndexFieldType>  {
+public interface DeferredOperation {
 
-    Long getId();
-
-    void setId(Long id);
-
-    FieldType getFieldType();
-
-    void setFieldType(FieldType fieldType);
-    
-    IndexField getIndexField();
-
-    void setIndexField(IndexField indexField);
+    void run();
 
 }

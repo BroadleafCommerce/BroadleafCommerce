@@ -242,6 +242,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         tooltip = "OfferItemRestrictionRuleType_tooltip",
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
+        defaultValue = "NONE",
         visibility = VisibilityEnum.HIDDEN_ALL)
     protected String offerItemQualifierRuleType;
 
@@ -795,6 +796,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setMaxUsesPerOrder(getMaxUsesPerOrder());
         cloned.setArchived(getArchived());
         cloned.setOfferItemQualifierRuleType(getOfferItemQualifierRuleType());
+        cloned.setOfferItemTargetRuleType(getOfferItemTargetRuleType());
         cloned.setCombinableWithOtherOffers(isCombinableWithOtherOffers());
         cloned.setQualifyingItemSubTotal(getQualifyingItemSubTotal());
         cloned.setOrderMinSubTotal(getOrderMinSubTotal());

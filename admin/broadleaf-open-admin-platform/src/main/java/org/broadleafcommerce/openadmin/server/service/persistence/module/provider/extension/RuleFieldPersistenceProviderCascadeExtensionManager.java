@@ -17,26 +17,19 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.rule.QuantityBasedRule;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * For internal usage. Allows extending API calls without subclassing the entity.
+ * For internal usage. Allows extension of entity API calls without subclassing the entity.
  *
  * @author Jeff Fischer
  */
-public interface RuleFieldPersistenceProviderExtensionHandler extends ExtensionHandler {
+@Service("blRuleFieldPersistenceProviderCascadeExtensionManager")
+public class RuleFieldPersistenceProviderCascadeExtensionManager extends ExtensionManager<RuleFieldPersistenceProviderCascadeExtensionHandler> {
 
-    ExtensionResultStatusType transformId(Object rule, ExtensionResultHolder<Long> resultHolder);
-
-    ExtensionResultStatusType postAdd(Object rule, ExtensionResultHolder resultHolder);
-
-    ExtensionResultStatusType postUpdate(Object rule);
-
-    ExtensionResultStatusType establishDirtyState(Object rule, ExtensionResultHolder<Boolean> resultHolder);
-
-    public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
+    public RuleFieldPersistenceProviderCascadeExtensionManager() {
+        super(RuleFieldPersistenceProviderCascadeExtensionHandler.class);
+    }
 
 }
