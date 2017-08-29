@@ -39,7 +39,114 @@ import org.springframework.web.filter.RequestContextFilter;
 import javax.servlet.Filter;
 
 /**
- * TODO detailed docs
+ * This is a convenient base class for launching a spring boot test against the admin application. The primary testing technologies
+ * employed here are JUnit and Spring's MockMVC. This integration test focuses on testing the controller API. It has the following beneficial attributes:
+ * <ul>
+ *     <li>The test is much less brittle than a traditional presentation-tier functional test, but with nearly the same full lifecycle coverage benefits.</li>
+ *     <li>Development iteration and test execution times are less.</li>
+ *     <li>This test will generally survive a admin pipeline refactor without much change. It has good longevity characteristics.</li>
+ *     <li>Raw database confirmation of operations is trivial.</li>
+ * </ul>
+ * Notably, the spring boot instance launched does not include a embedded container, but
+ * does include a full HSQL database. The database is fully network ready and can be queried by an external sql tool while the test
+ * is running.
+ * </p>
+ * Tests should extend {@link JUnitSpringBootAdminIntegrationSetup} and employ standard MockMVC test calls to simulate
+ * admin controller interactions. The {@link AdminTestHelper} is included for convenience API around starting an
+ * Entity-Manager-In-View session for retrieving and verifying records from the database. This is useful when directly
+ * confirming data results from admin MockMVC calls.
+ * </p>
+ * {@link JUnitSpringBootAdminIntegrationSetup} already introduces the most likely filters and user request roles required
+ * for admin interaction. Extending tests can customize by overriding {@link #getOrderedFilters(Filter...)} and
+ * {@link #getRequestRoles(String...)}. Note, this is different than the usage of @WithMockUser, which should be annotated
+ * on your test methods and specify the admin user name to associate with the test.
+ * </p>
+ * If you have existing, non-spring-boot tests already running, you'll want to separate the execution of your spring boot
+ * tests. Otherwise, you'll likely run into problems during test app context initialization in regard to some classloader
+ * nuances and static variables. This can be achieved by creating multiple &lt;execution&gt; elements in your
+ * maven-surefire-plugin configuration in your pom.xml. Review the documentation for the maven plugin on how to include and
+ * exclude tests into separate executions. http://maven.apache.org/surefire/maven-surefire-plugin/examples/inclusion-exclusion.html
+ * </p>
+ * Several libraries are required to be on the test classpath in order to get admin spring boot testing. You can include the
+ * following in your pom.xml &lt;dependencies&gt; section.
+ * <pre>
+ *     &lt;dependency&gt;
+ *        &lt;groupId&gt;org.broadleafcommerce&lt;/groupId&gt;
+ *        &lt;artifactId&gt;integration&lt;/artifactId&gt;
+ *        &lt;version&gt;${blc.version}&lt;/version&gt;
+ *        &lt;classifier&gt;tests&lt;/classifier&gt;
+ *        &lt;scope&gt;test&lt;/scope&gt;
+ *    &lt;/dependency&gt;
+ *    &lt;dependency&gt;
+ *        &lt;groupId&gt;org.broadleafcommerce&lt;/groupId&gt;
+ *        &lt;artifactId&gt;integration&lt;/artifactId&gt;
+ *        &lt;version&gt;${blc.version}&lt;/version&gt;
+ *        &lt;scope&gt;test&lt;/scope&gt;
+ *    &lt;/dependency&gt;
+ *   &lt;dependency&gt;
+ *        &lt;groupId&gt;org.broadleafcommerce&lt;/groupId&gt;
+ *        &lt;artifactId&gt;broadleaf-thymeleaf3-presentation&lt;/artifactId&gt;
+ *        &lt;version&gt;${broadleaf-presentation.version}&lt;/version&gt;
+ *        &lt;scope&gt;test&lt;/scope&gt;
+ *    &lt;/dependency&gt;
+ *    &lt;dependency&gt;
+ *        &lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+ *        &lt;artifactId&gt;spring-security-test&lt;/artifactId&gt;
+ *        &lt;version&gt;${spring.security.version}&lt;/version&gt;
+ *        &lt;scope&gt;test&lt;/scope&gt;
+ *    &lt;/dependency&gt;
+ *    &lt;dependency&gt;
+ *        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+ *        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+ *        &lt;version&gt;${spring.boot.test.version}&lt;/version&gt;
+ *        &lt;scope&gt;test&lt;/scope&gt;
+ *    &lt;/dependency&gt;
+ *    &lt;dependency&gt;
+ *        &lt;groupId&gt;com.broadleafcommerce&lt;/groupId&gt;
+ *        &lt;artifactId&gt;broadleaf-boot-starter-hsql-database&lt;/artifactId&gt;
+ *        &lt;version&gt;${database.starter.version}&lt;/version&gt;
+ *        &lt;scope&gt;test&lt;/scope&gt;
+ *    &lt;/dependency&gt;
+ * </pre>
+ * </p>
+ * Finally, an example test will look something like this:
+ * <pre>
+ *   public class MyIT extends JUnitSpringBootAdminIntegrationSetup {
+ *
+ *        protected AdminTestHelper h;
+ *
+ *        {@literal @}Override
+ *        public void setUp() throws Exception {
+ *            super.setUp();
+ *            h = getHelper(AdminTestHelper.class);
+ *        }
+ *
+ *        {@literal @}Test
+ *        {@literal @}WithMockUser(username = "admin")
+ *        public void testProductAdd() throws Throwable {
+ *            MvcResult result = getMockMvc().perform(post("/admin/product/new/enterprise-add").contextPath("/admin").accept("text/html")
+ *                    .param("entityType", ProductImpl.class.getName())
+ *                    .header("host", "global.local.com"))
+ *                    .andReturn();
+ *            String redirectUrl = result.getResponse().getRedirectedUrl();
+ *            Assert.assertTrue(redirectUrl.startsWith("/admin/product"));
+ *            Long id = Long.parseLong(redirectUrl.substring(redirectUrl.lastIndexOf("/") + 1, redirectUrl.indexOf("?")));
+ *            result = getMockMvc().perform(post("/admin/product/" + id).contextPath("/admin").accept("text/html")
+ *                    .param("isPostAdd", "true")
+ *                    .param("entityType", ProductImpl.class.getName())
+ *                    .param("ceilingEntityClassname", Product.class.getName())
+ *                    .param("id", String.valueOf(id))
+ *                    .param("sectionCrumbs", ProductImpl.class.getName() + "--" + id)
+ *                    .param("fields['defaultSku.name'].value", "Vendor Product")
+ *                    .param("fields['defaultSku.retailPrice'].value", "12")
+ *                    .param("fields['defaultCategory'].value", "3002")
+ *                    .param("fields['url'].value", "/hot-sauces/thing")
+ *                    .header("host", "global.local.com"))
+ *                    .andReturn();
+ *            Assert.assertEquals(result.getResponse().getStatus(), HttpServletResponse.SC_FOUND);
+ *        }
+ *   }
+ * </pre>
  *
  * @author Jeff Fischer
  */

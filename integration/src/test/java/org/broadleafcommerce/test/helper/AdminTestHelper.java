@@ -112,7 +112,7 @@ public class AdminTestHelper {
     }
 
     /**
-     * see {@link #startView(Long, String)}. Allows avoiding providing a side and sandbox.
+     * see {@link #startView(Long, String)}. Allows avoiding providing a site and sandbox.
      */
     public void startView() {
         startView(null, null);
