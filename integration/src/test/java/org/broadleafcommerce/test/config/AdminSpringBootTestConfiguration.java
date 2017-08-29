@@ -59,25 +59,7 @@ public class AdminSpringBootTestConfiguration {
 
     @Bean(name = "org.springframework.boot.test.mock.mockito.MockitoPostProcessor")
     public static BeanFactoryPostProcessor mockitoNoOp() {
-        return new MockitoPostProcessor(null) {
-            @Override
-            public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-                /*
-                So, this is a long story and exists as a workaround for a known Broadleaf problem with
-                LTW. This BeanFactoryPostProcessor actually scans every bean definition early to look for
-                appropriate configuration classes for mocks. It is automatically registered as part of "spring-boot-starter-test"
-                artifact inclusion. This ends up loading (but not initializing) any entity class along the way
-                (e.g. a entity class may be mentioned in a @Service class's import block). As a result,
-                our LTW process complains about un-transformed entities.
-
-                This hack is to disable this post processor, since we don't need @Mock support for this MVC integration test.
-                A longer term fix is to find a earlier integration point for registering class transformers with the
-                ClassLoader during the Spring startup lifecycle.
-                 */
-                //TODO Find a earlier integration point for registering class transformers with the ClassLoader during the Spring startup lifecycle
-                //do nothing and avoid the scanning impact
-            }
-        };
+        return new NoOpMockitoPostProcessor();
     }
 
     @Autowired
