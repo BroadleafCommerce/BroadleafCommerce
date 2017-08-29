@@ -69,8 +69,9 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
 
     protected boolean checkDirtyState(PopulateValueRequest request, Object instance, Object checkValue) throws Exception {
         boolean dirty = isFieldDirty(request, instance, checkValue);
-        boolean isDefaultValue = !StringUtils.isEmpty(request.getMetadata().getDefaultValue());
-        return (!request.getPreAdd() || isDefaultValue) && dirty;
+        boolean hasDefaultValue = !StringUtils.isEmpty(request.getMetadata().getDefaultValue());
+
+        return (!request.getPreAdd() || hasDefaultValue) && dirty;
     }
 
     protected boolean isFieldDirty(PopulateValueRequest request, Object instance, Object checkValue) throws IllegalAccessException, FieldNotAvailableException {
