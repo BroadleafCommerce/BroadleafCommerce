@@ -27,10 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -51,14 +48,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_OPTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
-@AdminPresentationClass(friendlyName = "Base Fulfillment Option")
+@AdminPresentationClass(friendlyName = "Fulfillment Option")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
@@ -98,12 +88,17 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     protected Boolean useFlatRates = true;
 
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_fulfillmentType",
+                       fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+                       broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
     @Column(name = "TAX_CODE", nullable = true)
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_taxCode")
     protected String taxCode;
 
     @Column(name = "TAXABLE")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_taxable")
     protected Boolean taxable = false;
 
     @Override

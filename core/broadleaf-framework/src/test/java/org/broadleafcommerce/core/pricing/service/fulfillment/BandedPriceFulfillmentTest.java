@@ -264,7 +264,7 @@ public class BandedPriceFulfillmentTest extends TestCase {
         }
 
         BandedPriceFulfillmentOption option = new BandedPriceFulfillmentOptionImpl();
-        option.setBands(bands);
+        option.setPriceBands(bands);
         return option;
     }
 
@@ -285,7 +285,7 @@ public class BandedPriceFulfillmentTest extends TestCase {
         }
 
         BandedWeightFulfillmentOption option = new BandedWeightFulfillmentOptionImpl();
-        option.setBands(bands);
+        option.setWeightBands(bands);
         return option;
     }
 

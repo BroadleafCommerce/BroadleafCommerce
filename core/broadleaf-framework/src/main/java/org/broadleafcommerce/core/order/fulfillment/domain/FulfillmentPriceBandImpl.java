@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -66,6 +67,7 @@ public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements Ful
     protected Long id;
 
     @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT", precision=19, scale=5, nullable = false)
+    @AdminPresentation(friendlyName = "FulfillmentPriceBandImpl_retailPriceMinimumAmount")
     protected BigDecimal retailPriceMinimumAmount;
     
     @ManyToOne(targetEntity=BandedPriceFulfillmentOptionImpl.class)

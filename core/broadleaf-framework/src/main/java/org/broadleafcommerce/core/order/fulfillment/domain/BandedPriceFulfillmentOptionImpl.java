@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,7 +43,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_OPT_BANDED_PRC")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option")
+@AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option",populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedPriceFulfillmentOption {
 
     private static final long serialVersionUID = 1L;
@@ -50,16 +51,16 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
     @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
-    protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
+    protected List<FulfillmentPriceBand> priceBands = new ArrayList<FulfillmentPriceBand>();
 
     @Override
-    public List<FulfillmentPriceBand> getBands() {
-        return bands;
+    public List<FulfillmentPriceBand> getPriceBands() {
+        return priceBands;
     }
 
     @Override
-    public void setBands(List<FulfillmentPriceBand> bands) {
-        this.bands = bands;
+    public void setPriceBands(List<FulfillmentPriceBand> priceBands) {
+        this.priceBands = priceBands;
     }
 
     @Override
@@ -71,8 +72,8 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
         }
         BandedPriceFulfillmentOption myClone = createResponse.getClone();
 
-        for (FulfillmentPriceBand band : bands) {
-            myClone.getBands().add(band);
+        for (FulfillmentPriceBand band : priceBands) {
+            myClone.getPriceBands().add(band);
         }
 
         return createResponse;

@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,7 +43,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_OPT_BANDED_WGT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(friendlyName = "Banded Weight Fulfillment Option")
+@AdminPresentationClass(friendlyName = "Banded Weight Fulfillment Option",populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedWeightFulfillmentOption {
 
     private static final long serialVersionUID = 1L;
@@ -50,16 +51,16 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
     @OneToMany(mappedBy="option", targetEntity=FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationCollection(friendlyName = "BandedWeightFulfillmentOptionBands", excluded = true)
-    protected List<FulfillmentWeightBand> bands = new ArrayList<FulfillmentWeightBand>();
+    protected List<FulfillmentWeightBand> weightBands = new ArrayList<FulfillmentWeightBand>();
 
     @Override
-    public List<FulfillmentWeightBand> getBands() {
-        return bands;
+    public List<FulfillmentWeightBand> getWeightBands() {
+        return weightBands;
     }
 
     @Override
-    public void setBands(List<FulfillmentWeightBand> bands) {
-        this.bands = bands;
+    public void setWeightBands(List<FulfillmentWeightBand> weightBands) {
+        this.weightBands = weightBands;
     }
 
     @Override
@@ -71,8 +72,8 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
         }
         BandedWeightFulfillmentOption myClone = createResponse.getClone();
 
-        for (FulfillmentWeightBand band : bands) {
-            myClone.getBands().add(band);
+        for (FulfillmentWeightBand band : weightBands) {
+            myClone.getWeightBands().add(band);
         }
 
         return createResponse;

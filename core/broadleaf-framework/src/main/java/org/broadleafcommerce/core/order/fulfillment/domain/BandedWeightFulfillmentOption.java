@@ -27,8 +27,8 @@ import java.util.List;
  */
 public interface BandedWeightFulfillmentOption extends FulfillmentOption {
 
-    public List<FulfillmentWeightBand> getBands();
+    public List<FulfillmentWeightBand> getWeightBands();
 
-    public void setBands(List<FulfillmentWeightBand> bands);
+    public void setWeightBands(List<FulfillmentWeightBand> bands);
 
 }
