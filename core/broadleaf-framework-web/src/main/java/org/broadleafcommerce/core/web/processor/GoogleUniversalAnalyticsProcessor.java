@@ -256,17 +256,19 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem orderItem = fulfillmentGroupItem.getOrderItem();
-    
-                Sku sku = ((SkuAccessor) orderItem).getSku();
-                
-                sb.append("ga('" + trackerPrefix + "ecommerce:addItem', {");
-                sb.append("'id': '" + order.getOrderNumber() + "'");
-                sb.append(",'name': '" + sku.getName() + "'");
-                sb.append(",'sku': '" + sku.getId() + "'");
-                sb.append(",'category': '" + getVariation(orderItem) + "'");
-                sb.append(",'price': '" + orderItem.getAveragePrice() + "'");
-                sb.append(",'quantity': '" + orderItem.getQuantity() + "'");
-                sb.append("});");
+
+                if (SkuAccessor.class.isAssignableFrom(orderItem.getClass())) {
+                    Sku sku = ((SkuAccessor) orderItem).getSku();
+
+                    sb.append("ga('" + trackerPrefix + "ecommerce:addItem', {");
+                    sb.append("'id': '" + order.getOrderNumber() + "'");
+                    sb.append(",'name': '" + sku.getName() + "'");
+                    sb.append(",'sku': '" + sku.getId() + "'");
+                    sb.append(",'category': '" + getVariation(orderItem) + "'");
+                    sb.append(",'price': '" + orderItem.getAveragePrice() + "'");
+                    sb.append(",'quantity': '" + orderItem.getQuantity() + "'");
+                    sb.append("});");
+                }
             }
         }
         return sb.toString();
