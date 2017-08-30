@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ import java.io.Serializable;
 /**
  * @author Chris Kittrell (ckittrell)
  */
-public interface AdvancedOfferPromotionMessageXref extends Serializable {
+public interface AdvancedOfferPromotionMessageXref extends Serializable, MultiTenantCloneable<AdvancedOfferPromotionMessageXref> {
 
     /**
      * Id of this AdvancedOfferPromotionMessageXref
