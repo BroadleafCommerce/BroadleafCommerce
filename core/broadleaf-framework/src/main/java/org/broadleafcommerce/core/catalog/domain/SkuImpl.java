@@ -1139,8 +1139,9 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
-    public Map<String, SkuAttribute> getMultiValueSkuAttributes() {
-        Map<String, SkuAttribute> multiValueMap = new MultiValueMap();
+    @SuppressWarnings("unchecked")
+    public Map<String, List<SkuAttribute>> getMultiValueSkuAttributes() {
+        MultiValueMap multiValueMap = new MultiValueMap();
 
         for (SkuAttribute skuAttribute : skuAttributes) {
             multiValueMap.put(skuAttribute.getName(), skuAttribute);

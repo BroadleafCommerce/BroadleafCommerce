@@ -404,7 +404,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      *
      * @return the multivalued attributes for this Sku
      */
-    public Map<String, SkuAttribute> getMultiValueSkuAttributes();
+    public Map<String, List<SkuAttribute>> getMultiValueSkuAttributes();
 
     /**
      * Sets the denormalized set of key-value pairs on a Sku
