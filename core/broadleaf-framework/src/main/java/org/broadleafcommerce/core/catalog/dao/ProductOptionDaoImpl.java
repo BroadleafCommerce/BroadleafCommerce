@@ -164,9 +164,12 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         predicates.add(cb.equal(root.get("productOptionValue").get("attributeValue"), attributeValue));
 
         // restrict to skus that have ids within the given list of skus ids
-        Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
-        if (skuDomainPredicate != null) {
-            predicates.add(skuDomainPredicate);
+        if (possibleSkuIds != null && possibleSkuIds.size() > 0) {
+            possibleSkuIds = sandBoxHelper.mergeCloneIds(SkuImpl.class, possibleSkuIds.toArray(new Long[possibleSkuIds.size()]));
+            Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
+            if (skuDomainPredicate != null) {
+                predicates.add(skuDomainPredicate);
+            }
         }
 
         // restrict archived values
