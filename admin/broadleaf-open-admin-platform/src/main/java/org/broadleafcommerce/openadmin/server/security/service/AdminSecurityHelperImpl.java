@@ -18,10 +18,10 @@
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Philip Baggett (pbaggett)
@@ -30,14 +30,13 @@ import java.util.Collection;
 public class AdminSecurityHelperImpl implements AdminSecurityHelper {
 
     @Override
-    public void addAllPermissionsToAuthorities(Collection<GrantedAuthority> grantedAuthorities, Collection<AdminPermission> adminPermissions) {
+    public void addAllPermissionsToAuthorities(List<SimpleGrantedAuthority> grantedAuthorities, Collection<AdminPermission> adminPermissions) {
         for (AdminPermission permission : adminPermissions) {
-            if(permission.isFriendly()) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
+            if (permission.isFriendly()) {
                 for (AdminPermission childPermission : permission.getAllChildPermissions()) {
                     grantedAuthorities.add(new SimpleGrantedAuthority(childPermission.getName()));
                 }
-            } else {
-                grantedAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
             }
         }
     }

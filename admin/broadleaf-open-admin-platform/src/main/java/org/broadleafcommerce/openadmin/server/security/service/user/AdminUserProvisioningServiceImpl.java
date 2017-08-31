@@ -23,14 +23,18 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.openadmin.server.security.external.AdminExternalLoginUserExtensionManager;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityHelper;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.Resource;
 
 /**
@@ -75,7 +79,7 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
             }
         }
 
-        HashSet<GrantedAuthority> newAuthorities = new HashSet<GrantedAuthority>();
+        HashSet<SimpleGrantedAuthority> newAuthorities = new HashSet<>();
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             newAuthorities.add(new SimpleGrantedAuthority(perm));
         }
@@ -86,7 +90,7 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
             for (AdminRole role : adminRoles) {
                 if (newRoles.contains(role.getName())) {
                     grantedRoles.add(role);
-                    adminSecurityHelper.addAllPermissionsToAuthorities(newAuthorities, role.getAllPermissions());
+                    adminSecurityHelper.addAllPermissionsToAuthorities(new ArrayList<>(newAuthorities), role.getAllPermissions());
                 }
             }
         }
