@@ -840,7 +840,7 @@
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>4.1.4</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
@@ -1261,7 +1261,7 @@
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure</artifactId>

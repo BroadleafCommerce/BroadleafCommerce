@@ -47,13 +47,15 @@ import net.sf.ehcache.Element;
 public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     public static final String PROPERTY_SOURCE_NAME = "systemPropertySource";
-    
+
     /**
      * If the property resoltion comes from the Spring Environment I don't want to try to re-resolve a property from the Environment. This
      * ensures that we don't get a StackOverflowException
      */
     protected static final ThreadLocal<Boolean> originatedFromEnvironment = ThreadLocalManager.createThreadLocal(Boolean.class, false);
-    
+
+    private static final String NULL_RESPONSE = "*NULL_RESPONSE*";
+
     protected Cache systemPropertyCache;
 
     @Resource(name="blSystemPropertiesDao")
@@ -67,7 +69,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     @Autowired
     protected Environment env;
-    
+
     @Override
     public String resolveSystemProperty(String name, String defaultValue) {
         String result = resolveSystemProperty(name);
@@ -97,7 +99,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         }
 
         if (result != null) {
-            return result;
+            return result.equals(NULL_RESPONSE)?null:result;
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
@@ -116,10 +118,11 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             }
         }
 
-        if (result != null) {
-            addPropertyToCache(name, result);
+        if (result == null) {
+            result = NULL_RESPONSE;
         }
-        return result;
+        addPropertyToCache(name, result);
+        return result.equals(NULL_RESPONSE)?null:result;
     }
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {

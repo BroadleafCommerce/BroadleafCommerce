@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.server.security.service.user;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityHelper;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,10 +43,13 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
-    
+
+    @Resource(name="blAdminSecurityHelper")
+    protected AdminSecurityHelper adminSecurityHelper;
+
     public static final String LEGACY_ROLE_PREFIX = "PERMISSION_";
     public static final String DEFAULT_SPRING_SECURITY_ROLE_PREFIX = "ROLE_";
-    
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         AdminUser adminUser = adminSecurityService.readAdminUserByUserName(username);
@@ -56,27 +60,13 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (AdminRole role : adminUser.getAllRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
-            for (AdminPermission permission : role.getAllPermissions()) {
-                authorities.add(new SimpleGrantedAuthority(permission.getName()));
-                if (permission.isFriendly()) {
-                    for (AdminPermission childPermission : permission.getAllChildPermissions()) {
-                        authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
-                    }
-                }
-            }
+            adminSecurityHelper.addAllPermissionsToAuthorities(authorities, role.getAllPermissions());
         }
-        for (AdminPermission permission : adminUser.getAllPermissions()) {
-            authorities.add(new SimpleGrantedAuthority(permission.getName()));
-            if (permission.isFriendly()) {
-                for (AdminPermission childPermission : permission.getAllChildPermissions()) {
-                    authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
-                }
-            }
-        }
+        adminSecurityHelper.addAllPermissionsToAuthorities(authorities, adminUser.getAllPermissions());
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             authorities.add(new SimpleGrantedAuthority(perm));
         }
-        
+
         // Spring security expects everything to begin with ROLE_ for things like hasRole() expressions so this adds additional
         // authorities with those mappings, as well as new ones with ROLE_ instead of PERMISSION_.
         // At the end of this, given a permission set like:
@@ -91,7 +81,7 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
                 it.add(new SimpleGrantedAuthority(auth.getAuthority().replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
             }
         }
-        
+
         return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
     }
 

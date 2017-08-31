@@ -194,9 +194,9 @@
             <artifactId>testng</artifactId>
             <!-- ABANDON ALL HOPE, YE WHO ENTER HERE -->
             <!-- DO NOT COPY THIS DEPENDENCY SOMEWHERE ELSE -->
-            
+
             <!-- A large amount of test failures occur within the integration project
-                 if you change the version to anything but exactly this. Proceed with 
+                 if you change the version to anything but exactly this. Proceed with
                  caution as tests will likely fail with deadlocks, etc -->
             <!-- If you want to use TestNG elsewhere, you should be using the latest version
                 and not use this version -->
@@ -238,7 +238,7 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
