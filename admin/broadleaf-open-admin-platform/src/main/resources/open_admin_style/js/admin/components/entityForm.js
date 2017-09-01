@@ -309,8 +309,10 @@ $(document).ready(function() {
     });
     
     var tabs_action=null;
-    $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
-            BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + '")').click(function(event) {
+    var sectionTabsSelector = 'div.section-tabs li ' +
+        'a:not(.workflow-tab, .system-property-tab ' + BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + ')';
+
+    $(document).on('click', sectionTabsSelector, function (event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
         var tabKey = $tab.find('span').data('tabkey');
@@ -335,23 +337,22 @@ $(document).ready(function() {
      			type: "POST",
      			data: $form.serializeArray()
      		}, function(data) {
-     			$('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
+     			$('div.' + href + 'Tab .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
-                    var $tableWrapper = data.find('.listgrid-header-wrapper:has(table#' + tableId + ')');
-     				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
+                    var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
+                    BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
-     			$('div.' + href + 'Tab .selectize-wrapper').each(function() {
+     			$('div.' + href + 'Tab .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('div.' + href + 'Tab .media-container').each(function() {
+                $('div.' + href + 'Tab .media-container', $(data)).each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);
                     var $assetGrid = $($container).find('.asset-grid-container');
-                    var $assetListGrid = data.find('.asset-listgrid');
 
                     BLCAdmin.assetGrid.initialize($assetGrid);
 
