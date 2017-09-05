@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -77,25 +76,7 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public Page readPageById(Long id) {
-        Boolean internalValidateFindPreviouslySet = false;
-        BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
-        Page page;
-
-        try {
-
-            if (broadleafRequestContext != null && !broadleafRequestContext.getInternalValidateFind()) {
-                broadleafRequestContext.setInternalValidateFind(true);
-                internalValidateFindPreviouslySet = true;
-            }
-
-            page = em.find(PageImpl.class, id);
-        } finally {
-
-            if (internalValidateFindPreviouslySet) {
-                broadleafRequestContext.setInternalValidateFind(false);
-            }
-        }
-        return page;
+        return em.find(PageImpl.class, id);
     }
 
     @Override
