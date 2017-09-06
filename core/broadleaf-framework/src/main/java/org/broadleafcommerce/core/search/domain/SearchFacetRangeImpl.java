@@ -174,7 +174,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
         cloned.setMaxValue(maxValue);
         cloned.setMinValue(minValue);
         if (searchFacet != null) {
-            cloned.setSearchFacet(searchFacet);
+            cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
     }
