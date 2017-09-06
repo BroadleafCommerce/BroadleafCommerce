@@ -204,8 +204,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         populateDiscreteOrderItem(item, itemRequest);
         
         item.setBundleOrderItem(itemRequest.getBundleOrderItem());
-        item.setBaseSalePrice(itemRequest.getSalePriceOverride()==null?itemRequest.getSku().getSalePrice():itemRequest.getSalePriceOverride());
-        item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
+        if (itemRequest.getSalePriceOverride() != null) {
+            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
+        }
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
 
         if (itemRequest.getSalePriceOverride() != null) {
