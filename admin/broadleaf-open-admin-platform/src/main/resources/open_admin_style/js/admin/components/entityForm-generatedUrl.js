@@ -86,8 +86,10 @@
 
             if (options != null && options.allowSlash) {
                 return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase() + '.' + valPostFix;
-            } else {
+            } else if(valPostFix){
                 return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase() + '.' + valPostFix;
+            }else{
+                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
             }
         }
 
