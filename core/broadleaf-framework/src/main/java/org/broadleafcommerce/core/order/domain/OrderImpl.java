@@ -36,17 +36,14 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.broadleafcommerce.core.catalog.domain.CategoryAdminPresentation;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
@@ -854,8 +851,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             }
         }
         for(OfferCode entry : addedOfferCodes){
-           OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-           cloned.getAddedOfferCodes().add(clonedEntry);
+            // We do not want to clone the offer code since that will cascade through offer. We only want to create
+            // the new relationship between this cloned order and the existing offer code.
+            cloned.getAddedOfferCodes().add(entry);
         }
 
         cloned.setTotal(total == null ? null : new Money(total));
