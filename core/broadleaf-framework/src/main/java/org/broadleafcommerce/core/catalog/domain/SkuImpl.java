@@ -579,6 +579,32 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
+    public Money getUnmodifiedRetailPrice() {
+        Money returnPrice = null;
+        if (retailPrice != null) {
+            returnPrice = new Money(retailPrice, getCurrency());
+        }
+        if (returnPrice == null && hasDefaultSku()) {
+            Sku defaultSku = lookupDefaultSku();
+            returnPrice = defaultSku.getUnmodifiedRetailPrice();
+        }
+        return returnPrice;
+    }
+
+    @Override
+    public Money getUnmodifiedSalePrice() {
+        Money returnPrice = null;
+        if (salePrice != null) {
+            returnPrice = new Money(salePrice, getCurrency());
+        }
+        if (returnPrice == null && hasDefaultSku()) {
+            Sku defaultSku = lookupDefaultSku();
+            returnPrice = defaultSku.getUnmodifiedSalePrice();
+        }
+        return returnPrice;
+    }
+
+    @Override
     public DynamicSkuPrices getPriceData() {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             if (dynamicPrices == null) {

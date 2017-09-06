@@ -136,6 +136,22 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     public Money getRetailPrice();
 
     /**
+     * Returns the basic retail price of the Sku. This price does not include any dynamic pricing, including PriceList
+     * modification.
+     *
+     * @return
+     */
+    Money getUnmodifiedRetailPrice();
+
+    /**
+     * Returns the basic sale price of the Sku. This price does not include any dynamic pricing, including PriceList
+     * modification.
+     *
+     * @return
+     */
+    Money getUnmodifiedSalePrice();
+
+    /**
      * Sets the retail price for the Sku. This price will automatically be overridden if your system is utilizing
      * the DynamicSkuPricingService.
      * 
