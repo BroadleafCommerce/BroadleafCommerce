@@ -36,8 +36,6 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -53,8 +51,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
-import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -71,7 +67,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -505,15 +500,13 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the sale price from there
             if (dynamicPrices == null) {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
-
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             }
-            
             returnPrice = dynamicPrices.getSalePrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
+            if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
+                return returnPrice;
+            }
         } else if (salePrice != null) {
             // We have an explicitly set sale price directly on this entity. We will not apply any adjustments
             returnPrice = new Money(salePrice, getCurrency());
@@ -561,15 +554,13 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the retail price from there
             if (dynamicPrices == null) {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
-
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             }
-            
             returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
+            if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
+                return returnPrice;
+            }
         } else if (retailPrice != null) {
             returnPrice = new Money(retailPrice, getCurrency());
         }
@@ -591,11 +582,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public DynamicSkuPrices getPriceData() {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             if (dynamicPrices == null) {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
-
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             }
             return dynamicPrices;
         } else {
