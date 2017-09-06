@@ -475,7 +475,7 @@ public class SkuImpl implements Sku {
     }
 
     protected boolean hasDefaultSku() {
-        return (product != null && product.getDefaultSku() != null && !getId().equals(product.getDefaultSku().getId()));
+        return (product != null && product.getDefaultSku() != null && getId() != null && !getId().equals(product.getDefaultSku().getId()));
     }
 
     protected Sku lookupDefaultSku() {
