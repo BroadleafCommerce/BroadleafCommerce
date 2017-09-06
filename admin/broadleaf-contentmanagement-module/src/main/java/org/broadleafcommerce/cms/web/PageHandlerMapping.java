@@ -82,7 +82,7 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
 
             } finally {
                 if (internalValidateFindPreviouslySet) {
-                    BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(true);
+                    BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(false);
                 }
             }
 

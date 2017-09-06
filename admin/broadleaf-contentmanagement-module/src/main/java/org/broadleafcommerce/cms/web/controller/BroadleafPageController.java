@@ -90,7 +90,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
         } finally {
 
             if (internalValidateFindPreviouslySet) {
-                BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(true);
+                BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(false);
             }
         }
     
