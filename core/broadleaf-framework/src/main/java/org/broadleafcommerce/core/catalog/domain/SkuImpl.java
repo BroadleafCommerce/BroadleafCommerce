@@ -289,9 +289,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Embedded
     protected Weight weight = new Weight();
 
-    @Transient
-    protected DynamicSkuPrices dynamicPrices = null;
-
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable",
         group = GroupName.ShippingOther, order = FieldOrder.IS_MACHINE_SORTABLE,
@@ -499,9 +496,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the sale price from there
-            if (dynamicPrices == null) {
-                dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
-            }
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getSalePrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
             if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
@@ -553,9 +548,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the retail price from there
-            if (dynamicPrices == null) {
-                dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
-            }
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
             if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
@@ -607,9 +600,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Override
     public DynamicSkuPrices getPriceData() {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            if (dynamicPrices == null) {
-                dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
-            }
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             return dynamicPrices;
         } else {
             DynamicSkuPrices dsp = new DynamicSkuPrices();
@@ -1189,7 +1180,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Override
     public void clearDynamicPrices() {
-        this.dynamicPrices = null;
+        SkuPricingConsiderationContext.removeFromThreadCache(getId());
     }
 
     @Override

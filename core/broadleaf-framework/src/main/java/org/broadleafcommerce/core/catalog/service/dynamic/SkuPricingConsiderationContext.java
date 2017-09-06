@@ -28,6 +28,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -79,32 +80,49 @@ public class SkuPricingConsiderationContext {
         );
     }
 
+    public static Map<Long, DynamicSkuPrices> getThreadCache() {
+        return SkuPricingConsiderationContext.skuPricingConsiderationContext.get().pricesBySku;
+    }
+
+    public static void clearThreadCache() {
+        SkuPricingConsiderationContext.skuPricingConsiderationContext.get().pricesBySku.clear();
+    }
+
+    public static void removeFromThreadCache(Long skuId) {
+        SkuPricingConsiderationContext.skuPricingConsiderationContext.get().pricesBySku.remove(skuId);
+    }
+
     public static DynamicSkuPrices getDynamicSkuPrices(Sku sku) {
         DynamicSkuPrices prices = null;
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            // We have dynamic pricing, so we will pull the retail price from there
-            if (!SkuPricingConsiderationContext.isPricingConsiderationActive()) {
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(sku);
-                SkuPricingConsiderationContext.startPricingConsideration();
-                try {
-                    prices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-                } finally {
-                    SkuPricingConsiderationContext.endPricingConsideration();
+            if (!getThreadCache().containsKey(sku.getId())) {
+                // We have dynamic pricing, so we will pull the retail price from there
+                if (!SkuPricingConsiderationContext.isPricingConsiderationActive()) {
+                    SkuPriceWrapper wrapper = new SkuPriceWrapper(sku);
+                    SkuPricingConsiderationContext.startPricingConsideration();
+                    try {
+                        prices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                    } finally {
+                        SkuPricingConsiderationContext.endPricingConsideration();
+                    }
+                } else {
+                    try {
+                        prices = new DynamicSkuPrices();
+                        Field retail = getSingleField(sku.getClass(), "retailPrice");
+                        Object retailVal = retail.get(sku);
+                        Money retailPrice = retailVal == null ? null : new Money((BigDecimal) retailVal);
+                        Field sale = getSingleField(sku.getClass(), "salePrice");
+                        Object saleVal = sale.get(sku);
+                        Money salePrice = saleVal == null ? null : new Money((BigDecimal) saleVal);
+                        prices.setRetailPrice(retailPrice);
+                        prices.setSalePrice(salePrice);
+                    } catch (IllegalAccessException e) {
+                        throw ExceptionHelper.refineException(e);
+                    }
                 }
+                getThreadCache().put(sku.getId(), prices);
             } else {
-                try {
-                    prices = new DynamicSkuPrices();
-                    Field retail = getSingleField(sku.getClass(), "retailPrice");
-                    Object retailVal = retail.get(sku);
-                    Money retailPrice = retailVal == null ? null : new Money((BigDecimal) retailVal);
-                    Field sale = getSingleField(sku.getClass(), "salePrice");
-                    Object saleVal = sale.get(sku);
-                    Money salePrice = saleVal == null ? null : new Money((BigDecimal) saleVal);
-                    prices.setRetailPrice(retailPrice);
-                    prices.setSalePrice(salePrice);
-                } catch (IllegalAccessException e) {
-                    throw ExceptionHelper.refineException(e);
-                }
+                prices = getThreadCache().get(sku.getId());
             }
         }
         return prices;
@@ -129,4 +147,5 @@ public class SkuPricingConsiderationContext {
     protected DynamicSkuPricingService pricingService;
     protected HashMap considerations;
     protected boolean isActive = false;
+    protected HashMap<Long, DynamicSkuPrices> pricesBySku = new HashMap<>();
 }
