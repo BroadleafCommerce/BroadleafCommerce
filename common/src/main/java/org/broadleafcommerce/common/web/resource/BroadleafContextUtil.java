@@ -112,7 +112,9 @@ public class BroadleafContextUtil {
 
         if (brc.getNonPersistentSite() == null) {
             brc.setNonPersistentSite(siteResolver.resolveSite(wr, true));
-            brc.setSandBox(sbResolver.resolveSandBox(wr, brc.getNonPersistentSite()));
+            if (includeSandBox) {
+                brc.setSandBox(sbResolver.resolveSandBox(wr, brc.getNonPersistentSite()));
+            }
             brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
         }
 
