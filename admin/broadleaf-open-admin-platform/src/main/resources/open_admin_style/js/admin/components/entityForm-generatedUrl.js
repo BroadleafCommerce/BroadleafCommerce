@@ -81,15 +81,16 @@
             if (val.toString().indexOf('.') != -1) {
                 var valFragments = val.split('.');
                 valPostFix = valFragments[valFragments.length - 1];
+                if(valPostFix){
+                    valPostFix="."+valPostFix
+                }
                 val = val.substring(0,val.length - valPostFix.length)
             }
 
             if (options != null && options.allowSlash) {
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase() + '.' + valPostFix;
-            } else if(valPostFix){
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase() + '.' + valPostFix;
-            }else{
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
+                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase() + valPostFix;
+            } else {
+                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase() + valPostFix;
             }
         }
 
