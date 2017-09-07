@@ -389,7 +389,15 @@ public class OrderServiceImpl implements OrderService {
             //make the final save of the priced order
             status = TransactionUtils.createTransaction("saveOrder",
                                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
+            Session session = em.unwrap(Session.class);
+            FlushMode current = session.getFlushMode();
             try {
+                if (!autoFlushSaveCart) {
+                    //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
+                    //be expensive. It is possible to avoid the autoflush if there's no concern about queries in the flow returning
+                    //incorrect results because something has not been flushed to the database yet.
+                    session.setFlushMode(FlushMode.MANUAL);
+                }
                 order = persist(order);
 
                 if (extensionManager != null) {
@@ -399,6 +407,10 @@ public class OrderServiceImpl implements OrderService {
             } catch (RuntimeException ex) {
                 TransactionUtils.finalizeTransaction(status, transactionManager, true);
                 throw ex;
+            } finally {
+                if (!autoFlushSaveCart) {
+                    session.setFlushMode(current);
+                }
             }
         }
 
