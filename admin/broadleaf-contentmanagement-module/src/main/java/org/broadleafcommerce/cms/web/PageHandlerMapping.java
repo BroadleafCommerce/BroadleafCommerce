@@ -69,7 +69,22 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
             String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
-            PageDTO page = pageService.findPageByURI(context.getLocale(), requestUri, buildMvelParameters(request), context.isSecure());
+            
+            Boolean internalValidateFindPreviouslySet = false;
+            PageDTO page;
+            
+            try {
+                if (!BroadleafRequestContext.getBroadleafRequestContext().getInternalValidateFind()) {
+                    BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(true);
+                    internalValidateFindPreviouslySet = true;
+                }
+                page = pageService.findPageByURI(context.getLocale(), requestUri, buildMvelParameters(request), context.isSecure());
+
+            } finally {
+                if (internalValidateFindPreviouslySet) {
+                    BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(false);
+                }
+            }
 
             if (page != null && ! (page instanceof NullPageDTO)) {
                 context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);
