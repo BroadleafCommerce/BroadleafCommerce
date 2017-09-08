@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -300,6 +301,12 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
 
             CategoryProductXref oldDefault = getCurrentDefaultXref(adminInstance);
+            //Fix for QA#2963 - during deployment sanboxed (not deployed) version of category will not be fetched from db
+            //and it will cause validation error, we should allow deployemnt of product with category in sandbox state
+            //so override required flag for that field during deployment
+            if(BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()){
+                ((BasicFieldMetadata)adminProperties.get("defaultCategory")).setRequiredOverride(false);
+            }
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
             boolean handled = false;
