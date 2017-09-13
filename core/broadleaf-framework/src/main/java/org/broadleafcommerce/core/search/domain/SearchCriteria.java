@@ -31,16 +31,17 @@ import java.util.Map;
  */
 public class SearchCriteria {
     
-    public static String PAGE_SIZE_STRING = "pageSize";
-    public static String PAGE_NUMBER = "page";
-    public static String SORT_STRING = "sort";
-    public static String QUERY_STRING = "q";
+    public static final String PAGE_SIZE_STRING = "pageSize";
+    public static final String PAGE_NUMBER = "page";
+    public static final String SORT_STRING = "sort";
+    public static final String QUERY_STRING = "q";
     
     protected Integer page = 1;
     protected Integer pageSize;
     protected Integer startIndex;
     protected String sortQuery;
     protected Map<String, String[]> filterCriteria = new HashMap<>();
+    
     /**
      * The category that the user searched on
      */
