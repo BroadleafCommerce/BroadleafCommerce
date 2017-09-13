@@ -44,6 +44,7 @@ public class ConditionalDirectCopyTransformMemberDto implements Serializable {
      */
     protected boolean skipOverlaps = false;
     protected String conditionalProperty;
+    protected Boolean conditionalValue;
 
     public String[] getTemplateTokens() {
         return templateTokens;
@@ -75,5 +76,13 @@ public class ConditionalDirectCopyTransformMemberDto implements Serializable {
 
     public void setConditionalProperty(String conditionalProperty) {
         this.conditionalProperty = conditionalProperty;
+    }
+
+    public Boolean getConditionalValue() {
+        return conditionalValue;
+    }
+
+    public void setConditionalValue(Boolean conditionalValue) {
+        this.conditionalValue = conditionalValue;
     }
 }
