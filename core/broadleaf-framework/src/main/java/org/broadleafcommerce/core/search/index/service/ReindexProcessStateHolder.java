@@ -73,6 +73,7 @@ public class ReindexProcessStateHolder {
     private final Map<String, Object> additionalPropeties = new HashMap<>();
     private final ArrayList<Throwable> failures = new ArrayList<>();
     private boolean failed = false;
+    private long expectedIndexableItemsToProcess = 0L;
     private long indexableItemsProcessed = 0L;
     private long documentsProcessed = 0L;
     
@@ -106,7 +107,6 @@ public class ReindexProcessStateHolder {
                 STATE_HOLDER_MAP.put(processId, new ReindexProcessStateHolder());
             }
         }
-        
     }
     
     /**
@@ -239,6 +239,50 @@ public class ReindexProcessStateHolder {
     }
     
     /**
+     * Provides a thread-safe, atomic way to increment an arbitrary Long value in the additional properties map. 
+     * If the property does not exist, it will be incremented (or decremented) from zero.  If the property already exists and is 
+     * not a long value, a ClassCastException will be thrown.  A negative number can be used to decrement.
+     * 
+     * @param processId
+     * @param key
+     * @param incrementBy
+     */
+    public static void incrementOrDecrementLongPropertyVal(String processId, String key, long incrementBy) {
+        ReindexProcessStateHolder instance = getInstance(processId);
+        synchronized (instance.additionalPropeties) {
+            Long val = (Long)instance.additionalPropeties.get(key);
+            if (val == null) {
+                val = incrementBy;
+            } else {
+                val += incrementBy;
+            }
+            instance.additionalPropeties.put(key, val);
+        }
+    }
+    
+    /**
+     * Provides a thread-safe, atomic way to increment an arbitrary Integer value in the additional properties map. 
+     * If the property does not exist, it will be incremented (or decremented) from zero.  If the property already exists and is 
+     * not a long value, a ClassCastException will be thrown.  A negative number can be used to decrement.
+     * 
+     * @param processId
+     * @param key
+     * @param incrementBy
+     */
+    public static void incrementOrDecrementIntPropertyVal(String processId, String key, int incrementBy) {
+        ReindexProcessStateHolder instance = getInstance(processId);
+        synchronized (instance.additionalPropeties) {
+            Integer val = (Integer)instance.additionalPropeties.get(key);
+            if (val == null) {
+                val = incrementBy;
+            } else {
+                val += incrementBy;
+            }
+            instance.additionalPropeties.put(key, val);
+        }
+    }
+    
+    /**
      * Allows callers to remove an arbirary entry from a map.
      * @param processId
      * @param key
@@ -290,6 +334,20 @@ public class ReindexProcessStateHolder {
         ReindexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             return instance.documentsProcessed;
+        }
+    }
+    
+    public static void setExepectedIndexableItemsToProcess(String processId, long expectedIndexableItemsToProcess) {
+        ReindexProcessStateHolder instance = getInstance(processId);
+        synchronized (instance) {
+            instance.expectedIndexableItemsToProcess += expectedIndexableItemsToProcess;
+        }
+    }
+    
+    public static long getExepectedIndexableItemsToProcess(String processId) {
+        ReindexProcessStateHolder instance = getInstance(processId);
+        synchronized (instance) {
+            return instance.expectedIndexableItemsToProcess;
         }
     }
     

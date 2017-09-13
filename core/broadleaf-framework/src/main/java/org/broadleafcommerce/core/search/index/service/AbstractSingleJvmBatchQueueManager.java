@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kelly Tisdell
  *
  */
-public abstract class AbstractSingleJvmBatchQueueManager<T> implements QueueManager<T> {
+public abstract class AbstractSingleJvmBatchQueueManager<T> implements QueueProducer<T>, QueueConsumer<T> {
     
     protected final String processId;
     protected final ArrayBlockingQueue<T> queue;
@@ -83,7 +83,7 @@ public abstract class AbstractSingleJvmBatchQueueManager<T> implements QueueMana
                                 return;
                             }
                             
-                            success = put(item, 5000L, TimeUnit.MILLISECONDS);
+                            success = put(item, 1000L, TimeUnit.MILLISECONDS);
                         }
                     } catch (InterruptedException e) {
                         //Mark the process as failed.

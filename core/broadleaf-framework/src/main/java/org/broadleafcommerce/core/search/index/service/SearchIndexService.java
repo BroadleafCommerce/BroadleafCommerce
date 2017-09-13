@@ -5,7 +5,7 @@ import org.broadleafcommerce.core.catalog.domain.Indexable;
 
 import java.util.List;
 
-public interface IndexService<I extends Indexable> {
+public interface SearchIndexService<I extends Indexable> {
     
     /**
      * Rebuilds an entire index.  Index is typically Solr or ElasticSearch, but could be any type of search-able index.
@@ -26,12 +26,5 @@ public interface IndexService<I extends Indexable> {
      * @return
      */
     public boolean isExecutingReindex();
-    
-    /**
-     * Indicates if this allows for distributed processing.
-     * 
-     * @return
-     */
-    public boolean isProcessDistributed();
 
 }

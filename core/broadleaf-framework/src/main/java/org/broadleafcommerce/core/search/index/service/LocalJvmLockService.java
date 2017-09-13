@@ -68,7 +68,7 @@ public class LocalJvmLockService implements LockService {
         }
         synchronized (LOCKS) {
             if (! isLocked(reference)) {
-                throw new LockException("There no lock for reference " + reference);
+                throw new LockException("There was no lock for reference " + reference);
             }
             
             LOCKS.remove(reference);

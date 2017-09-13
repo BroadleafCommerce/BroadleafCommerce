@@ -34,6 +34,7 @@ import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.broadleafcommerce.common.exception.ServiceException;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,15 +53,21 @@ public interface SolrUtil {
     /**
      * Executes a query against Solr, setting the appropriate Basic Auth headers, if needed.
      * 
+     * The index name (or collection name) is generally important, especially if using SolrCloud, 
+     * and if the SolrClient does not have an assigned defaultCollection.  See the Solr documentation for more details.
+     * 
      * @param query
      * @param indexName
      * @return
      * @throws SolrServerException
      * @throws IOException
      */
-    public QueryResponse query(SolrQuery query, String indexName) throws SolrServerException, IOException;
+    public QueryResponse query(SolrQuery query, String indexName) throws ServiceException;
     
     /**
+     * 
+     * The index name (or collection name) is generally important, especially if using SolrCloud, 
+     * and if the SolrClient does not have an assigned defaultCollection.  See the Solr documentation for more details.
      * 
      * @param docs
      * @param indexName
@@ -69,7 +76,7 @@ public interface SolrUtil {
      * @throws SolrServerException
      * @throws IOException
      */
-    public UpdateResponse updateIndex(List<SolrInputDocument> docs, String indexName, int commitWithin) throws SolrServerException, IOException;
+    public UpdateResponse updateIndex(List<SolrInputDocument> docs, String indexName, int commitWithin) throws ServiceException;
     
     /**
      * 
@@ -79,22 +86,23 @@ public interface SolrUtil {
      * @throws SolrServerException
      * @throws IOException
      */
-    public UpdateResponse updateIndex(List<SolrInputDocument> docs, int commitWithin) throws SolrServerException, IOException;
+    public UpdateResponse updateIndex(List<SolrInputDocument> docs, int commitWithin) throws ServiceException;
 
     /**
-     * This is the most flexible of the updateIndex APIs, as it allows you to set all of the parameters yourself, including 
-     * commitWithin, SolrInputDocuments, parameters, etc.
+     * 
      * 
      * @param request
      * @return
      * @throws SolrServerException
      * @throws IOException
      */
-    public UpdateResponse updateIndex(UpdateRequest request) throws SolrServerException, IOException;
+    public UpdateResponse updateIndex(UpdateRequest request) throws ServiceException;
     
     /**
-     * This is the most flexible of the updateIndex APIs, as it allows you to set all of the parameters yourself, including 
-     * commitWithin, SolrInputDocuments, parameters, etc.
+     * Convenience methods to send updates to Solr.  The update request could contain SolrInputDocuments, a delete query, etc.
+     * 
+     * The index name (or collection name) is generally important, especially if using SolrCloud, 
+     * and if the SolrClient does not have an assigned defaultCollection.  See the Solr documentation for more details.
      * 
      * @param request
      * @param indexName
@@ -102,11 +110,13 @@ public interface SolrUtil {
      * @throws SolrServerException
      * @throws IOException
      */
-    public UpdateResponse updateIndex(UpdateRequest request, String indexName) throws SolrServerException, IOException;
+    public UpdateResponse updateIndex(UpdateRequest request, String indexName) throws ServiceException;
     
     /**
      * This takes a primary and secondary alias, and swaps their assignment to 
      * their respective collection names.  So, for example, assume you have 2 aliases: catalog_primary and catalog_reindex. 
+     * The parameters MUST NOT be null and both parameters MUST be existing aliases for existing collections.
+     * 
      * Let's assume that they are assigned to collections as follows:
      * 
      * catalog_primary => blcCatalogCollection0
@@ -124,7 +134,7 @@ public interface SolrUtil {
      * 
      * Under the covers, we use the SolrJ API and CollectionAdminRequests to do this.
      * 
-     * Note, by default, this is only supported for SolrCloud.  You may wish to override this and use SolrJ's 
+     * Note, by default, this is only supported for SolrCloudClient.  You may wish to override this and use SolrJ's 
      * Core Admin Requests.
      * 
      * @param primaryAliasName
@@ -133,7 +143,7 @@ public interface SolrUtil {
      * @throws IOException
      * @throws UnsupportedOperationException
      */
-    public void swap(String primaryAliasName, String secondaryAliasName) throws SolrServerException, IOException;
+    public void swap(String primaryAliasName, String secondaryAliasName) throws ServiceException;
     
     /**
      * Returns the instance of the SolrClient (e.g. CloudSolrClient).
@@ -170,7 +180,7 @@ public interface SolrUtil {
      * @throws SolrServerException
      * @throws IOException
      */
-    public SolrResponse process(SolrRequest<? extends SolrResponse> request, String indexName) throws SolrServerException, IOException;
+    public SolrResponse process(SolrRequest<? extends SolrResponse> request, String indexName) throws ServiceException;
     
     /**
      * Generic wrapper that allows processing of Solr requests.  If the following properties are set, then they'll be passed 
@@ -184,7 +194,7 @@ public interface SolrUtil {
      * @throws SolrServerException
      * @throws IOException
      */
-    public SolrResponse process(SolrRequest<? extends SolrResponse> request) throws SolrServerException, IOException;
+    public SolrResponse process(SolrRequest<? extends SolrResponse> request) throws ServiceException;
     
     /**
      * This issues a commit to Solr.  Please check the docs for Solr.  This IS NOT like a database commit in that 
@@ -208,7 +218,7 @@ public interface SolrUtil {
      * @throws SolrServerException
      * @throws IOException
      */
-    public void commit(String collection) throws SolrServerException, IOException;
+    public void commit(String collection) throws ServiceException;
     
     /**
      * This issues a commit to Solr.  Please check the docs for Solr.  This IS NOT like a database commit in that 
@@ -235,6 +245,6 @@ public interface SolrUtil {
      * @throws SolrServerException
      * @throws IOException
      */
-    public void commit(String collection, boolean waitFlush, boolean waitSearcher, boolean softCommit) throws SolrServerException, IOException;
+    public void commit(String collection, boolean waitFlush, boolean waitSearcher, boolean softCommit) throws ServiceException;
     
 }

@@ -33,19 +33,26 @@ import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest.CreateAlias;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.schema.SchemaResponse.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.cloud.Aliases;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+@Component("blSolrUtil")
 public class SolrUtilImpl implements SolrUtil, InitializingBean {
     
     private static final Log LOG = LogFactory.getLog(SolrUtilImpl.class);
@@ -66,105 +73,73 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
     protected SolrClient client;
     
     @Override
-    public QueryResponse query(SolrQuery query, String indexName) throws SolrServerException, IOException {
+    public QueryResponse query(SolrQuery query, String indexName) throws ServiceException {
         QueryRequest request = new QueryRequest(query);
-        int tries = 0;
-        long pause = 0L;
-        while (true) {
-            try {
-                return (QueryResponse)process(request, indexName);
-            } catch (SolrServerException | IOException e) {
-                tries++;
-                if (tries > maxTries) {
-                    throw e;
-                }
-                LOG.warn("Error occured sending documents to Solr.  Retrying...", e);
-                if (pause > 0L) {
-                    try {
-                        Thread.sleep(pause);
-                    } catch (InterruptedException ie) {
-                        throw e;
-                    }
-                }
-                pause += waitTime;
-            }
-        }
+        return (QueryResponse)process(request, indexName);
     }
     
     @Override
-    public UpdateResponse updateIndex(UpdateRequest request) throws SolrServerException, IOException {
+    public UpdateResponse updateIndex(UpdateRequest request) throws ServiceException {
         return updateIndex(request, null);
     }
 
     @Override
-    public UpdateResponse updateIndex(UpdateRequest request, String indexName) throws SolrServerException, IOException {
-        int tries = 0;
-        long pause = 0L;
-        while (true) {
-            try {
-                return (UpdateResponse)process(request, indexName);
-            } catch (SolrServerException | IOException e) {
-                tries++;
-                if (tries > maxTries) {
-                    throw e;
-                }
-                LOG.warn("Error occured sending documents to Solr.  Retrying...", e);
-                if (pause > 0L) {
-                    try {
-                        Thread.sleep(pause);
-                    } catch (InterruptedException ie) {
-                        throw e;
-                    }
-                }
-                pause += waitTime;
-            }
-        }
+    public UpdateResponse updateIndex(UpdateRequest request, String indexName) throws ServiceException {
+        return (UpdateResponse)process(request, indexName);
     }
 
     @Override
-    public UpdateResponse updateIndex(List<SolrInputDocument> docs, String indexName, int commitWithin) throws SolrServerException, IOException {
+    public UpdateResponse updateIndex(List<SolrInputDocument> docs, String indexName, int commitWithin) throws ServiceException {
         if (docs == null || docs.isEmpty()) {
             LOG.warn("The collection of SolrInputDocuments was empty.  Skipping...");
             return null;
         }
         
-        int tries = 0;
-        long pause = 0L;
-        while (true) {
-            try {
-                UpdateRequest request = new UpdateRequest();
-                request.add(docs);
-                if (commitWithin > 0) {
-                    request.setCommitWithin(commitWithin);
-                } 
-                return (UpdateResponse)process(request, indexName);
-            } catch (SolrServerException | IOException e) {
-                tries++;
-                if (tries > maxTries) {
-                    throw e;
-                }
-                LOG.warn("Error occured sending documents to Solr.  Retrying...", e);
-                if (pause > 0L) {
-                    try {
-                        Thread.sleep(pause);
-                    } catch (InterruptedException ie) {
-                        throw e;
-                    }
-                }
-                pause += waitTime;
-            }
-        }
+        UpdateRequest request = new UpdateRequest();
+        request.add(docs);
+        if (commitWithin > 0) {
+            request.setCommitWithin(commitWithin);
+        } 
+        return (UpdateResponse)process(request, indexName);
     }
 
     @Override
-    public UpdateResponse updateIndex(List<SolrInputDocument> docs, int commitWithin) throws SolrServerException, IOException {
+    public UpdateResponse updateIndex(List<SolrInputDocument> docs, int commitWithin) throws ServiceException {
         return updateIndex(docs, null, commitWithin);
     }
     
     @Override
-    public void swap(String primaryAliasName, String secondaryAliasName) throws SolrServerException, IOException {
+    public void swap(String primaryAliasName, String secondaryAliasName) throws ServiceException {
         if (isSolrCloudMode()) {
+            CloudSolrClient cloudClient = (CloudSolrClient)getSolrClient();
+            Aliases aliases = cloudClient.getZkStateReader().getAliases();
+            Map<String,String> aliasMap = aliases.getCollectionAliasMap();
             
+            String primaryCollectionName = aliasMap.get(primaryAliasName);
+            if (primaryCollectionName != null) {
+                primaryCollectionName = primaryCollectionName.split(",")[0];
+            } else {
+                throw new ServiceException("Unable to determine collection name from primary alias '" + primaryAliasName + "'");
+            }
+            String secondaryCollectionName = aliasMap.get(secondaryAliasName);
+            if (secondaryCollectionName != null) {
+                secondaryCollectionName = secondaryCollectionName.split(",")[0];
+            } else {
+                throw new ServiceException("Unable to determine collection name from secondary alias '" + secondaryAliasName + "'");
+            }
+            
+            try {
+                //Assign the primary alias to the secondary collection
+                CreateAlias createAlias = CollectionAdminRequest.createAlias(primaryAliasName, secondaryCollectionName);
+                process(createAlias);
+                
+                //Assign the secondary alias to the primary collection
+                createAlias = CollectionAdminRequest.createAlias(secondaryAliasName, primaryCollectionName);
+                process(createAlias);
+            } catch (Exception e) {
+                throw new ServiceException("Error swapping primary alias '" + primaryAliasName + "' to backup alias '" 
+                        + secondaryAliasName + "' and vice versa.", e);
+            }
         } else {
             throw new UnsupportedOperationException("Realias operation is only supported in SolrCloud.");
         }
@@ -177,22 +152,46 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
 
     @Override
     public boolean isSolrCloudMode() {
-        return (client != null && client instanceof CloudSolrClient);
+        return (getSolrClient() != null && getSolrClient() instanceof CloudSolrClient);
     }
     
     @Override
-    public SolrResponse process(SolrRequest<? extends SolrResponse> request) throws SolrServerException, IOException {
+    public SolrResponse process(SolrRequest<? extends SolrResponse> request) throws ServiceException {
         return process(request, null);
     }
     
     @Override
-    public SolrResponse process(SolrRequest<? extends SolrResponse> request, String indexName) throws SolrServerException, IOException {
+    public SolrResponse process(SolrRequest<? extends SolrResponse> request, String indexName) throws ServiceException {
         //If these are null they will be ignored.  Otherwise, they will be used to set a Basic Auth header.
         request.setBasicAuthCredentials(basicAuthUserName, basicAuthPassword);
         request.setMethod(getDefaultHttpMethod());
         
-        //If the index name is null, it will be ignored.
-        return request.process(client, indexName);
+        
+        int tries = 0;
+        long pause = 0L;
+        while (true) {
+            try {
+                if (indexName != null) {
+                    return request.process(getSolrClient(), indexName);
+                } else {
+                    return request.process(getSolrClient());
+                }
+            } catch (SolrServerException | IOException e) {
+                tries++;
+                if (tries > maxTries) {
+                    throw new ServiceException("Error occured communicating with Solr.", e);
+                }
+                LOG.warn("Error occured communicating with Solr.  Retrying...", e);
+                if (pause > 0L) {
+                    try {
+                        Thread.sleep(pause);
+                    } catch (InterruptedException ie) {
+                        throw new ServiceException("Error occured communicating with Solr.", e);
+                    }
+                }
+                pause += waitTime;
+            }
+        }
     }
     
     @Override
@@ -207,21 +206,25 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
         if (isSolrCloudMode()) {
             //This should happen as part of creating this bean.  However, it won't hurt to call it again, 
             //so we'll ensure that this is connected once here.
-            ((CloudSolrClient)client).connect();
+            ((CloudSolrClient)getSolrClient()).connect();
         }
     }
     
     @Override
-    public void commit(String collection) throws SolrServerException, IOException {
+    public void commit(String collection) throws ServiceException {
         commit(collection, true, true, false);
     }
     
     @Override
-    public void commit(String collection, boolean waitFlush, boolean waitSearcher, boolean softCommit) throws SolrServerException, IOException {
-        if (collection != null) {
-            client.commit(collection, waitFlush, waitSearcher, softCommit);
-        } else {
-            client.commit(waitFlush, waitSearcher, softCommit);
+    public void commit(String collection, boolean waitFlush, boolean waitSearcher, boolean softCommit) throws ServiceException {
+        try {
+            if (collection != null) {
+                getSolrClient().commit(collection, waitFlush, waitSearcher, softCommit);
+            } else {
+                getSolrClient().commit(waitFlush, waitSearcher, softCommit);
+            }
+        } catch (SolrServerException | IOException e) {
+            throw new ServiceException("An error occured trying to force commit a Solr index for collection: " + collection, e);
         }
     }
 }
