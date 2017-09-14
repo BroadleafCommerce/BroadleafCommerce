@@ -17,7 +17,7 @@ public interface SearchIndexProcessLauncher<I extends Indexable> {
      * 
      * @return
      */
-    public boolean isExecutingReindex();
+    public boolean isExecuting();
     
     /**
      * Method to forceably stop a running index job.  If the job is not running, this will have no affect.

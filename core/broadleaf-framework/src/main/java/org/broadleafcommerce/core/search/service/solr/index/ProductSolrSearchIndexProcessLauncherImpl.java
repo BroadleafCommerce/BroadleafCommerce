@@ -8,9 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+/**
+ * Concrete implementation of AbstractSolrIndexProcessLauncherImpl, specifically for indexing or 
+ * reindexing products in Solr.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
+@Component("blProductSolrSearchIndexProcessLauncher")
 public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndexProcessLauncherImpl<Product> {
     
     /*

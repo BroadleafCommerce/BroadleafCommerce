@@ -176,13 +176,15 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
      */
     @Override
     public void rebuildIndex() throws ServiceException {
-        if (!isExecutingReindex()) {
+        if (!isExecuting()) {
             if (getTaskExecutor() != null) {
                 getTaskExecutor().execute(this);
             } else {
                 Thread t = new Thread(this, getClass().getName());
                 t.start();
             }
+        } else {
+            throw new ServiceException("The index process is already running for processId " + determineProcessId());
         }
     }
     
@@ -199,10 +201,10 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     
     /*
      * (non-Javadoc)
-     * @see org.broadleafcommerce.core.search.index.service.SearchIndexService#isExecutingReindex()
+     * @see org.broadleafcommerce.core.search.index.service.SearchIndexService#isExecuting()
      */
     @Override
-    public boolean isExecutingReindex() {
+    public boolean isExecuting() {
         synchronized (this) {
             return getLockService().isLocked(determineProcessId());
         }
@@ -215,7 +217,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     @Override
     public void forceStop() {
         synchronized(this) {
-            if (isExecutingReindex()) {
+            if (isExecuting()) {
                 try {
                     throw new Exception("A process with processId: " + determineProcessId() + " is being forceably stopped.");
                 } catch (Exception e) {
