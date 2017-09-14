@@ -227,4 +227,21 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
             throw new ServiceException("An error occured trying to force commit a Solr index for collection: " + collection, e);
         }
     }
+    
+    @Override
+    public String getCollectionNameForAlias(String alias) {
+        if (isSolrCloudMode()) {
+            CloudSolrClient cloudClient = (CloudSolrClient)getSolrClient();
+            Aliases aliases = cloudClient.getZkStateReader().getAliases();
+            Map<String,String> aliasMap = aliases.getCollectionAliasMap();
+            String collection = aliasMap.get(alias);
+            if (collection != null) {
+                return collection.split(",")[0];
+            }
+            
+            return collection;
+        } else {
+            throw new UnsupportedOperationException("Cannot obtain alias for a collection. Not in SolrCloud mode.");
+        }
+    }
 }

@@ -24,10 +24,10 @@ import java.util.List;
  *
  * @param <I>
  */
-public abstract class AbstractGenericSearchIndexService<I extends Indexable> 
-implements SearchIndexService<I>, Runnable, ApplicationContextAware {
+public abstract class AbstractGenericSearchIndexProcessLauncher<I extends Indexable> 
+implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     
-    private static final Log LOG = LogFactory.getLog(AbstractGenericSearchIndexService.class);
+    private static final Log LOG = LogFactory.getLog(AbstractGenericSearchIndexProcessLauncher.class);
     protected static final long DEFAULT_CLEANUP_WAIT_TIME = 5000L;
     
     protected ApplicationContext ctx;
@@ -210,10 +210,10 @@ implements SearchIndexService<I>, Runnable, ApplicationContextAware {
     
     /*
      * (non-Javadoc)
-     * @see org.broadleafcommerce.core.search.index.service.SearchIndexService#stop()
+     * @see org.broadleafcommerce.core.search.index.service.SearchIndexService#forceStop()
      */
     @Override
-    public void stop() {
+    public void forceStop() {
         synchronized(this) {
             if (isExecutingReindex()) {
                 try {
@@ -315,8 +315,9 @@ implements SearchIndexService<I>, Runnable, ApplicationContextAware {
      * any other processing.  Another alternative to using this is to implement a Spring event listener that listens for 
      * SearchIndexProcessStartedEvent types. This method is called before the SearchIndexProcessStartedEvent is raised.
      * @param processId
+     * @throws ServiceException
      */
-    protected abstract void preProcess(String processId);
+    protected abstract void preProcess(String processId) throws ServiceException;
     
     /**
      * This is a lifecycle method that allows for arbitrary pre-processing of a success flow.  This is invoked when no errors 
@@ -326,8 +327,9 @@ implements SearchIndexService<I>, Runnable, ApplicationContextAware {
      * SearchIndexProcessCompletedEvent types. This method is called before the SearchIndexProcessCompletedEvent is raised.
      * 
      * @param processId
+     * @throws ServiceException
      */
-    protected abstract void postProcessSuccess(String processId);
+    protected abstract void postProcessSuccess(String processId) throws ServiceException;
     
     /**
      * This is a lifecycle method that allows for arbitrary pre-processing of a failure flow.  This is invoked if/when an 
@@ -336,6 +338,7 @@ implements SearchIndexService<I>, Runnable, ApplicationContextAware {
      * SearchIndexProcessStateHolder). Another alternative to using this is to implement a Spring event listener that listens for 
      * SearchIndexProcessFailedEvent types. This method is called before the SearchIndexProcessFailedEvent is raised.
      * @param processId
+     * @throws ServiceException
      */
-    protected abstract void postProcessFailure(String processId);
+    protected abstract void postProcessFailure(String processId) throws ServiceException;
 }

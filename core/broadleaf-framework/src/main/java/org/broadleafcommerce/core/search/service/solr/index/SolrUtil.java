@@ -146,7 +146,7 @@ public interface SolrUtil {
     public void swap(String primaryAliasName, String secondaryAliasName) throws ServiceException;
     
     /**
-     * Returns the instance of the SolrClient (e.g. CloudSolrClient).
+     * Returns the instance of the underlying SolrClient (e.g. CloudSolrClient).
      * 
      * @return
      */
@@ -246,5 +246,13 @@ public interface SolrUtil {
      * @throws IOException
      */
     public void commit(String collection, boolean waitFlush, boolean waitSearcher, boolean softCommit) throws ServiceException;
+    
+    /**
+     * This method returns the collection name associated with an alias (or null).  This throws an UnsupportedOperationException 
+     * if the SolrClient is not a CloudSolrClient.
+     * @param alias
+     * @return
+     */
+    public String getCollectionNameForAlias(String alias);
     
 }
