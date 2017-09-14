@@ -60,16 +60,16 @@ import java.util.Map;
  * @author Kelly Tisdell
  *
  */
-public class ReindexProcessStateHolder {
+public class SearchIndexProcessStateHolder {
     
-    private static final Log LOG = LogFactory.getLog(ReindexProcessStateHolder.class);
+    private static final Log LOG = LogFactory.getLog(SearchIndexProcessStateHolder.class);
     
     public static final String PRIMARY_INDEX_NAME = "PRIMARY_INDEX_NAME"; //Convenience name of the current primary index that will be swapped to the background
     public static final String PRIMARY_ALIAS_NAME = "PRIMARY_ALIAS_NAME"; //Convenience name of the current primary alias 
     public static final String REINDEX_INDEX_NAME = "REINDEX_INDEX_NAME"; //Convenience name of the index or collection that is being reindexed.
     public static final String REINDEX_ALIAS_NAME = "REINDEX_ALIAS_NAME"; //Convenience name of the alias that is being reindexed.
     
-    private static final Map<String,ReindexProcessStateHolder> STATE_HOLDER_MAP = new HashMap<>();
+    private static final Map<String,SearchIndexProcessStateHolder> STATE_HOLDER_MAP = new HashMap<>();
     private final Map<String, Object> additionalPropeties = new HashMap<>();
     private final ArrayList<Throwable> failures = new ArrayList<>();
     private boolean failed = false;
@@ -77,7 +77,7 @@ public class ReindexProcessStateHolder {
     private long indexableItemsProcessed = 0L;
     private long documentsProcessed = 0L;
     
-    public ReindexProcessStateHolder() {
+    public SearchIndexProcessStateHolder() {
         //This should never be directly instantiated.  Use the static methods to access it.  Use additional properties 
         //to store additional state.
     }
@@ -100,11 +100,11 @@ public class ReindexProcessStateHolder {
             throw new IllegalArgumentException("Process ID must not be null in order to start a process.");
         }
         if (processId != null) {
-            synchronized (ReindexProcessStateHolder.class) {
+            synchronized (SearchIndexProcessStateHolder.class) {
                 if (STATE_HOLDER_MAP.containsKey(processId)) {
                     throw new IllegalStateException("Can't start process state for this process ID. It is already started.");
                 }
-                STATE_HOLDER_MAP.put(processId, new ReindexProcessStateHolder());
+                STATE_HOLDER_MAP.put(processId, new SearchIndexProcessStateHolder());
             }
         }
     }
@@ -114,7 +114,7 @@ public class ReindexProcessStateHolder {
      */
     public static void endProcessState(String processId) {
         if (processId != null) {
-            synchronized (ReindexProcessStateHolder.class) {
+            synchronized (SearchIndexProcessStateHolder.class) {
                 if (STATE_HOLDER_MAP.containsKey(processId)) {
                     STATE_HOLDER_MAP.remove(processId);
                 } else {
@@ -130,7 +130,7 @@ public class ReindexProcessStateHolder {
      */
     public static boolean isProcessStateEnabled(String processId) {
         if (processId != null) {
-            synchronized (ReindexProcessStateHolder.class) {
+            synchronized (SearchIndexProcessStateHolder.class) {
                 return (STATE_HOLDER_MAP.containsKey(processId));
             }
         }
@@ -145,7 +145,7 @@ public class ReindexProcessStateHolder {
      * @param th
      */
     public static void failFast(String processId, Throwable th) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized(instance) {
             instance.failed = true;
             if (th != null) {
@@ -161,7 +161,7 @@ public class ReindexProcessStateHolder {
      * @return
      */
     public static boolean isFailed(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized(instance) {
             return instance.failed;
         }
@@ -174,7 +174,7 @@ public class ReindexProcessStateHolder {
      * @return
      */
     public static Throwable getFirstFailure(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized(instance) {
             if (!instance.failures.isEmpty()){
                 return instance.failures.get(0);
@@ -192,7 +192,7 @@ public class ReindexProcessStateHolder {
      * @return
      */
     public static List<Throwable> getAllFailures(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized(instance) {
             return Collections.unmodifiableList(instance.failures);
         }
@@ -205,7 +205,7 @@ public class ReindexProcessStateHolder {
      * @return
      */
     public static Object getAdditionalProperty(String processId, String key) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance.additionalPropeties) {
             return instance.additionalPropeties.get(key);
         }
@@ -218,7 +218,7 @@ public class ReindexProcessStateHolder {
      * @return
      */
     public static Map<String, Object> getAdditionalProperties(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance.additionalPropeties) {
             return Collections.unmodifiableMap(instance.additionalPropeties);
         }
@@ -232,7 +232,7 @@ public class ReindexProcessStateHolder {
      * @param value
      */
     public static void setAdditionalProperty(String processId, String key, Object value) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance.additionalPropeties) {
             instance.additionalPropeties.put(key, value);
         }
@@ -248,7 +248,7 @@ public class ReindexProcessStateHolder {
      * @param incrementBy
      */
     public static void incrementOrDecrementLongPropertyVal(String processId, String key, long incrementBy) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance.additionalPropeties) {
             Long val = (Long)instance.additionalPropeties.get(key);
             if (val == null) {
@@ -270,7 +270,7 @@ public class ReindexProcessStateHolder {
      * @param incrementBy
      */
     public static void incrementOrDecrementIntPropertyVal(String processId, String key, int incrementBy) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance.additionalPropeties) {
             Integer val = (Integer)instance.additionalPropeties.get(key);
             if (val == null) {
@@ -289,71 +289,71 @@ public class ReindexProcessStateHolder {
      * @return
      */
     public static Object removeAdditionalProperty(String processId, String key) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance.additionalPropeties) {
             return instance.additionalPropeties.remove(key);
         }
     }
     
     public static void incrementIndexableItemsProcessed(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             instance.indexableItemsProcessed++;
         }
     }
     
     public static void incrementIndexableItemsProcessed(String processId, long itemsProcessed) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             instance.indexableItemsProcessed += itemsProcessed;
         }
     }
     
     public static long getIndexableItemsProcessed(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             return instance.indexableItemsProcessed;
         }
     }
     
     public static void incrementDocumentsProcessed(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             instance.documentsProcessed++;
         }
     }
     
     public static void incrementDocumentsProcessed(String processId, long itemsProcessed) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             instance.documentsProcessed += itemsProcessed;
         }
     }
     
     public static long getDocumentsProcessed(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             return instance.documentsProcessed;
         }
     }
     
     public static void setExepectedIndexableItemsToProcess(String processId, long expectedIndexableItemsToProcess) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             instance.expectedIndexableItemsToProcess += expectedIndexableItemsToProcess;
         }
     }
     
     public static long getExepectedIndexableItemsToProcess(String processId) {
-        ReindexProcessStateHolder instance = getInstance(processId);
+        SearchIndexProcessStateHolder instance = getInstance(processId);
         synchronized (instance) {
             return instance.expectedIndexableItemsToProcess;
         }
     }
     
-    private static ReindexProcessStateHolder getInstance(String processId) {
+    private static SearchIndexProcessStateHolder getInstance(String processId) {
         if (processId != null) {
-            synchronized(ReindexProcessStateHolder.class) {
+            synchronized(SearchIndexProcessStateHolder.class) {
                 if (STATE_HOLDER_MAP.containsKey(processId)) {
                     return STATE_HOLDER_MAP.get(processId);
                 }

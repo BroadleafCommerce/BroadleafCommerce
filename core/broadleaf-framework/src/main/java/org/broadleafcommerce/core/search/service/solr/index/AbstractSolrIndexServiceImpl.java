@@ -26,11 +26,5 @@ public abstract class AbstractSolrIndexServiceImpl<I extends Indexable> extends 
         // TODO Auto-generated method stub
         
     }
-
-    @Override
-    protected void process(String processId) throws ServiceException {
-        // TODO Auto-generated method stub
-        
-    }
     
 }

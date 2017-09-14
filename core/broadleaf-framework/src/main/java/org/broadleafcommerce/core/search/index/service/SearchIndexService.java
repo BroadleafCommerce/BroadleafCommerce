@@ -26,5 +26,11 @@ public interface SearchIndexService<I extends Indexable> {
      * @return
      */
     public boolean isExecutingReindex();
+    
+    /**
+     * Method to forceably stop a running index job.  If the job is not running, this will have no affect.
+     * @return
+     */
+    public void stop();
 
 }
