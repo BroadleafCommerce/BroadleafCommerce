@@ -144,4 +144,9 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     public ExtensionResultStatusType attachSortField(SolrQuery solrQuery, String requestedSortFieldName, SolrQuery.ORDER order) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public ExtensionResultStatusType getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix, ExtensionResultHolder<String> erh) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }
