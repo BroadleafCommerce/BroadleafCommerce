@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.search.index.service;
+package org.broadleafcommerce.core.search.index;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
@@ -24,5 +24,11 @@ public interface SearchIndexProcessLauncher<I extends Indexable> {
      * @return
      */
     public void forceStop();
+    
+    /**
+     * Returns the elapsed time in millis, or -1 if the system is not running.
+     * @return
+     */
+    public long getElapsedTime();
 
 }

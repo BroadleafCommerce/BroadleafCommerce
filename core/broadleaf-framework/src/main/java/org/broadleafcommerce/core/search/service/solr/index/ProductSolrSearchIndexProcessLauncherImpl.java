@@ -2,8 +2,8 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
-import org.broadleafcommerce.core.search.index.service.LockService;
-import org.broadleafcommerce.core.search.index.service.QueueProducer;
+import org.broadleafcommerce.core.search.index.LockService;
+import org.broadleafcommerce.core.search.index.QueueLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
      * But giving it its own name is nice because it adds flexibility if there are more than one 
      * LockServices defined for various indexing tasks.
      */
-    @Resource(name="blProductSearchIndexTaskExecutor")
+    @Resource(name="blProductSearchIndexLockService")
     protected LockService lockService;
     
     /*
@@ -79,7 +79,7 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     }
 
     @Override
-    protected QueueProducer<Long[]> createQueueProducer(String processId) {
+    protected QueueLoader<Long[]> createQueueLoader(String processId) {
         // TODO Auto-generated method stub
         return null;
     }

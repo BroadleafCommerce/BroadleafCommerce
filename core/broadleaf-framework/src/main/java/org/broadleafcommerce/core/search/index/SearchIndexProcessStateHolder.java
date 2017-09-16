@@ -22,7 +22,7 @@
  * #L%
  */
 
-package org.broadleafcommerce.core.search.index.service;
+package org.broadleafcommerce.core.search.index;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.search.index.service;
+package org.broadleafcommerce.core.search.index;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -6,16 +6,18 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * This is an abstract component to allow for the full reindexing of a specific index.  This component only operates as a 
  * controller for a multi-threaded process.  The purpose of this is to obtain a process lock (which may be in memory or 
- * distributed).  It then runs a QueueProducer in another thread, which begins to populate a Queue (which could be in memory or 
+ * distributed).  It then runs a QueueLoader in another thread, which begins to populate a Queue (which could be in memory or 
  * distributed).  It creates a Semaphore to block until all background threads are complete.  It then raises a process started 
  * event (which is a Spring event).  This may be propagated to a distributed event so that other QueueConsumers can be started.
  * Finally, it waits until the semaphore releases and completes the process.
@@ -25,11 +27,11 @@ import java.util.List;
  * @param <I>
  */
 public abstract class AbstractGenericSearchIndexProcessLauncher<I extends Indexable> 
-implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
+implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, InitializingBean {
     
     private static final Log LOG = LogFactory.getLog(AbstractGenericSearchIndexProcessLauncher.class);
     protected static final long DEFAULT_CLEANUP_WAIT_TIME = 5000L;
-    
+    private long startTime = -1;
     protected ApplicationContext ctx;
     
     /**
@@ -43,6 +45,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
      */
     protected final void executeInternally() {
         final String processId = determineProcessId();
+        final Serializable key;
         synchronized(this) {
             try {
                 //The whole point of a lock is to avoid having 2 threads or even 2 different cluster members 
@@ -52,16 +55,17 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
                 
                 //The owner of the lock is assumed to be the thread that controls the flow.  If it is a distributed lock, 
                 //it is assumed that a particular thread on a particular node controls the flow.
-                getLockService().lock(processId);
+                key = getLockService().lock(processId);
+                
+                startTime = System.currentTimeMillis();
             } catch (LockException e) {
                 LOG.error("There was an error obtaining the lock for processId " + processId, e);
                 return;
             }
         }
         
-        
         //TODO: Create Barrier.
-        QueueProducer<?> queueProducer = null;
+        QueueManager<?> queueManager = null;
         try {
             SearchIndexProcessStateHolder.startProcessState(processId);
             try {
@@ -69,23 +73,21 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
                 preProcess(processId);
                 
                 try {
-                    //This will start a QueueProducer in a background thread.
+                    //This will start a QueueLoader in a background thread.
                     //The purpose is to begin independently populating a Queue so that consumer threads can independently 
                     //and asynchronously consume the messages.
-                    queueProducer = createQueueProducer(processId);
-                    queueProducer.initialize();
-                    if (! queueProducer.getFieldEntity().equals(determineFieldEntity())) {
-                        throw new ServiceException("The QueueProducer has a FieldEntity type of: " 
-                                + queueProducer.getFieldEntity().toString() 
-                                + " and " + getClass().getName() + " has a FieldEntity type of " + determineFieldEntity().toString());
+                    queueManager = createQueueManager(processId);
+                    queueManager.initialize(processId);
+                    if (getTaskExecutor() == null) {
+                        queueManager.startQueueProducer();
+                    } else {
+                        queueManager.startQueueProducer(getTaskExecutor());
                     }
-                    runQueueProducer(queueProducer);
                     
-                    String queueName = queueProducer.getQueueName();
+                    String queueName = queueManager.getQueueName();
                     
                     //Now, we need to raise an event so that consumers can begin consuming messages.
                     ctx.publishEvent(new SearchIndexProcessStartedEvent(processId, determineFieldEntity(), queueName));
-                    
                     
                 } finally {
                     //TODO: Wait for Barrier...
@@ -142,11 +144,12 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
                 }
                 
                 try {
-                    if (queueProducer != null) {
-                        queueProducer.cleanup();
+                    if (queueManager != null) {
+                        queueManager.close();
                     }
                 } catch (Exception e) {
-                    LOG.error("An error occured trying to cleanup the QueueProducer for entity type: " + queueProducer.getFieldEntity().getType(), e);
+                    LOG.error("An error occured trying to cleanup the QueueManager for Queue name: " 
+                            + queueManager.getQueueName(), e);
                 }
                 
                 try {
@@ -157,14 +160,16 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
                 
                 synchronized (this) {
                     try {
-                        getLockService().unlock(processId);
+                        getLockService().unlock(key, processId);
                     } catch (LockException e) {
                         LOG.error("There was an error trying to remove the lock for processId " + processId, e);
                     }
                 }
             }
         } finally {
-            //
+            synchronized(this) {
+                startTime = -1;
+            }
         }
     }
     
@@ -207,6 +212,20 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     public boolean isExecuting() {
         synchronized (this) {
             return getLockService().isLocked(determineProcessId());
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.core.search.index.SearchIndexProcessLauncher#getElapsedTime()
+     */
+    public long getElapsedTime() {
+        synchronized(this) {
+            if (startTime < 0L) {
+                return -1L;
+            } else {
+                return (System.currentTimeMillis() - startTime);
+            }
         }
     }
     
@@ -256,28 +275,30 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     }
     
     /**
-     * Convenience method to allow overriding.  This runs the QueueProducer in another thread.
-     * @param producer
-     */
-    protected void runQueueProducer(QueueProducer<?> queueProducer) {
-        if (getTaskExecutor() != null) {
-            getTaskExecutor().execute(queueProducer);
-        } else {
-            Thread queueProducerThread = new Thread(queueProducer, queueProducer.getFieldEntity().getType() + "_QueueProducer");
-            queueProducerThread.start();
-        }
-    }
-    
-    /**
      * Method to allow implementors to return a specific TaskExecutor.  This method MAY return null.  If this method returns 
-     * null, then Threads will be directly created and used for execution of this job.
+     * null, then Threads will be directly created and used for execution of this job, which is the default. The reason is 
+     * that this process is careful to prevent multiple jobs running at the same time, and we don't want to consume 
+     * worker threads from a thread pool to run a single control thread.
      * 
      * This component runs itself in a background thread when the rebuildIndex() method is called.  This component also 
-     * delegates to a background thread to run the QueueProducer.
+     * delegates to a background thread to run the QueueLoader.  If you do return a task executor, make sure it has 
+     * enough threads to handle the control thread, the QueueLoader, and the worker threads for the QueueConsumer.
      * 
      * @return
      */
-    protected abstract TaskExecutor getTaskExecutor();
+    protected TaskExecutor getTaskExecutor() {
+        //Default is to return null
+        return null;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //TODO: Make sure that the QueueManager, LockService, and this all have the proper distributed properties.
+    }
     
     /**
      * Returns the LockService to be used by this component to lock and unlock the process.  This MUST NOT return null.
@@ -295,21 +316,12 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     protected abstract FieldEntity determineFieldEntity();
     
     /**
-     * This should instantiate an instance of the QueueProducer.  The QueueProducer should only be created / managed by this 
-     * thread.  If there are multiple servers participating in this process. Only the server that obtains the distributed lock 
-     * should create and start the QueueProducer.
-     * 
-     * QueueProducer implements Runnable.  It's job is to populate a Queue so that one or more threads can consume the data 
-     * in the queue and populate the search index.
-     * Implementors of this method SHOULD NOT call the run method or delegate this to a 
-     * thread this as it will be started in a background thread by this component.  The return value should typically be 
-     * a new instance every time with an empty, or otherwise 
-     * uninitialized, queue.
+     * This should return the QueueManager that owns the relationship between the QueueLoader and QueueConsumer.
      * 
      * @param processId
      * @return
      */
-    protected abstract QueueProducer<?> createQueueProducer(String processId);
+    protected abstract QueueManager<?> createQueueManager(String processId);
     
     /**
      * This is a lifecycle method that allows for arbitrary pre-processing.  This method is invoked after a lock is obtained, 
@@ -323,7 +335,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     
     /**
      * This is a lifecycle method that allows for arbitrary pre-processing of a success flow.  This is invoked when no errors 
-     * have occured, and after all other processing normal takes place.  However, this is invoked before the QueueProducer's 
+     * have occured, and after all other processing normal takes place.  However, this is invoked before the QueueLoader's 
      * cleanup method is called, and before the process state is destroyed (so implementors can access 
      * SearchIndexProcessStateHolder).  Another alternative to using this is to implement a Spring event listener that listens for 
      * SearchIndexProcessCompletedEvent types. This method is called before the SearchIndexProcessCompletedEvent is raised.
@@ -335,7 +347,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware {
     
     /**
      * This is a lifecycle method that allows for arbitrary pre-processing of a failure flow.  This is invoked if/when an 
-     * error occurs, but before the QueueProducer's 
+     * error occurs, but before the QueueLoader's 
      * cleanup method is called, and before the process state is destroyed (so implementors can access 
      * SearchIndexProcessStateHolder). Another alternative to using this is to implement a Spring event listener that listens for 
      * SearchIndexProcessFailedEvent types. This method is called before the SearchIndexProcessFailedEvent is raised.

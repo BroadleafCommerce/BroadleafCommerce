@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.search.index.service.AbstractGenericSearchIndexProcessLauncher;
+import org.broadleafcommerce.core.search.index.AbstractGenericSearchIndexProcessLauncher;
 
 import java.util.ArrayList;
 

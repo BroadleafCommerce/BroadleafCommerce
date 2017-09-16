@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.search.index.service;
+package org.broadleafcommerce.core.search.index;
 
 import org.broadleafcommerce.common.event.BroadleafApplicationEvent;
 import org.broadleafcommerce.core.search.domain.FieldEntity;

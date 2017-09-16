@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.search.index.service;
+package org.broadleafcommerce.core.search.index;
 
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 
@@ -20,5 +20,7 @@ public interface DocumentBuilder<I extends Indexable, D> {
      * @return
      */
     public D buildDocument(I indexable);
+    
+    public D buildDocument(Object o);
 
 }

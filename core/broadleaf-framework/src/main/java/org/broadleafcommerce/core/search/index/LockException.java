@@ -22,28 +22,34 @@
  * #L%
  */
 
-package org.broadleafcommerce.core.search.index.service;
+package org.broadleafcommerce.core.search.index;
 
-import java.util.concurrent.TimeUnit;
+/**
+ * Indicates an error locking or unlockin the reindex process.
+ * @author Kelly Tisdell
+ *
+ */
+public class LockException extends Exception {
 
-public interface QueueConsumer<T> {
-    
-    public T consume() throws InterruptedException;
-    
-    public T consume(long timeout, TimeUnit timeUnit) throws InterruptedException;
-    
-    /**
-     * Indicates if the queue is empty and there is nothing else that will be added to the queue.
-     * Essentially indicates that nothing more will be added to the queue, and nothing else is left in the queue.
-     * @return
-     */
-    public boolean isQueueExpired();
-    
-    /**
-     * Indicates if this queue consumer supports distributed processing.
-     * 
-     * @return
-     */
-    public boolean isDistributed();
-    
+    private static final long serialVersionUID = 1L;
+
+    public LockException() {
+        super();
+    }
+
+    public LockException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    public LockException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public LockException(String message) {
+        super(message);
+    }
+
+    public LockException(Throwable cause) {
+        super(cause);
+    }
 }

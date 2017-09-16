@@ -22,11 +22,7 @@
  * #L%
  */
 
-package org.broadleafcommerce.core.search.index.service;
-
-import org.broadleafcommerce.core.search.domain.FieldEntity;
-
-import java.util.concurrent.TimeUnit;
+package org.broadleafcommerce.core.search.index;
 
 /**
  * This represents a component that can populate a Queue concept, specifically for the purpose of reindexing a search engine.  
@@ -55,25 +51,10 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <T>
  */
-public interface QueueProducer<T> extends Runnable {
+public interface QueueLoader<T> extends Runnable {
     
     /**
-     * Puts the object on a queue, typically for consumption by another thread.  A return value of true 
-     * means that the put was successful.  A return value of false means that the value could not be put on the 
-     * queue in the specified time (often due to the queue having a max capacity).
-     * 
-     * If this method returns false, it is the implementer's responsibility to retry or fail as needed.
-     * 
-     * @param payload
-     * @param timeout
-     * @param timeUnit
-     * @return
-     * @throws InterruptedException
-     */
-    public boolean put(T payload, long timeout, TimeUnit timeUnit) throws InterruptedException;
-    
-    /**
-     * Indicates that there is nothing else that will be added to the queue during this process.  Since the QueueProducer 
+     * Indicates that there is nothing else that will be added to the queue during this process.  Since the QueueLoader 
      * is single threaded, and has the responsibility of populating a queue with a finite set of data, when there is nothing 
      * else to add to the queue, it is considered complete.
      * 
@@ -82,41 +63,25 @@ public interface QueueProducer<T> extends Runnable {
     public boolean isComplete();
     
     /**
+     * The return of this method indicates whether the queue is:
+     * 1. Complete (as defined by a call to {@link QueueLoader.isComplete()}) and empty
+     * 2. Or, the process has failed @see {@link SearchIndexProcessStateHolder}
+     * 
+     * @return
+     */
+    public boolean isQueueExpired();
+    
+    /**
+     * Indicates if the queue (at the time of the method invocation) is empty.
+     * @return
+     */
+    public boolean isEmpty();
+    
+    /**
      * Indicates if this queue producer supports distributed processing.
      * 
      * @return
      */
     public boolean isDistributed();
-    
-    /**
-     * This is the FieldEntity for which this QueueProducer is producing data for consumption.  This should not return null.
-     * @return
-     */
-    public FieldEntity getFieldEntity();
-    
-    /**
-     * A method to return the name of the Queue.
-     * @return
-     */
-    public String getQueueName();
-    
-    /**
-     * Method to allow any necessary configuration, connection to external resources, etc. Calling this implementation more 
-     * than once should have no effect.
-     */
-    public void initialize();
-    
-    /**
-     * Method to allow any necessary cleanup of resources, closing of connections, deletions of queues, etc.  
-     * This method does not necessarily stop or interrupt the thread, and may have no effect if the background thread is 
-     * still running.  Use the SearchIndexProcessStateHolder.failFast() method to stop a process.
-     */
-    public void cleanup();
-    
-    /**
-     * Marks this queue as being complete. In other words, nothing more will be added to the queue. This does not indicate 
-     * that the queue is empty.  Only that there is nothing more to add.
-     */
-    public void markComplete();
     
 }
