@@ -45,6 +45,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -496,7 +497,35 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Override
     public List<OrderAdjustment> getOrderAdjustments() {
-        return this.orderAdjustments;
+        return orderAdjustments;
+    }
+
+    @Override
+    public List<OrderAdjustment> getFutureCreditOrderAdjustments() {
+        List<OrderAdjustment> futureCreditAdjustments = new ArrayList<>();
+        for (OrderAdjustment adjustment : orderAdjustments) {
+            if (adjustment.isFutureCredit()) {
+                futureCreditAdjustments.add(adjustment);
+            }
+        }
+        return futureCreditAdjustments;
+    }
+
+    @Override
+    public List<Adjustment> getAllFutureCreditAdjustments() {
+        List<Adjustment> adjustments = new ArrayList<>();
+        
+        adjustments.addAll(getFutureCreditOrderAdjustments());
+        
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            adjustments.addAll(fulfillmentGroup.getFutureCreditFulfillmentGroupAdjustments());
+        }
+        for (OrderItem orderItem : orderItems) {
+            for (OrderItemPriceDetail oiPriceDetail : orderItem.getOrderItemPriceDetails()) {
+                adjustments.addAll(oiPriceDetail.getFutureCreditOrderItemPriceDetailAdjustments());
+            }
+        }
+        return adjustments;
     }
 
     protected void setOrderAdjustments(List<OrderAdjustment> orderAdjustments) {
@@ -598,6 +627,15 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         }
         return itemAdjustmentsValue;
     }
+
+    @Override
+    public Money getFutureCreditItemAdjustmentsValue() {
+        Money itemAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (OrderItem orderItem : orderItems) {
+            itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getFutureCreditTotalAdjustmentValue());
+        }
+        return itemAdjustmentsValue;
+    }
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
@@ -609,10 +647,32 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
+    public Money getFutureCreditFulfillmentGroupAdjustmentsValue() {
+        Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFutureCreditFulfillmentGroupAdjustmentsValue());
+        }
+        return adjustmentValue;
+    }
+
+    @Override
     public Money getOrderAdjustmentsValue() {
         Money orderAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderAdjustment orderAdjustment : orderAdjustments) {
-            orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
+            if (!orderAdjustment.isFutureCredit()) {
+                orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
+            }
+        }
+        return orderAdjustmentsValue;
+    }
+
+    @Override
+    public Money getFutureCreditOrderAdjustmentsValue() {
+        Money orderAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (OrderAdjustment orderAdjustment : orderAdjustments) {
+            if (orderAdjustment.isFutureCredit()) {
+                orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
+            }
         }
         return orderAdjustmentsValue;
     }
@@ -622,6 +682,14 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Money totalAdjustmentsValue = getItemAdjustmentsValue();
         totalAdjustmentsValue = totalAdjustmentsValue.add(getOrderAdjustmentsValue());
         totalAdjustmentsValue = totalAdjustmentsValue.add(getFulfillmentGroupAdjustmentsValue());
+        return totalAdjustmentsValue;
+    }
+
+    @Override
+    public Money getTotalFutureCreditAdjustmentsValue() {
+        Money totalAdjustmentsValue = getFutureCreditItemAdjustmentsValue();
+        totalAdjustmentsValue = totalAdjustmentsValue.add(getFutureCreditOrderAdjustmentsValue());
+        totalAdjustmentsValue = totalAdjustmentsValue.add(getFutureCreditFulfillmentGroupAdjustmentsValue());
         return totalAdjustmentsValue;
     }
 

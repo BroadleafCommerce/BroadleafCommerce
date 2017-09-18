@@ -58,6 +58,15 @@ public interface OrderItemPriceDetail extends Serializable, MultiTenantCloneable
     List<OrderItemPriceDetailAdjustment> getOrderItemPriceDetailAdjustments();
 
     /**
+     * Returns a List of the future credit adjustments that effected this priceDetail. 
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     * 
+     * @return a  List of OrderItemPriceDetailAdjustment
+     */
+    List<OrderItemPriceDetailAdjustment> getFutureCreditOrderItemPriceDetailAdjustments();
+
+    /**
      * Sets the list of OrderItemPriceDetailAdjustment
      * @param orderItemPriceDetailAdjustments
      */
@@ -86,11 +95,31 @@ public interface OrderItemPriceDetail extends Serializable, MultiTenantCloneable
     Money getAdjustmentValue();
 
     /**
+     * Returns the value of future credit adjustments for a single quantity of the item.
+     *
+     * Use {@link #getFutureCreditTotalAdjustmentValue()} to get the total for all quantities of this item.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return
+     */
+    Money getFutureCreditAdjustmentValue();
+
+    /**
      * Returns getAdjustmentValue() * the quantity.
      *
      * @return
      */
     Money getTotalAdjustmentValue();
+
+    /**
+     * Returns getFutureCreditAdjustmentValue() * the quantity.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return
+     */
+    Money getFutureCreditTotalAdjustmentValue();
 
     /**
      * Returns the total adjustedPrice.

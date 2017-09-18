@@ -199,6 +199,15 @@ public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<Ful
 
     public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments();
 
+    /**
+     * Returns a List of FulfillmentGroupAdjustment originating from FUTURE_CREDIT Offers.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return a List of FulfillmentGroupAdjustment
+     */
+    List<FulfillmentGroupAdjustment> getFutureCreditFulfillmentGroupAdjustments();
+
     public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
 
     public void removeAllAdjustments();
@@ -340,6 +349,15 @@ public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<Ful
     public List<DiscreteOrderItem> getDiscreteOrderItems();
     
     public Money getFulfillmentGroupAdjustmentsValue();
+
+    /**
+     * Returns the discount value of the applied future credit offers for this fulfillment group.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return the discount value of the applied future credit offers for this fulfillment group
+     */
+    Money getFutureCreditFulfillmentGroupAdjustmentsValue();
 
     /**
      * @return whether or not to override the shipping calculation

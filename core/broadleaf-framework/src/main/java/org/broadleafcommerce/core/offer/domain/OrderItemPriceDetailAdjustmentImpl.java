@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
 import org.hibernate.annotations.Cache;
@@ -111,6 +112,12 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_appliedToSalePrice", order = 3,
             group = "OrderItemPriceDetailAdjustmentImpl_Description")
     protected boolean appliedToSalePrice;
+
+    @Column(name = "IS_FUTURE_CREDIT")
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_isFutureCredit", order = 4,
+            group = "OrderItemPriceDetailAdjustmentImpl_Description",
+            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+    protected Boolean isFutureCredit = false;
     
     @Transient
     protected Money retailValue;
@@ -126,6 +133,9 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
         setOrderItemPriceDetail(orderItemPriceDetail);
         setOffer(offer);
         setReason(reason);
+        if (offer != null) {
+            setFutureCredit(OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType()));
+        }
     }
 
     @Override
@@ -257,6 +267,19 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     }
 
     @Override
+    public boolean isFutureCredit() {
+        if (isFutureCredit == null) {
+            return false;
+        }
+        return isFutureCredit;
+    }
+
+    @Override
+    public void setFutureCredit(boolean futureCredit) {
+        isFutureCredit = futureCredit;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -264,6 +287,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
         result = prime * result + ((orderItemPriceDetail == null) ? 0 : orderItemPriceDetail.hashCode());
         result = prime * result + ((reason == null) ? 0 : reason.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((isFutureCredit == null) ? 0 : isFutureCredit.hashCode());
         return result;
     }
 
@@ -312,6 +336,9 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
         } else if (!value.equals(other.value)) {
             return false;
         }
+        if (isFutureCredit != other.isFutureCredit) {
+            return false;
+        }
         return true;
     }
 
@@ -328,6 +355,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
         cloned.setSalesPriceValue(getSalesPriceValue());
         cloned.setRetailPriceValue(getRetailPriceValue());
         cloned.setValue(getValue());
+        cloned.setFutureCredit(isFutureCredit());
         return createResponse;
     }
 }

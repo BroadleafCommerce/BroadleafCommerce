@@ -78,4 +78,26 @@ public interface OrderItemPriceDetailAdjustment extends Adjustment, MultiTenantC
     public Money getSalesPriceValue();
 
     public void setSalesPriceValue(Money salesPriceValue);
+
+    /**
+     * Future credit means that the associated adjustment will be discounted at a later time to the customer 
+     * via a credit. It is up to the implementor to decide how to achieve this. This field is used to determine 
+     * if the adjustment originated from an offer marked as FUTURE_CREDIT.
+     *
+     * See {@link Offer#getAdjustmentType()} for more info
+     *
+     * @return 
+     */
+    boolean isFutureCredit();
+
+    /**
+     * Future credit means that the associated adjustment will be discounted at a later time to the customer 
+     * via a credit. It is up to the implementor to decide how to achieve this. This field is used to determine 
+     * if the adjustment originated from an offer marked as FUTURE_CREDIT.
+     *
+     * See {@link Offer#getAdjustmentType()} for more info
+     *
+     * @param futureCredit
+     */
+    void setFutureCredit(boolean futureCredit);
 }

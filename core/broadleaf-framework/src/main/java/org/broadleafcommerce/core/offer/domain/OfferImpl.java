@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -43,6 +44,7 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -346,6 +348,15 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
+
+    @Column(name = "OFFER_ADJUSTMENT_TYPE")
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Adjustment_Type",
+            group = GroupName.Description, order = FieldOrder.DiscountType + 1,
+            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType",
+            tooltip = "OfferImpl_Offer_Adjustment_Type_tooltip",
+            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+    protected String adjustmentType;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -749,6 +760,27 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
+    public OfferAdjustmentType getAdjustmentType() {
+        if (adjustmentType == null) {
+            return OfferAdjustmentType.ORDER_DISCOUNT;
+        }
+        return OfferAdjustmentType.getInstance(adjustmentType);
+    }
+
+    @Override
+    public void setAdjustmentType(OfferAdjustmentType adjustmentType) {
+        this.adjustmentType = adjustmentType.getType();
+    }
+
+    @Override
+    public boolean isFutureCredit() {
+        if (adjustmentType == null) {
+            return false;
+        }
+        return OfferAdjustmentType.FUTURE_CREDIT.equals(OfferAdjustmentType.getInstance(adjustmentType));
+    }
+
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
             .append(name)
@@ -805,28 +837,5 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setRequiresRelatedTargetAndQualifiers(requiresRelatedTargetAndQualifiers);
         cloned.setTotalitarianOffer(totalitarianOffer);
         cloned.setType(getType());
-        if (!BooleanUtils.toBoolean(context.getCopyHints().get(EXCLUDE_OFFERCODE_COPY_HINT))) {
-            for (OfferCode entry : offerCodes) {
-                OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-                cloned.getOfferCodes().add(clonedEntry);
-            }
-        }
-        for(OfferQualifyingCriteriaXref entry : qualifyingItemCriteria){
-            OfferQualifyingCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getQualifyingItemCriteriaXref().add(clonedEntry);
-        }
-        Set<OfferTargetCriteriaXref> offerTargetCriteriaXrefs = new HashSet<>();
-        for(OfferTargetCriteriaXref entry : targetItemCriteria){
-            OfferTargetCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            offerTargetCriteriaXrefs.add(clonedEntry);
-        }
-        cloned.setTargetItemCriteriaXref(offerTargetCriteriaXrefs);
-        for(Map.Entry<String, OfferOfferRuleXref> entry : offerMatchRules.entrySet()){
-            OfferOfferRuleXref clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getOfferMatchRulesXref().put(entry.getKey(),clonedEntry);
-        }
-
-        return  createResponse;
-    }
 
 }

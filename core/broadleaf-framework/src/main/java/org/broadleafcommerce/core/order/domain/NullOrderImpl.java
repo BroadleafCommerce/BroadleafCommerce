@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -217,6 +218,16 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
+    public List<OrderAdjustment> getFutureCreditOrderAdjustments() {
+        return null;
+    }
+
+    @Override
+    public List<Adjustment> getAllFutureCreditAdjustments() {
+        return null;
+    }
+
+    @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         return null;
     }
@@ -277,12 +288,32 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
+    public Money getFutureCreditItemAdjustmentsValue() {
+        return null;
+    }
+
+    @Override
+    public Money getFutureCreditFulfillmentGroupAdjustmentsValue() {
+        return null;
+    }
+
+    @Override
     public Money getOrderAdjustmentsValue() {
         return Money.ZERO;
     }
 
     @Override
+    public Money getFutureCreditOrderAdjustmentsValue() {
+        return null;
+    }
+
+    @Override
     public Money getTotalAdjustmentsValue() {
+        return null;
+    }
+
+    @Override
+    public Money getTotalFutureCreditAdjustmentsValue() {
         return null;
     }
 

@@ -498,11 +498,34 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments() {
         return this.fulfillmentGroupAdjustments;
     }
+
+    @Override
+    public List<FulfillmentGroupAdjustment> getFutureCreditFulfillmentGroupAdjustments() {
+        List<FulfillmentGroupAdjustment> futureCreditAdjustments = new ArrayList<>();
+        for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
+            if (adjustment.isFutureCredit()) {
+                futureCreditAdjustments.add(adjustment);
+            }
+            
+        }
+        return futureCreditAdjustments;
+    }
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
         Money adjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
         for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
+            if (!adjustment.isFutureCredit()) {
+                adjustmentsValue = adjustmentsValue.add(adjustment.getValue());
+            }
+        }
+        return adjustmentsValue;
+    }
+
+    @Override
+    public Money getFutureCreditFulfillmentGroupAdjustmentsValue() {
+        Money adjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
+        for (FulfillmentGroupAdjustment adjustment : getFutureCreditFulfillmentGroupAdjustments()) {
             adjustmentsValue = adjustmentsValue.add(adjustment.getValue());
         }
         return adjustmentsValue;

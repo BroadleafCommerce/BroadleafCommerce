@@ -692,6 +692,30 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
+    public Money getFutureCreditTotalAdjustmentValue() {
+        return getFutureCreditTotalAdjustmentValue(false);
+    }
+
+    @Override
+    public Money getFutureCreditTotalAdjustmentValue(boolean includeChildren) {
+        Money totalAdjustmentValue = BroadleafCurrencyUtils.getMoney(getOrder().getCurrency());
+        List<OrderItemPriceDetail> priceDetails = getOrderItemPriceDetails();
+        if (priceDetails != null) {
+            for (OrderItemPriceDetail priceDetail : getOrderItemPriceDetails()) {
+                totalAdjustmentValue = totalAdjustmentValue.add(priceDetail.getFutureCreditTotalAdjustmentValue());
+            }
+        }
+
+        if (includeChildren) {
+            for (OrderItem child : getChildOrderItems()) {
+                Money childPrice = child.getFutureCreditTotalAdjustmentValue();
+                totalAdjustmentValue = totalAdjustmentValue.add(childPrice);
+            }
+        }
+        return totalAdjustmentValue;
+    }
+
+    @Override
     public Money getTotalPrice() {
         return getTotalPrice(false);
     }

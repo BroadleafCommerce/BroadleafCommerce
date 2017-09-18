@@ -36,6 +36,8 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     protected boolean roundOfferValues = true;
     protected int roundingScale = 2;
     protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
+    protected boolean isFutureCredit = false;
+
 
     public PromotableOrderAdjustmentImpl(PromotableCandidateOrderOffer promotableCandidateOrderOffer, PromotableOrder promotableOrder) {
         assert (promotableOrder != null);
@@ -44,6 +46,9 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         this.promotableCandidateOrderOffer = promotableCandidateOrderOffer;
         this.promotableOrder = promotableOrder;
         this.offer = promotableCandidateOrderOffer.getOffer();
+        if (this.offer != null) {
+            this.setFutureCredit(this.offer.isFutureCredit());
+        }
         computeAdjustmentValue();
     }
     
@@ -149,4 +154,13 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         return (totalitarian != null && totalitarian.booleanValue());
     }
 
+    @Override
+    public boolean isFutureCredit() {
+        return isFutureCredit;
+    }
+
+    @Override
+    public void setFutureCredit(boolean futureCredit) {
+        isFutureCredit = futureCredit;
+    }
 }

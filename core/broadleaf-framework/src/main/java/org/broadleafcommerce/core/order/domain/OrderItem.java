@@ -453,6 +453,28 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
     Money getTotalAdjustmentValue(boolean includeChildren);
 
     /**
+     * Returns the total for future credit item level adjustments.
+     *
+     * For example, if the item has a 2 items priced at $10 a piece and a 10% discount applies to both
+     * quantities.    This method would return $2. 
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return
+     */
+    Money getFutureCreditTotalAdjustmentValue();
+
+    /**
+     * Returns the total for future credit item level adjustments.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     * 
+     * @param includeChildren
+     * @return
+     */
+    Money getFutureCreditTotalAdjustmentValue(boolean includeChildren);
+
+    /**
      * Returns the total price to be paid for this order item including item-level adjustments.
      * 
      * It does not include the effect of order level adjustments.   Calculated by looping through

@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -323,6 +324,25 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     List<OrderAdjustment> getOrderAdjustments();
 
     /**
+     * Returns a List of OrderAdjustment originating from FUTURE_CREDIT Offers.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return a List of OrderItemAdjustment
+     */
+    List<OrderAdjustment> getFutureCreditOrderAdjustments();
+
+    /**
+     * Returns a List of Adjustment originating from FUTURE_CREDIT Offers. This is obtained from the Order, OrderItem, 
+     * and FulfillmentGroup levels. 
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return a List of OrderItemAdjustment
+     */
+    List<Adjustment> getAllFutureCreditAdjustments();
+
+    /**
      * Returns all of the {@link OrderItem}s in this {@link Order} that are an instanceof {@link DiscreteOrderItem}. This
      * will also go into each {@link BundleOrderItem} (if there are any) and return all of the
      * {@link BundleOrderItem#getDiscreteOrderItems()} from each of those as well.
@@ -385,6 +405,15 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     Money getItemAdjustmentsValue();
 
     /**
+     * Returns the discount value of the applied future credit item offers for this order.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return the discount value of the applied item offers for this order
+     */
+    Money getFutureCreditItemAdjustmentsValue();
+
+    /**
      * Returns the discount value of all the applied order offers.  The value returned from this
      * method should be subtracted from the getSubTotal() to get the order price with all item and
      * order offers applied.
@@ -394,6 +423,15 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     Money getOrderAdjustmentsValue();
 
     /**
+     * Returns the discount value of the applied future credit order offers originating.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return the discount value of applied order offers.
+     */
+    Money getFutureCreditOrderAdjustmentsValue();
+
+    /**
      * Returns the total discount value for all applied item and order offers in the order.  The return
      * value should not be used with getSubTotal() to calculate the final price, since getSubTotal()
      * already takes into account the applied item offers.
@@ -401,6 +439,16 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @return the total discount of all applied item and order offers
      */
     Money getTotalAdjustmentsValue();
+
+    /**
+     * Returns the total discount value for applied item, order, and fulfillment offers in the order originating from 
+     * FUTURE_CREDIT Offers.  This should be used to credit the customer after the order has been placed.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return the total discount of applied item, order, and fulfillment offers
+     */
+    Money getTotalFutureCreditAdjustmentsValue();
 
     /**
      * Updates all of the prices of the {@link OrderItem}s in this {@link Order}
@@ -417,6 +465,15 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
     boolean finalizeItemPrices();
 
     Money getFulfillmentGroupAdjustmentsValue();
+
+    /**
+     * Returns the discount value of the applied future credit fulfillment offers for this order.
+     * 
+     * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
+     *
+     * @return the discount value of the applied future credit fulfillment offers for this order.
+     */
+    Money getFutureCreditFulfillmentGroupAdjustmentsValue();
     
     void addOfferCode(OfferCode addedOfferCode);
     
