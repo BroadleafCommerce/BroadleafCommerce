@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.hibernate.annotations.Cache;
@@ -107,6 +108,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
             gridOrder = 2000)
     protected BigDecimal value = Money.ZERO.getAmount();
 
+    @Column(name = "IS_FUTURE_CREDIT")
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_isFutureCredit", order = 4000,
+            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+    protected Boolean isFutureCredit = false;
+
     @Transient
     protected Offer deproxiedOffer;
 
@@ -119,6 +125,9 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
             this.reason = offer.getName();
         } else {
             this.reason = reason;
+        }
+        if (offer != null) {
+            this.setFutureCredit(OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType()));
         }
     }
 
@@ -191,6 +200,16 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     }
 
     @Override
+    public Boolean isFutureCredit() {
+        return isFutureCredit;
+    }
+
+    @Override
+    public void setFutureCredit(Boolean futureCredit) {
+        isFutureCredit = futureCredit;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -198,6 +217,7 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
         result = prime * result + ((offer == null) ? 0 : offer.hashCode());
         result = prime * result + ((reason == null) ? 0 : reason.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((isFutureCredit == null) ? 0 : isFutureCredit.hashCode());
         return result;
     }
 
@@ -244,6 +264,9 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
                 return false;
             }
         } else if (!value.equals(other.value)) {
+            return false;
+        }
+        if (isFutureCredit != other.isFutureCredit) {
             return false;
         }
         return true;
