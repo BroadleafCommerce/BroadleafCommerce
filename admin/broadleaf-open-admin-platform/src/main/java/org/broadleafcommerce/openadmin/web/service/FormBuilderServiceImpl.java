@@ -1027,6 +1027,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         f.setIsVisible(false);
                     }
 
+                    if (VisibilityEnum.VISIBLE_ALL.equals(fmd.getVisibility())) {
+                        f.setIsVisible(true);
+                    }
+
                     // Add the field to the appropriate FieldGroup
                     if (fmd.getGroup() == null) {
                         homelessFields.add(f);
