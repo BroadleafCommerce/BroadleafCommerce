@@ -1,3 +1,20 @@
+/*
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
 package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -27,21 +44,11 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     
     protected static final String DEFAULT_QUEUE_NAME = "productQueue";
     
-    /*
-     * This is likely an alias. It could be a shared LockService.
-     * But giving it its own name is nice because it adds flexibility if there are more than one 
-     * LockServices defined for various indexing tasks.
-     */
-    @Resource(name="blProductSearchIndexLockService")
+    @Resource(name="blSearchIndexLockService")
     protected LockService lockService;
     
-    /*
-     * This is likely an alias. It could be a shared TaskExecutor.
-     * But giving it its own name is nice because it adds flexibility if there are more than one 
-     * TaskExecutor defined for various indexing tasks.
-     */
     @Autowired(required=false)
-    @Qualifier("blProductSearchIndexTaskExecutor") 
+    @Qualifier("blSearchIndexTaskExecutor") 
     protected TaskExecutor taskExecutor;
     
     @Resource(name="blSolrUtil")

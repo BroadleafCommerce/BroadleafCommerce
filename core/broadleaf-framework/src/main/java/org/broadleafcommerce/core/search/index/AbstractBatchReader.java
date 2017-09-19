@@ -1,3 +1,20 @@
+/*
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
 package org.broadleafcommerce.core.search.index;
 
 import org.broadleafcommerce.common.site.domain.Catalog;
@@ -7,6 +24,7 @@ import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,10 +58,21 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
         if(sites != null && !sites.isEmpty()) {
             currentSite = sites.get(siteIndex);
             if (catalogs == null) {
-                catalogs = IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<List<Catalog>, RuntimeException>() {
+                catalogs = IdentityExecutionUtils
+                        .runOperationByIdentifier(new IdentityOperation<List<Catalog>, RuntimeException>() {
                     @Override
                     public List<Catalog> execute() throws RuntimeException {
-                        return getSiteService().findAllCatalogs();
+                        ArrayList<Catalog> out = new ArrayList<>();
+                        List<Catalog> cats = getSiteService().findAllCatalogs();
+                        if (cats != null) {
+                            for (Catalog cat : cats) {
+                                if (cat.isActive()) {
+                                    out.add(cat);
+                                }
+                            }
+                        }
+                        
+                        return out;
                     }
                 }, currentSite);
             }
@@ -63,16 +92,12 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
             //We've reached the end of a batch.  Decide what to do next...
             //Advance the catalog index
             catalogIndex++;
-            if (catalogs == null || catalogs.isEmpty()) {
+            if (catalogs == null || catalogIndex >= catalogs.size()) {
                 //We know we need to move to the next site...
                 siteIndex++;
                 catalogs = null;
-            } else if (catalogIndex >= catalogs.size()) {
-                //Reset the catalog index and move on to the next site.
-                catalogs = null;
                 catalogIndex = 0;
-                siteIndex++;
-            }
+            } 
             
             if (siteIndex >= sites.size()) {
                 //We're at the end of sites.
@@ -87,23 +112,19 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
         return page++;
     }
     
-    protected final synchronized void resetPage() {
-        page = -1;
-    }
-    
     private final synchronized void markComplete() {
         this.complete = true;
         sites = null;
         catalogs = null;
         siteIndex = 0;
         catalogIndex = 0;
-        resetPage();
+        page = 0;
     }
 
     @Override
     public final synchronized void reset() {
         complete = false;
-        resetPage();
+        page = 0;
         siteIndex = 0;
         sites = getSiteService().findAllNonPersistentActiveSites();
         catalogs = null;

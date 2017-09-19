@@ -1,3 +1,20 @@
+/*
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
 package org.broadleafcommerce.core.search.index;
 
 import org.apache.commons.logging.Log;
@@ -12,7 +29,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is an abstract component to allow for the full reindexing of a specific index.  This component only operates as a 
@@ -30,6 +49,7 @@ public abstract class AbstractGenericSearchIndexProcessLauncher<I extends Indexa
 implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, InitializingBean {
     
     private static final Log LOG = LogFactory.getLog(AbstractGenericSearchIndexProcessLauncher.class);
+    private static final Map<String, SearchIndexProcessLauncher<? extends Indexable>> FIELD_ENTITY_REGISTRY = new HashMap<>();
     protected static final long DEFAULT_CLEANUP_WAIT_TIME = 5000L;
     private long startTime = -1;
     protected ApplicationContext ctx;
@@ -163,13 +183,13 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                         getLockService().unlock(key, processId);
                     } catch (LockException e) {
                         LOG.error("There was an error trying to remove the lock for processId " + processId, e);
+                    } finally {
+                        startTime = -1;
                     }
                 }
             }
         } finally {
-            synchronized(this) {
-                startTime = -1;
-            }
+            //
         }
     }
     
@@ -181,15 +201,13 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
      */
     @Override
     public void rebuildIndex() throws ServiceException {
-        if (!isExecuting()) {
-            if (getTaskExecutor() != null) {
-                getTaskExecutor().execute(this);
-            } else {
+        synchronized(this) {
+            if (!isExecuting()) {
                 Thread t = new Thread(this, getClass().getName());
                 t.start();
+            } else {
+                throw new ServiceException("The index process is already running for processId " + determineProcessId());
             }
-        } else {
-            throw new ServiceException("The index process is already running for processId " + determineProcessId());
         }
     }
     
@@ -275,14 +293,11 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     }
     
     /**
-     * Method to allow implementors to return a specific TaskExecutor.  This method MAY return null.  If this method returns 
-     * null, then Threads will be directly created and used for execution of this job, which is the default. The reason is 
-     * that this process is careful to prevent multiple jobs running at the same time, and we don't want to consume 
-     * worker threads from a thread pool to run a single control thread.
+     * Method to allow implementors to return a specific TaskExecutor.  This method MAY return null.
      * 
      * This component runs itself in a background thread when the rebuildIndex() method is called.  This component also 
      * delegates to a background thread to run the QueueLoader.  If you do return a task executor, make sure it has 
-     * enough threads to handle the control thread, the QueueLoader, and the worker threads for the QueueConsumer.
+     * enough threads to handle the QueueLoader and the worker threads for the QueueConsumer.
      * 
      * @return
      */
@@ -291,13 +306,55 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
         return null;
     }
     
+    /**
+     * Optional hook point called by afterPropertiesSet
+     */
+    protected void initialize() {
+        //Nothing
+    }
+    
     /*
      * (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        //TODO: Make sure that the QueueManager, LockService, and this all have the proper distributed properties.
+    public final void afterPropertiesSet() throws Exception {
+        if (determineFieldEntity() == null) {
+            throw new IllegalStateException("FieldEntity was null.");
+        }
+        
+        synchronized(AbstractGenericSearchIndexProcessLauncher.class) {
+            if (FIELD_ENTITY_REGISTRY.containsKey(determineFieldEntity().getType())) {
+                throw new IllegalStateException(getClass().getName() 
+                        + " attempted to register itself with"
+                        + " FieldEntity type of " + determineFieldEntity().getType() 
+                        + " but that was already registered"
+                        + " to " 
+                        + FIELD_ENTITY_REGISTRY.get(determineFieldEntity().getType()).getClass().getName() 
+                        + ". There can"
+                        + " only be one SearchIndexProcessLauncher registered for a given FieldEntity.");
+            } else {
+                FIELD_ENTITY_REGISTRY.put(determineFieldEntity().getType(), this);
+            }
+        }
+        
+        initialize();
+    }
+    
+    /**
+     * This is a static convenience (factory) method for finding a SearchIndexProcessLauncher by its associated FieldEntity type.
+     * Returns null if nothing is registered for the provided FieldEntity.
+     * @param entity
+     * @return
+     */
+    public static SearchIndexProcessLauncher<? extends Indexable> getProcessLauncherForFieldEntity(
+            FieldEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        synchronized (AbstractGenericSearchIndexProcessLauncher.class) {
+            return FIELD_ENTITY_REGISTRY.get(entity.getType());
+        }  
     }
     
     /**

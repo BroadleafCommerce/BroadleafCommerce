@@ -33,11 +33,14 @@ import java.util.List;
 /**
  * Service exposing several methods for creating a Solr index based on catalog product data.
  *
+ *@deprecated
+ *
  * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
  */
+@Deprecated
 public interface SolrIndexService {
 
     /**
