@@ -29,7 +29,7 @@ import org.springframework.core.task.TaskExecutor;
  * 
  * In particular, we need a single-threaded data reader that fills a Queue until there is nothing left to put in the Queue, 
  * and then potentially multiple Queue consumer threads that read and process the data.  Implementors of this interface 
- * provide access to both ends of that contract - the QueueConsumer and the QueueLoader.
+ * provide access to both ends of that contract - the QueueReader and the QueueLoader.
  * 
  * Components implementing this interface are NOT meant to be singletons.  There should be one instance per queue name 
  * or a new instance for every queue.  Each QueueManager can only be used by a single index process at a time.
@@ -37,7 +37,7 @@ import org.springframework.core.task.TaskExecutor;
  * @author Kelly Tisdell
  *
  */
-public interface QueueManager<T> extends QueueConsumer<T> {
+public interface QueueManager<T> extends QueueReader<T> {
 
     /**
      * Returns the QueueLoader associated with this QueueManager
@@ -46,7 +46,7 @@ public interface QueueManager<T> extends QueueConsumer<T> {
     public QueueLoader<T> getQueueLoader();
     
     /**
-     * Returns the Queue name associated with both the QueueLoader and QueueConsumer.
+     * Returns the Queue name associated with both the QueueLoader and QueueReader.
      * 
      * @return
      */
@@ -54,8 +54,8 @@ public interface QueueManager<T> extends QueueConsumer<T> {
     
     /**
      * Lifecycle method to initialize this QueueManager.  This should initialize connections to the underlying queue, 
-     * if needed, and should make instances of the QueueLoader and QueueConsumer available. This method MUST NOT cause 
-     * the queue to be loaded.  However, after a call to this method, the QueueConsumer should be full initialized and 
+     * if needed, and should make instances of the QueueLoader and QueueReader available. This method MUST NOT cause 
+     * the queue to be loaded.  However, after a call to this method, the QueueReader should be full initialized and 
      * ready to begin consuming data from the Queue.  A call to startQueueProducer() will be required to begin loading 
      * the Queue with data.
      * 

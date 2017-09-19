@@ -38,7 +38,7 @@ import java.util.Map;
  * controller for a multi-threaded process.  The purpose of this is to obtain a process lock (which may be in memory or 
  * distributed).  It then runs a QueueLoader in another thread, which begins to populate a Queue (which could be in memory or 
  * distributed).  It creates a Semaphore to block until all background threads are complete.  It then raises a process started 
- * event (which is a Spring event).  This may be propagated to a distributed event so that other QueueConsumers can be started.
+ * event (which is a Spring event).  This may be propagated to a distributed event so that other QueueReaders can be started.
  * Finally, it waits until the semaphore releases and completes the process.
  * 
  * @author Kelly Tisdell
@@ -50,7 +50,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     
     private static final Log LOG = LogFactory.getLog(AbstractGenericSearchIndexProcessLauncher.class);
     private static final Map<String, SearchIndexProcessLauncher<? extends Indexable>> FIELD_ENTITY_REGISTRY = new HashMap<>();
-    protected static final long DEFAULT_CLEANUP_WAIT_TIME = 5000L;
+    protected static final long DEFAULT_PAUSE_TIME = 5000L;
     private long startTime = -1;
     protected ApplicationContext ctx;
     
@@ -87,16 +87,21 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
         //TODO: Create Barrier.
         QueueManager<?> queueManager = null;
         try {
-            SearchIndexProcessStateHolder.startProcessState(processId);
+            SearchIndexProcessStateHolder.startProcessState(processId, determineFieldEntity());
             try {
                 //Allow for any arbitrary pre-processing.
                 preProcess(processId);
                 
                 try {
+                    queueManager = getQueueManager(processId);
+                    if (queueManager.isDistributed() && ! getLockService().isDistributed()) {
+                        //It's OK if the lock service is distributed and the QueueManager is not.  But not vice versa.
+                        throw new IllegalStateException("If the QueueManager is distributed, the LockService must be as well.");
+                    }
+                    
                     //This will start a QueueLoader in a background thread.
                     //The purpose is to begin independently populating a Queue so that consumer threads can independently 
                     //and asynchronously consume the messages.
-                    queueManager = getQueueManager(processId);
                     queueManager.initialize(processId);
                     if (getTaskExecutor() == null) {
                         queueManager.startQueueProducer();
@@ -133,6 +138,8 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 
             } catch (Exception e) {
                 try {
+                    //There is no need to explicitly raise an event here because the SearchIndexProcessStateHolder 
+                    //should have taken care of that.
                     if (SearchIndexProcessStateHolder.isFailed(processId)) {
                         List<Throwable> throwables = SearchIndexProcessStateHolder.getAllFailures(processId);
                         if (throwables != null && !throwables.isEmpty()) {
@@ -148,9 +155,6 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                     
                     //Allow for any arbitrary post-processing.
                     postProcessFailure(processId);
-                    
-                    //Now, raise an event that the process failed.
-                    ctx.publishEvent(new SearchIndexProcessFailedEvent(processId, determineFieldEntity(), e));
                 } catch (Exception ie) {
                     LOG.error("An error occured in the catch block.  Trapping and logging here for investigation.", ie);
                 }
@@ -158,7 +162,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
             } finally {
                 try {
                     //Allow any background threads to finish what they are doing, realize there was an error, etc.
-                    Thread.sleep(determineCleanupWaitTime());
+                    Thread.sleep(determinePauseTime());
                 } catch (InterruptedException ie) {
                     //Ignore
                 }
@@ -270,15 +274,15 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     }
     
     /**
-     * This is the time that the main control thread will wait in the finally block before stopping the process and 
-     * cleaning up.  This allows any other threads to get caught up, recognize that an error has occured, etc.
+     * This is the time that the main control thread will pause to allow other threads to finish what they 
+     * are doing or catch up.
      * 
      * The default value is 5000 ms (5 seconds).
      * 
      * @return
      */
-    protected long determineCleanupWaitTime() {
-        return DEFAULT_CLEANUP_WAIT_TIME;
+    protected long determinePauseTime() {
+        return DEFAULT_PAUSE_TIME;
     }
     
     /**

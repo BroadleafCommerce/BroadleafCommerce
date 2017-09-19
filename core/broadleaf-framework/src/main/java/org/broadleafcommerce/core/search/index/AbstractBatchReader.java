@@ -27,7 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An abstract reader that handles the details of keeping track of pagination
+ * An abstract reader that handles the details of keeping track of pagination. This class also, optionally, provides 
+ * catalog context.  In particular, if we are in Broadleaf's Multi-Tenant mode (the Multi-Tenant module is active), this 
+ * class will retrieve active catalogs, by default, and read for each catalog.  This can be disabled by subclasses, who 
+ * can override readAllActiveCatalogsForIndexing() and return null.
  * 
  * @author Kelly Tisdell
  *
@@ -60,9 +63,10 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
         out = readBatchInternal(nextPage, pageSize, currentCatalog);
         if (out == null || out.size() <  pageSize) {
             //We've reached the end of a batch.  Decide what to do next...
-            //Advance the catalog index
+            //Advance the catalog index, and if there are more catalogs, keep going.
             catalogIndex++;
-            if (catalogs == null || catalogIndex >= catalogs.size()) {
+            if (catalogs == null || catalogIndex == catalogs.size()) {
+                //Otherwise, there's nothing left to do, so mark complete.
                 markComplete();
             } 
         }
@@ -78,13 +82,13 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
         this.complete = true;
         catalogs = null;
         catalogIndex = 0;
-        page = 0;
+        page = -1;
     }
 
     @Override
     public final synchronized void reset() {
         complete = false;
-        page = 0;
+        page = -1;
         catalogs = null;
         catalogs = readAllActiveCatalogsForIndexing();
         catalogIndex = 0;
@@ -113,35 +117,15 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
     }
     
     /**
-     * The page always starts at zero (0) and increments by 1 on each invocation.  It is the implementor's responsibility to 
-     * to adjust the page if necessary (e.g. page = page + 1, for example, when the page needs to start at 1 or a different  
-     * value). But the first time this method is called, the page value will be zero.  And it will be incremented by one on  
-     * each additional invocation until reset is called. The page size depends on the a call to getBatchSize(), 
-     * which must return a non-null value.
-     * 
-     * It is expected that this will consistently return items for the specified page and batch size.  When there are no more 
-     * items to return, this method MUST call markComplete(), indicating that there is no more data to return.
-     * 
-     * @param page
-     * @param pageSize
-     * @param catalog
-     * @return
-     */
-    protected abstract List<T> readBatchInternal(int page, int pageSize, Catalog catalog);
-    
-    /**
-     * Returns the site service that should be used by this component.
-     * @return
-     */
-    protected abstract SiteService getSiteService();
-    
-    /**
      * This is specifically designed when running with Broadleaf's Multi-Tenant / Multi-Catalog functionality 
      * such as Marketplace, 
      * 
      * This method can (and should) return null if Broadleaf's multi-tenant functionality is not activated.
      * 
      * This will return all active catalogs.
+     * 
+     * If you are reading items that do not require catalog context (e.g. Customers), 
+     * sub-classes should override this method and return null.
      * 
      * @return
      */
@@ -163,4 +147,27 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
         }
         return null;
     }
+    
+    /**
+     * The page always starts at zero (0) and increments by 1 on each invocation.  It is the implementor's responsibility to 
+     * to adjust the page if necessary (e.g. page = page + 1, for example, when the page needs to start at 1 or a different  
+     * value). But the first time this method is called, the page value will be zero.  And it will be incremented by one on  
+     * each additional invocation until reset is called. The page size depends on the a call to getBatchSize(), 
+     * which must return a non-null value.
+     * 
+     * It is expected that this will consistently return items for the specified page and batch size.  When there are no more 
+     * items to return, this method MUST call markComplete(), indicating that there is no more data to return.
+     * 
+     * @param page
+     * @param pageSize
+     * @param catalog
+     * @return
+     */
+    protected abstract List<T> readBatchInternal(int page, int pageSize, Catalog catalog);
+    
+    /**
+     * Returns the site service that should be used by this component.
+     * @return
+     */
+    protected abstract SiteService getSiteService();
 }

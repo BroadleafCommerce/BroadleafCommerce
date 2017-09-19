@@ -24,7 +24,7 @@ package org.broadleafcommerce.core.search.index;
  *
  * @param <T>
  */
-public interface QueueConsumer<T> {
+public interface QueueReader<T> {
 
     public T consume();
     

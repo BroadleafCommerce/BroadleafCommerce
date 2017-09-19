@@ -19,6 +19,9 @@ package org.broadleafcommerce.core.search.index;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,6 +72,7 @@ public class SearchIndexProcessStateHolder {
     private long expectedIndexableItemsToProcess = 0L;
     private long indexableItemsProcessed = 0L;
     private long documentsProcessed = 0L;
+    private FieldEntity fieldEntity;
     
     public SearchIndexProcessStateHolder() {
         //This should never be directly instantiated.  Use the static methods to access it.  Use additional properties 
@@ -87,17 +91,25 @@ public class SearchIndexProcessStateHolder {
      * You must use the same process ID to call endProcessState.
      * 
      * @param processId
+     * @param entity
      */
-    public static void startProcessState(String processId) {
+    public static void startProcessState(String processId, FieldEntity entity) {
         if (processId == null) {
             throw new IllegalArgumentException("Process ID must not be null in order to start a process.");
         }
+        
+        if (entity == null) {
+            throw new IllegalArgumentException("FieldEntity must not be null in order to start a process.");
+        }
+        
         if (processId != null) {
             synchronized (SearchIndexProcessStateHolder.class) {
                 if (STATE_HOLDER_MAP.containsKey(processId)) {
                     throw new IllegalStateException("Can't start process state for this process ID. It is already started.");
                 }
-                STATE_HOLDER_MAP.put(processId, new SearchIndexProcessStateHolder());
+                SearchIndexProcessStateHolder holder = new SearchIndexProcessStateHolder();
+                holder.fieldEntity = entity;
+                STATE_HOLDER_MAP.put(processId, holder);
             }
         }
     }
@@ -134,17 +146,34 @@ public class SearchIndexProcessStateHolder {
     /**
      * Notifies that the process has failed and keeps track of the Throwables passed in.  This allows other threads to monitor 
      * this state and fail the entire process fast if other thread reported a failure.
+     * 
+     * This will also attempt to raise a {@link SearchIndexProcessFailedEvent}, which is a Spring event.  The ability to 
+     * raise the event depends on the {@link ApplicationContextHolder} returning an {@link ApplicationContext}.
+     * 
      * @param processId
      * @param th
      */
     public static void failFast(String processId, Throwable th) {
         SearchIndexProcessStateHolder instance = getInstance(processId);
+        boolean firstFailure;
         synchronized(instance) {
-            instance.failed = true;
+            if (instance.failed) {
+                firstFailure = false;
+            } else {
+                instance.failed = true;
+                firstFailure = true;
+            }
+            
             if (th != null) {
                 instance.failures.add(th);
             }
-        }   
+        }
+        
+        //We only want to raise a failed event once per running processId.
+        if (firstFailure && ApplicationContextHolder.getApplicationContext() != null) {
+            SearchIndexProcessFailedEvent event = new SearchIndexProcessFailedEvent(processId, instance.fieldEntity, th);
+            ApplicationContextHolder.getApplicationContext().publishEvent(event);
+        }
     }
     
     /**
