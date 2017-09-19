@@ -112,7 +112,7 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
      */
     @Override
     public boolean isActive() {
-        return (!isComplete() && !queue.isEmpty() && ! SearchIndexProcessStateHolder.isFailed(processId));
+        return ((!isComplete() || !queue.isEmpty()) && ! SearchIndexProcessStateHolder.isFailed(processId));
     }
 
     @Override

@@ -57,7 +57,7 @@ public interface QueueLoader<T> extends Runnable {
     
     /**
      * The return of this method indicates whether the queue is:
-     * 1. Active (meaning that there is more to add to the queue and/or there the queue is not empty)
+     * 1. Active (meaning that there is more to add to the queue and/or the queue is not empty)
      * 2. And, the process has not failed @see {@link SearchIndexProcessStateHolder}
      * 
      * @return
