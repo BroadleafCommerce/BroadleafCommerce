@@ -67,20 +67,14 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
                 List<T> itemsToAdd = batchReader.readBatch();
                 if (itemsToAdd != null && !itemsToAdd.isEmpty()) {
                     for (T item : itemsToAdd) {
-                        try {
-                            boolean success = false;
-                            while (!success) {
-                                //Check to see if something is failed.
-                                if (SearchIndexProcessStateHolder.isFailed(processId)) {
-                                    return;
-                                }
-                                
-                                success = queue.offer(item, determinePutWaitTime(), TimeUnit.MILLISECONDS);
+                        boolean success = false;
+                        while (!success) {
+                            //Check to see if something is failed.
+                            if (SearchIndexProcessStateHolder.isFailed(processId)) {
+                                return;
                             }
-                        } catch (InterruptedException e) {
-                            //Mark the process as failed.
-                            SearchIndexProcessStateHolder.failFast(processId, e);
-                            return;
+                            
+                            success = queue.offer(item, determinePutWaitTime(), TimeUnit.MILLISECONDS);
                         }
                     }
                 } else {
