@@ -30,6 +30,14 @@
         WHERE product.defaultSku.name LIKE :name ORDER BY product.id</query>
     </named-query>
     
+    <named-query name="BC_READ_ALL_ACTIVE_PRODUCT_IDS" >
+        <query>SELECT product.id FROM org.broadleafcommerce.core.catalog.domain.Product product 
+               WHERE product.defaultSku.activeStartDate &lt;= :currentDate 
+               AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate IS NULL)
+               AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
+               ORDER BY product.id</query>
+    </named-query>
+    
     <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >
         <query>SELECT productBundle FROM org.broadleafcommerce.core.catalog.domain.ProductBundle productBundle
         WHERE productBundle.autoBundle = :autoBundle

@@ -64,12 +64,12 @@ public interface QueueLoader<T> extends Runnable {
     
     /**
      * The return of this method indicates whether the queue is:
-     * 1. Complete (as defined by a call to {@link QueueLoader.isComplete()}) and empty
-     * 2. Or, the process has failed @see {@link SearchIndexProcessStateHolder}
+     * 1. Active (meaning that there is more to add to the queue and/or there the queue is not empty)
+     * 2. And, the process has not failed @see {@link SearchIndexProcessStateHolder}
      * 
      * @return
      */
-    public boolean isQueueExpired();
+    public boolean isActive();
     
     /**
      * Indicates if the queue (at the time of the method invocation) is empty.

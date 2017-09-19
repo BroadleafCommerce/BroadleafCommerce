@@ -145,7 +145,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 
                 try {
                     if (queueManager != null) {
-                        queueManager.close();
+                        queueManager.close(processId);
                     }
                 } catch (Exception e) {
                     LOG.error("An error occured trying to cleanup the QueueManager for Queue name: " 

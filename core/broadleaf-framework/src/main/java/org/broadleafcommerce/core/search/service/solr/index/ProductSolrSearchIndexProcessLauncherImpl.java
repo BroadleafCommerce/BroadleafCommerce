@@ -2,8 +2,11 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.index.BatchMarker;
+import org.broadleafcommerce.core.search.index.BatchReader;
 import org.broadleafcommerce.core.search.index.LockService;
-import org.broadleafcommerce.core.search.index.QueueLoader;
+import org.broadleafcommerce.core.search.index.QueueManager;
+import org.broadleafcommerce.core.search.index.SingleJvmBlockingQueueManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +24,8 @@ import javax.annotation.Resource;
  */
 @Component("blProductSolrSearchIndexProcessLauncher")
 public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndexProcessLauncherImpl<Product> {
+    
+    protected static final String DEFAULT_QUEUE_NAME = "productQueue";
     
     /*
      * This is likely an alias. It could be a shared LockService.
@@ -47,6 +52,9 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     
     @Value("${org.broadleafcommerce.core.search.service.solr.index.productSecondaryAliasName:catalog_reindex}")
     protected String secondaryAliasName;
+    
+    @Resource(name="blProductIndexBatchReader")
+    protected BatchReader<BatchMarker> batchReader;
 
     @Override
     protected FieldEntity determineFieldEntity() {
@@ -69,20 +77,17 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     }
 
     @Override
-    protected TaskExecutor getTaskExecutor() {
-        return taskExecutor;
-    }
-
-    @Override
     protected LockService getLockService() {
         return lockService;
     }
-
-    @Override
-    protected QueueLoader<Long[]> createQueueLoader(String processId) {
-        // TODO Auto-generated method stub
-        return null;
+    
+    protected String getQueueName() {
+        return DEFAULT_QUEUE_NAME;
     }
 
+    @Override
+    protected QueueManager<?> createQueueManager(String processId) {
+        return new SingleJvmBlockingQueueManager<>(getQueueName(), batchReader);
+    }
     
 }

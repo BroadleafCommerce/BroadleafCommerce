@@ -24,4 +24,11 @@ public interface BatchReader<T> {
      * Resets the cursor to the beginning so that subsequent calls to readBatch() will return values from the beginning.
      */
     public void reset();
+    
+    /**
+     * Indicates if the cursor is at the end of the batch and no more items can be returned until the reset method is called. 
+     * If this method returns true, the readBatch method should return null or an empty list.
+     * @return
+     */
+    public boolean isComplete();
 }

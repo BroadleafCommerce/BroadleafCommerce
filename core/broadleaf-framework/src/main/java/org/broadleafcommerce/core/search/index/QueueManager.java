@@ -20,7 +20,7 @@ import org.springframework.core.task.TaskExecutor;
  * @author Kelly Tisdell
  *
  */
-public interface QueueManager<T> {
+public interface QueueManager<T> extends QueueConsumer<T> {
 
     /**
      * Returns the QueueLoader associated with this QueueManager
@@ -68,7 +68,7 @@ public interface QueueManager<T> {
      * Lifecycle method to allow the closing and cleanup of resources.
      * @throws LockException
      */
-    public void close();
+    public void close(String processId);
     
     /**
      * Indicates if this QueueManager is intended for distributed use.  Examples of distributed Queues include JMS, 
@@ -92,6 +92,6 @@ public interface QueueManager<T> {
     /**
      * Indicates if there is nothing left to take from the queue.
      */
-    public boolean isComplete();
+    public boolean isActive();
     
 }

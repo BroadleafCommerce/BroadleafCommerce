@@ -91,11 +91,11 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
 
     /*
      * (non-Javadoc)
-     * @see org.broadleafcommerce.core.search.index.service.QueueConsumer#isQueueExpired()
+     * @see org.broadleafcommerce.core.search.index.service.QueueConsumer#isActive()
      */
     @Override
-    public boolean isQueueExpired() {
-        return (isComplete() && queue.isEmpty()) || SearchIndexProcessStateHolder.isFailed(processId);
+    public boolean isActive() {
+        return (!isComplete() && !queue.isEmpty() && ! SearchIndexProcessStateHolder.isFailed(processId));
     }
 
     @Override

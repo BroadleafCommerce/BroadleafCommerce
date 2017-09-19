@@ -40,6 +40,7 @@ import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -56,7 +57,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -97,6 +97,41 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product readProductById(Long productId) {
         return em.find(ProductImpl.class, productId);
+    }
+    
+    @Override
+    public List<Long> readActiveProductIds(int page, int batchSize){
+        return readActiveProductIds(page, batchSize, false); //Don't cache.
+    }
+    
+    @Override
+    public List<Long> readActiveProductIds(int page, int batchSize, boolean cache){
+        Assert.isTrue(page >= 0, "Page must be >= 0.  The starting point is 0.");
+        Assert.isTrue(batchSize > 0, "Batch Size must be > 0.");
+        TypedQuery<Number> query = em.createNamedQuery("BC_READ_ALL_ACTIVE_PRODUCT_IDS", Number.class);
+        int start = page * batchSize;
+        
+        query.setFirstResult(start);
+        query.setMaxResults(batchSize);
+        
+        //We want to be careful about caching this as it is typically for batch processing...
+        if (cache) {
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+            Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+            query.setParameter("currentDate", currentDate);
+        } else {
+            query.setParameter("currentDate", new Date());
+        }
+        
+        List<Number> results = query.getResultList();
+        List<Long> output = new ArrayList<>();
+        if (results != null && !results.isEmpty()) {
+            for (Number num : results) {
+                output.add(num.longValue());
+            }
+        }
+        return output;
     }
     
     @Override

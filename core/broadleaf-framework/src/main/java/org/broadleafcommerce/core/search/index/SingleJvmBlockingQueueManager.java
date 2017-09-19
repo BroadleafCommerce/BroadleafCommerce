@@ -2,21 +2,21 @@ package org.broadleafcommerce.core.search.index;
 
 import org.springframework.util.Assert;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
+ * In-JVM QueueManager that uses an ArrayBlockingQueue.  This is not for use with distributed processes, but works great 
+ * for single-VM, multi-threaded processes.
  * 
  * @author Kelly Tisdell
  *
  * @param <T>
  */
-public class SingleJvmBlockingQueueManager<T> extends AbstractQueueManager<T> implements QueueConsumer<T> {
+public class SingleJvmBlockingQueueManager<T> extends AbstractQueueManager<T> {
     
     protected static final long DEFAULT_POLL_TIME = 1000L;
     protected static final int DEFAULT_MAX_QUEUE_CAPACITY = 10000;
-    private static final Set<String> QUEUE_NAMES_IN_USE = new HashSet<>();
     
     protected final int maxCapacity;
     
@@ -71,23 +71,17 @@ public class SingleJvmBlockingQueueManager<T> extends AbstractQueueManager<T> im
 
     @Override
     protected synchronized void initializeInternal(String processId) {
-        if (QUEUE_NAMES_IN_USE.contains(getQueueName())) {
-            throw new IllegalStateException("A QueueManager with the queueName of " + getQueueName() 
-                + " was already in use. Ensure it is stopped first.");
-        }
-        queue = createQueue();
-        batchReader.reset();
+        this.queue = createQueue();
+        this.batchReader.reset();
+        this.processId = processId;
         Assert.notNull(processId, "The processId cannot be null.");
-        
+        this.queueLoader = createQueueLoader();
     }
     
     @Override
-    protected synchronized void closeInternal() {
-        queue.clear();
-        QUEUE_NAMES_IN_USE.remove(getQueueName());
-        batchReader.reset();
-        queue = null;
-        queueLoader = null;
+    protected synchronized void closeInternal(String processId) {
+        this.queue.clear();
+        this.batchReader.reset();
     }
 
     @Override
@@ -102,17 +96,50 @@ public class SingleJvmBlockingQueueManager<T> extends AbstractQueueManager<T> im
     protected QueueLoader<T> createQueueLoader() {
         return new SingleJvmBlockingQueueLoader<>(processId, queue, batchReader);
     }
-
-    @Override
-    public boolean isComplete() {
-        //TODO:
-        return false;
+    
+    /**
+     * Time to wait for an entry to become available in the queue.  The default is 1000 (1 second).  This is backed by 
+     * an ArrayBlockingQueue, so this affects the poll method, which blocks and waits for this amount of time for something 
+     * to become available. Otherwise, it returns null.
+     * 
+     * @return
+     */
+    protected long getPollTime() {
+        return DEFAULT_POLL_TIME;
     }
 
     @Override
-    public T consume() {
-        //TODO:
-        return null;
+    public synchronized boolean isActive() {
+        if (isInitialized()) {
+            return queueLoader.isActive();
+        }
+        return false;
+    }
+
+    /*
+     * This method polls the queue for a determined period of time.  If nothing is available, it checks to make 
+     * sure that no errors were raised by other threads and that the queue is still active (meaning that it is still being 
+     * filled by the QueueLoader). Typically, a call to this method will return a value, unless an error has occured or 
+     * unless the queue is empty and nothing else will be added.
+     */
+    @Override
+    public final T consume() {
+        T val;
+        while (true) {
+            if (isActive()) {
+                try {
+                    val = queue.poll(getPollTime(), TimeUnit.MILLISECONDS);
+                    if (val != null) {
+                        return val;
+                    }
+                } catch (InterruptedException e) {
+                    SearchIndexProcessStateHolder.failFast(processId, e);
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
     }
     
 }

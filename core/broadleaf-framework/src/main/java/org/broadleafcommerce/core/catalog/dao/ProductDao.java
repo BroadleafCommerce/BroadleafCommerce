@@ -44,6 +44,28 @@ public interface ProductDao {
     @Nonnull
     public Product readProductById(@Nonnull Long productId);
     
+    /**
+     * Reads an ordered, paginated list of active product IDs. Page should start at 0 (i.e. first page is 0). Batch 
+     * size MUST be greater than 0.
+     * 
+     * @param page
+     * @param batchSize
+     * @return
+     */
+    public List<Long> readActiveProductIds(int page, int batchSize);
+    
+    /**
+     * Reads an ordered, paginated list of active product IDs. Page should start at 0 (i.e. first page is 0). Batch 
+     * size MUST be greater than 0. A provided cache value of true indicates that the cache should be used.  The default is 
+     * false, as this method will typically be used for batch reading and processing.
+     * 
+     * @param page
+     * @param batchSize
+     * @param cache
+     * @return
+     */
+    public List<Long> readActiveProductIds(int page, int batchSize, boolean cache);
+    
     public Product readProductByExternalId(String externalId);
     
     /**
