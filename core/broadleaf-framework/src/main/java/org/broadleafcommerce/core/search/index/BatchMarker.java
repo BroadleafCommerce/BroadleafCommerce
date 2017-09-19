@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class BatchMarker implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+    private int expectedBatchSize;
     private String fiendEntity;
     private Long siteId;
     private Long catalogId;
@@ -83,5 +83,21 @@ public class BatchMarker implements Serializable {
     public void setLastValue(Long lastValue) {
         this.lastValue = lastValue;
     }
+
+    /**
+     * Provides the expected number of items in this batch (given that we are only provided the first and last ID 
+     * in the batch).
+     * @return
+     */
+    public int getExpectedBatchSize() {
+        return expectedBatchSize;
+    }
+
+    
+    public void setExpectedBatchSize(int expectedBatchSize) {
+        this.expectedBatchSize = expectedBatchSize;
+    }
+    
+    
     
 }

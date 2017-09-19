@@ -46,14 +46,14 @@ public class ProductBatchReader extends AbstractBatchReader<BatchMarker> {
                     for (Long id : ids) {
                         holder.add(id);
                         if (holder.size() == pageSize) {
-                            BatchMarker marker = buildMarker(holder.get(0), holder.get(holder.size() - 1), site, catalog);
+                            BatchMarker marker = buildMarker(holder.get(0), holder.get(holder.size() - 1), site, catalog, holder.size());
                             markers.add(marker);
                             holder.clear();
                         }
                     }
                     
                     if (!holder.isEmpty()) {
-                        BatchMarker marker = buildMarker(holder.get(0), holder.get(holder.size() - 1), site, catalog);
+                        BatchMarker marker = buildMarker(holder.get(0), holder.get(holder.size() - 1), site, catalog, holder.size());
                         markers.add(marker);
                         holder.clear();
                     }
@@ -66,9 +66,9 @@ public class ProductBatchReader extends AbstractBatchReader<BatchMarker> {
         return markers;
     }
     
-    protected BatchMarker buildMarker(Long low, Long high, Site site, Catalog catalog) {
+    protected BatchMarker buildMarker(Long low, Long high, Site site, Catalog catalog, int expectedBatchSize) {
         BatchMarker marker = new BatchMarker();
-        marker.setFiendEntity(getFieldEntityString());
+        marker.setFiendEntity(FieldEntity.PRODUCT.getType());
         marker.setFirstValue(low);
         if (site != null) {
             marker.setSiteId(site.getId());
@@ -96,10 +96,6 @@ public class ProductBatchReader extends AbstractBatchReader<BatchMarker> {
         return DEFAULT_BATCH_MULTIPLIER;
     }
     
-    protected String getFieldEntityString() {
-        return FieldEntity.PRODUCT.getType();
-    }
-
     @Override
     protected SiteService getSiteService() {
         return siteService;
