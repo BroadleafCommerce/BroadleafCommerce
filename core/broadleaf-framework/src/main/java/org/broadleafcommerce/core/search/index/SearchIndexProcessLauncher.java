@@ -23,7 +23,8 @@ import org.broadleafcommerce.core.catalog.domain.Indexable;
 public interface SearchIndexProcessLauncher<I extends Indexable> {
     
     /**
-     * Rebuilds an entire index.  Index is typically Solr or ElasticSearch, but could be any type of search-able index.
+     * Rebuilds an entire index.  Index is typically Solr or ElasticSearch, but could be any type of search-able index. 
+     * This is the entry point for rebuilding an index, and is often run in a background thread.
      * 
      * @throws ServiceException
      */
@@ -43,7 +44,7 @@ public interface SearchIndexProcessLauncher<I extends Indexable> {
     public void forceStop();
     
     /**
-     * Returns the elapsed time in millis, or -1 if the system is not running.
+     * Returns the elapsed time in millis, or -1 if the system is not running or if this is not the master instance.
      * @return
      */
     public long getElapsedTime();

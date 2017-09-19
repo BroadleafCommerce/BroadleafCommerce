@@ -78,7 +78,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 key = getLockService().lock(processId);
                 
                 startTime = System.currentTimeMillis();
-            } catch (LockException e) {
+            } catch (Exception e) {
                 LOG.error("There was an error obtaining the lock for processId " + processId, e);
                 return;
             }
@@ -96,7 +96,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                     //This will start a QueueLoader in a background thread.
                     //The purpose is to begin independently populating a Queue so that consumer threads can independently 
                     //and asynchronously consume the messages.
-                    queueManager = createQueueManager(processId);
+                    queueManager = getQueueManager(processId);
                     queueManager.initialize(processId);
                     if (getTaskExecutor() == null) {
                         queueManager.startQueueProducer();
@@ -307,7 +307,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     }
     
     /**
-     * Optional hook point called by afterPropertiesSet
+     * Optional hook point called by afterPropertiesSet.  This gets invoked once by Spring when the bean is created.
      */
     protected void initialize() {
         //Nothing
@@ -328,16 +328,15 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 throw new IllegalStateException(getClass().getName() 
                         + " attempted to register itself with"
                         + " FieldEntity type of " + determineFieldEntity().getType() 
-                        + " but that was already registered"
-                        + " to " 
+                        + " but that was already registered to "
                         + FIELD_ENTITY_REGISTRY.get(determineFieldEntity().getType()).getClass().getName() 
-                        + ". There can"
-                        + " only be one SearchIndexProcessLauncher registered for a given FieldEntity.");
+                        + ". There can only be one SearchIndexProcessLauncher registered for a given FieldEntity.");
             } else {
                 FIELD_ENTITY_REGISTRY.put(determineFieldEntity().getType(), this);
             }
         }
         
+        //Delegate to subclasses to allow them to initialize, if needed.
         initialize();
     }
     
@@ -378,7 +377,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
      * @param processId
      * @return
      */
-    protected abstract QueueManager<?> createQueueManager(String processId);
+    protected abstract QueueManager<?> getQueueManager(String processId);
     
     /**
      * This is a lifecycle method that allows for arbitrary pre-processing.  This method is invoked after a lock is obtained, 

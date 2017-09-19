@@ -17,11 +17,10 @@
  */
 package org.broadleafcommerce.core.search.index;
 
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
+import org.broadleafcommerce.common.module.ModulePresentUtil;
 import org.broadleafcommerce.common.site.domain.Catalog;
-import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.service.SiteService;
-import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
-import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -39,9 +38,7 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
     protected static final int DEFAULT_BATCH_SIZE = 100;
     private boolean complete = false;
     private int page = -1; //Start at -1 so first call to getNextPage() will return 0.
-    private List<Site> sites;
     private List<Catalog> catalogs;
-    private int siteIndex = 0;
     private int catalogIndex = 0;
     
     @Override
@@ -53,56 +50,21 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
         Assert.isTrue(pageSize > 0, "pageSize must be greater than 0.");
         final int nextPage = getNextPage();
         final List<T> out;
-        final Site currentSite;
         final Catalog currentCatalog;
-        if(sites != null && !sites.isEmpty()) {
-            currentSite = sites.get(siteIndex);
-            if (catalogs == null) {
-                catalogs = IdentityExecutionUtils
-                        .runOperationByIdentifier(new IdentityOperation<List<Catalog>, RuntimeException>() {
-                    @Override
-                    public List<Catalog> execute() throws RuntimeException {
-                        ArrayList<Catalog> out = new ArrayList<>();
-                        List<Catalog> cats = getSiteService().findAllCatalogs();
-                        if (cats != null) {
-                            for (Catalog cat : cats) {
-                                if (cat.isActive()) {
-                                    out.add(cat);
-                                }
-                            }
-                        }
-                        
-                        return out;
-                    }
-                }, currentSite);
-            }
-            
-            if (catalogs != null && ! catalogs.isEmpty()) {
-                currentCatalog = catalogs.get(catalogIndex);
-            } else {
-                currentCatalog = null;
-            }   
+        if(catalogs != null && !catalogs.isEmpty()) {
+            currentCatalog = catalogs.get(catalogIndex);
         } else {
-            currentSite = null;
             currentCatalog = null;
         }
         
-        out = readBatchInternal(nextPage, pageSize, currentSite, currentCatalog);
+        out = readBatchInternal(nextPage, pageSize, currentCatalog);
         if (out == null || out.size() <  pageSize) {
             //We've reached the end of a batch.  Decide what to do next...
             //Advance the catalog index
             catalogIndex++;
             if (catalogs == null || catalogIndex >= catalogs.size()) {
-                //We know we need to move to the next site...
-                siteIndex++;
-                catalogs = null;
-                catalogIndex = 0;
-            } 
-            
-            if (siteIndex >= sites.size()) {
-                //We're at the end of sites.
                 markComplete();
-            }
+            } 
         }
         
         return out;
@@ -114,9 +76,7 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
     
     private final synchronized void markComplete() {
         this.complete = true;
-        sites = null;
         catalogs = null;
-        siteIndex = 0;
         catalogIndex = 0;
         page = 0;
     }
@@ -125,9 +85,9 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
     public final synchronized void reset() {
         complete = false;
         page = 0;
-        siteIndex = 0;
-        sites = getSiteService().findAllNonPersistentActiveSites();
         catalogs = null;
+        catalogs = readAllActiveCatalogsForIndexing();
+        catalogIndex = 0;
         resetInternal();
     }
 
@@ -164,13 +124,43 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
      * 
      * @param page
      * @param pageSize
+     * @param catalog
      * @return
      */
-    protected abstract List<T> readBatchInternal(int page, int pageSize, Site site, Catalog catalog);
+    protected abstract List<T> readBatchInternal(int page, int pageSize, Catalog catalog);
     
     /**
      * Returns the site service that should be used by this component.
      * @return
      */
     protected abstract SiteService getSiteService();
+    
+    /**
+     * This is specifically designed when running with Broadleaf's Multi-Tenant / Multi-Catalog functionality 
+     * such as Marketplace, 
+     * 
+     * This method can (and should) return null if Broadleaf's multi-tenant functionality is not activated.
+     * 
+     * This will return all active catalogs.
+     * 
+     * @return
+     */
+    protected List<Catalog> readAllActiveCatalogsForIndexing() {
+        if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.MULTI_TENANT_SINGLE_SCHEMA)) {
+            List<Catalog> cats = getSiteService().findAllCatalogs();
+            if (cats != null && ! cats.isEmpty()) {
+                ArrayList<Catalog> out = new ArrayList<>();
+                for (Catalog cat : cats) {
+                    if (cat.isActive()) {
+                        out.add(cat);
+                    }
+                }
+                
+                if (!out.isEmpty()) {
+                    return out;
+                }
+            }
+        }
+        return null;
+    }
 }

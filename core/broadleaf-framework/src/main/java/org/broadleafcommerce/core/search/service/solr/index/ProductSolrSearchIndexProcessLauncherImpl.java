@@ -93,7 +93,7 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     }
 
     @Override
-    protected QueueManager<?> createQueueManager(String processId) {
+    protected QueueManager<?> getQueueManager(String processId) {
         return new SingleJvmBlockingQueueManager<>(getQueueName(), batchReader);
     }
     

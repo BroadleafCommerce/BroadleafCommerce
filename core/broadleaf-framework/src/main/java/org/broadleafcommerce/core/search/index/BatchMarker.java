@@ -36,7 +36,6 @@ public class BatchMarker implements Serializable {
     private static final long serialVersionUID = 1L;
     private int expectedBatchSize;
     private String fiendEntity;
-    private Long siteId;
     private Long catalogId;
     private Long firstValue;
     private Long lastValue;
@@ -51,18 +50,6 @@ public class BatchMarker implements Serializable {
     
     public void setFiendEntity(String fiendEntity) {
         this.fiendEntity = fiendEntity;
-    }
-    
-    /**
-     * May be null, but if in a multi-tenant situation, this is the siteId for the batch.
-     * @return
-     */
-    public Long getSiteId() {
-        return siteId;
-    }
-    
-    public void setSiteId(Long siteId) {
-        this.siteId = siteId;
     }
     
     /**
