@@ -92,24 +92,31 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected String fieldType;
 
     @Column (name = "SECURITY_LEVEL")
+    @AdminPresentation(excluded = true)
     protected String securityLevel;
 
     @Column (name = "HIDDEN_FLAG")
+    @AdminPresentation(excluded = true)
     protected Boolean hiddenFlag = false;
 
     @Column (name = "VLDTN_REGEX")
+    @AdminPresentation(excluded = true)
     protected String validationRegEx;
 
     @Column (name = "VLDTN_ERROR_MSSG_KEY")
+    @AdminPresentation(excluded = true)
     protected String validationErrorMesageKey;
 
     @Column (name = "MAX_LENGTH")
+    @AdminPresentation(excluded = true)
     protected Integer maxLength;
 
     @Column (name = "COLUMN_WIDTH")
+    @AdminPresentation(excluded = true)
     protected String columnWidth;
 
     @Column (name = "TEXT_AREA_FLAG")
+    @AdminPresentation(excluded = true)
     protected Boolean textAreaFlag = false;
     
     @Column(name = "REQUIRED_FLAG")
@@ -121,6 +128,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected DataDrivenEnumeration dataDrivenEnumeration;
 
     @Column (name = "ALLOW_MULTIPLES")
+    @AdminPresentation(excluded = true)
     protected Boolean allowMultiples = false;
 
     @ManyToOne(targetEntity = FieldGroupImpl.class)
@@ -132,12 +140,15 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected Integer fieldOrder = 0;
 
     @Column (name = "TOOLTIP")
+    @AdminPresentation(excluded = true)
     protected String tooltip;
 
     @Column (name = "HELP_TEXT")
+    @AdminPresentation(excluded = true)
     protected String helpText;
 
     @Column (name = "HINT")
+    @AdminPresentation(excluded = true)
     protected String hint;
 
     @Override
