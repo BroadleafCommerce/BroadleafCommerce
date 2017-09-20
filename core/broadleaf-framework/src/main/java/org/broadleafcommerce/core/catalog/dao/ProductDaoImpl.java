@@ -100,6 +100,19 @@ public class ProductDaoImpl implements ProductDao {
     }
     
     @Override
+    public List<Product> readProductsInIdRange(Long fromId, Long toId) {
+        Assert.notNull(fromId, "fromId must not be null");
+        Assert.notNull(toId, "toId must not be null");
+        Assert.isTrue(fromId <= toId, "'fromId' must be less than or equal to 'toId'.");
+        
+        //Purposefully not cacheing this as it is typically used for batch processes.
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_IN_ID_RANGE", Product.class);
+        query.setParameter("fromId", fromId);
+        query.setParameter("toId", toId);
+        return query.getResultList();
+    }
+    
+    @Override
     public List<Long> readActiveProductIds(int page, int batchSize){
         return readActiveProductIds(page, batchSize, false); //Don't cache.
     }

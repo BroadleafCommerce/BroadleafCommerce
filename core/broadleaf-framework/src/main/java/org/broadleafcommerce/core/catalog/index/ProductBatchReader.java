@@ -55,7 +55,7 @@ public class ProductBatchReader extends AbstractBatchReader<BatchMarker> {
         IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<Void, RuntimeException>() {
             @Override
             public Void execute() {
-                List<Long> ids = productDao.readActiveProductIds(page, batchSize);
+                List<Long> ids = productDao.readActiveProductIds(page, batchSize, false);
                 if (!ids.isEmpty()) {
                     List<Long> holder = new ArrayList<>(pageSize);
                     for (Long id : ids) {
@@ -83,7 +83,7 @@ public class ProductBatchReader extends AbstractBatchReader<BatchMarker> {
     
     protected BatchMarker buildMarker(Long low, Long high, Catalog catalog, int expectedBatchSize) {
         BatchMarker marker = new BatchMarker();
-        marker.setFiendEntity(FieldEntity.PRODUCT.getType());
+        marker.setFieldEntity(FieldEntity.PRODUCT.getType());
         marker.setFirstValue(low);
         if (catalog != null) {
             marker.setCatalogId(catalog.getId());

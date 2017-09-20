@@ -55,6 +55,15 @@ public interface ProductDao {
     public List<Long> readActiveProductIds(int page, int batchSize);
     
     /**
+     * Reads a list of products in an ID range. Same as call to 
+     * 
+     * @param from
+     * @param to
+     * @return
+     */
+    public List<Product> readProductsInIdRange(Long from, Long to);
+    
+    /**
      * Reads an ordered, paginated list of active product IDs. Page should start at 0 (i.e. first page is 0). Batch 
      * size MUST be greater than 0. A provided cache value of true indicates that the cache should be used.  The default is 
      * false, as this method will typically be used for batch reading and processing.

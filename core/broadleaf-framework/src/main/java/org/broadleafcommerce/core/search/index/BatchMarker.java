@@ -35,7 +35,7 @@ public class BatchMarker implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private int expectedBatchSize;
-    private String fiendEntity;
+    private String fieldEntity;
     private Long catalogId;
     private Long firstValue;
     private Long lastValue;
@@ -44,12 +44,12 @@ public class BatchMarker implements Serializable {
      * This should be the String representation of the {@link FieldEntity}.
      * @return
      */
-    public String getFiendEntity() {
-        return fiendEntity;
+    public String getFieldEntity() {
+        return fieldEntity;
     }
     
-    public void setFiendEntity(String fiendEntity) {
-        this.fiendEntity = fiendEntity;
+    public void setFieldEntity(String fieldEntity) {
+        this.fieldEntity = fieldEntity;
     }
     
     /**

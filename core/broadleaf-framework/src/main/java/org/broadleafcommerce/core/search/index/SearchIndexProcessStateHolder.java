@@ -60,10 +60,7 @@ public class SearchIndexProcessStateHolder {
     
     private static final Log LOG = LogFactory.getLog(SearchIndexProcessStateHolder.class);
     
-    public static final String PRIMARY_INDEX_NAME = "PRIMARY_INDEX_NAME"; //Convenience name of the current primary index that will be swapped to the background
-    public static final String PRIMARY_ALIAS_NAME = "PRIMARY_ALIAS_NAME"; //Convenience name of the current primary alias 
-    public static final String REINDEX_INDEX_NAME = "REINDEX_INDEX_NAME"; //Convenience name of the index or collection that is being reindexed.
-    public static final String REINDEX_ALIAS_NAME = "REINDEX_ALIAS_NAME"; //Convenience name of the alias that is being reindexed.
+    public static final String INDEX_NAME = "INDEX_NAME"; //Convenience name of the index that is being re-populated.
     
     private static final Map<String,SearchIndexProcessStateHolder> STATE_HOLDER_MAP = new HashMap<>();
     private final Map<String, Object> additionalPropeties = new HashMap<>();

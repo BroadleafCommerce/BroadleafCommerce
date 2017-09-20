@@ -35,7 +35,12 @@
                WHERE product.defaultSku.activeStartDate &lt;= :currentDate 
                AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate IS NULL)
                AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
-               ORDER BY product.id</query>
+               ORDER BY product.id ASC</query>
+    </named-query>
+    
+    <named-query name="BC_READ_PRODUCTS_IN_ID_RANGE" >
+        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product 
+               WHERE product.id BETWEEN :fromId AND :toId</query>
     </named-query>
     
     <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >
