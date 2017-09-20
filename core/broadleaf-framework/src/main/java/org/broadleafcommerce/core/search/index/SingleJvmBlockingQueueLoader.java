@@ -114,15 +114,6 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
         return queue.isEmpty();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.search.index.service.QueueLoader#isDistributed()
-     */
-    @Override
-    public final boolean isDistributed() {
-        return false;
-    }
-
     protected long determinePutWaitTime() {
         return DEFAULT_PUT_WAIT_TIME;
     }

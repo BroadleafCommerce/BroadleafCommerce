@@ -47,7 +47,7 @@ public abstract class AbstractQueueManager<T> implements QueueManager<T>, Applic
     }
 
     @Override
-    public final synchronized void initialize(String processId) {
+    public final synchronized void initialize() {
         if (!initialized) {
             synchronized(QUEUE_NAMES_IN_USE) {
                 if (QUEUE_NAMES_IN_USE.containsKey(getQueueName())) {
@@ -58,7 +58,7 @@ public abstract class AbstractQueueManager<T> implements QueueManager<T>, Applic
                 QUEUE_NAMES_IN_USE.put(getQueueName(), this);
             }
             
-            initializeInternal(processId); //Allow subclasses to do what they need.
+            initializeInternal(); //Allow subclasses to do what they need.
             
             //Check all of the components.
             Assert.notNull(getQueueLoader(), "Call to " + getClass().getName() 
@@ -72,10 +72,10 @@ public abstract class AbstractQueueManager<T> implements QueueManager<T>, Applic
     }
     
     @Override
-    public final synchronized void close(String processId) {
+    public final synchronized void close() {
         if (initialized) {
             if (!isActive()) {
-                closeInternal(processId);
+                closeInternal();
                 synchronized(QUEUE_NAMES_IN_USE) {
                     QUEUE_NAMES_IN_USE.remove(getQueueName());
                 }
@@ -132,13 +132,11 @@ public abstract class AbstractQueueManager<T> implements QueueManager<T>, Applic
      * only be invoked once. A RuntimeException should be thrown from this method if there is an issue initializing.
      * @param processId
      */
-    protected abstract void initializeInternal(String processId);
+    protected abstract void initializeInternal();
     
     /**
      * Hook point to allow any additional cleanup.
      */
-    protected abstract void closeInternal(String processId);
-    
-    
+    protected abstract void closeInternal();
     
 }

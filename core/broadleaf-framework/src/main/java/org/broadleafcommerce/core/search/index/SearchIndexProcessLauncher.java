@@ -18,9 +18,8 @@
 package org.broadleafcommerce.core.search.index;
 
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
 
-public interface SearchIndexProcessLauncher<I extends Indexable> {
+public interface SearchIndexProcessLauncher<I> {
     
     /**
      * Rebuilds an entire index.  Index is typically Solr or ElasticSearch, but could be any type of search-able index. 

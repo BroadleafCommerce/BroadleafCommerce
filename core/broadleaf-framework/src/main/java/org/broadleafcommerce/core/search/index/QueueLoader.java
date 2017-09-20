@@ -70,11 +70,5 @@ public interface QueueLoader<T> extends Runnable {
      */
     public boolean isEmpty();
     
-    /**
-     * Indicates if this queue producer supports distributed processing.
-     * 
-     * @return
-     */
-    public boolean isDistributed();
     
 }

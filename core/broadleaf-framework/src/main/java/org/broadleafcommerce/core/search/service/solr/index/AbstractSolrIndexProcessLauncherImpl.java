@@ -21,12 +21,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.index.AbstractGenericSearchIndexProcessLauncher;
 
 import java.util.ArrayList;
 
-public abstract class AbstractSolrIndexProcessLauncherImpl<I extends Indexable> extends AbstractGenericSearchIndexProcessLauncher<I> {
+public abstract class AbstractSolrIndexProcessLauncherImpl<I> extends AbstractGenericSearchIndexProcessLauncher<I> {
     
     private static final Log LOG = LogFactory.getLog(AbstractSolrIndexProcessLauncherImpl.class);
     

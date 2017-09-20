@@ -17,17 +17,16 @@
  */
 package org.broadleafcommerce.core.search.service.solr.index;
 
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.index.BatchMarker;
 import org.broadleafcommerce.core.search.index.BatchReader;
 import org.broadleafcommerce.core.search.index.LockService;
+import org.broadleafcommerce.core.search.index.QueueEntryProcessor;
 import org.broadleafcommerce.core.search.index.QueueManager;
 import org.broadleafcommerce.core.search.index.SingleJvmBlockingQueueManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -40,7 +39,7 @@ import javax.annotation.Resource;
  *
  */
 @Component("blProductSolrSearchIndexProcessLauncher")
-public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndexProcessLauncherImpl<Product> {
+public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndexProcessLauncherImpl<BatchMarker> {
     
     protected static final String DEFAULT_QUEUE_NAME = "productQueue";
     
@@ -49,19 +48,16 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     
     @Autowired(required=false)
     @Qualifier("blSearchIndexTaskExecutor") 
-    protected TaskExecutor taskExecutor;
+    protected ThreadPoolTaskExecutor taskExecutor;
     
     @Resource(name="blSolrUtil")
     protected SolrUtil solrUtil;
     
-    @Value("${org.broadleafcommerce.core.search.service.solr.index.productPrimaryAliasName:catalog}")
-    protected String primaryAliasName;
-    
-    @Value("${org.broadleafcommerce.core.search.service.solr.index.productSecondaryAliasName:catalog_reindex}")
-    protected String secondaryAliasName;
-    
     @Resource(name="blProductIndexBatchReader")
     protected BatchReader<BatchMarker> batchReader;
+    
+    @Resource(name="blProductSolrSearchIndexProcessor")
+    protected QueueEntryProcessor<BatchMarker> processor;
 
     @Override
     protected FieldEntity determineFieldEntity() {
@@ -75,12 +71,12 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
 
     @Override
     protected String getPrimaryAliasName() {
-        return primaryAliasName;
+        return "catalog";
     }
 
     @Override
     protected String getSecondaryAliasName() {
-        return secondaryAliasName;
+        return "catalog_reindex";
     }
 
     @Override
@@ -93,8 +89,19 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     }
 
     @Override
-    protected QueueManager<?> getQueueManager(String processId) {
-        return new SingleJvmBlockingQueueManager<>(getQueueName(), batchReader);
+    protected QueueManager<BatchMarker> createQueueManager(String processId) {
+        return new SingleJvmBlockingQueueManager<>(processId, getQueueName(), batchReader);
     }
+
+    @Override
+    protected QueueEntryProcessor<BatchMarker> getQueueEntryProcessor() {
+        return processor;
+    }
+
+    @Override
+    protected ThreadPoolTaskExecutor getTaskExecutor() {
+        return taskExecutor;
+    }
+    
     
 }

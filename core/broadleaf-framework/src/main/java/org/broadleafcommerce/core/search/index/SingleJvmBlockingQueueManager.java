@@ -43,26 +43,29 @@ public class SingleJvmBlockingQueueManager<T> extends AbstractQueueManager<T> {
     
     protected final BatchReader<T> batchReader;
     
-    protected String processId;
+    final protected String processId;
     
     protected QueueLoader<T> queueLoader;
     
     protected ArrayBlockingQueue<T> queue;
     
-    public SingleJvmBlockingQueueManager(String queueName, BatchReader<T> batchReader) {
-        this(queueName, DEFAULT_MAX_QUEUE_CAPACITY, batchReader);
+    public SingleJvmBlockingQueueManager(String processId, String queueName, BatchReader<T> batchReader) {
+        this(processId, queueName, DEFAULT_MAX_QUEUE_CAPACITY, batchReader);
     }
     
-    public SingleJvmBlockingQueueManager(String queueName, int maxCapacity, BatchReader<T> batchReader) {
-        this(queueName, maxCapacity, true, batchReader);
+    public SingleJvmBlockingQueueManager(String processId, String queueName, int maxCapacity, BatchReader<T> batchReader) {
+        this(processId, queueName, maxCapacity, true, batchReader);
     }
     
-    public SingleJvmBlockingQueueManager(String queueName, int maxCapacity, boolean fair, BatchReader<T> batchReader) {
+    public SingleJvmBlockingQueueManager(String processId, String queueName, 
+            int maxCapacity, boolean fair, BatchReader<T> batchReader) {
         this.queueName = queueName;
         this.maxCapacity = maxCapacity;
         this.fair = fair;
         this.batchReader = batchReader;
+        this.processId = processId;
         Assert.notNull(queueName, "The queueName cannot be null");
+        Assert.notNull(processId, "The processId cannot be null");
         Assert.notNull(batchReader, "The batchReader cannot be null.");
         Assert.isTrue(maxCapacity > 0, "The maxCapacity must be greater than 0. Default is " + DEFAULT_MAX_QUEUE_CAPACITY);
     }
@@ -70,12 +73,6 @@ public class SingleJvmBlockingQueueManager<T> extends AbstractQueueManager<T> {
     @Override
     public QueueLoader<T> getQueueLoader() {
         return queueLoader;
-    }
-
-    @Override
-    public final boolean isDistributed() {
-        //By definition this is in-JVM.  This is not distributed, and so it is final.
-        return false;
     }
 
     @Override
@@ -87,16 +84,14 @@ public class SingleJvmBlockingQueueManager<T> extends AbstractQueueManager<T> {
     }
 
     @Override
-    protected synchronized void initializeInternal(String processId) {
+    protected synchronized void initializeInternal() {
         this.queue = createQueue();
         this.batchReader.reset();
-        this.processId = processId;
-        Assert.notNull(processId, "The processId cannot be null.");
         this.queueLoader = createQueueLoader();
     }
     
     @Override
-    protected synchronized void closeInternal(String processId) {
+    protected synchronized void closeInternal() {
         this.queue.clear();
         this.batchReader.reset();
     }

@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.search.index;
 
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
@@ -24,7 +26,7 @@ import java.util.UUID;
 /**
  * This component allows for the tracking of a lock reference for a single process ID or reference.
  * 
- * By definition, this component is non-distributed and only works in a single JVM.  Callers should 
+ * By definition, this implementation is non-distributed and only works in a single JVM.  Callers should 
  * acquire a lock by calling the lock method, and then, in a finally block, call the unlock method:
  * 
  * Object processId = FieldEntity.PRODUCT;
@@ -53,6 +55,7 @@ import java.util.UUID;
  * @author Kelly Tisdell
  *
  */
+@Component("blSearchIndexLockService")
 public class LocalJvmLockService implements LockService {
     
     private static final HashMap<Serializable, Serializable> LOCK_MAP = new HashMap<>();
@@ -109,12 +112,6 @@ public class LocalJvmLockService implements LockService {
             LOCK_MAP.remove(key);
         }
         
-    }
-
-    @Override
-    public final boolean isDistributed() {
-        //By defininition this is non-distributed.
-        return false;
     }
     
     /**

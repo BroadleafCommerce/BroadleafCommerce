@@ -59,9 +59,8 @@ public interface QueueManager<T> extends QueueReader<T> {
      * ready to begin consuming data from the Queue.  A call to startQueueProducer() will be required to begin loading 
      * the Queue with data.
      * 
-     * @param processId
      */
-    public void initialize(String processId);
+    public void initialize();
     
     /**
      * This starts the QueueProducer in a new Thread.  Only the 
@@ -83,16 +82,9 @@ public interface QueueManager<T> extends QueueReader<T> {
     
     /**
      * Lifecycle method to allow the closing and cleanup of resources.
-     * @throws LockException
+     * 
      */
-    public void close(String processId);
-    
-    /**
-     * Indicates if this QueueManager is intended for distributed use.  Examples of distributed Queues include JMS, 
-     * AMQP, Apache Kafka, etc.  An example of a non-distributed Queue would be java.util.concurrent.ArrayBlockingQueue.
-     * @return
-     */
-    public boolean isDistributed();
+    public void close();
     
     /**
      * Method to indicate that this component was successfully initialized by a call to initialize().

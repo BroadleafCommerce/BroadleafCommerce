@@ -20,36 +20,38 @@ package org.broadleafcommerce.core.search.index;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.common.util.BlockingRejectedExecutionHandler;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 /**
  * This is an abstract component to allow for the full reindexing of a specific index.  This component only operates as a 
- * controller for a multi-threaded process.  The purpose of this is to obtain a process lock (which may be in memory or 
- * distributed).  It then runs a QueueLoader in another thread, which begins to populate a Queue (which could be in memory or 
- * distributed).  It creates a Semaphore to block until all background threads are complete.  It then raises a process started 
- * event (which is a Spring event).  This may be propagated to a distributed event so that other QueueReaders can be started.
+ * controller for a multi-threaded process.  The purpose of this is to obtain a process lock. 
+ * It then runs a QueueLoader in another thread, which begins to populate a Queue.  
+ * It creates a Semaphore to block until all background threads are complete.  It then raises a process started 
+ * event (which is a Spring event). 
  * Finally, it waits until the semaphore releases and completes the process.
  * 
  * @author Kelly Tisdell
  *
  * @param <I>
  */
-public abstract class AbstractGenericSearchIndexProcessLauncher<I extends Indexable> 
+public abstract class AbstractGenericSearchIndexProcessLauncher<I> 
 implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, InitializingBean {
     
     private static final Log LOG = LogFactory.getLog(AbstractGenericSearchIndexProcessLauncher.class);
-    private static final Map<String, SearchIndexProcessLauncher<? extends Indexable>> FIELD_ENTITY_REGISTRY = new HashMap<>();
+    private static final Map<String, SearchIndexProcessLauncher<?>> FIELD_ENTITY_REGISTRY = new HashMap<>();
+    private static final Map<String, QueueManager<?>> QUEUE_MANAGERS_IN_USE = new HashMap<>();
     protected static final long DEFAULT_PAUSE_TIME = 5000L;
     private long startTime = -1;
     protected ApplicationContext ctx;
@@ -73,8 +75,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 //2 different threads simultaneously kicking off the same process at the same time, which could cause 
                 //major state issues in addition to increased resource use and reduced performance.
                 
-                //The owner of the lock is assumed to be the thread that controls the flow.  If it is a distributed lock, 
-                //it is assumed that a particular thread on a particular node controls the flow.
+                //The owner of the lock is assumed to be the thread that controls the flow.
                 key = getLockService().lock(processId);
                 
                 startTime = System.currentTimeMillis();
@@ -84,25 +85,23 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
             }
         }
         
-        //TODO: Create Barrier.
-        QueueManager<?> queueManager = null;
+        
         try {
             SearchIndexProcessStateHolder.startProcessState(processId, determineFieldEntity());
+            QueueManager<I> queueManager = null;
+            int count = 0;
             try {
                 //Allow for any arbitrary pre-processing.
                 preProcess(processId);
-                
+                Semaphore semaphore = new Semaphore(0);
                 try {
                     queueManager = getQueueManager(processId);
-                    if (queueManager.isDistributed() && ! getLockService().isDistributed()) {
-                        //It's OK if the lock service is distributed and the QueueManager is not.  But not vice versa.
-                        throw new IllegalStateException("If the QueueManager is distributed, the LockService must be as well.");
-                    }
+                    SearchIndexProcessStateHolder.setAdditionalProperty(processId, "_QUEUE_MANAGER", queueManager);
                     
                     //This will start a QueueLoader in a background thread.
                     //The purpose is to begin independently populating a Queue so that consumer threads can independently 
                     //and asynchronously consume the messages.
-                    queueManager.initialize(processId);
+                    queueManager.initialize();
                     if (getTaskExecutor() == null) {
                         queueManager.startQueueProducer();
                     } else {
@@ -114,8 +113,14 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                     //Now, we need to raise an event so that consumers can begin consuming messages.
                     ctx.publishEvent(new SearchIndexProcessStartedEvent(processId, determineFieldEntity(), queueName));
                     
+                    count = process(processId, semaphore);
+                    
                 } finally {
-                    //TODO: Wait for Barrier...
+                    try {
+                        semaphore.acquire(count);
+                    } catch (InterruptedException e) {
+                        LOG.error("Caught exception waiting for Semphore.", e);
+                    }
                     
                     if (SearchIndexProcessStateHolder.isFailed(processId)) {
                         if (SearchIndexProcessStateHolder.getFirstFailure(processId) != null) {
@@ -169,8 +174,12 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 
                 try {
                     if (queueManager != null) {
-                        queueManager.close(processId);
+                        queueManager.close();
                     }
+                    synchronized(QUEUE_MANAGERS_IN_USE) {
+                        QUEUE_MANAGERS_IN_USE.remove(processId);
+                    }
+                    
                 } catch (Exception e) {
                     LOG.error("An error occured trying to cleanup the QueueManager for Queue name: " 
                             + queueManager.getQueueName(), e);
@@ -274,6 +283,82 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     }
     
     /**
+     * Method to consume the Queue entry.  This is what will take whatever is on the queue and finish processing.  
+     * Typically, this executes in a background thread, if the ThreadPoolTaskExecutor is not null.  Otherwise, it executes 
+     * in the current thread.  This also delegates to the provided QueueProcessor, which must not be null.
+     * The semaphore keeps track of executions so that the control thread can wait on background threads. 
+     * Each individual call to this method must result in a single call to release the semaphore.
+     * 
+     * @param executor
+     * @param processor
+     * @param processId
+     * @param entry
+     * @param semaphore
+     */
+    protected void processEntry(final ThreadPoolTaskExecutor executor, 
+            final QueueEntryProcessor<I> processor, final String processId, final I entry, final Semaphore semaphore) {
+        
+        if (entry == null) {
+            semaphore.release();
+            return;
+        }
+        
+        if (!SearchIndexProcessStateHolder.isFailed(processId)) {
+            semaphore.release();
+            return;
+        }
+        
+        if (executor != null) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        processor.process(processId, entry);
+                    } catch (Throwable t) {
+                        SearchIndexProcessStateHolder.failFast(processId, t);
+                    } finally {
+                        semaphore.release();
+                    }
+                }
+            });
+        } else {
+            try {
+                processor.process(processId, entry);
+            } catch (Throwable t) {
+                SearchIndexProcessStateHolder.failFast(processId, t);
+            } finally {
+                semaphore.release();
+            }
+        }
+        
+    }
+    
+    protected int process(final String processId, final Semaphore semaphore) {
+        final QueueEntryProcessor<I> processor = getQueueEntryProcessor();
+        final ThreadPoolTaskExecutor executor = getTaskExecutor();
+        @SuppressWarnings("unchecked")
+        final QueueManager<I> queueManager = 
+                (QueueManager<I>)SearchIndexProcessStateHolder.getAdditionalProperty(processId, "_QUEUE_MANAGER");
+        int count = 0;
+        try {
+            while(true) {
+                I entry = queueManager.consume();
+                if (entry != null) {
+                    processEntry(executor, processor, processId, entry, semaphore);
+                    count++;
+                } else if (!queueManager.isActive()) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            SearchIndexProcessStateHolder.failFast(processId, e);
+        }
+        
+        //We must return a count so that the semaphore can release.
+        return count;
+    }
+    
+    /**
      * This is the time that the main control thread will pause to allow other threads to finish what they 
      * are doing or catch up.
      * 
@@ -297,15 +382,22 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     }
     
     /**
-     * Method to allow implementors to return a specific TaskExecutor.  This method MAY return null.
+     * Method to allow implementors to return a specific ThreadPoolTaskExecutor.  This method MAY return null.
      * 
      * This component runs itself in a background thread when the rebuildIndex() method is called.  This component also 
      * delegates to a background thread to run the QueueLoader.  If you do return a task executor, make sure it has 
      * enough threads to handle the QueueLoader and the worker threads for the QueueConsumer.
      * 
+     * One warning about this - the ThreadPoolTaskExecutor is not closed, destroyed, or otherwise cleaned up.  If Spring provides 
+     * the ThreadPoolTaskExecutor, Spring should be responsible for the lifecycle.  If the subclass creates the thread pool, it should 
+     * clean up the ThreadPoolTaskExecutor in both of the postProcess methods, or as part of the lifecycle of the implementing bean.
+     * 
+     * It is strongly recommended that implementations return a ThreadPoolTaskExecutor, and that the 
+     * configuration of it include the {@link BlockingRejectedExecutionHandler}.
+     * 
      * @return
      */
-    protected TaskExecutor getTaskExecutor() {
+    protected ThreadPoolTaskExecutor getTaskExecutor() {
         //Default is to return null
         return null;
     }
@@ -350,7 +442,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
      * @param entity
      * @return
      */
-    public static SearchIndexProcessLauncher<? extends Indexable> getProcessLauncherForFieldEntity(
+    public static SearchIndexProcessLauncher<?> getProcessLauncherForFieldEntity(
             FieldEntity entity) {
         if (entity == null) {
             return null;
@@ -359,6 +451,25 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
             return FIELD_ENTITY_REGISTRY.get(entity.getType());
         }  
     }
+    
+    @SuppressWarnings("unchecked")
+    private QueueManager<I> getQueueManager(String processId) {
+        synchronized (QUEUE_MANAGERS_IN_USE) {
+            QueueManager<?> qm = QUEUE_MANAGERS_IN_USE.get(processId);
+            if (qm == null) {
+                qm = createQueueManager(processId);
+                QUEUE_MANAGERS_IN_USE.put(processId, qm);
+            }
+            
+            return (QueueManager<I>)qm;
+        }
+    }
+    
+    /**
+     * This must return a thread-safe singleton {@link QueueEntryProcessor} that will handle entries from the Queue.
+     * @return
+     */
+    protected abstract QueueEntryProcessor<I> getQueueEntryProcessor();
     
     /**
      * Returns the LockService to be used by this component to lock and unlock the process.  This MUST NOT return null.
@@ -376,12 +487,13 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     protected abstract FieldEntity determineFieldEntity();
     
     /**
-     * This should return the QueueManager that owns the relationship between the QueueLoader and QueueConsumer.
+     * This should return a new instance of the QueueManager that owns the relationship between the QueueLoader 
+     * and QueueReader. 
      * 
      * @param processId
      * @return
      */
-    protected abstract QueueManager<?> getQueueManager(String processId);
+    protected abstract QueueManager<I> createQueueManager(String processId);
     
     /**
      * This is a lifecycle method that allows for arbitrary pre-processing.  This method is invoked after a lock is obtained, 

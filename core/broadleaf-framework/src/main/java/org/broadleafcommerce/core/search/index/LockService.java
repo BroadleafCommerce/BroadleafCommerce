@@ -70,9 +70,4 @@ public interface LockService {
      */
     public void unlock(Serializable key, Serializable reference) throws LockException;
     
-    /**
-     * Indicates if this LockService supports distributed locks (e.g. via a database, cache, Zookeeper, etc.).
-     * @return
-     */
-    public boolean isDistributed();
 }
