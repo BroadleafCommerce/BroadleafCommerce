@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentCon
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -244,8 +245,15 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             LOG.trace("A Processing Exception Occurred finalizing the order. Adding Error to Redirect Attributes.");
         }
 
-        redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
-                PaymentGatewayAbstractController.getProcessingErrorMessage());
+        Throwable cause = e.getCause();
+
+        if (cause!= null && cause.getCause() instanceof RequiredAttributeNotProvidedException) {
+            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    PaymentGatewayAbstractController.getCartReqAttributeNotProvidedMessage());
+        } else {
+            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    PaymentGatewayAbstractController.getProcessingErrorMessage());
+        }
     }
 
     public String getBaseConfirmationRedirect() {
