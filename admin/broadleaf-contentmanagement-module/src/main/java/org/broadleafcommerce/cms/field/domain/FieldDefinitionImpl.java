@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -163,18 +164,25 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     public SupportedFieldType getFieldType() {
         if (fieldType == null) {
             return null;
-        }
-        
-        if (fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+        } else if (fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
             return SupportedFieldType.ADDITIONAL_FOREIGN_KEY;
+        } else {
+            return SupportedFieldType.valueOf(fieldType);
         }
-        
-        return SupportedFieldType.valueOf(fieldType);
     }
 
     @Override
     public String getFieldTypeVal() {
         return fieldType;
+    }
+    
+    @Override
+    public DynamicSupportedFieldType getDynamicSupportedFieldType() {
+        if (fieldType == null) {
+            return null;
+        } else {
+            return DynamicSupportedFieldType.getInstance(fieldType);
+        }
     }
     
     @Override

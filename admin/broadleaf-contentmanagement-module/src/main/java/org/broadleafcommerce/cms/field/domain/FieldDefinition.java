@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.field.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
+import org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 import java.io.Serializable;
@@ -28,88 +29,90 @@ import java.io.Serializable;
  */
 public interface FieldDefinition extends Serializable, MultiTenantCloneable<FieldDefinition> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public SupportedFieldType getFieldType();
+    SupportedFieldType getFieldType();
 
     String getFieldTypeVal();
+    
+    DynamicSupportedFieldType getDynamicSupportedFieldType();
 
-    public void setFieldType(SupportedFieldType fieldType);
+    void setFieldType(SupportedFieldType fieldType);
 
     void setFieldType(String fieldType);
 
-    public String getSecurityLevel();
+    String getSecurityLevel();
 
-    public void setSecurityLevel(String securityLevel);
+    void setSecurityLevel(String securityLevel);
 
-    public Boolean getHiddenFlag();
+    Boolean getHiddenFlag();
 
-    public void setHiddenFlag(Boolean hiddenFlag);
+    void setHiddenFlag(Boolean hiddenFlag);
 
-    public String getValidationRegEx();
+    String getValidationRegEx();
 
-    public void setValidationRegEx(String validationRegEx);
+    void setValidationRegEx(String validationRegEx);
 
-    public Integer getMaxLength();
+    Integer getMaxLength();
 
-    public void setMaxLength(Integer maxLength);
+    void setMaxLength(Integer maxLength);
 
-    public String getColumnWidth();
+    String getColumnWidth();
 
-    public void setColumnWidth(String columnWidth);
+    void setColumnWidth(String columnWidth);
 
-    public Boolean getTextAreaFlag();
+    Boolean getTextAreaFlag();
 
-    public void setTextAreaFlag(Boolean textAreaFlag);
+    void setTextAreaFlag(Boolean textAreaFlag);
     
-    public Boolean getRequiredFlag();
+    Boolean getRequiredFlag();
 
-    public void setRequiredFlag(Boolean requiredFlag);
+    void setRequiredFlag(Boolean requiredFlag);
 
-    public DataDrivenEnumeration getDataDrivenEnumeration();
+    DataDrivenEnumeration getDataDrivenEnumeration();
     
-    public void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration);
+    void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration);
 
-    public Boolean getAllowMultiples();
+    Boolean getAllowMultiples();
 
-    public void setAllowMultiples(Boolean allowMultiples);
+    void setAllowMultiples(Boolean allowMultiples);
 
-    public String getFriendlyName();
+    String getFriendlyName();
 
-    public void setFriendlyName(String friendlyName);
+    void setFriendlyName(String friendlyName);
 
-    public String getValidationErrorMesageKey();
+    String getValidationErrorMesageKey();
 
-    public void setValidationErrorMesageKey(String validationErrorMesageKey);
+    void setValidationErrorMesageKey(String validationErrorMesageKey);
 
-    public FieldGroup getFieldGroup();
+    FieldGroup getFieldGroup();
 
-    public void setFieldGroup(FieldGroup fieldGroup);
+    void setFieldGroup(FieldGroup fieldGroup);
 
-    public int getFieldOrder();
+    int getFieldOrder();
 
-    public void setFieldOrder(int fieldOrder);
+    void setFieldOrder(int fieldOrder);
 
-    public String getTooltip();
+    String getTooltip();
 
-    public void setTooltip(String tooltip);
+    void setTooltip(String tooltip);
 
-    public String getHelpText();
+    String getHelpText();
 
-    public void setHelpText(String helpText);
+    void setHelpText(String helpText);
 
-    public String getHint();
+    String getHint();
 
-    public void setHint(String hint);
+    void setHint(String hint);
 
-    public String getAdditionalForeignKeyClass();
+    String getAdditionalForeignKeyClass();
 
-    public void setAdditionalForeignKeyClass(String className);
+    void setAdditionalForeignKeyClass(String className);
 
 }

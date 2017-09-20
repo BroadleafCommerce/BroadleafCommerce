@@ -37,7 +37,7 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, DynamicSupportedFieldType> TYPES = new LinkedHashMap<String, DynamicSupportedFieldType>();
+    private static final Map<String, DynamicSupportedFieldType> TYPES = new LinkedHashMap<>();
 
     public static final DynamicSupportedFieldType STRING = new DynamicSupportedFieldType("STRING", "String");
     public static final DynamicSupportedFieldType HTML = new DynamicSupportedFieldType("HTML", "Rich Text");
