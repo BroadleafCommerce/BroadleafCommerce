@@ -462,8 +462,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
     protected Map<String, DynamicResultSet> getViewSubRecords(HttpServletRequest request, Map<String, String> pathVars,
                                                               ClassMetadata cmd, Entity entity,
                                                               List<SectionCrumb> crumbs) throws Exception {
-        String firstTabName = cmd.getFirstTab() == null ? "General" : cmd.getFirstTab().getTabName();
-        return service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTabName);
+        String tabName = pathVars.get("tabName");
+        if (StringUtils.isEmpty(tabName)) {
+            tabName = cmd.getFirstTab() == null ? "General" : cmd.getFirstTab().getTabName();
+        }
+        return service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
     }
 
     private boolean isAddRequest(Entity entity) {
