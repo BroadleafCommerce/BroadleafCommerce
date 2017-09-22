@@ -46,6 +46,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -166,7 +167,7 @@ public class PageDaoImpl implements PageDao {
         try {
             return q.getResultList();
         } catch (NoResultException | EntityNotFoundException e) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
     }
     
@@ -231,7 +232,7 @@ public class PageDaoImpl implements PageDao {
         try {
             return query.getResultList();
         } catch (NoResultException | EntityNotFoundException e) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
     }
 
@@ -248,7 +249,7 @@ public class PageDaoImpl implements PageDao {
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             return query.getResultList();
         } catch (NoResultException e) {
-            return new ArrayList<Page>();
+            return Collections.emptyList();
         }
     }
 
@@ -282,7 +283,7 @@ public class PageDaoImpl implements PageDao {
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             return query.getResultList();
         } catch (NoResultException e) {
-            return new ArrayList<PageTemplate>();
+            return Collections.emptyList();
         }
     }
 
