@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +48,6 @@ import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
@@ -426,8 +424,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Entity entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
 
-        TabMetadata firstTab = cmd.getFirstTab();
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
+        Map<String, DynamicResultSet> subRecordsMap = getViewSubRecords(request, pathVars, cmd, entity, crumbs);
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
@@ -472,6 +469,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
     }
 
+    protected Map<String, DynamicResultSet> getViewSubRecords(HttpServletRequest request, Map<String, String> pathVars,
+                                                              ClassMetadata cmd, Entity entity,
+                                                              List<SectionCrumb> crumbs) throws Exception {
+        String tabName = pathVars.get("tabName");
+        if (StringUtils.isEmpty(tabName)) {
+            tabName = cmd.getFirstTab() == null ? "General" : cmd.getFirstTab().getTabName();
+        }
+        return service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
+    }
+
     private boolean isAddRequest(Entity entity) {
         ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
         ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
@@ -509,7 +516,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, pathVars);
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
+        Map<String, DynamicResultSet> subRecordsMap = getViewSubRecords(request, pathVars, cmd, entity, crumbs);
         entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
         if (isAddRequest(entity)) {
