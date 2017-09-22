@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -63,11 +64,31 @@ public class CreateOfferUtility {
         return offerCode;
     }
 
+    public OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, 
+                                     OfferDiscountType discountType, double value, String orderRule, boolean stackable, 
+                                     boolean combinable, int priority, String qualifierRule, OfferAdjustmentType adjustmentType) {
+        OfferCode offerCode = offerCodeDao.create();
+        Offer offer = createOffer(offerName, offerType, discountType, value, orderRule, stackable, combinable, priority, 
+                qualifierRule, adjustmentType);
+        offerCode.setOffer(offer);
+        offerCode.setOfferCode(offerCodeName);
+        offerCode = offerService.saveOfferCode(offerCode);
+        return offerCode;
+    }
+
     public Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value,
             String orderRule, boolean stackable, boolean combinable, int priority, String qualifierRule) {
+        return createOffer(offerName, offerType, discountType, value, orderRule, stackable, combinable, priority, 
+                qualifierRule, OfferAdjustmentType.ORDER_DISCOUNT);
+    }
+
+    public Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value,
+                             String orderRule, boolean stackable, boolean combinable, int priority, String qualifierRule,
+                             OfferAdjustmentType adjustmentType) {
         Offer offer = offerDao.create();
         offer.setName(offerName);
         offer.setStartDate(SystemTime.asDate());
+        offer.setAdjustmentType(adjustmentType);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
         offer.setStartDate(calendar.getTime());

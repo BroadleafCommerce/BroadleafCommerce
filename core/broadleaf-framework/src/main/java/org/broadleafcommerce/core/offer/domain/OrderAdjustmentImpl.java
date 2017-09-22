@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
@@ -107,6 +108,11 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
             gridOrder = 2000)
     protected BigDecimal value = Money.ZERO.getAmount();
 
+    @Column(name = "IS_FUTURE_CREDIT")
+    @AdminPresentation(friendlyName = "OrderAdjustmentImpl_isFutureCredit", order = 4000,
+            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+    protected Boolean isFutureCredit = false;
+
     @Transient
     protected Offer deproxiedOffer;
 
@@ -115,6 +121,9 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
         this.order = order;
         this.offer = offer;
         this.reason = reason;
+        if (offer != null) {
+            this.isFutureCredit = OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType());
+        }
     }
 
     @Override
@@ -189,6 +198,19 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
     }
 
     @Override
+    public Boolean isFutureCredit() {
+        if (isFutureCredit == null) {
+            return false;
+        }
+        return isFutureCredit;
+    }
+
+    @Override
+    public void setFutureCredit(Boolean futureCredit) {
+        isFutureCredit = futureCredit;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -196,6 +218,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
         result = prime * result + ((order == null) ? 0 : order.hashCode());
         result = prime * result + ((reason == null) ? 0 : reason.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((isFutureCredit == null) ? 0 : isFutureCredit.hashCode());
         return result;
     }
 
@@ -242,6 +265,9 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
                 return false;
             }
         } else if (!value.equals(other.value)) {
+            return false;
+        }
+        if (isFutureCredit != other.isFutureCredit) {
             return false;
         }
         return true;

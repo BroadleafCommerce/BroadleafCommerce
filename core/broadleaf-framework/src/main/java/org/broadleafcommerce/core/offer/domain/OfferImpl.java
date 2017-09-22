@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -43,11 +42,10 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
-import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -346,6 +344,15 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
+
+    @Column(name = "OFFER_ADJUSTMENT_TYPE")
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Adjustment_Type",
+            group = GroupName.Description, order = FieldOrder.DiscountType + 1,
+            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType",
+            tooltip = "OfferImpl_Offer_Adjustment_Type_tooltip",
+            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+    protected String adjustmentType;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -746,6 +753,27 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public String getMainEntityName() {
         return getName();
+    }
+
+    @Override
+    public OfferAdjustmentType getAdjustmentType() {
+        if (adjustmentType == null) {
+            return OfferAdjustmentType.ORDER_DISCOUNT;
+        }
+        return OfferAdjustmentType.getInstance(adjustmentType);
+    }
+
+    @Override
+    public void setAdjustmentType(OfferAdjustmentType adjustmentType) {
+        this.adjustmentType = adjustmentType.getType();
+    }
+
+    @Override
+    public boolean isFutureCredit() {
+        if (adjustmentType == null) {
+            return false;
+        }
+        return OfferAdjustmentType.FUTURE_CREDIT.equals(OfferAdjustmentType.getInstance(adjustmentType));
     }
 
     @Override
