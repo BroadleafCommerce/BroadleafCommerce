@@ -804,6 +804,22 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return viewEntityForm(request, response, model, varsForField, id);
     }
 
+    @RequestMapping(
+            value = "/{id}/{collectionField:.*}/{collectionItemId}/{tab:[0-9]+}/{tabName}",
+            method = RequestMethod.POST
+    )
+    public String viewCollectionItemTab(HttpServletRequest request, HttpServletResponse response, Model model,
+                                        @PathVariable  Map<String, String> pathVars,
+                                        @PathVariable(value="id") String id,
+                                        @PathVariable(value="collectionField") String collectionField,
+                                        @PathVariable(value="collectionItemId") String collectionItemId,
+                                        @PathVariable(value="tabName") String tabName,
+                                        @ModelAttribute(value = "entityForm") EntityForm entityForm) throws Exception {
+
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, ModalHeaderType.VIEW_COLLECTION_ITEM.getType(), entityForm, null);
+    }
+
+
     /**
      * Returns the records for a given collectionField filtered by a particular criteria
      * 
@@ -1457,7 +1473,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
             }
 
-            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
+            String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
+            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(mainMetadata, entity, sectionCrumbs, currentTabName);
             if (entityForm == null) {
                 entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
             } else {
@@ -1899,6 +1916,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withOrder(auditableField.getOrder())
                 .withOwningEntityClass(auditableField.getOwningEntityClass())
                 .withReadOnly(true);
+    }
+
+    protected String getCurrentTabName(Map<String, String> pathVars, ClassMetadata cmd) {
+        String tabName = pathVars.get("tabName");
+        if (StringUtils.isBlank(tabName)) {
+            TabMetadata firstTab = cmd.getFirstTab();
+            return firstTab != null ? firstTab.getTabName() : "General";
+        }
+        return tabName;
     }
 
     // *****************************************
