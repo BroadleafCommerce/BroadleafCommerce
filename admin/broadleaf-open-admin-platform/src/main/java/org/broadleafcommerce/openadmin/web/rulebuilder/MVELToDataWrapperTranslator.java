@@ -166,14 +166,11 @@ public class MVELToDataWrapperTranslator {
         int lstIdx = myCriteriaList.size() - 1;
         ExpressionDTO prevExpression = lstIdx != -1 ? myCriteriaList.get(lstIdx) : null;
         boolean sameExpressionId = prevExpression != null && temp.getId().equals(prevExpression.getId());
-        if (
-                sameExpressionId &&
-                prevExpression.getOperator().equals(BLCOperator.GREATER_THAN.name()) &&
-                temp.getOperator().equals(BLCOperator.LESS_THAN.name())
-            ) {
+        if (sameExpressionId && isBetweenOperator(prevExpression, temp)) {
             prevExpression.setOperator(BLCOperator.BETWEEN.name());
-            String start = prevExpression.getValue();
-            String end = temp.getValue();
+            boolean hasTempSmallerVal = Long.parseLong(temp.getValue()) < Long.parseLong(prevExpression.getValue());
+            String start = hasTempSmallerVal ? temp.getValue() : prevExpression.getValue();
+            String end = hasTempSmallerVal ? prevExpression.getValue() : temp.getValue();
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
                 start = "\"" + start + "\"" ;
                 end = "\"" + end + "\"";
@@ -182,14 +179,11 @@ public class MVELToDataWrapperTranslator {
             if (parentDTO != null) {
                 parentDTO.getRules().add(myCriteriaList.remove(lstIdx));
             }
-        } else if (
-                sameExpressionId &&
-                prevExpression.getOperator().equals(BLCOperator.GREATER_OR_EQUAL.name()) &&
-                temp.getOperator().equals(BLCOperator.LESS_OR_EQUAL.name())
-            ) {
+        } else if (sameExpressionId && isBetweenInclusiveOperator(prevExpression, temp)) {
             prevExpression.setOperator(BLCOperator.BETWEEN_INCLUSIVE.name());
-            String start = prevExpression.getValue();
-            String end = temp.getValue();
+            boolean hasTempSmallerVal = Long.parseLong(temp.getValue()) < Long.parseLong(prevExpression.getValue());
+            String start = hasTempSmallerVal ? temp.getValue() : prevExpression.getValue();
+            String end = hasTempSmallerVal ? prevExpression.getValue() : temp.getValue();
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
                 start = "\"" + start + "\"" ;
                 end = "\"" + end + "\"";
@@ -207,6 +201,24 @@ public class MVELToDataWrapperTranslator {
         } else {
             myCriteriaList.add(temp);
         }
+    }
+
+    protected boolean isBetweenOperator(ExpressionDTO prev, ExpressionDTO temp) {
+        String prevOperator = prev.getOperator();
+        String tempOperator = temp.getOperator();
+        long prevVal = Long.parseLong(prev.getValue());
+        long tempVal = Long.parseLong(temp.getValue());
+        return (tempVal > prevVal && prevOperator.equals(BLCOperator.GREATER_THAN.name()) && tempOperator.equals(BLCOperator.LESS_THAN.name()))
+                || (prevVal > tempVal && prevOperator.equals(BLCOperator.LESS_THAN.name()) && tempOperator.equals(BLCOperator.GREATER_THAN.name()) && tempVal < prevVal);
+    }
+
+    protected boolean isBetweenInclusiveOperator(ExpressionDTO prev, ExpressionDTO temp) {
+        String prevOperator = prev.getOperator();
+        String tempOperator = temp.getOperator();
+        long prevVal = Long.parseLong(prev.getValue());
+        long tempVal = Long.parseLong(temp.getValue());
+        return (tempVal >= prevVal && prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name()))
+                || (prevVal >= tempVal && prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempVal <= prevVal);
     }
 
 }
