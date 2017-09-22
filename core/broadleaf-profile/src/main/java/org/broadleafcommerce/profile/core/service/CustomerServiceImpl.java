@@ -563,6 +563,12 @@ public class CustomerServiceImpl implements CustomerService {
         return response;
     }
 
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public GenericResponse sendForcedPasswordChangeNotification(String username, String resetPasswordUrl) {
+        return sendForgotPasswordNotification(username, resetPasswordUrl);
+    }
+
     @Deprecated
     @Override
     public GenericResponse checkPasswordResetToken(String token) {
@@ -652,6 +658,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (! response.getHasErrors()) {
             customer.setUnencodedPassword(password);
+            customer.setPasswordChangeRequired(false);
             saveCustomer(customer);
             invalidateAllTokensForCustomer(customer);
         }
