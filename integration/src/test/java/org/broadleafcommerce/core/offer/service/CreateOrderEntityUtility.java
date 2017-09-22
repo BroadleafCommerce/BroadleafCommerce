@@ -70,9 +70,24 @@ public class CreateOrderEntityUtility {
 
     public List<FulfillmentGroup> createFulfillmentGroups(FulfillmentOption option, Double shippingPrice, Order order) {
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        FulfillmentGroup group = createFulfillmentGroup1(option, shippingPrice, order);
+
+        groups.add(group);
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
+            fgItem.setFulfillmentGroup(group);
+            fgItem.setOrderItem(orderItem);
+            fgItem.setQuantity(orderItem.getQuantity());
+            group.addFulfillmentGroupItem(fgItem);
+        }
+
+        return groups;
+    }
+
+    public FulfillmentGroup createFulfillmentGroup1(FulfillmentOption option, Double shippingPrice, Order order) {
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setFulfillmentOption(option);
-        groups.add(group);
         group.setRetailShippingPrice(new Money(shippingPrice));
         group.setOrder(order);
 
@@ -83,10 +98,10 @@ public class CreateOrderEntityUtility {
         address.setLastName("Fischer");
         address.setPostalCode("75240");
         address.setPrimaryPhone("972-978-9067");
+
         Country country = new CountryImpl();
         country.setAbbreviation("US");
         country.setName("United States");
-
         countryService.save(country);
 
         ISOCountry isoCountry = new ISOCountryImpl();
@@ -107,17 +122,49 @@ public class CreateOrderEntityUtility {
         address.setIsoCountrySubdivision("US-TX");
         address.setIsoCountryAlpha2(isoCountry);
 
-        for (OrderItem orderItem : order.getOrderItems()) {
-            FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
-            fgItem.setFulfillmentGroup(group);
-            fgItem.setOrderItem(orderItem);
-            fgItem.setQuantity(orderItem.getQuantity());
-            group.addFulfillmentGroupItem(fgItem);
-        }
+        group.setAddress(address);
+        return group;
+    }
+
+    public FulfillmentGroup createFulfillmentGroup2(FulfillmentOption option, Double shippingPrice, Order order) {
+        FulfillmentGroup group = new FulfillmentGroupImpl();
+        group.setFulfillmentOption(option);
+        group.setRetailShippingPrice(new Money(shippingPrice));
+        group.setOrder(order);
+
+        Address address = new AddressImpl();
+        address.setAddressLine1("ABC Test Rd");
+        address.setCity("Dallas");
+        address.setFirstName("Joe");
+        address.setLastName("Foster");
+        address.setPostalCode("75240");
+        address.setPrimaryPhone("972-978-9067");
+
+        Country country = new CountryImpl();
+        country.setAbbreviation("MX");
+        country.setName("Mexico");
+        countryService.save(country);
+
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("MX");
+        isoCountry.setName("MEXICO");
+
+        isoService.save(isoCountry);
+
+        State state = new StateImpl();
+        state.setAbbreviation("MXC");
+        state.setName("Mexico City");
+        state.setCountry(country);
+
+        stateService.save(state);
+
+        address.setState(state);
+        address.setCountry(country);
+        address.setIsoCountrySubdivision("MX-MXC");
+        address.setIsoCountryAlpha2(isoCountry);
 
         group.setAddress(address);
-
-        return groups;
+        return group;
     }
 
     public DiscreteOrderItem createDiscreteOrderItem(Long skuId, Double retailPrice, Double salePrice, boolean isDiscountable, int quantity, Order order) {
