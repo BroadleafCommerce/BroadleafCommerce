@@ -515,7 +515,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             Money syncFulfillmentPrice = Money.ZERO;
 
             for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                syncFulfillmentPrice = fg.getFulfillmentPrice();
+                syncFulfillmentPrice = syncFulfillmentPrice.add(fg.getFulfillmentPrice());
             }
             order.setTotalFulfillmentCharges(syncFulfillmentPrice);
         }

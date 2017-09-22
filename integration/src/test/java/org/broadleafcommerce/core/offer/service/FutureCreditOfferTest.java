@@ -27,6 +27,10 @@ import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferP
 import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
@@ -38,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -189,7 +194,9 @@ public class FutureCreditOfferTest extends CommonSetupBaseTest {
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money(0));
         option.setFulfillmentType(FulfillmentType.PHYSICAL_SHIP);
-        order.setFulfillmentGroups(orderUtil.createFulfillmentGroups(option, 5D, order));
+        List<FulfillmentGroup> fulfillmentGroups = orderUtil.createFulfillmentGroups(option, 5D, order);
+        fulfillmentGroups.add(orderUtil.createFulfillmentGroup2(option, 4D, order));
+        order.setFulfillmentGroups(fulfillmentGroups);
         orderService.save(order, false);
 
         order.addOrderItem(orderUtil.createDiscreteOrderItem(sku1, 1000D, null, true, 1, order));
@@ -212,9 +219,9 @@ public class FutureCreditOfferTest extends CommonSetupBaseTest {
         offerService.applyAndSaveFulfillmentGroupOffersToOrder(offers, order);
 
         assert ( order.getSubTotal().equals(new Money(1100D) ));
-        assert ( order.getTotalFulfillmentCharges().equals(new Money(5D) ));
+        assert ( order.getTotalFulfillmentCharges().equals(new Money(9D) ));
         assert ( order.getTotalAdjustmentsValue().equals(new Money(0D)));
-        assert ( order.getAllFutureCreditAdjustments().size() == 3);
-        assert ( order.getTotalFutureCreditAdjustmentsValue().equals(new Money(124.5D) ));
+        assert ( order.getAllFutureCreditAdjustments().size() == 4);
+        assert ( order.getTotalFutureCreditAdjustmentsValue().equals(new Money(125.3D) ));
     }
 }
