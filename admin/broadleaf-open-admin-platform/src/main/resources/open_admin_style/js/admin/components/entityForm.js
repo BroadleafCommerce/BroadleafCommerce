@@ -359,16 +359,6 @@ $(document).ready(function() {
                     }
 
                     $(this).find('.asset-grid-container').replaceWith($assetGrid);
-
-                    // We never know when the last image loads, so resize on EVERY image load
-                    $(this).find('.asset-grid-container .asset-item img').on('load', function(e) {
-                        var $container = $(this).parents('.asset-grid-container');
-                        if (BLCAdmin.assetGrid) {
-                            BLCAdmin.assetGrid.paginate.updateGridSize($container);
-                        } else {
-                            updateGridSize($container);
-                        }
-                    });
                 });
 
                 hideTabSpinner($tab, $tabBody);

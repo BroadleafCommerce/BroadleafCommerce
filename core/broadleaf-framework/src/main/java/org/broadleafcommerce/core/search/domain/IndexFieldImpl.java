@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.search.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -140,6 +142,22 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     @Override
     public void setFieldTypes(List<IndexFieldType> fieldTypes) {
         this.fieldTypes = fieldTypes;
+    }
+
+    @Override
+    public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        IndexField cloned = createResponse.getClone();
+        cloned.setSearchable(searchable);
+        cloned.setField(field);
+        for(IndexFieldType entry : fieldTypes){
+            cloned.getFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
+        }
+
+        return createResponse;
     }
 
     @Override

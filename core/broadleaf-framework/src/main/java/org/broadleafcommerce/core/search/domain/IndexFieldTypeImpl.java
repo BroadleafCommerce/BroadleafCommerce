@@ -131,4 +131,21 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
     public void setIndexField(IndexField indexField) {
         this.indexField = indexField;
     }
+
+    @Override
+    public <G extends IndexFieldType> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        IndexFieldType indexFieldType = createResponse.getClone();
+        if (indexField != null) {
+            indexFieldType.setIndexField(indexField.createOrRetrieveCopyInstance(context).getClone());
+        }
+
+        if (fieldType != null) {
+            indexFieldType.setFieldType(this.getFieldType());
+        }
+        return createResponse;
+    }
 }
