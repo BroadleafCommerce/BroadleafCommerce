@@ -119,4 +119,8 @@ public class ShippingInfoForm implements Serializable {
     public void setSaveAsDefault(boolean saveAsDefault) {
         this.saveAsDefault = saveAsDefault;
     }
+
+    public boolean hasValidAddress() {
+        return address != null && address.getAddressLine1() != null;
+    }
 }

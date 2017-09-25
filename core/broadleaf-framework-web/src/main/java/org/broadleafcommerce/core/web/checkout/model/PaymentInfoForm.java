@@ -117,4 +117,8 @@ public class PaymentInfoForm implements Serializable {
     public void setPaymentToken(String paymentToken) {
         this.paymentToken = paymentToken;
     }
+
+    public boolean hasValidAddress() {
+        return address != null && address.getAddressLine1() != null;
+    }
 }
