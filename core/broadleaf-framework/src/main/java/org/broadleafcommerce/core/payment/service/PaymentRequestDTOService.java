@@ -27,19 +27,17 @@ public interface PaymentRequestDTOService {
 
     /**
      * Uses customer information to populate the {@link PaymentRequestDTO#customer()} object
-     *
-     * @param requestDTO the {@link PaymentRequestDTO} that should be populated
+     *  @param requestDTO the {@link PaymentRequestDTO} that should be populated
      * @param customer the {@link Customer} to get data from
      */
-    void populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer);
+    PaymentRequestDTO populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer);
 
     /**
      * Uses customer information to populate the {@link PaymentRequestDTO#customer()} object
-     *
-     * @param requestDTO the {@link PaymentRequestDTO} that should be populated
+     *  @param requestDTO the {@link PaymentRequestDTO} that should be populated
      * @param customer the {@link Customer} to get data from
      * @param defaultEmailAddress the default email address to use if {@link Customer#getEmailAddress()} returns `null`
      */
-    void populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer, String defaultEmailAddress);
+    PaymentRequestDTO populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer, String defaultEmailAddress);
 
 }

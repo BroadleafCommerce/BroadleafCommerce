@@ -27,12 +27,12 @@ import org.springframework.stereotype.Service;
 public class PaymentRequestDTOServiceImpl implements PaymentRequestDTOService {
 
     @Override
-    public void populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer) {
-        populateCustomerInfo(requestDTO, customer, null);
+    public PaymentRequestDTO populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer) {
+        return populateCustomerInfo(requestDTO, customer, null);
     }
 
     @Override
-    public void populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer, String defaultEmailAddress) {
+    public PaymentRequestDTO populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer, String defaultEmailAddress) {
         String phoneNumber = null;
 
         for (CustomerPhone phone : ListUtils.emptyIfNull(customer.getCustomerPhones())) {
@@ -43,11 +43,12 @@ public class PaymentRequestDTOServiceImpl implements PaymentRequestDTOService {
 
         String emailAddress = (customer.getEmailAddress() == null)? defaultEmailAddress : customer.getEmailAddress();
 
-        requestDTO.customer()
+        return requestDTO.customer()
                 .customerId(customer.getId().toString())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
                 .email(emailAddress)
-                .phone(phoneNumber);
+                .phone(phoneNumber)
+                .done();
     }
 }
