@@ -106,6 +106,16 @@ public interface CustomerService {
      * 
      */
     GenericResponse sendForgotPasswordNotification(String userName, String forgotPasswordUrl);
+
+    /**
+     * Generates an access token and then emails the user.
+     *
+     * @param userName - the user to send a reset password email to.
+     * @param forgotPasswordUrl - Base url to include in the email.
+     * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
+     *
+     */
+    GenericResponse sendForcedPasswordChangeNotification(String userName, String forgotPasswordUrl);
     
     /**
      * Updates the password for the passed in customer only if the passed
