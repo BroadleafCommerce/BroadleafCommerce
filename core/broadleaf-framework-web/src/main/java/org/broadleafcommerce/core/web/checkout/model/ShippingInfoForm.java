@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
@@ -121,6 +122,6 @@ public class ShippingInfoForm implements Serializable {
     }
 
     public boolean hasValidAddress() {
-        return address != null && address.getAddressLine1() != null;
+        return address != null && StringUtils.isNotBlank(address.getAddressLine1());
     }
 }
