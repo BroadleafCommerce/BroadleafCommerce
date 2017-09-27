@@ -393,6 +393,23 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
+    public Map<String, DynamicResultSet> getAllRecordsForAllSubCollections(ClassMetadata cmd, Entity containingEntity,
+                                                                           List<SectionCrumb> sectionCrumb) throws ServiceException {
+        Map<String, DynamicResultSet> map = new HashMap<>();
+        for (Property p : cmd.getProperties()) {
+            FieldMetadata fieldMetadata = p.getMetadata();
+            boolean fieldAvailable = ArrayUtils.contains(fieldMetadata.getAvailableToTypes(), containingEntity.getType()[0]);
+            if (fieldAvailable && fieldMetadata instanceof CollectionMetadata) {
+                FetchPageRequest pageRequest = new FetchPageRequest()
+                        .withPageSize(Integer.MAX_VALUE);
+                PersistenceResponse resp = getPagedRecordsForCollection(cmd, containingEntity, p, null, pageRequest, null, sectionCrumb);
+                map.put(p.getName(), resp.getDynamicResultSet());
+            }
+        }
+        return map;
+    }
+
+    @Override
     public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
             throws ServiceException {
 
