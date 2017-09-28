@@ -108,6 +108,8 @@ public interface CustomerService {
      *
      */
     GenericResponse sendForgotPasswordNotification(String userName, String forgotPasswordUrl);
+
+
     /**
      * Generates an access token and then emails the user.
      *
@@ -117,6 +119,8 @@ public interface CustomerService {
      *
      */
     GenericResponse sendForcedPasswordChangeNotification(String userName, String forgotPasswordUrl);
+    
+
     /**
      * Updates the password for the passed in customer only if the passed
      * in token is valid for that customer.
