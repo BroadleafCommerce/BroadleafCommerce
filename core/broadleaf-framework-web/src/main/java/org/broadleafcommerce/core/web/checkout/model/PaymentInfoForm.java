@@ -119,7 +119,12 @@ public class PaymentInfoForm implements Serializable {
         this.paymentToken = paymentToken;
     }
 
+    /**
+     * NOTE: this looks for all of {@link Address}'s database required fields
+     */
     public boolean hasValidAddress() {
-        return address != null && StringUtils.isNotBlank(address.getAddressLine1());
+        return getAddress() != null
+                && StringUtils.isNotBlank(getAddress().getAddressLine1())
+                && StringUtils.isNotBlank(getAddress().getCity());
     }
 }
