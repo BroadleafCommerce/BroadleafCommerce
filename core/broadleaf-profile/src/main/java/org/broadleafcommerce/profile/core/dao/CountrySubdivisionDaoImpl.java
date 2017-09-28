@@ -46,7 +46,7 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
 
     @Override
     public CountrySubdivision findSubdivisionByAbbreviation(String abbreviation) {
-        return (CountrySubdivision) em.find(CountrySubdivisionImpl.class, abbreviation);
+        return (abbreviation == null)? null : em.find(CountrySubdivisionImpl.class, abbreviation);
     }
 
     @Override

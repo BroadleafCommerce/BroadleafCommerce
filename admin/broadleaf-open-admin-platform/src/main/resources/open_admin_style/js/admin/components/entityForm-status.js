@@ -279,7 +279,7 @@
                     this.removeChangesForId(id);
                 }
             }
-            
+
             this.updateEntityFormActions();
         },
 
@@ -288,31 +288,36 @@
          * It is called once when the page first loads, and then on every subsequent change.
          */
         updateEntityFormActions : function() {
-            // Grab all buttons we might want to enable/disable
-            var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
-            var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
-            var $approveBtn = $('.sandbox-actions').find('.button a:contains("Approve")').parent();
+            var $currModal = BLCAdmin.currentModal();
+            if ($currModal && $currModal.has('.modal-add-entity-form')) {
+                $('.submit-button', $currModal).prop('disabled', !this.getEntityFormChangesCount());
+            } else {
+                // Grab all buttons we might want to enable/disable
+                var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
+                var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
+                var $approveBtn = $('.sandbox-actions').find('.button a:contains("Approve")').parent();
 
-            // Check to see if there are any changes in the `entityFormChangeMap`
-            // If there are, we want to make sure the 'Save' button is active and any workflow buttons are not.
-            if (this.getEntityFormChangesCount()) {
-                $saveBtn.prop('disabled', false);
-                $promoteBtn.addClass('confirm');
-                $approveBtn.addClass('confirm');
+                // Check to see if there are any changes in the `entityFormChangeMap`
+                // If there are, we want to make sure the 'Save' button is active and any workflow buttons are not.
+                if (this.getEntityFormChangesCount()) {
+                    $saveBtn.prop('disabled', false);
+                    $promoteBtn.addClass('confirm');
+                    $approveBtn.addClass('confirm');
 
-                $("#headerChangeBoxContainer").removeClass("hidden");
-                $(".change-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
-                $('#headerChangeBox').show();
-            }
-            // Otherwise, we don't have any unsaved changes.  So disable the 'Save' button and make sure the
-            // workflow buttons are enabled
-            else {
-                $saveBtn.prop('disabled', true);
-                $promoteBtn.removeClass('confirm');
-                $approveBtn.removeClass('confirm');
+                    $("#headerChangeBoxContainer").removeClass("hidden");
+                    $(".change-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
+                    $('#headerChangeBox').show();
+                }
+                // Otherwise, we don't have any unsaved changes.  So disable the 'Save' button and make sure the
+                // workflow buttons are enabled
+                else {
+                    $saveBtn.prop('disabled', true);
+                    $promoteBtn.removeClass('confirm');
+                    $approveBtn.removeClass('confirm');
 
-                $("#headerChangeBoxContainer").addClass("hidden");
-                $('#headerChangeBox').hide();
+                    $("#headerChangeBoxContainer").addClass("hidden");
+                    $('#headerChangeBox').hide();
+                }
             }
         },
 
@@ -555,9 +560,9 @@
                 return false;
             }
 
-            // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
-            if ((el !== undefined && $(el).closest('.modal').length) ||
-                $('.oms').length ||
+            // Don't track if we are on an OMS page, in a modal (except add entity modal) or not on a page with an entity form
+            if ((el !== undefined && $('.oms').length) ||
+                $(el).closest('.modal:not(:has(.modal-add-entity-form))').length ||
                 !$('.entity-form').length) {
                 return false;
             }

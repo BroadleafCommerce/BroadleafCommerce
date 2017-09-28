@@ -6,8 +6,9 @@
             <span th:if="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}" >
                 <img class="thumbnail"
                      th:if="*{fields['__${field.name}__'].value != null}"
-                     blc:src="@{*{fields['__${field.name}__'].value}}"
-                     th:attr="data-fullurl=@{*{fields['__${field.name}__'].value}}" />
+                     th:with="cmsUrlPrefix=${#strings.defaultString('/' + cmsUrlPrefix, '')}"
+                     blc:src="@{${cmsUrlPrefix} + *{fields['__${field.name}__'].value}}"
+                     th:attr="data-fullurl=@{${cmsUrlPrefix} + *{fields['__${field.name}__'].value}}" />
                 <img class="thumbnail"
                      th:unless="*{fields['__${field.name}__'].value != null}" />
             </span>

@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -29,7 +28,6 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -216,7 +214,8 @@ public class AdminProductController extends AdminBasicEntityController {
 
         Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
 
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
+        String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
         if (entityForm == null) {
             entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
         } else {

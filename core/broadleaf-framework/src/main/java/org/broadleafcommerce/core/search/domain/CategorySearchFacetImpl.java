@@ -161,7 +161,7 @@ public class CategorySearchFacetImpl implements CategorySearchFacet {
         }
         cloned.setSequence(sequence);
         if (searchFacet != null) {
-            cloned.setSearchFacet(searchFacet);
+            cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
     }

@@ -87,7 +87,7 @@ import javax.persistence.Transient;
     }
 )
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
@@ -147,6 +147,20 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             excluded = true)
     protected String challengeAnswer;
 
+    /**
+     * <p>
+     *     If true, this customer must go through a reset password flow.
+     * </p>
+     * <p>
+     *     During a site conversion or security breach or a matter of routine security policy, 
+     *     it may be necessary to require users to change their password. This property will 
+     *     not allow a user whose credentials are managed within Broadleaf to login until 
+     *     they have reset their password. 
+     * </p>
+     * <p>
+     *     Used by blUserDetailsService.
+     * </p>
+     */
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
     @AdminPresentation(excluded = true)
     protected Boolean passwordChangeRequired = false;

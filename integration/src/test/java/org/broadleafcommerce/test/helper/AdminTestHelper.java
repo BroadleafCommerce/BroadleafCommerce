@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.PrintWriter;
@@ -100,6 +99,7 @@ public class AdminTestHelper {
             try {
                 pause(wait);
                 runnable.run();
+                break;
             } catch (AssertionError e) {
                 endView();
                 if (count > retryCount) {
