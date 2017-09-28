@@ -55,7 +55,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer readCustomerByExternalId(String id) {
-        TypedQuery<Customer> query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EXTERNAL_ID", Customer.class);
+        TypedQuery<Customer> query = em.createQuery("SELECT customer FROM org.broadleafcommerce.profile.core.domain.Customer customer WHERE customer.externalId = :externalId", Customer.class);
         query.setParameter("externalId", id);
         query.setHint(QueryHints.HINT_CACHEABLE, false);
         List<Customer> resultList = query.getResultList();

@@ -31,10 +31,6 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
 
     public void setId(Long id);
 
-    public String getExternalId();
-
-    public void setExternalId(String externalId);
-
     public String getUsername();
 
     public void setUsername(String username);

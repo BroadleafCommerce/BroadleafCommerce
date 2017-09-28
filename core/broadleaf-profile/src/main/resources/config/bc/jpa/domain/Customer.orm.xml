@@ -26,11 +26,6 @@
         WHERE customer.username = :username</query>
     </named-query>
 
-    <named-query name="BC_READ_CUSTOMER_BY_EXTERNAL_ID" >
-        <query>SELECT customer FROM org.broadleafcommerce.profile.core.domain.Customer customer
-        WHERE customer.externalId = :externalId</query>
-    </named-query>
-
     <named-query name="BC_READ_CUSTOMER_BY_EMAIL" >
         <query>SELECT customer FROM org.broadleafcommerce.profile.core.domain.Customer customer
         WHERE customer.emailAddress = :email</query>
