@@ -83,14 +83,14 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             newAuthorities.add(new SimpleGrantedAuthority(perm));
         }
-
+        List<SimpleGrantedAuthority> newAuthoritiesList = new ArrayList<>(newAuthorities);
         HashSet<AdminRole> grantedRoles = new HashSet<AdminRole>();
         List<AdminRole> adminRoles = securityService.readAllAdminRoles();
         if (adminRoles != null) {
             for (AdminRole role : adminRoles) {
                 if (newRoles.contains(role.getName())) {
                     grantedRoles.add(role);
-                    adminSecurityHelper.addAllPermissionsToAuthorities(new ArrayList<>(newAuthorities), role.getAllPermissions());
+                    adminSecurityHelper.addAllPermissionsToAuthorities(newAuthoritiesList, role.getAllPermissions());
                 }
             }
         }
@@ -144,7 +144,7 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         //Save the user data and all of the roles...
         adminUser = securityService.saveAdminUser(adminUser);
 
-        return new AdminUserDetails(adminUser.getId(), details.getUsername(), "", true, true, true, true, newAuthorities);
+        return new AdminUserDetails(adminUser.getId(), details.getUsername(), "", true, true, true, true, newAuthoritiesList);
     }
 
     /**
