@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +29,7 @@ import org.hibernate.SessionFactory;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class used primarily for retrieving fields on domain classes. Retrieval will include searching in the inheritance
@@ -39,6 +41,8 @@ import java.util.List;
 public class BLCFieldUtils {
 
     private static final Log LOG = LogFactory.getLog(BLCFieldUtils.class);
+    public static final Map<String,Object> FIELD_CACHE = new LRUMap<>(100000);
+    public static final Object NULL_FIELD = new Object();
 
     protected SessionFactory sessionFactory;
     protected boolean includeUnqualifiedPolymorphicEntities;
@@ -77,14 +81,35 @@ public class BLCFieldUtils {
      * @throws IllegalStateException
      */
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException nsf) {
-            // Try superclass
-            if (clazz.getSuperclass() != null) {
-                return getSingleField(clazz.getSuperclass(), fieldName);
+        String key = clazz.getName() + "#" + fieldName;
+        Object response;
+        synchronized (FIELD_CACHE) {
+            response = FIELD_CACHE.get(key);
+        }
+        if (response == null) {
+            Field found;
+            try {
+                found = clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException nsf) {
+                // Try superclass
+                if (clazz.getSuperclass() != null) {
+                    found = getSingleField(clazz.getSuperclass(), fieldName);
+                } else {
+                    found = null;
+                }
             }
-
+            if (found == null) {
+                response = NULL_FIELD;
+            } else {
+                response = found;
+            }
+            synchronized (FIELD_CACHE) {
+                FIELD_CACHE.put(key, response);
+            }
+        }
+        if (response instanceof Field) {
+            return (Field) response;
+        } else {
             return null;
         }
     }
