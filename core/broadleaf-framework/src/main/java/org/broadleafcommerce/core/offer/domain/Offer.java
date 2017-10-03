@@ -261,12 +261,12 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * 
      * Out-of-box, this field is disabled from admin and must be manually enabled to view, since it is not a typical 
      * requirement to most implementations. To enable, add the following to AdminConfig.java:
-     * 
-     * @Bean
-     * public Map<String, String> blAppConfigurationMap() {
-     *      Map<String, String> appConfigMap = new HashMap<>();
-     *      appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
-     *      return appConfigMap; 
+     *
+     * @Merge("blAppConfigurationMap")
+     * public Map<String, String> adminOfferAdjustmentType() {
+     *     Map<String, String> appConfigMap = new HashMap<>();
+     *     appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
+     *     return appConfigMap;
      * }
      * 
      * @return
@@ -284,11 +284,11 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * Out-of-box, this field is disabled from admin and must be manually enabled to view, since it is not a typical 
      * requirement to most implementations. To enable, add the following to AdminConfig.java:
      *
-     * @Bean
-     * public Map<String, String> blAppConfigurationMap() {
-     *      Map<String, String> appConfigMap = new HashMap<>();
-     *      appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
-     *      return appConfigMap; 
+     * @Merge("blAppConfigurationMap")
+     * public Map<String, String> adminOfferAdjustmentType() {
+     *     Map<String, String> appConfigMap = new HashMap<>();
+     *     appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
+     *     return appConfigMap;
      * }
      * 
      * @param adjustmentType
