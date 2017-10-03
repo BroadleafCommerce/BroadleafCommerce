@@ -51,10 +51,16 @@ public abstract class AbstractBroadleafApplicationEventListener<T extends Broadl
     @Qualifier("blLocaleService")
     protected LocaleService localeService;
 
-    protected abstract void onApplicationEventInternal(T event);
+    //protected BroadleafApplicationEventListenerExtensionManager extensionManager;
+
+    protected abstract void handleApplicationEvent(T event);
 
     @Override
     public void onApplicationEvent(final T event) {
+        //ExtensionResultStatusType result = extensionManager.handleApplicationEvent(event);
+        //if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+        //    return;
+        //}
         Site site = getSite(event);
         Catalog catalog = getCatalog(event);
         Site profile = getProfile(event);
@@ -70,7 +76,7 @@ public abstract class AbstractBroadleafApplicationEventListener<T extends Broadl
                     ctx.setTimeZone(getTimeZone(event));
                     ctx.setLocale(getLocale(event));
                     ctx.setBroadleafCurrency(getCurrency(event));
-                    onApplicationEventInternal(event);
+                    handleApplicationEvent(event);
                 } finally {
                     ctx.setTimeZone(origTimeZone);
                     ctx.setLocale(origLocale);

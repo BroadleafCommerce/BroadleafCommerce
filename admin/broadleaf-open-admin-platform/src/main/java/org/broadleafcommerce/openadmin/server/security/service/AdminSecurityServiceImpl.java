@@ -48,6 +48,7 @@ import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserDet
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.core.Authentication;
@@ -77,6 +78,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static int TEMP_PASSWORD_LENGTH = 12;
     private static final int FULL_PASSWORD_LENGTH = 16;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;

@@ -48,11 +48,7 @@ public abstract class BroadleafApplicationEvent extends ApplicationEvent {
 	}
 	
 	protected transient final Map<String, Object> context = Collections.synchronizedMap(new HashMap<String, Object>());
-	
-	/**
-	 * Instantiates this with the required source. The asynchronous property is false and the errorHandler is null.
-	 * @param source
-	 */
+
 	public BroadleafApplicationEvent(Object source) {
 		super(source);
 
