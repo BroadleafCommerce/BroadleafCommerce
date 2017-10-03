@@ -205,20 +205,38 @@ public class MVELToDataWrapperTranslator {
 
     protected boolean isBetweenOperator(ExpressionDTO prev, ExpressionDTO temp) {
         String prevOperator = prev.getOperator();
+        String prevVal = prev.getValue();
         String tempOperator = temp.getOperator();
-        long prevVal = Long.parseLong(prev.getValue());
-        long tempVal = Long.parseLong(temp.getValue());
-        return (tempVal > prevVal && prevOperator.equals(BLCOperator.GREATER_THAN.name()) && tempOperator.equals(BLCOperator.LESS_THAN.name()))
-                || (prevVal > tempVal && prevOperator.equals(BLCOperator.LESS_THAN.name()) && tempOperator.equals(BLCOperator.GREATER_THAN.name()) && tempVal < prevVal);
+        String tempVal = temp.getValue();
+        try {
+            if (prevOperator.equals(BLCOperator.GREATER_THAN.name()) && tempOperator.equals(BLCOperator.LESS_THAN.name())) {
+                return Long.parseLong(tempVal) > Long.parseLong(prevVal);
+            } else if (prevOperator.equals(BLCOperator.LESS_THAN.name()) && tempOperator.equals(BLCOperator.GREATER_THAN.name())) {
+                return Long.parseLong(prevVal) > Long.parseLong(tempVal);
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            LOG.warn(String.format("Used string values in expression %s %s && %s %s", prevOperator, prevVal, tempOperator, tempVal));
+            return false;
+        }
     }
 
     protected boolean isBetweenInclusiveOperator(ExpressionDTO prev, ExpressionDTO temp) {
         String prevOperator = prev.getOperator();
+        String prevVal = prev.getValue();
         String tempOperator = temp.getOperator();
-        long prevVal = Long.parseLong(prev.getValue());
-        long tempVal = Long.parseLong(temp.getValue());
-        return (tempVal >= prevVal && prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name()))
-                || (prevVal >= tempVal && prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempVal <= prevVal);
+        String tempVal = temp.getValue();
+        try {
+            if (prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name())) {
+                return Long.parseLong(tempVal) > Long.parseLong(prevVal);
+            } else if (prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name())) {
+                return Long.parseLong(prevVal) > Long.parseLong(tempVal);
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            LOG.warn(String.format("Used string values in expression %s %s && %s %s", prevOperator, prevVal, tempOperator, tempVal));
+            return false;
+        }
     }
 
 }
