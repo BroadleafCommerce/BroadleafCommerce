@@ -19,15 +19,15 @@
 package org.broadleafcommerce.common.email.service.message;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-
 import java.util.Map;
-
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
 
@@ -53,16 +53,28 @@ public abstract class MessageCreator {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.getType());
                 EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.getType());
+
+                // attach headers, if they exist
+                if (MapUtils.isNotEmpty(info.getHeaders())) {
+                    for (Map.Entry<String, String> header: info.getHeaders().entrySet()) {
+                        mimeMessage.addHeader(header.getKey(), header.getValue());
+                    }
+                }
+
                 boolean isMultipart = CollectionUtils.isNotEmpty(info.getAttachments());
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, info.getEncoding());
-                message.setTo(emailUser.getEmailAddress());
-                message.setFrom(info.getFromAddress());
+                message.setTo(new InternetAddress(emailUser.getEmailAddress()));
+                message.setFrom(new InternetAddress(info.getFromAddress()));
                 message.setSubject(info.getSubject());
                 if (emailUser.getBCCAddresses() != null && emailUser.getBCCAddresses().length > 0) {
-                    message.setBcc(emailUser.getBCCAddresses());
+                    for (String bcc : emailUser.getBCCAddresses()) {
+                        message.addBcc(new InternetAddress(bcc));
+                    }
                 }
                 if (emailUser.getCCAddresses() != null && emailUser.getCCAddresses().length > 0) {
-                    message.setCc(emailUser.getCCAddresses());
+                    for (String cc : emailUser.getCCAddresses()) {
+                        message.addCc(new InternetAddress(cc));
+                    }
                 }
                 String messageBody = info.getMessageBody();
                 if (messageBody == null) {

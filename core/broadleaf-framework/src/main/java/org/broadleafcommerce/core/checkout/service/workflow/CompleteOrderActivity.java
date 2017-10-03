@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +56,7 @@ public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutS
         seed.getOrder().setOrderNumber(determineOrderNumber(seed.getOrder()));
         seed.getOrder().setSubmitDate(determineSubmitDate(seed.getOrder()));
 
-        OrderSubmittedEvent event = new OrderSubmittedEvent(seed.getOrder().getId(), seed.getOrder().getOrderNumber());
+        OrderSubmittedEvent event = new OrderSubmittedEvent(this, seed.getOrder().getId(), seed.getOrder().getOrderNumber());
         applicationContext.publishEvent(event);
 
         return context;

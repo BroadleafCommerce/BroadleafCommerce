@@ -28,18 +28,20 @@ public class OrderSubmittedEvent extends BroadleafApplicationEvent {
 
     private static final long serialVersionUID = 1L;
 
+    protected final Long orderId;
     protected final String orderNumber;
 
-    public OrderSubmittedEvent(Long orderId, String orderNumber) {
-        super(orderId);
+    public OrderSubmittedEvent(Object source, Long orderId, String orderNumber) {
+        super(source);
+        this.orderId = orderId;
         this.orderNumber = orderNumber;
     }
 
     public Long getOrderId() {
-        return (Long) super.getSource();
+        return orderId;
     }
 
     public String getOrderNumber() {
-        return (String) orderNumber;
+        return orderNumber;
     }
 }
