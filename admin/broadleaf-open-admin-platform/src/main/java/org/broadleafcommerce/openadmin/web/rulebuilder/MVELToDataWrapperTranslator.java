@@ -206,19 +206,31 @@ public class MVELToDataWrapperTranslator {
     protected boolean isBetweenOperator(ExpressionDTO prev, ExpressionDTO temp) {
         String prevOperator = prev.getOperator();
         String tempOperator = temp.getOperator();
-        long prevVal = Long.parseLong(prev.getValue());
-        long tempVal = Long.parseLong(temp.getValue());
-        return (tempVal > prevVal && prevOperator.equals(BLCOperator.GREATER_THAN.name()) && tempOperator.equals(BLCOperator.LESS_THAN.name()))
-                || (prevVal > tempVal && prevOperator.equals(BLCOperator.LESS_THAN.name()) && tempOperator.equals(BLCOperator.GREATER_THAN.name()) && tempVal < prevVal);
+        try {
+            if (prevOperator.equals(BLCOperator.GREATER_THAN.name()) && tempOperator.equals(BLCOperator.LESS_THAN.name())) {
+                return Long.parseLong(temp.getValue()) > Long.parseLong(prev.getValue());
+            } else if (prevOperator.equals(BLCOperator.LESS_THAN.name()) && tempOperator.equals(BLCOperator.GREATER_THAN.name())) {
+                return Long.parseLong(prev.getValue()) > Long.parseLong(temp.getValue());
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     protected boolean isBetweenInclusiveOperator(ExpressionDTO prev, ExpressionDTO temp) {
         String prevOperator = prev.getOperator();
         String tempOperator = temp.getOperator();
-        long prevVal = Long.parseLong(prev.getValue());
-        long tempVal = Long.parseLong(temp.getValue());
-        return (tempVal >= prevVal && prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name()))
-                || (prevVal >= tempVal && prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempVal <= prevVal);
+        try {
+            if (prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name())) {
+                return Long.parseLong(temp.getValue()) > Long.parseLong(prev.getValue());
+            } else if (prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name())) {
+                return Long.parseLong(prev.getValue()) > Long.parseLong(temp.getValue());
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
 }
