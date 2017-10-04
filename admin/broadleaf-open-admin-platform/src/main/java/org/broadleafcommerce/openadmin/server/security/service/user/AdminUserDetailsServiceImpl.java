@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service.user;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityHelper;
@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +42,8 @@ import javax.annotation.Resource;
 @Component("blAdminUserDetailsService")
 public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
-    @Resource(name="blAdminSecurityService")
-    protected AdminSecurityService adminSecurityService;
+    @Resource(name="blAdminUserDao")
+    protected AdminUserDao adminUserDao;
 
     @Resource(name="blAdminSecurityHelper")
     protected AdminSecurityHelper adminSecurityHelper;
@@ -52,7 +53,13 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        AdminUser adminUser = adminSecurityService.readAdminUserByUserName(username);
+        AdminUser adminUser = adminUserDao.readAdminUserByUserName(username);
+        if (adminUser == null) {
+            List<AdminUser> results = adminUserDao.readAdminUserByEmail(username);
+            if (!CollectionUtils.isEmpty(results)) {
+                adminUser = results.get(0);
+            }
+        }
         if (adminUser == null || adminUser.getActiveStatusFlag() == null || !adminUser.getActiveStatusFlag()) {
             throw new UsernameNotFoundException("The user was not found");
         }
