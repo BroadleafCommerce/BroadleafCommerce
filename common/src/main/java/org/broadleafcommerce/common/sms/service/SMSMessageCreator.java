@@ -1,5 +1,6 @@
 package org.broadleafcommerce.common.sms.service;
 
+import org.broadleafcommerce.common.sms.service.type.SMSMessage;
 import java.util.Map;
 
 /**
@@ -7,5 +8,5 @@ import java.util.Map;
  */
 public interface SMSMessageCreator {
 
-    void sendMessage(String to, String from, String body, Map<String, Object> props);
+    void sendMessage(SMSMessage message, Map<String, Object> props);
 }
