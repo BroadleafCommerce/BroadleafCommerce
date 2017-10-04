@@ -43,6 +43,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotPasswordEvent;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserDetails;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -368,9 +370,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             }
 
             if (activeUsernames.size() > 0) {
-                HashMap<String, Object> vars = new HashMap<String, Object>();
-                vars.put("accountNames", activeUsernames);
-                emailService.sendTemplateEmail(emailAddress, getSendUsernameEmailInfo(), vars);
+                applicationContext.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, activeUsernames));
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -400,9 +400,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             fpst.setToken(encodePassword(token, null));
             fpst.setCreateDate(SystemTime.asDate());
             forgotPasswordSecurityTokenDao.saveToken(fpst);
-            
-            HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("token", token);
+
             String resetPasswordUrl = getResetPasswordURL();
             if (!StringUtils.isEmpty(resetPasswordUrl)) {
                 if (resetPasswordUrl.contains("?")) {
@@ -411,9 +409,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                     resetPasswordUrl=resetPasswordUrl+"?token="+token;
                 }
             }
-            vars.put("resetPasswordUrl", resetPasswordUrl);
-            emailService.sendTemplateEmail(user.getEmail(), getResetPasswordEmailInfo(), vars);
-            
+
+            applicationContext.publishEvent(new AdminForgotPasswordEvent(this, user.getId(), token, resetPasswordUrl));
         }
         return response;
     }
