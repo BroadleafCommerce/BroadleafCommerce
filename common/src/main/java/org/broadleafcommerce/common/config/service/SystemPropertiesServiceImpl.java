@@ -108,7 +108,10 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             if (envOrigination) {
                 result = null;
             } else {
-                result = env.getProperty(name);
+                result = getPropertyFromCache(name);
+                if (result == null) {
+                    result = env.getProperty(name);
+                }
             }
         } else {
             if ("_blank_".equals(property.getValue())) {

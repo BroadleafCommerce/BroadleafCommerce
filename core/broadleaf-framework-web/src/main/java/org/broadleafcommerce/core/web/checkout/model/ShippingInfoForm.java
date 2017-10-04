@@ -121,7 +121,12 @@ public class ShippingInfoForm implements Serializable {
         this.saveAsDefault = saveAsDefault;
     }
 
+    /**
+     * NOTE: this looks for all of {@link Address}'s database required fields
+     */
     public boolean hasValidAddress() {
-        return address != null && StringUtils.isNotBlank(address.getAddressLine1());
+        return getAddress() != null
+                && StringUtils.isNotBlank(getAddress().getAddressLine1())
+                && StringUtils.isNotBlank(getAddress().getCity());
     }
 }
