@@ -23,15 +23,17 @@
  */
 package org.broadleafcommerce.core.order.event;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.event.AbstractBroadleafApplicationEventListener;
 import org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster;
 import org.broadleafcommerce.common.event.OrderSubmittedEvent;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.notification.service.type.Notification;
-import org.broadleafcommerce.common.notification.service.type.NotificationType;
-import org.broadleafcommerce.common.notification.service.NotificationService;
+import org.broadleafcommerce.common.notification.service.NotificationDispatcher;
+import org.broadleafcommerce.common.notification.service.type.EmailNotification;
+import org.broadleafcommerce.common.notification.service.type.NotificationEventType;
+import org.broadleafcommerce.common.notification.service.type.SMSNotification;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,27 +62,40 @@ public class NotificationOrderSubmittedEventListener extends AbstractBroadleafAp
     protected OrderService orderService;
 
     @Autowired
-    @Qualifier("blEmailNotificationService")
-    protected NotificationService notificationService;
+    @Qualifier("blNotificationDispatcher")
+    protected NotificationDispatcher notificationDispatcher;
 
     @Override
     protected void handleApplicationEvent(OrderSubmittedEvent event) {
         Order order = orderService.findOrderById(event.getOrderId());
         if (order != null) {
+            Map<String, Object> context = createContext(order);
+
             try {
-                String emailAddress = order.getEmailAddress() != null ? order.getEmailAddress() : order.getCustomer().getEmailAddress();
-
-                Map<String, Object> context = new HashMap<>();
-                context.put(ORDER_CONTEXT_KEY, order);
-                context.put(CUSTOMER_CONTEXT_KEY, order.getCustomer());
-
-                notificationService.sendNotification(new Notification(emailAddress, NotificationType.ORDER_CONFIRMATION, context));
+                notificationDispatcher.dispatchNotification(new EmailNotification(order.getEmailAddress(), NotificationEventType.ORDER_CONFIRMATION, context));
             } catch (ServiceException e) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to send an order confirmation email for order #" + order.getOrderNumber(), e);
+                    LOG.debug("Failure to dispatch order confirmation email notification", e);
+                }
+            }
+
+            try {
+                notificationDispatcher.dispatchNotification(new SMSNotification(NotificationEventType.ORDER_CONFIRMATION, context));
+            } catch (ServiceException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failure to dispatch order confirmation sms notification", e);
                 }
             }
         }
+    }
+
+    protected Map<String, Object> createContext(Order order) {
+        Map<String, Object> context = new HashMap<>();
+        if (order != null) {
+            context.put(ORDER_CONTEXT_KEY, order);
+            context.put(CUSTOMER_CONTEXT_KEY, order.getCustomer());
+        }
+        return MapUtils.unmodifiableMap(context);
     }
 
     @Override

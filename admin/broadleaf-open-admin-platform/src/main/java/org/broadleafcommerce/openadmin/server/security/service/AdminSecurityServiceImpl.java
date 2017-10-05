@@ -62,7 +62,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -370,7 +369,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             }
 
             if (activeUsernames.size() > 0) {
-                applicationContext.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, activeUsernames));
+                applicationContext.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, null, activeUsernames));
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");

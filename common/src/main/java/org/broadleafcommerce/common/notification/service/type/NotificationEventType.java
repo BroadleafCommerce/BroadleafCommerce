@@ -31,31 +31,31 @@ import java.util.Map;
 /**
  * @author Nick Crum ncrum
  */
-public class NotificationType implements Serializable, BroadleafEnumerationType {
+public class NotificationEventType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, NotificationType> TYPES = new LinkedHashMap<String, NotificationType>();
+    private static final Map<String, NotificationEventType> TYPES = new LinkedHashMap<String, NotificationEventType>();
 
-    public static final NotificationType ADMIN_FORGOT_PASSWORD = new NotificationType("ADMIN_FORGOT_PASSWORD", "Admin Forgot Password");
-    public static final NotificationType ADMIN_FORGOT_USERNAME = new NotificationType("ADMIN_FORGOT_USERNAME", "Admin Forgot Username");
-    public static final NotificationType ORDER_CONFIRMATION = new NotificationType("ORDER_CONFIRMATION", "Order Confirmation");
-    public static final NotificationType FORGOT_PASSWORD = new NotificationType("FORGOT_PASSWORD", "Forgot Password");
-    public static final NotificationType FORGOT_USERNAME = new NotificationType("FORGOT_USERNAME", "Forgot Username");
-    public static final NotificationType REGISTER_CUSTOMER = new NotificationType("REGISTER_CUSTOMER", "Register Customer");
+    public static final NotificationEventType ADMIN_FORGOT_PASSWORD = new NotificationEventType("ADMIN_FORGOT_PASSWORD", "Admin Forgot Password");
+    public static final NotificationEventType ADMIN_FORGOT_USERNAME = new NotificationEventType("ADMIN_FORGOT_USERNAME", "Admin Forgot Username");
+    public static final NotificationEventType ORDER_CONFIRMATION = new NotificationEventType("ORDER_CONFIRMATION", "Order Confirmation");
+    public static final NotificationEventType FORGOT_PASSWORD = new NotificationEventType("FORGOT_PASSWORD", "Forgot Password");
+    public static final NotificationEventType FORGOT_USERNAME = new NotificationEventType("FORGOT_USERNAME", "Forgot Username");
+    public static final NotificationEventType REGISTER_CUSTOMER = new NotificationEventType("REGISTER_CUSTOMER", "Register Customer");
 
-    public static NotificationType getInstance(final String type) {
+    public static NotificationEventType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
     private String friendlyType;
 
-    public NotificationType() {
+    public NotificationEventType() {
         //do nothing
     }
 
-    public NotificationType(final String type, final String friendlyType) {
+    public NotificationEventType(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
         setType(type);
     }
@@ -93,7 +93,7 @@ public class NotificationType implements Serializable, BroadleafEnumerationType 
             return false;
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
-        NotificationType other = (NotificationType) obj;
+        NotificationEventType other = (NotificationEventType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

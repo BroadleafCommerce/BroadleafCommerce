@@ -7,27 +7,17 @@ import java.util.Map;
 /**
  * @author Nick Crum ncrum
  */
-public class Notification implements Serializable {
+public abstract class Notification implements Serializable {
 
-    protected String target;
     protected String notificationType;
     protected Map<String, Object> context = new HashMap<>();
 
     public Notification() {
     }
 
-    public Notification(String target, NotificationType notificationType, Map<String, Object> context) {
-        this.target = target;
+    public Notification(NotificationEventType notificationEventType, Map<String, Object> context) {
         this.context = context;
-        setType(notificationType);
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
+        setType(notificationEventType);
     }
 
     public Map<String, Object> getContext() {
@@ -38,11 +28,14 @@ public class Notification implements Serializable {
         this.context = context;
     }
 
-    public NotificationType getType() {
-        return NotificationType.getInstance(notificationType);
+    public NotificationEventType getType() {
+        if (notificationType == null) {
+            return null;
+        }
+        return NotificationEventType.getInstance(notificationType);
     }
 
-    public void setType(NotificationType notificationType) {
-        this.notificationType = notificationType.getType();
+    public void setType(NotificationEventType notificationEventType) {
+        this.notificationType = notificationEventType.getType();
     }
 }

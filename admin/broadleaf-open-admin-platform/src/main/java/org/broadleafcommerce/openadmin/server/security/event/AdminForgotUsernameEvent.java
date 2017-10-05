@@ -10,9 +10,10 @@ import java.util.List;
 public class AdminForgotUsernameEvent extends BroadleafApplicationEvent {
 
     protected String emailAddress;
+    protected String phoneNumber;
     protected List<String> activeUsernames = new ArrayList<>();
 
-    public AdminForgotUsernameEvent(Object source, String emailAddress, List<String> activeUsernames) {
+    public AdminForgotUsernameEvent(Object source, String emailAddress, String phoneNumber, List<String> activeUsernames) {
         super(source);
         this.emailAddress = emailAddress;
         this.activeUsernames = activeUsernames;
@@ -24,6 +25,14 @@ public class AdminForgotUsernameEvent extends BroadleafApplicationEvent {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public List<String> getActiveUsernames() {

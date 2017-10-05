@@ -1,17 +1,19 @@
 package org.broadleafcommerce.profile.core.event;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.event.AbstractBroadleafApplicationEventListener;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.notification.service.type.Notification;
-import org.broadleafcommerce.common.notification.service.NotificationService;
+import org.broadleafcommerce.common.notification.service.NotificationDispatcher;
+import org.broadleafcommerce.common.notification.service.type.EmailNotification;
+import org.broadleafcommerce.common.notification.service.type.NotificationEventType;
+import org.broadleafcommerce.common.notification.service.type.SMSNotification;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.broadleafcommerce.common.notification.service.type.NotificationType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,8 +31,8 @@ public class NotificationRegisterCustomerEventListener extends AbstractBroadleaf
     protected CustomerService customerService;
 
     @Autowired
-    @Qualifier("blEmailNotificationService")
-    protected NotificationService notificationService;
+    @Qualifier("blNotificationDispatcher")
+    protected NotificationDispatcher notificationDispatcher;
 
     @Override
     protected void handleApplicationEvent(RegisterCustomerEvent event) {
@@ -42,15 +44,29 @@ public class NotificationRegisterCustomerEventListener extends AbstractBroadleaf
             return;
         }
 
+        Map<String, Object> context = createContext(customer, event);
+
         try {
-            Map<String, Object> context = new HashMap<>();
-            context.put(CUSTOMER_CONTEXT_KEY, customer);
-            notificationService.sendNotification(new Notification(customer.getEmailAddress(), NotificationType.REGISTER_CUSTOMER, context));
+            notificationDispatcher.dispatchNotification(new EmailNotification(customer.getEmailAddress(), NotificationEventType.REGISTER_CUSTOMER, context));
         } catch (ServiceException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unable to send registration email for customer with email " + customer.getEmailAddress(), e);
             }
         }
+
+        try {
+            notificationDispatcher.dispatchNotification(new SMSNotification(NotificationEventType.REGISTER_CUSTOMER, context));
+        } catch (ServiceException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to send registration sms for customer", e);
+            }
+        }
+    }
+
+    protected Map<String, Object> createContext(Customer customer, RegisterCustomerEvent event) {
+        Map<String, Object> context = new HashMap<>();
+        context.put(CUSTOMER_CONTEXT_KEY, customer);
+        return MapUtils.unmodifiableMap(context);
     }
 
     @Override

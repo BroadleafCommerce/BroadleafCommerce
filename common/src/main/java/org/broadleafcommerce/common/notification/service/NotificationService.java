@@ -1,6 +1,5 @@
 package org.broadleafcommerce.common.notification.service;
 
-import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.notification.service.type.Notification;
 
 /**
@@ -8,5 +7,8 @@ import org.broadleafcommerce.common.notification.service.type.Notification;
  */
 public interface NotificationService {
 
-    boolean sendNotification(Notification notification) throws ServiceException;
+    boolean canHandle(Class<? extends Notification> clazz);
+
+    void sendNotification(Notification notification);
+
 }
