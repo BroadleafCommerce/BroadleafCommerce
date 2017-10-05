@@ -17,17 +17,6 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +25,16 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
@@ -55,9 +54,15 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer readCustomerByExternalId(String id) {
-        TypedQuery<Customer> query = em.createQuery("SELECT customer FROM org.broadleafcommerce.profile.core.domain.Customer customer WHERE customer.externalId = :externalId", Customer.class);
-        query.setParameter("externalId", id);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
+        Root<CustomerImpl> customer = criteria.from(CustomerImpl.class);
+        criteria.select(customer);
+        criteria.where(builder.equal(customer.get("externalId"), id));
+
+        TypedQuery<Customer> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, false);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Customer");
         List<Customer> resultList = query.getResultList();
         return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
     }
@@ -164,7 +169,11 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Long readNumberOfCustomers() {
-        Query query = em.createQuery("SELECT COUNT(xref) FROM org.broadleafcommerce.profile.core.domain.Customer xref");
-        return (Long) query.getSingleResult();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(CustomerImpl.class)));
+        TypedQuery<Long> query = em.createQuery(criteria);
+
+        return query.getSingleResult();
     }
 }

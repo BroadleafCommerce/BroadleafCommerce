@@ -18,12 +18,12 @@
 package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -33,8 +33,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import java.util.List;
 
 @Repository("blCustomerAddressDao")
 public class CustomerAddressDaoImpl implements CustomerAddressDao {
@@ -80,8 +78,11 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
 
     @Override
     public Long readNumberOfAddresses() {
-        Query query = em.createQuery("SELECT COUNT(xref) FROM org.broadleafcommerce.profile.core.domain.CustomerAddress xref");
-        return (Long) query.getSingleResult();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(CustomerAddressImpl.class)));
+        TypedQuery<Long> query = em.createQuery(criteria);
+        return query.getSingleResult();
     }
 
     public CustomerAddress readCustomerAddressById(Long customerAddressId) {
