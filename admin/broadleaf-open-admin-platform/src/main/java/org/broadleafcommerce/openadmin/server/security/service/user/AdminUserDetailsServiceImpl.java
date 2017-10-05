@@ -64,6 +64,10 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("The user was not found");
         }
 
+        return buildDetails(username, adminUser);
+    }
+
+    protected UserDetails buildDetails(String username, AdminUser adminUser) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (AdminRole role : adminUser.getAllRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
