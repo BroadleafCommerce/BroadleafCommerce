@@ -17,28 +17,22 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import org.broadleafcommerce.common.event.OrderSubmittedEvent;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 @Component("blCompleteOrderActivity")
-public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutSeed>> implements ApplicationContextAware {
+public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     public static final int ORDER = 7000;
-    
-    protected ApplicationContext applicationContext;
 
     @Autowired
     public CompleteOrderActivity(@Qualifier("blCompleteOrderRollbackHandler") CompleteOrderRollbackHandler rollbackHandler) {
@@ -56,9 +50,6 @@ public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutS
         seed.getOrder().setOrderNumber(determineOrderNumber(seed.getOrder()));
         seed.getOrder().setSubmitDate(determineSubmitDate(seed.getOrder()));
 
-        OrderSubmittedEvent event = new OrderSubmittedEvent(this, seed.getOrder().getId(), seed.getOrder().getOrderNumber());
-        applicationContext.publishEvent(event);
-
         return context;
     }
 
@@ -74,8 +65,4 @@ public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutS
         return OrderStatus.SUBMITTED;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
 }

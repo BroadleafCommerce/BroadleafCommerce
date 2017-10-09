@@ -17,11 +17,6 @@
  */
 package org.broadleafcommerce.common.email.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.email.dao.EmailReportingDao;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.service.exception.EmailException;
@@ -32,10 +27,17 @@ import org.broadleafcommerce.common.email.service.message.EmailPropertyType;
 import org.broadleafcommerce.common.email.service.message.EmailServiceProducer;
 import org.broadleafcommerce.common.email.service.message.MessageCreator;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
+ * @deprecated
+ * @see org.broadleafcommerce.common.notification.service.NotificationService
+ * @see org.broadleafcommerce.common.notification.service.NotificationDispatcher
  */
+@Deprecated
 @Service("blEmailService")
 public class EmailServiceImpl implements EmailService {
 

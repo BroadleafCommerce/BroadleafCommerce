@@ -22,6 +22,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
 import org.broadleafcommerce.common.id.service.IdGenerationService;
 import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.broadleafcommerce.common.email.service.EmailService;
@@ -52,6 +53,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,7 +76,8 @@ public class CustomerServiceImpl implements CustomerService {
     private static final int PASSWORD_LENGTH = 16;
 
     @Autowired
-    protected ApplicationContext applicationContext;
+    @Qualifier("blApplicationEventPublisher")
+    protected BroadleafApplicationEventPublisher eventPublisher;
 
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
@@ -220,7 +223,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer retCustomer = saveCustomer(customer);
         createRegisteredCustomerRoles(retCustomer);
         
-        applicationContext.publishEvent(new RegisterCustomerEvent(this, retCustomer.getId()));
+        eventPublisher.publishEvent(new RegisterCustomerEvent(this, retCustomer.getId()));
         notifyPostRegisterListeners(retCustomer);
 
         return retCustomer;
@@ -517,7 +520,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
 
             if (activeUsernames.size() > 0) {
-                applicationContext.publishEvent(new ForgotUsernameEvent(this, emailAddress, activeUsernames));
+                eventPublisher.publishEvent(new ForgotUsernameEvent(this, emailAddress, activeUsernames));
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -556,7 +559,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
 
-            applicationContext.publishEvent(new ForgotPasswordEvent(this, customer.getId(), token, resetPasswordUrl));
+            eventPublisher.publishEvent(new ForgotPasswordEvent(this, customer.getId(), token, resetPasswordUrl));
         }
         return response;
     }

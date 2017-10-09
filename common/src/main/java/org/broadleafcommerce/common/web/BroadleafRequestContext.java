@@ -127,6 +127,7 @@ public class BroadleafRequestContext {
     protected List<Long> explicitCatalogs = new ArrayList<>();
     protected Site currentProfile;
     protected Boolean ignoreSite = false;
+    protected Map<String, Object> ruleMap = new HashMap<>();
     protected Map<String, Object> additionalProperties = new HashMap<>();
     protected MessageSource messageSource;
     protected RequestDTO requestDTO;
@@ -409,6 +410,14 @@ public class BroadleafRequestContext {
 
     public void setIgnoreSite(Boolean ignoreSite) {
         this.ignoreSite = ignoreSite;
+    }
+
+    public Map<String, Object> getRuleMap() {
+        return ruleMap;
+    }
+
+    public void setRuleMap(Map<String, Object> ruleMap) {
+        this.ruleMap = ruleMap;
     }
 
     public Map<String, Object> getAdditionalProperties() {

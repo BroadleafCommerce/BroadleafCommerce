@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
@@ -81,7 +82,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     private static final int FULL_PASSWORD_LENGTH = 16;
 
     @Autowired
-    protected ApplicationContext applicationContext;
+    @Qualifier("blApplicationEventPublisher")
+    protected BroadleafApplicationEventPublisher eventPublisher;
 
     @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;
@@ -369,7 +371,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             }
 
             if (activeUsernames.size() > 0) {
-                applicationContext.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, null, activeUsernames));
+                eventPublisher.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, null, activeUsernames));
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -409,7 +411,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                 }
             }
 
-            applicationContext.publishEvent(new AdminForgotPasswordEvent(this, user.getId(), token, resetPasswordUrl));
+            eventPublisher.publishEvent(new AdminForgotPasswordEvent(this, user.getId(), token, resetPasswordUrl));
         }
         return response;
     }

@@ -256,7 +256,7 @@ public class MvelHelper {
      */
     public static Map<String, Object> buildMvelParameters() {
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
-       BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null && brc.getRequest() != null) {
            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
             HttpServletRequest request = brc.getRequest();
@@ -269,8 +269,15 @@ public class MvelHelper {
                 for (String mapKey : blcRuleMap.keySet()) {
                     mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
                 }
-           }
-       }
+            }
+
+            Map<String, Object> brcRuleMap = brc.getRuleMap();
+            if (blcRuleMap != null) {
+                for (String mapKey : brcRuleMap.keySet()) {
+                    mvelParameters.put(mapKey, brcRuleMap.get(mapKey));
+                }
+            }
+        }
 
        return mvelParameters;
    }    

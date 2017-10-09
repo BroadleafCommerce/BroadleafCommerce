@@ -56,7 +56,7 @@ public abstract class AbstractBroadleafApplicationEventListener<T extends Broadl
     protected abstract void handleApplicationEvent(T event);
 
     @Override
-    public void onApplicationEvent(final T event) {
+    public final void onApplicationEvent(final T event) {
         //ExtensionResultStatusType result = extensionManager.handleApplicationEvent(event);
         //if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
         //    return;

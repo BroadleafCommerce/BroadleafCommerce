@@ -15,35 +15,26 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.notification.service.type;
+package org.broadleafcommerce.common.event;
 
-import java.util.Map;
+import org.springframework.context.ApplicationEvent;
 
 /**
  * @author Nick Crum ncrum
  */
-public class EmailNotification extends Notification {
+public interface BroadleafApplicationEventPublisher {
 
-    protected String emailAddress;
+    /**
+     * Publishes the {@code ApplicationEvent} on the ApplicationContext in a synchronized or unsynchronized context.
+     *
+     * @param applicationEvent
+     */
+    public void publishEvent(ApplicationEvent applicationEvent);
 
-    public EmailNotification() {
-        super();
-    }
-
-    public EmailNotification(NotificationEventType notificationEventType, Map<String, Object> context) {
-        super(notificationEventType, context);
-    }
-
-    public EmailNotification(String emailAddress, NotificationEventType notificationEventType, Map<String, Object> context) {
-        super(notificationEventType, context);
-        this.emailAddress = emailAddress;
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
+    /**
+     * Publishes the {@code ApplicationEvent} on the ApplicationContext in an unsynchronized context.
+     *
+     * @param applicationEvent
+     */
+    public void publishEventUnsynchronized(ApplicationEvent applicationEvent);
 }
