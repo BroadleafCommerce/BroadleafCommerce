@@ -38,6 +38,7 @@ public class NotificationEventType implements Serializable, BroadleafEnumeration
     public static final NotificationEventType FORGOT_PASSWORD = new NotificationEventType("FORGOT_PASSWORD", "Forgot Password");
     public static final NotificationEventType FORGOT_USERNAME = new NotificationEventType("FORGOT_USERNAME", "Forgot Username");
     public static final NotificationEventType REGISTER_CUSTOMER = new NotificationEventType("REGISTER_CUSTOMER", "Register Customer");
+    public static final NotificationEventType CONTACT_US = new NotificationEventType("CONTACT_US", "Contact Us");
 
     public static NotificationEventType getInstance(final String type) {
         return TYPES.get(type);
