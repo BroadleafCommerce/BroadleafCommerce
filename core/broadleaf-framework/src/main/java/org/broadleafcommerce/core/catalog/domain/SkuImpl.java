@@ -78,6 +78,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1140,7 +1141,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Map<String, List<SkuAttribute>> getMultiValueSkuAttributes() {
+    public Map<String, Collection<SkuAttribute>> getMultiValueSkuAttributes() {
         MultiValueMap multiValueMap = new MultiValueMap();
 
         for (SkuAttribute skuAttribute : skuAttributes) {
