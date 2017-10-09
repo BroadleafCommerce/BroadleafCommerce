@@ -37,4 +37,8 @@ public interface CustomerAddressService {
 
     public CustomerAddress create();
 
+    List<CustomerAddress> readBatchAddresses(int start, int pageSize);
+
+    Long readNumberOfAddresses();
+
 }

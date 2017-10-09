@@ -46,6 +46,8 @@ public interface CustomerService {
 
     public Customer readCustomerById(Long userId);
 
+    public Customer readCustomerByExternalId(String userExternalId);
+
     public Customer createCustomer();
 
     /**
@@ -61,15 +63,15 @@ public interface CustomerService {
      * @param customerId the id of the customer to lookup
      */
     public Customer createCustomerFromId(Long customerId);
-    
+
     /**
      * Returns a non-persisted {@link Customer}. Typically used with registering a new customer.
      */
     public Customer createNewCustomer();
-    
+
     /**
      * Subclassed implementations can assign unique roles for various customer types
-     * 
+     *
      * @param customer {@link Customer} to create roles for
      */
     public void createRegisteredCustomerRoles(Customer customer);
@@ -77,17 +79,17 @@ public interface CustomerService {
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
 
     public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners);
-    
+
     public Customer resetPassword(PasswordReset passwordReset);
-    
+
     public List<PasswordUpdatedHandler> getPasswordResetHandlers();
 
     public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers);
-    
+
     public List<PasswordUpdatedHandler> getPasswordChangedHandlers();
 
     public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
-    
+
     /**
      * Looks up the corresponding {@link Customer} and emails the address on file with
      * the associated username.
@@ -103,9 +105,10 @@ public interface CustomerService {
      * @param userName - the user to send a reset password email to.
      * @param forgotPasswordUrl - Base url to include in the email.
      * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
-     * 
+     *
      */
     GenericResponse sendForgotPasswordNotification(String userName, String forgotPasswordUrl);
+
 
     /**
      * Generates an access token and then emails the user.
@@ -117,6 +120,7 @@ public interface CustomerService {
      */
     GenericResponse sendForcedPasswordChangeNotification(String userName, String forgotPasswordUrl);
     
+
     /**
      * Updates the password for the passed in customer only if the passed
      * in token is valid for that customer.
@@ -128,7 +132,7 @@ public interface CustomerService {
      * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired)
      */
     GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
-    
+
     /**
      * Verifies that the passed in token is valid.
      * <p>
@@ -136,7 +140,7 @@ public interface CustomerService {
      * The new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} bean requires passing in a Customer to find the appropriate token.
      *
      * @deprecated  {@link #checkPasswordResetToken(String, Customer)}, this will be removed in 4.2
-     * 
+     *
      * @param token password reset token
      * @return Response can contain errors including (invalidToken, tokenUsed, and tokenExpired)
      */
@@ -158,7 +162,7 @@ public interface CustomerService {
      * @return the next customerId to be used
      */
     public Long findNextCustomerId();
-    
+
     /**
      * @deprecated use {@link #getSaltSource()} instead, this will be removed in 4.2
      *
@@ -166,7 +170,7 @@ public interface CustomerService {
      */
     @Deprecated
     public String getSalt();
-    
+
     /**
      * @deprecated use {@link #setSaltSource(SaltSource)} instead, this will be removed in 4.2
      *
@@ -185,7 +189,7 @@ public interface CustomerService {
      */
     @Deprecated
     public SaltSource getSaltSource();
-    
+
     /**
      * Sets the {@link SaltSource} used with blPasswordEncoder to encrypt the user password. Usually configured within
      * applicationContext-security.xml
@@ -196,13 +200,13 @@ public interface CustomerService {
      */
     @Deprecated
     public void setSaltSource(SaltSource saltSource);
-    
+
     /**
      * @deprecated use {@link #getSalt(Customer, String)} instead, this will be removed in 4.2
      */
     @Deprecated
     public Object getSalt(Customer customer);
-    
+
     /**
      * Gets the salt object for the current customer. By default this delegates to {@link #getSaltSource()}. If there is
      * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
@@ -215,7 +219,7 @@ public interface CustomerService {
      */
     @Deprecated
     public Object getSalt(Customer customer, String unencodedPassword);
-    
+
     /**
      * Encodes the clear text parameter, using the customer as a potential Salt. Does not change the customer properties. 
      * This method only encodes the password and returns the encoded result.
@@ -260,7 +264,7 @@ public interface CustomerService {
      * Additionally, having the encoding algorithm handle the salt internally reduces code complexity and dependencies such as {@link SaltSource}.
      *
      * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
-     * 
+     *
      * @param rawPassword the unencoded password
      * @param encodedPassword the encoded password to compare against
      * @param customer the {@link Customer} to use for the salt
@@ -290,4 +294,7 @@ public interface CustomerService {
      */
     public boolean customerPassesCustomerRule(Customer customer, CustomerRuleHolder customerRuleHolder);
 
+    List<Customer> readBatchCustomers(int start, int pageSize);
+
+    Long readNumberOfCustomers();
 }
