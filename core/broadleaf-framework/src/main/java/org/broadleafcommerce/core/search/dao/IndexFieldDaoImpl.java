@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

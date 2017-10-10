@@ -23,6 +23,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.cache.spi.UpdateTimestampsCache;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.type.Type;
@@ -153,7 +154,7 @@ public class UpdateExecutor {
         String tableName = ((AbstractEntityPersister) metadata).getTableName();
         UpdateTimestampsCache timestampsCache = em.unwrap(SessionImplementor.class).getFactory().getUpdateTimestampsCache();
         if (timestampsCache != null) {
-            timestampsCache.invalidate(new Serializable[]{tableName});
+            timestampsCache.invalidate(new Serializable[]{tableName}, (SharedSessionContractImplementor) session);
         }
     }
 

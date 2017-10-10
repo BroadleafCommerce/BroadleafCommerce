@@ -204,12 +204,12 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
     @Override
     public void clearAutoFlushMode() {
-        em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+        em.unwrap(Session.class).setHibernateFlushMode(FlushMode.MANUAL);
     }
 
     @Override
     public void enableAutoFlushMode() {
-        em.unwrap(Session.class).setFlushMode(FlushMode.AUTO);
+        em.unwrap(Session.class).setHibernateFlushMode(FlushMode.AUTO);
     }
 
     @Override

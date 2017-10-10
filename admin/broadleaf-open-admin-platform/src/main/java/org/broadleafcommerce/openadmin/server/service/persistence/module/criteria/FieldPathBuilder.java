@@ -20,11 +20,10 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.hibernate.ejb.EntityManagerFactoryImpl;
-import org.hibernate.ejb.criteria.CriteriaBuilderImpl;
-import org.hibernate.ejb.criteria.path.PluralAttributePath;
-import org.hibernate.ejb.criteria.path.SingularAttributePath;
 import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
+import org.hibernate.query.criteria.internal.path.PluralAttributePath;
+import org.hibernate.query.criteria.internal.path.SingularAttributePath;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class FieldPathBuilder {
             if (path.getJavaType().isAnnotationPresent(Embeddable.class)) {
                 String original = ((SingularAttributePath) path).getAttribute().getDeclaringType().getJavaType().getName() + "." + ((SingularAttributePath) path).getAttribute().getName() + "." + piece;
                 String copy = path.getJavaType().getName() + "." + piece;
-                copyCollectionPersister(original, copy, ((CriteriaBuilderImpl) builder).getEntityManagerFactory().getSessionFactory());
+                copyCollectionPersister(original, copy, ((CriteriaBuilderImpl) builder).getEntityManagerFactory());
             }
             
             try {
@@ -108,12 +107,12 @@ public class FieldPathBuilder {
                 // We weren't able to resolve the requested piece, likely because it's in a polymoprhic version
                 // of the path we're currently on. Let's see if there's any polymoprhic version of our class to
                 // use instead.
-        	    EntityManagerFactoryImpl em = ((CriteriaBuilderImpl) builder).getEntityManagerFactory();
+        	    SessionFactoryImpl em = ((CriteriaBuilderImpl) builder).getEntityManagerFactory();
         	    Metamodel mm = em.getMetamodel();
         	    boolean found = false;
         	    
         	    Class<?>[] polyClasses = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
-        	            path.getJavaType(), em.getSessionFactory(), true, true);
+        	            path.getJavaType(), em, true, true);
         	    
         	    for (Class<?> clazz : polyClasses) {
             		ManagedType mt = mm.managedType(clazz);

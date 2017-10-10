@@ -45,7 +45,7 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
     @Override
     public BroadleafCurrency findDefaultBroadleafCurrency() {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_CURRENCY");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, true);
         List<BroadleafCurrency> currencyList = query.getResultList();
         if (currencyList.size() >= 1) {
             return currencyList.get(0);
@@ -60,7 +60,7 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
     public BroadleafCurrency findCurrencyByCode(String currencyCode) {
         Query query = em.createNamedQuery("BC_READ_CURRENCY_BY_CODE");
         query.setParameter("currencyCode", currencyCode);
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, true);
         List<BroadleafCurrency> currencyList = query.getResultList();
         if (currencyList.size() >= 1) {
             return currencyList.get(0);
@@ -71,7 +71,7 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
     @Override
     public List<BroadleafCurrency> getAllCurrencies() {
         Query query = em.createNamedQuery("BC_READ_ALL_CURRENCIES");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 

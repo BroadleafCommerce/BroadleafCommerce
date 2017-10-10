@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.CustomerOfferImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
