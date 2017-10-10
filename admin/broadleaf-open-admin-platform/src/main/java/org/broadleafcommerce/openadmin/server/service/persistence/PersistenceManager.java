@@ -34,47 +34,47 @@ import java.util.Map;
 
 public interface PersistenceManager {
 
-    public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
+    Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
 
-    public abstract Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException;
+    Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException;
 
-    public abstract Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
+    Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
 
-    public abstract ClassMetadata buildClassMetadata(Class<?>[] entities, PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws IllegalArgumentException;
+    ClassMetadata buildClassMetadata(Class<?>[] entities, PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws IllegalArgumentException;
 
-    public abstract PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException;
+    PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException;
 
-    public abstract PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+    PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
 
-    public abstract PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
 
-    public abstract PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
 
-    public abstract PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
+    PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
 
-    public abstract void configureDynamicEntityDao(Class entityClass, TargetModeType targetMode);
+    void configureDynamicEntityDao(Class entityClass, TargetModeType targetMode);
 
     /**
-     * This method produces a {@link DynamicEntityDao} with a blPU-based standardEntityManager and EJB3ConfigurationDao
+     * This method produces a {@link DynamicEntityDao} with a blPU-based standardEntityManager
      *  using the passed in {@link TargetModeType}
      */
-    public abstract void configureDefaultDynamicEntityDao(TargetModeType targetModeType);
+    void configureDefaultDynamicEntityDao(TargetModeType targetModeType);
 
-    public abstract DynamicEntityDao getDynamicEntityDao();
+    DynamicEntityDao getDynamicEntityDao();
 
-    public abstract void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao);
+    void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao);
 
-    public abstract TargetModeType getTargetMode();
+    TargetModeType getTargetMode();
 
-    public abstract void setTargetMode(TargetModeType targetMode);
+    void setTargetMode(TargetModeType targetMode);
 
-    public abstract List<CustomPersistenceHandler> getCustomPersistenceHandlers();
+    List<CustomPersistenceHandler> getCustomPersistenceHandlers();
 
-    public abstract void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers);
+    void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers);
 
-    public abstract Class<?>[] getUpDownInheritance(Class<?> testClass);
+    Class<?>[] getUpDownInheritance(Class<?> testClass);
 
-    public abstract Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException;
+    Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException;
 
     String getIdPropertyName(String entityClass);
 

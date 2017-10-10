@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
-import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -133,10 +132,6 @@ public interface DynamicEntityDao {
     SessionFactory getSessionFactory();
 
     boolean useCache();
-
-    EJB3ConfigurationDao getEjb3ConfigurationDao();
-
-    void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao);
 
     DynamicDaoHelper getDynamicDaoHelper();
 

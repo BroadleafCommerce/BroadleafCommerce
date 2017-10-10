@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
-import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.hibernate.SessionFactory;
 
 import java.lang.reflect.Field;
@@ -47,7 +46,6 @@ public class BLCFieldUtils {
     protected SessionFactory sessionFactory;
     protected boolean includeUnqualifiedPolymorphicEntities;
     protected boolean useCache;
-    protected EJB3ConfigurationDao ejb3ConfigurationDao;
     protected EntityConfiguration entityConfiguration;
     protected DynamicDaoHelper helper;
 
@@ -57,17 +55,14 @@ public class BLCFieldUtils {
      * @param sessionFactory provides metadata about a domain class
      * @param includeUnqualifiedPolymorphicEntities include polymorphic variations that were excluded with {@link org.broadleafcommerce.common.presentation.AdminPresentationClass#excludeFromPolymorphism()}
      * @param useCache use the polymorphic type list cache in {@link org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl}
-     * @param ejb3ConfigurationDao provides additional metadata about a domain class
      * @param entityConfiguration contains any explicitly defined entity types for the system
      * @param helper helper class for retrieving polymorphic types for a ceiling domain class
      */
     public BLCFieldUtils(SessionFactory sessionFactory, boolean includeUnqualifiedPolymorphicEntities,
-                         boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao,
-                         EntityConfiguration entityConfiguration, DynamicDaoHelper helper) {
+                         boolean useCache, EntityConfiguration entityConfiguration, DynamicDaoHelper helper) {
         this.sessionFactory = sessionFactory;
         this.includeUnqualifiedPolymorphicEntities = includeUnqualifiedPolymorphicEntities;
         this.useCache = useCache;
-        this.ejb3ConfigurationDao = ejb3ConfigurationDao;
         this.entityConfiguration = entityConfiguration;
         this.helper = helper;
     }
@@ -129,7 +124,7 @@ public class BLCFieldUtils {
 
         for (int j=0;j<tokens.length;j++) {
             String propertyName = tokens[j];
-            Class<?>[] myEntities = helper.getUpDownInheritance(clazz, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache, ejb3ConfigurationDao);
+            Class<?>[] myEntities = helper.getUpDownInheritance(clazz, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
             Class<?> myClass;
             if (ArrayUtils.isEmpty(myEntities)) {
                 myClass = clazz;
@@ -143,7 +138,7 @@ public class BLCFieldUtils {
             }
             field = getSingleField(myClass, propertyName);
             if (field != null && j < tokens.length - 1) {
-                Class<?>[] fieldEntities = helper.getUpDownInheritance(field.getType(), sessionFactory, includeUnqualifiedPolymorphicEntities, useCache, ejb3ConfigurationDao);
+                Class<?>[] fieldEntities = helper.getUpDownInheritance(field.getType(), sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
                 if (!ArrayUtils.isEmpty(fieldEntities)) {
                     clazz = getClassForField(helper, tokens[j + 1], field, fieldEntities);
                     if (clazz == null) {
@@ -192,7 +187,7 @@ public class BLCFieldUtils {
         Class<?> myClass = field != null?field.getType():entities[0];
         if (getSingleField(matchedClasses.get(0), token) != null) {
             clazz = matchedClasses.get(0);
-            Class<?>[] entities2 = helper.getUpDownInheritance(clazz, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache, ejb3ConfigurationDao);
+            Class<?>[] entities2 = helper.getUpDownInheritance(clazz, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
             if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
                 try {
                     clazz = entityConfiguration.lookupEntityClass(myClass.getName());

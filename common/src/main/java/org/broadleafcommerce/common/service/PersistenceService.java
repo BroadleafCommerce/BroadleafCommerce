@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.service;
 
 import org.broadleafcommerce.common.persistence.TargetModeType;
-import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Map;
@@ -66,14 +65,6 @@ public interface PersistenceService {
     PlatformTransactionManager identifyTransactionManager(String className, TargetModeType targetModeType);
 
     /**
-     * Identifies the {@link EJB3ConfigurationDao} for the given entityClass
-     *
-     * @param entityClass
-     * @return the {@link EJB3ConfigurationDao}
-     */
-    EJB3ConfigurationDao identifyEJB3ConfigurationDao(Class entityClass);
-
-    /**
      * Identifies the default {@link EntityManager} for the given targetModeType
      *
      * NOTE: This assumes that the {@link EntityManager} is based on blPU
@@ -94,16 +85,6 @@ public interface PersistenceService {
     PlatformTransactionManager identifyDefaultTransactionManager(TargetModeType targetModeType);
 
     /**
-     * Identifies the default {@link EJB3ConfigurationDao} for the given targetModeType
-     *
-     * NOTE: This assumes that the {@link EJB3ConfigurationDao} is based on blPU
-     *
-     * @param targetModeType
-     * @return the {@link EJB3ConfigurationDao}
-     */
-    EJB3ConfigurationDao identifyDefaultEJB3ConfigurationDao(TargetModeType targetModeType);
-
-    /**
      * Gathers the {@link EntityManager} from the provided managerMap
      *
      * @param managerMap
@@ -118,14 +99,6 @@ public interface PersistenceService {
      * @return the {@link PlatformTransactionManager}
      */
     PlatformTransactionManager getTransactionManager(Map<String, Object> managerMap);
-
-    /**
-     * Gathers the {@link EJB3ConfigurationDao} from the provided managerMap
-     *
-     * @param managerMap
-     * @return the {@link EJB3ConfigurationDao}
-     */
-    EJB3ConfigurationDao getEJB3ConfigurationDao(Map<String, Object> managerMap);
 
     /**
      * Retrieves the topmost implementation for the given className by checking each registered {@link EntityManager}. If

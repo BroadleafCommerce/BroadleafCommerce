@@ -76,8 +76,7 @@ public class FieldManager {
         SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
                 getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
         BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
-                dynamicEntityDao.getEjb3ConfigurationDao(), entityConfiguration,
-                dynamicEntityDao.getDynamicDaoHelper());
+                entityConfiguration, dynamicEntityDao.getDynamicDaoHelper());
         return fieldUtils.getField(clazz, fieldName);
     }
 

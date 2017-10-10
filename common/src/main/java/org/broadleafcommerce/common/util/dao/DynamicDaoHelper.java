@@ -154,10 +154,9 @@ public interface DynamicDaoHelper {
      * @param sessionFactory
      * @param includeUnqualifiedPolymorphicEntities Some entities may be excluded from polymorphism (Abstract class and those marked with {@link AdminPresentationClass#excludeFromPolymorphism()}). Override that exlusion behavior.
      * @param useCache Cache the polymorphic types discovered for the ceilingClass.
-     * @param ejb3ConfigurationDao
      * @return The list of Hibernate registered entities that appear above and below the testClass in an entity inheritance hierarchy
      */
     Class<?>[] getUpDownInheritance(Class<?> testClass, SessionFactory sessionFactory,
-                    boolean includeUnqualifiedPolymorphicEntities, boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao);
+                    boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
 
 }

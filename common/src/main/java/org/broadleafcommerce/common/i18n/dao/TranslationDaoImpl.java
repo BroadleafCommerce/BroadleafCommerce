@@ -31,7 +31,7 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.hibernate.ejb.HibernateEntityManager;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;

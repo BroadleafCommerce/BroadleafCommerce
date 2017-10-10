@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -43,8 +42,8 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 
 /**
- * Service to help gather the correct {@link EntityManager}, {@link PlatformTransactionManager},
- *  or {@link EJB3ConfigurationDao} based on a class and {@link TargetModeType}. This functionality is
+ * Service to help gather the correct {@link EntityManager} or {@link PlatformTransactionManager},
+ *  based on a class and {@link TargetModeType}. This functionality is
  *  especially useful when multiple {@link javax.persistence.PersistenceUnit}s are in use.
  *
  * Note: All "default" items reference blPU, which is used to manage most Broadleaf entities in the Admin.
@@ -58,7 +57,6 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
 
     protected static final String ENTITY_MANAGER_KEY = "entityManager";
     protected static final String TRANSACTION_MANAGER_KEY = "transactionManager";
-    protected static final String EJB3_CONFIG_DAO_KEY = "ejb3ConfigurationDao";
 
     @Resource (name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -77,7 +75,6 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
 
     private final Map<String, EntityManager> ENTITY_MANAGER_CACHE = new ConcurrentHashMap<>();
     private final Map<String, PlatformTransactionManager> TRANSACTION_MANAGER_CACHE = new ConcurrentHashMap<>();
-    private final Map<String, EJB3ConfigurationDao> EJB3_CONFIG_DAO_CACHE = new ConcurrentHashMap<>();
 
     private DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
@@ -129,7 +126,6 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     protected void populateCaches(String targetMode, Map<String, Object> managerMap) {
         final EntityManager em = getEntityManager(managerMap);
         final PlatformTransactionManager txManager = getTransactionManager(managerMap);
-        final EJB3ConfigurationDao ejb3ConfigurationDao = getEJB3ConfigurationDao(managerMap);
 
         SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
         for (Object item : sessionFactory.getAllClassMetadata().values()) {
@@ -139,11 +135,6 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
             String managerCacheKey = buildManagerCacheKey(targetMode, mappedClass);
             ENTITY_MANAGER_CACHE.put(managerCacheKey, em);
             TRANSACTION_MANAGER_CACHE.put(managerCacheKey, txManager);
-
-            String ejb3ConfigDaoCacheKey = buildEJB3ConfigDaoCacheKey(mappedClass);
-            if (!EJB3_CONFIG_DAO_CACHE.containsKey(ejb3ConfigDaoCacheKey)) {
-                EJB3_CONFIG_DAO_CACHE.put(ejb3ConfigDaoCacheKey, ejb3ConfigurationDao);
-            }
         }
     }
 
@@ -191,18 +182,6 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     }
 
     @Override
-    public EJB3ConfigurationDao identifyEJB3ConfigurationDao(Class entityClass) {
-        String cacheKey = buildEJB3ConfigDaoCacheKey(entityClass);
-        EJB3ConfigurationDao ejb3ConfigurationDao = EJB3_CONFIG_DAO_CACHE.get(cacheKey);
-
-        if (ejb3ConfigurationDao == null) {
-            throw new RuntimeException("Unable to determine the EJB3ConfigurationDao for the following class: " + entityClass.getName());
-        }
-
-        return ejb3ConfigurationDao;
-    }
-
-    @Override
     public EntityManager identifyDefaultEntityManager(TargetModeType targetModeType) {
         Map<String, Object> managerMap = defaultTargetModeMap.get(targetModeType.getType());
         return getEntityManager(managerMap);
@@ -222,17 +201,6 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     @Override
     public PlatformTransactionManager getTransactionManager(Map<String, Object> managerMap) {
         return (PlatformTransactionManager) managerMap.get(TRANSACTION_MANAGER_KEY);
-    }
-
-    @Override
-    public EJB3ConfigurationDao identifyDefaultEJB3ConfigurationDao(TargetModeType targetModeType) {
-        Map<String, Object> managerMap = defaultTargetModeMap.get(targetModeType.getType());
-        return getEJB3ConfigurationDao(managerMap);
-    }
-
-    @Override
-    public EJB3ConfigurationDao getEJB3ConfigurationDao(Map<String, Object> managerMap) {
-        return (EJB3ConfigurationDao) managerMap.get(EJB3_CONFIG_DAO_KEY);
     }
 
     @Override

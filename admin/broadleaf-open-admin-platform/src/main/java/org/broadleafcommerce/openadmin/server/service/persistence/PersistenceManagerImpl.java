@@ -33,7 +33,6 @@ import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.ValidationUtil;
-import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -806,34 +805,20 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     public void configureDynamicEntityDao(Class entityClass, TargetModeType targetModeType) {
         EntityManager entityManager = getEntityManager(entityClass, targetModeType);
         dynamicEntityDao.setStandardEntityManager(entityManager);
-
-        EJB3ConfigurationDao ejb3ConfigurationDao = getEJB3ConfigurationDao(entityClass);
-        dynamicEntityDao.setEjb3ConfigurationDao(ejb3ConfigurationDao);
     }
 
     protected EntityManager getEntityManager(Class entityClass, TargetModeType targetModeType) {
         return persistenceService.identifyEntityManager(entityClass, targetModeType);
     }
 
-    protected EJB3ConfigurationDao getEJB3ConfigurationDao(Class entityClass) {
-        return persistenceService.identifyEJB3ConfigurationDao(entityClass);
-    }
-
     @Override
     public void configureDefaultDynamicEntityDao(TargetModeType targetModeType) {
         EntityManager entityManager = getDefaultEntityManager(targetModeType);
         dynamicEntityDao.setStandardEntityManager(entityManager);
-
-        EJB3ConfigurationDao ejb3ConfigurationDao = getDefaultEJB3ConfigurationDao(targetModeType);
-        dynamicEntityDao.setEjb3ConfigurationDao(ejb3ConfigurationDao);
     }
 
     protected EntityManager getDefaultEntityManager(TargetModeType targetModeType) {
         return persistenceService.identifyDefaultEntityManager(targetModeType);
-    }
-
-    protected EJB3ConfigurationDao getDefaultEJB3ConfigurationDao(TargetModeType targetModeType) {
-        return persistenceService.identifyDefaultEJB3ConfigurationDao(targetModeType);
     }
 
     @Override

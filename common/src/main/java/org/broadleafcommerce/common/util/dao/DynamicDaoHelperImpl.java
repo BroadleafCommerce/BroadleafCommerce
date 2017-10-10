@@ -155,7 +155,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
     @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass, SessionFactory sessionFactory,
-                boolean includeUnqualifiedPolymorphicEntities, boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao) {
+                boolean includeUnqualifiedPolymorphicEntities, boolean useCache) {
         Class<?>[] pEntities = getAllPolymorphicEntitiesFromCeiling(testClass, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
         if (ArrayUtils.isEmpty(pEntities)) {
             return pEntities;
@@ -167,7 +167,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         boolean eof = false;
         while (!eof) {
             Class<?> superClass = topConcreteClass.getSuperclass();
-            PersistentClass persistentClass = ejb3ConfigurationDao.getConfiguration().getClassMapping(superClass.getName());
+            PersistentClass persistentClass = MappingProvider.getMapping(superClass.getName());
             if (persistentClass == null) {
                 eof = true;
             } else {

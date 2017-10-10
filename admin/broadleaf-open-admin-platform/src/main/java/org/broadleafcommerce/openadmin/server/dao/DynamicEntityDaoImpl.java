@@ -32,7 +32,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
+import org.broadleafcommerce.common.util.dao.MappingProvider;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -120,8 +120,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
      */
     
     protected EntityManager standardEntityManager;
-
-    protected EJB3ConfigurationDao ejb3ConfigurationDao;
 
     @Resource(name="blMetadata")
     protected Metadata metadata;
@@ -215,7 +213,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Override
     public PersistentClass getPersistentClass(String targetClassName) {
-        return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
+        return MappingProvider.getMapping(targetClassName);
     }
 
     @Override
@@ -252,7 +250,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
-        return dynamicDaoHelper.getUpDownInheritance(testClass, getSessionFactory(), true, useCache(), ejb3ConfigurationDao);
+        return dynamicDaoHelper.getUpDownInheritance(testClass, getSessionFactory(), true, useCache());
     }
 
     @Override
@@ -1554,16 +1552,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Override
     public void setStandardEntityManager(EntityManager entityManager) {
         this.standardEntityManager = entityManager;
-    }
-
-    @Override
-    public EJB3ConfigurationDao getEjb3ConfigurationDao() {
-        return ejb3ConfigurationDao;
-    }
-
-    @Override
-    public void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao) {
-        this.ejb3ConfigurationDao = ejb3ConfigurationDao;
     }
 
     @Override

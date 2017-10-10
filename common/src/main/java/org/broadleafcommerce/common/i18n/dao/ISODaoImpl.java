@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.i18n.dao;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import javax.annotation.Resource;
