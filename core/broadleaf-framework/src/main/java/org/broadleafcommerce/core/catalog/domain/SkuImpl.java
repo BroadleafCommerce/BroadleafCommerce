@@ -227,7 +227,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected String description;
 
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description",
         group = GroupName.General, order = FieldOrder.LONG_DESCRIPTION,

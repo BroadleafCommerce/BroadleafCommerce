@@ -248,7 +248,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected String displayTemplate;
 
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 2000,
             group = GroupName.General,
