@@ -138,15 +138,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Autowired(required=false)
     @Qualifier("blAdminSaltSource")
     protected SaltSource saltSource;
-    
-    @Resource(name="blEmailService")
-    protected EmailService emailService;
-
-    @Resource(name="blSendAdminResetPasswordEmail")
-    protected EmailInfo resetPasswordEmailInfo;
-
-    @Resource(name="blSendAdminUsernameEmailInfo")
-    protected EmailInfo sendUsernameEmailInfo;
 
     /**
      * <p>Sets either {@link #passwordEncoder} or {@link #passwordEncoderNew} based on the type of {@link #passwordEncoderBean}
@@ -513,22 +504,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
         AdminSecurityServiceImpl.TEMP_PASSWORD_LENGTH = PASSWORD_TOKEN_LENGTH;
-    }
-
-    public EmailInfo getSendUsernameEmailInfo() {
-        return sendUsernameEmailInfo;
-    }
-
-    public void setSendUsernameEmailInfo(EmailInfo sendUsernameEmailInfo) {
-        this.sendUsernameEmailInfo = sendUsernameEmailInfo;
-    }
-
-    public EmailInfo getResetPasswordEmailInfo() {
-        return resetPasswordEmailInfo;
-    }
-
-    public void setResetPasswordEmailInfo(EmailInfo resetPasswordEmailInfo) {
-        this.resetPasswordEmailInfo = resetPasswordEmailInfo;
     }
 
     @Deprecated

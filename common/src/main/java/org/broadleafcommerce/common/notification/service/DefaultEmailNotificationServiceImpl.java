@@ -17,11 +17,18 @@
  */
 package org.broadleafcommerce.common.notification.service;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.email.service.EmailService;
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.notification.service.type.EmailNotification;
 import org.broadleafcommerce.common.notification.service.type.Notification;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Nick Crum ncrum
@@ -31,6 +38,13 @@ public class DefaultEmailNotificationServiceImpl implements NotificationService 
 
     protected final Log LOG = LogFactory.getLog(DefaultEmailNotificationServiceImpl.class);
 
+    @Autowired(required = false)
+    protected List<EmailInfo> emailInfos;
+
+    @Autowired
+    @Qualifier("blEmailService")
+    protected EmailService emailService;
+
     @Override
     public boolean canHandle(Class<? extends Notification> clazz) {
         return EmailNotification.class.isAssignableFrom(clazz);
@@ -38,8 +52,17 @@ public class DefaultEmailNotificationServiceImpl implements NotificationService 
 
     @Override
     public void sendNotification(Notification notification) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Attempt to send email notification of type " + notification.getType().getFriendlyType());
+        boolean success = false;
+        for (EmailInfo info: ListUtils.emptyIfNull(emailInfos)) {
+            if (Objects.equals(info.getEmailType(), notification.getType().getType())) {
+                emailService.sendTemplateEmail(((EmailNotification) notification).getEmailAddress(), info, notification.getContext());
+                success = true;
+            }
+        }
+
+        if (!success && LOG.isWarnEnabled()) {
+            LOG.warn("Unable to find an EmailInfo that matched a notification of type " + notification.getType().getType()
+                    + ". Be sure to specify the \"emailType\" property for any EmailInfo you define.");
         }
     }
 }
