@@ -51,16 +51,10 @@ public abstract class AbstractBroadleafApplicationEventListener<T extends Broadl
     @Qualifier("blLocaleService")
     protected LocaleService localeService;
 
-    //protected BroadleafApplicationEventListenerExtensionManager extensionManager;
-
     protected abstract void handleApplicationEvent(T event);
 
     @Override
     public final void onApplicationEvent(final T event) {
-        //ExtensionResultStatusType result = extensionManager.handleApplicationEvent(event);
-        //if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-        //    return;
-        //}
         Site site = getSite(event);
         Catalog catalog = getCatalog(event);
         Site profile = getProfile(event);
