@@ -17,12 +17,10 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
@@ -34,6 +32,9 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.grouping.GroupingTranslat
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.statement.Expression;
 import org.broadleafcommerce.openadmin.web.rulebuilder.statement.PhraseTranslator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class to convert an MVEL string into a DataWrapper object
@@ -175,6 +176,7 @@ public class MVELToDataWrapperTranslator {
         int lstIdx = myCriteriaList.size() - 1;
         ExpressionDTO prevExpression = lstIdx != -1 ? myCriteriaList.get(lstIdx) : null;
         boolean sameExpressionId = prevExpression != null && temp.getId().equals(prevExpression.getId());
+        
         if (sameExpressionId && isBetweenOperator(prevExpression, temp)) {
             prevExpression.setOperator(BLCOperator.BETWEEN.name());
             boolean hasTempSmallerVal = Long.parseLong(temp.getValue()) < Long.parseLong(prevExpression.getValue());
@@ -212,22 +214,53 @@ public class MVELToDataWrapperTranslator {
         }
     }
 
-    protected boolean isBetweenOperator(ExpressionDTO prev, ExpressionDTO temp) {
-        String prevOperator = prev.getOperator();
-        String tempOperator = temp.getOperator();
-        long prevVal = Long.parseLong(prev.getValue());
-        long tempVal = Long.parseLong(temp.getValue());
-        return (tempVal > prevVal && prevOperator.equals(BLCOperator.GREATER_THAN.name()) && tempOperator.equals(BLCOperator.LESS_THAN.name()))
-                || (prevVal > tempVal && prevOperator.equals(BLCOperator.LESS_THAN.name()) && tempOperator.equals(BLCOperator.GREATER_THAN.name()) && tempVal < prevVal);
+    protected boolean isBetweenOperator(final ExpressionDTO prev, final ExpressionDTO temp) {
+        boolean isBetweenOperator;
+        final String prevOperator = prev.getOperator();
+        final String tempOperator = temp.getOperator();
+        
+        try {
+            final long prevVal = Long.parseLong(prev.getValue());
+            final long tempVal = Long.parseLong(temp.getValue());
+
+            isBetweenOperator = (tempVal > prevVal && prevOperator.equals(BLCOperator.GREATER_THAN.name()) 
+                                 && tempOperator.equals(BLCOperator.LESS_THAN.name())) 
+                                || (prevVal > tempVal && prevOperator.equals(BLCOperator.LESS_THAN.name()) 
+                                    && tempOperator.equals(BLCOperator.GREATER_THAN.name()) && tempVal < prevVal);
+        } catch (final NumberFormatException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format("Trying to parse a non-long value to a long: %s, %s", 
+                                        StringUtil.sanitize(prev.getValue()), StringUtil.sanitize(temp.getValue())));
+            }
+            
+            isBetweenOperator = false;
+        }
+        
+        return isBetweenOperator;
     }
 
-    protected boolean isBetweenInclusiveOperator(ExpressionDTO prev, ExpressionDTO temp) {
-        String prevOperator = prev.getOperator();
-        String tempOperator = temp.getOperator();
-        long prevVal = Long.parseLong(prev.getValue());
-        long tempVal = Long.parseLong(temp.getValue());
-        return (tempVal >= prevVal && prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name()))
-                || (prevVal >= tempVal && prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempVal <= prevVal);
+    protected boolean isBetweenInclusiveOperator(final ExpressionDTO prev, final ExpressionDTO temp) {
+        boolean isBetweenOperator;
+        final String prevOperator = prev.getOperator();
+        final String tempOperator = temp.getOperator();
+        
+        try {
+            final long prevVal = Long.parseLong(prev.getValue());
+            final long tempVal = Long.parseLong(temp.getValue());
+            isBetweenOperator = (tempVal >= prevVal && prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) 
+                                 && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name())) 
+                                || (prevVal >= tempVal && prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) 
+                                    && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempVal <= prevVal);
+        } catch (final NumberFormatException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format("Trying to parse a non-long value to a long: %s, %s",
+                                        StringUtil.sanitize(prev.getValue()), StringUtil.sanitize(temp.getValue())));
+            }
+
+            isBetweenOperator = false;
+        }
+        
+        return isBetweenOperator;
     }
 
 }
