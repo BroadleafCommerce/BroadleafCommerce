@@ -44,6 +44,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.TableGenerator;
+import javax.persistence.metamodel.EntityType;
 
 /**
  * Detect inconsistencies between the values in the SEQUENCE_GENERATOR and the primary
@@ -98,10 +99,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
 
     protected void patchSequenceGeneratorInconsistencies(EntityManager em, Session session) {
         SessionFactory sessionFactory = session.getSessionFactory();
-        for (Object item : sessionFactory.getAllClassMetadata().values()) {
-            ClassMetadata metadata = (ClassMetadata) item;
-            String idProperty = metadata.getIdentifierPropertyName();
-            Class<?> mappedClass = metadata.getMappedClass();
+        for (EntityType<?> item : sessionFactory.getMetamodel().getEntities()) {
+            String idProperty = item.getId(item.getIdType().getJavaType()).getName();
+            Class<?> mappedClass = item.getJavaType();
             Field idField;
             try {
                 idField = mappedClass.getDeclaredField(idProperty);

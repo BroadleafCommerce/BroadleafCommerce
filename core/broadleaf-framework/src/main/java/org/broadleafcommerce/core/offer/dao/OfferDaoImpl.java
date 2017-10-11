@@ -31,13 +31,11 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -46,13 +44,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
@@ -164,7 +155,7 @@ public class OfferDaoImpl implements OfferDao {
     @Override
     public List<Offer> readOffersByAutomaticDeliveryType() {
         //TODO change this to a JPA criteria
-        Criteria criteria = ((HibernateEntityManager) em).getSession().createCriteria(OfferImpl.class);
+        Criteria criteria = em.unwrap(Session.class).createCriteria(OfferImpl.class);
 
         Date myDate = getCurrentDateAfterFactoringInDateResolution();
 

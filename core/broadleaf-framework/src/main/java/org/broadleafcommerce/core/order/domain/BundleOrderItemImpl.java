@@ -61,7 +61,6 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BUNDLE_ORDER_ITEM")
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "BundleOrderItemImpl_bundleOrderItem")
 public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderItem {
 

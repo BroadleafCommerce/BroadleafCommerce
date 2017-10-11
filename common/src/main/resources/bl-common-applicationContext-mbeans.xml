@@ -32,31 +32,6 @@
     <!-- All of the below mbeans and JMX support can be disabled by activating the spring profile "mbeansdisabled" -->
     <!-- This is especially useful for tests -->
     <!-- NOTE -->
-
-    <bean id="exporter" primary="true" class="org.springframework.jmx.export.MBeanExporter" depends-on="entityManagerFactory">
-        <property name="autodetect" value="true"/>
-        <property name="assembler" ref="blAssembler"/>
-        <property name="namingStrategy" ref="blNamingStrategy"/>
-        <property name="registrationPolicy" value="IGNORE_EXISTING" />
-        <property name="beans">
-            <map>
-                <entry>
-                    <key>
-                        <bean class="org.broadleafcommerce.common.jmx.ExplicitNameFactoryBean">
-                            <constructor-arg value="org.broadleafcommerce:name=hibernate.statistics"/>
-                            <constructor-arg ref="blJmxNamingBean"/>
-                        </bean>
-                    </key>
-                    <bean class="org.hibernate.jmx.StatisticsService">
-                        <property name="statisticsEnabled" value="false" />
-                        <property name="sessionFactory">
-                            <util:property-path path="entityManagerFactory.sessionFactory" />
-                        </property>
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>
     
     <bean id="blJmxNamingBean" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName">

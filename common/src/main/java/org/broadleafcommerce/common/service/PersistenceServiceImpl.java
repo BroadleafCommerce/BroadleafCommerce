@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.broadleafcommerce.common.util.dao.MappingProvider;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -40,6 +41,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.ManagedType;
 
 /**
  * Service to help gather the correct {@link EntityManager} or {@link PlatformTransactionManager},
@@ -128,9 +131,8 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
         final PlatformTransactionManager txManager = getTransactionManager(managerMap);
 
         SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
-        for (Object item : sessionFactory.getAllClassMetadata().values()) {
-            ClassMetadata metadata = (ClassMetadata) item;
-            Class<?> mappedClass = metadata.getMappedClass();
+        for (EntityType<?> item : sessionFactory.getMetamodel().getEntities()) {
+            Class<?> mappedClass = item.getJavaType();
 
             String managerCacheKey = buildManagerCacheKey(targetMode, mappedClass);
             ENTITY_MANAGER_CACHE.put(managerCacheKey, em);

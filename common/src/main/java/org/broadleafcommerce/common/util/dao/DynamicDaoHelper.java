@@ -21,7 +21,6 @@ package org.broadleafcommerce.common.util.dao;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
@@ -49,7 +48,7 @@ public interface DynamicDaoHelper {
      * @param entityManager
      * @return
      */
-    Map<String, Object> getIdMetadata(Class<?> entityClass, HibernateEntityManager entityManager);
+    Map<String, Object> getIdMetadata(Class<?> entityClass, EntityManager entityManager);
 
     /**
      * Retrieve the list of property names known to Hibernate for the entity class.
@@ -58,7 +57,7 @@ public interface DynamicDaoHelper {
      * @param entityManager
      * @return
      */
-    List<String> getPropertyNames(Class<?> entityClass, HibernateEntityManager entityManager);
+    List<String> getPropertyNames(Class<?> entityClass, EntityManager entityManager);
 
     /**
      * Retrieve the list of property types ({@link Type} known to Hibernate for the entity class.
@@ -67,15 +66,15 @@ public interface DynamicDaoHelper {
      * @param entityManager
      * @return
      */
-    List<Type> getPropertyTypes(Class<?> entityClass, HibernateEntityManager entityManager);
+    List<Type> getPropertyTypes(Class<?> entityClass, EntityManager entityManager);
 
     /**
-     * Get the SessionFactory instance from a HibernateEntityManager instance.
+     * Get the SessionFactory instance from a EntityManager instance.
      *
      * @param entityManager
      * @return
      */
-    SessionFactory getSessionFactory(HibernateEntityManager entityManager);
+    SessionFactory getSessionFactory(EntityManager entityManager);
 
     /**
      * Get all the polymorphic types known to Hibernate for the ceiling class provided. The ceiling class should be an
