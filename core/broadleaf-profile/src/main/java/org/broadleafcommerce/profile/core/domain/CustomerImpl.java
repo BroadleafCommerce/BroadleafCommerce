@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.audit.AuditExcludeFieldValue;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -114,6 +115,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @Column(name = "PASSWORD")
     @AdminPresentation(excluded = true)
+    @AuditExcludeFieldValue
     protected String password;
 
     @Column(name = "EMAIL_ADDRESS")
