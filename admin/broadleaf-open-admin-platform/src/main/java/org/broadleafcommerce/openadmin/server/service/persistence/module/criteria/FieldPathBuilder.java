@@ -95,11 +95,11 @@ public class FieldPathBuilder {
         for (int i = 0; i < myFieldPath.getTargetPropertyPieces().size(); i++) {
             String piece = myFieldPath.getTargetPropertyPieces().get(i);
             
-            if (path.getJavaType().isAnnotationPresent(Embeddable.class)) {
-                String original = ((SingularAttributePath) path).getAttribute().getDeclaringType().getJavaType().getName() + "." + ((SingularAttributePath) path).getAttribute().getName() + "." + piece;
-                String copy = path.getJavaType().getName() + "." + piece;
-                copyCollectionPersister(original, copy, ((CriteriaBuilderImpl) builder).getEntityManagerFactory());
-            }
+            //if (path.getJavaType().isAnnotationPresent(Embeddable.class)) {
+                //String original = ((SingularAttributePath) path).getAttribute().getDeclaringType().getJavaType().getName() + "." + ((SingularAttributePath) path).getAttribute().getName() + "." + piece;
+                //String copy = path.getJavaType().getName() + "." + piece;
+                //copyCollectionPersister(original, copy, ((CriteriaBuilderImpl) builder).getEntityManagerFactory());
+            //}
             
             try {
                 path = path.get(piece);
@@ -161,22 +161,22 @@ public class FieldPathBuilder {
      * This is a workaround for HHH-6562 (https://hibernate.atlassian.net/browse/HHH-6562)
      */
     @SuppressWarnings("unchecked")
-    private void copyCollectionPersister(String originalKey, String copyKey,
-            SessionFactoryImpl sessionFactory) {
-        try {
-            Field collectionPersistersField = SessionFactoryImpl.class
-                    .getDeclaredField("collectionPersisters");
-            collectionPersistersField.setAccessible(true);
-            Map collectionPersisters = (Map) collectionPersistersField.get(sessionFactory);
-            if (collectionPersisters.containsKey(originalKey)) {
-                Object collectionPersister = collectionPersisters.get(originalKey);
-                collectionPersisters.put(copyKey, collectionPersister);
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    private void copyCollectionPersister(String originalKey, String copyKey,
+//            SessionFactoryImpl sessionFactory) {
+//        try {
+//            Field collectionPersistersField = SessionFactoryImpl.class
+//                    .getDeclaredField("collectionPersisters");
+//            collectionPersistersField.setAccessible(true);
+//            Map collectionPersisters = (Map) collectionPersistersField.get(sessionFactory);
+//            if (collectionPersisters.containsKey(originalKey)) {
+//                Object collectionPersister = collectionPersisters.get(originalKey);
+//                collectionPersisters.put(copyKey, collectionPersister);
+//            }
+//        }
+//        catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
     
     public CriteriaQuery getCriteria() {
         return criteria;

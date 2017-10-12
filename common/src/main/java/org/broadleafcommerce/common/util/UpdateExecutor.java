@@ -152,7 +152,7 @@ public class UpdateExecutor {
         //update the timestamp cache for the table so that queries will be refreshed
         ClassMetadata metadata = session.getSessionFactory().getClassMetadata(entityType);
         String tableName = ((AbstractEntityPersister) metadata).getTableName();
-        UpdateTimestampsCache timestampsCache = em.unwrap(SessionImplementor.class).getFactory().getUpdateTimestampsCache();
+        UpdateTimestampsCache timestampsCache = em.unwrap(SessionImplementor.class).getFactory().getCache().getUpdateTimestampsCache();
         if (timestampsCache != null) {
             timestampsCache.invalidate(new Serializable[]{tableName}, (SharedSessionContractImplementor) session);
         }

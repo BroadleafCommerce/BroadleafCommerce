@@ -247,12 +247,11 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         Map<String, Object> response = new HashMap<>();
         SessionFactory sessionFactory = entityManager.unwrap(Session.class).getSessionFactory();
-        
-        ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
-        if (metadata == null) {
+        boolean isEntity = sessionFactory.getMetamodel().entity(entityClass.getName()) != null;
+        if (!isEntity) {
             return null;
         }
-        
+        ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
         String idProperty = metadata.getIdentifierPropertyName();
         response.put("name", idProperty);
         Type idType = metadata.getIdentifierType();

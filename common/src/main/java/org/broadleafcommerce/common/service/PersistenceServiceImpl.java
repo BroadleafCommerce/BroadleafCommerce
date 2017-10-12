@@ -25,10 +25,8 @@ import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.broadleafcommerce.common.util.dao.MappingProvider;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.SmartLifecycle;
@@ -42,7 +40,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.ManagedType;
 
 /**
  * Service to help gather the correct {@link EntityManager} or {@link PlatformTransactionManager},
