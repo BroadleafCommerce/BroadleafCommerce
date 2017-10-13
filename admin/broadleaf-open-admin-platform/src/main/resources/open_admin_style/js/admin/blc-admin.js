@@ -414,7 +414,7 @@ var BLCAdmin = (function($) {
                     BLCAdmin.currentModal().trigger('content-loaded');
                 });
             } else {
-                showLinkAsModal(link);
+                BLCAdmin.showLinkAsModal(link);
             }
         },
 
@@ -1176,6 +1176,30 @@ var BLCAdmin = (function($) {
             } else {
                 processMethod(methodParams);
             }
+        },
+
+        wait: function($el, timeout, callback) {
+            var timeStep = 25;
+            var timeStart = new Date().getTime();
+            if ($el.length) {
+                callback($el);
+            } else {
+                var selector = $el.selector;
+                var totalTime = 0;
+                var timerId = window.setInterval(function() {
+                    console.log('tic-tac');
+                    $el = $(selector);
+                    if (new Date().getTime() > (timeStart + timeout)) {
+                        console.error("Waiting time expired for " + selector);
+                        clearInterval(timerId);
+                    } else if ($el.length) {
+                        callback($el);
+                        clearInterval(timerId);
+                    }
+                    totalTime += timeStep;
+                }, timeStep);
+            }
+
         }
     };
 

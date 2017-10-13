@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -43,7 +45,9 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -55,8 +59,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -80,6 +86,9 @@ public class AdminProductController extends AdminBasicEntityController {
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "messageSource")
+    protected MessageSource messageSource;
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
@@ -372,6 +381,24 @@ public class AdminProductController extends AdminBasicEntityController {
         form.removeListGrid("defaultSku.skuAttributes");
         
         return view;
+    }
+
+    /**
+     * Returns the empty form for modifying primary media attributes.
+     */
+    @RequestMapping(value = "/update/media/primary", method = RequestMethod.GET)
+    public String viewUpdateMediaPrimaryAttrsForm(HttpServletRequest request, HttpServletResponse response,
+                                                  Model model, Locale locale) throws Exception {
+
+        String modalTitle = messageSource.getMessage("UpdatePrimaryMediaAttrs.title", null, "Update primary media attrs", locale);
+        model.addAttribute("modalTitle", modalTitle);
+
+        model.addAttribute("viewType", "modal/updateMediaPrimaryAttrs");
+        model.addAttribute("modalClass", "primary-media-attr-modal");
+        model.addAttribute("modalHeaderType", "custom");
+        model.addAttribute("showActions", true);
+
+        return "modules/modalContainer";
     }
     
 }

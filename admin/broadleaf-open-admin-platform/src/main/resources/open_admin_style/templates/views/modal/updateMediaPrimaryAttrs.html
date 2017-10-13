@@ -1,0 +1,17 @@
+<form id='primary-media-attr-form'>
+    <div class='field-group'>
+        <label for='primary-media-title'><span th:text="#{MediaImpl_Media_Title}">Title</span></label>
+        <div><input id='primary-media-title' type='text'></div>
+    </div>
+    <div class='field-group'>
+        <label for='primary-media-altText'><span th:text="#{MediaImpl_Media_Alt_Text}">Alt Text</span></label>
+        <div><input id='primary-media-altText' type='text'></div>
+    </div>
+    <div class='field-group'>
+        <label for='primary-media-tags'><span th:text="#{MediaImpl_Media_Tags}">Tags</span></label>
+        <div><textarea id='primary-media-tags'></textarea></div>
+    </div>
+</form>
+<div class="entity-form-actions">
+    <button type='submit' form='primary-media-attr-form' disabled class='button primary large' th:text="#{Apply}">Apply</button>
+</div>

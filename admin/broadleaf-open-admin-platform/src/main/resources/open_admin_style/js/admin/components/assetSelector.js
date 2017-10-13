@@ -148,7 +148,7 @@ $(document).ready(function() {
                     mediaItem.val(JSON.stringify(mediaJson)).trigger('input');
                 }
             }
-            $container.find('button.clear-asset-selector').show();
+            $container.find('button.clear-asset-selector, button.edit-asset-selector').show();
             $container.find('.media-image-container .media-actions').css('display', '');
 
             $container.find('div.asset-url').html(fields['assetUrl']);
@@ -161,6 +161,18 @@ $(document).ready(function() {
         });
         
         return false;
+    });
+
+    $('body').on('click', 'button.edit-asset-selector', function() {
+        BLCAdmin.modalNavigateTo(BLC.servletContext + "/product/update/media/primary");
+
+        // wait until
+        BLCAdmin.wait($('#primary-media-attr-form'), 3000, function ($form) {
+            var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
+            $form.find('#primary-media-title').val(primaryData['title']);
+            $form.find('#primary-media-altText').val(primaryData['altText']);
+            $form.find('#primary-media-tags').val(primaryData['tags']);
+        });
     });
 
     $('body').on('click', 'button.clear-asset-selector', function(event) {
@@ -186,11 +198,11 @@ $(document).ready(function() {
         $thumbnail.attr('src', src);
         $thumbnail.addClass('placeholder-image');
         $this.hide();
+        $container.find('.edit-asset-selector').hide();
 
         var $mediaImageContainer = $container.find('.media-image-container');
         $mediaImageContainer.find('.media-actions').css('display', 'block');
 
-        positionMediaButtons($mediaImageContainer);
         $container.find('div.asset-url').html('No media selected.');
     });
 
@@ -218,29 +230,33 @@ $(document).ready(function() {
         $('#assetUploadForm').removeClass('hidden');
     }
 
-    $('body').on('mouseover', '.media-image-container', function() {
-        positionMediaButtons(this);
-    });
-
     // On the asset list view, the upload button triggers this form
        $('body').on('click', 'button.upload-asset', function(event) {
                $('#assetUploadFile').click();
     });
 
-    function positionMediaButtons(container) {
-        var center = $(container).width() / 2;
-        var spacing = 15;
+    $('body').on('input', '#primary-media-attr-form input, #primary-media-attr-form textarea', function () {
+        $("button[form='primary-media-attr-form']").prop('disabled', false);
+    });
 
-        // clear goes on the right
-        var clearBtn = $(container).find('.media-actions button.clear-asset-selector');
-        clearBtn.css('left', parseInt(center + spacing) + 'px');
+    $('body').on('submit', '#primary-media-attr-form', function () {
+        var $this = $(this);
 
-        // lookup goes on the left unless clear is hidden
-        var lookupBtn = $(container).find('.media-actions button.show-asset-selector');
-        if (clearBtn.css('display') != 'none') {
-            lookupBtn.css('left', parseInt(center - spacing - 50) + 'px');
-        } else {
-            lookupBtn.css('left', parseInt(center - 25) + 'px');
-        }
-    }
+        var $primaryDataField = $("#fields\\'defaultSku__skuMedia---primary\\'\\.value");
+
+        var primaryData = JSON.parse($primaryDataField.val());
+        primaryData['title'] = $this.find('#primary-media-title').val();
+        primaryData['altText'] = $this.find('#primary-media-altText').val();
+        primaryData['tags'] = $this.find('#primary-media-tags').val();
+
+        $primaryDataField.val(JSON.stringify(primaryData));
+
+        $('.submit-button').prop('disabled', false);
+
+        BLCAdmin.hideCurrentModal();
+
+        return false;
+    });
+
+
 });
