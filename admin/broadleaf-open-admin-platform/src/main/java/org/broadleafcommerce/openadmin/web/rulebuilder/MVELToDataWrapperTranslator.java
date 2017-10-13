@@ -140,6 +140,8 @@ public class MVELToDataWrapperTranslator {
                 if (!isBetweenDetected && !isBetweenInclusiveDetected) {
                     invalidSubGroupFound = true;
                 }
+            } else {
+                invalidSubGroupFound = true;
             }
         }
         return invalidSubGroupFound;
