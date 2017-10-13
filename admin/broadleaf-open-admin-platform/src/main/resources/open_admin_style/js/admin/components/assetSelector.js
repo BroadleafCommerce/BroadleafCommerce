@@ -166,7 +166,7 @@ $(document).ready(function() {
     $('body').on('click', 'button.edit-asset-selector', function() {
         BLCAdmin.modalNavigateTo(BLC.servletContext + "/product/update/media/primary");
 
-        // wait until
+        // wait until modal window will be loaded to populate form fields
         BLCAdmin.wait($('#primary-media-attr-form'), 3000, function ($form) {
             var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
             $form.find('#primary-media-title').val(primaryData['title']);

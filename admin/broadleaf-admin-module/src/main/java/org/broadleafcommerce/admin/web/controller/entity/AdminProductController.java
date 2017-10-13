@@ -384,7 +384,7 @@ public class AdminProductController extends AdminBasicEntityController {
     }
 
     /**
-     * Returns the empty form for modifying primary media attributes.
+     * Returns the empty form for modifying primary media attributes. Form will be populated in view.
      */
     @RequestMapping(value = "/update/media/primary", method = RequestMethod.GET)
     public String viewUpdateMediaPrimaryAttrsForm(HttpServletRequest request, HttpServletResponse response,
