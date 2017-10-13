@@ -429,3 +429,7 @@ input.result-page-size-input {
     float: right;
     padding-left: 10px;
 }
+
+.large-disabled {
+  height: 200px;
+}

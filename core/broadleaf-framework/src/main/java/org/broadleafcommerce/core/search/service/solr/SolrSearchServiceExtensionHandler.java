@@ -233,4 +233,15 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     ExtensionResultStatusType attachSortField(SolrQuery solrQuery, String requestedSortFieldName, SolrQuery.ORDER order);
+
+    /**
+     * Extension point to allow overriding the way the property name for an index field with the given field type and prefix is built.
+     *
+     * @param field
+     * @param fieldType
+     * @param prefix
+     * @param erh
+     * @return
+     */
+    ExtensionResultStatusType getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix, ExtensionResultHolder<String> erh);
 }

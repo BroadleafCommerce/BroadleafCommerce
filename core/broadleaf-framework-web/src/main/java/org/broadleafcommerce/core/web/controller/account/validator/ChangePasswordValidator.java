@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -36,19 +37,24 @@ public class ChangePasswordValidator implements Validator {
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
+    @Value("${enable.current.password.check:true}")
+    protected Boolean enableCurrentPasswordCheck = true;
+
     public void validate(PasswordChange passwordChange, Errors errors) {
 
         String currentPassword = passwordChange.getCurrentPassword();
         String password = passwordChange.getNewPassword();
         String passwordConfirm = passwordChange.getNewPasswordConfirm();
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentPassword", "currentPassword.required");
+        if (enableCurrentPasswordCheck) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentPassword", "currentPassword.required");
+        }
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "newPassword", "newPassword.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "newPasswordConfirm", "newPasswordConfirm.required");
 
         if (!errors.hasErrors()) {
             //validate current password
-            if (!customerService.isPasswordValid(currentPassword, CustomerState.getCustomer().getPassword(), CustomerState.getCustomer())) {
+            if (enableCurrentPasswordCheck && !customerService.isPasswordValid(currentPassword, CustomerState.getCustomer().getPassword(), CustomerState.getCustomer())) {
                 errors.rejectValue("currentPassword", "currentPassword.invalid");
             }
             //password and confirm password fields must be equal

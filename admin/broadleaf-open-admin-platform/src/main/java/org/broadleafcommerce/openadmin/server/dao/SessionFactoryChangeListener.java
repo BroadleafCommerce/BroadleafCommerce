@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.server.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
 import org.hibernate.SessionFactory;
@@ -48,6 +49,7 @@ public class SessionFactoryChangeListener implements SessionFactoryObserver {
         synchronized (DynamicDaoHelperImpl.LOCK_OBJECT) {
             DynamicEntityDaoImpl.METADATA_CACHE.clear();
             DynamicDaoHelperImpl.POLYMORPHIC_ENTITY_CACHE.clear();
+            BLCFieldUtils.FIELD_CACHE.clear();
             try {
                 Field metadataCache = DynamicEntityRemoteService.class.getDeclaredField("METADATA_CACHE");
                 metadataCache.setAccessible(true);

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
@@ -116,5 +117,14 @@ public class PaymentInfoForm implements Serializable {
 
     public void setPaymentToken(String paymentToken) {
         this.paymentToken = paymentToken;
+    }
+
+    /**
+     * NOTE: this looks for all of {@link Address}'s database required fields
+     */
+    public boolean hasValidAddress() {
+        return getAddress() != null
+                && StringUtils.isNotBlank(getAddress().getAddressLine1())
+                && StringUtils.isNotBlank(getAddress().getCity());
     }
 }
