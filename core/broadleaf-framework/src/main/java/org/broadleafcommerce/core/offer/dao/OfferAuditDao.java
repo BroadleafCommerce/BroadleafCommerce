@@ -64,6 +64,19 @@ public interface OfferAuditDao {
     Long countUsesByCustomer(Order order, Long customerId, Long offerId);
 
     /**
+     * Counts how many times the an offer has been used by a customer (within the number of passed in days if provided). 
+     * This method will take into account if the Offer has already been 
+     * applied to the Order so as not to prevent the Offer from applying 
+     * to new items added to the Order by a CRS.
+     *
+     * @param order
+     * @param customerId
+     * @param offerId
+     * @return number of times and offer has been used by a customer
+     */
+    Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage);
+
+    /**
      * Counts how many times the an offer has been used by a customer
      *
      * @param customerId
@@ -103,4 +116,7 @@ public interface OfferAuditDao {
      */
     List<OfferAudit> readOfferAuditsByOrderId(Long orderId);
 
+    Long getCurrentDateResolution();
+
+    void setCurrentDateResolution(Long currentDateResolution);
 }
