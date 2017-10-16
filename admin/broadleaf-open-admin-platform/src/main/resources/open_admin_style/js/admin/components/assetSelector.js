@@ -164,15 +164,46 @@ $(document).ready(function() {
     });
 
     $('body').on('click', 'button.edit-asset-selector', function() {
-        BLCAdmin.modalNavigateTo(BLC.servletContext + "/product/update/media/primary");
+        var $modal = BLCAdmin.getModalSkeleton();
+        $modal.addClass('primary-media-attrs-modal');
+        $modal.find('.modal-header h3').text(BLCAdmin.messages.primaryMediaAttrsFormTitle);
+        $modal.find('.modal-body').append(
+            "<form id='primary-media-attrs-form'>" +
+                "<div class='field-group'>" +
+                    "<label for='primary-media-title'>" +
+                         "<span>" + BLCAdmin.messages.primaryMediaAttrsTitle + "</span>" +
+                    "</label>" +
+                    "<div><input id='primary-media-title' type='text'></div>" +
+                "</div>" +
+                "<div class='field-group'>" +
+                    "<label for='primary-media-altText'>" +
+                        "<span>" + BLCAdmin.messages.primaryMediaAttrsAltText + "</span>" +
+                    "</label>" +
+                    "<div><input id='primary-media-altText' type='text'></div>" +
+                "</div>" +
+                "<div class='field-group'>" +
+                    "<label for='primary-media-tags'>" +
+                        "<span>" + BLCAdmin.messages.primaryMediaAttrsTags + "</span>" +
+                    "</label>" +
+                    "<div><input id='primary-media-tags' type='text'></div>" +
+                "</div>" +
+            "</form>"
+        );
+        $modal.find('.modal-footer').append(
+            "<button form='primary-media-attrs-form' class='button primary large' disabled>" +
+                BLCAdmin.messages.primaryMediaAttrsBtnApply +
+            "</button>"
+        );
 
-        // wait until modal window will be loaded to populate form fields
-        BLCAdmin.wait($('#primary-media-attr-form'), 3000, function ($form) {
-            var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
-            $form.find('#primary-media-title').val(primaryData['title']);
-            $form.find('#primary-media-altText').val(primaryData['altText']);
-            $form.find('#primary-media-tags').val(primaryData['tags']);
-        });
+        BLCAdmin.showElementAsModal($modal);
+
+
+        var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
+
+        var $form = $('#primary-media-attrs-form');
+        $form.find('#primary-media-title').val(primaryData['title']);
+        $form.find('#primary-media-altText').val(primaryData['altText']);
+        $form.find('#primary-media-tags').val(primaryData['tags']);
     });
 
     $('body').on('click', 'button.clear-asset-selector', function(event) {
@@ -235,11 +266,11 @@ $(document).ready(function() {
                $('#assetUploadFile').click();
     });
 
-    $('body').on('input', '#primary-media-attr-form input, #primary-media-attr-form textarea', function () {
-        $("button[form='primary-media-attr-form']").prop('disabled', false);
+    $('body').on('input', '#primary-media-attrs-form input, #primary-media-attrs-form textarea', function () {
+        $("button[form='primary-media-attrs-form']").prop('disabled', false);
     });
 
-    $('body').on('submit', '#primary-media-attr-form', function () {
+    $('body').on('submit', '#primary-media-attrs-form', function () {
         var $this = $(this);
 
         var $primaryDataField = $("#fields\\'defaultSku__skuMedia---primary\\'\\.value");
