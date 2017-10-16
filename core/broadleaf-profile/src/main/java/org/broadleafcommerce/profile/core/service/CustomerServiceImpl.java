@@ -17,16 +17,12 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
 import org.broadleafcommerce.common.id.service.IdGenerationService;
-import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
-import org.broadleafcommerce.common.email.service.EmailService;
-import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
@@ -44,6 +40,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityT
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
+import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.broadleafcommerce.profile.core.event.ForgotPasswordEvent;
 import org.broadleafcommerce.profile.core.event.ForgotUsernameEvent;
 import org.broadleafcommerce.profile.core.event.RegisterCustomerEvent;
@@ -52,21 +49,18 @@ import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObser
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
