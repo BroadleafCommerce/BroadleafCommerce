@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.offer.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
@@ -29,6 +31,9 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -50,6 +55,9 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    protected Long currentDateResolution = 10000L;
+    protected Date cachedDate = SystemTime.asDate();
 
     @Override
     public OfferAudit create() {
@@ -79,6 +87,11 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public Long countUsesByCustomer(Order order, Long customerId, Long offerId) {
+        return countUsesByCustomer(order, customerId, offerId, null);
+    }
+
+    @Override
+    public Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
@@ -103,6 +116,17 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                 )
             )
         );
+
+        if (minimumDaysPerUsage != null && minimumDaysPerUsage != 0L) {
+            Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
+
+            Calendar previousCalendar = new GregorianCalendar();
+
+            previousCalendar.setTime(currentDate);
+            previousCalendar.add(Calendar.DAY_OF_YEAR, -minimumDaysPerUsage.intValue());
+
+            restrictions.add(builder.between(root.<Date>get("redeemedDate"), previousCalendar.getTime(), currentDate));
+        }
 
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
@@ -182,6 +206,17 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                 .toQuery(em);
         
         return query.getResultList();
+    }
+
+
+    @Override
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    @Override
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
     }
 
 }

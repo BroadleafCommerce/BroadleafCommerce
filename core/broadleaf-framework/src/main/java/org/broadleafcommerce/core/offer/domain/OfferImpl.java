@@ -237,6 +237,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
         defaultValue = "0")
     protected Long maxUsesPerCustomer;
+
+    @Column(name = "MINIMUM_DAYS_PER_USAGE")
+    @AdminPresentation(friendlyName = "OfferImpl_Minimum_Days_Per_Usage",
+            group = GroupName.Restrictions, order = FieldOrder.MinimumDaysPerUsage,
+            tooltip = "OfferImplMinimumDaysPerUsage_tooltip",
+            defaultValue = "0")
+    protected Long minimumDaysPerUsage;
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
@@ -563,6 +570,16 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
         this.maxUsesPerCustomer = maxUsesPerCustomer;
+    }
+
+    @Override
+    public Long getMinimumDaysPerUsage() {
+        return minimumDaysPerUsage;
+    }
+
+    @Override
+    public void setMinimumDaysPerUsage(Long minimumDaysPerUsage) {
+        this.minimumDaysPerUsage = minimumDaysPerUsage;
     }
     
     @Override

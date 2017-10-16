@@ -153,6 +153,26 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public void setMaxUsesPerCustomer(Long maxUses);
 
     /**
+     * Sets the minimum number of days that this offer can be used 
+     * by the same customer before resetting the number of uses dictated by {@link Offer#getMaxUsesPerCustomer()}. 
+     *
+     * 0 or null indicates that the offer will never reset usages.
+     *
+     * @return
+     */
+    Long getMinimumDaysPerUsage();
+
+    /**
+     * Sets the minimum number of days that this offer can be used 
+     * by the same customer before resetting the number of uses dictated by {@link Offer#getMaxUsesPerCustomer()}. 
+     *
+     * 0 or null indicates that the offer will never reset usages.
+     * 
+     * @param minimumDaysPerUsage
+     */
+    void setMinimumDaysPerUsage(Long minimumDaysPerUsage);
+
+    /**
      * Indicates that there is no limit to how many times a customer can use this offer. By default this is true if
      * {@link #getMaxUsesPerCustomer()} == 0
      */

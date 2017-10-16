@@ -160,8 +160,9 @@ public interface OfferAdminPresentation {
 
         public static final int MaxUsesPerOrder = 1000;
         public static final int MaxUsesPerCustomer = 2000;
-        public static final int OrderMinSubTotal = 3000;
-        public static final int TargetMinSubTotal = 4000;
+        public static final int MinimumDaysPerUsage = 3000;
+        public static final int OrderMinSubTotal = 4000;
+        public static final int TargetMinSubTotal = 5000;
 
         public static final int Priority = 1000;
         public static final int Proration = 2000;
