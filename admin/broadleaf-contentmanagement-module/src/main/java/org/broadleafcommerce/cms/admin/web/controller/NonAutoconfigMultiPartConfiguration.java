@@ -23,7 +23,7 @@ package org.broadleafcommerce.cms.admin.web.controller;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageServiceImpl;
 import org.broadleafcommerce.common.config.PostAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;

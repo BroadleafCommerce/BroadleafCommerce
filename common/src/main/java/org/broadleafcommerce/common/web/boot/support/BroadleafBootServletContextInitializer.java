@@ -21,7 +21,7 @@
 package org.broadleafcommerce.common.web.boot.support;
 
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 
 import javax.servlet.ServletContext;

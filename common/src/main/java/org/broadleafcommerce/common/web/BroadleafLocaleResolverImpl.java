@@ -75,7 +75,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
             String localeCode = BLCRequestUtils.getURLorHeaderParameter(request, LOCALE_CODE_PARAM);
             locale = localeService.findLocaleByCode(localeCode);
             if (BLCRequestUtils.isOKtoUseSession(request)) {
-                request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_SESSION);
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find locale by param " + localeCode + " resulted in " + locale);
@@ -84,7 +84,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
 
         // Third, check the session
         if (locale == null && BLCRequestUtils.isOKtoUseSession(request)) {
-            locale = (Locale) request.getAttribute(LOCALE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            locale = (Locale) request.getAttribute(LOCALE_VAR, WebRequest.SCOPE_SESSION);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find locale from session resulted in " + locale);
             }
@@ -99,7 +99,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
         if (locale == null) {
             locale = localeService.findDefaultLocale();
             if (BLCRequestUtils.isOKtoUseSession(request)) {
-                request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_SESSION);
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Locale set to default locale " + locale);
@@ -112,7 +112,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
         request.setAttribute(CookieLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME, javaLocale, WebRequest.SCOPE_REQUEST);
 
         if (BLCRequestUtils.isOKtoUseSession(request)) {
-            request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_SESSION);
         }
         return locale;
     }

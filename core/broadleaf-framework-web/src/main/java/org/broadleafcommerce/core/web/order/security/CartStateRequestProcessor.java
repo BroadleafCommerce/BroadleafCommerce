@@ -156,7 +156,7 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     public Order getOverrideCart(WebRequest request) {
         Long orderId = null;
         if (BLCRequestUtils.isOKtoUseSession(request)) {
-            orderId = (Long) request.getAttribute(OVERRIDE_CART_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+            orderId = (Long) request.getAttribute(OVERRIDE_CART_ATTR_NAME, WebRequest.SCOPE_SESSION);
         }
         Order cart = null;
         if (orderId != null) {
@@ -205,11 +205,11 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             // The anonymous customer from session is no longer needed; it can be safely removed
             request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerSessionAttributeName(),
-                    WebRequest.SCOPE_GLOBAL_SESSION);
+                    WebRequest.SCOPE_SESSION);
             request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName(),
-                    WebRequest.SCOPE_GLOBAL_SESSION);
+                    WebRequest.SCOPE_SESSION);
 
-            request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_SESSION);
         }
         return mergeCartResponse.getOrder();
     }

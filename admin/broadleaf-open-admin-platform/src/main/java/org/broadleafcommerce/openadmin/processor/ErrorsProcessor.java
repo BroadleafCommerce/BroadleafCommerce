@@ -29,13 +29,13 @@ import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierAttrProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
+import org.broadleafcommerce.presentation.model.BroadleafBindStatus;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.servlet.support.BindStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,7 +83,7 @@ public class ErrorsProcessor extends AbstractBroadleafVariableModifierAttrProces
     @Override
     public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
 
-        BindStatus bindStatus = context.getBindStatus(attributeValue);
+        BroadleafBindStatus bindStatus = context.getBindStatus(attributeValue);
 
         Map<String, Object> newLocalVars = new HashMap<>();
         if (bindStatus.isError()) {

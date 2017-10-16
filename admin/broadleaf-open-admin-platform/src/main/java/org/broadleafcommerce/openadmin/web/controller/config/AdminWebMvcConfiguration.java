@@ -22,8 +22,8 @@ import org.broadleafcommerce.common.config.PostAutoConfigurationImport;
 import org.broadleafcommerce.common.web.BroadleafCookieLocaleResolver;
 import org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor;
 import org.broadleafcommerce.openadmin.web.controller.AdminRequestMappingHandlerMapping;
-import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -31,7 +31,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -92,8 +92,8 @@ public class AdminWebMvcConfiguration {
          * SPRING-UPGRADE-CHECK
          */
         @Bean
-        public WebMvcRegistrationsAdapter blAdminMvcRegistrations() {
-            return new WebMvcRegistrationsAdapter() {
+        public WebMvcRegistrations blAdminMvcRegistrations() {
+            return new WebMvcRegistrations() {
                 @Override
                 public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
                     return new AdminRequestMappingHandlerMapping();
