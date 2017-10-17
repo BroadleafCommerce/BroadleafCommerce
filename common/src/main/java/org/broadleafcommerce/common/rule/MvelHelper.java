@@ -270,13 +270,6 @@ public class MvelHelper {
                     mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
                 }
             }
-
-            Map<String, Object> brcRuleMap = brc.getRuleMap();
-            if (blcRuleMap != null) {
-                for (String mapKey : brcRuleMap.keySet()) {
-                    mvelParameters.put(mapKey, brcRuleMap.get(mapKey));
-                }
-            }
         }
 
        return mvelParameters;
