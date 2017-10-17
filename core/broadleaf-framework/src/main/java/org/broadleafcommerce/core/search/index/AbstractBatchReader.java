@@ -38,7 +38,7 @@ import java.util.List;
  */
 public abstract class AbstractBatchReader<T> implements BatchReader<T> {
     
-    protected static final int DEFAULT_BATCH_SIZE = 100;
+    protected static final int DEFAULT_PAGE_SIZE = 100;
     private boolean complete = false;
     private int page = -1; //Start at -1 so first call to getNextPage() will return 0.
     private List<Catalog> catalogs;
@@ -106,7 +106,7 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
      * @return
      */
     protected int getPageSize() {
-        return DEFAULT_BATCH_SIZE;
+        return DEFAULT_PAGE_SIZE;
     }
     
     /**
@@ -130,7 +130,8 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
      * @return
      */
     protected List<Catalog> readAllActiveCatalogsForIndexing() {
-        if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.MULTI_TENANT_SINGLE_SCHEMA)) {
+        if (getSiteService() != null && 
+                ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.MULTI_TENANT_SINGLE_SCHEMA)) {
             List<Catalog> cats = getSiteService().findAllCatalogs();
             if (cats != null && ! cats.isEmpty()) {
                 ArrayList<Catalog> out = new ArrayList<>();
@@ -152,11 +153,13 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
      * The page always starts at zero (0) and increments by 1 on each invocation.  It is the implementor's responsibility to 
      * to adjust the page if necessary (e.g. page = page + 1, for example, when the page needs to start at 1 or a different  
      * value). But the first time this method is called, the page value will be zero.  And it will be incremented by one on  
-     * each additional invocation until reset is called. The page size depends on the a call to getBatchSize(), 
+     * each additional invocation until reset is called. The page size depends on the a call to getPageSize(), 
      * which must return a non-null value.
      * 
      * It is expected that this will consistently return items for the specified page and batch size.  When there are no more 
      * items to return, this method MUST call markComplete(), indicating that there is no more data to return.
+     * 
+     * The page will start at zero and increment.  The pageSize will always be greater than zero.  The catalog may be null.
      * 
      * @param page
      * @param pageSize

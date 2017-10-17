@@ -35,35 +35,50 @@ import org.apache.solr.client.solrj.response.schema.SchemaResponse.UpdateRespons
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
-@Component("blSolrUtil")
-public class SolrUtilImpl implements SolrUtil, InitializingBean {
+public class SolrUtilImpl implements SolrUtil {
     
     private static final Log LOG = LogFactory.getLog(SolrUtilImpl.class);
+    protected static final int DEFAULT_MAX_TRIES = 3;
+    protected static final long DEFAULT_WAIT_TIME = 50L;
     
-    @Value("${com.broadleafcommerce.solr.index.update.maxTries:3}")
-    protected int maxTries = 3;
+    protected final boolean solrCloudMode;
+    protected final int maxTries;
+    protected final long waitTime;
+    protected final String basicAuthUserName;
+    protected final String basicAuthPassword;
+    protected final SolrClient client;
     
-    @Value("${com.broadleafcommerce.solr.index.update.error.waitTime:250}")
-    protected long waitTime = 250L;
+    private boolean connected = false;
     
-    @Value("${com.broadleafcommerce.solr.auth.basic.username:}")
-    protected String basicAuthUserName;
+    public SolrUtilImpl(SolrClient client) {
+        this(client, null, null, DEFAULT_MAX_TRIES, DEFAULT_WAIT_TIME);
+    }
     
-    @Value("${com.broadleafcommerce.solr.auth.basic.password:}")
-    protected String basicAuthPassword;
+    public SolrUtilImpl(SolrClient client, String basicAuthUserName, String basicAuthPassword) {
+        this(client, basicAuthPassword, basicAuthPassword, DEFAULT_MAX_TRIES, DEFAULT_WAIT_TIME);
+    }
     
-    @Resource(name="blSolrClient")
-    protected SolrClient client;
+    public SolrUtilImpl(SolrClient client, String basicAuthUserName, String basicAuthPassword, int maxTries, long waitTime) {
+        Assert.notNull(client, "The SolrClient cannot be null.");
+        Assert.isTrue(maxTries > 0, "maxTries must be greater than 0");
+        this.client = client;
+        this.maxTries = maxTries;
+        this.waitTime = waitTime;
+        this.basicAuthUserName = basicAuthUserName;
+        this.basicAuthPassword = basicAuthPassword;
+        this.solrCloudMode = (this.client instanceof CloudSolrClient);
+        try {
+            connect();
+        } catch (Exception e) {
+            LOG.error("Error connecting to Zookeeper while initializing. Will try again when attempting to talk to Solr.", e);
+        }
+    }
     
     @Override
     public QueryResponse query(SolrQuery query, String indexName) throws ServiceException {
@@ -104,20 +119,13 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
     @Override
     public void swap(String primaryAliasName, String secondaryAliasName) throws ServiceException {
         if (isSolrCloudMode()) {
-            CloudSolrClient cloudClient = (CloudSolrClient)getSolrClient();
-            Aliases aliases = cloudClient.getZkStateReader().getAliases();
-            Map<String,String> aliasMap = aliases.getCollectionAliasMap();
             
-            String primaryCollectionName = aliasMap.get(primaryAliasName);
-            if (primaryCollectionName != null) {
-                primaryCollectionName = primaryCollectionName.split(",")[0];
-            } else {
+            String primaryCollectionName = getCollectionNameForAlias(primaryAliasName);
+            String secondaryCollectionName = getCollectionNameForAlias(secondaryAliasName);
+            if (primaryCollectionName == null) {
                 throw new ServiceException("Unable to determine collection name from primary alias '" + primaryAliasName + "'");
             }
-            String secondaryCollectionName = aliasMap.get(secondaryAliasName);
-            if (secondaryCollectionName != null) {
-                secondaryCollectionName = secondaryCollectionName.split(",")[0];
-            } else {
+            if (secondaryCollectionName == null) {
                 throw new ServiceException("Unable to determine collection name from secondary alias '" + secondaryAliasName + "'");
             }
             
@@ -145,7 +153,7 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
 
     @Override
     public boolean isSolrCloudMode() {
-        return (getSolrClient() != null && getSolrClient() instanceof CloudSolrClient);
+        return solrCloudMode;
     }
     
     @Override
@@ -159,7 +167,7 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
         request.setBasicAuthCredentials(basicAuthUserName, basicAuthPassword);
         request.setMethod(getDefaultHttpMethod());
         
-        
+        connect(); //If it's already connected this will do nothing.  Otherwise, it will connect to Zookeeper, if applicable.
         int tries = 0;
         long pause = 0L;
         while (true) {
@@ -192,15 +200,6 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
         //Allows more data and more complex queries to be submitted to the server.
         //Solr's default is GET, which creates issues when the query string is too long.
         return METHOD.POST;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (isSolrCloudMode()) {
-            //This should happen as part of creating this bean.  However, it won't hurt to call it again, 
-            //so we'll ensure that this is connected once here.
-            ((CloudSolrClient)getSolrClient()).connect();
-        }
     }
     
     @Override
@@ -235,6 +234,21 @@ public class SolrUtilImpl implements SolrUtil, InitializingBean {
             return collection;
         } else {
             throw new UnsupportedOperationException("Cannot obtain alias for a collection. Not in SolrCloud mode.");
+        }
+    }
+    
+    /**
+     * This allows us to quietly connect on first use.  This helps prevent BLC from starting when Zookeeper is 
+     * not yet started, which can be helpful for local development.
+     */
+    private void connect() {
+        if (!connected && isSolrCloudMode()) {
+            synchronized (this) {
+                if (!connected) {
+                    ((CloudSolrClient)getSolrClient()).connect();
+                    connected = true;
+                }
+            }
         }
     }
 }

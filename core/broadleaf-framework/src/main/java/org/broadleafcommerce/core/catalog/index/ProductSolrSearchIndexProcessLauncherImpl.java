@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr.index;
+package org.broadleafcommerce.core.catalog.index;
 
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.index.BatchMarker;
@@ -24,6 +24,8 @@ import org.broadleafcommerce.core.search.index.LockService;
 import org.broadleafcommerce.core.search.index.QueueEntryProcessor;
 import org.broadleafcommerce.core.search.index.QueueManager;
 import org.broadleafcommerce.core.search.index.SingleJvmBlockingQueueManager;
+import org.broadleafcommerce.core.search.service.solr.index.AbstractSolrIndexProcessLauncherImpl;
+import org.broadleafcommerce.core.search.service.solr.index.SolrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -41,13 +43,15 @@ import javax.annotation.Resource;
 @Component("blProductSolrSearchIndexProcessLauncher")
 public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndexProcessLauncherImpl<BatchMarker> {
     
+    protected static final String DEFAULT_CATALOG_PRIMARY_ALIAS = "catalog";
+    protected static final String DEFAULT_CATALOG_SECONDARY_ALIAS = "catalog_reindex";
     protected static final String DEFAULT_QUEUE_NAME = "productQueue";
     
     @Resource(name="blSearchIndexLockService")
     protected LockService lockService;
     
     @Autowired(required=false)
-    @Qualifier("blSearchIndexTaskExecutor") 
+    @Qualifier("blSearchIndexTaskExecutor")
     protected ThreadPoolTaskExecutor taskExecutor;
     
     @Resource(name="blSolrUtil")
@@ -63,29 +67,29 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     protected FieldEntity determineFieldEntity() {
         return FieldEntity.PRODUCT;
     }
+    
+    @Override
+    protected String getPrimaryAliasName() {
+        return DEFAULT_CATALOG_PRIMARY_ALIAS;
+    }
+
+    @Override
+    protected String getSecondaryAliasName() {
+        return DEFAULT_CATALOG_SECONDARY_ALIAS;
+    }
+    
+    protected String getQueueName() {
+        return DEFAULT_QUEUE_NAME;
+    }
 
     @Override
     protected SolrUtil getSolrUtil() {
         return solrUtil;
     }
-
-    @Override
-    protected String getPrimaryAliasName() {
-        return "catalog";
-    }
-
-    @Override
-    protected String getSecondaryAliasName() {
-        return "catalog_reindex";
-    }
-
+    
     @Override
     protected LockService getLockService() {
         return lockService;
-    }
-    
-    protected String getQueueName() {
-        return DEFAULT_QUEUE_NAME;
     }
 
     @Override
@@ -102,6 +106,4 @@ public class ProductSolrSearchIndexProcessLauncherImpl extends AbstractSolrIndex
     protected ThreadPoolTaskExecutor getTaskExecutor() {
         return taskExecutor;
     }
-    
-    
 }

@@ -52,7 +52,8 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
     private static final Log LOG = LogFactory.getLog(AbstractGenericSearchIndexProcessLauncher.class);
     private static final Map<String, SearchIndexProcessLauncher<?>> FIELD_ENTITY_REGISTRY = new HashMap<>();
     private static final Map<String, QueueManager<?>> QUEUE_MANAGERS_IN_USE = new HashMap<>();
-    protected static final long DEFAULT_PAUSE_TIME = 5000L;
+    private static final long DEFAULT_PAUSE_TIME = 5000L;
+    private static final String QUEUE_MANAGER_KEY = "_QUEUE_MANAGER";
     private long startTime = -1;
     protected ApplicationContext ctx;
     
@@ -96,7 +97,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 Semaphore semaphore = new Semaphore(0);
                 try {
                     queueManager = getQueueManager(processId);
-                    SearchIndexProcessStateHolder.setAdditionalProperty(processId, "_QUEUE_MANAGER", queueManager);
+                    SearchIndexProcessStateHolder.setAdditionalProperty(processId, QUEUE_MANAGER_KEY, queueManager);
                     
                     //This will start a QueueLoader in a background thread.
                     //The purpose is to begin independently populating a Queue so that consumer threads can independently 
@@ -338,7 +339,7 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
         final ThreadPoolTaskExecutor executor = getTaskExecutor();
         @SuppressWarnings("unchecked")
         final QueueManager<I> queueManager = 
-                (QueueManager<I>)SearchIndexProcessStateHolder.getAdditionalProperty(processId, "_QUEUE_MANAGER");
+                (QueueManager<I>)SearchIndexProcessStateHolder.getAdditionalProperty(processId, QUEUE_MANAGER_KEY);
         int count = 0;
         try {
             while(true) {

@@ -98,7 +98,7 @@ public class ProductBatchReader extends AbstractBatchReader<BatchMarker> {
      * If you want no more than the provided batch size to be returned from the DB, then this method should return 1.
      * 
      * Note that this does not affect the batch sizes returned to the caller.  This just facilitates fewer round trips 
-     * to the DB to build the batches (or pages).
+     * to the DB to build the batch markers (or pages) with the min and max product ids in a particular batch.
      * 
      * The default is 5.
      * 

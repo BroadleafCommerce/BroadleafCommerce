@@ -71,7 +71,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -174,10 +173,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 reindexCollectionName = reindexCollectionName.split(",")[0];
 
                 //Essentially "swap cores" here by reassigning the aliases
-                new CollectionAdminRequest.CreateAlias().setAliasName(primaryCloudClient.getDefaultCollection())
-                        .setAliasedCollections(reindexCollectionName).process(primaryCloudClient);
-                new CollectionAdminRequest.CreateAlias().setAliasName(reindexCloudClient.getDefaultCollection())
-                        .setAliasedCollections(primaryCollectionName).process(reindexCloudClient);
+                CollectionAdminRequest.createAlias(primaryCloudClient.getDefaultCollection(), reindexCollectionName)
+                    .process(primaryCloudClient);
+                CollectionAdminRequest.createAlias(reindexCloudClient.getDefaultCollection(), primaryCollectionName)
+                    .process(reindexCloudClient);
+                
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);

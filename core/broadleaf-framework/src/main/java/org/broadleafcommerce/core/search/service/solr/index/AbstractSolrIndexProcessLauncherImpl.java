@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.search.index.AbstractGenericSearchIndexProcessLauncher;
+import org.broadleafcommerce.core.search.index.SearchIndexProcessStateHolder;
 
 import java.util.ArrayList;
 
@@ -47,7 +48,7 @@ public abstract class AbstractSolrIndexProcessLauncherImpl<I> extends AbstractGe
      * If you are not using SolrCloud or aliases, then this method should return the collection name (which, in lieu of 
      * an alias, should be a stable, constant string).
      * 
-     * This method must not return null.
+     * This method MUST NOT return null.
      *  
      * @return
      */
@@ -68,7 +69,9 @@ public abstract class AbstractSolrIndexProcessLauncherImpl<I> extends AbstractGe
     protected abstract String getSecondaryAliasName();
     
     /**
-     * Given a primary alias name, this returns the associated collection name that is aliased.
+     * Given a primary alias name, this returns the associated collection name that is aliased.  The default behavior 
+     * is to use the primary alias name to query Solr for its associated collection name (since aliases can be, and often 
+     * are, reassigned or swapped with different collections).
      * @return
      */
     protected String getPrimaryCollectionName() {
@@ -80,11 +83,14 @@ public abstract class AbstractSolrIndexProcessLauncherImpl<I> extends AbstractGe
     }
     
     /**
-     * Given a secondary alias name, this returns the associated collection name that is aliased.
+     * Given a secondary alias name, this returns the associated collection name that is aliased. The default behavior 
+     * is to use the secondary alias name to query Solr for its associated collection name (since aliases can be, and often 
+     * are, reassigned or swapped with different collections).  If there is no secondary alias name, then this method returns 
+     * null.
      * @return
      */
     protected String getSecondaryCollectionName() {
-        if (getSolrUtil().isSolrCloudMode()) {
+        if (getSolrUtil().isSolrCloudMode() && getSecondaryAliasName() != null) {
             return getSolrUtil().getCollectionNameForAlias(getSecondaryAliasName());
         } else {
             return getSecondaryAliasName();
@@ -103,6 +109,15 @@ public abstract class AbstractSolrIndexProcessLauncherImpl<I> extends AbstractGe
      */
     @Override
     protected void preProcess(String processId) throws ServiceException {
+        String collectionName = getSecondaryAliasName();
+        if (collectionName == null) {
+            collectionName = getPrimaryAliasName();
+        }
+        
+        //We want the index alias name to be associated with the process state so we know which index we are writing to.
+        SearchIndexProcessStateHolder.setAdditionalProperty(processId, 
+                SearchIndexProcessStateHolder.INDEX_NAME, collectionName);
+        
         reinitializeIndex(processId);
     }
     
