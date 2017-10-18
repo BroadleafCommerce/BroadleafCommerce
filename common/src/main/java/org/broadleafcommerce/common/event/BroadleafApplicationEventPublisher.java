@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,31 +17,24 @@
  */
 package org.broadleafcommerce.common.event;
 
+import org.springframework.context.ApplicationEvent;
 
 /**
- * Concrete event that is raised when an order is submitted.
- * 
- * @author Kelly Tisdell
- *
+ * @author Nick Crum ncrum
  */
-public class OrderSubmittedEvent extends BroadleafApplicationEvent {
+public interface BroadleafApplicationEventPublisher {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * Publishes the {@code ApplicationEvent} on the ApplicationContext in a synchronized or unsynchronized context.
+     *
+     * @param applicationEvent
+     */
+    public void publishEvent(ApplicationEvent applicationEvent);
 
-    protected final Long orderId;
-    protected final String orderNumber;
-
-    public OrderSubmittedEvent(Object source, Long orderId, String orderNumber) {
-        super(source);
-        this.orderId = orderId;
-        this.orderNumber = orderNumber;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
+    /**
+     * Publishes the {@code ApplicationEvent} on the ApplicationContext in an unsynchronized context.
+     *
+     * @param applicationEvent
+     */
+    public void publishEventUnsynchronized(ApplicationEvent applicationEvent);
 }

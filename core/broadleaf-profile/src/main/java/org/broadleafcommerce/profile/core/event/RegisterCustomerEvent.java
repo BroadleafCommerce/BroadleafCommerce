@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,33 +15,27 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.event;
+package org.broadleafcommerce.profile.core.event;
 
+import org.broadleafcommerce.common.event.BroadleafApplicationEvent;
 
 /**
- * Concrete event that is raised when an order is submitted.
- * 
- * @author Kelly Tisdell
- *
+ * @author Nick Crum ncrum
  */
-public class OrderSubmittedEvent extends BroadleafApplicationEvent {
+public class RegisterCustomerEvent extends BroadleafApplicationEvent {
 
-    private static final long serialVersionUID = 1L;
+    protected Long customerId;
 
-    protected final Long orderId;
-    protected final String orderNumber;
-
-    public OrderSubmittedEvent(Object source, Long orderId, String orderNumber) {
+    public RegisterCustomerEvent(Object source, Long customerId) {
         super(source);
-        this.orderId = orderId;
-        this.orderNumber = orderNumber;
+        this.customerId = customerId;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public String getOrderNumber() {
-        return orderNumber;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }
