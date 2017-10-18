@@ -60,7 +60,7 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
         
         while (true) {
             //Check to see if something is failed.
-            if (SearchIndexProcessStateHolder.isFailed(processId) || isComplete()) {
+            if (SearchIndexProcessStateHolder.isFailed(processId) || isLoadingComplete()) {
                 return;
             }
             try {
@@ -74,7 +74,7 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
                                 return;
                             }
                             
-                            success = queue.offer(item, determinePutWaitTime(), TimeUnit.MILLISECONDS);
+                            success = addToQueue(item);
                         }
                     }
                 } else {
@@ -87,16 +87,21 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
         }
     }
     
-    private synchronized void markComplete() {
-        this.complete = true;
+    @Override
+    public boolean addToQueue(T item) {
+        try {
+            return queue.offer(item, determinePutWaitTime(), TimeUnit.MILLISECONDS);
+        } catch(InterruptedException e) {
+            throw new RuntimeException("Thread was interrupted trying to add an item to the queue.", e);
+        }
     }
-
+    
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.search.index.service.QueueLoader#isComplete()
      */
     @Override
-    public synchronized boolean isComplete() {
+    public synchronized boolean isLoadingComplete() {
         return complete;
     }
 
@@ -106,15 +111,21 @@ public class SingleJvmBlockingQueueLoader<T> implements QueueLoader<T> {
      */
     @Override
     public boolean isActive() {
-        return ((!isComplete() || !queue.isEmpty()) && ! SearchIndexProcessStateHolder.isFailed(processId));
+        //These are already synchronized...
+        return ((!isLoadingComplete() || !queue.isEmpty()) && ! SearchIndexProcessStateHolder.isFailed(processId));
     }
 
     @Override
     public boolean isEmpty() {
+        //This is already synchronized at the Queue level.
         return queue.isEmpty();
     }
 
     protected long determinePutWaitTime() {
         return DEFAULT_PUT_WAIT_TIME;
+    }
+    
+    private synchronized void markComplete() {
+        this.complete = true;
     }
 }

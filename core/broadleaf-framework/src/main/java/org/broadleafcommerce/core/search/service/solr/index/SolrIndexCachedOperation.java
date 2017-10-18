@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class SolrIndexCachedOperation {
         Catalog currentCatalog = ctx == null ? null : ctx.getCurrentCatalog();
         Map<Long, CatalogStructure> catalogCaches = CACHE.get();
         if (catalogCaches == null) {
-            catalogCaches = new HashMap<Long, CatalogStructure>();
+            catalogCaches = Collections.synchronizedMap(new HashMap<Long, CatalogStructure>());
             CACHE.set(catalogCaches);
         }
         if (currentCatalog != null) {

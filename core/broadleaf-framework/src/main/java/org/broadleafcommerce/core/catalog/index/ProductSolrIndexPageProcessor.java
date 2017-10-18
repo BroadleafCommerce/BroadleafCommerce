@@ -107,6 +107,7 @@ public class ProductSolrIndexPageProcessor implements QueueEntryProcessor<BatchM
         }
         
         TransactionStatus status = null;
+        boolean txFinalized = false;
         try {
             //Begin transaction to ensure we have access to an entity manager when in a background thread.
             status = TransactionUtils.createTransaction("indexProductsInSolr",
@@ -120,25 +121,42 @@ public class ProductSolrIndexPageProcessor implements QueueEntryProcessor<BatchM
                 currentCatalog = null;
             }
             
-            List<SolrInputDocument> docs = buildPage(processId, currentCatalog, firstValue, lastValue);
+            final UpdateRequest[] requestHolder = new UpdateRequest[1];
+            performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
+                
+                @Override
+                public void execute() throws ServiceException {
+                    List<SolrInputDocument> docs = buildPage(processId, currentCatalog, firstValue, lastValue);
+                    
+                    if (docs != null && !docs.isEmpty()) {
+                        UpdateRequest request = new UpdateRequest();
+                        request.add(docs);
+                        requestHolder[0] = request;
+                    }
+                }
+            });
             
-            if (docs != null && !docs.isEmpty()) {
-                UpdateRequest request = new UpdateRequest();
-                request.add(docs);
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            txFinalized = true;
+            
+            //Communicate with Solr outside of the DB transaction...
+            if (requestHolder[0] != null) {
                 String indexName = (String)SearchIndexProcessStateHolder.getAdditionalProperty(processId, 
                         SearchIndexProcessStateHolder.INDEX_NAME);
                 if (indexName == null) {
-                    solrUtil.updateIndex(request);
+                    solrUtil.updateIndex(requestHolder[0]);
                 } else {
-                    solrUtil.updateIndex(request, indexName);
+                    solrUtil.updateIndex(requestHolder[0], indexName);
                 }
             }
-            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            
         } catch (Exception e) {
-            try {
-                TransactionUtils.finalizeTransaction(status, transactionManager, true);
-            } catch (Exception rbe) {
-                LOG.error("Error rolling back a read only transaction. Ignorning.", rbe);
+            if (!txFinalized) {
+                try {
+                    TransactionUtils.finalizeTransaction(status, transactionManager, true);
+                } catch (Exception rbe) {
+                    LOG.error("Error rolling back a read only transaction. Ignorning.", rbe);
+                }
             }
             throw new ServiceException("There was an error processing a BatchMarker entry for processId " + processId, e);
         } finally {
@@ -158,23 +176,23 @@ public class ProductSolrIndexPageProcessor implements QueueEntryProcessor<BatchM
                 sandBoxHelper.ignoreCloneCache(true);
                 try {
                     products = productDao.readProductsInIdRange(firstValue, lastValue);
-                    extensionManager.getProxy().startBatchEvent(products);
-                    List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
-                        @Override
-                        public Long transform(Object input) {
-                            return shs.getCurrentProductId((Indexable) input);
-                        }
-                    });
-                    
-                    solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
                     
                     final ArrayList<SolrInputDocument> documents = new ArrayList<>();
                     
                     if (products != null && !products.isEmpty()) {
+                        extensionManager.getProxy().startBatchEvent(products);
+                        List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
+                            @Override
+                            public Long transform(Object input) {
+                                return shs.getCurrentProductId((Indexable) input);
+                            }
+                        });
+                        
+                        solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
                         List<Locale> locales = getAllLocales(processId);
                         
                         for (Product product : products) {
-                            SolrInputDocument doc = docBuilder.buildDocument(product, locales);
+                            SolrInputDocument doc = docBuilder.buildDocument(processId, product, locales);
                             if (doc != null) {
                                 documents.add(doc);
                             }
@@ -203,7 +221,7 @@ public class ProductSolrIndexPageProcessor implements QueueEntryProcessor<BatchM
     }
     
     @SuppressWarnings("unchecked")
-    public List<Locale> getAllLocales(String processId) {
+    protected List<Locale> getAllLocales(String processId) {
         List<Locale> out = (List<Locale>)SearchIndexProcessStateHolder.getAdditionalProperty(processId, LOCALES_KEY);
         if (out == null) {
             synchronized(this.getClass()) {

@@ -39,10 +39,11 @@ public interface DocumentBuilder<I extends Indexable, D> {
      * accept a {@link Product} and return a SolrInputDocument.  If the Indexable parameter 
      * should not be indexed, for whatever reason, this method should return null.
      * 
+     * @param processId
      * @param indexable
      * @param locales
      * @return
      */
-    public D buildDocument(I indexable, List<Locale> locales);
+    public D buildDocument(String processId, I indexable, List<Locale> locales);
     
 }

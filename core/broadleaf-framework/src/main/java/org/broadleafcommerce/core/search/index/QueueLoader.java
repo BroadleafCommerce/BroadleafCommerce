@@ -36,7 +36,7 @@ package org.broadleafcommerce.core.search.index;
  * batches of Indexable items for processing.  After all, it is the sequential batch reading that is difficult.  
  * Implementors could potentially put fully hydrated domain objects on the queue.  However, if those objects require 
  * serialization that can create issues such as LazyInitializationExceptions once deserialized, or serialization 
- * overhead due to deep object graphs.  Additionally, the Queue producer is single threaded, so it needs to be fast so 
+ * overhead due to deep object graphs.  Additionally, the Queue loader is single threaded, so it needs to be fast so 
  * that there is no thread starvation during multi-threaded consumption of the queue.  Therefore, it is recommended 
  * that implementors of this interface read ID batches so that consumers can read the top level objects based on those IDs.
  * 
@@ -53,7 +53,7 @@ public interface QueueLoader<T> extends Runnable {
      * 
      * @return
      */
-    public boolean isComplete();
+    public boolean isLoadingComplete();
     
     /**
      * The return of this method indicates whether the queue is:
@@ -65,10 +65,21 @@ public interface QueueLoader<T> extends Runnable {
     public boolean isActive();
     
     /**
-     * Indicates if the queue (at the time of the method invocation) is empty.
+     * Indicates if the queue (at the time of the method invocation) is empty. Two subsequent calls to this method may 
+     * return different results, depending on the state of the queue.
      * @return
      */
     public boolean isEmpty();
+    
+    /**
+     * Adds an item to the queue. Returns true if the item was added to the queue.  False otherwise.
+     * 
+     * Implementations may throw a RuntimeException.
+     * 
+     * @param entry
+     * @return
+     */
+    public boolean addToQueue(T entry);
     
     
 }

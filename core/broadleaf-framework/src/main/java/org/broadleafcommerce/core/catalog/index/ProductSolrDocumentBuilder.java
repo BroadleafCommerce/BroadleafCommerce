@@ -7,21 +7,33 @@ import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
+import org.broadleafcommerce.core.search.dao.IndexFieldDao;
+import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.index.DocumentBuilder;
+import org.broadleafcommerce.core.search.index.SearchIndexProcessStateHolder;
+import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -32,11 +44,21 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
     
     @Resource(name = "blSolrIndexServiceExtensionManager")
     protected SolrIndexServiceExtensionManager extensionManager;
+    
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+    
+    @Resource(name = "blSolrHelperService")
+    protected SolrHelperService shs;
+    
+    @Resource(name = "blIndexFieldDao")
+    protected IndexFieldDao indexFieldDao;
 
     @Override
-    public SolrInputDocument buildDocument(Product indexable, List<Locale> locales) {
+    public SolrInputDocument buildDocument(final String processId, final Product indexable, final List<Locale> locales) {
         if (shouldIndex(indexable)) {
             final SolrInputDocument document = new SolrInputDocument();
+            final List<IndexField> fields = getIndexFields(processId);
 
             attachBasicDocumentFields(indexable, document);
 
@@ -45,7 +67,7 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
             attachAdditionalDocumentFields(indexable, document);
 
             extensionManager.getProxy().attachChildDocuments(indexable, document, fields, locales);
-
+            
             return document;
         }
         return null;
@@ -110,14 +132,14 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
         }
 
         // Add the namespace and ID fields for this product
-        document.addField(shs.getNamespaceFieldName(), solrConfiguration.getNamespace());
+        document.addField(shs.getNamespaceFieldName(), indexable.getFieldEntityType().getType());
         document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
         document.addField(shs.getTypeFieldName(), shs.getDocumentType(indexable));
         document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
 
         extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
 
-        Long cacheKey = this.shs.getCurrentProductId(indexable); // current
+        Long cacheKey = shs.getCurrentProductId(indexable); // current
         if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
             cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
             if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
@@ -158,5 +180,94 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
     protected void attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document) {
         //Empty implementation. Placeholder for others to extend and add additional fields
         extensionManager.getProxy().attachAdditionalDocumentFields(indexable, document);
+    }
+    
+    protected Map<String, Object> getPropertyValues(Indexable indexedItem, Field field, FieldType fieldType, List<Locale> locales)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        String propertyName = field.getPropertyName();
+        Map<String, Object> values = new HashMap<>();
+
+        ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
+        if (extensionManager != null) {
+            extensionResult = extensionManager.getProxy().addPropertyValues(indexedItem, field, fieldType, values, propertyName, locales);
+        }
+        
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
+            Object propertyValue = shs.getPropertyValue(indexedItem, field);
+            if (propertyValue != null) {
+                values.put("", propertyValue);
+            }
+        }
+
+        return values;
+    }
+    
+    /**
+     * Walk the category hierarchy upwards, adding a field for each level to the solr document
+     *
+     * @param document the solr document for the product
+     * @param cache the catalog structure cache
+     * @param categoryId the current category id
+     */
+    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId, Set<Long> indexedParents) {
+        Long catIdToAdd = shs.getCategoryId(categoryId);
+
+        Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
+        if (existingValues == null || !existingValues.contains(catIdToAdd)) {
+            document.addField(shs.getCategoryFieldName(), catIdToAdd);
+        }
+
+        Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
+        for (Long parent : parents) {
+            if (!indexedParents.contains(parent)) {
+                indexedParents.add(parent);
+                buildFullCategoryHierarchy(document, cache, parent, indexedParents);
+            }
+        }
+    }
+    
+    /**
+     *  We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
+     *  displayOrder value.
+     *
+     * @param cache
+     * @param displayOrderKey
+     * @return
+     */
+    protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
+        BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+        if (displayOrder == null) {
+            return null;
+        }
+        return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected List<IndexField> getIndexFields(String processId) {
+        if (processId == null) {
+            return indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+        } else {
+            List<IndexField> out = (List<IndexField>)SearchIndexProcessStateHolder.getAdditionalProperty(processId, "_PRODUCT_INDEX_FIELDS");
+            if (out == null) {
+                synchronized (this) {
+                    out = (List<IndexField>)SearchIndexProcessStateHolder.getAdditionalProperty(processId, "_PRODUCT_INDEX_FIELDS");
+                    if (out == null) {
+                        out = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+                        if (out == null) {
+                            out = new ArrayList<>();
+                        }
+                        
+                        for (IndexField field : out) {
+                            //Try to avoid LazyInitializationException
+                            field.getFieldTypes().size();
+                        }
+                        
+                        SearchIndexProcessStateHolder.setAdditionalProperty(processId, "_PRODUCT_INDEX_FIELDS", out);
+                    }
+                }
+            }
+            return out;
+        }
     }
 }

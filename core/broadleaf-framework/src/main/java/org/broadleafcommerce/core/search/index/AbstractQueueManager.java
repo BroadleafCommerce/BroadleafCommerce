@@ -132,11 +132,15 @@ public abstract class AbstractQueueManager<T> implements QueueManager<T>, Applic
      * only be invoked once. A RuntimeException should be thrown from this method if there is an issue initializing.
      * @param processId
      */
-    protected abstract void initializeInternal();
+    protected void initializeInternal() {
+        //Nothing...
+    }
     
     /**
      * Hook point to allow any additional cleanup.
      */
-    protected abstract void closeInternal();
+    protected void closeInternal() {
+        //Nothing...
+    }
     
 }
