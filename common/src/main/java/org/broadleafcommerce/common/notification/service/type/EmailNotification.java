@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.common.notification.service.type;
 
+import org.broadleafcommerce.common.email.service.message.Attachment;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,6 +28,7 @@ import java.util.Map;
 public class EmailNotification extends Notification {
 
     protected String emailAddress;
+    protected List<Attachment> attachments = new ArrayList<Attachment>();
 
     public EmailNotification() {
         super();
@@ -45,5 +49,13 @@ public class EmailNotification extends Notification {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 }

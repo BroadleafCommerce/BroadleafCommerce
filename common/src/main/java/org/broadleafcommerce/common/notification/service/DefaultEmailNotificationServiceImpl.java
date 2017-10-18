@@ -55,7 +55,9 @@ public class DefaultEmailNotificationServiceImpl implements NotificationService 
         boolean success = false;
         for (EmailInfo info: ListUtils.emptyIfNull(emailInfos)) {
             if (Objects.equals(info.getEmailType(), notification.getType().getType())) {
-                emailService.sendTemplateEmail(((EmailNotification) notification).getEmailAddress(), info, notification.getContext());
+                EmailInfo clonedInfo = info.clone();
+                clonedInfo.setAttachments(((EmailNotification) notification).getAttachments());
+                emailService.sendTemplateEmail(((EmailNotification) notification).getEmailAddress(), clonedInfo, notification.getContext());
                 success = true;
             }
         }
