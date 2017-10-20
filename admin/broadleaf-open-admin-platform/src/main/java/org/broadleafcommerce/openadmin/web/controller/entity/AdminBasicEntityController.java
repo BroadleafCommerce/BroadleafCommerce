@@ -1475,7 +1475,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             }
 
             String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
-            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(mainMetadata, entity, sectionCrumbs, currentTabName);
+            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
             if (entityForm == null) {
                 entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
             } else {
