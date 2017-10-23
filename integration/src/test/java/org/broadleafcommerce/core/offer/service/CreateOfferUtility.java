@@ -67,9 +67,14 @@ public class CreateOfferUtility {
     public OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, 
                                      OfferDiscountType discountType, double value, String orderRule, boolean stackable, 
                                      boolean combinable, int priority, String qualifierRule, OfferAdjustmentType adjustmentType) {
-        OfferCode offerCode = offerCodeDao.create();
         Offer offer = createOffer(offerName, offerType, discountType, value, orderRule, stackable, combinable, priority, 
                 qualifierRule, adjustmentType);
+        
+        return createOfferCode(offerCodeName, offer);
+    }
+
+    public OfferCode createOfferCode(String offerCodeName, Offer offer) {
+        OfferCode offerCode = offerCodeDao.create();
         offerCode.setOffer(offer);
         offerCode.setOfferCode(offerCodeName);
         offerCode = offerService.saveOfferCode(offerCode);

@@ -67,9 +67,6 @@ public class FutureCreditOfferTest extends CommonSetupBaseTest {
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
 
-    @Resource
-    protected FulfillmentGroupOfferProcessorImpl fgProcessor;
-
     protected final OfferDataItemProvider dataProvider = new OfferDataItemProvider();
 
 
