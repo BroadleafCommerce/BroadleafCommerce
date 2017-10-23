@@ -414,7 +414,7 @@ var BLCAdmin = (function($) {
                     BLCAdmin.currentModal().trigger('content-loaded');
                 });
             } else {
-                showLinkAsModal(link);
+                BLCAdmin.showLinkAsModal(link);
             }
         },
 
