@@ -84,10 +84,10 @@ public class MvelHelper {
             if (type.equals(SupportedFieldType.BOOLEAN.toString())) {
                 return Boolean.parseBoolean(fieldValue);
             } else if (type.equals(SupportedFieldType.DATE.toString())) {
-                try {
-                    return FormatUtil.getTimeZoneFormat().parse(fieldValue);
-                } catch (ParseException e) {
+                if (fieldValue.length() == 19) {
                     return FormatUtil.getDateFormat().parse(fieldValue);
+                } else {
+                    return FormatUtil.getTimeZoneFormat().parse(fieldValue);
                 }
             } else if (type.equals(SupportedFieldType.INTEGER.toString())) {
                 return Integer.parseInt(fieldValue);
@@ -108,13 +108,13 @@ public class MvelHelper {
     }
 
     public static String currentTime() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = SystemTime.asCalendar();
 
         return FormatUtil.getTimeZoneFormat().format(calendar.getTime());
     }
 
     public static String subtractFromCurrentTime(int days) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = SystemTime.asCalendar();
         calendar.add(Calendar.DAY_OF_YEAR, -days);
 
         return FormatUtil.getTimeZoneFormat().format(calendar.getTime());
