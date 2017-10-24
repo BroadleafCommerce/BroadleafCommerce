@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,33 +15,15 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.event;
+package org.broadleafcommerce.common.sms.service;
 
+import org.broadleafcommerce.common.sms.service.type.SMSMessage;
+import java.util.Map;
 
 /**
- * Concrete event that is raised when an order is submitted.
- * 
- * @author Kelly Tisdell
- *
+ * @author Nick Crum ncrum
  */
-public class OrderSubmittedEvent extends BroadleafApplicationEvent {
+public interface SMSMessageCreator {
 
-    private static final long serialVersionUID = 1L;
-
-    protected final Long orderId;
-    protected final String orderNumber;
-
-    public OrderSubmittedEvent(Object source, Long orderId, String orderNumber) {
-        super(source);
-        this.orderId = orderId;
-        this.orderNumber = orderNumber;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
+    void sendMessage(SMSMessage message, Map<String, Object> props);
 }

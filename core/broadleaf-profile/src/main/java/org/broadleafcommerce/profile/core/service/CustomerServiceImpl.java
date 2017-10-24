@@ -17,15 +17,12 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
 import org.broadleafcommerce.common.id.service.IdGenerationService;
-import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
-import org.broadleafcommerce.common.email.service.EmailService;
-import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
@@ -43,6 +40,10 @@ import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityT
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
+import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
+import org.broadleafcommerce.profile.core.event.ForgotPasswordEvent;
+import org.broadleafcommerce.profile.core.event.ForgotUsernameEvent;
+import org.broadleafcommerce.profile.core.event.RegisterCustomerEvent;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -54,14 +55,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -70,7 +69,11 @@ public class CustomerServiceImpl implements CustomerService {
     private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
     private static final int PASSWORD_LENGTH = 16;
 
-    @Resource(name = "blCustomerDao")
+    @Autowired
+    @Qualifier("blApplicationEventPublisher")
+    protected BroadleafApplicationEventPublisher eventPublisher;
+
+    @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
     @Resource(name = "blIdGenerationService")
@@ -120,21 +123,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Resource(name = "blRoleDao")
     protected RoleDao roleDao;
-
-    @Resource(name = "blEmailService")
-    protected EmailService emailService;
-
-    @Resource(name = "blForgotPasswordEmailInfo")
-    protected EmailInfo forgotPasswordEmailInfo;
-
-    @Resource(name = "blForgotUsernameEmailInfo")
-    protected EmailInfo forgotUsernameEmailInfo;
-
-    @Resource(name = "blRegistrationEmailInfo")
-    protected EmailInfo registrationEmailInfo;
-
-    @Resource(name = "blChangePasswordEmailInfo")
-    protected EmailInfo changePasswordEmailInfo;
 
     protected int tokenExpiredMinutes = 30;
     protected int passwordTokenLength = 20;
@@ -213,12 +201,10 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
         createRegisteredCustomerRoles(retCustomer);
-
-        HashMap<String, Object> vars = new HashMap<String, Object>();
-        vars.put("customer", retCustomer);
-
-        sendEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);
+        
+        eventPublisher.publishEvent(new RegisterCustomerEvent(this, retCustomer.getId()));
         notifyPostRegisterListeners(retCustomer);
+
         return retCustomer;
     }
 
@@ -513,9 +499,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
 
             if (activeUsernames.size() > 0) {
-                HashMap<String, Object> vars = new HashMap<String, Object>();
-                vars.put("userNames", activeUsernames);
-                sendEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
+                eventPublisher.publishEvent(new ForgotUsernameEvent(this, emailAddress, activeUsernames));
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -540,34 +524,21 @@ public class CustomerServiceImpl implements CustomerService {
             String token = PasswordUtils.generateSecurePassword(getPasswordTokenLength());
             token = token.toLowerCase();
 
-            Object salt = getSalt(customer, token);
-
-            String saltString = null;
-            if (salt != null) {
-                saltString = Hex.encodeHexString(salt.toString().getBytes());
-            }
-
             CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
             fpst.setCustomerId(customer.getId());
-            fpst.setToken(encodePass(token, saltString));
+            fpst.setToken(encodePassword(token));
             fpst.setCreateDate(SystemTime.asDate());
             customerForgotPasswordSecurityTokenDao.saveToken(fpst);
 
-            if (usingDeprecatedPasswordEncoder() && saltString != null) {
-                token = token + '-' + saltString;
-            }
-
-            HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("token", token);
             if (!StringUtils.isEmpty(resetPasswordUrl)) {
                 if (resetPasswordUrl.contains("?")) {
-                    resetPasswordUrl = resetPasswordUrl + "&token=" + token;
+                    resetPasswordUrl = resetPasswordUrl+"&token="+token;
                 } else {
-                    resetPasswordUrl = resetPasswordUrl + "?token=" + token;
+                    resetPasswordUrl = resetPasswordUrl+"?token="+token;
                 }
             }
-            vars.put("resetPasswordUrl", resetPasswordUrl);
-            sendEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
+
+            eventPublisher.publishEvent(new ForgotPasswordEvent(this, customer.getId(), token, resetPasswordUrl));
         }
         return response;
     }
@@ -709,10 +680,6 @@ public class CustomerServiceImpl implements CustomerService {
         return minutesSinceSave > tokenExpiredMinutes;
     }
 
-    protected void sendEmail(String emailAddress, EmailInfo emailInfo, Map<String, Object> props) {
-        emailService.sendTemplateEmail(emailAddress, emailInfo, props);
-    }
-
     public int getTokenExpiredMinutes() {
         return tokenExpiredMinutes;
     }
@@ -729,37 +696,6 @@ public class CustomerServiceImpl implements CustomerService {
         this.passwordTokenLength = passwordTokenLength;
     }
 
-    public EmailInfo getForgotPasswordEmailInfo() {
-        return forgotPasswordEmailInfo;
-    }
-
-    public void setForgotPasswordEmailInfo(EmailInfo forgotPasswordEmailInfo) {
-        this.forgotPasswordEmailInfo = forgotPasswordEmailInfo;
-    }
-
-    public EmailInfo getForgotUsernameEmailInfo() {
-        return forgotUsernameEmailInfo;
-    }
-
-    public void setForgotUsernameEmailInfo(EmailInfo forgotUsernameEmailInfo) {
-        this.forgotUsernameEmailInfo = forgotUsernameEmailInfo;
-    }
-
-    public EmailInfo getRegistrationEmailInfo() {
-        return registrationEmailInfo;
-    }
-
-    public void setRegistrationEmailInfo(EmailInfo registrationEmailInfo) {
-        this.registrationEmailInfo = registrationEmailInfo;
-    }
-
-    public EmailInfo getChangePasswordEmailInfo() {
-        return changePasswordEmailInfo;
-    }
-
-    public void setChangePasswordEmailInfo(EmailInfo changePasswordEmailInfo) {
-        this.changePasswordEmailInfo = changePasswordEmailInfo;
-    }
 
     @Deprecated
     protected boolean usingDeprecatedPasswordEncoder() {
