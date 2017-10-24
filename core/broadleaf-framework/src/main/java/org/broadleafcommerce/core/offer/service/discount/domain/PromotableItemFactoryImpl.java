@@ -17,21 +17,19 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 @Service("blPromotableItemFactory")
 public class PromotableItemFactoryImpl implements PromotableItemFactory {
 
-    @Resource
-    private SystemPropertiesService systemPropertiesService;
+    @Value("${use.quantity.only.tier.calculation:false}")
+    protected boolean useQtyOnlyTierCalculation = false;
 
     public PromotableOrder createPromotableOrder(Order order, boolean includeOrderAndItemAdjustments) {
         return new PromotableOrderImpl(order, this, includeOrderAndItemAdjustments);
@@ -75,8 +73,6 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
 
     @Override
     public PromotableCandidateItemOffer createPromotableCandidateItemOffer(PromotableOrder promotableOrder, Offer offer) {
-        boolean useQtyOnlyTierCalculation = 
-                systemPropertiesService.resolveBooleanSystemProperty("use.quantity.only.tier.calculation", false);
         return new PromotableCandidateItemOfferImpl(promotableOrder, offer, useQtyOnlyTierCalculation);
     }
     
