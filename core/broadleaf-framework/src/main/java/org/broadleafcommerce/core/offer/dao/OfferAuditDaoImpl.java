@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
@@ -56,8 +55,18 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected Long currentDateResolution = 10000L;
+    protected Long currentDateResolution = 3600000L;
     protected Date cachedDate = SystemTime.asDate();
+
+    protected Date getCurrentDateAfterFactoringInDateResolution() {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, getCurrentDateResolution());
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
+            }
+        }
+        return returnDate;
+    }
 
     @Override
     public OfferAudit create() {
@@ -118,7 +127,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         );
 
         if (minimumDaysPerUsage != null && minimumDaysPerUsage != 0L) {
-            Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
+            Date currentDate = getCurrentDateAfterFactoringInDateResolution();
 
             Calendar previousCalendar = new GregorianCalendar();
 
