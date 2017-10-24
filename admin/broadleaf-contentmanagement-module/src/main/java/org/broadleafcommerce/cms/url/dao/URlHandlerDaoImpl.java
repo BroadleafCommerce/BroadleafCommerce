@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -69,6 +70,13 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
     }
 
     @Override
+    public List<URLHandler> findURLHandlersByDestination(String uri) {
+        TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_BY_DESTINATION_URL", URLHandler.class);
+        query.setParameter("newURL", uri);
+        return query.getResultList();
+    }
+
+    @Override
     public URLHandler findURLHandlerById(Long id) {
         return em.find(URLHandlerImpl.class, id);
     }
@@ -90,6 +98,13 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
 
     public URLHandler saveURLHandler(URLHandler handler) {
         return em.merge(handler);
+    }
+
+    @Override
+    public void deleteURLHandler(URLHandler urlHandler) {
+        Query query = em.createNamedQuery("BC_DELETE_BY_ID");
+        query.setParameter("id", urlHandler.getId());
+        query.executeUpdate();
     }
 
 }

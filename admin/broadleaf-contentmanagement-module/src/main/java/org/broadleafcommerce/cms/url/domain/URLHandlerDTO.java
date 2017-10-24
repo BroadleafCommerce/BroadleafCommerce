@@ -41,6 +41,12 @@ public class URLHandlerDTO implements URLHandler {
         setNewURL(newUrl);
     }
 
+    public URLHandlerDTO(Long id, String incomingURL, String newUrl, URLRedirectType redirectType) {
+        this(newUrl, redirectType);
+        setId(id);
+        setIncomingURL(incomingURL);
+    }
+
     public Long getId() {
         return id;
     }

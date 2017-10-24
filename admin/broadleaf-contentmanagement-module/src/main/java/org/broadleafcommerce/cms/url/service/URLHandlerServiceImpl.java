@@ -107,7 +107,10 @@ public class URLHandlerServiceImpl implements URLHandlerService {
                 handler = NULL_URL_HANDLER;
             } else if (!(URLHandlerDTO.class.isAssignableFrom(handler.getClass()))) {
                 //Create a non-entity instance of the DTO to cache.
-                handler = new URLHandlerDTO(handler.getNewURL(), handler.getUrlRedirectType());
+                handler = new URLHandlerDTO(handler.getId(),
+                        handler.getIncomingURL(),
+                        handler.getNewURL(),
+                        handler.getUrlRedirectType());
             }
 
             if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
@@ -133,6 +136,11 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     }
 
     @Override
+    public List<URLHandler> findURLHandlersByDestination(String uri) {
+        return urlHandlerDao.findURLHandlersByDestination(uri);
+    }
+
+    @Override
     public List<URLHandler> findAllRegexURLHandlers() {
         return urlHandlerDao.findAllRegexURLHandlers();
     }
@@ -141,6 +149,12 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     @Transactional("blTransactionManager")
     public URLHandler saveURLHandler(URLHandler handler) {
         return urlHandlerDao.saveURLHandler(handler);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void deleteURLHandler(URLHandler urlHandler) {
+        urlHandlerDao.deleteURLHandler(urlHandler);
     }
 
     protected URLHandler checkForMatches(String requestURI) {
@@ -171,7 +185,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
             if (currentHandler != null) {
                 // We don't want an invalid regex to cause tons of logging                
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Error parsing URL Handler (incoming =" + currentHandler.getIncomingURL() + "), outgoing = ( "
+                    LOG.warn("Error parsing URL Handler incoming = (" + currentHandler.getIncomingURL() + "), outgoing = ("
                             + currentHandler.getNewURL() + "), " + requestURI);
                 }
             }

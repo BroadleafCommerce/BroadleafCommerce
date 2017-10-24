@@ -21,7 +21,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -187,7 +186,19 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 4000,
             group = GroupName.General,
             prominent = true, gridOrder = 2000,
-            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
+            validationConfigurations = {
+                    @ValidationConfiguration(validationImplementation = "blUriPropertyValidator"),
+                    @ValidationConfiguration(
+                            validationImplementation = "blUniqueValueValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(
+                                            itemName = ConfigurationItem.ERROR_MESSAGE,
+                                            itemValue = "This URL is already in use. Please provide a unique URL."
+                                    )
+                            }
+                    )
+            }
+    )
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 

@@ -28,19 +28,27 @@ import java.util.List;
 public interface URLHandlerDao {
 
 
-    public URLHandler findURLHandlerByURI(String uri);
+    URLHandler findURLHandlerByURI(String uri);
 
     /**
      * Gets all the URL handlers configured in the system
      *
      * @return
      */
-    public List<URLHandler> findAllURLHandlers();
+    List<URLHandler> findAllURLHandlers();
 
-    public URLHandler saveURLHandler(URLHandler handler);
+    URLHandler saveURLHandler(URLHandler handler);
 
-    public URLHandler findURLHandlerById(Long id);
+    void deleteURLHandler(URLHandler urlHandler);
 
-    public List<URLHandler> findAllRegexURLHandlers();
+    URLHandler findURLHandlerById(Long id);
 
+    List<URLHandler> findAllRegexURLHandlers();
+
+    /**
+     * Loads URLHandlers from the database with the given URI as a destination
+     * @param uri the URI to search for as a destination
+     * @return list of URLHandlers in DB with <code>uri</code> as destination
+     */
+    List<URLHandler> findURLHandlersByDestination(String uri);
 }
