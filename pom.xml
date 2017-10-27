@@ -49,7 +49,7 @@
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.0.0.RELEASE</spring.version>
+        <spring.version>5.0.1.RELEASE</spring.version>
         <spring.security.version>5.0.0.M5</spring.security.version>
         <spring.boot.version>2.0.0.M5</spring.boot.version>
         <spring.mobile.version>2.0.0.M1</spring.mobile.version>
@@ -65,6 +65,7 @@
         <lombok.version>1.16.18</lombok.version>
         <database.starter.version>1.0.1-GA</database.starter.version>
         <closure.compiler.version>v20180204</closure.compiler.version>
+        <hibernate.version>5.2.12.Final</hibernate.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
@@ -578,20 +579,20 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>5.2.11.Final</version>
+                <version>${hibernate.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.2.11.Final</version>
+                <version>${hibernate.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>5.2.11.Final</version>
+                <version>${hibernate.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -608,7 +609,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-ehcache</artifactId>
-                <version>5.2.11.Final</version>
+                <version>${hibernate.version}</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
