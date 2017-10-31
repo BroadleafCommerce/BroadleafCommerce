@@ -22,10 +22,14 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service("blPromotableItemFactory")
 public class PromotableItemFactoryImpl implements PromotableItemFactory {
+
+    @Value("${use.quantity.only.tier.calculation:false}")
+    protected boolean useQtyOnlyTierCalculation = false;
 
     public PromotableOrder createPromotableOrder(Order order, boolean includeOrderAndItemAdjustments) {
         return new PromotableOrderImpl(order, this, includeOrderAndItemAdjustments);
@@ -69,7 +73,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
 
     @Override
     public PromotableCandidateItemOffer createPromotableCandidateItemOffer(PromotableOrder promotableOrder, Offer offer) {
-        return new PromotableCandidateItemOfferImpl(promotableOrder, offer);
+        return new PromotableCandidateItemOfferImpl(promotableOrder, offer, useQtyOnlyTierCalculation);
     }
     
     @Override
