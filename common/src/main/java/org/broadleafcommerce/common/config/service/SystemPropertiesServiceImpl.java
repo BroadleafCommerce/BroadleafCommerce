@@ -47,6 +47,7 @@ import net.sf.ehcache.Element;
 public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     public static final String PROPERTY_SOURCE_NAME = "systemPropertySource";
+    protected static final String ENV_CACHE_PREFIX = "ORIGIN_FROM_ENV";
 
     /**
      * If the property resoltion comes from the Spring Environment I don't want to try to re-resolve a property from the Environment. This
@@ -155,14 +156,14 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
      * @return
      */
     protected String buildKey(String propertyName) {
-        String key = propertyName;
+        Long siteId = null;
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
             if (brc.getSite() != null) {
-                key = brc.getSite().getId() + "-" + key;
+                siteId = brc.getSite().getId();
             }
         }
-        return key;
+        return buildKey(propertyName, siteId);
     }
 
     /**
@@ -173,10 +174,24 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
      * @return
      */
     protected String buildKey(SystemProperty systemProperty) {
-        String key = systemProperty.getName();
+        String propertyName = systemProperty.getName();
+        Long siteId = null;
         if (systemProperty instanceof SiteDiscriminator && ((SiteDiscriminator) systemProperty).getSiteDiscriminator() != null) {
-            key = ((SiteDiscriminator) systemProperty).getSiteDiscriminator() + "-" + key;
+            siteId = ((SiteDiscriminator) systemProperty).getSiteDiscriminator();
         }
+        return buildKey(propertyName, siteId);
+    }
+
+    protected String buildKey(String propertyName, Long siteId) {
+        String key = propertyName;
+        if (siteId != null) {
+            key = siteId + "-" + key;
+        }
+
+        if (BooleanUtils.isTrue(originatedFromEnvironment.get())) {
+            key = ENV_CACHE_PREFIX + "-" + key;
+        }
+
         return key;
     }
 
