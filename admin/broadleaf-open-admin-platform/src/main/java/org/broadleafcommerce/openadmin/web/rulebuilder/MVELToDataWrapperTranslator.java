@@ -95,8 +95,13 @@ public class MVELToDataWrapperTranslator {
                         dataDTO.setContainedPk(containedId);
                         dataDTO.setQuantity(qty);
                         dataWrapper.getData().add(dataDTO);
+
                         if (group.getSubGroups().size() > 0) {
-                            throw new MVELTranslationException(MVELTranslationException.SUB_GROUP_DETECTED, SUB_GROUP_MESSAGE);
+                            Boolean invalidSubGroupFound = checkForInvalidSubGroup(dataDTO);
+
+                            if (invalidSubGroupFound) {
+                                throw new MVELTranslationException(MVELTranslationException.SUB_GROUP_DETECTED, SUB_GROUP_MESSAGE);
+                            }
                         }
                     }
                 }
@@ -109,6 +114,37 @@ public class MVELToDataWrapperTranslator {
         }
 
         return dataWrapper;
+    }
+
+    protected Boolean checkForInvalidSubGroup(DataDTO dataDTO) {
+        Boolean invalidSubGroupFound = false;
+
+        for (DataDTO rules : dataDTO.getRules()) {
+            ArrayList<DataDTO> subRules = rules.getRules();
+
+            if (subRules != null && subRules.size() == 2) {
+                ExpressionDTO expression1 = (ExpressionDTO) subRules.get(0);
+                ExpressionDTO expression2 = (ExpressionDTO) subRules.get(1);
+
+                Boolean isBetweenDetected = false;
+                Boolean isBetweenInclusiveDetected = false;
+
+                if (expression1.getOperator().equals("GREATER_THAN") && expression2.getOperator().equals("LESS_THAN")) {
+                    isBetweenDetected = true;
+                }
+
+                if (expression1.getOperator().equals("GREATER_OR_EQUAL") && expression2.getOperator().equals("LESS_OR_EQUAL")) {
+                    isBetweenInclusiveDetected = true;
+                }
+
+                if (!isBetweenDetected && !isBetweenInclusiveDetected) {
+                    invalidSubGroupFound = true;
+                }
+            } else {
+                invalidSubGroupFound = true;
+            }
+        }
+        return invalidSubGroupFound;
     }
 
     protected DataDTO createRuleDataDTO(DataDTO parentDTO, Group group, RuleBuilderFieldService fieldService)
