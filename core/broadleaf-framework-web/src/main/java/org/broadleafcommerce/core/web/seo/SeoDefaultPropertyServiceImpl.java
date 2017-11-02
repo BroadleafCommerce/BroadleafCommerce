@@ -20,19 +20,16 @@ package org.broadleafcommerce.core.web.seo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.utils.URIBuilder;
-import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.util.BroadleafUrlParamUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuMediaXref;
-import org.broadleafcommerce.core.search.domain.SearchCriteria;
-import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
@@ -40,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -243,7 +239,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
         if (shouldIncludeProductPagination(pageNumber)) {
             String productPaginationParam = getProductPaginationParam();
 
-            canonicalUrl = addPaginationParamToUrl(canonicalUrl, productPaginationParam, pageNumber);
+            canonicalUrl = BroadleafUrlParamUtils.addPaginationParam(canonicalUrl, productPaginationParam, pageNumber);
         }
 
         return canonicalUrl;
@@ -303,19 +299,13 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
     }
 
     protected boolean isValidNextPageNumber(Category category, Integer pageNumber) {
-        try {
-            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        return pageNumber <= getPageCount(category);
+    }
 
-            SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
-            SearchResult result = searchService.findSearchResults(searchCriteria);
-            Integer totalPages = result.getTotalPages();
+    protected Integer getPageCount(Category category) {
+        int activeCategoryCount = category.getActiveProductXrefs().size();
 
-            return pageNumber <= totalPages;
-        } catch (ServiceException e) {
-            LOG.warn(e.getMessage(), e);
-
-            return false;
-        }
+        return (int) Math.ceil(activeCategoryCount * 1.0 / getPageSize());
     }
 
     protected String getCanonicalUrl(Category category, int pageNumber) {
@@ -324,7 +314,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
         if (shouldIncludeCategoryPagination(pageNumber)) {
             String categoryPaginationParam = getCategoryPaginationParam();
 
-            canonicalUrl = addPaginationParamToUrl(canonicalUrl, categoryPaginationParam, pageNumber);
+            canonicalUrl = BroadleafUrlParamUtils.addPaginationParam(canonicalUrl, categoryPaginationParam, pageNumber);
         }
 
         return canonicalUrl;
@@ -344,17 +334,6 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
         }
     }
 
-    protected String addPaginationParamToUrl(String url, String paginationParamName, Integer pageNumber) {
-        try {
-            if (pageNumber > 1) {
-                return new URIBuilder(url).addParameter(paginationParamName, String.valueOf(pageNumber)).build().toString();
-            }
-        } catch (URISyntaxException e) {
-            // If we run into trouble, do nothing - we'll just return the url we were given.
-        }
-        return url;
-    }
-
     protected boolean productPaginationIsEnabled() {
         return env.getProperty("seo.product.pagination.enabled", boolean.class, false);
     }
@@ -366,4 +345,20 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
     protected String getCategoryPaginationParam() {
         return env.getProperty("seo.category.pagination.param", "page");
     }
+
+    protected int getPageSize() {
+        try {
+            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+            String pageSize = request.getParameter("pageSize");
+
+            if (StringUtils.isBlank(pageSize)) {
+                return env.getProperty("web.defaultPageSize", int.class, 40);
+            }
+
+            return Integer.parseInt(pageSize);
+        } catch (NumberFormatException e) {
+            return 1;
+        }
+    }
+
 }
