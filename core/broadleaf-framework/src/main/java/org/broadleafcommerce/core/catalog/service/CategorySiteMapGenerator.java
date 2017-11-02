@@ -25,11 +25,14 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapImageWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.common.web.util.BroadleafUrlParamUtils;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfiguration;
+import org.broadleafcommerce.core.util.service.BroadleafSitemapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -122,7 +125,19 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
             // lastModDate
             siteMapUrl.setLastModDate(generateDate(category));
 
+            constructImageURLs(siteMapBuilder, siteMapUrl, category);
+
             siteMapBuilder.addUrl(siteMapUrl);
+        }
+    }
+
+    protected void constructImageURLs(SiteMapBuilder siteMapBuilder, SiteMapURLWrapper siteMapUrl, Category category) {
+        for (CategoryMediaXref categoryMediaXref : category.getCategoryMediaXref().values()) {
+            SiteMapImageWrapper siteMapImage = new SiteMapImageWrapper();
+
+            siteMapImage.setLoc(BroadleafSitemapUtils.generateImageUrl(siteMapBuilder, categoryMediaXref.getMedia()));
+
+            siteMapUrl.addImage(siteMapImage);
         }
     }
 
