@@ -61,4 +61,13 @@ public interface SeoDefaultPropertyService {
 
     String getCanonicalUrl(Product product);
 
+    String getPaginationPrevUrl(Product product);
+
+    String getPaginationNextUrl(Product product);
+
+    String getCanonicalUrl(Category category);
+
+    String getPaginationPrevUrl(Category category);
+
+    String getPaginationNextUrl(Category category);
 }

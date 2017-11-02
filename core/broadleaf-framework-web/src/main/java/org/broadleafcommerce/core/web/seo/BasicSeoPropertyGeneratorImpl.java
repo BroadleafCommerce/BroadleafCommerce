@@ -65,6 +65,15 @@ public class BasicSeoPropertyGeneratorImpl extends AbstractSeoPropertyGenerator 
         String defaultDescription = defaultPropertyService.getCategoryDescriptionPattern();
         addDefaultDescription(properties, defaultDescription);
 
+        String canonicalUrl = defaultPropertyService.getCanonicalUrl(category);
+        properties.put("canonicalUrl", canonicalUrl);
+
+        String paginationPrevUrl = defaultPropertyService.getPaginationPrevUrl(category);
+        properties.put("paginationPrevUrl", paginationPrevUrl);
+
+        String paginationNextUrl = defaultPropertyService.getPaginationNextUrl(category);
+        properties.put("paginationNextUrl", paginationNextUrl);
+
         return properties;
     }
 
@@ -80,6 +89,12 @@ public class BasicSeoPropertyGeneratorImpl extends AbstractSeoPropertyGenerator 
 
         String canonicalUrl = defaultPropertyService.getCanonicalUrl(product);
         properties.put("canonicalUrl", canonicalUrl);
+
+        String paginationPrevUrl = defaultPropertyService.getPaginationPrevUrl(product);
+        properties.put("paginationPrevUrl", paginationPrevUrl);
+
+        String paginationNextUrl = defaultPropertyService.getPaginationNextUrl(product);
+        properties.put("paginationNextUrl", paginationNextUrl);
 
         return properties;
     }
