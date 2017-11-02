@@ -129,7 +129,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     protected Integer getPageCountForCategory(Category category) {
         int activeProductCount = category.getActiveProductXrefs().size();
 
-        return (int) Math.ceil(activeProductCount * 1.0 / getDefaultPageSize());
+        return (activeProductCount == 0)? 1 : (int) Math.ceil(activeProductCount * 1.0 / getDefaultPageSize());
     }
 
     protected String generateUrl(SiteMapBuilder siteMapBuilder, Category category, int pageNumber) {
@@ -162,11 +162,11 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     }
 
     protected int getDefaultPageSize() {
-        return env.getProperty("web.defaultPageSize", int.class, 40);
+        return (env == null)? 40 : env.getProperty("web.defaultPageSize", int.class, 40);
     }
 
     protected String getCategoryPaginationParam() {
-        return env.getProperty("seo.category.pagination.param", "page");
+        return (env == null)? "page" : env.getProperty("seo.category.pagination.param", "page");
     }
 
 }
