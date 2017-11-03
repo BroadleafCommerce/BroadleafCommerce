@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigu
 import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigurationImpl;
 import org.easymock.EasyMock;
 import org.junit.Test;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,7 +116,7 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         // Initialize the mocks
         EasyMock.replay(categoryDao);
 
-        CategorySiteMapGenerator csmg = new CategorySiteMapGenerator();
+        CategorySiteMapGenerator csmg = new CategorySiteMapGenerator(new MockEnvironment());
         csmg.setCategoryDao(categoryDao);
         csmg.setRowLimit(5);
 

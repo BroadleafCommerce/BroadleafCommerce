@@ -33,7 +33,6 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfiguration;
 import org.broadleafcommerce.core.util.service.BroadleafSitemapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -53,7 +52,6 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     protected static final Log LOG = LogFactory.getLog(CategorySiteMapGenerator.class);
 
-    @Autowired
     protected Environment env;
 
     @Resource(name = "blCategoryDao")
@@ -61,6 +59,10 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     @Value("${category.site.map.generator.row.limit}")
     protected int rowLimit;
+
+    public CategorySiteMapGenerator(Environment env) {
+        this.env = env;
+    }
 
     @Override
     public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
@@ -177,11 +179,11 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     }
 
     protected int getDefaultPageSize() {
-        return (env == null)? 40 : env.getProperty("web.defaultPageSize", int.class, 40);
+        return env.getProperty("web.defaultPageSize", int.class, 40);
     }
 
     protected String getCategoryPaginationParam() {
-        return (env == null)? "page" : env.getProperty("seo.category.pagination.param", "page");
+        return env.getProperty("seo.category.pagination.param", "page");
     }
 
 }
