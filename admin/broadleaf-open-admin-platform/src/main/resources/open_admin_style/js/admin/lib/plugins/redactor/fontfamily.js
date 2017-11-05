@@ -62,7 +62,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
         	},
         	set: function (value)
         	{
-        		this.inline.format('span', 'syle', 'font-family:' + value + ';');
+        		this.inline.format('span', 'style', 'font-family:' + value + ';');
         	},
         	reset: function()
         	{
