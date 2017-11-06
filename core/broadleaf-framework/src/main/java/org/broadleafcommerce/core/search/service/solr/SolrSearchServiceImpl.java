@@ -222,9 +222,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         
         modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria, defaultSort);
 
-        solrQuery.setShowDebugInfo(true);
-
         if (LOG.isTraceEnabled()) {
+            solrQuery.setShowDebugInfo(true);
+
             try {
                 LOG.trace(URLDecoder.decode(solrQuery.toString(), "UTF-8"));
             } catch (Exception e) {
