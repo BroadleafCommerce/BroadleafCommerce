@@ -405,7 +405,7 @@ public class ListGrid {
     }
     
     public Boolean getHideIdColumn() {
-        return hideIdColumn == null ? false : hideIdColumn;
+        return hideIdColumn == null ? true : hideIdColumn;
     }
 
     /* ************************** */
