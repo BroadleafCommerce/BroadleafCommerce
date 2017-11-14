@@ -81,11 +81,11 @@ public class ConcurrentFileOutputStreamImpl implements ConcurrentFileOutputStrea
     }
 
     protected void replaceExisting(File src, File dest) throws IOException {
-        if (src.exists()) {
-            try {
-                Files.move(src.toPath(), dest.toPath(), ATOMIC_MOVE, REPLACE_EXISTING);
-            } catch (AtomicMoveNotSupportedException e) {
-                synchronized (getFileMoveLock(dest.getAbsoluteFile())) {
+        synchronized (getFileMoveLock(dest)) {
+            if (src.exists()) {
+                try {
+                    Files.move(src.toPath(), dest.toPath(), ATOMIC_MOVE, REPLACE_EXISTING);
+                } catch (AtomicMoveNotSupportedException e) {
                     Files.move(src.toPath(), dest.toPath(), REPLACE_EXISTING);
                 }
             }
