@@ -129,7 +129,7 @@
                     $mediaImageContainer.find('img.thumbnail').data("fullurl", BLC.servletContext + origVal);
                     $mediaImageContainer.find('img.thumbnail').parent().attr("href", BLC.servletContext + origVal);
                     $mediaImageContainer.find('img.thumbnail').removeClass('placeholder-image');
-                    $mediaImageContainer.find('button.clear-asset-selector').show();
+                    $mediaImageContainer.find('button.edit-asset-selector, button.clear-asset-selector').show();
 
                     origVal = '{ "url": "' + origVal + '" }';
                 }

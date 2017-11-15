@@ -48,10 +48,18 @@ public interface ProductOptionValue extends Serializable, MultiTenantCloneable<P
     public void setId(Long id);
 
     /**
-     * Gets the option value.  (e.g. "red")
-     * @param
+     * Gets the option value. (e.g. "red") This method uses dynamic translation for the current locale.
+     * @return
      */
     public String getAttributeValue();
+
+    /**
+     * Gets the option value. (e.g. "red") This method does not use dynamic translation for the current locale.
+     * Instead it returns the raw value.
+     * 
+     * @return
+     */
+    String getRawAttributeValue();
 
     /**
      * Sets the option value.  (e.g. "red")

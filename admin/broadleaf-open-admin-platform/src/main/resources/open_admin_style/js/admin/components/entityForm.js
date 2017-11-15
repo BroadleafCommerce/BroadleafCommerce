@@ -329,7 +329,7 @@ $(document).ready(function() {
      		tabs_action = tabUrl;
      	}
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && !$tab.hasClass('first-tab')) {
+     	if (tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf('/add/') === -1 && !$tab.hasClass('first-tab')) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({
