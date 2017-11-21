@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -41,6 +42,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -432,5 +434,16 @@ public class OrderDaoImpl implements OrderDao {
 
     protected Long getDatabaseOrderLockTimeToLive() {
         return BLCSystemProperty.resolveLongSystemProperty("order.lock.database.time.to.live", -1L);
+    }
+
+    @Override
+    public List<Order> readOrdersByEmail(String email) {
+        if (StringUtils.isEmpty(email)) {
+            return Collections.emptyList();
+        }
+        TypedQuery<Order> query = em.createNamedQuery("BC_READ_ORDERS_BY_EMAIL", Order.class);
+        query.setParameter("email", email);
+        List<Order> orders = query.getResultList();
+        return orders != null ? orders : new ArrayList<Order>();
     }
 }

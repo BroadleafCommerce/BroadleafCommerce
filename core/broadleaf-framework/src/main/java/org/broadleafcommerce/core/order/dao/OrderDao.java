@@ -92,4 +92,5 @@ public interface OrderDao {
      */
     public boolean releaseLock(Order order);
 
+    List<Order> readOrdersByEmail(String email);
 }

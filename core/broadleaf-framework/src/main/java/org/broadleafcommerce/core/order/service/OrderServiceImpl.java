@@ -1147,4 +1147,9 @@ public class OrderServiceImpl implements OrderService {
         }
         return candidateOrder;
     }
+
+    @Override
+    public List<Order> findOrdersByEmail(String email) {
+        return orderDao.readOrdersByEmail(email);
+    }
 }
