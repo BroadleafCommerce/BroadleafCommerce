@@ -15,10 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.linked.data;
+package org.broadleafcommerce.core.web.linkeddata.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -66,9 +65,7 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
             addReviewData(product, productData);
 
             schemaObjects.put(productData);
-            schemaObjects.put(getBreadcrumbList(product, url));
-            schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
-            schemaObjects.put(LinkedDataUtil.getDefaultWebSite(environment, url));
+            schemaObjects.put(getBreadcrumbList());
         }
 
         return schemaObjects;
@@ -155,57 +152,5 @@ public class ProductLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
             productData.put("review", reviews);
         }
-    }
-
-    /**
-     * Gets the category breadcrumbs and appends the product breadcrumb
-     * @param product the product on the page visited
-     * @param url the full URL requested
-     * @return a JSON object representing the breadcrumb list
-     */
-    protected JSONObject getBreadcrumbList(Product product, String url) throws JSONException {
-
-        JSONObject breadcrumbObjects = new JSONObject();
-
-        breadcrumbObjects.put("@context", LinkedDataUtil.DEFAULT_CONTEXT);
-        breadcrumbObjects.put("@type", "BreadcrumbList");
-
-        String homepageUrl = LinkedDataUtil.getHomepageUrl(url);
-        String homepageNoSlash = homepageUrl.substring(0, homepageUrl.length() - 1);
-
-        List<CategoryProductXref> categoryXrefs = product.getAllParentCategoryXrefs();
-
-        JSONArray itemListElement = new JSONArray();
-
-        int index = 1;
-        for (CategoryProductXref categoryXref : categoryXrefs) {
-            JSONObject listItem = new JSONObject();
-            listItem.put("@type", "ListItem");
-            listItem.put("position", index);
-
-            JSONObject item = new JSONObject();
-            item.put("@id", homepageNoSlash + categoryXref.getCategory().getUrl());
-            item.put("name", categoryXref.getCategory().getName());
-
-            listItem.put("item", item);
-            itemListElement.put(listItem);
-            index++;
-        }
-
-        // Add the product last
-        JSONObject listItem = new JSONObject();
-        listItem.put("@type", "ListItem");
-        listItem.put("position", index);
-
-        JSONObject item = new JSONObject();
-        item.put("@id", homepageNoSlash + product.getUrl());
-        item.put("name", product.getName());
-
-        listItem.put("item", item);
-        itemListElement.put(listItem);
-
-        breadcrumbObjects.put("itemListElement", itemListElement);
-
-        return breadcrumbObjects;
     }
 }

@@ -17,6 +17,15 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -27,20 +36,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
 
     private static final Log LOG = LogFactory.getLog(CustomerDaoImpl.class);
-    
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
@@ -51,7 +51,22 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer readCustomerById(Long id) {
         return em.find(CustomerImpl.class, id);
     }
-    
+
+    @Override
+    public Customer readCustomerByExternalId(String id) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
+        Root<CustomerImpl> customer = criteria.from(CustomerImpl.class);
+        criteria.select(customer);
+        criteria.where(builder.equal(customer.get("externalId"), id));
+
+        TypedQuery<Customer> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, false);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Customer");
+        List<Customer> resultList = query.getResultList();
+        return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
+    }
+
     @Override
     public List<Customer> readCustomersByIds(List<Long> ids){
         if (ids == null || ids.size() == 0) {
@@ -107,14 +122,14 @@ public class CustomerDaoImpl implements CustomerDao {
         List<Customer> customers = readCustomersByEmail(emailAddress);
         return CollectionUtils.isEmpty(customers) ? null : customers.get(0);
     }
-    
+
     @Override
     public List<Customer> readCustomersByEmail(String emailAddress) {
         TypedQuery<Customer> query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL", Customer.class);
         query.setParameter("email", emailAddress);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
-        return query.getResultList();        
+        return query.getResultList();
     }
 
     @Override
@@ -150,5 +165,15 @@ public class CustomerDaoImpl implements CustomerDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Customer");
 
         return query.getResultList();
+    }
+
+    @Override
+    public Long readNumberOfCustomers() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(CustomerImpl.class)));
+        TypedQuery<Long> query = em.createQuery(criteria);
+
+        return query.getSingleResult();
     }
 }

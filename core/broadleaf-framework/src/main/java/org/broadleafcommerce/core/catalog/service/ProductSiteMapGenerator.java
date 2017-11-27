@@ -19,13 +19,16 @@ package org.broadleafcommerce.core.catalog.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapImageWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.util.service.BroadleafSitemapUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -80,10 +83,21 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
                 // lastModDate
                 siteMapUrl.setLastModDate(generateDate(product));
 
+                constructImageURLs(siteMapBuilder, siteMapUrl, product);
+
                 siteMapBuilder.addUrl(siteMapUrl);
             }
         } while (products.size() == pageSize);
+    }
 
+    protected void constructImageURLs(SiteMapBuilder siteMapBuilder, SiteMapURLWrapper siteMapUrl, Product product) {
+        for (Media media : product.getMedia().values()) {
+            SiteMapImageWrapper siteMapImage = new SiteMapImageWrapper();
+
+            siteMapImage.setLoc(BroadleafSitemapUtils.generateImageUrl(siteMapBuilder, media));
+
+            siteMapUrl.addImage(siteMapImage);
+        }
     }
 
     protected String generateUri(SiteMapBuilder smb, Product product) {

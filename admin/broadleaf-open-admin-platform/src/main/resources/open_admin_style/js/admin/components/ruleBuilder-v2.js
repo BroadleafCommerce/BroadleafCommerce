@@ -33,6 +33,8 @@
         RULE_WITH_QUANTITY : "rule-builder-with-quantity"
     };
 
+    BLCAdmin.productNameDelimiter = '¬';
+
     /**
      * An Admin page may contain multiple rule builders of various different types.
      * @type {Array}
@@ -495,7 +497,6 @@
                 var valRef = field.values;
                 if (valRef && typeof valRef === 'string' &&
                     valRef.startsWith('[') && valRef.endsWith("]")) {
-                    console.log(valRef);
                     field.values = $.parseJSON(valRef);
                 }
 
@@ -525,6 +526,7 @@
                     placeholder: field.label + " +",
                     create: allowAdd,
                     createOnBlur: allowAdd,
+                    delimiter: BLCAdmin.productNameDelimiter,
                     onInitialize: function () {
                         var $selectize = this;
                         $selectize.sectionKey = sectionKey;
@@ -541,7 +543,7 @@
                         var $selectize = this;
                         var data = $selectize.$input.attr("data-hydrate");
 
-                        var dataHydrate = BLCAdmin.stringToArray(data);
+                        var dataHydrate = BLCAdmin.stringToArray(data, "\",\"");
                         for (var k = 0; k < dataHydrate.length; k++) {
                             var item = dataHydrate[k];
                             if ($selectize.getOption(item).length === 0) {
@@ -607,7 +609,7 @@
                 };
                 field.valueGetter = function(rule) {
                     var value = rule.$el.find('.rule-value-container input.query-builder-selectize-input').val();
-                    value = value.replace(/,/g,'\",\"');
+                    value = value.split(BLCAdmin.productNameDelimiter).join("\",\"");
                     if(value.length <= 0) {
                         return "";
                     }
@@ -929,7 +931,7 @@
             parent.find('select').each(function(i, el) {
                 var el = $(el);
                 if (el.hasClass('form-control')) {
-                    el.removeClass('form-control').blSelectize();
+                    el.removeClass('form-control').blSelectize({delimiter: BLCAdmin.productNameDelimiter});
                 }
             });
 
@@ -1093,7 +1095,7 @@ $(document).ready(function() {
         $modal.find('.modal-body').find('select').each(function(i, el) {
             var el = $(el);
             if (el.hasClass('form-control')) {
-                el.removeClass('form-control').blSelectize();
+                el.removeClass('form-control').blSelectize({delimiter: BLCAdmin.productNameDelimiter});
             }
         });
 
@@ -1176,7 +1178,7 @@ $(document).ready(function() {
         var el = $(e.target);
         if (el.is('select')) {
             if (el.hasClass('form-control')) {
-                el.removeClass('form-control').blSelectize();
+                el.removeClass('form-control').blSelectize({delimiter: BLCAdmin.productNameDelimiter});
             }
         }
     });

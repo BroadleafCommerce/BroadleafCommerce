@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
@@ -34,13 +33,9 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ListIterator;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -50,6 +45,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by bpolster.
@@ -164,7 +164,11 @@ public class PageDaoImpl implements PageDao {
         q.setHint(QueryHints.HINT_CACHEABLE, true);
         q.setHint(QueryHints.HINT_CACHE_REGION, "query.Cms");
 
-        return q.getResultList();
+        try {
+            return q.getResultList();
+        } catch (NoResultException | EntityNotFoundException e) {
+            return Collections.emptyList();
+        }
     }
     
     @Override
@@ -186,11 +190,7 @@ public class PageDaoImpl implements PageDao {
 
         List<Page> pages = getResultForQueryAndCache(criteriaQuery);
         
-        if (CollectionUtils.isEmpty(pages)) {
-            return null;
-        } else {
-            return filterInactive(pages);
-        }
+        return filterInactive(pages);
     }
     
     protected List<Page> filterInactive(final List<Page> pages) {
@@ -229,7 +229,11 @@ public class PageDaoImpl implements PageDao {
         query.setParameter("uri", uri);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
 
-        return query.getResultList();
+        try {
+            return query.getResultList();
+        } catch (NoResultException | EntityNotFoundException e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
@@ -245,7 +249,7 @@ public class PageDaoImpl implements PageDao {
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             return query.getResultList();
         } catch (NoResultException e) {
-            return new ArrayList<Page>();
+            return Collections.emptyList();
         }
     }
 
@@ -279,7 +283,7 @@ public class PageDaoImpl implements PageDao {
             query.setHint(QueryHints.HINT_CACHEABLE, true);
             return query.getResultList();
         } catch (NoResultException e) {
-            return new ArrayList<PageTemplate>();
+            return Collections.emptyList();
         }
     }
 

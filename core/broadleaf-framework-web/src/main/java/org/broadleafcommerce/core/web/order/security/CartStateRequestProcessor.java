@@ -132,6 +132,11 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
             }
         }
 
+        updateCartRequestAttributes(request, cart);
+
+    }
+
+    protected void updateCartRequestAttributes(WebRequest request, Order cart) {
         request.setAttribute(cartRequestAttributeName, cart, WebRequest.SCOPE_REQUEST);
 
         // Setup cart for content rule processing
@@ -142,13 +147,12 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         ruleMap.put("order", cart);
 
-        // Leaving the following line in for backwards compatibility, but all rules should use order as the 
+        // Leaving the following line in for backwards compatibility, but all rules should use order as the
         // variable name.
         ruleMap.put("cart", cart);
         request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap, WebRequest.SCOPE_REQUEST);
-
     }
-    
+
     public Order getOverrideCart(WebRequest request) {
         Long orderId = null;
         if (BLCRequestUtils.isOKtoUseSession(request)) {

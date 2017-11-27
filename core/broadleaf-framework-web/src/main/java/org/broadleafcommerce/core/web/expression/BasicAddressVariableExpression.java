@@ -17,14 +17,18 @@
  */
 package org.broadleafcommerce.core.web.expression;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -39,6 +43,9 @@ public class BasicAddressVariableExpression implements BroadleafVariableExpressi
     @Resource(name = "blStateService")
     protected StateService stateService;
 
+    @Resource(name = "blCountrySubdivisionService")
+    protected CountrySubdivisionService countrySubdivisionService;
+
     @Resource(name = "blCountryService")
     protected CountryService countryService;
 
@@ -47,8 +54,21 @@ public class BasicAddressVariableExpression implements BroadleafVariableExpressi
         return "address";
     }
 
+    @Deprecated
     public List<State> getStateOptions() {
         return stateService.findStates();
+    }
+
+    public List<CountrySubdivision> getCountrySubOptionsByISOCountry(ISOCountry isoCountry) {
+        if (isoCountry == null) {
+            return new ArrayList<>();
+        }
+
+        return getCountrySubOptionsByCountryAbbrev(isoCountry.getAlpha2());
+    }
+
+    public List<CountrySubdivision> getCountrySubOptionsByCountryAbbrev(String countryAbbreviation) {
+        return countrySubdivisionService.findSubdivisions(countryAbbreviation);
     }
 
     public List<Country> getCountryOptions() {

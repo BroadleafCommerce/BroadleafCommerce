@@ -21,6 +21,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.util.ClassUtils;
 
@@ -54,7 +55,7 @@ public abstract class AbstractCacheMissAware {
     private Object nullObject = null;
 
     /**
-     * Build the key representing this missed cache item. Will include sandbox information
+     * Build the key representing this missed cache item. Will include sandbox and/or site information
      * if appropriate.
      *
      * @param params the appropriate params comprising a unique key for this cache item
@@ -69,6 +70,10 @@ public abstract class AbstractCacheMissAware {
         String key = StringUtils.join(params, '_');
         if (sandBox != null) {
             key = sandBox.getId() + "_" + key;
+        }
+        Site site = context.getNonPersistentSite();
+        if (site != null) {
+            key = key + "_" +  site.getId();
         }
         return key;
     }

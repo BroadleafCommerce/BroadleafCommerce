@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.wrapper;
 
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
@@ -23,7 +22,9 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.broadleafcommerce.common.util.FormatUtil;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author bpolster
  */
 @XmlRootElement(name = "url")
-@XmlType(propOrder = { "loc", "lastmod", "changefreq", "priority" })
+@XmlType(propOrder = { "loc", "lastmod", "changefreq", "priority", "siteMapImageWrappers" })
 public class SiteMapURLWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;   
@@ -47,6 +48,21 @@ public class SiteMapURLWrapper implements Serializable {
     protected String changefreq;
 
     protected String priority;
+
+    private List<SiteMapImageWrapper> siteMapImageWrappers = new ArrayList<>();
+
+    public List<SiteMapImageWrapper> getSiteMapImageWrappers() {
+        return siteMapImageWrappers;
+    }
+
+    @XmlElement(name = "image", namespace = "http://www.google.com/schemas/sitemap-image/1.1")
+    public void setSiteMapImageWrappers(List<SiteMapImageWrapper> siteMapImageWrappers) {
+        this.siteMapImageWrappers = siteMapImageWrappers;
+    }
+
+    public void addImage(SiteMapImageWrapper siteMapImage) {
+        getSiteMapImageWrappers().add(siteMapImage);
+    }
 
     public void setLastModDate(Date lastModDate) {
         if (lastModDate != null) {
@@ -103,5 +119,4 @@ public class SiteMapURLWrapper implements Serializable {
     public void setPriority(String priority) {
         this.priority = priority;
     }
-    
 }

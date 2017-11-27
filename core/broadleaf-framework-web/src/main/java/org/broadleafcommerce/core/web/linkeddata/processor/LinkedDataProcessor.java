@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.processor;
+package org.broadleafcommerce.core.web.linkeddata.processor;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -25,8 +25,8 @@ import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.linked.data.LinkedDataDestinationType;
-import org.broadleafcommerce.core.linked.data.LinkedDataService;
+import org.broadleafcommerce.core.web.linkeddata.service.LinkedDataDestinationType;
+import org.broadleafcommerce.core.web.linkeddata.service.LinkedDataService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;

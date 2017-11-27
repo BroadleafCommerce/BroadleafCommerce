@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGeneratorTest;
@@ -26,10 +28,13 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryMediaXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfiguration;
 import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigurationImpl;
 import org.easymock.EasyMock;
 import org.junit.Test;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,9 +54,23 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         Category c1 = new CategoryImpl();
         c1.setUrl("/");
         c1.setId(1l);
+
         Category c2 = new CategoryImpl();
         c2.setUrl("/hot-sauces");
         c2.setId(2l);
+        CategoryMediaXref cmXref1 = new CategoryMediaXrefImpl();
+        Media m1 = new MediaImpl();
+        m1.setUrl("/img/hot-sauce-img1.png");
+        cmXref1.setCategory(c2);
+        cmXref1.setMedia(m1);
+        c2.getCategoryMediaXref().put("image1", cmXref1);
+        CategoryMediaXref cmXref2 = new CategoryMediaXrefImpl();
+        Media m2 = new MediaImpl();
+        m2.setUrl("/img/hot-sauce-img2.png");
+        cmXref2.setCategory(c2);
+        cmXref2.setMedia(m2);
+        c2.getCategoryMediaXref().put("image2", cmXref2);
+
         Category c3 = new CategoryImpl();
         c3.setUrl("merchandise");
         c3.setId(3l);
@@ -97,7 +116,7 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         // Initialize the mocks
         EasyMock.replay(categoryDao);
 
-        CategorySiteMapGenerator csmg = new CategorySiteMapGenerator();
+        CategorySiteMapGenerator csmg = new CategorySiteMapGenerator(new MockEnvironment());
         csmg.setCategoryDao(categoryDao);
         csmg.setRowLimit(5);
 
