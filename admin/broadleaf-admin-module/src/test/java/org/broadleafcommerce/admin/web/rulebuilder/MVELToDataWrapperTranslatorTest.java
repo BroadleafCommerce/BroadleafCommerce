@@ -417,7 +417,6 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
     }
 
     public void testInBetweenRuleOrderLessThenAndGreaterThenAndCurrency() throws MVELTranslationException {
-    public void testBetweenDatesDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
         Property[] p1 = new Property[1];
