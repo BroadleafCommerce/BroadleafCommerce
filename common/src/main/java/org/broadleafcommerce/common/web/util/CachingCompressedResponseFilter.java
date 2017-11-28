@@ -65,13 +65,15 @@ import javax.servlet.http.HttpServletResponse;
  * be set to true to enable this filter.
  * </p>
  * Cached static file compression generally refers to compression requests for static artifacts, such as css, js and similar files. To
- * allow static file caching, the 'filter.compression.allow.static.file.cache' property must be true (default) and the file
+ * allow static file caching, the 'filter.compression.allow.static.file.cache' property must be true and the file
  * must be recognized in the list of extension to mimetype mapping represented in the 'filter.compression.extension.mime.mappings'
  * property. Should a static file fail to be found in the mapping list, the system will fallback to dynamic compression for
  * the artifact. The 'filter.compression.extension.mime.mappings' property is a comma delimited list of request URI matching
  * regular expressions to mime types. For example, the following property setting would limit static compressed file caching
  * to only files that end in the '.css' and '.js' extensions: {@code filter.compression.extension.mime.mappings=.*\\.css:text/css,.*\\.js}.
- * See the javadoc for {@link #compressionExtensionToMimeMappings} for the default values.
+ * See the javadoc for {@link #compressionExtensionToMimeMappings} for the default values. 'filter.compression.allow.static.file.cache'
+ * is false by default, which makes the most sense when a CDN is in place, since the CDN will be the primary source of
+ * asset caching.
  * </p>
  * The directory in which cached static files should be stored is denoted via the 'filter.compression.file.temp.directory'
  * property. By default, this property is set to 'none', which signifies that the standard java temp directory should be used.
@@ -118,6 +120,14 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
     protected Boolean useWhileInDefaultEnvironment = true;
 
     /**
+     * It is likely resource versioning will be disabled in the default, development environment. This setting will tell
+     * the system to not cache static resources in the local filesystem in the default environment to avoid static
+     * asset caching issues where a versioned name change is not involved.
+     */
+    @Value("${filter.compression.cache.default.environment:false}")
+    protected Boolean cacheWhileInDefaultEnvironment = false;
+
+    /**
      * Specify a filesystem directory in which to store compressed static files. 'none' by default, which means use
      * the java temp directory.
      */
@@ -145,9 +155,9 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
     protected String compressionExtensionToMimeMappings;
 
     /**
-     * Whether or not to cache static file compression results. The default value if true (use the cache).
+     * Whether or not to cache static file compression results. The default value is false (don't use the cache).
      */
-    @Value("${filter.compression.allow.static.file.cache:true}")
+    @Value("${filter.compression.allow.static.file.cache:false}")
     protected Boolean allowStaticFileCache;
 
     /**
@@ -156,6 +166,11 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
      */
     @Value("${filter.compression.blacklist.uri.regex:none}")
     protected String blackListURIs;
+
+    @Value("${resource.versioning.enabled:true}")
+    protected Boolean resourceVersioningEnabled;
+
+    protected Boolean isDefaultEnvironment = false;
 
     @Autowired
     protected Environment environment;
@@ -171,15 +186,10 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
 
     @Override
     protected void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if ((
-                ArrayUtils.isNotEmpty(environment.getActiveProfiles()) &&
-                Arrays.binarySearch(environment.getActiveProfiles(), "default") < 0
-        )
-                || useWhileInDefaultEnvironment
-        ) {
+        if (!isDefaultEnvironment || useWhileInDefaultEnvironment) {
             if (useGzipCompression(request, response)) {
                 String mimeType = getMimeType(request);
-                if (mimeType != null && allowStaticFileCache) {
+                if (mimeType != null && shouldUseStaticCache()) {
                     boolean isValid = processStatic(request, response, chain, mimeType);
                     if (!isValid) {
                         processDynamic(request, response, chain);
@@ -213,6 +223,18 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
                 blackListPatterns.add(Pattern.compile(rawPattern));
             }
         }
+        isDefaultEnvironment = !(ArrayUtils.isNotEmpty(environment.getActiveProfiles()) && Arrays.binarySearch(environment.getActiveProfiles(), "default") < 0);
+        if (!resourceVersioningEnabled && shouldUseStaticCache()) {
+            LOG.warn("Static file compression cache is enabled, but resource versioning is not enabled. This can lead " +
+                    "to unversioned resources being cached in the filesystem. If these resources are updated, you will " +
+                    "not see the changes because of the unversioned file cache of the same name. It is recommended to " +
+                    "not use static file compression cache when resource versioning is not enabled. Static file " +
+                    "compression cache can be controlled with the 'filter.compression.allow.static.file.cache' property.");
+        }
+    }
+
+    protected boolean shouldUseStaticCache() {
+        return allowStaticFileCache && !isDefaultEnvironment || (isDefaultEnvironment && cacheWhileInDefaultEnvironment);
     }
 
     protected String getMimeType(HttpServletRequest request) {
