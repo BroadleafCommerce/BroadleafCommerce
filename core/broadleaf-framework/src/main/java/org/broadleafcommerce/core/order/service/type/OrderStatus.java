@@ -38,26 +38,26 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
      * Represents a wishlist. This also usually means that the {@link Order} has its {@link Order#getName()} set although
      * not required
      */
-    public static final OrderStatus NAMED = new OrderStatus("NAMED", "Named");
-    public static final OrderStatus QUOTE = new OrderStatus("QUOTE", "Quote");
+    public static final OrderStatus NAMED = new OrderStatus("NAMED", "Named", true);
+    public static final OrderStatus QUOTE = new OrderStatus("QUOTE", "Quote", true);
     
     /**
      * Represents a cart (non-submitted {@link Order}s)
      */
-    public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS", "In Process");
+    public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS", "In Process", true);
     
     /**
      * Used to represent a completed {@link Order}. Note that this also means that the {@link Order}
      * should have its {@link Order#getOrderNumber} set
      */
-    public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted");
-    public static final OrderStatus CANCELLED = new OrderStatus("CANCELLED", "Cancelled");
-    public static final OrderStatus ARCHIVED = new OrderStatus("ARCHIVED", "Archived");
+    public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted", false);
+    public static final OrderStatus CANCELLED = new OrderStatus("CANCELLED", "Cancelled", false);
+    public static final OrderStatus ARCHIVED = new OrderStatus("ARCHIVED", "Archived", false);
     
     /**
      * Used when a CSR has locked a cart to act on behalf of a customer
      */
-    public static final OrderStatus CSR_OWNED = new OrderStatus("CSR_OWNED", "Owned by CSR");
+    public static final OrderStatus CSR_OWNED = new OrderStatus("CSR_OWNED", "Owned by CSR", true);
 
 
     public static OrderStatus getInstance(final String type) {
@@ -66,14 +66,22 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
 
     private String type;
     private String friendlyType;
+    private boolean editable;
 
     public OrderStatus() {
         //do nothing
     }
 
-    public OrderStatus(final String type, final String friendlyType) {
+    public OrderStatus(String type, String friendlyType) {
+        this.friendlyType = friendlyType;
+        this.setType(type);
+        this.editable = false;
+    }
+
+    public OrderStatus(final String type, final String friendlyType, boolean editable) {
         this.friendlyType = friendlyType;
         setType(type);
+        this.editable = editable;
     }
 
     @Override
@@ -91,6 +99,10 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 
     @Override

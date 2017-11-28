@@ -71,6 +71,10 @@ public class PaymentInfoForm implements Serializable {
         this.customerPaymentId = customerPaymentId;
     }
 
+    public boolean hasCustomerPaymentId() {
+        return customerPaymentId != null;
+    }
+
     public boolean getShouldSaveNewPayment() {
         return shouldSaveNewPayment;
     }

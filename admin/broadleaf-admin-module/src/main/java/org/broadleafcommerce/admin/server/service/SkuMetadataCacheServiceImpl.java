@@ -20,6 +20,7 @@ package org.broadleafcommerce.admin.server.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,7 +87,7 @@ public class SkuMetadataCacheServiceImpl implements SkuMetadataCacheService {
 
     @Override
     public void invalidateFromCache(String cacheKey) {
-        LOG.debug("Invalidating Sku metadata cache for: " + cacheKey);
+        LOG.debug("Invalidating Sku metadata cache for: " + StringUtil.sanitize(cacheKey));
         METADATA_CACHE.remove(cacheKey);
     }
     

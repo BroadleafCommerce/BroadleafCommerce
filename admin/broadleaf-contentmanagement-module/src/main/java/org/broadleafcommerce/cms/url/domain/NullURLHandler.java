@@ -17,14 +17,23 @@
  */
 package org.broadleafcommerce.cms.url.domain;
 
+import org.broadleafcommerce.cms.url.type.URLRedirectType;
+
 /**
  * A Null instance of a URLHandler.   Used by the default URLHandlerServiceImpl implementation to
  * cache misses (e.g. urls  that are not being handled by forwards and redirects.
  *
  * @author bpolster
  */
-public class NullURLHandler extends URLHandlerImpl {
+public class NullURLHandler extends URLHandlerDTO {
 
     private static final long serialVersionUID = 1L;
 
+    public NullURLHandler() {
+        this(null, null);
+    }
+    
+    public NullURLHandler(String newUrl, URLRedirectType redirectType) {
+        super(newUrl, redirectType);
+    }
 }

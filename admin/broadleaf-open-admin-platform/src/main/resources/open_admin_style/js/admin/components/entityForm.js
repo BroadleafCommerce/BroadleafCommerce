@@ -18,7 +18,7 @@
 
 (function($, BLCAdmin) {
 
-    var excludedEFSectionTabSelectors = [];
+    var excludedEFSectionTabSelectors = ['.workflow-tab', '.system-property-tab', '.upload-tab'];
 
     var originalStickyBarOffset;
     var originalStickyBarHeight;
@@ -59,11 +59,7 @@
         },
 
         getExcludedEFSectionTabSelectorString : function() {
-            var excludedSelectors = '';
-            for (var i=0;i<excludedEFSectionTabSelectors.length;i++){
-                excludedSelectors += ', ' + excludedEFSectionTabSelectors[i];
-            }
-            return excludedSelectors;
+            return excludedEFSectionTabSelectors.join(", ");
         },
 
         /**
@@ -309,8 +305,7 @@ $(document).ready(function() {
     });
     
     var tabs_action=null;
-    var sectionTabsSelector = 'div.section-tabs li ' +
-        'a:not(.workflow-tab, .system-property-tab ' + BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + ')';
+    var sectionTabsSelector = 'div.section-tabs li a:not(' + BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + ')';
 
     $(document).on('click', sectionTabsSelector, function (event) {
         var $tab = $(this);
@@ -329,7 +324,7 @@ $(document).ready(function() {
      		tabs_action = tabUrl;
      	}
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && !$tab.hasClass('first-tab')) {
+     	if (tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf('/add/') === -1 && !$tab.hasClass('first-tab')) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({

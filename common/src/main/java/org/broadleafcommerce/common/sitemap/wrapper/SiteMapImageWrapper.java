@@ -1,0 +1,44 @@
+/*
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+package org.broadleafcommerce.common.sitemap.wrapper;
+
+import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ * @author Chris Kittrell (ckittrell)
+ */
+@XmlRootElement(name = "image", namespace = "http://www.google.com/schemas/sitemap-image/1.1")
+public class SiteMapImageWrapper implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    protected String loc;
+
+    public String getLoc() {
+        return loc;
+    }
+
+    @XmlElement(name = "loc", namespace = "http://www.google.com/schemas/sitemap-image/1.1")
+    public void setLoc(String loc) {
+        this.loc = loc;
+    }
+    
+}

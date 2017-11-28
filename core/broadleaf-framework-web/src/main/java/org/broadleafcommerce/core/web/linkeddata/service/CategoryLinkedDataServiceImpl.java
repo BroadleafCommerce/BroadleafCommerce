@@ -15,52 +15,50 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.linked.data;
+package org.broadleafcommerce.core.web.linkeddata.service;
 
-import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbService;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * This service generates metadata for pages that are not specialized. It includes the organization, website, and
- * breadcrumb list.
+ * This service generates metadata unique to the category pages. It will list all the products in a category for SEO.
  *
  * @author Jacob Mitash
  */
-@Service(value = "blDefaultLinkedDataServiceImpl")
-public class DefaultLinkedDataServiceImpl implements LinkedDataService {
-
-    @Autowired
-    protected Environment environment;
-
-    @Autowired
-    protected BreadcrumbService breadcrumbService;
+@Service(value = "blCategoryLinkedDataServiceImpl")
+public class CategoryLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
 
     @Override
     public Boolean canHandle(LinkedDataDestinationType destination) {
-        return LinkedDataDestinationType.DEFAULT.equals(destination);
-    }
-
-    protected JSONArray getLinkedDataJson(String url, List<Product> products) throws JSONException {
-        JSONArray schemaObjects = new JSONArray();
-
-        schemaObjects.put(LinkedDataUtil.getDefaultOrganization(environment, url));
-        schemaObjects.put(LinkedDataUtil.getDefaultWebSite(environment, url));
-        if(breadcrumbService != null) {
-            schemaObjects.put(LinkedDataUtil.getDefaultBreadcrumbList(breadcrumbService, url));
-        }
-
-        return schemaObjects;
+        return LinkedDataDestinationType.CATEGORY.equals(destination);
     }
 
     @Override
-    public String getLinkedData(String url, List<Product> products) throws JSONException {
-        return getLinkedDataJson(url, products).toString();
+    protected JSONArray getLinkedDataJson(String url, List<Product> products) throws JSONException {
+        JSONArray schemaObjects = super.getLinkedDataJson(url, products);
+
+        JSONObject categoryData = new JSONObject();
+        categoryData.put("@context", "http://schema.org");
+        categoryData.put("@type", "ItemList");
+        JSONArray itemList = new JSONArray();
+        for(int i = 0; i < products.size(); i++) {
+            JSONObject item = new JSONObject();
+            item.put("@type", "ListItem");
+            item.put("position", i + 1);
+            item.put("url", products.get(i).getUrl());
+            itemList.put(item);
+        }
+        categoryData.put("itemListElement", itemList);
+
+        schemaObjects.put(categoryData);
+        schemaObjects.put(getBreadcrumbList());
+
+        return schemaObjects;
+
     }
 }

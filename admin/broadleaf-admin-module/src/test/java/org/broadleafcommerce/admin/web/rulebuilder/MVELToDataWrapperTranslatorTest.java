@@ -416,6 +416,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    public void testInBetweenRuleOrderLessThenAndGreaterThenAndCurrency() throws MVELTranslationException {
     public void testBetweenDatesDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -531,7 +532,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(exp.getValue().equals("[45,75]"));
     }
 
-    public void testInBetweenRuleCurrentlyDoesNotWork() throws MVELTranslationException {
+    public void testInBetweenRuleOrderGreaterThenAndLessThenAndCurrency() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
         Property[] properties = new Property[3];

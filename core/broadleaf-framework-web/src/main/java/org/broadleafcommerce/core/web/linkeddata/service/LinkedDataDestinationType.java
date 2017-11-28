@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.linked.data;
+package org.broadleafcommerce.core.web.linkeddata.service;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 

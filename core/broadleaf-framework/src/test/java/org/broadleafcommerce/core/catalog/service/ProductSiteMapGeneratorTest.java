@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
@@ -47,12 +49,20 @@ public class ProductSiteMapGeneratorTest extends SiteMapGeneratorTest {
 
         Product p1 = new ProductImpl();
         p1.setUrl("/hot-sauces/sudden_death_sauce");
+        Sku s1 = new SkuImpl();
+        p1.setDefaultSku(s1);
         Product p2 = new ProductImpl();
         p2.setUrl("hot-sauces/sweet_death_sauce");
+        Sku s2 = new SkuImpl();
+        p2.setDefaultSku(s2);
         Product p3 = new ProductImpl();
         p3.setUrl("/hot-sauces/hoppin_hot_sauce");
+        Sku s3 = new SkuImpl();
+        p3.setDefaultSku(s3);
         Product p4 = new ProductImpl();
         p4.setUrl("/hot-sauces/day_of_the_dead_chipotle_hot_sauce");
+        Sku s4 = new SkuImpl();
+        p4.setDefaultSku(s4);
 
         List<Product> products = new ArrayList<Product>();
         products.add(p1);
