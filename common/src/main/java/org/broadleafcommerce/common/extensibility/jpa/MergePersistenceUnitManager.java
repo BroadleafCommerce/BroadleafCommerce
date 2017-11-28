@@ -192,14 +192,14 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             for (BroadleafClassTransformer transformer : classTransformers) {
                 try {
                     boolean isTransformerQualified = !(transformer instanceof NullClassTransformer) &&
-                            (
-                                pui.getPersistenceUnitName().equals("blPU") &&
-                                !(transformer instanceof BroadleafPersistenceUnitDeclaringClassTransformer)
-                            ) ||
-                            (
-                                (transformer instanceof BroadleafPersistenceUnitDeclaringClassTransformer) &&
-                                pui.getPersistenceUnitName().equals(((BroadleafPersistenceUnitDeclaringClassTransformer) transformer).getPersistenceUnitName())
-                            );
+                        (
+                            pui.getPersistenceUnitName().equals("blPU") &&
+                            !(transformer instanceof BroadleafPersistenceUnitDeclaringClassTransformer)
+                        ) ||
+                        (
+                            (transformer instanceof BroadleafPersistenceUnitDeclaringClassTransformer) &&
+                            pui.getPersistenceUnitName().equals(((BroadleafPersistenceUnitDeclaringClassTransformer) transformer).getPersistenceUnitName())
+                        );
                     if (isTransformerQualified) {
                         pui.addTransformer(transformer);
                     }
