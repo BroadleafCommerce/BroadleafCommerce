@@ -72,6 +72,12 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
         //do nothing
     }
 
+    public OrderStatus(String type, String friendlyType) {
+        this.friendlyType = friendlyType;
+        this.setType(type);
+        this.editable = false;
+    }
+
     public OrderStatus(final String type, final String friendlyType, boolean editable) {
         this.friendlyType = friendlyType;
         setType(type);
