@@ -27,6 +27,12 @@
         ORDER BY category.id</query>
     </named-query>
 
+    <named-query name="BC_READ_CATEGORIES_BY_CATALOG">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
+            WHERE category.embeddableCatalogTenantDiscriminator.catalogDiscriminator = :catalogId
+            ORDER BY category.id</query>
+    </named-query>
+
     <named-query name="BC_READ_CATEGORY_BY_NAME">
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
         WHERE category.name = :categoryName 

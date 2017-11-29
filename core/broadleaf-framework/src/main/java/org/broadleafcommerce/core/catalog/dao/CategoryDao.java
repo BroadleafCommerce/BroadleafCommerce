@@ -115,6 +115,19 @@ public interface CategoryDao {
     public List<Category> readAllCategories(@Nonnull int limit, @Nonnull int offset);
 
     /**
+     * Retrieve a list of {@code Category} instances by catalog_disc.
+     *
+     * @param catalogId the catalog_disc to search by
+     * @return the Category instances having the specified catalog_disc
+     */
+
+    @Nonnull
+    public List<Category> readCategoriesByCatalog(Long catalogId);
+
+    @Nonnull
+    public List<Category> readCategoriesByCatalog(Long catalogId, int limit, int offset);
+
+    /**
      * Retrieve all products in the datastore
      *
      * @return a list of all {@code Category} instances in the datastore, regardless of their category association
@@ -124,6 +137,16 @@ public interface CategoryDao {
 
     @Nonnull
     public List<Product> readAllProducts(@Nonnull int limit, @Nonnull int offset);
+
+    /**
+     * Retrieve a list of {@code Product} instances by catalog_disc.
+     *
+     * @param catalogId the catalog_disc to search by
+     * @return the Product instances having the specified catalog_disc
+     */
+    public List<Product> readProductsByCatalog(Long catalogId);
+
+    public List<Product> readProductsByCatalog(Long catalogId, int limit, int offset);
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance

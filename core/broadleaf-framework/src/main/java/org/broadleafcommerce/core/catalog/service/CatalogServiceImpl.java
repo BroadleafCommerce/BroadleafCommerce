@@ -202,6 +202,16 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public List<Category> findCategoriesByCatalog(Long catalogId) {
+        return categoryDao.readCategoriesByCatalog(catalogId);
+    }
+
+    @Override
+    public List<Category> findCategoriesByCatalog(Long catalogId, int limit, int offset) {
+        return categoryDao.readCategoriesByCatalog(catalogId, limit, offset);
+    }
+
+    @Override
     public List<Category> findAllSubCategories(Category category) {
         return categoryDao.readAllSubCategories(category);
     }
@@ -229,6 +239,16 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public List<Product> findAllProducts(int limit, int offset) {
         return categoryDao.readAllProducts(limit, offset);
+    }
+
+    @Override
+    public List<Product> findProductsByCatalog(Long catalogId) {
+        return categoryDao.readProductsByCatalog(catalogId);
+    }
+
+    @Override
+    public List<Product> findProductsByCatalog(Long catalogId, int limit, int offset) {
+        return categoryDao.readProductsByCatalog(catalogId, limit, offset);
     }
 
     @Override
