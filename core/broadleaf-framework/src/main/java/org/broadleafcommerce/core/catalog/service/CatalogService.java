@@ -174,7 +174,6 @@ public interface CatalogService {
 
     public List<Category> findAllCategories(int limit, int offset);
 
-
     public List<Product> findAllProducts();
 
     public List<Product> findAllProducts(int limit, int offset);

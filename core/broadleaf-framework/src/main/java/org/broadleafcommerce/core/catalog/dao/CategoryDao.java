@@ -114,7 +114,6 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readAllCategories(@Nonnull int limit, @Nonnull int offset);
 
-
     /**
      * Retrieve all products in the datastore
      *
@@ -125,7 +124,6 @@ public interface CategoryDao {
 
     @Nonnull
     public List<Product> readAllProducts(@Nonnull int limit, @Nonnull int offset);
-
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance

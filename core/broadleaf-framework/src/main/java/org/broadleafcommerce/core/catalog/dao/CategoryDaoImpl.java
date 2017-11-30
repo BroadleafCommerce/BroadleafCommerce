@@ -175,7 +175,6 @@ public class CategoryDaoImpl implements CategoryDao {
         return query.getResultList();
     }
 
-
     @Override
     public List<Product> readAllProducts() {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ALL_PRODUCTS", Product.class);
