@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,6 +96,23 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
             }
         }
 
+        // Spring security expects everything to begin with ROLE_ for things like hasRole() expressions so this adds additional
+        // authorities with those mappings, as well as new ones with ROLE_ instead of PERMISSION_.
+        // At the end of this, given a permission set like:
+        // PERMISSION_ALL_PRODUCT
+        // The following authorities will appear in the final list to Spring security:
+        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
+        ListIterator<SimpleGrantedAuthority> it = new ArrayList<>(newAuthorities).listIterator();
+        while (it.hasNext()) {
+            SimpleGrantedAuthority auth = it.next();
+            if (auth.getAuthority().startsWith(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX)) {
+                it.add(new SimpleGrantedAuthority(AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()));
+                it.add(new SimpleGrantedAuthority(auth.getAuthority().replaceAll(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX, 
+                        AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
+            }
+        }
+        
+        
         AdminUser adminUser = securityService.readAdminUserByUserName(details.getUsername());
         if (adminUser == null) {
             adminUser = new AdminUserImpl();
