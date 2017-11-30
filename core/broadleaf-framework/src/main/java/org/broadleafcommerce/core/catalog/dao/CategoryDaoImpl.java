@@ -175,21 +175,6 @@ public class CategoryDaoImpl implements CategoryDao {
         return query.getResultList();
     }
 
-    @Override
-    public List<Category> readCategoriesByCatalog(Long catalogId) {
-        TypedQuery<Category> query = em.createNamedQuery("BC_READ_CATEGORIES_BY_CATALOG", Category.class);
-        query.setParameter("catalogId", catalogId);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Category> readCategoriesByCatalog(Long catalogId, int limit, int offset) {
-        TypedQuery<Category> query = em.createNamedQuery("BC_READ_CATEGORIES_BY_CATALOG", Category.class);
-        query.setParameter("catalogId", catalogId);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        return query.getResultList();
-    }
 
     @Override
     public List<Product> readAllProducts() {
@@ -205,22 +190,6 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Product> readProductsByCatalog(Long catalogId) {
-        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATALOG", Product.class);
-        query.setParameter("catalogId", catalogId);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Product> readProductsByCatalog(Long catalogId, int limit, int offset) {
-        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATALOG", Product.class);
-        query.setParameter("catalogId", catalogId);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
         return query.getResultList();
     }
 

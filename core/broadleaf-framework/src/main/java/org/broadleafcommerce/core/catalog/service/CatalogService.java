@@ -174,46 +174,10 @@ public interface CatalogService {
 
     public List<Category> findAllCategories(int limit, int offset);
 
-    /**
-     * Retrieve a list of {@code Category} instance based on the catalog_disc
-     * property.
-     *
-     * @param catalogId the category catalog_disc to search by
-     * @return the list of matching Category instances
-     */
-    public List<Category> findCategoriesByCatalog(Long catalogId);
-
-    /**
-     * Retrieve a list of {@code Category} instance based on the catalog_disc
-     * property.
-     * @param catalogId the category catalog_disc to search by
-     * @param limit the maximum number of results to return
-     * @param offset the starting point of the records to return
-     * @return the list of matching Category instances
-     */
-    public List<Category> findCategoriesByCatalog(Long catalogId, int limit, int offset);
 
     public List<Product> findAllProducts();
 
     public List<Product> findAllProducts(int limit, int offset);
-
-    /**
-     * Retrieve a list of {@code Product} instance based on the catalog_disc
-     * property.
-     * @param catalogId the category catalog_disc to search by
-     * @return the list of matching Category instances
-     */
-    public List<Product> findProductsByCatalog(Long catalogId);
-
-    /**
-     * Retrieve a list of {@code Product} instance based on the catalog_disc
-     * property.
-     * @param catalogId the category catalog_disc to search by
-     * @param limit the maximum number of results to return
-     * @param offset the starting point of the records to return
-     * @return the list of matching Category instances
-     */
-    public List<Product> findProductsByCatalog(Long catalogId, int limit, int offset);
 
     public List<Product> findProductsForCategory(Category category);
 
