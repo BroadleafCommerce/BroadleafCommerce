@@ -237,6 +237,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public List<Sku> findAllSkus(int offset, int limit) {
+        return skuDao.readAllSkus(offset, limit);
+    }
+
+    @Override
     public Sku findSkuById(Long skuId) {
         return skuDao.readSkuById(skuId);
     }

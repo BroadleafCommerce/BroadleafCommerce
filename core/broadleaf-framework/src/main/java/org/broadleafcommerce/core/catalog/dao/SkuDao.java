@@ -35,14 +35,14 @@ public interface SkuDao {
      * @param skuId the primary key of the sku
      * @return the sku at the primary key
      */
-    public Sku readSkuById(Long skuId);
+    Sku readSkuById(Long skuId);
 
     /**
      * Queries for a {@code Sku} instance by its Universal Product Code (UPC).
      * @param upc
      * @return
      */
-    public Sku readSkuByUpc(String upc);
+    Sku readSkuByUpc(String upc);
 
     /**
      * Retrieve a {@link Sku} instance by its external id
@@ -50,7 +50,7 @@ public interface SkuDao {
      * @param externalId the external id of the sku
      * @return the sku with this external id
      */
-    public Sku readSkuByExternalId(String externalId);
+    Sku readSkuByExternalId(String externalId);
 
     /**
      * Persist a {@code Sku} instance to the datastore
@@ -58,9 +58,9 @@ public interface SkuDao {
      * @param sku the sku to persist
      * @return the saved state of the passed in sku
      */
-    public Sku save(Sku sku);
+    Sku save(Sku sku);
     
-    public SkuFee saveSkuFee(SkuFee fee);
+    SkuFee saveSkuFee(SkuFee fee);
 
     /**
      * Retrieve the {@code Sku} instance whose primary key is the smallest
@@ -68,14 +68,23 @@ public interface SkuDao {
      *
      * @return the sku with the smallest primary key
      */
-    public Sku readFirstSku();
+    Sku readFirstSku();
 
     /**
      * Retrieve all {@code Sku} instances from the datastore
      *
      * @return the list of all skus
      */
-    public List<Sku> readAllSkus();
+    List<Sku> readAllSkus();
+
+    /**
+     * Retrieve all {@code Sku} instances from the datastore
+     *
+     * @param offset the starting offset of the query
+     * @param limit the maximum number of Skus to gather
+     * @return the list of all skus in the given range
+     */
+    List<Sku> readAllSkus(int offset, int limit);
 
     /**
      * Find all the {@code Sku} instances whose primary key matches
@@ -84,14 +93,14 @@ public interface SkuDao {
      * @param ids the list of primary key values
      * @return the list of skus that match the list of primary key values
      */
-    public List<Sku> readSkusByIds(List<Long> ids);
+    List<Sku> readSkusByIds(List<Long> ids);
 
     /**
      * Remove the {@code Sku} instance from the datastore
      *
      * @param sku the sku to remove
      */
-    public void delete(Sku sku);    
+    void delete(Sku sku);    
 
     /**
      * Create a new {@code Sku} instance. The system will use the configuration in
@@ -114,14 +123,14 @@ public interface SkuDao {
      *
      * @return a {@code Sku} instance based on the Broadleaf entity configuration.
      */
-    public Sku create();
+    Sku create();
     
     /**
      * Returns the number of Skus that are currently active.
      * 
      * @return the number of currently active Skus
      */
-    public Long readCountAllActiveSkus();
+    Long readCountAllActiveSkus();
 
     /**
      * Reads all Skus from the database that are currently active. This method utilizes database paging.
@@ -133,7 +142,7 @@ public interface SkuDao {
      * @param pageSize - the number of results per page
      * @return a list of active Skus for the given page
      */
-    public List<Sku> readAllActiveSkus(int page, int pageSize);
+    List<Sku> readAllActiveSkus(int page, int pageSize);
 
     /**
      * Reads all skus from the database that are currently active. This method utilizes efficient
@@ -155,7 +164,7 @@ public interface SkuDao {
      *
      * @return the milliseconds to cache the current date/time
      */
-    public Long getCurrentDateResolution();
+    Long getCurrentDateResolution();
 
     /**
      * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
@@ -164,7 +173,7 @@ public interface SkuDao {
      *
      * @param currentDateResolution the milliseconds to cache the current date/time
      */
-    public void setCurrentDateResolution(Long currentDateResolution);
+    void setCurrentDateResolution(Long currentDateResolution);
 
     /**
      * Look up a sku that matches the given URI
@@ -173,6 +182,6 @@ public interface SkuDao {
      * @return List of skus that match the passed in URI.
      * 
      */
-    public List<Sku> findSkuByURI(String key);
+    List<Sku> findSkuByURI(String uri);
     
 }
