@@ -28,4 +28,5 @@ public interface PostUpdateOrderExtensionHandler extends ExtensionHandler {
     ExtensionResultStatusType postUpdate(long orderId);
     ExtensionResultStatusType postUpdate(Order order);
     ExtensionResultStatusType postUpdateAll(List<Order> orders);
+    ExtensionResultStatusType postUpdateAllByIds(List<Long> orderIds);
 }

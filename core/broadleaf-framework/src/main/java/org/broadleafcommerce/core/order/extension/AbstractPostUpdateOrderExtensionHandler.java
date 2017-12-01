@@ -42,4 +42,9 @@ public abstract class AbstractPostUpdateOrderExtensionHandler
     public ExtensionResultStatusType postUpdateAll(List<Order> orders) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public ExtensionResultStatusType postUpdateAllByIds(List<Long> orderIds) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }
