@@ -17,6 +17,14 @@
  */
 package org.broadleafcommerce.cms.file.dao;
 
+import org.broadleafcommerce.cms.file.domain.StaticAsset;
+import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +38,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Created by bpolster.
@@ -102,6 +101,17 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         } catch (NoResultException e) {
             return new ArrayList<StaticAsset>();
         }
+    }
+
+    @Override
+    public Long readTotalStaticAssetCount() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(StaticAssetImpl.class)));
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getSingleResult();
     }
 
     @Override

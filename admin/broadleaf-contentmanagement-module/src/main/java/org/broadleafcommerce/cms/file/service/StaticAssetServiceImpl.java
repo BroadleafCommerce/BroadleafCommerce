@@ -96,6 +96,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return staticAssetDao.readAllStaticAssets();
     }
 
+    @Override
+    public Long findTotalStaticAssetCount() {
+        return staticAssetDao.readTotalStaticAssetCount();
+    }
+
     static {
         MimeUtil.registerMimeDetector(ExtensionMimeDetector.class.getName());
         MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());

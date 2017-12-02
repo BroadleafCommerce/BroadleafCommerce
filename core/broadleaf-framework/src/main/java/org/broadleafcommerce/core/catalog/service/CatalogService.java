@@ -219,7 +219,9 @@ public interface CatalogService {
     Sku createSku();
     
     Product createProduct(ProductType productType);
-    
+
+    Long findTotalCategoryCount();
+
     List<Category> findAllSubCategories(Category category);
 
     List<Category> findAllSubCategories(Category category, int limit, int offset);

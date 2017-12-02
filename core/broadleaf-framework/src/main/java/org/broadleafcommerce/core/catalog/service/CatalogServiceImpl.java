@@ -202,6 +202,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Long findTotalCategoryCount() {
+        return categoryDao.readTotalCategoryCount();
+    }
+
+    @Override
     public List<Category> findAllSubCategories(Category category) {
         return categoryDao.readAllSubCategories(category);
     }
