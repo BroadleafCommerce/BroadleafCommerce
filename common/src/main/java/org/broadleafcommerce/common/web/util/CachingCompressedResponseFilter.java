@@ -91,7 +91,7 @@ import javax.servlet.http.HttpServletResponse;
  * </p>
  * Certain request URI can be blacklisted for compression altogether via the 'filter.compression.blacklist.uri.regex'
  * property. This is a comma delimited list of regular expression that, when matched against a request URI, will cause
- * that URI to not be compressed. The default value for this property is 'none'.
+ * that URI to not be compressed.
  *
  * @author Jeff Fischer
  */
