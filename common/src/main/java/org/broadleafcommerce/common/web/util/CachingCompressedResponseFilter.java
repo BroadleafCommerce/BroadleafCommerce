@@ -162,15 +162,17 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
 
     /**
      * A comma delimited list of URI matching regular expressions for requests that should be ignored for any compression.
-     * The default value is 'none'.
+     * The default value is '.*\\.jpg,.*\\.jpeg,.*\\.gif'.
      */
-    @Value("${filter.compression.blacklist.uri.regex:none}")
+    @Value("${filter.compression.blacklist.uri.regex:.*\\.jpg,.*\\.jpeg,.*\\.gif}")
     protected String blackListURIs;
 
     @Value("${resource.versioning.enabled:true}")
     protected Boolean resourceVersioningEnabled;
 
     protected Boolean isDefaultEnvironment = false;
+
+    protected Boolean initialized = false;
 
     @Autowired
     protected Environment environment;
@@ -212,24 +214,28 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
 
     @Override
     protected void initFilterBean() throws ServletException {
-        String[] pairs = compressionExtensionToMimeMappings.split(",");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split(":");
-            extensionToMime.put(Pattern.compile(keyValue[0]), keyValue[1]);
-        }
-        if (!"none".equals(blackListURIs)) {
-            String[] rawPatterns = blackListURIs.split(",");
-            for (String rawPattern : rawPatterns) {
-                blackListPatterns.add(Pattern.compile(rawPattern));
+        if (!initialized) {
+            String[] pairs = compressionExtensionToMimeMappings.split(",");
+            for (String pair : pairs) {
+                String[] keyValue = pair.split(":");
+                extensionToMime.put(Pattern.compile(keyValue[0]), keyValue[1]);
             }
-        }
-        isDefaultEnvironment = !(ArrayUtils.isNotEmpty(environment.getActiveProfiles()) && Arrays.binarySearch(environment.getActiveProfiles(), "default") < 0);
-        if (!resourceVersioningEnabled && shouldUseStaticCache()) {
-            LOG.warn("Static file compression cache is enabled, but resource versioning is not enabled. This can lead " +
-                    "to unversioned resources being cached in the filesystem. If these resources are updated, you will " +
-                    "not see the changes because of the unversioned file cache of the same name. It is recommended to " +
-                    "not use static file compression cache when resource versioning is not enabled. Static file " +
-                    "compression cache can be controlled with the 'filter.compression.allow.static.file.cache' property.");
+            if (!"none".equals(blackListURIs)) {
+                String[] rawPatterns = blackListURIs.split(",");
+                for (String rawPattern : rawPatterns) {
+                    blackListPatterns.add(Pattern.compile(rawPattern));
+                }
+            }
+            isDefaultEnvironment = !(ArrayUtils.isNotEmpty(environment.getActiveProfiles()) && Arrays.binarySearch(environment.getActiveProfiles(), "default") < 0);
+
+            if (!resourceVersioningEnabled && shouldUseStaticCache()) {
+                LOG.warn("Static file compression cache is enabled, but resource versioning is not enabled. This can lead " +
+                        "to unversioned resources being cached in the filesystem. If these resources are updated, you will " +
+                        "not see the changes because of the unversioned file cache of the same name. It is recommended to " +
+                        "not use static file compression cache when resource versioning is not enabled. Static file " +
+                        "compression cache can be controlled with the 'filter.compression.allow.static.file.cache' property.");
+            }
+            initialized = true;
         }
     }
 
