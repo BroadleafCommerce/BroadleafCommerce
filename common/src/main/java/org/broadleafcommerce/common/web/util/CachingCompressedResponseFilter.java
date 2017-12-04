@@ -362,7 +362,7 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
             }
         }
 
-        return true;
+        return false;
     }
 
 }
