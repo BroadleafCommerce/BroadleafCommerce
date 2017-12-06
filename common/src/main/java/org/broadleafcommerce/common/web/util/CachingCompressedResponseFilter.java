@@ -162,9 +162,9 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
 
     /**
      * A comma delimited list of URI matching regular expressions for requests that should be ignored for any compression.
-     * The default value is '.*\\.jpg,.*\\.jpeg,.*\\.gif'.
+     * The default value is '.*\\.jpg,.*\\.jpeg,.*\\.gif,.*\\.png'.
      */
-    @Value("${filter.compression.blacklist.uri.regex:.*\\.jpg,.*\\.jpeg,.*\\.gif}")
+    @Value("${filter.compression.blacklist.uri.regex:.*\\.jpg,.*\\.jpeg,.*\\.gif,.*\\.png}")
     protected String blackListURIs;
 
     @Value("${resource.versioning.enabled:true}")
@@ -245,7 +245,7 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
 
     protected String getMimeType(HttpServletRequest request) {
         String response = null;
-        String uri = request.getRequestURI();
+        String uri = request.getRequestURI().toLowerCase();
         for (Map.Entry<Pattern, String> entry : extensionToMime.entrySet()) {
             if (entry.getKey().matcher(uri).matches()) {
                 response = entry.getValue();
@@ -336,7 +336,7 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
 
     protected boolean useGzipCompression(HttpServletRequest request, HttpServletResponse response) throws MalformedURLException {
         for (Pattern pattern : blackListPatterns) {
-            String uri = request.getRequestURI();
+            String uri = request.getRequestURI().toLowerCase();
             if (pattern.matcher(uri).matches()) {
                 return false;
             }
