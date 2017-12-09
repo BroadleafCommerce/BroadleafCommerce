@@ -15,34 +15,38 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.linkeddata.service;
+package org.broadleafcommerce.core.web.linkeddata.generator;
 
-import org.broadleafcommerce.core.catalog.domain.Product;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * This linked data service provides metadata relevant to
- * the page.
+ * This linked data generator provides structured metadata relevant for a page's SEO.
+ * <p>
+ * See <a href="http://schema.org/" target="_blank">http://schema.org/</a>.
  *
  * @author Jacob Mitash
+ * @author Nathan Moore (nathanmoore).
  */
-public interface LinkedDataService {
+public interface LinkedDataGenerator {
 
     /**
-     * Determines whether or not this LinkedDataService can handle the incoming {@link LinkedDataDestinationType}
-     * @param destination
-     * @return whether or not to handle the destination type
+     * Determines whether or not this LinkedDataGenerator can handle the incoming request.
+     * @param request
+     * @return whether to handle the destination type
      */
-    Boolean canHandle(LinkedDataDestinationType destination);
+    boolean canHandle(final HttpServletRequest request);
 
     /**
      * Gets the linked data for default pages
      * @param url
-     * @param products
-     * @return string JSON representation of linked data
+     * @param request
+     * @return JSON representation of linked data
      */
-    String getLinkedData(String url, List<Product> products) throws JSONException;
+    void getLinkedDataJSON(final String url, final HttpServletRequest request, final JSONArray schemaObjects) throws JSONException;
 
+    
+    String getStructuredDataContext();
 }
