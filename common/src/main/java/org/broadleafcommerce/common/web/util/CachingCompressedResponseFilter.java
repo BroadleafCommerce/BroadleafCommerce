@@ -240,7 +240,7 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
     }
 
     protected boolean shouldUseStaticCache() {
-        return allowStaticFileCache && !isDefaultEnvironment || (isDefaultEnvironment && cacheWhileInDefaultEnvironment);
+        return allowStaticFileCache && (!isDefaultEnvironment || cacheWhileInDefaultEnvironment);
     }
 
     protected String getMimeType(HttpServletRequest request) {
