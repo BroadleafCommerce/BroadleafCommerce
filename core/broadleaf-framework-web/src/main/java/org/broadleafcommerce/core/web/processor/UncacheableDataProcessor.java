@@ -91,7 +91,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     @Resource(name = "blInventoryServiceExtensionManager"   )
     protected InventoryServiceExtensionManager inventoryServiceExtensionManager;
 
-    private String defaultCallbackFunction = "updateUncacheableData(params)";
+    private String defaultCallbackFunction = "updateUncacheableData(params);\n";
 
     @Override
     public String getName() {
@@ -109,7 +109,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         sb.append("<SCRIPT>\n");
         sb.append("  var params = \n  ");
         sb.append(buildContentMap(context)).append(";\n  ");
-        sb.append(getUncacheableDataFunction(context, tagAttributes)).append(";\n");
+        sb.append(getUncacheableDataFunction(context, tagAttributes));
         sb.append("</SCRIPT>");
                 
         // Add contentNode to the document
@@ -244,8 +244,10 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     }
     
     public String getUncacheableDataFunction(BroadleafTemplateContext context, Map<String, String> tagAttributes) {
-        if (tagAttributes.containsKey("callback")) {
-            return tagAttributes.get("callback");
+        if (tagAttributes.containsKey("callbackBlock")) {
+            return tagAttributes.get("callbackBlock");
+        } else if (tagAttributes.containsKey("callback")) {
+            return tagAttributes.get("callback") + ";\n";
         } else {
             return getDefaultCallbackFunction();
         }
