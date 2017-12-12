@@ -37,6 +37,22 @@
     <bean id="orderStateAOP"
           class="org.broadleafcommerce.core.web.order.OrderStateAOP"/>
 
+    <bean id="blFrameworkLinkedDataGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blDefaultLinkedDataGenerator"/>
+                <ref bean="blHomepageLinkedDataGenerator"/>
+                <ref bean="blCategoryLinkedDataGenerator"/>
+                <ref bean="blProductLinkedDataGenerator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="sourceRef" value="blFrameworkLinkedDataGenerators"/>
+        <property name="targetRef" value="blLinkedDataGenerators"/>
+    </bean>
+
     <aop:config>
         <aop:aspect id="orderStateAspect" ref="orderStateAOP">
             <aop:pointcut id="orderRetrievalMethod"

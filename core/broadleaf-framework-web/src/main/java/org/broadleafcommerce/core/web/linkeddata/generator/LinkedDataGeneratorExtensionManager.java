@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce CMS Module
+ * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,27 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.cms.file.dao;
+package org.broadleafcommerce.core.web.linkeddata.generator;
 
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
-
-import java.util.List;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * Created by bpolster.
+ * Manage extension points for {@link org.broadleafcommerce.core.web.linkeddata.generator.LinkedDataGenerator}s.
+ * 
+ * @author Nathan Moore (nathanmoore).
  */
-public interface StaticAssetDao {
-
-    public StaticAsset readStaticAssetById(Long id);
-    
-    public List<StaticAsset> readAllStaticAssets();
-
-    public void delete(StaticAsset asset);
-
-    public StaticAsset addOrUpdateStaticAsset(StaticAsset asset, boolean clearLevel1Cache);
-
-    Long readTotalStaticAssetCount();
-
-    public StaticAsset readStaticAssetByFullUrl(String fullUrl);
-
+@Service("blLinkedDataGeneratorExtensionManager")
+public class LinkedDataGeneratorExtensionManager extends ExtensionManager<LinkedDataGeneratorExtensionHandler> {
+    public LinkedDataGeneratorExtensionManager() {
+        super(LinkedDataGeneratorExtensionHandler.class);
+    }
 }

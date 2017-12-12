@@ -15,40 +15,48 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.web.linkeddata.service;
+package org.broadleafcommerce.core.web.linkeddata.generator;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * This service generates metadata specialized for the homepage, namely the search action. The search action allows
+ * This generator generates structured data specific for a homepage, namely the search action. The search action allows
  * search engines to recognize the site has a search feature and allows users to search the site directly from the
  * search engine.
+ * <p>
+ * See <a href="http://schema.org/Organization" target="_blank">http://schema.org/Organization</a>, 
+ * <a href="http://schema.org/ContactPoint" target="_blank">http://schema.org/ContactPoint</a>, 
+ * <a href="http://schema.org/WebSite" target="_blank">http://schema.org/WebSite</a>, 
+ * and <a href="http://schema.org/SearchAction" target="_blank">http://schema.org/SearchAction</a>
+ * 
  *
  * @author Jacob Mitash
+ * @author Nathan Moore (nathanmoore).
  */
-@Service(value = "blHomepageLinkedDataServiceImpl")
-public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl {
+@Service(value = "blHomepageLinkedDataGenerator")
+public class HomepageLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator {
 
     @Override
-    public Boolean canHandle(LinkedDataDestinationType destination) {
-        return LinkedDataDestinationType.HOME.equals(destination);
+    public boolean canHandle(final HttpServletRequest request) {
+        return Objects.equals(request.getRequestURI(), "/");
     }
 
     @Override
-    protected JSONArray getLinkedDataJson(String url, List<Product> products) throws JSONException {
-        JSONArray schemaObjects = new JSONArray();
+    protected JSONArray getLinkedDataJsonInternal(final String url, final HttpServletRequest request,
+                                                  final JSONArray schemaObjects) throws JSONException {
+        schemaObjects.put(addWebSiteData(request));
+        schemaObjects.put(addOrganizationData(request));
 
-        schemaObjects.put(getWebSite());
-        schemaObjects.put(getBreadcrumbList());
-        schemaObjects.put(getOrganization());
+        extensionManager.getProxy().addHomepageData(request, schemaObjects);
 
         return schemaObjects;
     }
@@ -58,35 +66,40 @@ public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
      *
      * @return JSON representation of Organization from Schema.org
      */
-    protected JSONObject getOrganization() throws JSONException {
-        JSONObject organization = new JSONObject();
-
-        organization.put("@context", DEFAULT_CONTEXT);
+    protected JSONObject addOrganizationData(final HttpServletRequest request) throws JSONException {
+        final JSONObject organization = new JSONObject();
+        
+        organization.put("@context", getStructuredDataContext());
         organization.put("@type", "Organization");
         organization.put("name", getSiteName());
         organization.put("url", getSiteBaseUrl());
         organization.put("logo", getLogoUrl());
 
         if (siteHasCustomerServiceNumber()) {
-            organization.put("contactPoint", getContactList());
+            organization.put("contactPoint", addContactData(request));
         }
 
         if (siteHasSocialLinks()) {
-            organization.put("sameAs", getSocialMediaList());
+            organization.put("sameAs", addSocialMediaData(request));
         }
+
+        extensionManager.getProxy().addOrganizationData(request, organization);
 
         return organization;
     }
 
-    private JSONArray getContactList() throws JSONException {
-        JSONArray contactList = new JSONArray();
-
-        JSONObject contact = new JSONObject();
+    protected JSONArray addContactData(final HttpServletRequest request) throws JSONException {
+        final JSONArray contactList = new JSONArray();
+        final JSONObject contact = new JSONObject();
+        
         contact.put("@type", "ContactPoint");
         contact.put("telephone", getSiteCustomerServiceNumber());
         contact.put("contactType", "customerService");
-        contactList.put(contact);
 
+        extensionManager.getProxy().addContactData(request, contact);
+        
+        contactList.put(contact);
+        
         return contactList;
     }
 
@@ -95,13 +108,15 @@ public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
      *
      * @return JSON representation of WebSite from Schema.org
      */
-    protected JSONObject getWebSite() throws JSONException {
+    protected JSONObject addWebSiteData(final HttpServletRequest request) throws JSONException {
         JSONObject webSite = new JSONObject();
-        webSite.put("@context", DEFAULT_CONTEXT);
+        webSite.put("@context", DEFAULT_STRUCTURED_CONTENT_CONTEXT);
         webSite.put("@type", "WebSite");
         webSite.put("name", getSiteName());
         webSite.put("url", getSiteBaseUrl());
-        webSite.put("potentialAction", getPotentialAction());
+        webSite.put("potentialAction", addPotentialActions(request));
+
+        extensionManager.getProxy().addWebSiteData(request, webSite);
 
         return webSite;
     }
@@ -120,33 +135,34 @@ public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
      *
      * @throws JSONException
      */
-    protected JSONArray getSocialMediaList() throws JSONException {
-        String siteSocialAccounts = getSiteSocialAccounts();
-        String[] socialAccounts = siteSocialAccounts.split(",");
+    protected JSONArray addSocialMediaData(final HttpServletRequest request) throws JSONException {
+        final String siteSocialAccounts = getSiteSocialAccounts();
 
-        return new JSONArray(Arrays.asList(socialAccounts));
+        final JSONArray socialMediaData = new JSONArray(Arrays.asList(siteSocialAccounts.split(",")));
+        
+        extensionManager.getProxy().addSocialMediaData(request, socialMediaData);
+        
+        return socialMediaData;
     }
 
-    protected JSONObject getPotentialAction() throws JSONException {
-        JSONObject potentialAction = new JSONObject();
+    protected JSONObject addPotentialActions(final HttpServletRequest request) throws JSONException {
+        final JSONObject potentialAction = new JSONObject();
 
         potentialAction.put("@type", "SearchAction");
         potentialAction.put("target", getSiteBaseUrl() + getSiteSearchUri());
         potentialAction.put("query-input", "required name=query");
 
+        extensionManager.getProxy().addPotentialActionsData(request, potentialAction);
+
         return potentialAction;
     }
 
-    private boolean siteHasCustomerServiceNumber() {
+    protected boolean siteHasCustomerServiceNumber() {
         return StringUtils.isNotBlank(getSiteCustomerServiceNumber());
     }
 
-    private boolean siteHasSocialLinks() {
+    protected boolean siteHasSocialLinks() {
         return StringUtils.isNotBlank(getSiteSocialAccounts());
-    }
-
-    protected String getSiteName() {
-        return environment.getProperty("site.name");
     }
 
     protected String getSiteLogo() {
@@ -162,6 +178,10 @@ public class HomepageLinkedDataServiceImpl extends DefaultLinkedDataServiceImpl 
     }
 
     protected String getSiteSearchUri() {
-        return environment.getProperty("site.search");
+        return "/" + environment.getProperty("site.search");
+    }
+
+    protected String getSiteName() {
+        return environment.getProperty("site.name");
     }
 }
