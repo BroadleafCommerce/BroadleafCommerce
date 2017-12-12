@@ -26,11 +26,11 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -51,6 +51,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -84,6 +85,21 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderById(final Long orderId) {
         return em.find(OrderImpl.class, orderId);
+    }
+
+    @Override
+    public Order readOrderByExternalId(String orderExternalId) {
+        TypedQuery<Order> query = new TypedQueryBuilder<Order>(Order.class, "ord")
+                .addRestriction("ord.embeddedOmsOrder.externalId", "=", orderExternalId)
+                .toQuery(em);
+
+        try {
+            return query.getSingleResult();
+            //potentially we can get exception because externalId field is added in oms module that is not mandatory to have
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
     @Override

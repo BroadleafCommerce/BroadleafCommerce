@@ -44,6 +44,8 @@ public interface OrderDao {
 
     Order readOrderById(Long orderId, boolean refresh);
 
+    Order readOrderByExternalId(String orderExternalId);
+
     List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
 
     List<Order> readOrdersForCustomer(Long id);
