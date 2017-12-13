@@ -41,7 +41,7 @@ public class StaticAssetView implements View {
     private static final Log LOG = LogFactory.getLog(StaticAssetView.class);
 
     protected boolean browserAssetCachingEnabled = true;
-    protected long cacheSeconds = 60 * 60 * 24;
+    protected long cacheSeconds = 60 * 60 * 24 * 365;
 
     @Override
     public String getContentType() {
