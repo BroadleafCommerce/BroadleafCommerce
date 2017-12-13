@@ -29,7 +29,19 @@
             <li><a th:href="@{/adminLogout.htm}" th:utext="#{header.logout}">Logout</a></li>
         </ul>
     </div>
-
+    
+    <div class="language-selector account-info dropdown">
+        <div class="dropdown-toggle" id="accountdrop" data-toggle="dropdown" aria-expanded="true">
+            <span th:text="${session.blLocale.friendlyName}"></span>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="accountdrop">
+            <li th:each="locale : ${@blLocaleService.findAllLocales()}">
+                <a href="javascript:;" 
+                th:attr="onclick=${'BLC.addUrlParam(document.location.search, ''blLocaleCode'', ''' + locale.localeCode + ''')'}"
+                th:text="#{${locale.friendlyName}}"></a>
+            </li>
+        </ul>
+    </div>
 
     <th:block th:if="${customRibbon == null or #strings.equals(customRibbon, '')}">
         <div th:replace="layout/partials/sandboxRibbon"></div>
