@@ -1,0 +1,188 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+
+/****************************************
+ ADMIN MEDIA IMAGE STYLES
+****************************************/
+
+.media-image {
+  /*height: 150px;*/
+  /*width: 150px;*/
+  object-fit: cover;
+  min-width: 150px;
+}
+
+.media-image-container {
+  position: relative;
+}
+
+.media-image-container .media-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  color: #636466;
+  background: rgba(255,255,255,0.8);
+  display: none;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.media-image-container:not(.disabled):hover .media-actions {
+  display: block;
+}
+
+.media-image-container div.view-asset-selector {
+  border-radius: 20%;
+  padding: 5px;
+  position: absolute;
+  color: white;
+  left: 1%;
+  bottom: 1%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  background-color: rgba(0,0,0,0.25);
+  box-shadow: none;
+  z-index: 5;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 1em;
+}
+
+.media-image-container button {
+  border-radius: 20%;
+  padding: 5px;
+  font-size: 30px;
+  width: 44px;
+  height: 40px;
+  position: absolute;
+}
+
+.media-image-container .media-actions button {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin: 40% 10px;
+}
+
+.media-image-container .media-actions button > i {
+  margin: 0;
+}
+
+.media-image-container .media-actions button.show-asset-selector {
+  font-size: 22px;
+}
+
+.fieldset-card-content .media-image {
+  height: auto;
+  width: 100%;
+  max-width: 350px;
+  object-fit: cover;
+}
+
+.fieldset-card-content .media-image-container {
+  /*width: 100%;*/
+  max-width: 350px;
+}
+
+.fieldset-card .media-image .thumbnail {
+  height: auto;
+}
+
+/****************************************
+ ADMIN THUMBNAIL STYLES
+****************************************/
+
+.thumbnail {
+  padding: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  display: inline;
+  border: none;
+}
+
+td[data-fieldname="thumbnail"] {
+  padding: 0 !important;
+  object-fit: cover;
+  width: 52px;
+  text-align: center;
+}
+
+td .thumbnail {
+  height: 38px !important;
+  width: auto !important;
+}
+
+div#thumbnail-zoom {
+  position: absolute;
+  z-index: 99999999;
+  font-size: 19px;
+  background-color: #FFF;
+  padding: 10px;
+  border: 1px solid #CCC;
+  border-radius: 4px;
+}
+
+div.imagePreviewContainer {
+  width: 200px;
+  height: 200px;
+  float: right;
+}
+
+.media-image .thumbnail {
+  height: 150px;
+}
+
+.placeholder-image {
+  width: 100%;
+  max-width: 350px;
+}
+
+/****************************************
+ ADMIN UPLOAD ASSET RELATED STYLES
+****************************************/
+
+.uploadFileFormContainer {
+  padding: 10px 0;
+}
+
+div.uploadMessage {
+  display: none;
+}
+
+/****************************************
+ ADMIN ASSET SELECTOR RELATED STYLES
+****************************************/
+
+.col4 .fieldset-card-content .asset-selector-container {
+  text-align: center;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+}
+
+.col10 .fieldset-card-content .asset-selector-container,
+.col8 .fieldset-card-content .asset-selector-container {
+  display: inline-block;
+}
+
+.fieldset-card-content .asset-selector-container label {
+  display: inline-block;
+}

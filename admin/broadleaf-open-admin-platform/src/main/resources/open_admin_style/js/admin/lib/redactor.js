@@ -102,8 +102,8 @@
     $.Redactor.opts = {
 
         // settings
-        lang: 'en',
-        direction: 'ltr', // ltr or rtl
+        lang: "en",
+        direction: document.getElementsByTagName("html")[0].getAttribute("dir") || "ltr",
 
         plugins: false, // array
 
