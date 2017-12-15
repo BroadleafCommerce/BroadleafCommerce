@@ -41,7 +41,7 @@ public class StaticAssetView implements View {
     private static final Log LOG = LogFactory.getLog(StaticAssetView.class);
 
     protected boolean browserAssetCachingEnabled = true;
-    protected long cacheSeconds = 60 * 60 * 24 * 365;
+    protected long cacheSeconds = 60 * 60 * 24;
 
     @Override
     public String getContentType() {
@@ -78,7 +78,8 @@ public class StaticAssetView implements View {
                     response.setDateHeader ("Last-Modified", check.getTimeInMillis());
                 }
                 Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.SECOND, new Long(cacheSeconds).intValue());
+                long year = cacheSeconds * 365;
+                cal.add(Calendar.SECOND, new Long(year).intValue());
                 response.setDateHeader ("Expires", cal.getTimeInMillis());
             }
             OutputStream os = response.getOutputStream();
