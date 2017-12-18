@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Integration
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
@@ -15,21 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
-package org.broadleafcommerce.test.junit;
+package org.broadleafcommerce.core.web.linkeddata.generator;
 
-import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * The {@literal @}Transactional version of the {@link JUnitAdminIntegrationSetup}
+ * Manage extension points for {@link org.broadleafcommerce.core.web.linkeddata.generator.LinkedDataGenerator}s.
  * 
- * @author Phillip Verheyden (phillipuniverse)
+ * @author Nathan Moore (nathanmoore).
  */
-@BroadleafAdminIntegrationTest
-public class JUnitTransactionalAdminIntegrationSetup extends AbstractTransactionalJUnit4SpringContextTests {
-
+@Service("blLinkedDataGeneratorExtensionManager")
+public class LinkedDataGeneratorExtensionManager extends ExtensionManager<LinkedDataGeneratorExtensionHandler> {
+    public LinkedDataGeneratorExtensionManager() {
+        super(LinkedDataGeneratorExtensionHandler.class);
+    }
 }

@@ -146,6 +146,7 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
         String mappingPrefix = tagAttributes.get("mapping-prefix");
         boolean async = tagAttributes.containsKey("async");
         boolean defer = tagAttributes.containsKey("defer");
+        boolean includeAsyncDeferUnbundled = tagAttributes.containsKey("includeAsyncDeferUnbundled") && Boolean.parseBoolean(tagAttributes.get("includeAsyncDeferUnbundled"));
         
         List<String> files = new ArrayList<>();
         for (String file : tagAttributes.get("files").split(",")) {
@@ -162,6 +163,12 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
             
             addElementToModel(bundleUrl, async, defer, context, model);
         } else {
+            if (async) {
+                async = includeAsyncDeferUnbundled;
+            }
+            if (defer) {
+                defer = includeAsyncDeferUnbundled;
+            }
             for (String fileName : files) {
                 fileName = fileName.trim();
                 String fullFileName = (String) context.parseExpression("@{'" + mappingPrefix + fileName + "'}");

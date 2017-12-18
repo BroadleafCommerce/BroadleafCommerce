@@ -17,9 +17,9 @@
  */
 package org.broadleafcommerce.cms.file.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
+
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -33,6 +33,8 @@ public interface StaticAssetDao {
     public void delete(StaticAsset asset);
 
     public StaticAsset addOrUpdateStaticAsset(StaticAsset asset, boolean clearLevel1Cache);
+
+    Long readTotalStaticAssetCount();
 
     public StaticAsset readStaticAssetByFullUrl(String fullUrl);
 
