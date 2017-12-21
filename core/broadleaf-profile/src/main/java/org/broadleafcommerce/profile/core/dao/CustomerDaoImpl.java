@@ -56,7 +56,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer readCustomerByExternalId(String id) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
-        Root<CustomerImpl> customer = criteria.from(CustomerImpl.class);
+        Root<? extends Customer> customer = criteria.from(entityConfiguration.lookupEntityClass(Customer.class.getName(), Customer.class));
         criteria.select(customer);
         criteria.where(builder.equal(customer.get("externalId"), id));
 
