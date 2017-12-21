@@ -103,9 +103,4 @@
             WHERE order.emailAddress = :email</query>
     </named-query>
 
-    <named-query name="BC_READ_ORDERS_BY_EMAIL_AND_SITE" >
-        <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
-            WHERE order.emailAddress = :email AND order.embeddableSiteDiscriminator.siteDiscriminator = :currentSite</query>
-    </named-query>
-
 </entity-mappings>
