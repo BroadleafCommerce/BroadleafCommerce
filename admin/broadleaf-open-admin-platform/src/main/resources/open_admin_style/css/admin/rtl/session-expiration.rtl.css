@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Integration
+ * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2017 Broadleaf Commerce
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,21 +15,13 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
-package org.broadleafcommerce.test.junit;
 
-import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+#lightbox #expire-message #expire-text-container {
+  padding: 15px 30px;
+  background-color: #F9F7F3;
+}
 
-
-/**
- * The {@literal @}Transactional version of the {@link JUnitAdminIntegrationSetup}
- * 
- * @author Phillip Verheyden (phillipuniverse)
- */
-@BroadleafAdminIntegrationTest
-public class JUnitTransactionalAdminIntegrationSetup extends AbstractTransactionalJUnit4SpringContextTests {
-
+#lightbox #expire-message #expire-text span {
+  color: #8EAA2B;
+  font-weight: bold;
 }

@@ -1,0 +1,1062 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+
+/****************************************
+ ADMIN COMMON ENTITY FORM  STYLES
+****************************************/
+
+.entityFormTab {
+  display: none;
+}
+
+.entityFormTab.active {
+  display: block;
+}
+
+.entity-form-actions .admin-section {
+  display: inherit;
+}
+
+.entity-form-actions .ajax-loader {
+  float: right;
+  margin: 30px 10px;
+}
+
+.mainEntityName {
+  max-width: 600px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.entityCatalogName {
+  font-size: 12px;
+  font-weight: 100;
+  padding-right: 5px;
+}
+
+.sticky-fixed {
+  position: fixed;
+  top: 80px;
+  width: 100%;
+  z-index: 1040;
+}
+
+.form-control {
+  /*border-radius: 5px;*/
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  color: initial;
+}
+
+/****************************************
+ADMIN COMMON ENTITY CONTENT RELATED STYLES
+****************************************/
+
+.app-content .content {
+  min-width: 912px;
+  margin-right: 50px;
+}
+
+.app-content .content .section-content .main-content .content-yield {
+  padding: 10px 40px;
+  max-width: 2000px;
+}
+
+.app-content .fieldset-card,
+.modal-body .fieldset-card {
+  margin-bottom: 15px;
+}
+
+.content-collapsed {
+  display: none;
+}
+
+.collapser {
+  display: inline-block;
+  float: left;
+  font-size: 8px;
+  opacity: 0.5;
+}
+
+.card {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+  -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+  box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+}
+
+/****************************************
+ ADMIN BUTTON RELATED STYLES
+****************************************/
+
+.button {
+  text-decoration: none;
+  color: #fff;
+  background-color: #404040;
+  text-align: center;
+  letter-spacing: .5px;
+  /*-webkit-transition: .2s ease-out;*/
+  /*-moz-transition: .2s ease-out;*/
+  /*-o-transition: .2s ease-out;*/
+  /*-ms-transition: .2s ease-out;*/
+  /*transition: .2s ease-out;*/
+  cursor: pointer;
+}
+
+.button {
+  border: none;
+  border-radius: 2px;
+  display: inline-block;
+  height: 34px;
+  line-height: 34px;
+  outline: 0;
+  padding: 0 16px;
+  text-transform: capitalize;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.button {
+  font-size: 11px;
+  /*line-height: 12px;*/
+}
+
+.button > i {
+  /*margin-right: 5px;*/
+}
+
+.button.large {
+  padding: 0 2rem;
+}
+
+.button.small {
+  padding: 0px 10px;
+}
+
+.button.secondary,
+.button {
+  background-color: #404040;
+}
+
+.button.secondary:hover {
+  background-color: #757575;
+}
+
+.button.and-button {
+  background-color: #757575;
+}
+
+.button.and-button:hover {
+  background-color: #A2A2A2;
+}
+
+.button-action {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  border: none;
+  outline: 0;
+  text-transform: uppercase;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: none;
+}
+
+.button-action:hover {
+  background-color: transparent;
+  color: #809831;
+}
+
+.button-group:first-child {
+  z-index: 999;
+}
+
+.button-group>.button {
+  float: none;
+}
+
+.input-group-btn {
+  display: table-cell;
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.input-group-btn>.button+.button {
+  margin-right: -1px;
+}
+
+.input-group-btn button.button {
+  height: 34px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  line-height: 34px;
+  width: 40px;
+}
+
+.input-group-btn button.button:not(:first-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group-btn button.button:first-child:not(:last-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+button:disabled,
+button.disabled {
+  /*background-color: #EEEEEE !important;*/
+  opacity: 0.4;
+  box-shadow: none;
+  color: black !important;
+  cursor: default;
+}
+
+button:disabled:hover,
+button.disabled:hover {
+  clear: both;
+  /*background-color: inherit !important;*/
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
+  margin-top: -5px;
+  margin-right: -3px;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button {
+  margin-top: 20px;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group ul {
+  margin-top: -22px;
+}
+
+/****************************************
+  ADMIN SITE AND SITE_BAR RELATED STYLES
+****************************************/
+
+.select-site {
+  display: none;
+}
+
+.app-content .content .site-bar {
+  z-index: 1050;
+}
+
+.app-content .content .site-bar .button {
+  line-height: inherit;
+}
+
+/****************************************
+  ADMIN SANDBOX AND SANDBOX_BAR RELATED STYLES
+****************************************/
+
+.sandbox-selector-wrapper {
+  position: relative;
+}
+
+.sandbox-selector-wrapper > select {
+  -webkit-appearance: none;
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.sandbox-bar .row {
+  margin: 0;
+}
+
+.sandbox-bar .row .sandbox-selector-wrapper {
+  padding: 0px;
+}
+
+.sandbox-bar .row .sandbox-actions-wrapper {
+  float: left;
+  padding-left: 0;
+}
+
+.app-content .content .sandbox-bar #sandboxes {
+  padding: 0 68px 2px;
+}
+
+.app-content .content .sandbox-bar .sandbox-actions .button {
+  background-color: rgba(0,0,0,0.1);
+  margin: 4px 5px 0 0;
+  padding: 0;
+  line-height: normal;
+  height: inherit;
+  color: white;
+}
+
+/****************************************
+ ADMIN FILTER RELATED STYLES
+****************************************/
+
+.filter-info {
+  float: left;
+  text-align: left;
+}
+
+.filter-info .button-group {
+  margin-top: 6px;
+}
+
+.filter-info > .filter-button {
+  margin-top: 6px;
+}
+
+.rule-filter-container.admin-select,
+.rule-operator-container.admin-select,
+.rule-filter-container.admin-select > select,
+.rule-operator-container.admin-select > select,
+.rule-filter-container.admin-select:before,
+.rule-operator-container.admin-select:before {
+  content: "\e61b";
+  font-family: 'broadleaf';
+  float: left;
+  font-size: 1.0em;
+  text-align: center;
+  display: block;
+  position: absolute;
+}
+
+.rule-filter-container.admin-select:before,
+.rule-operator-container.admin-select:before {
+  left: 4px;
+  top: 7px;
+}
+
+/* Making dropdowns rectangular */
+
+.rule-filter-container.admin-select,
+.rule-operator-container.admin-select,
+.sandbox-selector-wrapper {
+  position: relative;
+}
+
+.rule-filter-container.admin-select > select,
+.rule-operator-container.admin-select > select,
+.sandbox-selector-wrapper > select {
+  -webkit-appearance: none;
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.rule-filter-container.admin-select:before,
+.rule-operator-container.admin-select:before {
+  content: "\e61b";
+  font-family: 'broadleaf';
+  float: left;
+  font-size: 1.0em;
+  text-align: center;
+  display: block;
+  position: absolute;
+}
+
+.rule-filter-container.admin-select:before,
+.rule-operator-container.admin-select:before {
+  left: 4px;
+  top: 7px;
+}
+
+/****************************************
+ ADMIN HEADER FLASH RELATED STYLES
+****************************************/
+
+#headerFlashAlertBoxContainer {
+  float: left;
+  padding-left: 10px;
+  font-size: 12px;
+  color: #DE3A2E;
+}
+
+#headerFlashAlertBox.alert {
+  padding: 0;
+  margin: 0;
+}
+
+#headerFlashAlertBox .close {
+  visibility: hidden;
+}
+
+/****************************************
+ ADMIN ALERT AND ERROR RELATED STYLES
+****************************************/
+
+.alert {
+  /*color: #8EAA2B;*/
+  border: 0;
+  text-transform: none;
+}
+
+.errors {
+  margin-bottom: 5px;
+  color: red;
+}
+
+span.alert-box.save-alert {
+  color: #98B30A;
+}
+
+span.alert-box.error-alert {
+  color: #A80202;
+}
+
+.fa.fa-exclamation-triangle {
+  color: #D20A33 !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+.has-error input,
+.has-error textarea {
+  border-color: #D20A33;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+}
+
+.has-error input:focus,
+.has-error textarea:focus {
+  border-color: #D20A33;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 6px #D20A33;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 6px #D20A33;
+}
+
+.has-error span.display-value {
+  border: 1px solid #D20A33;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+}
+
+.has-error .error {
+  color: #D20A33;
+  font-size: 12px;
+  display: block;
+}
+
+/****************************************
+ ADMIN FIELD RELATED STYLES
+****************************************/
+
+.field-help {
+  color: #B3B3B3;
+  font-size: 12px;
+  display: block;
+}
+
+label {
+  display: block;
+  margin-bottom: 0;
+}
+
+label .fa {
+  font-size: 13px;
+}
+
+label i.help-tip {
+  text-transform: none;
+}
+
+.override-label {
+  line-height: 14px;
+}
+
+.override-label label {
+  display: inline-block;
+}
+
+.untitledGroup {
+  border: 0;
+  padding: 0;
+}
+
+.input-group-addon {
+  border-radius: 0px;
+}
+
+.input-group {
+  width: 100%;
+}
+
+fieldset {
+  margin: 10px 0 0 0;
+}
+
+fieldset:not(.untitledGroup) {
+  background-color: #FBFAF7;
+}
+
+.required:after {
+  content: ' *';
+  color: #D20A33;
+}
+
+.modal-body .row .col6:first-child {
+  padding-right: 0;
+}
+
+.modal-body .row .col6:last-child {
+  padding-left: 0;
+}
+
+.associated-fields .field-group {
+  margin-bottom: 0;
+}
+
+/****************************************
+ ADMIN RADIO BUTTON STYLES
+****************************************/
+
+.radio-container {
+  padding: 0 10px;
+  display: block;
+}
+
+.radio-label span {
+  font-weight: 500 !important;
+}
+
+.radio-label.disabled {
+  color: #B3B3B3;
+}
+
+input[type="radio"].radio {
+  top: 0;
+  visibility: hidden;
+}
+
+input[type="radio"].radio+label.radio-label,
+input[type="radio"].radio+label.radio-label.clr,
+.radio > input[type="radio"]+label {
+  padding-right: 25px;
+  padding-left: 15px;
+  margin-bottom: 8px;
+}
+
+/****************************************
+ ADMIN COMMON FIELD STYLES
+****************************************/
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
+input[type="search"] {
+  height: 34px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+input[type="datetime"],
+input[type="date"],
+input[type="month"],
+input[type="week"],
+input[type="time"],
+input[type="datetime-local"],
+textarea {
+  margin: 0;
+}
+
+input[disabled],
+input[readonly],
+fieldset[disabled] input,
+textarea[disabled] {
+  /*cursor: not-allowed;*/
+  background-color: #eeeeee;
+}
+
+select:not(#sandboxes) {
+  padding: 0 10px;
+  border: 1px solid #D8D5D0;
+  display: inline-block;
+  background: white;
+  height: 34px !important;
+  line-height: 34px;
+  vertical-align: middle;
+  width: 100%;
+  font-size: 13px;
+  box-shadow: none;
+  -webkit-appearance: none;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0 0;
+  border-radius: 0;
+  box-sizing: border-box;
+  color: #303030;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/****************************************
+ ADMIN SPECIFIC FIELD STYLES
+****************************************/
+
+input.color-picker-value {
+  width: 16.66667%;
+}
+
+.changes.numeric-field {
+  min-width: 200px;
+  width: 16.6667% !important;
+}
+
+[data-fieldname="rejectionLabel"] {
+  white-space: initial !important;
+}
+
+/****************************************
+  ADMIN REDACTOR RELATED STYLE
+****************************************/
+
+.redactor-toolbar {
+  z-index: 1039 !important;
+}
+
+.redactor-box {
+  border: 1px solid #D8D5D0;
+}
+
+.redactor-box {
+  margin-bottom: 0 !important;
+}
+
+/****************************************
+  ADMIN DATE FIELD RELATED STYLES
+****************************************/
+
+.date-field {
+  min-width: 350px;
+  width: 25% !important;
+}
+
+.xdsoft_current {
+  background: #94AF39 !important;
+  box-shadow: #94AF39 0 1px 3px 0 inset !important;
+}
+
+.xdsoft_datetimepicker .xdsoft_timepicker {
+  width: 80px;
+}
+
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_prev,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_next {
+  margin-right: 25px;
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar td:hover,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div:hover {
+  color: #fff !important;
+  background: #F2B95A !important;
+  box-shadow: none !important;
+}
+
+.time-eod {
+  cursor: pointer;
+  color: #94AF39;
+  text-align: center;
+}
+
+.time-eod:hover {
+  color: #F2B95A;
+}
+
+/****************************************
+ ADMIN FIELD PLACEHOLDER STYLES
+****************************************/
+
+::-webkit-input-placeholder {
+  font-size: 12px;
+  color: #B3B3B3;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.5em;
+}
+
+:-moz-placeholder {
+  /* Firefox 18- */
+  font-size: 12px;
+  color: #B3B3B3;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.5em;
+}
+
+::-moz-placeholder {
+  /* Firefox 19+ */
+  font-size: 12px;
+  color: #B3B3B3;
+  font-family: 'Open Sans', sans-serif;
+}
+
+:-ms-input-placeholder {
+  font-size: 12px;
+  color: #B3B3B3;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.5em;
+}
+
+/****************************************
+ ADMIN FIELDSET TITLEBAR STYLES
+****************************************/
+
+.app-content .fieldset-card .titlebar {
+  width: 100%;
+  padding: 0 15px;
+  letter-spacing: 0;
+}
+
+.app-content .fieldset-card.untitledGroup .titlebar,
+.modal-body .fieldset-card.untitledGroup .titlebar {
+  display: none;
+}
+
+.content-area-title-bar .ajax-loader {
+  float: right;
+  margin: 30px 10px;
+}
+
+.content-area-title-bar .alert-box {
+  float: left;
+  padding-left: 10px;
+  font-size: 12px;
+  color: #8EAA2B !important;
+}
+
+.content-area-title-bar .alert-box.alert {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #DE3A2E !important;
+}
+
+.fieldset-card .titlebar-title i.help-tip {
+  margin-right: 5px;
+}
+
+.fieldset-card .titlebar .titlebar-title .tooltip {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.fieldset-card .titlebar .titlebar-title .alert-box {
+  text-transform: none;
+  font-weight: normal;
+}
+
+.fieldset-card .titlebar .titlebar-title,
+.fieldset-card .titlebar .collapser {
+  display: inline-block;
+  margin: 10px 0;
+  position: relative;
+}
+
+.fieldset-card .fieldset-card-content {
+  padding: 15px 15px 0 !important;
+}
+
+.fieldset-card .fieldset-card-content label {
+  font-size: 11px !important;
+  color: #616161;
+  line-height: 14px;
+  text-transform: uppercase !important;
+  padding-bottom: 1px;
+}
+
+.fieldset-card:not(.dynamic-form):not(.inModal):first-child {
+  margin-top: 22px;
+}
+
+/****************************************
+ ADMIN TRANSLATION FIELDSET PLACEHOLDER STYLES
+****************************************/
+
+.fieldset-card .fieldset-card-content .show-translations {
+  font-size: 12px;
+  margin-right: 5px;
+  font-weight: 400;
+}
+
+.fieldset-card .fieldset-card-content .show-translations i {
+  font-size: 14px;
+}
+
+.fieldset-card .fieldset-card-content .show-translations span {
+  font-size: 12px;
+  text-transform: none;
+  font-weight: 400;
+  padding-right: 1px;
+  vertical-align: middle;
+}
+
+/****************************************
+ ADMIN FIELD_GROUP STYLES
+****************************************/
+
+.field-group label span {
+  font-size: 11px;
+  text-transform: uppercase;
+  /*color:#B3B3B3;*/
+  font-weight: 600;
+}
+
+.field-group label span.alert-wrapper {
+  font-size: 12px;
+  letter-spacing: .05em;
+  font-weight: normal;
+  margin-right: 10px;
+}
+
+.field-group label span.alert-wrapper .alert-box {
+  color: #8EAA2B !important;
+}
+
+/****************************************
+ ADMIN BOOLEAN LINK STYLES
+****************************************/
+
+.boolean-link {
+  font-size: 11px;
+  color: #94AF39;
+}
+
+a.boolean-link.view-options:before {
+  content: 'View';
+}
+
+a.boolean-link.hide-options:before {
+  content: 'Hide';
+}
+
+/****************************************
+ ADMIN DESCRIPTION STYLES
+****************************************/
+
+a.description-link {
+  font-size: 11px;
+  color: #94AF39;
+}
+
+.description-text {
+  height: 34px;
+  padding: 5px 10px;
+  background-color: #eeeeee;
+  font-size: 12px;
+  font-style: italic;
+  border: 1px solid #D8D5D0;
+}
+
+.description-hide {
+  float: left;
+  font-size: 11px;
+  color: #94AF39;
+}
+
+/****************************************
+  ADMIN FOREGIN_KEY RELATED STYLES
+****************************************/
+
+.foreign-key-value-container .display-value.read-only {
+  margin-left: 15px;
+  text-overflow: ellipsis;
+  padding: 10px 15px;
+  cursor: auto;
+}
+
+.foreign-key-value-container .input-group-btn .button.secondary:disabled:first-of-type {
+  border-right: none;
+}
+
+/****************************************
+  ADMIN DYNAMIC FORMS RELATED STYLES
+****************************************/
+
+.dynamic-form-wrapper {
+  min-height: 10px;
+}
+
+.dynamic-form-wrapper img {
+  margin: auto;
+}
+
+.dynamic-form-container .fieldset-card-content .content-item-action-wrapper {
+  margin-bottom: 15px;
+}
+
+.content-item-add-button-wrapper {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.content-item-add-sc {
+  margin: 0 auto;
+}
+
+.pick-sctype-popup {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+  -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+  box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+  padding: 10px 15px 15px;
+  margin: 10px auto;
+  text-align: right;
+  width: 550px;
+}
+
+.pick-sctype-popup .selectize-control {
+  width: 425px;
+  display: inline-block;
+}
+
+.pick-sctype-popup .actions {
+  float: left;
+  display: inline-block;
+}
+
+.pick-sctype-popup .actions .action-popup-cancel {
+  vertical-align: middle;
+}
+
+/****************************************
+ ADMIN ACTION POPUP RELATED STYLES
+****************************************/
+
+div.action-popup img.ajax-loader {
+  float: left;
+  margin-left: 10px;
+  display: none;
+}
+
+div.action-popup span.submit-error.success {
+  color: #8EAA2B;
+  font-weight: bold;
+}
+
+div.action-popup span.submit-error,
+div.action-popup span.sync-ok {
+  line-height: 27px;
+  color: #890923;
+  display: none;
+}
+
+div.action-popup span.sync-ok {
+  color: green !important;
+}
+
+div.action-popup span.sync-error {
+  line-height: 30px;
+  clear: both;
+  color: #890923;
+  display: none;
+}
+
+div.action-popup span.sync-error button {
+  float: left;
+  margin-top: 5px;
+}
+
+div.action-popup span.deploy-error {
+  line-height: 30px;
+  clear: both;
+  color: #890923;
+  display: none;
+}
+
+div.action-popup span.deploy-error button {
+  float: left;
+  margin-top: 5px;
+}
+
+/****************************************
+ ADMIN CHANGES RELATED STYLES
+****************************************/
+
+p.changes-made-label {
+  font-size: .85em;
+  margin-bottom: 0.5em;
+  margin-top: -5px;
+}
+
+p.local-changes-made-label {
+  font-size: .85em;
+  margin-bottom: 0.5em;
+  margin-top: 30px;
+}
+
+p.deployment-summary {
+  margin-top: 4px;
+}
+
+#revert-changes {
+  color: #D20A33;
+  text-decoration: underline;
+}
+
+#headerChangeBoxContainer {
+  float: left;
+  padding-left: 10px;
+  font-size: 12px;
+}
+
+/****************************************
+ ADMIN WORKFLOW RELATED STYLES
+****************************************/
+
+span.listgrid-row-action {
+  font-size: 16px;
+  visibility: hidden;
+  width: 27px;
+  height: 27px;
+  display: inline-block;
+  background: #94AF39;
+  border-radius: 2px;
+  color: white;
+}
+
+span.listgrid-row-action:hover {
+  background-color: #809831;
+}
+
+span.listgrid-row-action a:hover {
+  color: #809831;
+}
+
+.dirty span.listgrid-row-action a:hover {
+  color: #efbc62;
+}

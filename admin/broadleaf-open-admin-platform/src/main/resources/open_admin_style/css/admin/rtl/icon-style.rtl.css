@@ -1,0 +1,195 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+
+@font-face {
+  font-family: 'broadleaf';
+  src: url('../../fonts/broadleaf.eot?i3chse');
+  src: url('../../fonts/broadleaf.eot?i3chse#iefix') format('embedded-opentype'),
+	url('../../fonts/broadleaf.woff2?i3chse') format('woff2'),
+	url('../../fonts/broadleaf.ttf?i3chse') format('truetype'),
+	url('../../fonts/broadleaf.woff?i3chse') format('woff'),
+	url('../../fonts/broadleaf.svg?i3chse#broadleaf') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="blc-icon-"],
+[class*=" blc-icon-"] {
+  font-family: 'broadleaf';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.blc-icon-blc-leaf:before {
+  content: "\e900";
+}
+
+.blc-icon-blc-logo:before {
+  content: "\e901";
+}
+
+.blc-icon-add-category:before {
+  content: "\e600";
+}
+
+.blc-icon-calendar:before {
+  content: "\e601";
+}
+
+.blc-icon-catalog:before {
+  content: "\e602";
+}
+
+.blc-icon-category:before {
+  content: "\e603";
+}
+
+.blc-icon-checkmark:before {
+  content: "\e604";
+}
+
+.blc-icon-close:before {
+  content: "\e605";
+}
+
+.blc-icon-content:before {
+  content: "\e606";
+}
+
+.blc-icon-customer-care:before {
+  content: "\e607";
+}
+
+.blc-icon-delete:before {
+  content: "\e608";
+}
+
+.blc-icon-deploy:before {
+  content: "\e609";
+}
+
+.blc-icon-design:before {
+  content: "\e60a";
+}
+
+.blc-icon-edit:before {
+  content: "\e60b";
+}
+
+.blc-icon-globe:before {
+  content: "\e60c";
+}
+
+.blc-icon-notifications:before {
+  content: "\e60d";
+}
+
+.blc-icon-product-added:before {
+  content: "\e60e";
+}
+
+.blc-icon-product-group:before {
+  content: "\e60f";
+}
+
+.blc-icon-product-image:before {
+  content: "\e610";
+}
+
+.blc-icon-reverse:before {
+  content: "\e611";
+}
+
+.blc-icon-running:before {
+  content: "\e612";
+}
+
+.blc-icon-security:before {
+  content: "\e613";
+}
+
+.blc-icon-settings:before {
+  content: "\e614";
+}
+
+.blc-icon-site-updates:before {
+  content: "\e615";
+}
+
+.blc-icon-tooltip:before {
+  content: "\e616";
+}
+
+.blc-icon-view:before {
+  content: "\e617";
+}
+
+.blc-icon-dot-menu-horizontal:before {
+  content: "\e618";
+}
+
+.blc-icon-dot-menu-vertical:before {
+  content: "\e619";
+}
+
+.blc-icon-save:before {
+  content: "\e61a";
+}
+
+.blc-icon-select-arrows:before {
+  content: "\e61b";
+}
+
+.blc-icon-triangle-left:before {
+  content: "\e61c";
+}
+
+.blc-icon-triangle-right:before {
+  content: "\e61d";
+}
+
+.blc-icon-credit-card:before {
+  content: "\e61e";
+}
+
+.blc-icon-folder-images:before {
+  content: "\e61f";
+}
+
+.blc-icon-search:before {
+  content: "\e902";
+}
+
+.blc-icon-news:before {
+  content: "\e620";
+}
+
+.blc-icon-publish:before {
+  content: "\e621";
+}
+
+.blc-icon-tools:before {
+  content: "\e622";
+}
