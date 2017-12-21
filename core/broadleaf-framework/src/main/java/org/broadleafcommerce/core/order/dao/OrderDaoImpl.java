@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
@@ -51,13 +52,11 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -457,9 +456,22 @@ public class OrderDaoImpl implements OrderDao {
         if (StringUtils.isEmpty(email)) {
             return Collections.emptyList();
         }
-        TypedQuery<Order> query = em.createNamedQuery("BC_READ_ORDERS_BY_EMAIL", Order.class);
-        query.setParameter("email", email);
+        TypedQuery<Order> query = createReadOrderByEmailQuery(email);
         List<Order> orders = query.getResultList();
         return orders != null ? orders : new ArrayList<Order>();
+    }
+
+    private TypedQuery<Order> createReadOrderByEmailQuery(String email) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Site currentSite = context.getNonPersistentSite();
+        TypedQuery<Order> query;
+        if (currentSite != null && currentSite.getId() != null) {
+            query = em.createNamedQuery("BC_READ_ORDERS_BY_EMAIL_AND_SITE", Order.class);
+            query.setParameter("currentSite", currentSite.getId());
+        } else {
+            query = em.createNamedQuery("BC_READ_ORDERS_BY_EMAIL", Order.class);
+        }
+        query.setParameter("email", email);
+        return query;
     }
 }
