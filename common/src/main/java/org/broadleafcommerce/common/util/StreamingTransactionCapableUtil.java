@@ -96,7 +96,8 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
                                 "Please ensure that your StreamCapableTransactionalOperation#retrieveTotalCount() " +
                                 "and StreamCapableTransactionalOperation#retrievePage(int startPos, int pageSize) " +
                                 "queries contain the same conditions as to ultimately provide the number of entities " +
-                                "equal to the declared total count.", pagedItemCount, pageSize));
+                                "equal to the declared total count. Stream operation: %s",
+                                pagedItemCount, pageSize, streamOperation.getClass()));
                     }
 
                     if (pagedItemCount < pageSize) {
