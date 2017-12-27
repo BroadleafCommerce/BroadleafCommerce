@@ -61,7 +61,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
     @Resource(name = "priceListSearchFacetRangeExtensionManager")
     protected PriceListSearchFacetRangeExtensionManager extensionManager;
 
-    @Value("${database.searchfacets.enabled}")
+    @Value("${database.searchfacets.enabled:true}")
     protected boolean enabledFacets;
 
     protected static String CACHE_NAME = "blStandardElements";
