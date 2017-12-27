@@ -28,42 +28,21 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.*;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Resource;
+import javax.persistence.*;
+import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.FetchParent;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 /**
  * @author Jeff Fischer
@@ -98,7 +77,7 @@ public class ProductDaoImpl implements ProductDao {
     public Product readProductById(Long productId) {
         return em.find(ProductImpl.class, productId);
     }
-    
+
     @Override
     public Product readProductByExternalId(String externalId) {
         TypedQuery<Product> query = new TypedQueryBuilder<Product>(Product.class, "product")
@@ -185,7 +164,7 @@ public class ProductDaoImpl implements ProductDao {
 
         return query.getResultList();
     }
-    
+
     @Override
     public List<Product> readFilteredActiveProductsByQuery(String query, SearchCriteria searchCriteria) {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
@@ -202,16 +181,16 @@ public class ProductDaoImpl implements ProductDao {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
-        
+
         // The root of our search is Product since we are searching
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
-        
+
         // We also want to filter on attributes from sku and productAttributes
         Join<Product, Sku> sku = product.join("defaultSku");
-        
+
         // Product objects are what we want back
         criteria.select(product);
-        
+
         // We only want results that match the search query
         List<Predicate> restrictions = new ArrayList<Predicate>();
         if (query != null) {
@@ -223,22 +202,22 @@ public class ProductDaoImpl implements ProductDao {
                     )
             );
         }
-                
-        attachSearchCriteria(searchCriteria, product, sku, restrictions);
-        
+
+        attachDbSearchCriteria(searchCriteria, product, sku, restrictions);
+
         attachActiveRestriction(currentDate, product, sku, restrictions);
-        
+
         attachOrderBy(searchCriteria, product, sku, criteria);
-        
+
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        
+
         TypedQuery<Product> typedQuery = em.createQuery(criteria);
         //don't cache - not really practical for open ended search
-        
+
         return typedQuery.getResultList();
     }
-    
+
     @Override
     public List<Product> readFilteredActiveProductsByCategory(Long categoryId, SearchCriteria searchCriteria) {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
@@ -257,10 +236,10 @@ public class ProductDaoImpl implements ProductDao {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
-        
+
         // The root of our search is Category since we are browsing
         Root<CategoryProductXrefImpl> productXref = criteria.from(CategoryProductXrefImpl.class);
-        
+
         // We want to filter on attributes from product and sku
         Join<CategoryProductXref, Product> product = productXref.join("product");
         Join<Product, Sku> sku = product.join("defaultSku");
@@ -268,21 +247,22 @@ public class ProductDaoImpl implements ProductDao {
 
         // Product objects are what we want back
         criteria.select(product);
-        
+
         // We only want results from the determine category
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(category.get("id").in(sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId)));
-        
-        attachSearchCriteria(searchCriteria, product, sku, restrictions);
-        
+
+        attachDbSearchCriteria(searchCriteria, product, sku, restrictions);
+
         attachActiveRestriction(currentDate, product, sku, restrictions);
-        
+
         attachOrderBy(searchCriteria, product, sku, criteria);
-        
+
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        
+
         TypedQuery<Product> typedQuery = em.createQuery(criteria);
+
         //don't cache - not really practical for open ended search
         //typedQuery.setHint(SandBoxHelper.QueryHints.FILTER_INCLUDE, ".*CategoryProductXrefImpl");
 
@@ -292,12 +272,12 @@ public class ProductDaoImpl implements ProductDao {
     protected void attachActiveRestriction(Date currentDate, Path<? extends Product> product, 
             Path<? extends Sku> sku, List<Predicate> restrictions) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        
+
         // Add the product archived status flag restriction
         restrictions.add(builder.or(
                             builder.isNull(product.get("archiveStatus").get("archived")),
                             builder.equal(product.get("archiveStatus").get("archived"), 'N')));
-        
+
         // Add the active start/end date restrictions
         restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
         restrictions.add(builder.or(
@@ -309,16 +289,16 @@ public class ProductDaoImpl implements ProductDao {
             From<?, ? extends Product> product, Path<? extends Sku> sku, CriteriaQuery<?> criteria) {
         if (StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
             CriteriaBuilder builder = em.getCriteriaBuilder();
-        
+
             List<Order> sorts = new ArrayList<Order>();
-            
+
             String sortQueries = searchCriteria.getSortQuery();
             for (String sortQuery : sortQueries.split(",")) {
                 String[] sort = sortQuery.split(" ");
                 if (sort.length == 2) {
                     String key = sort[0];
                     boolean asc = sort[1].toLowerCase().contains("asc");
-                    
+
                     // Determine whether we should use the product path or the sku path
                     Path<?> pathToUse;
                     if (key.contains("defaultSku.")) {
@@ -332,7 +312,7 @@ public class ProductDaoImpl implements ProductDao {
                         // to attach search facet to any query parameter
                         continue;
                     }
-                    
+
                     if (asc) {
                         sorts.add(builder.asc(pathToUse.get(key)));
                     } else {
@@ -340,7 +320,7 @@ public class ProductDaoImpl implements ProductDao {
                     }
                 }
             }
-            
+
             criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
         }
     }
@@ -348,13 +328,13 @@ public class ProductDaoImpl implements ProductDao {
     protected void attachSearchCriteria(SearchCriteria searchCriteria, 
             From<?, ? extends Product> product, From<?, ? extends Sku> sku, List<Predicate> restrictions) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        
+
         // Build out the filter criteria from the users request
         for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
             String key = entry.getKey();
             List<String> eqValues = new ArrayList<String>();
             List<String[]> rangeValues = new ArrayList<String[]>();
-            
+
             // Determine which path is the appropriate one to use
             Path<?> pathToUse;
             if (key.contains("defaultSku.")) {
@@ -362,10 +342,10 @@ public class ProductDaoImpl implements ProductDao {
                 key = key.substring("defaultSku.".length());
             } else if (key.contains("productAttributes.")) {
                 pathToUse = product.join("productAttributes");
-                
+
                 key = key.substring("productAttributes.".length());
                 restrictions.add(builder.equal(pathToUse.get("name").as(String.class), key));
-                
+
                 key = "value";
             } else if (key.contains("product.")) {
                 pathToUse = product;
@@ -375,7 +355,7 @@ public class ProductDaoImpl implements ProductDao {
                 // to attach search facet to any query parameter
                 continue;
             }
-            
+
             // Values can be equality checks (ie manufacturer=Dave's) or range checks, which take the form
             // key=range[minRange:maxRange]. Figure out what type of check this is
             for (String value : entry.getValue()) {
@@ -389,13 +369,13 @@ public class ProductDaoImpl implements ProductDao {
                     eqValues.add(value);
                 }
             }
-            
+
             // Add the equality range restriction with the "in" builder. That means that the query string
             // ?manufacturer=Dave&manufacturer=Bob would match either Dave or Bob
             if (eqValues.size() > 0) {
                 restrictions.add(pathToUse.get(key).in(eqValues));
             }
-            
+
             // If we have any range restrictions, we need to build those too. Ranges are also "or"ed together,
             // such that specifying range[0:5] and range[10:null] for the same field would match items
             // that were valued between 0 and 5 OR over 10 for that field
@@ -406,7 +386,7 @@ public class ProductDaoImpl implements ProductDao {
                 if (range[1] != null && !range[1].equals("null")) {
                     max = new BigDecimal(range[1]);
                 }
-                
+
                 Predicate minRange = builder.greaterThan(pathToUse.get(key).as(BigDecimal.class), min);
                 Predicate maxRange = null;
                 if (max != null) {
@@ -416,7 +396,96 @@ public class ProductDaoImpl implements ProductDao {
                     rangeRestrictions.add(minRange);
                 }
             }
-            
+
+            if (rangeRestrictions.size() > 0) {
+                restrictions.add(builder.or(rangeRestrictions.toArray(new Predicate[rangeRestrictions.size()])));
+            }
+        }
+    }
+
+    protected void attachDbSearchCriteria(SearchCriteria searchCriteria,
+                                          From<?, ? extends Product> product, From<?, ? extends Sku> sku, List<Predicate> restrictions) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+
+        // Build out the filter criteria from the users request
+        for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
+            String key = entry.getKey();
+            List<String> eqValues = new ArrayList<String>();
+            List<String[]> rangeValues = new ArrayList<String[]>();
+
+            // Determine which path is the appropriate one to use
+            Path<?> pathToUse;
+            if (key.contains("defaultSku.")) {
+                pathToUse = sku;
+                key = key.substring("defaultSku.".length());
+            } else if (key.contains("productAttributes.")) {
+                pathToUse = product.join("productAttributes");
+
+                key = key.substring("productAttributes.".length());
+                restrictions.add(builder.equal(pathToUse.get("name").as(String.class), key));
+
+                key = "value";
+            } else if (key.contains("productOptionValuesMap")) {
+                Join<Object, Object> productOption = product.join("productOptions")
+                        .join("productOption");
+                pathToUse = productOption
+                        .join("allowedValues");
+
+                key = key.substring("productOptionValuesMap(".length(), (key.length() - ")".length()));
+                Predicate attributeName = builder.equal(builder.lower(productOption.get("attributeName").as(String.class)), key.toLowerCase());
+                restrictions.add(attributeName);
+
+                key = "attributeValue";
+            } else if (key.contains("product.")) {
+                pathToUse = product;
+                key = key.substring("product.".length());
+            } else {
+                // We don't know which path this facet is built on - resolves previous bug that attempted
+                // to attach search facet to any query parameter
+                continue;
+            }
+
+            // Values can be equality checks (ie manufacturer=Dave's) or range checks, which take the form
+            // key=range[minRange:maxRange]. Figure out what type of check this is
+            for (String value : entry.getValue()) {
+                if (value.contains("range[")) {
+                    String[] rangeValue = new String[]{
+                            value.substring(value.indexOf("[") + 1, value.indexOf(":")),
+                            value.substring(value.indexOf(":") + 1, value.indexOf("]"))
+                    };
+                    rangeValues.add(rangeValue);
+                } else {
+                    eqValues.add(value);
+                }
+            }
+
+            // Add the equality range restriction with the "in" builder. That means that the query string
+            // ?manufacturer=Dave&manufacturer=Bob would match either Dave or Bob
+            if (eqValues.size() > 0) {
+                restrictions.add(pathToUse.get(key).in(eqValues));
+            }
+
+            // If we have any range restrictions, we need to build those too. Ranges are also "or"ed together,
+            // such that specifying range[0:5] and range[10:null] for the same field would match items
+            // that were valued between 0 and 5 OR over 10 for that field
+            List<Predicate> rangeRestrictions = new ArrayList<Predicate>();
+            for (String[] range : rangeValues) {
+                BigDecimal min = new BigDecimal(range[0]);
+                BigDecimal max = null;
+                if (range[1] != null && !range[1].equals("null")) {
+                    max = new BigDecimal(range[1]);
+                }
+
+                Predicate minRange = builder.greaterThan(pathToUse.get(key).as(BigDecimal.class), min);
+                Predicate maxRange = null;
+                if (max != null) {
+                    maxRange = builder.lessThan(pathToUse.get(key).as(BigDecimal.class), max);
+                    rangeRestrictions.add(builder.and(minRange, maxRange));
+                } else {
+                    rangeRestrictions.add(minRange);
+                }
+            }
+
             if (rangeRestrictions.size() > 0) {
                 restrictions.add(builder.or(rangeRestrictions.toArray(new Predicate[rangeRestrictions.size()])));
             }
@@ -428,7 +497,7 @@ public class ProductDaoImpl implements ProductDao {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readActiveProductsByCategoryInternal(categoryId, currentDate, limit, offset);
     }
-    
+
     @Override
     @Deprecated
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate, int limit, int offset) {
@@ -488,7 +557,7 @@ public class ProductDaoImpl implements ProductDao {
         query.setParameter("autoBundle", Boolean.TRUE);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        
+
         return query.getResultList();
     }       
 
@@ -513,19 +582,19 @@ public class ProductDaoImpl implements ProductDao {
         }
         String urlKey = uri.substring(uri.lastIndexOf('/'));        
         Query query;
-    
+
         query = em.createNamedQuery("BC_READ_PRODUCTS_BY_OUTGOING_URL");
         query.setParameter("url", uri);
         query.setParameter("urlKey", urlKey);
         query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-    
+
         @SuppressWarnings("unchecked")
         List<Product> results = query.getResultList();
         return results;
     }
-    
+
     @Override
     public List<Product> readAllActiveProducts(int page, int pageSize) {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
@@ -537,7 +606,7 @@ public class ProductDaoImpl implements ProductDao {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readAllActiveProductsInternal(pageSize, currentDate, lastId);
     }
-    
+
     @Override
     @Deprecated
     public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {    
@@ -562,13 +631,13 @@ public class ProductDaoImpl implements ProductDao {
 
         return query.setMaxResults(pageSize).getResultList();
     }
-    
+
     @Override
     public List<Product> readAllActiveProducts() {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readAllActiveProductsInternal(currentDate);
     }
-    
+
     @Override
     @Deprecated
     public List<Product> readAllActiveProducts(Date currentDate) {
@@ -583,13 +652,13 @@ public class ProductDaoImpl implements ProductDao {
 
         return query.getResultList();
     }
-    
+
     @Override
     public Long readCountAllActiveProducts() {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readCountAllActiveProductsInternal(currentDate);
     }
-    
+
     @Override
     @Deprecated
     public Long readCountAllActiveProducts(Date currentDate) {

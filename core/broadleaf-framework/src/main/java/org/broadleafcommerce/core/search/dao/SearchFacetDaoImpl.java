@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -34,32 +35,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.*;
+import javax.persistence.criteria.*;
 
 @Repository("blSearchFacetDao")
 public class SearchFacetDaoImpl implements SearchFacetDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
-    
+
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
+    @Resource(name="blCatalogService")
+    protected CatalogService catalogService;
+
     @Override
     public List<SearchFacet> readAllSearchFacets(FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<SearchFacet> criteria = builder.createQuery(SearchFacet.class);
         
+
         Root<SearchFacetImpl> facet = criteria.from(SearchFacetImpl.class);
         
+
         criteria.select(facet);
         criteria.where(
                 builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
@@ -70,43 +69,64 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
         
+
         return query.getResultList();
     }
     
+
     @Override
-    public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass) {
+    public List<Tuple> readDistinctValuesForField(String fieldName, List<Long> productIds) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<T> criteria = builder.createQuery(fieldValueClass);
-        
+        CriteriaQuery<Tuple> criteria = builder.createQuery(Tuple.class);
+        List<Predicate> restrictions = new ArrayList<>();
+
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
         Path<Sku> sku = product.get("defaultSku");
-        
+
+        if (productIds != null && !productIds.isEmpty()) {
+            restrictions.add(product.get("id").in(productIds));
+        }
+
         Path<?> pathToUse;
         if (fieldName.contains("defaultSku.")) {
             pathToUse = sku;
             fieldName = fieldName.substring("defaultSku.".length());
-        } else if (fieldName.contains("productAttributes.")) {
+        } else if (fieldName.contains("productAttributes")) {
             pathToUse = product.join("productAttributes");
-            
-            fieldName = fieldName.substring("productAttributes.".length());
-            criteria.where(builder.equal(
-                builder.lower(pathToUse.get("name").as(String.class)), fieldName.toLowerCase()));
-            
+
+            fieldName = fieldName.substring("productAttributes(".length(), (fieldName.length() - ").value".length()));
+
+            restrictions.add(builder.equal(
+                    builder.lower(pathToUse.get("name").as(String.class)), fieldName.toLowerCase()));
+
             fieldName = "value";
-        } else if (fieldName.contains("product.")) {
+        } else if (fieldName.contains("productOptionValuesMap")) {
+            Join<Object, Object> productOption = product.join("productOptions")
+                    .join("productOption");
+            pathToUse = productOption
+                    .join("allowedValues");
+
+            fieldName = fieldName.substring("productOptionValuesMap(".length(), (fieldName.length() - ")".length()));
+            Predicate attributeName = builder.equal(builder.lower(productOption.get("attributeName").as(String.class)), fieldName.toLowerCase());
+            restrictions.add(attributeName);
+
+            fieldName = "attributeValue";
+        } else if (fieldName.toLowerCase().contains("product.")) {
             pathToUse = product;
             fieldName = fieldName.substring("product.".length());
         } else {
             throw new IllegalArgumentException("Invalid facet fieldName specified: " + fieldName);
         }
-        
-        criteria.where(pathToUse.get(fieldName).as(fieldValueClass).isNotNull());
-        criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
+        restrictions.add(pathToUse.get(fieldName).isNotNull());
 
-        TypedQuery<T> query = em.createQuery(criteria);
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        criteria.groupBy(pathToUse.get(fieldName));
+        criteria.multiselect(pathToUse.get(fieldName), builder.count(pathToUse));
+
+        TypedQuery<Tuple> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
-        
+
         return query.getResultList();
     }
 

@@ -17,11 +17,13 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 
+import javax.persistence.Tuple;
 import java.util.List;
 
 /**
@@ -32,16 +34,16 @@ import java.util.List;
 public interface SearchFacetDao {
 
     /**
-     * Returns the distinct values for the given fieldName inside of the search clas sas a list of the specified 
-     * type. For example, reading the distinct values for "manufacturer" in the ProductImpl class and specifying
-     * the value class as String would search the ProductImpl entity's distinct manufacturers and return a 
-     * List<String> of these values.
+     * Returns the distinct values for the given fieldName and products ids as a list Tuple objects.
+     * For example, reading the distinct values for "manufacturer" in the ProductImpl class and specifying the products
+     * ids would search the ProductImpl entity's distinct manufacturers and return a list of Tuple objects that contains
+     * the distinct values for the field and count of available products.
      * 
      * @param fieldName
-     * @param fieldValueClass
-     * @return  the distinct values for the field
+     * @param productIds
+     * @return list of Tuple objects that contains the distinct values for the field and count of available products
      */
-    public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass);
+    public List<Tuple> readDistinctValuesForField(String fieldName, List<Long> productIds);
 
     /**
      * Returns all SearchFacets that are tagged with showOnSearch for the given entity type
