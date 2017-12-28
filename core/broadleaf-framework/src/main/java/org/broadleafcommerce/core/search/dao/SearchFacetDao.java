@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
