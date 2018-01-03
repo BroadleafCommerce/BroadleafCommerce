@@ -476,7 +476,10 @@
                 field.type = 'date';
                 field.plugin = 'datetimepicker';
                 field.plugin_config = {
-                    format: "m/d/Y H:i"
+                    format: "m/d/Y H:i",
+                    onChangeDateTime : function (current_time, $input) {
+                        $input.trigger('input');
+                    }
                 };
             }
         },
