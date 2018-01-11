@@ -95,4 +95,8 @@ public interface OrderDao {
     public boolean releaseLock(Order order);
 
     List<Order> readOrdersByEmail(String email);
+    
+    public List<Order> readBatchOrders(int start, int pageSize);
+    
+    public Long readNumberOfOrders();
 }

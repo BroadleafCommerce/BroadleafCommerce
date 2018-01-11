@@ -462,5 +462,10 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Long> findProductIdsUsingProductOptionById(Long productId, int start, int pageSize) {
         return productOptionDao.findProductIdsUsingProductOptionById(productId, start, pageSize);
     }
+    
+    @Override
+ 	public Long readNumberOfSkus() {
+     		return skuDao.readNumberOfSkus();
+     }
 
 }

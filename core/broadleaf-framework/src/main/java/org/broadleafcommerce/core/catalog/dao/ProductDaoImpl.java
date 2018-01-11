@@ -36,7 +36,9 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -657,4 +659,5 @@ public class ProductDaoImpl implements ProductDao {
         criteria.orderBy(builder.asc(product.get("id")));
         return criteria;
     }
+    
 }
