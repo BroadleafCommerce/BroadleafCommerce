@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
@@ -30,7 +32,6 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -56,11 +57,13 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityFilter extends GenericFilterBean {
 
     protected static final Log LOG = LogFactory.getLog(SecurityFilter.class);
-    
-    @Resource(name="blStaleStateProtectionService")
+
+    @Autowired
+    @Qualifier("blStaleStateProtectionService")
     protected StaleStateProtectionService staleStateProtectionService;
 
-    @Resource(name="blExploitProtectionService")
+    @Autowired
+    @Qualifier("blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
     protected List<String> excludedRequestPatterns;
