@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUser
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,7 +37,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -48,7 +49,7 @@ import javax.servlet.http.HttpServletRequest;
  * This class checks to see if a user exists and if not, creates one.  It also replaces all roles associated with a user with roles that
  * match their Authentication credentials.  DO NOT USE THIS FILTER UNLESS YOU ARE AUTHENTICATING AGAINST AN EXTERNAL
  * SOURCE SUCH AS LDAP.
- * 
+ *
  * @deprecated NO LONGER REQUIRED AND SHOULD NOT BE USED. SEE BroadleafAdminLdapUserDetailsMapper.
  *
  * <p/>
@@ -57,13 +58,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Deprecated
 public class AdminExternalLoginStateFilter extends GenericFilterBean {
-    
+
     protected static final String BLC_ADMIN_PROVISION_USER_CHECK = "BLC_ADMIN_PROVISION_USER_CHECK";
 
-    @Resource(name="blAdminSecurityService")
+    @Autowired
+    @Qualifier("blAdminSecurityService")
     private AdminSecurityService adminSecurityService;
-    
-    @Resource(name="blEntityConfiguration")
+
+    @Autowired
+    @Qualifier("blEntityConfiguration")
     private EntityConfiguration entityConfiguration;
 
     @Override
@@ -86,7 +89,7 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
                             saveAdminUser(broadleafUser, user);
                             request.getSession().setAttribute(BLC_ADMIN_PROVISION_USER_CHECK, Boolean.TRUE);
                         }
-                        
+
                     }
                 }
             }
@@ -94,7 +97,7 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
-    
+
     protected void saveAdminUser(BroadleafExternalAuthenticationUserDetails broadleafUser, AdminUser user) {
         //Name, login, password, email are required.
         user.setLogin(broadleafUser.getUsername());
@@ -127,7 +130,7 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
             roleSet = new HashSet<AdminRole>();
             user.setAllRoles(roleSet);
         }
-        
+
         //Now add the appropriate roles back in
         List<AdminRole> availableRoles = adminSecurityService.readAllAdminRoles();
         if (availableRoles != null) {

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,38 +20,44 @@ package org.broadleafcommerce.core.web.catalog;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Resource;
+import java.util.HashMap;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 
 /**
  * Register this filter via Spring DelegatingFilterProxy, or register your own implementation
  * that provides additional, desirable members to the pricingConsiderations Map
  * that is generated from the getPricingConsiderations method.
- * 
+ *
  * @author jfischer
  *
  */
 public class DefaultDynamicSkuPricingFilter extends AbstractDynamicSkuPricingFilter {
-    
-    @Resource(name="blDynamicSkuPricingService")
+
+    @Autowired
+    @Qualifier("blDynamicSkuPricingService")
     protected DynamicSkuPricingService skuPricingService;
-    
-    @Resource(name="blCustomerState")
+
+    @Autowired
+    @Qualifier("blCustomerState")
     protected CustomerState customerState;
 
+    @Override
     public DynamicSkuPricingService getDynamicSkuPricingService(ServletRequest request) {
         return skuPricingService;
     }
 
+    @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public HashMap getPricingConsiderations(ServletRequest request) {
         HashMap pricingConsiderations = new HashMap();
         Customer customer = customerState.getCustomer((HttpServletRequest)  request);
         pricingConsiderations.put("customer", customer);
-        
+
         return pricingConsiderations;
     }
 
