@@ -83,8 +83,9 @@ public class ProductBatchReader extends AbstractBatchReader<BatchMarker> {
     
     protected BatchMarker buildMarker(Long low, Long high, Catalog catalog, int expectedBatchSize) {
         BatchMarker marker = new BatchMarker();
-        marker.setFieldEntity(FieldEntity.PRODUCT.getType());
+        marker.setFieldEntity(FieldEntity.PRODUCT);
         marker.setFirstValue(low);
+        marker.setExpectedBatchSize(expectedBatchSize);
         if (catalog != null) {
             marker.setCatalogId(catalog.getId());
         }

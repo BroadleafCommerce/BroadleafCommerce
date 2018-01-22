@@ -8,7 +8,6 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
-import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
@@ -64,15 +63,24 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
 
             attachIndexableDocumentFields(document, indexable, fields, locales);
 
-            attachAdditionalDocumentFields(indexable, document);
+            extensionManager.getProxy().attachAdditionalDocumentFields(indexable, document);
 
             extensionManager.getProxy().attachChildDocuments(indexable, document, fields, locales);
+            
+            postProcessDocuement(document, indexable, fields, locales);
             
             return document;
         }
         return null;
     }
 
+    /**
+     * Allows implementors to determine if this product should indeed be indexed. The default is that if it's not null 
+     * and is active, then return true.
+     * 
+     * @param indexable
+     * @return
+     */
     protected boolean shouldIndex(Product indexable) {
         if (indexable != null && indexable.isActive()) {
             return true;
@@ -80,7 +88,7 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
         return false;
     }
     
-    protected void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<IndexField> fields, List<Locale> locales) {
+    protected void attachIndexableDocumentFields(SolrInputDocument document, Product indexable, List<IndexField> fields, List<Locale> locales) {
         for (IndexField indexField : fields) {
             try {
                 // If we find an IndexField entry for this field, then we need to store it in the index
@@ -177,12 +185,7 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
         }
     }
     
-    protected void attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document) {
-        //Empty implementation. Placeholder for others to extend and add additional fields
-        extensionManager.getProxy().attachAdditionalDocumentFields(indexable, document);
-    }
-    
-    protected Map<String, Object> getPropertyValues(Indexable indexedItem, Field field, FieldType fieldType, List<Locale> locales)
+    protected Map<String, Object> getPropertyValues(Product indexedItem, Field field, FieldType fieldType, List<Locale> locales)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
@@ -269,5 +272,16 @@ public class ProductSolrDocumentBuilder implements DocumentBuilder<Product, Solr
             }
             return out;
         }
+    }
+    
+    /**
+     * Empty implementation to allow a hook for clients to extend this class and add some additional logic to the construction of the document.
+     * @param document
+     * @param indexable
+     * @param fields
+     * @param locales
+     */
+    protected void postProcessDocuement(SolrInputDocument document, Product indexable, List<IndexField> fields, List<Locale> locales) {
+        //Purposefully empty implementation....
     }
 }

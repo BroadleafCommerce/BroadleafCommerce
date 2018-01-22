@@ -31,13 +31,17 @@ public abstract class SearchIndexProcessEvent extends BroadleafApplicationEvent 
 
     private static final long serialVersionUID = 1L;
     private final String processId;
-    private final FieldEntity fieldEntity;
+    private final String fieldEntity;
 
     public SearchIndexProcessEvent(String processId, FieldEntity fieldEntity) {
         super(processId);
         Assert.notNull(processId, "Process ID cannot be null.");
         this.processId = processId;
-        this.fieldEntity = fieldEntity;
+        if (fieldEntity != null) {
+            this.fieldEntity = fieldEntity.getType();
+        } else {
+            this.fieldEntity = null;
+        }
     }
 
     public String getProcessId() {
@@ -45,6 +49,10 @@ public abstract class SearchIndexProcessEvent extends BroadleafApplicationEvent 
     }
     
     public FieldEntity getFieldEntity() {
-        return fieldEntity;
+        if (fieldEntity != null) {
+            return FieldEntity.getInstance(fieldEntity);
+        } else {
+            return null;
+        }
     }
 }

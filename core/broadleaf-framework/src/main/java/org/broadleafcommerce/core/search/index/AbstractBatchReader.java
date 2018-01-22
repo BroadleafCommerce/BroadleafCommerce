@@ -110,7 +110,7 @@ public abstract class AbstractBatchReader<T> implements BatchReader<T> {
     }
     
     /**
-     * Mechanism to allow for internal resetting of state.
+     * Hook / mechanism to allow for augmenting internal resetting of state.  This is called by the reset() method.
      */
     protected void resetInternal() {
         //Nothing...

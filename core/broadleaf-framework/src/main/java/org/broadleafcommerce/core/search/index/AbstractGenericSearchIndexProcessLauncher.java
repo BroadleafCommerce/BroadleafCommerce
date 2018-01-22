@@ -191,19 +191,17 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                 } catch (Exception e) {
                     LOG.error("Error trying to end process state with processId: " + processId, e);
                 }
-                
-                synchronized (this) {
-                    try {
-                        getLockService().unlock(key, processId);
-                    } catch (LockException e) {
-                        LOG.error("There was an error trying to remove the lock for processId " + processId, e);
-                    } finally {
-                        startTime = -1;
-                    }
-                }
             }
         } finally {
-            //
+            synchronized (this) {
+                try {
+                    getLockService().unlock(key, processId);
+                } catch (LockException e) {
+                    LOG.error("There was an error trying to remove the lock for processId " + processId, e);
+                } finally {
+                    startTime = -1;
+                }
+            }
         }
     }
     

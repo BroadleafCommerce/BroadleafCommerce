@@ -41,15 +41,15 @@ public class BatchMarker implements Serializable {
     private Long lastValue;
     
     /**
-     * This should be the String representation of the {@link FieldEntity}.
+     * This should be the {@link FieldEntity}.
      * @return
      */
-    public String getFieldEntity() {
-        return fieldEntity;
+    public FieldEntity getFieldEntity() {
+        return FieldEntity.getInstance(fieldEntity);
     }
     
-    public void setFieldEntity(String fieldEntity) {
-        this.fieldEntity = fieldEntity;
+    public void setFieldEntity(FieldEntity fieldEntity) {
+        this.fieldEntity = fieldEntity.getType();
     }
     
     /**
