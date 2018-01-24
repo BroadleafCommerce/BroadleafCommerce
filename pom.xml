@@ -683,6 +683,12 @@
                 <artifactId>imageio-jpeg</artifactId>
                 <version>3.0-rc5</version>
             </dependency>
+            <!-- PNG image processing -->
+            <dependency>
+                <groupId>com.github.depsypher</groupId>
+                <artifactId>pngtastic</artifactId>
+                <version>1.5</version>
+            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
