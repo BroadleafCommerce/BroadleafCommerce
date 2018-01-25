@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
@@ -112,6 +113,13 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
+
+    /**
+     * @return whether or not to enable debug query info for the SolrQuery
+     */
+    protected boolean shouldShowDebugQuery() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("solr.showDebugQuery", false);
+    }
 
     @Override
     public void rebuildIndex() throws ServiceException, IOException {
@@ -222,9 +230,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         
         modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria, defaultSort);
 
-        if (LOG.isTraceEnabled()) {
-            solrQuery.setShowDebugInfo(true);
+        solrQuery.setShowDebugInfo(shouldShowDebugQuery());
 
+        if (LOG.isTraceEnabled()) {
             try {
                 LOG.trace(URLDecoder.decode(solrQuery.toString(), "UTF-8"));
             } catch (Exception e) {
