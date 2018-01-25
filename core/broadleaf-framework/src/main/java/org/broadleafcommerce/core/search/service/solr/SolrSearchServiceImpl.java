@@ -28,10 +28,12 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.RequestDTO;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
@@ -114,8 +116,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
+    @Autowired
+    protected SystemPropertiesService systemPropertiesService;
+
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
+
+    /**
+     * @return whether or not to enable debug query info for the SolrQuery
+     */
+    protected boolean shouldShowDebugQuery() {
+        return systemPropertiesService.resolveBooleanSystemProperty("solr.showDebugQuery", false);
+    }
 
     @Override
     public void rebuildIndex() throws ServiceException, IOException {
@@ -236,7 +248,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         attachSortClause(solrQuery, searchCriteria, defaultSort);
 
-        solrQuery.setShowDebugInfo(true);
+        solrQuery.setShowDebugInfo(shouldShowDebugQuery());
 
         if (LOG.isTraceEnabled()) {
             try {
