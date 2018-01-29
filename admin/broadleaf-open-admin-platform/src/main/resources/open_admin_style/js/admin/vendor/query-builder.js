@@ -1175,6 +1175,41 @@ QueryBuilder.prototype.setRules = function(data) {
 
         data.rules.forEach(function(item) {
             var model;
+            var subRules = item.rules;
+
+            if (subRules.length == 2) {
+                var expression1 = subRules[0];
+                var expression2 = subRules[1];
+
+                var isBetweenDetected = false;
+                var isBetweenInclusiveDetected = false;
+                var operator;
+
+                if (expression1.operator == "GREATER_THAN" && expression2.operator == "LESS_THAN") {
+                    isBetweenDetected = true;
+                    operator = "BETWEEN";
+                }
+
+                if (expression1.operator == "GREATER_OR_EQUAL" && expression2.operator == "LESS_OR_EQUAL") {
+                    isBetweenInclusiveDetected = true;
+                    operator = "BETWEEN_INCLUSIVE";
+
+                }
+
+                if (isBetweenDetected || isBetweenInclusiveDetected) {
+
+                    item.condition = null;
+                    item.id = expression1.id;
+                    item.operator = operator;
+                    item.value = expression1.value;
+                    item.value2 = expression2.value;
+
+                    item.rules.splice(1, 1);
+                    item.rules.splice(0, 1);
+                }
+
+            }
+
             if (item.rules && item.rules.length>0) {
                 if (that.settings.allow_groups != -1 && that.settings.allow_groups < group.level) {
                     that.reset();
@@ -1203,7 +1238,13 @@ QueryBuilder.prototype.setRules = function(data) {
                 model.flags = that.parseRuleFlags(item);
 
                 if (model.operator.nb_inputs !== 0 && item.value !== undefined) {
-                    model.value = item.value;
+                    if (item.value2 != null) {
+                        var valueArray = [item.value, item.value2];
+                        
+                        model.value = valueArray;
+                    } else {
+                        model.value = item.value;
+                    }
                 }
             }
         });
