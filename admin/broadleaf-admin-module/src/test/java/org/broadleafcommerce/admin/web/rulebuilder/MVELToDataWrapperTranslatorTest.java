@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.admin.web.rulebuilder;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.admin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.OrderFieldServiceImpl;
@@ -34,6 +33,10 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
+
+import java.util.TimeZone;
+
+import junit.framework.TestCase;
 
 /**
  * @author Elbert Bautista (elbertbautista)
