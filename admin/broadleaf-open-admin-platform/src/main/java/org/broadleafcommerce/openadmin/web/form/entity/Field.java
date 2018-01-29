@@ -41,6 +41,7 @@ public class Field {
     protected String value;
     protected String displayValue;
     protected String fieldComponentRenderer;
+    protected String gridFieldComponentRenderer;
     protected String foreignKeyDisplayValueProperty;
     protected String foreignKeyClass;
     protected String foreignKeySectionPath;
@@ -101,6 +102,11 @@ public class Field {
 
     public Field withFieldComponentRenderer(String fieldComponentRenderer) {
         setFieldComponentRenderer(fieldComponentRenderer);
+        return this;
+    }
+
+    public Field withGridFieldComponentRenderer(String gridFieldComponentRenderer) {
+        setGridFieldComponentRenderer(gridFieldComponentRenderer);
         return this;
     }
     
@@ -384,6 +390,14 @@ public class Field {
 
     public void setFieldComponentRenderer(String fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
+    }
+
+    public String getGridFieldComponentRenderer() {
+        return gridFieldComponentRenderer;
+    }
+
+    public void setGridFieldComponentRenderer(String gridFieldComponentRenderer) {
+        this.gridFieldComponentRenderer = gridFieldComponentRenderer;
     }
 
     public String getValue() {

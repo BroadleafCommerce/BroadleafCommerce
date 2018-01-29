@@ -1,5 +1,5 @@
 <comment th:remove="all" xmlns:th="http://www.w3.org/1999/html">
-<!-- This component represents a list grid toolbar -->
+<!-- This component represents a list grid -->
 </comment>
 
 <th:block th:if="${!#strings.isEmpty(listGrid.templateOverride)}">
@@ -144,27 +144,41 @@
                                th:href="@{${record.path}}"
                                th:utext="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
 
-
                             <th:block th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}">
                                 <a class="external-link" th:href="@{${headerField.foreignKeySectionPath + '/' + field.value}}" th:utext="${field.displayValue}"></a>
                             </th:block>
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
-                                <img class="thumbnail" th:style="${'width: 100%;'}"
-                                    blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
-                                    th:attr="data-fullurl=@{${field.value}}" />
+                                <th:block th:if="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
+                                    <img class="thumbnail" th:style="${'width: 100%;'}"
+                                         blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                         th:attr="data-fullurl=@{${field.value}}" />
+                                </th:block>
+                                <th:block th:unless="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
+                                        <div th:replace="${'fields/' + #strings.toLowerCase(field.gridComponentRenderer)}"></div>
+                                </th:block>
                             </span>
 
                             <span th:if="${field.fieldType == 'COLOR'}">
-                                <span class="sandbox-color-square" 
-                                    th:style="${'background-color: ' + field.value + ';'}"></span>
+                                <th:block th:if="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
+                                    <span class="sandbox-color-square"
+                                          th:style="${'background-color: ' + field.value + ';'}"></span>
+                                </th:block>
+                                <th:block th:unless="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
+                                     <div th:replace="${'fields/' + #strings.toLowerCase(field.gridComponentRenderer)}"></div>
+                                </th:block>
                             </span>
 
                             <th:block th:unless="${headerField.mainEntityLink
                                     or headerField.canLinkToExternalEntity 
                                     or field.fieldType == 'IMAGE'
-                                    or field.fieldType == 'COLOR'}"
+                                    or field.fieldType == 'COLOR'}">
+
+                                <th:block th:if="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}"
                                   th:utext="${field.displayValue}"></th:block>
+                                <th:block th:unless="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
+                                    <div th:replace="${'fields/' + #strings.toLowerCase(field.gridComponentRenderer)}"></div>
+                                </th:block>
                         </th:block>
 
                         <th:block th:case="'asset_grid'">

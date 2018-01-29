@@ -68,6 +68,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String broadleafEnumeration;
     protected Boolean hideEnumerationIfEmpty;
     protected SupportedFieldType fieldComponentRenderer;
+    protected SupportedFieldType gridFieldComponentRenderer;
     protected Boolean readOnly;
     protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<>(5);
     protected Boolean requiredOverride;
@@ -301,9 +302,16 @@ public class BasicFieldMetadata extends FieldMetadata {
         return fieldComponentRenderer;
     }
 
-    
     public void setFieldComponentRenderer(SupportedFieldType fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
+    }
+
+    public SupportedFieldType getGridFieldComponentRenderer() {
+        return gridFieldComponentRenderer;
+    }
+
+    public void setGridFieldComponentRenderer(SupportedFieldType gridFieldComponentRenderer) {
+        this.gridFieldComponentRenderer = gridFieldComponentRenderer;
     }
 
     public Boolean getReadOnly() {
