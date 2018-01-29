@@ -114,6 +114,8 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readAllCategories(@Nonnull int limit, @Nonnull int offset);
 
+    Long readTotalCategoryCount();
+
     /**
      * Retrieve all products in the datastore
      *

@@ -624,4 +624,12 @@ public interface OrderService {
      * @return the enhanced cart, or the untouched candidateOrder if no enhancement is available
      */
     Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder);
+
+    /**
+     * Looks up all Orders for the specified email, regardless of current OrderStatus
+     *
+     * @param email
+     * @return the requested Orders
+     */
+    List<Order> findOrdersByEmail(String email);
 }

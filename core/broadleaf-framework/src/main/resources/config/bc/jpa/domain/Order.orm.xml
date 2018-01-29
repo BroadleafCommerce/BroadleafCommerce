@@ -98,4 +98,9 @@
         </query>
     </named-query>
 
+    <named-query name="BC_READ_ORDERS_BY_EMAIL" >
+        <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
+            WHERE order.emailAddress = :email</query>
+    </named-query>
+
 </entity-mappings>

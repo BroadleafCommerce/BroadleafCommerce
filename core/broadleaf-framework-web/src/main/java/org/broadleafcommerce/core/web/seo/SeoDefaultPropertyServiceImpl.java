@@ -23,11 +23,15 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.util.BroadleafUrlParamUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuMediaXref;
+import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -36,6 +40,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Chris Kittrell (ckittrell)
@@ -51,6 +56,12 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
 
     @Resource(name = "blBaseUrlResolver")
     protected BaseUrlResolver urlResolver;
+
+    @Resource(name = "blSearchFacetDTOService")
+    protected SearchFacetDTOService facetService;
+
+    @Resource(name = "blSearchService")
+    protected SearchService searchService;
 
     @Override
     public String getProductTitlePattern(Product product) {
@@ -128,7 +139,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
 
     @Override
     public String getUrl(Category category) {
-        return urlResolver.getSiteBaseUrl() + category.getUrl();
+        return getCanonicalUrl(category);
     }
 
     @Override
@@ -170,15 +181,184 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
 
     @Override
     public String getCanonicalUrl(Product product) {
+        Integer pageNumber = getCurrentProductPageNumber();
+
+        return getCanonicalUrl(product, pageNumber);
+    }
+
+    @Override
+    public String getPaginationPrevUrl(Product product) {
+        Integer pageNumber = getCurrentProductPageNumber() - 1;
+
+        if (!productPaginationIsEnabled() || !isValidPrevPageNumber(pageNumber)) {
+            return null;
+        }
+
+        return getCanonicalUrl(product, pageNumber);
+    }
+
+    @Override
+    public String getPaginationNextUrl(Product product) {
+        Integer pageNumber = getCurrentProductPageNumber() + 1;
+
+        if (!productPaginationIsEnabled() || !isValidNextPageNumber(product, pageNumber)) {
+            return null;
+        }
+
+        return getCanonicalUrl(product, pageNumber);
+    }
+
+    protected boolean shouldIncludeProductPagination(int pageNumber) {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+
+        String productPaginationParam = getProductPaginationParam();
+        String productPaginationParamValue = request.getParameter(productPaginationParam);
+        boolean hasPaginationParamValue = StringUtils.isNotBlank(productPaginationParamValue);
+
+        return productPaginationIsEnabled() && (hasPaginationParamValue || (pageNumber > 1));
+    }
+
+    protected boolean isValidPrevPageNumber(Integer pageNumber) {
+        return (pageNumber > 0);
+    }
+
+    /**
+     * This method is intended to be overridden to also determine whether or not the {@param pageNumber} is under
+     *  the total number of pages for the given {@param product}.
+     */
+    protected boolean isValidNextPageNumber(Product product, Integer pageNumber) {
+        return true;
+    }
+
+    protected String getCanonicalUrl(Product product, int pageNumber) {
+        String canonicalUrl = product.getCanonicalUrl();
+        if (StringUtils.isEmpty(canonicalUrl)) {
+            canonicalUrl = urlResolver.getSiteBaseUrl() + product.getUrl();
+        }
+
+        if (shouldIncludeProductPagination(pageNumber)) {
+            String productPaginationParam = getProductPaginationParam();
+
+            canonicalUrl = BroadleafUrlParamUtils.addPaginationParam(canonicalUrl, productPaginationParam, pageNumber);
+        }
+
+        return canonicalUrl;
+    }
+
+    protected Integer getCurrentProductPageNumber() {
         try {
-            String canonicalUrl = product.getCanonicalUrl();
-            if (StringUtils.isEmpty(canonicalUrl)) {
-                canonicalUrl = product.getUrl();
-            }
-            return urlResolver.getSiteBaseUrl() + canonicalUrl;
-        } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
-            return "";
+            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+
+            String productPaginationParam = getProductPaginationParam();
+            String productPaginationParamValue = request.getParameter(productPaginationParam);
+
+            return Integer.valueOf(productPaginationParamValue);
+        } catch (NumberFormatException e) {
+            // Unable to parse page number value. That's fine, return page 1 instead;
+            return 1;
         }
     }
+
+    @Override
+    public String getCanonicalUrl(Category category) {
+        Integer pageNumber = getCurrentCategoryPageNumber();
+
+        return getCanonicalUrl(category, pageNumber);
+    }
+
+    @Override
+    public String getPaginationPrevUrl(Category category) {
+        Integer pageNumber = getCurrentCategoryPageNumber() - 1;
+
+        if (!isValidPrevPageNumber(pageNumber)) {
+            return null;
+        }
+
+        return getCanonicalUrl(category, pageNumber);
+    }
+
+    @Override
+    public String getPaginationNextUrl(Category category) {
+        Integer pageNumber = getCurrentCategoryPageNumber() + 1;
+
+        if (!isValidNextPageNumber(category, pageNumber)) {
+            return null;
+        }
+
+        return getCanonicalUrl(category, pageNumber);
+    }
+
+    protected boolean shouldIncludeCategoryPagination(int pageNumber) {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+
+        String categoryPaginationParam = getCategoryPaginationParam();
+        String categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
+        boolean hasPaginationParamValue = StringUtils.isNotBlank(categoryPaginationParamValue);
+
+        return hasPaginationParamValue || (pageNumber > 1);
+    }
+
+    protected boolean isValidNextPageNumber(Category category, Integer pageNumber) {
+        return pageNumber <= getPageCount(category);
+    }
+
+    protected Integer getPageCount(Category category) {
+        int activeCategoryCount = category.getActiveProductXrefs().size();
+
+        return (int) Math.ceil(activeCategoryCount * 1.0 / getPageSize());
+    }
+
+    protected String getCanonicalUrl(Category category, int pageNumber) {
+        String canonicalUrl = urlResolver.getSiteBaseUrl() + category.getUrl();
+
+        if (shouldIncludeCategoryPagination(pageNumber)) {
+            String categoryPaginationParam = getCategoryPaginationParam();
+
+            canonicalUrl = BroadleafUrlParamUtils.addPaginationParam(canonicalUrl, categoryPaginationParam, pageNumber);
+        }
+
+        return canonicalUrl;
+    }
+
+    protected Integer getCurrentCategoryPageNumber() {
+        try {
+            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+
+            String categoryPaginationParam = getCategoryPaginationParam();
+            String categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
+
+            return Integer.valueOf(categoryPaginationParamValue);
+        } catch (NumberFormatException e) {
+            // Unable to parse page number value. That's fine, return page 1 instead;
+            return 1;
+        }
+    }
+
+    protected boolean productPaginationIsEnabled() {
+        return env.getProperty("seo.product.pagination.enabled", boolean.class, false);
+    }
+
+    protected String getProductPaginationParam() {
+        return env.getProperty("seo.product.pagination.param");
+    }
+
+    protected String getCategoryPaginationParam() {
+        return env.getProperty("seo.category.pagination.param", "page");
+    }
+
+    protected int getPageSize() {
+        try {
+            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+            String pageSize = request.getParameter("pageSize");
+
+            if (StringUtils.isBlank(pageSize)) {
+                return env.getProperty("web.defaultPageSize", int.class, 40);
+            }
+
+            return Integer.parseInt(pageSize);
+        } catch (NumberFormatException e) {
+            return 1;
+        }
+    }
+
 }

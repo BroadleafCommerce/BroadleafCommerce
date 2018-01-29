@@ -129,7 +129,7 @@
                     $mediaImageContainer.find('img.thumbnail').data("fullurl", BLC.servletContext + origVal);
                     $mediaImageContainer.find('img.thumbnail').parent().attr("href", BLC.servletContext + origVal);
                     $mediaImageContainer.find('img.thumbnail').removeClass('placeholder-image');
-                    $mediaImageContainer.find('button.clear-asset-selector').show();
+                    $mediaImageContainer.find('button.edit-asset-selector, button.clear-asset-selector').show();
 
                     origVal = '{ "url": "' + origVal + '" }';
                 }
@@ -290,34 +290,34 @@
         updateEntityFormActions : function() {
             var $currModal = BLCAdmin.currentModal();
             if ($currModal && $currModal.has('.modal-add-entity-form')) {
+                // in community, modal submit gets disabled when there is a validation error
                 $('.submit-button', $currModal).prop('disabled', !this.getEntityFormChangesCount());
-            } else {
-                // Grab all buttons we might want to enable/disable
-                var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
-                var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
-                var $approveBtn = $('.sandbox-actions').find('.button a:contains("Approve")').parent();
+            }
+            
+            // Grab all buttons we might want to enable/disable
+            var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
+            var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
+            var $approveBtn = $('.sandbox-actions').find('.button a:contains("Approve")').parent();
 
+            if (this.getEntityFormChangesCount()) {
                 // Check to see if there are any changes in the `entityFormChangeMap`
                 // If there are, we want to make sure the 'Save' button is active and any workflow buttons are not.
-                if (this.getEntityFormChangesCount()) {
-                    $saveBtn.prop('disabled', false);
-                    $promoteBtn.addClass('confirm');
-                    $approveBtn.addClass('confirm');
+                $saveBtn.prop('disabled', false);
+                $promoteBtn.addClass('confirm');
+                $approveBtn.addClass('confirm');
 
-                    $("#headerChangeBoxContainer").removeClass("hidden");
-                    $(".change-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
-                    $('#headerChangeBox').show();
-                }
+                $("#headerChangeBoxContainer").removeClass("hidden");
+                $(".change-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
+                $('#headerChangeBox').show();
+            } else {
                 // Otherwise, we don't have any unsaved changes.  So disable the 'Save' button and make sure the
                 // workflow buttons are enabled
-                else {
-                    $saveBtn.prop('disabled', true);
-                    $promoteBtn.removeClass('confirm');
-                    $approveBtn.removeClass('confirm');
+                $saveBtn.prop('disabled', true);
+                $promoteBtn.removeClass('confirm');
+                $approveBtn.removeClass('confirm');
 
-                    $("#headerChangeBoxContainer").addClass("hidden");
-                    $('#headerChangeBox').hide();
-                }
+                $("#headerChangeBoxContainer").addClass("hidden");
+                $('#headerChangeBox').hide();
             }
         },
 

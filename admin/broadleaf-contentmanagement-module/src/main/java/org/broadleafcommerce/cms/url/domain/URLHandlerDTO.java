@@ -41,26 +41,32 @@ public class URLHandlerDTO implements URLHandler {
         setNewURL(newUrl);
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getIncomingURL() {
         return incomingURL;
     }
 
+    @Override
     public void setIncomingURL(String incomingURL) {
         this.incomingURL = incomingURL;
     }
 
+    @Override
     public String getNewURL() {
         return newURL;
     }
 
+    @Override
     public void setNewURL(String newURL) {
         this.newURL = newURL;
     }
@@ -91,7 +97,7 @@ public class URLHandlerDTO implements URLHandler {
 
     @Override
     public void setUrlRedirectType(URLRedirectType redirectType) {
-        this.urlRedirectType = redirectType.getType();
+        this.urlRedirectType = redirectType == null ? null : redirectType.getType();
     }
 
     @Override

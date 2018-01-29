@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Admin Module
  * %%
  * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
@@ -15,34 +15,14 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.linked.data;
+package org.broadleafcommerce.admin.server.service.persistence.module.provider.extension;
 
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.codehaus.jettison.json.JSONException;
 
-import java.util.List;
+public interface ProductUrlFieldPersistenceProviderExtensionHandler extends ExtensionHandler {
 
-/**
- * This linked data service provides metadata relevant to
- * the page.
- *
- * @author Jacob Mitash
- */
-public interface LinkedDataService {
-
-    /**
-     * Determines whether or not this LinkedDataService can handle the incoming {@link LinkedDataDestinationType}
-     * @param destination
-     * @return whether or not to handle the destination type
-     */
-    Boolean canHandle(LinkedDataDestinationType destination);
-
-    /**
-     * Gets the linked data for default pages
-     * @param url
-     * @param products
-     * @return string JSON representation of linked data
-     */
-    String getLinkedData(String url, List<Product> products) throws JSONException;
-
+    ExtensionResultStatusType modifyUrl(String url, Product product, ExtensionResultHolder<String> holder);
 }

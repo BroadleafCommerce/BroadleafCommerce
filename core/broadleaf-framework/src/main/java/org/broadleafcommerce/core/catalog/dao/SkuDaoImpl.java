@@ -27,8 +27,6 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
@@ -47,7 +45,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -125,6 +122,17 @@ public class SkuDaoImpl implements SkuDao {
     @Override
     public List<Sku> readAllSkus() {
         TypedQuery<Sku> query = em.createNamedQuery("BC_READ_ALL_SKUS", Sku.class);
+        //don't cache - could take up too much memory
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Sku> readAllSkus(int offset, int limit) {
+        TypedQuery<Sku> query = em.createNamedQuery("BC_READ_ALL_SKUS", Sku.class);
+        //don't cache - could take up too much memory
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
         return query.getResultList();
     }
 

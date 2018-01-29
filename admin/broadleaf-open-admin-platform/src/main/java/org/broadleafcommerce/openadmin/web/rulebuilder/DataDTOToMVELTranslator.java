@@ -580,7 +580,7 @@ public class DataDTOToMVELTranslator {
                             }
                         } else {
                             try {
-                                Integer.parseInt(value[j].toString());
+                                Integer.parseInt(parsableVal);
                             } catch (Exception e) {
                                 throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
                                         fieldName + ") based on field type. The type of field is Integer, " +

@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,18 +84,35 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             newAuthorities.add(new SimpleGrantedAuthority(perm));
         }
-
+        List<SimpleGrantedAuthority> newAuthoritiesList = new ArrayList<>(newAuthorities);
         HashSet<AdminRole> grantedRoles = new HashSet<AdminRole>();
         List<AdminRole> adminRoles = securityService.readAllAdminRoles();
         if (adminRoles != null) {
             for (AdminRole role : adminRoles) {
                 if (newRoles.contains(role.getName())) {
                     grantedRoles.add(role);
-                    adminSecurityHelper.addAllPermissionsToAuthorities(new ArrayList<>(newAuthorities), role.getAllPermissions());
+                    adminSecurityHelper.addAllPermissionsToAuthorities(newAuthoritiesList, role.getAllPermissions());
                 }
             }
         }
 
+        // Spring security expects everything to begin with ROLE_ for things like hasRole() expressions so this adds additional
+        // authorities with those mappings, as well as new ones with ROLE_ instead of PERMISSION_.
+        // At the end of this, given a permission set like:
+        // PERMISSION_ALL_PRODUCT
+        // The following authorities will appear in the final list to Spring security:
+        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
+        ListIterator<SimpleGrantedAuthority> it = new ArrayList<>(newAuthorities).listIterator();
+        while (it.hasNext()) {
+            SimpleGrantedAuthority auth = it.next();
+            if (auth.getAuthority().startsWith(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX)) {
+                it.add(new SimpleGrantedAuthority(AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()));
+                it.add(new SimpleGrantedAuthority(auth.getAuthority().replaceAll(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX, 
+                        AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
+            }
+        }
+        
+        
         AdminUser adminUser = securityService.readAdminUserByUserName(details.getUsername());
         if (adminUser == null) {
             adminUser = new AdminUserImpl();
@@ -144,7 +162,7 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         //Save the user data and all of the roles...
         adminUser = securityService.saveAdminUser(adminUser);
 
-        return new AdminUserDetails(adminUser.getId(), details.getUsername(), "", true, true, true, true, newAuthorities);
+        return new AdminUserDetails(adminUser.getId(), details.getUsername(), "", true, true, true, true, newAuthoritiesList);
     }
 
     /**

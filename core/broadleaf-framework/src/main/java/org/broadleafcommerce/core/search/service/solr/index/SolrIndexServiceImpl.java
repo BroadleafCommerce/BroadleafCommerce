@@ -171,12 +171,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         LOG.info("Rebuilding the entire Solr index...");
         StopWatch s = new StopWatch();
 
-        try{
-            preBuildIndex();
-            buildIndex();
-        } finally {
-            postBuildIndex();
-        }
+        preBuildIndex();
+        buildIndex();
+        postBuildIndex();
 
         LOG.info(String.format("Finished building entire Solr index in %s", s.toLapString()));
     }

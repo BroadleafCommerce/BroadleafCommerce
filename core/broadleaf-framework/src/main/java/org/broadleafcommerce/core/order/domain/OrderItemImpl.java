@@ -136,6 +136,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
+    @AdminPresentationToOneLookup()
     protected Order order;
 
     @Column(name = "PRICE", precision = 19, scale = 5)

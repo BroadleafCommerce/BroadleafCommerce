@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.admin.web.rulebuilder;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.admin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.OrderFieldServiceImpl;
@@ -33,10 +34,6 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
-
-import java.util.TimeZone;
-
-import junit.framework.TestCase;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -454,12 +451,12 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, null, customerFieldService);
 
         customerFieldService.init();
-        
+
         assert(dataWrapper.getData().get(0).getRules().size() == 2);
 
     }
 
-    public void testInBetweenRuleCurrentlyWorks() throws MVELTranslationException {
+    public void testInBetweenRuleOrderLessThenAndGreaterThenAndCurrency() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
         Property[] properties = new Property[3];
@@ -491,7 +488,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(exp.getValue().equals("[45,75]"));
     }
 
-    public void testInBetweenRuleCurrentlyDoesNotWork() throws MVELTranslationException {
+    public void testInBetweenRuleOrderGreaterThenAndLessThenAndCurrency() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
         Property[] properties = new Property[3];
