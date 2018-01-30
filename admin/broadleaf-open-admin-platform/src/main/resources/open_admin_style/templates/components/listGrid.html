@@ -149,23 +149,23 @@
                             </th:block>
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
-                                <th:block th:if="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
+                                <th:block th:if="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
                                     <img class="thumbnail" th:style="${'width: 100%;'}"
                                          blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
                                          th:attr="data-fullurl=@{${field.value}}" />
                                 </th:block>
-                                <th:block th:unless="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
-                                        <div th:replace="${'fields/' + #strings.toLowerCase(field.gridComponentRenderer)}"></div>
+                                <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
+                                        <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
                                 </th:block>
                             </span>
 
                             <span th:if="${field.fieldType == 'COLOR'}">
-                                <th:block th:if="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
+                                <th:block th:if="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
                                     <span class="sandbox-color-square"
                                           th:style="${'background-color: ' + field.value + ';'}"></span>
                                 </th:block>
-                                <th:block th:unless="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
-                                     <div th:replace="${'fields/' + #strings.toLowerCase(field.gridComponentRenderer)}"></div>
+                                <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
+                                     <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
                                 </th:block>
                             </span>
 
@@ -174,10 +174,10 @@
                                     or field.fieldType == 'IMAGE'
                                     or field.fieldType == 'COLOR'}">
 
-                                <th:block th:if="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}"
+                                <th:block th:if="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}"
                                   th:utext="${field.displayValue}"></th:block>
-                                <th:block th:unless="${field.gridComponentRenderer == null or #strings.equals(field.gridComponentRenderer, 'UNKNOWN')}">
-                                    <div th:replace="${'fields/' + #strings.toLowerCase(field.gridComponentRenderer)}"></div>
+                                <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
+                                    <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
                                 </th:block>
                         </th:block>
 
