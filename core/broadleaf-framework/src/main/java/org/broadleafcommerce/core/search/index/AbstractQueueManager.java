@@ -90,7 +90,7 @@ public abstract class AbstractQueueManager<T> implements QueueManager<T>, Applic
     }
 
     @Override
-    public final synchronized void startQueueProducer() {
+    public final synchronized void startQueueLoader() {
         if (!initialized) {
             throw new IllegalStateException("QueueManager (" + getClass().getName() + ") was not initialized.");
         }
@@ -103,7 +103,7 @@ public abstract class AbstractQueueManager<T> implements QueueManager<T>, Applic
     }
 
     @Override
-    public final synchronized void startQueueProducer(TaskExecutor t) {
+    public final synchronized void startQueueLoader(TaskExecutor t) {
         if (!initialized) {
             throw new IllegalStateException("QueueManager (" + getClass().getName() + ") was not initialized.");
         }

@@ -63,14 +63,10 @@ public interface QueueManager<T> extends QueueReader<T> {
     public void initialize();
     
     /**
-     * This starts the QueueProducer in a new Thread.  Only the 
-     * process manager or thread that has the key and reference can start the QueueProducer.
-     * @param lockService
-     * @param key
-     * @param reference
-     * @throws LockException
+     * This starts the QueueLoader in a new Thread.  Only the 
+     * process manager or thread that has the key and reference can start the QueueLoader.
      */
-    public void startQueueProducer();
+    public void startQueueLoader();
     
     /**
      * Delegates the execution of the QueueProducer to the provided TaskExecutor.
@@ -78,7 +74,7 @@ public interface QueueManager<T> extends QueueReader<T> {
      * @param t
      * 
      */
-    public void startQueueProducer(TaskExecutor t);
+    public void startQueueLoader(TaskExecutor t);
     
     /**
      * Lifecycle method to allow the closing and cleanup of resources.

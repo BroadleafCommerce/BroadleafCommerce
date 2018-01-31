@@ -104,9 +104,11 @@ implements SearchIndexProcessLauncher<I>, Runnable, ApplicationContextAware, Ini
                     //and asynchronously consume the messages.
                     queueManager.initialize();
                     if (getTaskExecutor() == null) {
-                        queueManager.startQueueProducer();
+                        LOG.info("Starting the QueueLoader without a TaskExecutor.  This will create a new thread.");
+                        queueManager.startQueueLoader();
                     } else {
-                        queueManager.startQueueProducer(getTaskExecutor());
+                        LOG.info("Starting the QueueLoader with a TaskExecutor.");
+                        queueManager.startQueueLoader(getTaskExecutor());
                     }
                     
                     String queueName = queueManager.getQueueName();

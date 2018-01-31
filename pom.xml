@@ -967,7 +967,7 @@
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>7.0.1</version>
+                <version>7.2.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
