@@ -355,7 +355,8 @@ $(document).ready(function() {
                         initAssetGrid($assetGrid);
                     }
 
-                    $(this).find('.asset-grid-container').replaceWith($assetGrid);
+                    var $assertGridContainer = $('#' + tableId + ' .asset-grid-body-wrapper').find('.asset-grid-container');
+                    $assertGridContainer.replaceWith($assetGrid);
                 });
 
                 hideTabSpinner($tab, $tabBody);
