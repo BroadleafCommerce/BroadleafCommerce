@@ -159,6 +159,18 @@
                                 </th:block>
                             </span>
 
+                            <span th:if="${field.fieldType == 'MEDIA'}">
+                                <th:block th:if="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
+                                      <img class="thumbnail" th:style="${'width: 100%;'}"
+                                           blc:src="@{${field.media.url}} + ?smallAdminThumbnail"
+                                           th:attr="data-fullurl=@{${field.media.url}}" />
+                                </th:block>
+                                <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
+                                     <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
+                                </th:block>
+
+                            </span>
+
                             <span th:if="${field.fieldType == 'COLOR'}">
                                 <th:block th:if="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
                                     <span class="sandbox-color-square"
