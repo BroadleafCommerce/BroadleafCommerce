@@ -411,6 +411,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                         Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.FIELDCOMPONENTRENDERER)) {
                 fieldMetadataOverride.setFieldComponentRenderer(SupportedFieldType.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.GRIDFIELDCOMPONENTRENDERER)) {
+                fieldMetadataOverride.setGridFieldComponentRenderer(SupportedFieldType.valueOf(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.TOOLTIP)) {
                 fieldMetadataOverride.setTooltip(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.HELPTEXT)) {
@@ -526,6 +528,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setBroadleafEnumeration(annot.broadleafEnumeration());
             override.setHideEnumerationIfEmpty(annot.hideEnumerationIfEmpty());
             override.setFieldComponentRenderer(annot.fieldComponentRenderer());
+            override.setGridFieldComponentRenderer(annot.gridFieldComponentRenderer());
             override.setColumnWidth(annot.columnWidth());
             override.setExplicitFieldType(annot.fieldType());
             override.setDisplayType(annot.displayType());
@@ -657,6 +660,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getFieldComponentRenderer() != null) {
             metadata.setFieldComponentRenderer(basicFieldMetadata.getFieldComponentRenderer());
+        }
+        if (basicFieldMetadata.getGridFieldComponentRenderer() != null) {
+            metadata.setGridFieldComponentRenderer(basicFieldMetadata.getGridFieldComponentRenderer());
         }
         if (basicFieldMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(basicFieldMetadata.getFriendlyName());

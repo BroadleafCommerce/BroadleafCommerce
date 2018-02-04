@@ -999,6 +999,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     f.withName(property.getName())
                      .withFieldType(fieldType)
                      .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
+                     .withGridFieldComponentRenderer(fmd.getGridFieldComponentRenderer()==null?null:fmd.getGridFieldComponentRenderer().toString())
                      .withOrder(fmd.getOrder())
                      .withFriendlyName(fmd.getFriendlyName())
                      .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
