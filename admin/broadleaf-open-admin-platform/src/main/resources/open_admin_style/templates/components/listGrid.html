@@ -135,7 +135,6 @@
                         th:title="${field.displayValue}"
                         th:class="${field.isDerived ? 'derived' : ''}"
                         th:style="${headerField.contentOverflowAllowed?'overflow: visible;':''}">
-
                         <th:block th:case="'main'">
                             <span th:replace="components/partials/listGridIcon"></span>
 
@@ -155,7 +154,7 @@
                                          th:attr="data-fullurl=@{${field.value}}" />
                                 </th:block>
                                 <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
-                                        <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
+                                    <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
                                 </th:block>
                             </span>
 
@@ -175,12 +174,13 @@
                                     or field.fieldType == 'COLOR'}">
 
                                 <th:block th:if="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}"
-                                  th:utext="${field.displayValue}"></th:block>
+                                  th:utext="${field.displayValue}">
+                                </th:block>
                                 <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
                                     <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
                                 </th:block>
+                            </th:block>
                         </th:block>
-
                         <th:block th:case="'asset_grid'">
                             <span th:replace="components/partials/listGridIcon"></span>
 
@@ -198,8 +198,8 @@
                                     or field.fieldType == 'IMAGE'}"
                                   th:utext="${field.displayValue}"></th:block>
                         </th:block>
-
                         <th:block th:case="*">
+                        
                             <a href="#" class="sub-list-grid-reorder"
                                style="visibility: hidden;"
                                th:if="${headerFieldStat.first} and ${listGrid.isSortable()}"
