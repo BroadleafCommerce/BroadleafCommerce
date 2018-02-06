@@ -289,7 +289,7 @@
          */
         updateEntityFormActions : function() {
             var $currModal = BLCAdmin.currentModal();
-            if ($currModal && $currModal.has('.modal-add-entity-form')) {
+            if ($currModal && $currModal.has('.modal-add-entity-form').length) {
                 // in community, modal submit gets disabled when there is a validation error
                 $('.submit-button', $currModal).prop('disabled', !this.getEntityFormChangesCount());
             }
