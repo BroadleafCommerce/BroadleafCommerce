@@ -288,4 +288,13 @@ public interface OfferService {
     public Boolean deleteOfferCode(OfferCode code);
 
     public Offer findOfferById(Long offerId);
+
+    /**
+     * Make a production copy of an offer.
+     *
+     * @param offerId
+     * @return
+     */
+    Offer duplicate(Long offerId);
+
 }
