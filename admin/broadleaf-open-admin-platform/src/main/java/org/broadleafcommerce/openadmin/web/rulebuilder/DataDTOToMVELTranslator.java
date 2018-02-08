@@ -550,7 +550,7 @@ public class DataDTOToMVELTranslator {
 
                 switch(type) {
                     case BOOLEAN:
-                        response.append(value[j]);
+                        response.append(parsableVal);
                         break;
                     case DECIMAL:
                         try {
@@ -631,7 +631,7 @@ public class DataDTOToMVELTranslator {
                         if (!ignoreQuotes) {
                             response.append("\"");
                         }
-                        response.append(value[j]);
+                        response.append(parsableVal);
                         if (!ignoreQuotes) {
                             response.append("\"");
                         }
