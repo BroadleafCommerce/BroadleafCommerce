@@ -29,7 +29,22 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 /**
- * Add configured cookies as fields to request-based rule builder
+ * Add configured cookies as fields to request-based rule builder.
+ * </p>
+ * Configuration is generally as easy as enabling the feature
+ * via a property and then configuring one or more cookie configurations.
+ * </p>
+ * Add {@code cookie.content.targeting.enabled=true} to a property file visible to both admin and site (i.e. common-shared.properties)
+ * </p>
+ * Add a cookie configuration to your Spring xml or Java configuration. Sample below demonstrated Java-based config:
+ * {@code
+ *    @Merge("blCookieRuleConfigs")
+ *    public RuleDTOConfig myCookieRuleDTOConfig() {
+ *        RuleDTOConfig config = new RuleDTOConfig("myFieldName", "myLabel");
+ *        config.setAlternateName("cookieName");
+ *        return config;
+ *    }
+ * }
  *
  * @author Jeff Fischer
  */
