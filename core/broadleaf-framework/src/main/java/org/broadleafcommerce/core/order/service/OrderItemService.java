@@ -97,4 +97,8 @@ public interface OrderItemService {
     public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
 
     public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
+
+    List<OrderItem> readBatchOrderItems(int start, int count);
+
+    Long readNumberOfOrderItems();
 }

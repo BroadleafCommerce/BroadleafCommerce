@@ -618,4 +618,14 @@ public class OrderItemServiceImpl implements OrderItemService {
     public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
         return orderItemDao.readOrderItemsForCustomersInDateRange(customerIds, startDate, endDate);
     }
+
+    @Override
+    public List<OrderItem> readBatchOrderItems(int start, int count) {
+        return null;
+    }
+
+    @Override
+    public Long readNumberOfOrderItems() {
+        return null;
+    }
 }
