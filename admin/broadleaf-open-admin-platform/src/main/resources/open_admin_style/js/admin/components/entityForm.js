@@ -154,12 +154,33 @@
             var submit = BLCAdmin.runSubmitHandlers($form);
 
             if (submit) {
-                BLC.ajax({
-                    url: $form.attr('action'),
-                    dataType: "json",
-                    type: "POST",
-                    data: BLCAdmin.serializeArray($form)
-                }, function (data) {
+                var options = {};
+                if ($form.attr('enctype') == 'multipart/form-data') {
+                    // Got some files I need to upload, use FormData
+                    // so that they are POSTed correctly
+                    // Un-disabling these fields allows us to replicate the same
+                    // functionality as BLC.serializeArray()
+                    var $disabledFields = $form.find(':disabled').attr('disabled', false);
+                    var formData = new FormData($form[0]);
+                    $disabledFields.attr('disabled', true);
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        data: formData
+                    };
+                } else {
+                    // normal case, no multipart
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        data: BLCAdmin.serializeArray($form)
+                    };
+                }
+                BLC.ajax(options, function (data) {
                     BLCAdmin.entityForm.hideActionSpinner();
 
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
