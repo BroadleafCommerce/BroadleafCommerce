@@ -335,7 +335,14 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');
-        var tabUrl = encodeURI(currentAction + '/1/' + tabKey);
+        var tabUrlSlug = '/1/' + tabKey;
+        if (currentAction.indexOf('?') >= 0) {
+            var questionIdx = currentAction.indexOf('?');
+            currentAction = currentAction.substring(0, questionIdx) + tabUrlSlug + currentAction.substring(questionIdx, currentAction.length);
+        } else {
+            currentAction += tabUrlSlug;
+        }
+        var tabUrl = encodeURI(currentAction);
 
      	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
      		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
