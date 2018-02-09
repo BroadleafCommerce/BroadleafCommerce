@@ -44,8 +44,8 @@
                       method="POST"
                       th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ')
                          + (additionalControllerClasses == null ? '' : additionalControllerClasses)}"
-                      th:action="@{${currentUrl}}">
-
+                      th:action="@{${currentUrl}}"
+                      th:attrappend="enctype=${entityForm.encType!=null}?${entityForm.encType}">
                 <span style="display: none;" id="previewurl"
                       th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}"></span>
 

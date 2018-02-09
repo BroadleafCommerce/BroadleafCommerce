@@ -63,6 +63,7 @@ public class EntityForm {
     protected String entityType;
     protected String mainEntityName;
     protected String sectionKey;
+    protected String encType;
     protected Boolean readOnly = false;
 
     /**
@@ -110,14 +111,14 @@ public class EntityForm {
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /**
-     * @return a flattened, field name keyed representation of all of 
+     * @return a flattened, field name keyed representation of all of
      * the fields in all of the groups for this form. This set will also includes all of the dynamic form
      * fields.
-     * 
+     *
      * Note that if there collisions between the dynamic form fields and the fields on this form (meaning that they
      * have the same name), then the dynamic form field will be excluded from the map and the preference will be given
      * to first-level entities
-     * 
+     *
      * @see {@link #getFields(boolean)}
      */
     public Map<String, Field> getFields() {
@@ -150,7 +151,7 @@ public class EntityForm {
 
     /**
      * Clears out the cached 'fields' variable which is used to render the form on the frontend. Use this method
-     * if you want to force the entityForm to rebuild itself based on the tabs and groups that have been assigned and 
+     * if you want to force the entityForm to rebuild itself based on the tabs and groups that have been assigned and
      * populated
      */
     public void clearFieldsMap() {
@@ -175,7 +176,7 @@ public class EntityForm {
     /**
      * Convenience method for grabbing a grid by its collection field name. This is very similar to {@link #findField(String)}
      * but differs in that this only searches through the sub collections for the current entity
-     * 
+     *
      * @param collectionFieldName the field name of the collection on the top-level entity
      * @return
      */
@@ -640,6 +641,17 @@ public class EntityForm {
 
     public void setMainEntityName(String mainEntityName) {
         this.mainEntityName = mainEntityName;
+    }
+
+    public String getEncType() {
+        return encType;
+    }
+
+    /**
+     * Changes the encoding type on the built {@code <form>}
+     */
+    public void setEncType(String encType) {
+        this.encType = encType;
     }
 
     public String getSectionKey() {

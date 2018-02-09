@@ -154,12 +154,46 @@
             var submit = BLCAdmin.runSubmitHandlers($form);
 
             if (submit) {
-                BLC.ajax({
-                    url: $form.attr('action'),
-                    dataType: "json",
-                    type: "POST",
-                    data: BLCAdmin.serializeArray($form)
-                }, function (data) {
+                var options = {};
+                if ($form.attr('enctype') == 'multipart/form-data') {
+                    // Got some files I need to upload, use FormData
+                    // so that they are POSTed correctly
+                    // Un-disabling these fields allows us to replicate the same
+                    // functionality as BLC.serializeArray()
+                    var $disabledFields = $form.find(':disabled').attr('disabled', false);
+                    var formData = new FormData();
+                    // First append all the files (works even if there are multiple
+                    // in the same file input)
+                    $.each($form.find("input[type='file']"), function(i, tag) {
+                        $.each($(tag)[0].files, function(i, file) {
+                            formData.append(tag.name, file);
+                        });
+                    });
+                    // Then get the other normal properties
+                    var params = $form.serializeArray();
+                    $.each(params, function (i, val) {
+                        formData.append(val.name, val.value);
+                    });
+                    // clean up after ourselves and put disabled back
+                    $disabledFields.attr('disabled', true);
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        data: formData
+                    };
+                } else {
+                    // normal case, no multipart
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        data: BLCAdmin.serializeArray($form)
+                    };
+                }
+                BLC.ajax(options, function (data) {
                     BLCAdmin.entityForm.hideActionSpinner();
 
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
@@ -314,7 +348,14 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');
-        var tabUrl = encodeURI(currentAction + '/1/' + tabKey);
+        var tabUrlSlug = '/1/' + tabKey;
+        if (currentAction.indexOf('?') >= 0) {
+            var questionIdx = currentAction.indexOf('?');
+            currentAction = currentAction.substring(0, questionIdx) + tabUrlSlug + currentAction.substring(questionIdx, currentAction.length);
+        } else {
+            currentAction += tabUrlSlug;
+        }
+        var tabUrl = encodeURI(currentAction);
 
      	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
      		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
