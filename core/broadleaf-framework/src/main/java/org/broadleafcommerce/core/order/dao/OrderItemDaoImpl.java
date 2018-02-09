@@ -29,7 +29,6 @@ import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -160,7 +159,6 @@ public class OrderItemDaoImpl implements OrderItemDao {
         CriteriaQuery<OrderItem> criteria = builder.createQuery(OrderItem.class);
         Root<OrderItemImpl> orderItem = criteria.from(OrderItemImpl.class);
         criteria.select(orderItem);
-        criteria.where(builder.equal(orderItem.get("status"), OrderStatus.SUBMITTED.getType()));
         TypedQuery<OrderItem> query = em.createQuery(criteria);
         query.setFirstResult(start);
         query.setMaxResults(count);
