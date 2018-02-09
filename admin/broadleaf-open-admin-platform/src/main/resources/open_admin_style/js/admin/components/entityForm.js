@@ -161,7 +161,20 @@
                     // Un-disabling these fields allows us to replicate the same
                     // functionality as BLC.serializeArray()
                     var $disabledFields = $form.find(':disabled').attr('disabled', false);
-                    var formData = new FormData($form[0]);
+                    var formData = new FormData();
+                    // First append all the files (works even if there are multiple
+                    // in the same file input)
+                    $.each($form.find("input[type='file']"), function(i, tag) {
+                        $.each($(tag)[0].files, function(i, file) {
+                            formData.append(tag.name, file);
+                        });
+                    });
+                    // Then get the other normal properties
+                    var params = $form.serializeArray();
+                    $.each(params, function (i, val) {
+                        formData.append(val.name, val.value);
+                    });
+                    // clean up after ourselves and put disabled back
                     $disabledFields.attr('disabled', true);
                     options = {
                         url: $form.attr('action'),
