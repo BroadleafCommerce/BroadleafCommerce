@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,6 +140,30 @@ public class OrderItemDaoImpl implements OrderItemDao {
         criteria.orderBy(builder.desc(order.get("customer")), builder.asc(order.get("submitDate")));
 
         TypedQuery<OrderItem> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public Long readNumberOfOrderItems() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(OrderItemImpl.class)));
+        TypedQuery<Long> query = em.createQuery(criteria);
+        return query.getSingleResult();    }
+
+    @Override
+    public List<OrderItem> readBatchOrderItems(int start, int count) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<OrderItem> criteria = builder.createQuery(OrderItem.class);
+        Root<OrderItemImpl> orderItem = criteria.from(OrderItemImpl.class);
+        criteria.select(orderItem);
+        criteria.where(builder.equal(orderItem.get("status"), OrderStatus.SUBMITTED.getType()));
+        TypedQuery<OrderItem> query = em.createQuery(criteria);
+        query.setFirstResult(start);
+        query.setMaxResults(count);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
 

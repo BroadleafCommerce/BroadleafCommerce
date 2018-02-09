@@ -621,11 +621,11 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public List<OrderItem> readBatchOrderItems(int start, int count) {
-        return null;
+        return orderItemDao.readBatchOrderItems(start, count);
     }
 
     @Override
     public Long readNumberOfOrderItems() {
-        return null;
+        return orderItemDao.readNumberOfOrderItems();
     }
 }

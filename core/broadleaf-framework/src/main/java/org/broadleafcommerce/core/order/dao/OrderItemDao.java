@@ -50,4 +50,8 @@ public interface OrderItemDao {
     OrderItemPriceDetail initializeOrderItemPriceDetails(OrderItem item);
 
     List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
+
+    Long readNumberOfOrderItems();
+
+    List<OrderItem> readBatchOrderItems(int start, int count);
 }
