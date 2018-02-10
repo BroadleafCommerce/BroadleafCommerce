@@ -427,7 +427,14 @@ $(document).ready(function() {
             var $form = BLCAdmin.getForm($deleteButton);
 
             var currentAction = $form.attr('action');
-            var deleteUrl = currentAction + '/delete';
+            var deleteUrl = currentAction;
+            var deleteAppend = '/delete';
+            if (deleteUrl.indexOf('?') >= 0) {
+                var questionIdx = deleteUrl.indexOf('?');
+                deleteUrl = deleteUrl.substring(0, questionIdx) + deleteAppend + deleteUrl.substring(questionIdx, deleteUrl.length);
+            } else {
+                deleteUrl += deleteAppend;
+            }
 
             BLCAdmin.entityForm.showActionSpinner($deleteButton.closest('.entity-form-actions'));
 
