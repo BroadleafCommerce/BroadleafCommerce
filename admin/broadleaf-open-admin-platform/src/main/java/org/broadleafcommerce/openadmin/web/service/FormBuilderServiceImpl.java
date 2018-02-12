@@ -57,6 +57,7 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -71,6 +72,8 @@ import org.broadleafcommerce.openadmin.server.security.service.ExceptionAwareRow
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
@@ -1881,14 +1884,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Property valueProp = cmd.getPMap().get("value");
             mapFormProperties.add(valueProp);
         } else {
+            String valueClassName = mapStructure.getValueClassName();
+            List<String> classNames = getValueClassNames(valueClassName);
+
             mapFormProperties = new ArrayList<>(Arrays.asList(cmd.getProperties()));
-            CollectionUtils.filter(mapFormProperties, new Predicate() {
-                @Override
-                public boolean evaluate(Object object) {
-                    Property p = (Property) object;
-                    return ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), mapStructure.getValueClassName());
-                }
-            });
+            filterMapFormProperties(mapFormProperties, classNames);
         }
 
         setEntityFormFields(cmd, ef, mapFormProperties);
@@ -1902,7 +1902,36 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         return ef;
     }
-    
+
+    protected List<String> getValueClassNames(String valueClassName) {
+        PersistenceManager pm = PersistenceManagerFactory.getPersistenceManager(valueClassName);
+        List<String> classNames = new ArrayList<>();
+        try {
+            Class<?>[] mapEntities = pm.getPolymorphicEntities(valueClassName);
+            for (Class clazz : mapEntities) {
+                classNames.add(clazz.getName());
+            }
+        } catch (ClassNotFoundException e) {
+            classNames.add(valueClassName);
+        }
+        return classNames;
+    }
+
+    protected void filterMapFormProperties(List<Property> mapFormProperties, final List<String> classNames) {
+        CollectionUtils.filter(mapFormProperties, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                Property p = (Property) object;
+                for (String availType : p.getMetadata().getAvailableToTypes()) {
+                    if (classNames.contains(availType)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
     protected EntityForm createStandardEntityForm() {
         EntityForm ef = new EntityForm();
         ef.addAction(DefaultEntityFormActions.SAVE);

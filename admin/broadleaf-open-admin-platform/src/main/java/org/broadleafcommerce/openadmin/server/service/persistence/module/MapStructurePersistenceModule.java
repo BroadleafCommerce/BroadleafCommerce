@@ -142,9 +142,11 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                         MergedPropertyType.MAPSTRUCTUREVALUE
                     );
                 } else {
+                    String valueClassName = mapStructure.getValueClassName();
+                    Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(valueClassName));
                     valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                        mapStructure.getValueClassName(), 
-                        new Class[]{Class.forName(mapStructure.getValueClassName())},
+                        valueClassName,
+                        entities,
                         null, 
                         new String[]{}, 
                         new ForeignKey[]{}, 
@@ -220,15 +222,17 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                     MergedPropertyType.MAPSTRUCTUREVALUE
                 );
             } else {
+                String valueClassName = mapStructure.getValueClassName();
+                Class<?>[] mapEntities = persistenceManager.getPolymorphicEntities(valueClassName);
                 valueUnfilteredMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    mapStructure.getValueClassName(), 
-                    new Class[]{Class.forName(mapStructure.getValueClassName())},
-                    null, 
-                    new String[]{}, 
-                    new ForeignKey[]{}, 
+                    valueClassName,
+                    mapEntities,
+                    null,
+                    new String[]{},
+                    new ForeignKey[]{},
                     MergedPropertyType.MAPSTRUCTUREVALUE,
-                    persistencePerspective.getPopulateToOneFields(), 
-                    persistencePerspective.getIncludeFields(), 
+                    persistencePerspective.getPopulateToOneFields(),
+                    persistencePerspective.getIncludeFields(),
                     persistencePerspective.getExcludeFields(),
                     persistencePerspective.getConfigurationKey(),
                     ""
@@ -328,12 +332,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                     MergedPropertyType.MAPSTRUCTUREVALUE
                 );
             } else {
+                String valueClassName = mapStructure.getValueClassName();
+                Class<?>[] mapEntities = persistenceManager.getPolymorphicEntities(valueClassName);
                 valueUnfilteredMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    mapStructure.getValueClassName(), 
-                    new Class[]{Class.forName(mapStructure.getValueClassName())},
-                    null, 
-                    new String[]{}, 
-                    new ForeignKey[]{}, 
+                    valueClassName,
+                    mapEntities,
+                    null,
+                    new String[]{},
+                    new ForeignKey[]{},
                     MergedPropertyType.MAPSTRUCTUREVALUE,
                     persistencePerspective.getPopulateToOneFields(), 
                     persistencePerspective.getIncludeFields(), 
@@ -482,9 +488,11 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                     MergedPropertyType.MAPSTRUCTUREVALUE
                 );
             } else {
+                String valueClassName = mapStructure.getValueClassName();
+                Class<?>[] mapEntities = persistenceManager.getPolymorphicEntities(valueClassName);
                 valueUnfilteredMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    mapStructure.getValueClassName(), 
-                    new Class[]{Class.forName(mapStructure.getValueClassName())},
+                    valueClassName,
+                    mapEntities,
                     null, 
                     new String[]{}, 
                     new ForeignKey[]{}, 
