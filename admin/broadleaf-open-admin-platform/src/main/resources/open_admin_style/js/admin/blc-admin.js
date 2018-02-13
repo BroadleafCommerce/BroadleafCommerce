@@ -1180,13 +1180,13 @@ $.fn.blSelectize = function (settings_user) {
             settings_user = {};
         }
         // add default settings here
-        settings_user['dropdownParent'] = 'body';
-        settings_user['hideSelected'] = true;
-        settings_user['selectOnTab'] = true;
-        settings_user['plugins'] = ['clear_on_type', 'enter_key_blur'];
-        settings_user['placeholder'] = 'Click here to select ...';
-        settings_user['positionDropdown'] = 'auto';
-        settings_user['onInitialize'] = function() {
+        settings_user['dropdownParent'] = settings_user['dropdownParent'] || 'body';
+        settings_user['hideSelected'] = settings_user['hideSelected'] || true;
+        settings_user['selectOnTab'] = settings_user['selectOnTab'] || true;
+        settings_user['plugins'] = settings_user['plugins'] || ['clear_on_type', 'enter_key_blur'];
+        settings_user['placeholder'] = settings_user['placeholder'] || 'Click here to select ...';
+        settings_user['positionDropdown'] = settings_user['positionDropdown'] || 'auto';
+        settings_user['onInitialize'] = settings_user['onInitialize'] || function() {
             if (Object.keys(this.options).length <= 1) {
                 // Remove the dropdown css
                 this.$control.addClass('remove-caret');
