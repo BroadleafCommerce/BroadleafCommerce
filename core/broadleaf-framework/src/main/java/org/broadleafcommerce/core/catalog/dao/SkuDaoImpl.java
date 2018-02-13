@@ -315,14 +315,4 @@ public class SkuDaoImpl implements SkuDao {
         criteria.orderBy(builder.asc(sku.get("id")));
         return criteria;
     }
-    
-    @Override
-    public Long readNumberOfSkus() {
-    	 //CriteriaBuilder builder = em.getCriteriaBuilder();
-       //  CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-         //criteria.select(builder.count(criteria.from(SkuImpl.class)));
-         //TypedQuery<Long> query = em.createQuery(criteria);
-         //return query.getSingleResult();
-    	return readCountAllActiveSkus();
-    }
 }

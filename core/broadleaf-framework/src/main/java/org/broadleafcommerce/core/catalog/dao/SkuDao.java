@@ -183,7 +183,4 @@ public interface SkuDao {
      * 
      */
     List<Sku> findSkuByURI(String uri);
-    
-    public Long readNumberOfSkus();
-    
 }

@@ -298,7 +298,4 @@ public interface CatalogService {
      * @return
      */
     List<Long> findProductIdsUsingProductOptionById(Long productOptionId, int start, int pageSize);
-    
-    Long readNumberOfSkus();
-
 }
