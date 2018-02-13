@@ -143,7 +143,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                     );
                 } else {
                     String valueClassName = mapStructure.getValueClassName();
-                    Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(valueClassName));
+                    Class<?>[] entities = persistenceManager.getPolymorphicEntities(valueClassName);
                     valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
                         valueClassName,
                         entities,
