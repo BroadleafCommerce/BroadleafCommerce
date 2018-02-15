@@ -25,16 +25,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.dto.ClassTree;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.openadmin.dto.SortDirection;
+import org.broadleafcommerce.openadmin.dto.*;
 import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.domain.FetchPageRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
@@ -43,6 +34,7 @@ import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
+import org.broadleafcommerce.openadmin.server.service.extension.FilterProductTypePersistenceHandlerExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.*;
@@ -115,6 +107,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     @Resource(name="blClassNameRequestParamValidationService")
     protected ClassNameRequestParamValidationService validationService;
+
+    @Resource(name = "blFilterProductTypePersistenceHandlerExtensionManager")
+    protected FilterProductTypePersistenceHandlerExtensionManager filterProductTypeExtensionManager;
 
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -435,56 +430,65 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @see {@link #getSortDirections(Map)}
      */
     protected FilterAndSortCriteria[] getCriteria(Map<String, List<String>> requestParams) {
-        if (requestParams == null || requestParams.isEmpty()) {
-            return null;
-        }
         Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
-
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
-        for (Entry<String, List<String>> entry : requestParams.entrySet()) {
-            if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
-                    && !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)
-                    && !entry.getKey().equals(FilterAndSortCriteria.MAX_INDEX_PARAMETER)
-                    && !entry.getKey().equals(FilterAndSortCriteria.START_INDEX_PARAMETER)) {
-                List<String> values = entry.getValue();
-                List<String> collapsedValues = new ArrayList<String>();
-                for (String value : values) {
-                    if (value.contains(FILTER_VALUE_SEPARATOR)) {
-                        String[] vs = value.split(FILTER_VALUE_SEPARATOR_REGEX);
-                        for (String v : vs) {
-                            collapsedValues.add(v);
+
+        if (requestParams != null || !requestParams.isEmpty()) {
+
+            for (Entry<String, List<String>> entry : requestParams.entrySet()) {
+                if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
+                        && !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)
+                        && !entry.getKey().equals(FilterAndSortCriteria.MAX_INDEX_PARAMETER)
+                        && !entry.getKey().equals(FilterAndSortCriteria.START_INDEX_PARAMETER)) {
+                    List<String> values = entry.getValue();
+                    List<String> collapsedValues = new ArrayList<String>();
+                    for (String value : values) {
+                        if (value.contains(FILTER_VALUE_SEPARATOR)) {
+                            String[] vs = value.split(FILTER_VALUE_SEPARATOR_REGEX);
+                            for (String v : vs) {
+                                collapsedValues.add(v);
+                            }
+                        } else {
+                            collapsedValues.add(value);
                         }
+                    }
+
+                    FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues, Integer.MIN_VALUE);
+                    fasMap.put(entry.getKey(), fasCriteria);
+                }
+            }
+
+            List<String> sortProperties = getSortPropertyNames(requestParams);
+            List<String> sortDirections = getSortDirections(requestParams);
+            if (CollectionUtils.isNotEmpty(sortProperties)) {
+                //set up a map to determine if there is already some criteria set for the sort property
+                for (int i = 0; i < sortProperties.size(); i++) {
+                    boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
+                    FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
+                    //If there is already criteria for this property, attach the sort to that. Otherwise, create some new
+                    //FilterAndSortCriteria for the sort
+                    if (propertyCriteria != null) {
+                        propertyCriteria.setSortAscending(sortAscending);
                     } else {
-                        collapsedValues.add(value);
+                        propertyCriteria = new FilterAndSortCriteria(sortProperties.get(i));
+                        propertyCriteria.setOrder(Integer.MIN_VALUE);
+                        propertyCriteria.setSortAscending(sortAscending);
+                        fasMap.put(sortProperties.get(i), propertyCriteria);
                     }
                 }
-
-                FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues, Integer.MIN_VALUE);
-                fasMap.put(entry.getKey(),fasCriteria);
             }
+
+            result.addAll(fasMap.values());
         }
 
-        List<String> sortProperties = getSortPropertyNames(requestParams);
-        List<String> sortDirections = getSortDirections(requestParams);
-        if (CollectionUtils.isNotEmpty(sortProperties)) {
-            //set up a map to determine if there is already some criteria set for the sort property
-            for (int i = 0; i < sortProperties.size(); i++) {
-                boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
-                FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
-                //If there is already criteria for this property, attach the sort to that. Otherwise, create some new
-                //FilterAndSortCriteria for the sort
-                if (propertyCriteria != null) {
-                    propertyCriteria.setSortAscending(sortAscending);
-                } else {
-                    propertyCriteria = new FilterAndSortCriteria(sortProperties.get(i));
-                    propertyCriteria.setOrder(Integer.MIN_VALUE);
-                    propertyCriteria.setSortAscending(sortAscending);
-                    fasMap.put(sortProperties.get(i),propertyCriteria);
-                }
-            }
+        CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
+        criteriaTransferObject.setCriteriaMap(fasMap);
+        try {
+            filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
+        } catch (ServiceException e) {
+            e.printStackTrace();
         }
-
-        result.addAll(fasMap.values());
+        result.addAll(criteriaTransferObject.getCriteriaMap().values());
         return result.toArray(new FilterAndSortCriteria[result.size()]);
     }
     
