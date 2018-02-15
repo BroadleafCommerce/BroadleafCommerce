@@ -47,6 +47,9 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     
     protected static final Log LOG = LogFactory.getLog(OfferAuditDaoImpl.class);
 
+    private static final Long NULL_ACCOUNT_ID = null;
+    private static final Long NULL_CUSTOMER_ID = null;
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
@@ -98,21 +101,45 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     @Override
+    public Long countUsesByAccount(Order order, Long accountId, Long offerId) {
+        return countUsesByAccount(order, accountId, offerId, null);
+    }
+
+    @Override
+    public Long countUsesByAccount(Order order, Long accountId, Long offerId, Long minimumDaysPerUsage) {
+        return countUsesByAccountOrCustomer(order, NULL_CUSTOMER_ID, accountId, offerId, minimumDaysPerUsage);
+    }
+
+    @Override
     public Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage) {
+        return countUsesByAccountOrCustomer(order, customerId, NULL_ACCOUNT_ID, offerId, minimumDaysPerUsage);
+    }
+
+    protected Long countUsesByAccountOrCustomer(Order order, Long customerId, Long accountId, Long offerId, Long minimumDaysPerUsage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
         criteria.select(builder.count(root));
 
+        Predicate customerOrAccountPredicate = null;
+
+        if (customerId != null) {
+            customerOrAccountPredicate = builder.equal(root.get("customerId"), customerId);
+        } else if (accountId != null) {
+            customerOrAccountPredicate = builder.equal(root.get("accountId"), accountId);
+        } else {
+            LOG.debug("Count uses by account or customer called without an account or a customer.");
+            return 0L;
+        }
+
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(
             builder.and(
+                        customerOrAccountPredicate, builder.equal(root.get("offerId"), offerId),
                 builder.or(
                     builder.notEqual(root.get("orderId"),  getOrderId(order)),
                     builder.isNull(root.get("orderId"))
-                ),
-                builder.equal(root.get("customerId"), customerId),
-                builder.equal(root.get("offerId"), offerId)
+                        )
             )
         );
 

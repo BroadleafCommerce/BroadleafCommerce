@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
 import java.util.List;
 
 
@@ -72,6 +73,20 @@ public interface OfferAuditService {
      * @return number of times and offer has been used by a customer
      */
     Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage);
+
+
+    /**
+     * Counts how many times the an offer has been used by an account 
+     * This method will take into account if the Offer has already been 
+     * applied to the Order so as not to prevent the Offer from applying 
+     * to new items added to the Order by a CRS.
+     *
+     * @param order
+     * @param accountId
+     * @param offerId
+     * @return number of times and offer has been used by a customer
+     */
+    Long countUsesByAccount(Order order, Long accountId, Long offerId, Long minimumDaysPerUsage);
 
     /**
      * Counts how many times the an offer has been used by a customer

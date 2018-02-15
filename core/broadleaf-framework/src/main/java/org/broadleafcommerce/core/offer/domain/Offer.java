@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
 import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
@@ -151,6 +152,22 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * @param maxUses
      */
     public void setMaxUsesPerCustomer(Long maxUses);
+
+    /**
+     * Enum that allows implementations to vary how customer max uses will
+     * be interpreted.    If null, the strategy will be {@link CustomerMaxUsesStrategyType.CUSTOMER}.
+     * 
+     * @return
+     */
+    CustomerMaxUsesStrategyType getMaxUsesStrategyType();
+
+    /**
+     * Sets the strategy for determining customer max uses.
+     * 
+     * @param strategyType
+     * @see #getMaxUsesStrategyType()
+     */
+    void setMaxUsesStrategyType(CustomerMaxUsesStrategyType strategyType);
 
     /**
      * Sets the minimum number of days that this offer can be used 
@@ -327,4 +344,5 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
      * @return
      */
     boolean isFutureCredit();
+
 }

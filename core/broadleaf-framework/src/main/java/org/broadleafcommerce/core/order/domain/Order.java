@@ -548,4 +548,16 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      */
     public void setTaxOverride(Boolean taxOverride);
 
+    /**
+     * This method returns null from the default implementation.   The Broadleaf
+     * Account module weaves in an implementation that returns the account id associated
+     * with the order.   
+     * 
+     * This method is used by the Broadleaf Offer engine to allow offers to be 
+     * restricted so that a given account can only use the offer a max number of times. 
+     * 
+     * @see Offer.getMaxUsesStrategyType()
+     * 
+     */
+    Long getBroadleafAccountId();
 }
