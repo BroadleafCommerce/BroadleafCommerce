@@ -55,6 +55,11 @@ public class MultiTenantCopyContext {
     protected Map<String, Map<Object, Object>> equivalentsMap;
     protected GenericEntityService genericEntityService;
     protected List<DeferredOperation> deferredOperations = new ArrayList<DeferredOperation>();
+    /**
+     * hints used to fine tune copying - generally support for hints is included in {@link MultiTenantCloneable#createOrRetrieveCopyInstance(org.broadleafcommerce.common.copy.MultiTenantCopyContext)} implementations.
+     */
+    protected Map<String, String> copyHints = new HashMap<String, String>();
+    protected Boolean isForDuplicate = false;
     
     public MultiTenantCopyContext(Catalog fromCatalog, Catalog toCatalog, Site fromSite, Site toSite, 
             GenericEntityService genericEntityService, MultiTenantCopierExtensionManager extensionManager) {
@@ -197,6 +202,29 @@ public class MultiTenantCopyContext {
 
     public List<DeferredOperation> getDeferredOperations() {
         return deferredOperations;
+    }
+
+    /**
+     * Provides a place for the caller to provide generic information to inform the copy operation. It's still up
+     * to the entity implementation of {@link MultiTenantCloneable#createOrRetrieveCopyInstance(org.broadleafcommerce.common.copy.MultiTenantCopyContext)}
+     * to actually harvest and utilize the information in some meaningful way.
+     *
+     * @return
+     */
+    public Map<String, String> getCopyHints() {
+        return copyHints;
+    }
+
+    public void setCopyHints(Map<String, String> copyHints) {
+        this.copyHints = copyHints;
+    }
+
+    public Boolean getForDuplicate() {
+        return isForDuplicate;
+    }
+
+    public void setForDuplicate(Boolean forDuplicate) {
+        isForDuplicate = forDuplicate;
     }
 
     protected boolean checkCloneStatus(Object instance) {

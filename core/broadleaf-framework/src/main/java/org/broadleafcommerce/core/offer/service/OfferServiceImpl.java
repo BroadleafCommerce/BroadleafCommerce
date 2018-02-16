@@ -21,6 +21,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.EntityDuplicateModifier;
+import org.broadleafcommerce.common.persistence.EntityDuplicator;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
@@ -112,6 +114,12 @@ public class OfferServiceImpl implements OfferService {
 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    @Resource(name="blEntityDuplicator")
+    protected EntityDuplicator duplicator;
+
+    @Resource(name="blOfferDuplicateModifier")
+    protected EntityDuplicateModifier<Offer> offerDuplicateModifier;
 
     @Override
     public List<Offer> findAllOffers() {
@@ -616,6 +624,14 @@ public class OfferServiceImpl implements OfferService {
 
         offerCodeDao.delete(code);
         return true;
+    }
+
+    @Transactional("blTransactionManager")
+    @Override
+    public Offer duplicate(Long originalOfferId) {
+        Map<String, String> copyHints = new HashMap<String, String>();
+        copyHints.put(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, "true");
+        return duplicator.copy(OfferImpl.class, originalOfferId, copyHints, offerDuplicateModifier);
     }
 
     @Override
