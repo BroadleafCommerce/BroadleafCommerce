@@ -462,24 +462,7 @@ public class OrderDaoImpl implements OrderDao {
         List<Order> orders = query.getResultList();
         return orders != null ? orders : new ArrayList<Order>();
     }
-    
-    @Override
-    public List<Order> readBatchOrders(int start, int pageSize) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
-        Root<OrderImpl> order = criteria.from(OrderImpl.class);
-        criteria.select(order);
-        criteria.where(builder.equal(order.get("status"),OrderStatus.SUBMITTED.getType()));
-        //criteria.add(Restrictions.eq("OrderStatus", "SUBMITTED"));
-        TypedQuery<Order> query = em.createQuery(criteria);
-        query.setFirstResult(start);
-        query.setMaxResults(pageSize);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
 
-        return query.getResultList();
-    }
-    
     @Override
     public Long readNumberOfOrders() {
     	 CriteriaBuilder builder = em.getCriteriaBuilder();

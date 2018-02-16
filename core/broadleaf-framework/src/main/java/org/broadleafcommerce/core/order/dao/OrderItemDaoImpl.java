@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,11 +156,25 @@ public class OrderItemDaoImpl implements OrderItemDao {
         return query.getSingleResult();    }
 
     @Override
-    public List<OrderItem> readBatchOrderItems(int start, int count) {
+    public List<OrderItem> readBatchOrderItems(int start, int count, List<OrderStatus> statuses) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<OrderItem> criteria = builder.createQuery(OrderItem.class);
-        Root<OrderItemImpl> orderItem = criteria.from(OrderItemImpl.class);
-        criteria.select(orderItem);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        Join<Order, OrderItem> orderItems = order.join("orderItems");
+        criteria.select(orderItems);
+
+        List<Predicate> restrictions = new ArrayList<>();
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        if (CollectionUtils.isNotEmpty(statuses)) {
+            // We only want results that match the orders with the correct status
+            ArrayList<String> statusStrings = new ArrayList<String>();
+            for (OrderStatus status : statuses) {
+                statusStrings.add(status.getType());
+            }
+            criteria.where(order.get("status").as(String.class).in(statusStrings));
+        }
+
         TypedQuery<OrderItem> query = em.createQuery(criteria);
         query.setFirstResult(start);
         query.setMaxResults(count);

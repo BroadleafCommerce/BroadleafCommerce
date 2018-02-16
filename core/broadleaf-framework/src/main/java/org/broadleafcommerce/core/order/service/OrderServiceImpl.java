@@ -1154,10 +1154,10 @@ public class OrderServiceImpl implements OrderService {
     }
     
     @Override
-    public List<Order> readBatchOrders(int start, int pageSize){
-    		return orderDao.readBatchOrders(start, pageSize);
+    public List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> orderStatusList) {
+        return orderDao.readBatchOrders(start, pageSize, orderStatusList);
     }
-    
+
     @Override
 	public Long readNumberOfOrders() {
     		return orderDao.readNumberOfOrders();

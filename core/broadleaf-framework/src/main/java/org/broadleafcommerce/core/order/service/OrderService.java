@@ -633,8 +633,7 @@ public interface OrderService {
      */
     List<Order> findOrdersByEmail(String email);
     
-    public List<Order> readBatchOrders(int start, int pageSize);
+    public List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> orderStatusList);
     
     public Long readNumberOfOrders();
-
 }
