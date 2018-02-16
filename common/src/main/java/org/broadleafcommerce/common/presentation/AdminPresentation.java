@@ -256,13 +256,23 @@ public @interface AdminPresentation {
     boolean allowNoValueEnumOption() default false;
 
     /**
-     * Optional - drives the component that renders the UI
+     * Optional - drives the component that renders the UI for an entityform
      *
      * When not specified, will default to the fieldType
      * 
      * @return the component name responsible for rendering this field
      */
     SupportedFieldType fieldComponentRenderer() default SupportedFieldType.UNKNOWN;
+
+
+    /**
+     * Optional - drives the component that renders the UI for a listgrid
+     *
+     * When not specified, will default to the fieldType
+     *
+     * @return the component name responsible for rendering this field
+     */
+    SupportedFieldType gridFieldComponentRenderer() default SupportedFieldType.UNKNOWN;
 
     /**
      * Optional - only required if you want to make the field immutable

@@ -17,10 +17,16 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import org.broadleafcommerce.common.persistence.EntityDuplicator;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -31,8 +37,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,6 +58,12 @@ public class AdminOfferController extends AdminBasicEntityController {
     
     public static final String SECTION_KEY = "offer";
     public static String[] customCriteria = {};
+
+    @Resource(name="blOfferService")
+    protected OfferService offerService;
+
+    @Resource(name="blEntityDuplicator")
+    protected EntityDuplicator duplicator;
 
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
@@ -81,6 +97,7 @@ public class AdminOfferController extends AdminBasicEntityController {
         customCriteria = new String[]{};
         String view = super.viewEntityForm(request, response, model, pathVars, id);
         modifyModelAttributes(model);
+        addDuplicateOption(model, id);
         return view;
     }
     
@@ -105,7 +122,46 @@ public class AdminOfferController extends AdminBasicEntityController {
         }
         return view;
     }
-    
+
+    @RequestMapping(value = "/{id}/duplicate", method = RequestMethod.POST)
+    public String duplicateEntity(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars, @PathVariable(value="id") String id,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+        if (duplicator.validate(OfferImpl.class, Long.parseLong(id))) {
+            String sectionKey = getSectionKey(pathVars);
+            Offer duplicate;
+            try {
+                duplicate = offerService.duplicate(Long.parseLong(id));
+            } catch (Exception e) {
+                return getErrorDuplicatingResponse(response, "Duplication_Failure");
+            }
+
+            // Note that AJAX Redirects need the context path prepended to them
+            return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + duplicate.getId();
+        } else {
+            return getErrorDuplicatingResponse(response, "Validation_Failure");
+        }
+    }
+
+    protected String getErrorDuplicatingResponse(HttpServletResponse response, String code) {
+        List<Map<String, Object>> errors = new ArrayList<>();
+        String message;
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            message = context.getMessageSource().getMessage(code, null, code, context.getJavaLocale());
+        } else {
+            LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
+            message = "Duplication_Failure";
+        }
+
+        Map<String, Object> errorMap = new HashMap<>();
+        errorMap.put("errorType", "global");
+        errorMap.put("code", code);
+        errorMap.put("message", message);
+        errors.add(errorMap);
+        return new JsonResponse(response).with("errors", errors).done();
+    }
+
     /**
      * Offer field visibility is dependent on other fields in the entity. Mark the form with the appropriate class
      * so that the Javascript will know to handle this form.
@@ -120,5 +176,14 @@ public class AdminOfferController extends AdminBasicEntityController {
             form.findField("targetItemCriteria").setRequired(true);
         }
     }
-    
+
+    protected void addDuplicateOption(Model model, String id) {
+        if (duplicator.validate(OfferImpl.class, Long.parseLong(id))) {
+            EntityForm form = (EntityForm) model.asMap().get("entityForm");
+            EntityFormAction duplicate = new EntityFormAction("duplicate")
+                    .withButtonClass("duplicate-button")
+                    .withDisplayText("Duplicate");
+            form.addAction(duplicate);
+        }
+    }
 }

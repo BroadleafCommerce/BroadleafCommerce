@@ -51,12 +51,11 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
-import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.core.env.Environment;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -66,7 +65,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.annotation.Resource;
 
 /**
@@ -108,8 +106,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
+    @Autowired
+    protected Environment environment;
+
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
+
+    /**
+     * @return whether or not to enable debug query info for the SolrQuery
+     */
+    protected boolean shouldShowDebugQuery() {
+        return environment.getProperty("solr.showDebugQuery", Boolean.class, false);
+    }
 
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
@@ -225,7 +233,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         attachSortClause(solrQuery, searchCriteria, defaultSort);
 
-        solrQuery.setShowDebugInfo(true);
+        solrQuery.setShowDebugInfo(shouldShowDebugQuery());
 
         if (LOG.isTraceEnabled()) {
             try {

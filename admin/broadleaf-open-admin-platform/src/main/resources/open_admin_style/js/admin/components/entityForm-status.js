@@ -289,7 +289,7 @@
          */
         updateEntityFormActions : function() {
             var $currModal = BLCAdmin.currentModal();
-            if ($currModal && $currModal.has('.modal-add-entity-form')) {
+            if ($currModal && $currModal.has('.modal-add-entity-form').length) {
                 // in community, modal submit gets disabled when there is a validation error
                 $('.submit-button', $currModal).prop('disabled', !this.getEntityFormChangesCount());
             }
@@ -646,7 +646,7 @@ $(document).ready(function() {
      * This event handler is fired for `change` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('change', 'select, input:radio, input.query-builder-selectize-input', function() {
+    $body.on('change', 'select, input:radio, input.query-builder-selectize-input, input:file', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 

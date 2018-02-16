@@ -546,10 +546,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             id = transformId(id, quantityBasedRule);
             idProperty.setValue(String.valueOf(id));
 
-            Property containedIdProperty = new Property();
-            containedIdProperty.setName("containedId");
             Object containedRule = findContainedRuleIfApplicable(quantityBasedRule);
+            Property containedIdProperty = new Property();
             if (containedRule != null) {
+                containedIdProperty.setName("containedId");
                 EntityManager em = PersistenceManagerFactory.getDefaultPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
                 Long containedId = (Long) em.unwrap(Session.class).getIdentifier(containedRule);
                 containedId = transformId(containedId, containedRule);

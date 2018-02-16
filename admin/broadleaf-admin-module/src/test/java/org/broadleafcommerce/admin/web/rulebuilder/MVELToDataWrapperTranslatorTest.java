@@ -416,6 +416,49 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    public void testBetweenDatesDataWrapper() throws MVELTranslationException {
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+
+        Property[] p1 = new Property[1];
+        Property m1 = new Property();
+        m1.setName("matchRule");
+        m1.setValue("(MvelHelper.convertField(\"DATE\",customer.?getCustomerAttributes()[\"invoice_date\"])>MvelHelper" +
+                ".convertField(\"DATE\",\"2017.10.14 16:38:00 -0500\")&&MvelHelper.convertField(\"DATE\",customer" +
+                ".?getCustomerAttributes()[\"invoice_date\"])<MvelHelper.convertField(\"DATE\"," +
+                "\"2017.10.16 16:38:00 -0500\"))&&(MvelHelper.convertField(\"DATE\",customer.?getCustomerAttributes()" +
+                "[\"invoice_date\"])>=MvelHelper.convertField(\"DATE\",\"2017.10.24 16:39:00 -0500\")&&MvelHelper" +
+                ".convertField(\"DATE\",customer.?getCustomerAttributes()[\"invoice_date\"])<=MvelHelper" +
+                ".convertField(\"DATE\",\"2017.10.25 16:40:00 -0500\"))");
+        Property q1 = new Property();
+        q1.setName("quantity");
+        q1.setValue("1");
+        Property i1 = new Property();
+        i1.setName("id");
+        i1.setValue("100");
+        p1[0] = m1;
+
+        Entity e1 = new Entity();
+        e1.setProperties(p1);
+
+        Entity[] entities = new Entity[1];
+        entities[0] = e1;
+
+        customerFieldService.getFields().add(new FieldData.Builder()
+                .label("Customer - invoice date")
+                .name("getCustomerAttributes()---invoice_date")
+                .operators(RuleOperatorType.DATE)
+                .options(RuleOptionType.EMPTY_COLLECTION)
+                .type(SupportedFieldType.DATE)
+                .build());
+
+        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, null, customerFieldService);
+
+        customerFieldService.init();
+
+        assert(dataWrapper.getData().get(0).getRules().size() == 2);
+
+    }
+
     public void testInBetweenRuleOrderLessThenAndGreaterThenAndCurrency() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 

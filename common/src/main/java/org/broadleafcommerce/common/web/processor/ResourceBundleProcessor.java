@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.springframework.stereotype.Component;
 
@@ -147,7 +148,8 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
         boolean async = tagAttributes.containsKey("async");
         boolean defer = tagAttributes.containsKey("defer");
         boolean includeAsyncDeferUnbundled = tagAttributes.containsKey("includeAsyncDeferUnbundled") && Boolean.parseBoolean(tagAttributes.get("includeAsyncDeferUnbundled"));
-        
+        String dependencyEvent = tagAttributes.get("bundle-dependency-event");
+
         List<String> files = new ArrayList<>();
         for (String file : tagAttributes.get("files").split(",")) {
             files.add(file.trim());
@@ -161,7 +163,7 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
             String bundleResourceName = bundlingService.resolveBundleResourceName(name, mappingPrefix, files);
             String bundleUrl = getBundleUrl(bundleResourceName, context);
             
-            addElementToModel(bundleUrl, async, defer, context, model);
+            addElementToModel(bundleUrl, async, defer, dependencyEvent, context, model);
         } else {
             if (async) {
                 async = includeAsyncDeferUnbundled;
@@ -207,19 +209,65 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
 
         return bundleUrl;
     }
-    
+
+    /**
+     * @deprecated Use {@link #addElementToModel(String, boolean, boolean, String, BroadleafTemplateContext, BroadleafTemplateModel)} instead
+     */
+    @Deprecated
     protected void addElementToModel(String src, boolean async, boolean defer, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        addElementToModel(src, async, defer, null, context, model);
+    }
+    
+    protected void addElementToModel(String src, boolean async, boolean defer, String dependencyEvent, BroadleafTemplateContext context, BroadleafTemplateModel model) {
         if (src.contains(";")) {
             src = src.substring(0, src.indexOf(';'));
         }
         
         if (src.endsWith(".js")) {
-            model.addElement(context.createNonVoidElement("script", getScriptAttributes(src, async, defer), true));
+            if (!StringUtils.isEmpty(dependencyEvent)) {
+                addDependentBundleRestrictionToModel(src, async, defer, dependencyEvent, context, model);
+            } else {
+                model.addElement(context.createNonVoidElement("script", getScriptAttributes(src, async, defer), true));
+            }
         } else if (src.endsWith(".css")) {
             model.addElement(context.createNonVoidElement("link", getLinkAttributes(src), true));
         } else {
             throw new IllegalArgumentException("Unknown extension for: " + src + " - only .js and .css are supported");
         }
+    }
+
+    protected void addDependentBundleRestrictionToModel(String src, boolean async, boolean defer, String dependencyEvent, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        String methodName = src;
+        if (methodName.contains("/")) {
+            methodName = methodName.substring(methodName.lastIndexOf("/")+1, methodName.length());
+        }
+        methodName = methodName.replaceAll("-", "_");
+        methodName = methodName.replaceAll("\\.", "_");
+        StringBuilder sb = new StringBuilder();
+        sb.append("<script>\n");
+        sb.append("if (typeof("+dependencyEvent+"Event) !== 'undefined'){");
+        sb.append("$(function() {");
+        sb.append("handle"+methodName+"();");
+        sb.append("});");
+        sb.append("} else {");
+        sb.append("document.body.addEventListener('"+dependencyEvent+"',");
+        sb.append("function (elem) {");
+        sb.append("$(function() {");
+        sb.append("handle"+methodName+"();");
+        sb.append("});");
+        sb.append("}, false");
+        sb.append(");");
+        sb.append("}");
+        sb.append("function handle"+methodName+"() {");
+        sb.append("var script= document.createElement('script');");
+        sb.append("script.type= 'text/javascript';");
+        sb.append("script.src= '"+src+"';");
+        sb.append("document.body.append(script);");
+        sb.append("}");
+        sb.append("\n</script>");
+
+        BroadleafTemplateElement linkedData = context.createTextElement(sb.toString());
+        model.addElement(linkedData);
     }
 
     protected Map<String, String> getScriptAttributes(String src, boolean async, boolean defer) {

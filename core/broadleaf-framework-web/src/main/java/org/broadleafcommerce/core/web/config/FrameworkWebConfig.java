@@ -17,11 +17,20 @@
  */
 package org.broadleafcommerce.core.web.config;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
+import org.broadleafcommerce.common.security.util.CookieUtils;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.broadleafcommerce.core.rule.RuleDTOConfig;
+import org.broadleafcommerce.core.web.cookie.CookieRuleFilter;
+import org.broadleafcommerce.core.web.cookie.CookieRuleRequestProcessor;
 import org.broadleafcommerce.core.web.seo.BasicSeoPropertyGeneratorImpl;
 import org.broadleafcommerce.core.web.seo.SeoPropertyGenerator;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ListFactoryBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,4 +73,28 @@ public class FrameworkWebConfig {
         return generators;
     }
 
+    @Bean
+    public ListFactoryBean blCookieRuleConfigs() {
+        ListFactoryBean listFactoryBean = new ListFactoryBean();
+        listFactoryBean.setSourceList(new ArrayList<RuleDTOConfig>());
+        return listFactoryBean;
+    }
+
+    @Bean
+    @Autowired
+    @ConditionalOnProperty("cookie.content.targeting.enabled")
+    @ConditionalOnNotAdmin
+    public CookieRuleRequestProcessor blCookieRuleRequestProcessor(@Qualifier("blCookieRuleConfigs") List configs, CookieUtils cookieUtils) {
+        CookieRuleRequestProcessor processor = new CookieRuleRequestProcessor(configs, cookieUtils);
+        return processor;
+    }
+
+    @Bean
+    @Autowired
+    @ConditionalOnProperty("cookie.content.targeting.enabled")
+    @ConditionalOnNotAdmin
+    public CookieRuleFilter blCookieRuleFilter(@Qualifier("blCookieRuleRequestProcessor") CookieRuleRequestProcessor processor) {
+        CookieRuleFilter filter = new CookieRuleFilter(processor);
+        return filter;
+    }
 }

@@ -154,12 +154,46 @@
             var submit = BLCAdmin.runSubmitHandlers($form);
 
             if (submit) {
-                BLC.ajax({
-                    url: $form.attr('action'),
-                    dataType: "json",
-                    type: "POST",
-                    data: BLCAdmin.serializeArray($form)
-                }, function (data) {
+                var options = {};
+                if ($form.attr('enctype') == 'multipart/form-data') {
+                    // Got some files I need to upload, use FormData
+                    // so that they are POSTed correctly
+                    // Un-disabling these fields allows us to replicate the same
+                    // functionality as BLC.serializeArray()
+                    var $disabledFields = $form.find(':disabled').attr('disabled', false);
+                    var formData = new FormData();
+                    // First append all the files (works even if there are multiple
+                    // in the same file input)
+                    $.each($form.find("input[type='file']"), function(i, tag) {
+                        $.each($(tag)[0].files, function(i, file) {
+                            formData.append(tag.name, file);
+                        });
+                    });
+                    // Then get the other normal properties
+                    var params = $form.serializeArray();
+                    $.each(params, function (i, val) {
+                        formData.append(val.name, val.value);
+                    });
+                    // clean up after ourselves and put disabled back
+                    $disabledFields.attr('disabled', true);
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        data: formData
+                    };
+                } else {
+                    // normal case, no multipart
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        data: BLCAdmin.serializeArray($form)
+                    };
+                }
+                BLC.ajax(options, function (data) {
                     BLCAdmin.entityForm.hideActionSpinner();
 
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
@@ -314,7 +348,14 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');
-        var tabUrl = encodeURI(currentAction + '/1/' + tabKey);
+        var tabUrlSlug = '/1/' + tabKey;
+        if (currentAction.indexOf('?') >= 0) {
+            var questionIdx = currentAction.indexOf('?');
+            currentAction = currentAction.substring(0, questionIdx) + tabUrlSlug + currentAction.substring(questionIdx, currentAction.length);
+        } else {
+            currentAction += tabUrlSlug;
+        }
+        var tabUrl = encodeURI(currentAction);
 
      	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
      		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
@@ -355,7 +396,8 @@ $(document).ready(function() {
                         initAssetGrid($assetGrid);
                     }
 
-                    $(this).find('.asset-grid-container').replaceWith($assetGrid);
+                    var $assertGridContainer = $('#' + tableId + ' .asset-grid-body-wrapper').find('.asset-grid-container');
+                    $assertGridContainer.replaceWith($assetGrid);
                 });
 
                 hideTabSpinner($tab, $tabBody);
@@ -385,7 +427,14 @@ $(document).ready(function() {
             var $form = BLCAdmin.getForm($deleteButton);
 
             var currentAction = $form.attr('action');
-            var deleteUrl = currentAction + '/delete';
+            var deleteUrl = currentAction;
+            var deleteAppend = '/delete';
+            if (deleteUrl.indexOf('?') >= 0) {
+                var questionIdx = deleteUrl.indexOf('?');
+                deleteUrl = deleteUrl.substring(0, questionIdx) + deleteAppend + deleteUrl.substring(questionIdx, deleteUrl.length);
+            } else {
+                deleteUrl += deleteAppend;
+            }
 
             BLCAdmin.entityForm.showActionSpinner($deleteButton.closest('.entity-form-actions'));
 
@@ -416,6 +465,43 @@ $(document).ready(function() {
 
             event.preventDefault();
         }
+    });
+
+    $('body').on('click', 'button.duplicate-button, a.duplicate-button', function(event) {
+        var $button = $(this);
+        var $form = BLCAdmin.getForm($button);
+
+        var currentAction = $form.attr('action');
+        var dupUrl = currentAction + '/duplicate';
+
+        BLCAdmin.entityForm.showActionSpinner($button.closest('.entity-form-actions'));
+
+        // On success this should redirect, on failure we'll get some JSON back
+        BLC.ajax({
+            url: dupUrl,
+            type: "POST",
+            data: $form.serializeArray(),
+            complete: BLCAdmin.entityForm.hideActionSpinner()
+        }, function (data) {
+            $("#headerFlashAlertBoxContainer").removeClass("hidden");
+            $(".errors, .error, .tab-error-indicator, .tabError").remove();
+            $('.has-error').removeClass('has-error');
+
+            if (!data.errors) {
+                var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.duplicated + '!', {
+                    alertType: 'save-alert',
+                    autoClose: 2000,
+                    clearOtherAlerts: true
+                });
+            } else {
+                BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDuplicating);
+            }
+
+            BLCAdmin.runPostFormSubmitHandlers($form, data);
+        });
+
+        event.preventDefault();
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {

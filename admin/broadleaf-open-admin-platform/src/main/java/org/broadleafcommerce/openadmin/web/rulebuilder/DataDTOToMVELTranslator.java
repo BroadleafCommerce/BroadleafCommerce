@@ -598,7 +598,7 @@ public class DataDTOToMVELTranslator {
                             }
                         } else {
                             try {
-                                Integer.parseInt(value[j].toString());
+                                Integer.parseInt(parsableVal);
                             } catch (Exception e) {
                                 throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
                                         fieldName + ") based on field type. The type of field is Integer, " +
@@ -649,14 +649,16 @@ public class DataDTOToMVELTranslator {
                         }
                         break;
                     default:
+                        String stringVersionState = String.valueOf(value[j]);
+                        boolean alreadyHasQuotes = stringVersionState.startsWith("\"") && stringVersionState.endsWith("\"");
                         if (ignoreCase) {
                             response.append("MvelHelper.toUpperCase(");
                         }
-                        if (!ignoreQuotes) {
+                        if (!ignoreQuotes && !alreadyHasQuotes) {
                             response.append("\"");
                         }
-                        response.append(value[j]);
-                        if (!ignoreQuotes) {
+                        response.append(stringVersionState);
+                        if (!ignoreQuotes && !alreadyHasQuotes) {
                             response.append("\"");
                         }
                         if (ignoreCase) {

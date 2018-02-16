@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -92,6 +93,7 @@ import javax.persistence.Transient;
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {
 
+    public static final String EXCLUDE_OFFERCODE_COPY_HINT = "exclude-offerCodes";
     public static final long serialVersionUID = 1L;
 
     @Id
@@ -203,7 +205,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             group = GroupName.Advanced,
             defaultValue = "false")
     protected Boolean applyToChildItems = false;
-    
+
     /**
      * Determines if other offers of the same type can be combined with this offer. 
      */
@@ -245,7 +247,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             tooltip = "OfferImplMinimumDaysPerUsage_tooltip",
             defaultValue = "0")
     protected Long minimumDaysPerUsage;
-    
+
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
         group = GroupName.QualifierRuleRestriction,
@@ -592,7 +594,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setMinimumDaysPerUsage(Long minimumDaysPerUsage) {
         this.minimumDaysPerUsage = minimumDaysPerUsage;
     }
-    
+
     @Override
     public boolean isUnlimitedUsePerCustomer() {
         return getMaxUsesPerCustomer() == 0;
@@ -844,9 +846,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setRequiresRelatedTargetAndQualifiers(requiresRelatedTargetAndQualifiers);
         cloned.setTotalitarianOffer(totalitarianOffer);
         cloned.setType(getType());
-        for(OfferCode entry : offerCodes){
-            OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getOfferCodes().add(clonedEntry);
+        if (!BooleanUtils.toBoolean(context.getCopyHints().get(EXCLUDE_OFFERCODE_COPY_HINT))) {
+            for (OfferCode entry : offerCodes) {
+                OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+                cloned.getOfferCodes().add(clonedEntry);
+            }
         }
         for(OfferQualifyingCriteriaXref entry : qualifyingItemCriteria){
             OfferQualifyingCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
