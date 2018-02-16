@@ -625,14 +625,16 @@ public class DataDTOToMVELTranslator {
                         response.append("\")");
                         break;
                     default:
+                        String stringVersionState = String.valueOf(value[j]);
+                        boolean alreadyHasQuotes = stringVersionState.startsWith("\"") && stringVersionState.endsWith("\"");
                         if (ignoreCase) {
                             response.append("MvelHelper.toUpperCase(");
                         }
-                        if (!ignoreQuotes) {
+                        if (!ignoreQuotes && !alreadyHasQuotes) {
                             response.append("\"");
                         }
-                        response.append(value[j]);
-                        if (!ignoreQuotes) {
+                        response.append(stringVersionState);
+                        if (!ignoreQuotes && !alreadyHasQuotes) {
                             response.append("\"");
                         }
                         if (ignoreCase) {
