@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferAuditService;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -62,7 +63,14 @@ public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<ProcessCont
         
         for (Offer offer : appliedOffers) {
             if (offer.isLimitedUsePerCustomer()) {
-                Long currentUses = offerAuditService.countUsesByCustomer(order, order.getCustomer().getId(), offer.getId(), offer.getMinimumDaysPerUsage());
+                CustomerMaxUsesStrategyType strategy = offer.getMaxUsesStrategyType();
+                boolean checkUsingCustomer = (strategy == null || strategy.equals(CustomerMaxUsesStrategyType.CUSTOMER));
+                Long currentUses;
+                if (checkUsingCustomer) {
+                    currentUses = offerAuditService.countUsesByCustomer(order, order.getCustomer().getId(), offer.getId(), offer.getMinimumDaysPerUsage());
+                } else {
+                    currentUses = offerAuditService.countUsesByAccount(order, order.getBroadleafAccountId(), offer.getId(), offer.getMinimumDaysPerUsage());
+                }
                 
                 if (currentUses >= offer.getMaxUsesPerCustomer()) {
                     throw new OfferMaxUseExceededException("The customer has used this offer more than the maximum allowed number of times.");

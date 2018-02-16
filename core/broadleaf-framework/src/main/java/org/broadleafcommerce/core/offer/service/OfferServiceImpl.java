@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
+import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -498,10 +499,15 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public boolean verifyMaxCustomerUsageThreshold(Order order, Offer offer) {
-        Customer customer = order.getCustomer();
-        
         if (offer.isLimitedUsePerCustomer()) {
-            Long currentUses = offerAuditService.countUsesByCustomer(order, customer.getId(), offer.getId(), offer.getMinimumDaysPerUsage());
+            CustomerMaxUsesStrategyType strategy = offer.getMaxUsesStrategyType();
+            boolean checkUsingCustomer = (strategy == null || strategy.equals(CustomerMaxUsesStrategyType.CUSTOMER));
+            Long currentUses;
+            if (checkUsingCustomer) {
+                currentUses = offerAuditService.countUsesByCustomer(order, order.getCustomer().getId(), offer.getId(), offer.getMinimumDaysPerUsage());
+            } else {
+                currentUses = offerAuditService.countUsesByAccount(order, order.getBroadleafAccountId(), offer.getId(), offer.getMinimumDaysPerUsage());
+            }
             
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;

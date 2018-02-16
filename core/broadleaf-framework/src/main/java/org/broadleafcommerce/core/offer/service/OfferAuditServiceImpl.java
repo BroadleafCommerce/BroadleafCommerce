@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 import javax.annotation.Resource;
 
 
@@ -68,6 +69,11 @@ public class OfferAuditServiceImpl implements OfferAuditService {
     @Override
     public Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage) {
         return offerAuditDao.countUsesByCustomer(order, customerId, offerId, minimumDaysPerUsage);
+    }
+
+    @Override
+    public Long countUsesByAccount(Order order, Long accountId, Long offerId, Long minimumDaysPerUsage) {
+        return offerAuditDao.countUsesByAccount(order, accountId, offerId, minimumDaysPerUsage);
     }
 
     @Deprecated

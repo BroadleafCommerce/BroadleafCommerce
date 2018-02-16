@@ -42,6 +42,7 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
 import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
@@ -158,7 +159,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Value",
         group = GroupName.Description, order = FieldOrder.Amount,
         prominent = true, gridOrder = 4,
-        defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
@@ -202,7 +203,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             group = GroupName.Advanced,
             defaultValue = "false")
     protected Boolean applyToChildItems = false;
-
+    
     /**
      * Determines if other offers of the same type can be combined with this offer. 
      */
@@ -234,6 +235,10 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         defaultValue = "0")
     protected Long maxUsesPerCustomer;
 
+    @Column(name = "MAX_USES_STRATEGY")
+    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Strategy", allowNoValueEnumOption = false, defaultValue = "CUSTOMER", group = GroupName.Restrictions, order = FieldOrder.MaxUsesStrategy, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType")
+    protected String maxUsesStrategy;
+
     @Column(name = "MINIMUM_DAYS_PER_USAGE")
     @AdminPresentation(friendlyName = "OfferImpl_Minimum_Days_Per_Usage",
             group = GroupName.Restrictions, order = FieldOrder.MinimumDaysPerUsage,
@@ -254,21 +259,21 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
         group = GroupName.QualifierRuleRestriction, order = FieldOrder.QualifyingItemSubTotal,
-        defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal qualifyingItemSubTotal;
 
     @Column(name = "ORDER_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Order_Subtotal",
         tooltip = "OfferImplMinOrderSubtotal_tooltip",
         group = GroupName.Restrictions, order = FieldOrder.OrderMinSubTotal,
-        defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal orderMinSubTotal;
 
     @Column(name = "TARGET_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Target_Subtotal",
             tooltip = "OfferImplMinTargetSubtotal_tooltip",
             group = GroupName.Restrictions, order = FieldOrder.TargetMinSubTotal,
-            defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal targetMinSubTotal;
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
@@ -569,6 +574,16 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
+    public CustomerMaxUsesStrategyType getMaxUsesStrategyType() {
+        return CustomerMaxUsesStrategyType.getInstance(maxUsesStrategy);
+    }
+
+    @Override
+    public void setMaxUsesStrategyType(CustomerMaxUsesStrategyType strategyType) {
+        this.maxUsesStrategy = strategyType.getType();
+    }
+
+    @Override
     public Long getMinimumDaysPerUsage() {
         return minimumDaysPerUsage;
     }
@@ -617,27 +632,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setMarketingMessage(String marketingMessage) {
         this.marketingMessage = marketingMessage;
     }
-
-    //    @Override
-    //    @Deprecated
-    //    public Set<OfferItemCriteria> getQualifyingItemCriteria() {
-    //        if (legacyQualifyingItemCriteria.size() == 0) {
-    //            for (OfferQualifyingCriteriaXref xref : getQualifyingItemCriteriaXref()) {
-    //                legacyQualifyingItemCriteria.add(xref.getOfferItemCriteria());
-    //            }
-    //        }
-    //        return Collections.unmodifiableSet(legacyQualifyingItemCriteria);
-    //    }
-    //
-    //    @Override
-    //    @Deprecated
-    //    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
-    //        this.legacyQualifyingItemCriteria.clear();
-    //        this.qualifyingItemCriteria.clear();
-    //        for(OfferItemCriteria crit : qualifyingItemCriteria){
-    //            this.qualifyingItemCriteria.add(new OfferQualifyingCriteriaXrefImpl(this, crit));
-    //        }
-    //    }
 
     @Override
     public Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref() {
@@ -871,5 +865,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
         return  createResponse;
     }
+
 
 }

@@ -929,5 +929,10 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         return  createResponse;
     }
 
+    @Override
+    public Long getBroadleafAccountId() {
+        // This method has an implementation weaved in when using the Broadleaf Account module.
+        return null;
+    }
 
 }
