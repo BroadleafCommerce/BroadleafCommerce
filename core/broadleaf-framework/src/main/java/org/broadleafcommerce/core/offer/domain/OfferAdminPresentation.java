@@ -129,6 +129,7 @@ public interface OfferAdminPresentation {
 
     public static class GroupOrder {
         public static final int Description = 1000;
+        public static final int Pricing = 2000;
         public static final int ActivityRange = 2000;
         public static final int Customer = 3000;
         public static final int Restrictions = 5000;

@@ -367,6 +367,19 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             tooltip = "OfferImpl_Offer_Adjustment_Type_tooltip",
             showIfProperty="admin.showIfProperty.offerAdjustmentType")
     protected String adjustmentType;
+    
+    @Column(name = "USE_LIST_FOR_DISCOUNTS")
+    @AdminPresentation(friendlyName = "OfferImpl_Use_List_For_Discounts",
+            group = GroupName.Description,
+            defaultValue = "false")
+    protected Boolean useListForDiscounts = false;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferPriceDataImpl.class, cascade = CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+    @AdminPresentationCollection(
+            friendlyName = "OfferImpl_Offer_Price_Data",
+            group = GroupName.Description, order = FieldOrder.OfferType + 10)
+    protected List<OfferPriceData> offerPriceData = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -687,7 +700,27 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref) {
        this.offerMatchRules = offerMatchRulesXref;
-   }
+    }
+
+    @Override
+    public Boolean getUseListForDiscounts() {
+        return useListForDiscounts;
+    }
+
+    @Override
+    public void setUseListForDiscounts(Boolean useListForDiscounts) {
+        this.useListForDiscounts = useListForDiscounts;
+    }
+
+    @Override
+    public List<OfferPriceData> getOfferPriceData() {
+        return offerPriceData;
+    }
+
+    @Override
+    public void setOfferPriceData(List<OfferPriceData> offerPriceData) {
+        this.offerPriceData = offerPriceData;
+    }
 
     @Override
     public Character getArchived() {

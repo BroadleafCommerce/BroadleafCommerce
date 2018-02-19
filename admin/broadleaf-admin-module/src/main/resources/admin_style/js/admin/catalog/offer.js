@@ -140,6 +140,28 @@
                 return (parentValue > 0);
             }
         );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-useListForDiscounts',
+            '#field-useListForDiscounts',
+            function showIfValue() {
+                return false;
+            },
+            {
+                'additionalChangeAction-runOnInitialization': true,
+            }
+        );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-useListForDiscounts',
+            '#offerPriceData',
+            'true',
+            {
+                'additionalChangeAction-runOnInitialization': true,
+            }
+        );
         
     });
 

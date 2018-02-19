@@ -244,7 +244,15 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     Map<String, OfferOfferRuleXref> getOfferMatchRulesXref();
 
     void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref);
-    
+
+    Boolean getUseListForDiscounts();
+
+    void setUseListForDiscounts(Boolean useListForDiscounts);
+
+    List<OfferPriceData> getOfferPriceData();
+
+    void setOfferPriceData(List<OfferPriceData> offerPriceData);
+
     /**
      * Indicates the amount of items that must be purchased for this offer to
      * be considered for this order.

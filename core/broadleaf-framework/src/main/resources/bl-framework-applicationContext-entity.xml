@@ -61,6 +61,7 @@
     <bean id="org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment" class="org.broadleafcommerce.core.payment.domain.secure.CreditCardPaymentInfoImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment" class="org.broadleafcommerce.core.payment.domain.secure.GiftCardPaymentImpl" scope="prototype"/>    
     <bean id="org.broadleafcommerce.core.offer.domain.Offer" class="org.broadleafcommerce.core.offer.domain.OfferImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.offer.domain.OfferPriceData" class="org.broadleafcommerce.core.offer.domain.OfferPriceDataImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OfferRule" class="org.broadleafcommerce.core.offer.domain.OfferRuleImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.CustomerOffer" class="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OfferCode" class="org.broadleafcommerce.core.offer.domain.OfferCodeImpl" scope="prototype"/>
