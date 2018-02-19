@@ -137,7 +137,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
     protected String discountType;
 
     @Column(name = "AMOUNT", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer_Value",
+    @AdminPresentation(friendlyName = "OfferPriceDataImpl_Amount",
             requiredOverride = RequiredOverride.REQUIRED,
             order = 7000,
             defaultValue = "0.00",
