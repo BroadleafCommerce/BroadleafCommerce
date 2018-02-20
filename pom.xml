@@ -1593,6 +1593,11 @@
                 <artifactId>yuicompressor</artifactId>
                 <version>2.4.7</version>
             </dependency>
+            <dependency>
+                <groupId>com.googlecode.htmlcompressor</groupId>
+                <artifactId>htmlcompressor</artifactId>
+                <version>1.5.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
