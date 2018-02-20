@@ -37,6 +37,8 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -459,5 +461,14 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("email", email);
         List<Order> orders = query.getResultList();
         return orders != null ? orders : new ArrayList<Order>();
+    }
+
+    @Override
+    public Long readNumberOfOrders() {
+    	 CriteriaBuilder builder = em.getCriteriaBuilder();
+         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+         criteria.select(builder.count(criteria.from(OrderImpl.class)));
+         TypedQuery<Long> query = em.createQuery(criteria);
+         return query.getSingleResult();
     }
 }

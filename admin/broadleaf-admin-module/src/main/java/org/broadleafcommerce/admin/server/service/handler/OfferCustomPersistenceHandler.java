@@ -57,17 +57,14 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
@@ -287,10 +284,10 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             try {
                 boolean isActive = false;
                 Property startDate = entity.findProperty("startDate");
-                if (startDate != null) {
+                if (startDate != null && StringUtils.isNotBlank(startDate.getValue())) {
                     Property endDate = entity.findProperty("endDate");
                     Date end = null;
-                    if (endDate != null) {
+                    if (endDate != null && StringUtils.isNotBlank(endDate.getValue())) {
                         end = helper.getSimpleDateFormatter().parse(endDate.getValue());
                     }
                     Date date = helper.getSimpleDateFormatter().parse(startDate.getValue());

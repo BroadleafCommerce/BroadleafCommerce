@@ -1152,4 +1152,14 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findOrdersByEmail(String email) {
         return orderDao.readOrdersByEmail(email);
     }
+    
+    @Override
+    public List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> orderStatusList) {
+        return orderDao.readBatchOrders(start, pageSize, orderStatusList);
+    }
+
+    @Override
+	public Long readNumberOfOrders() {
+    		return orderDao.readNumberOfOrders();
+    }
 }

@@ -50,6 +50,7 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.extension.OrderItemServiceExtensionManager;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -617,5 +618,14 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
         return orderItemDao.readOrderItemsForCustomersInDateRange(customerIds, startDate, endDate);
+    }
+
+    public List<OrderItem> readBatchOrderItems(int start, int count, List<OrderStatus> orderStatusList) {
+        return orderItemDao.readBatchOrderItems(start, count, orderStatusList);
+    }
+
+    @Override
+    public Long readNumberOfOrderItems() {
+        return orderItemDao.readNumberOfOrderItems();
     }
 }

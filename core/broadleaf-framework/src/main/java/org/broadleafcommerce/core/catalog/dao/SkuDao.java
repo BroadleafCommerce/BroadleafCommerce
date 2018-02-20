@@ -183,5 +183,4 @@ public interface SkuDao {
      * 
      */
     List<Sku> findSkuByURI(String uri);
-    
 }

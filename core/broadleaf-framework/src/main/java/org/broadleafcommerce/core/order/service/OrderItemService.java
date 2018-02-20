@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -97,4 +98,8 @@ public interface OrderItemService {
     public void mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
 
     public List<OrderItem> findOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
+
+    List<OrderItem> readBatchOrderItems(int start, int count, List<OrderStatus>orderStatusList);
+
+    Long readNumberOfOrderItems();
 }
