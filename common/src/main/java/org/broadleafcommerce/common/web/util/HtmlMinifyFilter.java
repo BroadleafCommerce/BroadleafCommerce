@@ -1,4 +1,4 @@
-/*
+\/*
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
@@ -28,6 +28,7 @@ import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -53,6 +54,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 public class HtmlMinifyFilter extends OncePerRequestFilter implements Ordered {
 
     protected HtmlCompressor compressor;
+    protected Pattern pattern = Pattern.compile("-?[0-9]*?");
 
     @Override
     public int getOrder() {
@@ -63,7 +65,7 @@ public class HtmlMinifyFilter extends OncePerRequestFilter implements Ordered {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String uri = httpServletRequest.getRequestURI();
-        if (!uri.contains(".") || uri.endsWith(".html")) {
+        if ((!uri.contains(".") || uri.endsWith(".html")) && !isWidget(uri)) {
             CharResponseWrapper responseWrapper = new CharResponseWrapper(httpServletResponse);
             filterChain.doFilter(httpServletRequest, responseWrapper);
             String servletResponse = responseWrapper.toString();
@@ -71,6 +73,14 @@ public class HtmlMinifyFilter extends OncePerRequestFilter implements Ordered {
         } else {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
+    }
+
+    protected boolean isWidget(String uri) {
+        if (uri.contains("/") && !uri.contains(".")) {
+            String fragment = uri.substring(uri.lastIndexOf("/") + 1, uri.length());
+            return pattern.matcher(fragment).matches();
+        }
+        return false;
     }
 
     @Override
