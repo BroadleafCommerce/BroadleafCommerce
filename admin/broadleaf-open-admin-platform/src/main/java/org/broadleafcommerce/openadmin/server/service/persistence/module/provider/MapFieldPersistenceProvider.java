@@ -32,9 +32,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
+
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -150,6 +152,11 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
     @Override
     public int getOrder() {
         return FieldPersistenceProvider.MAP_FIELD;
+    }
+
+    @Override
+    public boolean canHandlePopulateNull() {
+        return true;
     }
 
     protected void updateAssignableValue(PopulateValueRequest populateValueRequest, Serializable instance, Object parent, Class<?>
