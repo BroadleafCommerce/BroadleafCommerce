@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.value.ValueAssignable;
@@ -90,9 +91,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
-                dirty = persistValue
-                        || (assignableValue != null && assignableValue.getValue() == null && populateValueRequest.getProperty().getValue() != null)
-                        || (assignableValue != null && !assignableValue.getValue().equals(populateValueRequest.getProperty().getValue()));
+                dirty = persistValue || (assignableValue != null && ObjectUtils.notEqual(assignableValue.getValue(), populateValueRequest.getProperty().getValue()));
                 if (dirty) {
                     updateAssignableValue(populateValueRequest, instance, parent, valueType, persistValue, assignableValue);
                 }
