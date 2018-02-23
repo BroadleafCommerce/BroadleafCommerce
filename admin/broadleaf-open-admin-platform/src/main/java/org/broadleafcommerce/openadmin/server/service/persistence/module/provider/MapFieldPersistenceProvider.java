@@ -166,6 +166,11 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
             parent = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(parent);
             assignableValue = establishAssignableValue(populateValueRequest, parent);
         }
+        if (populateValueRequest.getProperty().getValue() == null) {
+            populateValueRequest.getPersistenceManager().getDynamicEntityDao()
+                .getStandardEntityManager().remove(assignableValue);
+            return;
+        }
         String key = populateValueRequest.getProperty().getName().substring(populateValueRequest
                 .getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager
                 .MAPFIELDSEPARATOR.length(), populateValueRequest.getProperty().getName().length());
