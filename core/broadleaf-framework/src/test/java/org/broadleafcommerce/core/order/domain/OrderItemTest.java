@@ -27,6 +27,8 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtilityImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
@@ -50,7 +52,8 @@ public class OrderItemTest extends TestCase {
     
     @Override
     protected void setUp() throws Exception {
-        PromotableOrder promotableOrder = new PromotableOrderImpl(new OrderImpl(), new PromotableItemFactoryImpl(), false);
+        PromotableOfferUtility promotableOfferUtility = new PromotableOfferUtilityImpl();
+        PromotableOrder promotableOrder = new PromotableOrderImpl(new OrderImpl(), new PromotableItemFactoryImpl(promotableOfferUtility), false);
 
         DiscreteOrderItemImpl discreteOrderItem1 = new DiscreteOrderItemImpl();
         discreteOrderItem1.setName("test1");
@@ -62,7 +65,7 @@ public class OrderItemTest extends TestCase {
         pdetail.setOrderItem(discreteOrderItem1);
         pdetail.setQuantity(2);
         PromotableOrderItem orderItem1 = new PromotableOrderItemImpl(discreteOrderItem1, null,
-                new PromotableItemFactoryImpl(), false);
+                new PromotableItemFactoryImpl(promotableOfferUtility), false);
         priceDetail1 = new PromotableOrderItemPriceDetailImpl(orderItem1, 2);
 
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();

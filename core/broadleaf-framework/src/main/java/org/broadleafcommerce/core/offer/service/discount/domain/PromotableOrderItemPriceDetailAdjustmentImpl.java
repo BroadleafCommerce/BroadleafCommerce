@@ -22,8 +22,6 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 
-import java.math.BigDecimal;
-
 public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromotionRounding implements PromotableOrderItemPriceDetailAdjustment, OfferHolder {
 
     private static final long serialVersionUID = 1L;
@@ -37,13 +35,16 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
     protected Offer offer;
 
     public PromotableOrderItemPriceDetailAdjustmentImpl(PromotableCandidateItemOffer promotableCandidateItemOffer,
-            PromotableOrderItemPriceDetail orderItemPriceDetail) {
+                                                        PromotableOrderItemPriceDetail orderItemPriceDetail,
+                                                        Money retailAdjustmentValue,
+                                                        Money saleAdjustmentValue) {
         assert (promotableCandidateItemOffer != null);
         assert (orderItemPriceDetail != null);
         this.promotableCandidateItemOffer = promotableCandidateItemOffer;
         this.promotableOrderItemPriceDetail = orderItemPriceDetail;
         this.offer = promotableCandidateItemOffer.getOffer();
-        computeAdjustmentValues();
+        this.retailAdjustmentValue = retailAdjustmentValue;
+        this.saleAdjustmentValue = saleAdjustmentValue;
     }
 
     public PromotableOrderItemPriceDetailAdjustmentImpl(OrderItemPriceDetailAdjustment itemAdjustment,
@@ -62,30 +63,6 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
         appliedToSalePrice = itemAdjustment.isAppliedToSalePrice();
         promotableOrderItemPriceDetail = orderItemPriceDetail;
         offer = itemAdjustment.getOffer();
-    }
-
-    /*
-     * Calculates the value of the adjustment for both retail and sale prices.   
-     * If either adjustment is greater than the item value, it will be set to the
-     * currentItemValue (e.g. no adjustment can cause a negative value). 
-     */
-    protected void computeAdjustmentValues() {
-        saleAdjustmentValue = new Money(getCurrency());
-        retailAdjustmentValue = new Money(getCurrency());
-
-        Money currentPriceDetailRetailValue = promotableOrderItemPriceDetail.calculateItemUnitPriceWithAdjustments(false);
-        Money currentPriceDetailSalesValue = promotableOrderItemPriceDetail.calculateItemUnitPriceWithAdjustments(true);
-        if (currentPriceDetailSalesValue == null) {
-            currentPriceDetailSalesValue = currentPriceDetailRetailValue;
-        }
-        
-        BigDecimal offerUnitValue = PromotableOfferUtility.determineOfferUnitValue(offer, promotableCandidateItemOffer);
-
-        retailAdjustmentValue = PromotableOfferUtility.computeAdjustmentValue(currentPriceDetailRetailValue, offerUnitValue, this, this);
-                
-        if (offer.getApplyDiscountToSalePrice() == true) {
-            saleAdjustmentValue = PromotableOfferUtility.computeAdjustmentValue(currentPriceDetailSalesValue, offerUnitValue, this, this);
-        }
     }
 
     @Override
@@ -153,7 +130,7 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
     @Override
     public PromotableOrderItemPriceDetailAdjustment copy() {
         PromotableOrderItemPriceDetailAdjustmentImpl newAdjustment = new PromotableOrderItemPriceDetailAdjustmentImpl(
-                promotableCandidateItemOffer, promotableOrderItemPriceDetail);
+                promotableCandidateItemOffer, promotableOrderItemPriceDetail, null, null);
         newAdjustment.adjustmentValue = adjustmentValue;
         newAdjustment.saleAdjustmentValue = saleAdjustmentValue;
         newAdjustment.retailAdjustmentValue = retailAdjustmentValue;

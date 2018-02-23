@@ -33,8 +33,10 @@ import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferPriceDataIdentifierType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -43,6 +45,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -144,6 +147,14 @@ public class OfferPriceDataImpl implements OfferPriceData {
             prominent = true, gridOrder = 4000)
     protected BigDecimal amount;
 
+    @Column(name = "QUANTITY", nullable=false)
+    @AdminPresentation(friendlyName = "OfferPriceDataImpl_Quantity",
+            requiredOverride = RequiredOverride.REQUIRED,
+            order = 8000,
+            defaultValue = "1",
+            prominent = true, gridOrder = 5000)
+    protected Integer quantity;
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -231,6 +242,16 @@ public class OfferPriceDataImpl implements OfferPriceData {
     @Override
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    @Override
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     @Override

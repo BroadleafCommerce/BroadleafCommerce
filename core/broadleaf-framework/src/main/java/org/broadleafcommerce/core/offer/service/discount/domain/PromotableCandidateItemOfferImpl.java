@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.MinimumTargetsRequired;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -50,6 +51,8 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
 
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateTargetsMap =
             new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+
+    protected HashMap<OfferPriceData, List<PromotableOrderItem>> candidateFixedTargetsMap = new HashMap<>();
     
     protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<PromotableOrderItem>();
 
@@ -73,16 +76,6 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public BroadleafCurrency getCurrency() {
         return promotableOrder.getOrderCurrency();
-    }
-
-    @Override
-    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
-        Money savings = new Money(promotableOrder.getOrderCurrency());
-        originalPrice = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
-
-        BigDecimal offerUnitValue = PromotableOfferUtility.determineOfferUnitValue(offer, this);
-        savings = PromotableOfferUtility.computeAdjustmentValue(originalPrice, offerUnitValue, this, this);
-        return savings.multiply(qtyToReceiveSavings);
     }
 
     /**
@@ -223,6 +216,16 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public void setCandidateTargetsMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
         this.candidateTargetsMap = candidateItemsMap;
+    }
+
+    @Override
+    public HashMap<OfferPriceData, List<PromotableOrderItem>> getCandidateFixedTargetsMap() {
+        return candidateFixedTargetsMap;
+    }
+
+    @Override
+    public void setCandidateFixedTargetsMap(HashMap<OfferPriceData, List<PromotableOrderItem>> candidateFixedTargetsMap) {
+        this.candidateFixedTargetsMap = candidateFixedTargetsMap;
     }
 
     @Override

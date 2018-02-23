@@ -38,34 +38,17 @@ public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionR
 
     public PromotableFulfillmentGroupAdjustmentImpl(
             PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
-            PromotableFulfillmentGroup fulfillmentGroup) {
+            PromotableFulfillmentGroup fulfillmentGroup,
+            Money retailAdjustmentValue,
+            Money saleAdjustmentValue) {
         this.promotableCandidateFulfillmentGroupOffer = promotableCandidateFulfillmentGroupOffer;
         this.promotableFulfillmentGroup = fulfillmentGroup;
-        computeAdjustmentValues();
+        this.retailAdjustmentValue = retailAdjustmentValue;
+        this.saleAdjustmentValue = saleAdjustmentValue;
     }
 
     public Offer getOffer() {
         return promotableCandidateFulfillmentGroupOffer.getOffer();
-    }
-
-    /*
-     * Calculates the value of the adjustment for both retail and sale prices.   
-     * If either adjustment is greater than the item value, it will be set to the
-     * currentItemValue (e.g. no adjustment can cause a negative value). 
-     */
-    protected void computeAdjustmentValues() {
-        saleAdjustmentValue = new Money(getCurrency());
-        retailAdjustmentValue = new Money(getCurrency());
-        Offer offer = promotableCandidateFulfillmentGroupOffer.getOffer();
-
-        Money currentPriceDetailSalesValue = promotableFulfillmentGroup.calculatePriceWithAdjustments(true);
-        Money currentPriceDetailRetailValue = promotableFulfillmentGroup.calculatePriceWithAdjustments(false);
-
-        retailAdjustmentValue = PromotableOfferUtility.computeAdjustmentValue(currentPriceDetailRetailValue, offer.getValue(), this, this);
-
-        if (offer.getApplyDiscountToSalePrice() == true) {
-            saleAdjustmentValue = PromotableOfferUtility.computeAdjustmentValue(currentPriceDetailSalesValue, offer.getValue(), this, this);
-        }
     }
 
     protected Money computeAdjustmentValue(Money currentPriceDetailValue) {

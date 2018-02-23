@@ -28,7 +28,7 @@ import java.io.Serializable;
  * 
  * @author bpolster
  */
-public interface PromotableFulfillmentGroupAdjustment extends Serializable {
+public interface PromotableFulfillmentGroupAdjustment extends PromotionRounding, Serializable {
 
     /**
      * Returns the associated promotableFulfillmentGroup

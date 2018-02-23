@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
@@ -107,6 +108,10 @@ public interface OfferServiceUtilities {
     int markTargetsForCriteria(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier, boolean checkOnly,
             Offer promotion, OrderItem relatedQualifierRoot, OfferItemCriteria itemCriteria,
             List<PromotableOrderItemPriceDetail> priceDetails, int targetQtyNeeded);
+
+    boolean markTargetsForOfferPriceData(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier,
+                                         boolean checkOnly, Offer promotion, OrderItem relatedQualifierRoot, OfferPriceData offerPriceData,
+                                         List<PromotableOrderItemPriceDetail> priceDetails);
 
     /**
      * Returns the number of targets marked for the passed in itemCriteria

@@ -502,6 +502,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
+    public String getExternalId() {
+        return getDefaultSku().getExternalId();
+    }
+
+    @Override
     public Boolean getCanSellWithoutOptions() {
         return canSellWithoutOptions == null ? false : canSellWithoutOptions;
     }

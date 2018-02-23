@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
@@ -76,6 +77,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     @Resource(name = "blOfferServiceUtilities")
     protected OfferServiceUtilities offerServiceUtilities;
+
+    public OrderOfferProcessorImpl(PromotableOfferUtility promotableOfferUtility) {
+        super(promotableOfferUtility);
+    }
 
     @Override
     public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {

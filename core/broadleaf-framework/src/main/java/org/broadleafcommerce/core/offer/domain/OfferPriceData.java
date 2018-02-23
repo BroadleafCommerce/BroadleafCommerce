@@ -60,4 +60,8 @@ public interface OfferPriceData extends Status, Serializable, MultiTenantCloneab
     BigDecimal getAmount();
 
     void setAmount(BigDecimal amount);
+
+    Integer getQuantity();
+
+    void setQuantity(Integer quantity);
 }
