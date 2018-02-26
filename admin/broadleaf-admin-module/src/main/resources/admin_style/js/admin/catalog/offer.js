@@ -145,10 +145,7 @@
             clazz,
             '#field-useListForDiscounts',
             '#offerPriceData',
-            function showIfValue(parentValue) {
-                console.log(parentValue);
-                return (parentValue === 'true');
-            },
+            'true',
             {
                 'additionalChangeAction-runOnInitialization': true
             }
