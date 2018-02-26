@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.Tuple;
@@ -121,7 +122,7 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
         Offer offer = promotableCandidateItemOffer.getOffer();
         BigDecimal offerUnitValue;
         OfferDiscountType discountType;
-        if (offer.getUseListForDiscounts() && MapUtils.isNotEmpty(promotableCandidateItemOffer.getCandidateFixedTargetsMap())) {
+        if (BooleanUtils.isTrue(offer.getUseListForDiscounts()) && MapUtils.isNotEmpty(promotableCandidateItemOffer.getCandidateFixedTargetsMap())) {
             OfferPriceData offerPriceData = findMatchingOfferPriceData(promotableCandidateItemOffer, promotableOrderItem);
             discountType = offerPriceData.getDiscountType();
             offerUnitValue = offerPriceData.getAmount();
