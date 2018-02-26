@@ -371,7 +371,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "USE_LIST_FOR_DISCOUNTS")
     @AdminPresentation(friendlyName = "OfferImpl_Use_List_For_Discounts",
             group = GroupName.Description,
-            defaultValue = "false")
+            defaultValue = "false", fieldType = SupportedFieldType.HIDDEN)
     protected Boolean useListForDiscounts = false;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferPriceDataImpl.class, cascade = CascadeType.ALL)
@@ -704,6 +704,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Boolean getUseListForDiscounts() {
+        if (useListForDiscounts == null) {
+            return false;
+        }
         return useListForDiscounts;
     }
 

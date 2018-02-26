@@ -47,7 +47,6 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
         if (promotableOrderItem.getOrderItem() instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem) promotableOrderItem.getOrderItem();
 
-            // TODO: refactor into separate methods for better cleanliness. Perhaps add an extension handler!
             if ((offerPriceData.getIdentifierType().equals(OfferPriceDataIdentifierType.PRODUCT_ID)
                     && Objects.equals(Long.valueOf(offerPriceData.getIdentifierValue()), doi.getProduct().getId()))
                     || (offerPriceData.getIdentifierType().equals(OfferPriceDataIdentifierType.SKU_ID)
