@@ -130,7 +130,7 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
     @Override
     public PromotableOrderItemPriceDetailAdjustment copy() {
         PromotableOrderItemPriceDetailAdjustmentImpl newAdjustment = new PromotableOrderItemPriceDetailAdjustmentImpl(
-                promotableCandidateItemOffer, promotableOrderItemPriceDetail, null, null);
+                promotableCandidateItemOffer, promotableOrderItemPriceDetail, retailAdjustmentValue, saleAdjustmentValue);
         newAdjustment.adjustmentValue = adjustmentValue;
         newAdjustment.saleAdjustmentValue = saleAdjustmentValue;
         newAdjustment.retailAdjustmentValue = retailAdjustmentValue;
