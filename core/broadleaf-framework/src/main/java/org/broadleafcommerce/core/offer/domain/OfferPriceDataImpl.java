@@ -315,6 +315,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
         result = 31 * result + getIdentifierValue().hashCode();
         result = 31 * result + getDiscountType().hashCode();
         result = 31 * result + getAmount().hashCode();
+        result = 31 * result + getQuantity().hashCode();
         result = 31 * result + (archiveStatus != null ? archiveStatus.hashCode() : 0);
         return result;
     }
@@ -336,6 +337,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
         cloned.setAmount(amount);
         cloned.setIdentifierType(getIdentifierType());
         cloned.setIdentifierValue(identifierValue);
+        cloned.setQuantity(quantity);
         return createResponse;
     }
 }

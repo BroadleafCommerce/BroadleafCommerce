@@ -903,6 +903,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             cloned.getOfferMatchRulesXref().put(entry.getKey(),clonedEntry);
         }
 
+        for (OfferPriceData offerPriceDataEntry : offerPriceData) {
+            OfferPriceData clonedEntry = offerPriceDataEntry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getOfferPriceData().add(clonedEntry);
+        }
+
         return  createResponse;
     }
 
