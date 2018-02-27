@@ -144,11 +144,18 @@
         BLCAdmin.addDependentFieldHandler(
             clazz,
             '#field-useListForDiscounts',
-            '#offerPriceData',
-            'true',
-            {
-                'additionalChangeAction-runOnInitialization': true
+            '#field-useListForDiscounts',
+            function() {
+                // never show
+                return false;
             }
+        );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-useListForDiscounts',
+            '#offerPriceData',
+            'true'
         );
         
     });

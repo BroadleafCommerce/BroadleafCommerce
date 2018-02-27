@@ -944,7 +944,7 @@ var BLCAdmin = (function($) {
             BLCAdmin.addInitializationHandler(function($container) {
                 var $form = $container.find('form').length ? $container.find('form') : $container.closest('form');
                 var thisClass = $form.find('input[name="ceilingEntityClassname"]').val();
-                if (thisClass != null && thisClass.indexOf(className) >= 0) {
+                if (!!thisClass && thisClass.indexOf(className) >= 0) {
                     var toggleFunction = function(event) {
                         // Get the containers parent in the event a field is on another tab
                         var $containerParent = $container.parent();
@@ -957,22 +957,20 @@ var BLCAdmin = (function($) {
                         
                         // Either match the string or execute a function to figure out if the child field should be shown
                         var shouldShow = false;
-                        if (typeof showIfValue == "function") {
+                        if (typeof showIfValue === "function") {
                             shouldShow = showIfValue(parentValue, event.data.$container);
                         } else {
-                            shouldShow = (parentValue == showIfValue);
+                            shouldShow = (parentValue === showIfValue);
                         }
 
-                        console.log($parentField);
-
                         // Clear the data in the child field if that option was set
-                        if (options != null && options['clearChildData'] && !event.initialization && !event.revertEntityFormChanges) {
+                        if (!$.isEmptyObject(options) && options['clearChildData'] && !event.initialization && !event.revertEntityFormChanges) {
                             BLCAdmin.setFieldValue($childField, null);
                         }
 
                         BLCAdmin.entityForm.toggleFieldVisibility($childField, shouldShow);
                         
-                        if (options != null 
+                        if (!$.isEmptyObject(options)
                                 && options['additionalChangeAction'] 
                                 && (options['additionalChangeAction-runOnInitialization'] || !event.initialization)) {
                             options['additionalChangeAction']($parentField, $childField, shouldShow, parentValue);
