@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2018 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,59 +15,36 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-if (!RedactorPlugins) var RedactorPlugins = {};
-
 (function($)
 {
-    RedactorPlugins.fontfamily = function()
-    {
-        return {
-        	init: function ()
-        	{
-        	    /**
-                 * Initialize necessary font mappings for Redactor
-                 */
-        	    var fontMap = {
-        	        arial: ["Arial", "Arial, Helvetica, sans-serif"],
-        	        arialblack: ["Arial Black", '"Arial Black", Gadget, sans-serif'],
-        	        courier: ["Courier New", '"Courier New", Courier, monospace'],
-        	        impact: ["Impact", 'Impact, Charcoal, sans-serif'],
-        	        lucida: ["Lucida", '"Lucida Sans Unicode", "Lucida Grande", sans-serif'],
-        	        lucidaconsole: ["Lucida Console", '"Lucida Console", Monaco, monospace'],
-        	        georgia: ["Georgia", "Georgia, serif"],
-        	        palatino: ["Palatino Linotype", '"Palatino Linotype", "Book Antiqua", Palatino, serif'],
-        	        tahoma: ["Tahoma", "Tahoma, Geneva, sans-serif"],
-        	        times: ["Times New Roman", "Times, serif"],
-        	        trebuchet: ["Trebuchet", '"Trebuchet MS", Helvetica, sans-serif'],
-        	        verdana: ["Verdana", "Verdana, Geneva, sans-serif"] 
-        	    };
-        	    
-        		var that = this;
-        		var dropdown = {};
-        
-        		$.each(fontMap, function(i, element)
-        		{
-        		    var fontName = element[0];
-        		    var fontFace = element[1];
-        			dropdown['s' + i] = {
-                        title: "<font face='" + fontFace + "'>" + fontName + "</font>",
-                        func: function() { that.fontfamily.set(element[1]) }
-        		    };
-        		});
-        
-        		dropdown.remove = { title: 'Remove Font Family', func: that.fontfamily.reset };
-        		
-        		var button = this.button.add('fontfamily', 'Change Font Family');
-        		this.button.addDropdown(button, dropdown);
-        	},
-        	set: function (value)
-        	{
-        		this.inline.format('span', 'style', 'font-family:' + value + ';');
-        	},
-        	reset: function()
-        	{
-        		this.inline.removeStyleRule('font-family');
-        	}
-        };
-    };
+	$.Redactor.prototype.fontfamily = function()
+	{
+		return {
+			init: function ()
+			{
+				var fonts = [ 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Monospace' ];
+				var that = this;
+				var dropdown = {};
+
+				$.each(fonts, function(i, s)
+				{
+					dropdown['s' + i] = { title: s, func: function() { that.fontfamily.set(s); }};
+				});
+
+				dropdown.remove = { title: 'Remove Font Family', func: that.fontfamily.reset };
+
+				var button = this.button.add('fontfamily', 'Change Font Family');
+				this.button.addDropdown(button, dropdown);
+
+			},
+			set: function (value)
+			{
+				this.inline.format('span', 'style', 'font-family:' + value + ';');
+			},
+			reset: function()
+			{
+				this.inline.removeStyleRule('font-family');
+			}
+		};
+	};
 })(jQuery);
