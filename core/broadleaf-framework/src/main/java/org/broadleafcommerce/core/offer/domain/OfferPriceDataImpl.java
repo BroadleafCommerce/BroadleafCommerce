@@ -302,6 +302,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
         if (!getIdentifierValue().equals(that.getIdentifierValue())) return false;
         if (!getDiscountType().equals(that.getDiscountType())) return false;
         if (!getAmount().equals(that.getAmount())) return false;
+        if (!getQuantity().equals(that.getQuantity())) return false;
         return archiveStatus != null ? archiveStatus.equals(that.archiveStatus) : that.archiveStatus == null;
     }
 
