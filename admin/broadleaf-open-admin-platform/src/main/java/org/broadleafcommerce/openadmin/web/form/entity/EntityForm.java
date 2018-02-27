@@ -137,11 +137,11 @@ public class EntityForm {
         for (Entry<String, EntityForm> entry : dynamicForms.entrySet()) {
             Map<String, Field> dynamicFormFields = entry.getValue().getFields();
             for (Entry<String, Field> dynamicField : dynamicFormFields.entrySet()) {
-                if (fields.containsKey(dynamicField.getKey()) && LOG.isDebugEnabled()) {
-                    LOG.debug("Excluding dynamic field " + StringUtil.sanitize(dynamicField.getKey()) +
-                            " as there is already an occurrence in this entityForm");
-                } else {
+                if (!fields.containsKey(dynamicField.getKey())) {
                     fields.put(dynamicField.getKey(), dynamicField.getValue());
+                } else if (LOG.isDebugEnabled()) {
+                    LOG.debug("Excluding dynamic field " + StringUtil.sanitize(dynamicField.getKey()) +
+                                " as there is already an occurrence in this entityForm");
                 }
             }
         }
