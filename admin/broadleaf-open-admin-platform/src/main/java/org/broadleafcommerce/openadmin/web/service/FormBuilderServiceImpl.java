@@ -57,7 +57,6 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -99,11 +98,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -120,7 +117,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -1001,8 +997,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     f.withName(property.getName())
                      .withFieldType(fieldType)
-                     .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
-                     .withGridFieldComponentRenderer(fmd.getGridFieldComponentRenderer()==null?null:fmd.getGridFieldComponentRenderer().toString())
+                     .withFieldComponentRenderer(getFieldComponentRenderer(fmd))
+                     .withGridFieldComponentRenderer(getGridFieldComponentRenderer(fmd))
                      .withOrder(fmd.getOrder())
                      .withFriendlyName(fmd.getFriendlyName())
                      .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
@@ -1067,6 +1063,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 f.setAssociatedFieldName(null);
             }
         }
+    }
+
+    protected String getFieldComponentRenderer(BasicFieldMetadata fmd) {
+        if (StringUtils.isNotBlank(fmd.getFieldComponentRendererTemplate())) {
+            return fmd.getFieldComponentRendererTemplate();
+        }
+        return fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString();
+    }
+
+    protected String getGridFieldComponentRenderer(BasicFieldMetadata fmd) {
+        if (StringUtils.isNotBlank(fmd.getGridFieldComponentRendererTemplate())) {
+            return fmd.getGridFieldComponentRendererTemplate();
+        }
+        return fmd.getGridFieldComponentRenderer()==null?null:fmd.getGridFieldComponentRenderer().toString();
     }
 
     private Field findAssociatedField(EntityForm ef, Field f) {
