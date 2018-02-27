@@ -370,7 +370,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     
     @Column(name = "USE_LIST_FOR_DISCOUNTS")
     @AdminPresentation(friendlyName = "OfferImpl_Use_List_For_Discounts",
-            group = GroupName.Description,
+            group = GroupName.Description, fieldComponentRendererTemplate = "HIDDEN_BOOLEAN",
             defaultValue = "false")
     protected Boolean useListForDiscounts = false;
 
