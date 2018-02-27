@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import java.util.HashMap;
 import java.util.List;
 
-public interface PromotableCandidateFulfillmentGroupOffer {
+public interface PromotableCandidateFulfillmentGroupOffer extends PromotionRounding {
 
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 

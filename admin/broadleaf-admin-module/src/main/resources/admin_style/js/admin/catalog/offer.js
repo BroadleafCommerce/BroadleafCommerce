@@ -140,6 +140,13 @@
                 return (parentValue > 0);
             }
         );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-useListForDiscounts',
+            '#offerPriceData',
+            'true'
+        );
         
     });
 

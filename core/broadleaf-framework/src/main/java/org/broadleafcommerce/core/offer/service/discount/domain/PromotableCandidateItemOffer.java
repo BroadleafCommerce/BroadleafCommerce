@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.MinimumTargetsRequired;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 
 import java.io.Serializable;
@@ -28,7 +29,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public interface PromotableCandidateItemOffer extends Serializable {
+public interface PromotableCandidateItemOffer extends PromotionRounding, Serializable {
 
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 
@@ -47,11 +48,6 @@ public interface PromotableCandidateItemOffer extends Serializable {
     public void setPotentialSavingsQtyOne(Money potentialSavingsQtyOne);
 
     public boolean hasQualifyingItemCriteria();
-
-    /**
-     * Public only for unit testing - not intended to be called
-     */
-    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings);
 
     public int calculateMaximumNumberOfUses();
     
@@ -81,7 +77,11 @@ public interface PromotableCandidateItemOffer extends Serializable {
      * @return
      */
     public int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion);
-    
+
+    HashMap<OfferPriceData, List<PromotableOrderItem>> getCandidateFixedTargetsMap();
+
+    void setCandidateFixedTargetsMap(HashMap<OfferPriceData, List<PromotableOrderItem>> candidateFixedTargetsMap);
+
     public int getPriority();
     
     public Offer getOffer();

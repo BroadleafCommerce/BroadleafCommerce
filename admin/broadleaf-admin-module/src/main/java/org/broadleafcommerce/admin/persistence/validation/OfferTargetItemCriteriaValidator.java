@@ -18,6 +18,7 @@
 package org.broadleafcommerce.admin.persistence.validation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -56,7 +57,8 @@ public class OfferTargetItemCriteriaValidator extends ValidationConfigurationBas
             String value) {
 
         Property offerTypeProperty = entity.findProperty("type");
-        if(OfferType.ORDER_ITEM.getType().equals(offerTypeProperty.getValue())) {
+        Property useListForDiscountsProperty = entity.findProperty("useListForDiscounts");
+        if(OfferType.ORDER_ITEM.getType().equals(offerTypeProperty.getValue()) && BooleanUtils.isNotTrue(Boolean.parseBoolean(useListForDiscountsProperty.getValue()))) {
             String targetItemCriteriaJson = entity.findProperty("targetItemCriteria").getUnHtmlEncodedValue();
             if (targetItemCriteriaJson == null) {
                 targetItemCriteriaJson = entity.findProperty("targetItemCriteriaJson").getUnHtmlEncodedValue();

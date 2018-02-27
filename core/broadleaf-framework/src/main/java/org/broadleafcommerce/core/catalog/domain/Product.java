@@ -254,6 +254,8 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public void setDefaultSku(Sku defaultSku);
 
+    String getExternalId();
+
     /**
      * @return whether or not the default sku can be used for a multi-sku product in the case that no 
      * product options are set. Defaults to false if not specified. Note that this only affects multi-sku
