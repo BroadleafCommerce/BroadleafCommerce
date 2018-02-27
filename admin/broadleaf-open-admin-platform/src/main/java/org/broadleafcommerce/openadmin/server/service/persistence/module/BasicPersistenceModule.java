@@ -360,7 +360,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             try {
                                 boolean isBreakDetected = false;
                                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                    if (!isBreakDetected || fieldPersistenceProvider.alwaysRun() && (value != null || fieldPersistenceProvider.canHandlePopulateNull())) {
+                                    if ((!isBreakDetected || fieldPersistenceProvider.alwaysRun()) && (value != null || fieldPersistenceProvider.canHandlePopulateNull())) {
                                         MetadataProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
                                         if (MetadataProviderResponse.NOT_HANDLED != response) {
                                             handled = true;
