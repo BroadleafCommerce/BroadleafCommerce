@@ -551,12 +551,11 @@ input[type="radio"].radio {
   visibility: hidden;
 }
 
-input[type="radio"].radio+label.radio-label,
-input[type="radio"].radio+label.radio-label.clr,
-.radio > input[type="radio"]+label {
-  padding-right: 25px;
+input[type="radio"].radio+::before,
+input[type="radio"].radio+label.radio-label.clr::before,
+.radio > input[type="radio"]+label::before {
+  padding-right: 10px;
   padding-left: 15px;
-  margin-bottom: 8px;
 }
 
 /****************************************
