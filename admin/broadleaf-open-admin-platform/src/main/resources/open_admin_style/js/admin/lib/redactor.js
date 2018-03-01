@@ -190,11 +190,11 @@
 
         tabifier: true,
 
-        deniedTags: ['script', 'style'],
+        deniedTags: [ 'noscript', 'script', 'style'],
         allowedTags: false, // or array
 
         paragraphizeBlocks: ['table', 'div', 'pre', 'form', 'ul', 'ol', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'dl', 'blockquote', 'figcaption',
-                            'address', 'section', 'header', 'footer', 'aside', 'article', 'object', 'style', 'script', 'iframe', 'select', 'input', 'textarea',
+                            'address', 'section', 'header', 'footer', 'aside', 'article', 'object', 'style', 'noscript', 'script', 'iframe', 'select', 'input', 'textarea',
                             'button', 'option', 'map', 'area', 'math', 'hr', 'fieldset', 'legend', 'hgroup', 'nav', 'figure', 'details', 'menu', 'summary', 'p'],
 
         removeComments: false,
@@ -2013,6 +2013,9 @@
                     // convert script tag
                     html = html.replace(/<script(.*?[^>]?)>([\w\W]*?)<\/script>/gi, '<pre class="redactor-script-tag" style="display: none;" $1>$2</pre>');
 
+                    // convert noscript tag
+                    html = html.replace(/<noscript(.*?[^>]?)>([\w\W]*?)<\/noscript>/gi, '<pre class="redactor-noscript-tag" style="display: none;" $1>$2</pre>');
+
                     // replace dollar sign to entity
                     html = html.replace(/\$/g, '&#36;');
 
@@ -2079,20 +2082,21 @@
                         return '';
                     }
 
+
                     // reconvert script tag
                     html = html.replace(/<pre class="redactor-script-tag" style="display: none;"(.*?[^>]?)>([\w\W]*?)<\/pre>/gi, '<script$1>$2</script>');
 
                     /* START BLC MODIFICATION */
                     // unconvert dollar sign only in script tags, and unconvert `<!-- -->` back to `<![[ ]]>`
-                    html = html.replace(/(<script)(.*?[^>]?)>([\w\W]*?)(<\/script>)/gi,
-                        function(match, scriptOpen, tagAttributes, content, scriptClose, offset, string) {
-                            content = content.replace(/&#36;/g, '\$')
-                                .replace(/&lt;/g, '<')
-                                .replace(/&gt;/g, '>')
-                                .replace(/(<!)(--)/g, '$1')
-                                .replace(/(--)(>)/g, '$2');
-                            return scriptOpen + tagAttributes + '>' + content + scriptClose;
-                        });
+                     html = html.replace(/(<script)(.*?[^>]?)>([\w\W]*?)(<\/script>)/gi,
+                         function(match, scriptOpen, tagAttributes, content, scriptClose, offset, string) {
+                             content = content.replace(/&#36;/g, '\$')
+                                 .replace(/&lt;/g, '<')
+                                 .replace(/&gt;/g, '>')
+                                 .replace(/(<!)(--)/g, '$1')
+                                 .replace(/(--)(>)/g, '$2');
+                             return scriptOpen + tagAttributes + '>' + content + scriptClose;
+                         });
                     /* END BLC MODIFICATION */
 
                     // restore form tag
@@ -2176,6 +2180,9 @@
                     html = html.replace(new RegExp('<(.*?) data-verified="redactor">', 'gi'), '<$1>');
 
                     html = html.replace(/&amp;/g, '&');
+
+                    // reconvert noscript tag
+                    html = html.replace(/<pre class="redactor-noscript-tag" style="display: none;"(.*?[^>]?)>([\w\W]*?)<\/pre>/gi, '<noscript$1>$2</noscript>');
 
                     return html;
                 },
@@ -2296,7 +2303,7 @@
                         html = html.replace(/<!--[\s\S]+?-->/gi, '');
 
                         // scripts
-                        html = html.replace(/<(!|script[^>]*>.*?<\/script(?=[>\s])|\/?(\?xml(:\w+)?|img|meta|link|style|\w:\w+)(?=[\s\/>]))[^>]*>/gi, '');
+                        html = html.replace(/<(!|script[^>]*>.*?<\/script(?=[>\s])|noscript[^>]*>.*?<\/noscript(?=[>\s])|\/?(\?xml(:\w+)?|img|meta|link|style|\w:\w+)(?=[\s\/>]))[^>]*>/gi, '');
 
                         // Convert <s> into <strike>
                         html = html.replace(/<(\/?)s>/gi, "<$1strike>");
@@ -7981,7 +7988,7 @@
 
                     // clean setup
                     var ownLine = ['area', 'body', 'head', 'hr', 'i?frame', 'link', 'meta', 'noscript', 'style', 'script', 'table', 'tbody', 'thead', 'tfoot'];
-                    var contOwnLine = ['li', 'dt', 'dt', 'h[1-6]', 'option', 'script'];
+                    var contOwnLine = ['li', 'dt', 'dt', 'h[1-6]', 'option', 'noscript', 'script'];
                     var newLevel = ['p', 'blockquote', 'div', 'dl', 'fieldset', 'form', 'frameset', 'map', 'ol', 'pre', 'select', 'td', 'th', 'tr', 'ul'];
 
                     this.tabifier.lineBefore = new RegExp('^<(/?' + ownLine.join('|/?' ) + '|' + contOwnLine.join('|') + ')[ >]');
@@ -8074,7 +8081,7 @@
                         {
                             out += tag + '>\n';
                         }
-                        else if (t = tag.match(/^<(script|style|pre)/i))
+                        else if (t = tag.match(/^<(noscript|script|style|pre)/i))
                         {
                             t[1] = t[1].toLowerCase();
                             tag = this.tabifier.cleanTag(tag);
@@ -8112,6 +8119,7 @@
                     code = code.replace(/\n\s*\n/g, '\n');
                     code = code.replace(/^[\s\n]*/, '');
                     code = code.replace(/[\s\n]*$/, '');
+                    code = code.replace(/<noscript(.*?)>\n<\/noscript>/gi, '<noscript$1></noscript>');
                     code = code.replace(/<script(.*?)>\n<\/script>/gi, '<script$1></script>');
 
                     this.tabifier.cleanlevel = 0;
@@ -8341,7 +8349,7 @@
                     {
                         this.tidy.$div.find(this.tidy.settings.deniedTags.join(',')).each(function(i, s)
                         {
-                            if ($(s).hasClass('redactor-script-tag') || $(s).hasClass('redactor-selection-marker')) return;
+                            if ($(s).hasClass('redactor-noscript-tag')||$(s).hasClass('redactor-script-tag') || $(s).hasClass('redactor-selection-marker')) return;
 
                             if (s.innerHTML === '') $(s).remove();
                             else $(s).contents().unwrap();
