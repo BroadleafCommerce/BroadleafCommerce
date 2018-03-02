@@ -42,11 +42,6 @@ var BLCAdmin = (function($) {
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
     function showModal($data, onModalHide, onModalHideArgs) {
-
-        if($data.hasClass('wrap-in-modal')) {
-            $data = wrapInModal($data);
-        }
-
         // If we already have an active modal, we don't need another backdrop on subsequent modals
         $data.modal({
             backdrop: (modals.length < 1),
@@ -350,6 +345,9 @@ var BLCAdmin = (function($) {
             if (!$element.find('.content-yield').length) {
                 var content = $('<div>', { 'class': 'content-yield'});
                 $element.find('.modal-body').wrapInner(content);
+            }
+            if($element.hasClass('wrap-in-modal')) {
+                $element = wrapInModal($element);
             }
             $('body').append($element);
             showModal($element, onModalHide, onModalHideArgs);
