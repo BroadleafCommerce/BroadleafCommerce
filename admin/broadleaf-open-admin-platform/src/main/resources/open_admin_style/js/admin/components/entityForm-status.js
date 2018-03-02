@@ -621,9 +621,10 @@ $(document).ready(function() {
                 return;
             }
             // This is a special case for rule builders, we need to capture the match quantity value
-            else if ($(this).hasClass('rules-group-header-item-qty')) {
+            else if ($(this).hasClass('rules-group-header-item-qty')
+                    && $(this).closest('.rules-group-container').attr('data-orig-val') === undefined) {
                 var $ruleGroupContainer = $(this).closest('.rules-group-container');
-                $ruleGroupContainer.attr('orig-val', $(this).val());
+                $ruleGroupContainer.attr('data-orig-val', $(this).val());
                 return;
             }
             // If this is a redactor field, we have to set its text attribute, not its value

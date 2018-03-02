@@ -1564,3 +1564,12 @@ $('.main-content').scroll(function () {
         $(this).find('.content-yield').height(h - title - tabs);
     }
 });
+
+$('body').on('input', 'input.resize-as-needed', function () {
+    var minSize = $(this).data('min-size') || 1;
+    var maxSize = $(this).data('max-size') || $(this).attr('maxlength') || 30;
+    var newSize = $(this).val().length;
+    newSize = Math.max(minSize, newSize);
+    newSize = Math.min(maxSize, newSize);
+    $(this).attr('size', newSize);
+});
