@@ -47,8 +47,7 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
     private boolean useWhileInDefaultEnvironment = true;
 
-    @Autowired
-    @Qualifier("blPrecompressedArtifactFileExtensionWhitelist")
+    @Resource(name = "blPrecompressedArtifactFileExtensionWhitelist")
     List<String> fileExtensionWhitelist;
 
     @Resource
