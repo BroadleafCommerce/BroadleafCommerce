@@ -42,6 +42,11 @@ var BLCAdmin = (function($) {
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
     function showModal($data, onModalHide, onModalHideArgs) {
+
+        if($data.hasClass('wrap-in-modal')) {
+            $data = wrapInModal($data);
+        }
+
         // If we already have an active modal, we don't need another backdrop on subsequent modals
         $data.modal({
             backdrop: (modals.length < 1),
@@ -92,7 +97,6 @@ var BLCAdmin = (function($) {
             }
         });
 
-
         // Only initialize all fields if NOT a normal EntityForm in modal
         // Should initialize for lookups
         if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
@@ -103,6 +107,16 @@ var BLCAdmin = (function($) {
 
         BLCAdmin.initializeModalButtons($data);
         BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
+    }
+
+    function wrapInModal($data) {
+        var id = ($data.attr('id') || 'wrapped') + '-modal';
+        return $(
+            '<div class="modal in" id="' + id + '">' +
+            '    <div class="modal-header"><button class="close" type="button" data-dismiss="modal" aria-hidden="true">×</button></div>' +
+            '    <div class="modal-body" style="padding: 0 20px">' + $data.html() + '</div>' +
+            '</div>'
+        );
     }
 
     function getDependentFieldFilterKey(className, childFieldName) {
