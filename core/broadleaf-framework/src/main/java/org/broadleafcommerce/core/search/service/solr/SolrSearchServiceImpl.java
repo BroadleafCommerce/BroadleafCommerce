@@ -197,7 +197,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(searchCriteria.getQuery())
                 .setRows(searchCriteria.getPageSize())
-                .setStart((start) * searchCriteria.getPageSize());
+                .setStart((start) * searchCriteria.getPageSize())
+                .setRequestHandler(searchCriteria.getRequestHandler());
 
         //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
         if (solrConfiguration.isSiteCollections()) {
