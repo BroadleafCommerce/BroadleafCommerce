@@ -894,7 +894,11 @@ var BLCAdmin = (function($) {
                 value = $field.find('select').val();
             }
             if (value == null) {
-                value = $field.find('input[type="hidden"]').val();
+                if ($field.find('input[type="hidden"].value').length) {
+                    value = $field.find('input[type="hidden"].value').val();
+                } else {
+                    value = $field.find('input[type="hidden"]').val();
+                }
             }
             if (value == null) {
                 value = $field.find('input[type="text"]').val();
