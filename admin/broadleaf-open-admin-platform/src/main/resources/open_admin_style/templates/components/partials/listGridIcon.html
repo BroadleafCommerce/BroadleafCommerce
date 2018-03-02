@@ -1,5 +1,5 @@
 <span class="workflow-change-icon" style="width: 15px; display: inline-block;"
-      th:if="${headerFieldStat.first} and ${listGrid.selectType} != 'multi_select'"
+      th:if="${headerFieldStat.first}"
       th:unless="${field.fieldType == 'IMAGE' or field.fieldType == 'COLOR'}">
     <a th:if="${record.hasIcon}"
        data-width="200"
