@@ -50,14 +50,13 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     public SearchCriteria buildSearchCriteria(HttpServletRequest request) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setPageSize(getDefaultPageSize());
         
-        Map<String, String[]> facets = new HashMap<String, String[]>();
+        Map<String, String[]> facets = new HashMap<>();
 
-        for (Entry<String, String[]> entry : (Iterable<Entry<String, String[]>>) request.getParameterMap().entrySet()) {
+        for (Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
             String key = entry.getKey();
 
             if (Objects.equals(key, SearchCriteria.SORT_STRING)) {
@@ -78,6 +77,12 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
                     query = null;
                 }
                 searchCriteria.setQuery(query);
+            } else if (Objects.equals(key, SearchCriteria.REQUEST_HANDLER)) {
+                String requestHandler = entry.getValue()[0];
+                if (!requestHandler.startsWith("/")) {
+                    requestHandler = "/" + requestHandler;
+                }
+                searchCriteria.setRequestHandler(requestHandler);
             } else {
                 facets.put(key, entry.getValue());
             }
