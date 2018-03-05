@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,11 +27,13 @@ import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,12 +50,12 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     protected int getMaxPageSize() {
         return BLCSystemProperty.resolveIntSystemProperty("web.maxPageSize");
     }
-    
+
     @Override
     public SearchCriteria buildSearchCriteria(HttpServletRequest request) {
-        SearchCriteria searchCriteria = new SearchCriteria();
+        SearchCriteria searchCriteria = createSearchCriteria();
         searchCriteria.setPageSize(getDefaultPageSize());
-        
+
         Map<String, String[]> facets = new HashMap<>();
 
         for (Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
@@ -87,13 +89,17 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
                 facets.put(key, entry.getValue());
             }
         }
-        
+
         searchCriteria.setFilterCriteria(facets);
         searchCriteria.setCategory((Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME));
-        
+
         return searchCriteria;
     }
-    
+
+    protected SearchCriteria createSearchCriteria() {
+        return new SearchCriteria();
+    }
+
     @Override
     public void setActiveFacetResults(List<SearchFacetDTO> facets, HttpServletRequest request) {
         if (facets != null) {
@@ -104,7 +110,7 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
             }
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public boolean isActive(SearchFacetResultDTO result, HttpServletRequest request) {
@@ -121,12 +127,12 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
         }
         return false;
     }
-    
+
     @Override
     public String getUrlKey(SearchFacetResultDTO result) {
         return result.getFacet().getField().getAbbreviation();
     }
-    
+
     @Override
     public String getValue(SearchFacetResultDTO result) {
         return result.getValueKey();
