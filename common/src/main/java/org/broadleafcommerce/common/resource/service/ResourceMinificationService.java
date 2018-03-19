@@ -20,24 +20,43 @@ package org.broadleafcommerce.common.resource.service;
 import org.springframework.core.io.Resource;
 
 /**
- * Service responsible for interacting with YUI-compressor to minify JS/CSS resources.
+ * Service responsible for interacting with YUI-compressor or Google Closure Compiler to minify JS/CSS resources.
+ *
+ * YUI-compressor is controlled via the following properties:
+ *
+ * <ul>
+ *  <li>minify.enabled - whether or not to actually perform minification</li>
+ *  <li>minify.linebreak - if set to a value other than -1, will enforce a linebreak at that value</li>
+ *  <li>minify.munge - if true, will replace variable names with shorter versions</li>
+ *  <li>minify.verbose - if true, will display extra logging information to the console</li>
+ *  <li>minify.preserveAllSemiColons - if true, will never remove semi-colons, even if two in a row exist</li>
+ *  <li>minify.disableOptimizations - if true, will disable some micro-optimizations that are performed</li>
+ * </ul>
+ *
+ * The Google Closure Compiler uses to minify only JS resources.
+ * To use it instead of the YUI-compressor, add the property: minify.closure.compiler.enabled=true
+ *
+ * Compiler is controlled via the following properties:
+ * <ul>
+ *  <li>minify.compilerOptions.compilerLanguageIn - Sets ECMAScript version to use for the input.
+ *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT, "
+ * "ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016, "
+ * "ECMASCRIPT_2017, ECMASCRIPT_NEXT</li>
+ *
+ *  <li>minify.compilerOptions.compilerLanguageOut - Sets ECMAScript version to use for the output.
+ *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT, "
+ * "ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016, "
+ * "ECMASCRIPT_2017, ECMASCRIPT_NEXT, NO_TRANSPILE</li>
+ *
+ *  <li>minify.compilerOptions.warningLevel - Warnings level. Possible values: QUIET, DEFAULT, VERBOSE</li>
+ * </ul>
  * 
  * @author Andre Azzolini (apazzolini)
  */
 public interface ResourceMinificationService {
 
     /**
-     * Given the source byte[], will return a byte[] that represents the YUI-compressor minified version
-     * of the byte[]. The behavior of this method is controlled via the following properties:
-     * 
-     * <ul>
-     *  <li>minify.enabled - whether or not to actually perform minification</li>
-     *  <li>minify.linebreak - if set to a value other than -1, will enforce a linebreak at that value</li>
-     *  <li>minify.munge - if true, will replace variable names with shorter versions</li>
-     *  <li>minify.verbose - if true, will display extra logging information to the console</li>
-     *  <li>minify.preserveAllSemiColons - if true, will never remove semi-colons, even if two in a row exist</li>
-     *  <li>minify.disableOptimizations - if true, will disable some micro-optimizations that are performed</li>
-     * </ul>
+     * Given the source byte[], will return a byte[] that represents the minified version of the byte[]
      * 
      * @param filename
      * @param bytes
@@ -56,9 +75,11 @@ public interface ResourceMinificationService {
      * Indicates whether or not the system is allowed to attempt to minify individual files. This can be useful if
      * the YUI compressor is failing to minify JavaScript/CSS due to syntax errors and you are attempting to track
      * down which file is problematic. It should not be enabled in a production environment.
-     * 
+     *
+     * @deprecated
      * @return the value of the system property "minify.allowSingleMinification"
      */
+    @Deprecated
     boolean getAllowSingleMinification();
 
     /**
@@ -69,18 +90,7 @@ public interface ResourceMinificationService {
     Resource minify(Resource originalResource);
 
     /**
-     * Given a {@link Resource}, will return a resource that represents the YUI-compressor minified version.
-     * 
-     * The behavior of this method is controlled via the following properties:
-     * 
-     * <ul>
-     *  <li>minify.enabled - whether or not to actually perform minification</li>
-     *  <li>minify.linebreak - if set to a value other than -1, will enforce a linebreak at that value</li>
-     *  <li>minify.munge - if true, will replace variable names with shorter versions</li>
-     *  <li>minify.verbose - if true, will display extra logging information to the console</li>
-     *  <li>minify.preserveAllSemiColons - if true, will never remove semi-colons, even if two in a row exist</li>
-     *  <li>minify.disableOptimizations - if true, will disable some micro-optimizations that are performed</li>
-     * </ul>
+     * Given a {@link Resource}, will return a resource that represents the minified version.
      * 
      * @param orginalResource
      * @param the name of resource
