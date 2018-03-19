@@ -1382,9 +1382,13 @@ $(document).ready(function() {
     // primary entity buttons should be disabled until page is loaded
     $(window).load(function () {
         $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
-        $('a.show-translations').removeClass('disabled');
     });
 
+    //moved show-translations to an initializationHandler so it gets fired for modals as well 
+    BLCAdmin.addInitializationHandler(function($container) {
+        $('a.show-translations').removeClass('disabled');
+     });
+    
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
             if (BLCAdmin.currentModal() != null) {
