@@ -38,17 +38,17 @@ import org.springframework.core.io.Resource;
  *
  * Compiler is controlled via the following properties:
  * <ul>
- *  <li>minify.compilerOptions.compilerLanguageIn - Sets ECMAScript version to use for the input.
+ *  <li>minify.closure.compiler.languageIn - Sets ECMAScript version to use for the input.
  *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT, "
  * "ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016, "
  * "ECMASCRIPT_2017, ECMASCRIPT_NEXT</li>
  *
- *  <li>minify.compilerOptions.compilerLanguageOut - Sets ECMAScript version to use for the output.
+ *  <li>minify.closure.compiler.languageOut - Sets ECMAScript version to use for the output.
  *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT, "
  * "ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016, "
  * "ECMASCRIPT_2017, ECMASCRIPT_NEXT, NO_TRANSPILE</li>
  *
- *  <li>minify.compilerOptions.warningLevel - Warnings level. Possible values: QUIET, DEFAULT, VERBOSE</li>
+ *  <li>minify.closure.compiler.warningLevel - Warnings level. Possible values: QUIET, DEFAULT, VERBOSE</li>
  * </ul>
  * 
  * @author Andre Azzolini (apazzolini)

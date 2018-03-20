@@ -44,11 +44,11 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @Configuration
 public class BroadleafCommonConfig {
 
-    @Value("${minify.compilerOptions.compilerLanguageIn:ECMASCRIPT_2017}")
+    @Value("${minify.closure.compiler.languageIn:ECMASCRIPT_2017}")
     protected String compilerLanguageIn;
-    @Value("${minify.compilerOptions.compilerLanguageOut:ECMASCRIPT5}")
+    @Value("${minify.closure.compiler.languageOut:ECMASCRIPT5}")
     protected String compilerLanguageOut;
-    @Value("${minify.compilerOptions.warningLevel:QUIET}")
+    @Value("${minify.closure.compiler.warningLevel:QUIET}")
     protected String warningLevel;
 
     /**
