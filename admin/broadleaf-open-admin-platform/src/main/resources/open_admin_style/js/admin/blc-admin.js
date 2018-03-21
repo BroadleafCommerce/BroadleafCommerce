@@ -92,7 +92,6 @@ var BLCAdmin = (function($) {
             }
         });
 
-
         // Only initialize all fields if NOT a normal EntityForm in modal
         // Should initialize for lookups
         if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
@@ -103,6 +102,16 @@ var BLCAdmin = (function($) {
 
         BLCAdmin.initializeModalButtons($data);
         BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
+    }
+
+    function wrapInModal($data) {
+        var id = ($data.attr('id') || 'wrapped') + '-modal';
+        return $(
+            '<div class="modal in" id="' + id + '">' +
+            '    <div class="modal-header"><button class="close" type="button" data-dismiss="modal" aria-hidden="true">×</button></div>' +
+            '    <div class="modal-body" style="padding: 0 20px">' + $data.html() + '</div>' +
+            '</div>'
+        );
     }
 
     function getDependentFieldFilterKey(className, childFieldName) {
@@ -336,6 +345,9 @@ var BLCAdmin = (function($) {
             if (!$element.find('.content-yield').length) {
                 var content = $('<div>', { 'class': 'content-yield'});
                 $element.find('.modal-body').wrapInner(content);
+            }
+            if($element.hasClass('wrap-in-modal')) {
+                $element = wrapInModal($element);
             }
             $('body').append($element);
             showModal($element, onModalHide, onModalHideArgs);
@@ -1567,4 +1579,13 @@ $('.main-content').scroll(function () {
     if (h > (content + title + tabs) && h < (contentWrapper + title + tabs)) {
         $(this).find('.content-yield').height(h - title - tabs);
     }
+});
+
+$('body').on('input', 'input.resize-as-needed', function () {
+    var minSize = $(this).data('min-size') || 1;
+    var maxSize = $(this).data('max-size') || $(this).attr('maxlength') || 30;
+    var newSize = $(this).val().length;
+    newSize = Math.max(minSize, newSize);
+    newSize = Math.min(maxSize, newSize);
+    $(this).attr('size', newSize);
 });

@@ -151,8 +151,12 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
             //Add the Match instructions with quantity field if necessary
             var matchSpan = $("<span>", {"class": "rules-group-header-span", "text": "Match"});
             var itemPK = $("<input>", {"class": "rules-group-header-item-pk", "type": "hidden", "value": options.pk});
-            var itemQty = $("<input>", {"class": "rules-group-header-item-qty", "type": options.quantity ? "text" : "hidden",
+            var itemQty = $("<input>", {"class": "rules-group-header-item-qty resize-as-needed", "type": options.quantity ? "text" : "hidden",
                 "value": options.quantity});
+
+            //This can't be a part of the above line, otherwise jQuery tries to run the deprecated method size(1) instead
+            //of adding the 'size' attribute
+            itemQty.attr('size', options.quantity ? options.quantity.toString().length : 1);
 
             // To introduce additional unique "items that satisfy" text, you must create a property such that
             // the key is in the following format "{Rule Identifier Type}_ItemsThatSatisfyText".

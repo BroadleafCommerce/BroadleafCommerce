@@ -27,6 +27,7 @@ $(document).ready(function() {
 	
 	$('body').on('hide', '.modal', function () {
 		$("html").css({ overflow: 'auto' });
+		BLCAdmin.entityForm.visitedTabs.removeModalTabs();
 	});
 	
 	$('body').on('click', 'a.modal-view', function() {

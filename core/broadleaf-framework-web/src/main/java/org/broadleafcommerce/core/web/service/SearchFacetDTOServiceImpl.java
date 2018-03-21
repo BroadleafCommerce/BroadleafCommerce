@@ -27,11 +27,13 @@ import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,16 +50,15 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     protected int getMaxPageSize() {
         return BLCSystemProperty.resolveIntSystemProperty("web.maxPageSize");
     }
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public SearchCriteria buildSearchCriteria(HttpServletRequest request) {
-        SearchCriteria searchCriteria = new SearchCriteria();
-        searchCriteria.setPageSize(getDefaultPageSize());
-        
-        Map<String, String[]> facets = new HashMap<String, String[]>();
 
-        for (Entry<String, String[]> entry : (Iterable<Entry<String, String[]>>) request.getParameterMap().entrySet()) {
+    @Override
+    public SearchCriteria buildSearchCriteria(HttpServletRequest request) {
+        SearchCriteria searchCriteria = createSearchCriteria();
+        searchCriteria.setPageSize(getDefaultPageSize());
+
+        Map<String, String[]> facets = new HashMap<>();
+
+        for (Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
             String key = entry.getKey();
 
             if (Objects.equals(key, SearchCriteria.SORT_STRING)) {
@@ -78,17 +79,27 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
                     query = null;
                 }
                 searchCriteria.setQuery(query);
+            } else if (Objects.equals(key, SearchCriteria.REQUEST_HANDLER)) {
+                String requestHandler = entry.getValue()[0];
+                if (!requestHandler.startsWith("/")) {
+                    requestHandler = "/" + requestHandler;
+                }
+                searchCriteria.setRequestHandler(requestHandler);
             } else {
                 facets.put(key, entry.getValue());
             }
         }
-        
+
         searchCriteria.setFilterCriteria(facets);
         searchCriteria.setCategory((Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME));
-        
+
         return searchCriteria;
     }
-    
+
+    protected SearchCriteria createSearchCriteria() {
+        return new SearchCriteria();
+    }
+
     @Override
     public void setActiveFacetResults(List<SearchFacetDTO> facets, HttpServletRequest request) {
         if (facets != null) {
@@ -99,7 +110,7 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
             }
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public boolean isActive(SearchFacetResultDTO result, HttpServletRequest request) {
@@ -116,12 +127,12 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
         }
         return false;
     }
-    
+
     @Override
     public String getUrlKey(SearchFacetResultDTO result) {
         return result.getFacet().getField().getAbbreviation();
     }
-    
+
     @Override
     public String getValue(SearchFacetResultDTO result) {
         return result.getValueKey();

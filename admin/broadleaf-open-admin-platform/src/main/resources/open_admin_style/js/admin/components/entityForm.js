@@ -297,6 +297,40 @@
             }
 
             hideGroupIfFieldsAreHidden($field);
+        },
+
+
+        visitedTabs: {
+            _tabs: [],
+
+            contains: function ($tab) {
+                var tabKey = this._getTabKey($tab);
+                return this._tabs.indexOf(tabKey) !== -1;
+            },
+
+            add: function ($tab) {
+                var tabKey = this._getTabKey($tab);
+                this._tabs.push(tabKey);
+            },
+
+            removeModalTabs: function () {
+                var tmp = [];
+                for (var i = 0; i < this._tabs.length; i++) {
+                    var tabName = this._tabs[i];
+                    if (tabName.indexOf('modal|') === -1) {
+                        tmp.push(tabName);
+                    }
+                }
+                this._tabs = tmp;
+            },
+
+            _getTabKey: function ($tab) {
+                var tabKey = $tab.find('span').data('tabkey');
+                if ($tab.parents(".modal").length) {
+                    tabKey = 'modal|' + tabKey;
+                }
+                return tabKey;
+            },
         }
     };
 })(jQuery, BLCAdmin);
@@ -337,8 +371,7 @@ $(document).ready(function() {
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
     });
-    
-    var tabs_action=null;
+
     var sectionTabsSelector = 'div.section-tabs li a:not(' + BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + ')';
 
     $(document).on('click', sectionTabsSelector, function (event) {
@@ -357,15 +390,10 @@ $(document).ready(function() {
         }
         var tabUrl = encodeURI(currentAction);
 
-     	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
-     		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
-     	} else if (tabs_action && tabs_action.indexOf(tabUrl) == -1) {
-     		tabs_action += ' / ' + tabUrl;
-     	} else if (tabs_action == null) {
-     		tabs_action = tabUrl;
-     	}
+        var isVisitedBefore = BLCAdmin.entityForm.visitedTabs.contains($tab);
+        if (!isVisitedBefore) BLCAdmin.entityForm.visitedTabs.add($tab);
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf('/add/') === -1 && !$tab.hasClass('first-tab')) {
+     	if (!isVisitedBefore && !$tab.hasClass('first-tab') && !currentAction.endsWith('/add')) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({
