@@ -75,7 +75,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     protected static final String DEFAULT_ADMIN_IMAGE_EXTENSIONS = "bmp,jpg,jpeg,png,img,tiff,gif";
     protected static final long TEN_MEGABYTES = 10000000L;
-    protected static final long TWO_MEGABYTES = 2048L;
+    protected static final long ONE_MEGEBYTE = 1024L;
     protected static final int EIGHT_KILOBYTES = 8096;
 
     protected String cacheDirectory;
@@ -478,7 +478,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     protected long getMaxUploadableImageSize() {
-        return env.getProperty("asset.server.max.uploadable.image.size", long.class, TWO_MEGABYTES);
+        return env.getProperty("asset.server.max.uploadable.image.size", long.class, ONE_MEGEBYTE);
     }
 
     protected int getFileBufferSize() {
