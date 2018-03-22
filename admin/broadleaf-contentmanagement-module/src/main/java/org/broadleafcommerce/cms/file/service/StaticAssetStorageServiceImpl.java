@@ -39,7 +39,8 @@ import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdap
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,7 +58,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -68,15 +71,12 @@ import javax.annotation.Resource;
 @Service("blStaticAssetStorageService")
 public class StaticAssetStorageServiceImpl implements StaticAssetStorageService {
 
-    @Value("${asset.server.max.uploadable.file.size}")
-    protected long maxUploadableFileSize;
-
-    @Value("${asset.server.file.buffer.size}")
-    protected int fileBufferSize = 8096;
-
     private static final Log LOG = LogFactory.getLog(StaticAssetStorageServiceImpl.class);
 
     protected String cacheDirectory;
+
+    @Autowired
+    protected Environment env;
 
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
@@ -405,7 +405,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     public void createStaticAssetStorageFromFile(MultipartFile file, StaticAsset staticAsset) throws IOException {
         createStaticAssetStorage(file.getInputStream(), staticAsset);
     }
-    
+
     @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public void createStaticAssetStorage(InputStream fileInputStream, StaticAsset staticAsset) throws IOException {
@@ -421,7 +421,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             String destFileName = FilenameUtils.normalize(tempWorkArea.getFilePathLocation() + File.separator + FilenameUtils.separatorsToSystem(staticAsset.getFullUrl()));
 
             InputStream input = fileInputStream;
-            byte[] buffer = new byte[fileBufferSize];
+            byte[] buffer = new byte[getFileBufferSize()];
 
             File destFile = new File(destFileName);
             if (!destFile.getParentFile().exists()) {
@@ -433,23 +433,21 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
 
             OutputStream output = new FileOutputStream(destFile);
-            boolean deleteFile = false;
+            long maxFileSize = getMaxUploadSizeForFile(destFileName);
             try {
                 int bytesRead;
                 int totalBytesRead = 0;
                 while ((bytesRead = input.read(buffer)) != -1) {
                     totalBytesRead += bytesRead;
-                    if (totalBytesRead > maxUploadableFileSize) {
-                        deleteFile = true;
+                    if (totalBytesRead > maxFileSize) {
                         throw new IOException("Maximum Upload File Size Exceeded");
                     }
                     output.write(buffer, 0, bytesRead);
                 }
                 
                 // close the output file stream prior to moving files around
-                
                 output.close();
-                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, deleteFile);
+                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, false);
             } finally {
                 IOUtils.closeQuietly(output);
                 broadleafFileService.closeWorkArea(tempWorkArea);
@@ -457,4 +455,33 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         }
     }
 
+    protected long getMaxUploadSizeForFile(String fileName) {
+        String extension = getFileExtension(fileName);
+        if (getAdminImageFileExtensions().contains(extension)) {
+            return getMaxUploadableImageSize();
+        }
+        return getMaxUploadableFileSize();
+    }
+
+    protected String getFileExtension(String assetPath) {
+        int extensionStartIndex = assetPath.lastIndexOf(".") + 1;
+        return assetPath.substring(extensionStartIndex);
+    }
+
+    protected long getMaxUploadableFileSize() {
+        return env.getProperty("asset.server.max.uploadable.file.size", long.class, 10000000L);
+    }
+
+    protected long getMaxUploadableImageSize() {
+        return env.getProperty("asset.server.max.uploadable.image.size", long.class, 2048L);
+    }
+
+    protected int getFileBufferSize() {
+        return env.getProperty("asset.server.file.buffer.size", int.class, 8096);
+    }
+
+    protected List<String> getAdminImageFileExtensions() {
+        String extensions = env.getProperty("admin.image.file.extensions", String.class);
+        return Arrays.asList(extensions.split(","));
+    }
 }
