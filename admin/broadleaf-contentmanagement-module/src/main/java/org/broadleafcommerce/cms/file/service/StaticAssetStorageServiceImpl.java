@@ -73,6 +73,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     private static final Log LOG = LogFactory.getLog(StaticAssetStorageServiceImpl.class);
 
+    protected static final String DEFAULT_ADMIN_IMAGE_EXTENSIONS = "bmp,jpg,jpeg,png,img,tiff,gif";
+    protected static final long TEN_MEGABYTES = 10000000L;
+    protected static final long TWO_MEGABYTES = 2048L;
+    protected static final int EIGHT_KILOBYTES = 8096;
+
     protected String cacheDirectory;
 
     @Autowired
@@ -469,19 +474,19 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     protected long getMaxUploadableFileSize() {
-        return env.getProperty("asset.server.max.uploadable.file.size", long.class, 10000000L);
+        return env.getProperty("asset.server.max.uploadable.file.size", long.class, TEN_MEGABYTES);
     }
 
     protected long getMaxUploadableImageSize() {
-        return env.getProperty("asset.server.max.uploadable.image.size", long.class, 2048L);
+        return env.getProperty("asset.server.max.uploadable.image.size", long.class, TWO_MEGABYTES);
     }
 
     protected int getFileBufferSize() {
-        return env.getProperty("asset.server.file.buffer.size", int.class, 8096);
+        return env.getProperty("asset.server.file.buffer.size", int.class, EIGHT_KILOBYTES);
     }
 
     protected List<String> getAdminImageFileExtensions() {
-        String extensions = env.getProperty("admin.image.file.extensions", String.class);
+        String extensions = env.getProperty("admin.image.file.extensions", String.class, DEFAULT_ADMIN_IMAGE_EXTENSIONS);
         return Arrays.asList(extensions.split(","));
     }
 }
