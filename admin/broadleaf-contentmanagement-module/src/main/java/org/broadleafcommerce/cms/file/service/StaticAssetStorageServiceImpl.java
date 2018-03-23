@@ -461,11 +461,23 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     protected long getMaxUploadSizeForFile(String fileName) {
-        String extension = getFileExtension(fileName);
-        if (getAdminImageFileExtensions().contains(extension)) {
+        if (isImageFile(fileName)) {
             return getMaxUploadableImageSize();
         }
+
         return getMaxUploadableFileSize();
+    }
+
+    protected boolean isImageFile(String fileName) {
+        String extension = getFileExtension(fileName);
+
+        for (String imageFileExtension : getAdminImageFileExtensions()) {
+            if (imageFileExtension.equalsIgnoreCase(extension)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected String getFileExtension(String assetPath) {
