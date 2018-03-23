@@ -65,7 +65,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>broadleaf-5.2.4-M3</tag>
+        <tag>broadleaf-5.2.4-MAX_FILE_SIZE-SNAPSHOT</tag>
     </scm>
     <build>
         <pluginManagement>
