@@ -496,10 +496,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         String imgSizeProperty = "asset.server.max.uploadable.image.size";
         // backwards-compatibility checks, only use the image-size specific property if it is
         // not the default value. Otherwise, delegate to the old property
-        if (env.getProperty(imgSizeProperty, long.class) == DEFAULT_IMG_UPLOAD_SIZE) {
+        long maxImgSize = env.getProperty(imgSizeProperty, long.class, DEFAULT_IMG_UPLOAD_SIZE);
+        if (maxImgSize == DEFAULT_IMG_UPLOAD_SIZE) {
             return getMaxUploadableFileSize();
         } else {
-            return env.getProperty(imgSizeProperty, long.class);
+            return maxImgSize;
         }
     }
 
