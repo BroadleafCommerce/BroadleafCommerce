@@ -4,7 +4,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.2.6-MAX_FILE_SIZE-M2-M3-SNAPSHOT</version>
+        <version>5.2.4-MAX_FILE_SIZE-M4</version>
     </parent>
     <artifactId>admin</artifactId>
     <packaging>pom</packaging>
