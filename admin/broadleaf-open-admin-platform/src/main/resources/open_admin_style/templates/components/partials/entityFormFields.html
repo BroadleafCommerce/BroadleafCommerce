@@ -55,11 +55,11 @@
         <div class="fieldgroup-listgrid-wrapper-header" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden-body'">
             <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:utext="#{${listGrid.friendlyName}}"></span>
             <th:block th:unless="${listGrid.manualFetch}">
-                <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
-                <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+                <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.record} + ')'"></span>
+                <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.records} + ')'"></span>
             </th:block>
             <th:block th:if="${listGrid.manualFetch}">
-                <span class="listgrid-total-records" th:text="'(Click Fetch to check for records)'"></span>
+                <span class="listgrid-total-records" th:text="#{listgrid.manualFetch}"></span>
             </th:block>
             <th:blockv th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:blockv>
         </div>
