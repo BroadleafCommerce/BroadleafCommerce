@@ -643,6 +643,8 @@ var BLCAdmin = (function($) {
                     tabKey: true,
                     tabsAsSpaces: 4,
                     deniedTags: [],
+                    direction: $('html').attr('dir') || 'ltr',
+                    lang: $('html').attr('lang') || 'en',
                     initCallback: function() {
                         // reset the redactor contents to ensure correct rendering
                         this.code.set(this.code.get());
