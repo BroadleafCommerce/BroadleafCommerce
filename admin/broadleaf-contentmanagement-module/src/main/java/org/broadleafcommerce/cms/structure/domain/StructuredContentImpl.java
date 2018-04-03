@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -165,6 +166,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @BatchSize(size = 20)
     @ClonePolicyMapOverride
     @ClonePolicyArchive
+    @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "structuredContentFields")
     protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();
 
     @Transient
