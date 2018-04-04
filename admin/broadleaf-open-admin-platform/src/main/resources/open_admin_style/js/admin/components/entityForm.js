@@ -193,6 +193,10 @@
                         data: BLCAdmin.serializeArray($form)
                     };
                 }
+                
+                options.error = function() {
+                    BLCAdmin.entityForm.hideActionSpinner();
+                }
                 BLC.ajax(options, function (data) {
                     BLCAdmin.entityForm.hideActionSpinner();
 
@@ -208,7 +212,7 @@
                             clearOtherAlerts: true
                         });
 
-                        if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
+                        if (!$form.closest('.modal').length) {
                             if (BLCAdmin.entityForm.status) {
                                 BLCAdmin.entityForm.status.clearEntityFormChanges();
                             }
