@@ -193,10 +193,6 @@
                         data: BLCAdmin.serializeArray($form)
                     };
                 }
-                
-                options.error = function() {
-                    BLCAdmin.entityForm.hideActionSpinner();
-                }
                 BLC.ajax(options, function (data) {
                     BLCAdmin.entityForm.hideActionSpinner();
 
