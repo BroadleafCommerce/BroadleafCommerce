@@ -124,8 +124,12 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
         }
 
         dto.setPrice(BLCMoneyFormatUtils.formatPrice(priceHolder.getResult()));
-        dto.setRetailPrice(BLCMoneyFormatUtils.formatPrice(sku.getRetailPrice()));
-        dto.setSalePrice(BLCMoneyFormatUtils.formatPrice(sku.getSalePrice()));
+        if (sku.getRetailPrice() != null) {
+            dto.setRetailPrice(BLCMoneyFormatUtils.formatPrice(sku.getRetailPrice()));
+        }
+        if (sku.getSalePrice() != null) {
+            dto.setSalePrice(BLCMoneyFormatUtils.formatPrice(sku.getSalePrice()));
+        }
         dto.setOnSale(sku.isOnSale());
         dto.setSelectedOptions(values);
         return dto;
