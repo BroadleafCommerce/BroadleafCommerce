@@ -554,7 +554,11 @@
          * @returns {boolean}
          */
         checkIfShouldTrackChanges : function(el) {
-
+            // if changes are explcitly tracked on this input, track it
+            if ($(el).data('track-changes')) {
+                return true;
+            }
+            
             // if this element is in an OMS tab, we don't want to track
             if (el !== undefined && $(el).closest('.oms-tab').length) {
                 return false;
