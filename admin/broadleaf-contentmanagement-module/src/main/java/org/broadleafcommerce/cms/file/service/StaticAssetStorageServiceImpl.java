@@ -40,6 +40,7 @@ import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.MultipartProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,10 +75,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     private static final Log LOG = LogFactory.getLog(StaticAssetStorageServiceImpl.class);
 
     protected static final String DEFAULT_ADMIN_IMAGE_EXTENSIONS = "bmp,jpg,jpeg,png,img,tiff,gif";
-    // 1MB default for image uploads
-    protected static final long DEFAULT_IMG_UPLOAD_SIZE = 1024 * 1024;
-    // 10MB default for general file uploads
-    protected static final long DEFAULT_FILE_UPLOAD_SIZE = 1024 * 1024 * 10;
+
+    public static final long DEFAULT_ASSET_UPLOAD_SIZE = 1024 * 1024 * 10;
+
     // 8kb default for the buffer for moving files around
     protected static final int DEFAULT_BUFFER_SIZE = 8096;
 
@@ -106,6 +106,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    @Autowired(required = false)
+    protected MultipartProperties defaultMultipartSettings;
 
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
@@ -489,15 +492,22 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     protected long getMaxUploadableFileSize() {
-        return env.getProperty("asset.server.max.uploadable.file.size", long.class, DEFAULT_FILE_UPLOAD_SIZE);
+        Long blcUploadSize = env.getProperty("asset.server.max.uploadable.file.size", Long.class);
+        if (blcUploadSize != null) {
+            return blcUploadSize;
+        }
+
+        if (defaultMultipartSettings != null) {
+            return defaultMultipartSettings.createMultipartConfig().getMaxFileSize();
+        }
+        return DEFAULT_ASSET_UPLOAD_SIZE;
     }
 
     protected long getMaxUploadableImageSize() {
-        String imgSizeProperty = "asset.server.max.uploadable.image.size";
         // backwards-compatibility checks, only use the image-size specific property if it is
         // not the default value. Otherwise, delegate to the old property
-        long maxImgSize = env.getProperty(imgSizeProperty, long.class, DEFAULT_IMG_UPLOAD_SIZE);
-        if (maxImgSize == DEFAULT_IMG_UPLOAD_SIZE) {
+        Long maxImgSize = env.getProperty("asset.server.max.uploadable.image.size", Long.class);
+        if (maxImgSize == null) {
             return getMaxUploadableFileSize();
         } else {
             return maxImgSize;

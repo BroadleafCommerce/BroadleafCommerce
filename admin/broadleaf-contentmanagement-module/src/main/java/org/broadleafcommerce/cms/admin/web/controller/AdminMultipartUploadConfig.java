@@ -10,52 +10,56 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /**
- * 
+ *
  */
 package org.broadleafcommerce.cms.admin.web.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.PostAutoConfigurationImport;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.MultipartProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import javax.servlet.MultipartConfigElement;
 
 /**
  * Borrows much of its config from {@link MultipartAutoConfiguration} but overrides the default property
  * used for max upload size
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Configuration
 @PostAutoConfigurationImport(NonAutoconfigMultiPartConfiguration.class)
 @EnableConfigurationProperties(MultipartProperties.class)
 public class AdminMultipartUploadConfig {
-    
-    public static final long DEFAULT_10_MEGABYTES = 10000000;
-    
+
+    private static final Log LOG = LogFactory.getLog(AdminMultipartUploadConfig.class);
+
     protected MultipartProperties multipartProperties;
-    
+
     public AdminMultipartUploadConfig(MultipartProperties multipartProperties) {
         this.multipartProperties = multipartProperties;
     }
-    
+
     @Bean
-    public MultipartConfigElement multipartConfigElement(@Value("${asset.server.max.uploadable.file.size}") long blcMaxFileSize ) {
+    public MultipartConfigElement multipartConfigElement(Environment env) {
         MultipartConfigElement multipartConfig = this.multipartProperties.createMultipartConfig();
-        // If a user has configured the max file size from Broadleaf to be anything but the default,
+        // If a user has configured the max file size from Broadleaf to be anything,
         // override it here
-        if (blcMaxFileSize != DEFAULT_10_MEGABYTES) {
-            // TODO: warn that using asset.server.max.uploadable.file.size is deprecated, docs to change the defaults
+        String blcAssetUploadSizeProperty = "asset.server.max.uploadable.file.size";
+        Long blcMaxFileSize = env.getProperty(blcAssetUploadSizeProperty, Long.class);
+        if (blcMaxFileSize != null) {
+            LOG.info(String.format("The %s has been set to %s, using this as the file upload limit and ignoring the Spring Boot settings", blcAssetUploadSizeProperty, blcMaxFileSize));
             multipartConfig = new MultipartConfigElement(multipartConfig.getLocation(),
                 multipartConfig.getMaxRequestSize(),
                 blcMaxFileSize,
@@ -63,5 +67,5 @@ public class AdminMultipartUploadConfig {
         }
         return multipartConfig;
     }
-    
+
 }
