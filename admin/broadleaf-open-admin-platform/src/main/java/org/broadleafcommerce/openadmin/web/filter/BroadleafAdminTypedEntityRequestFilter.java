@@ -120,7 +120,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
         // Find the type and build the new path.
         String type = getEntityTypeFromRequest(request);
-        final String forwardPath = servletPath.replace(type, "");
+        final String forwardPath = servletPath;
 
         // Get the type field name on the Entity for the given section.
         String typedFieldName = getTypeFieldName(typedEntitySection);
