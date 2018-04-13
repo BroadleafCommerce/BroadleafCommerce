@@ -35,6 +35,11 @@ public class AdminAuditableListener {
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (!brc.getAdmin()) {
+            return;
+        }
+
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
@@ -56,6 +61,11 @@ public class AdminAuditableListener {
 
     @PreUpdate
     public void setAuditUpdatedBy(Object entity) throws Exception {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (!brc.getAdmin()) {
+            return;
+        }
+
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
