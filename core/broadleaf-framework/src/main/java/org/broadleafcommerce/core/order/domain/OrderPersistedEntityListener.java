@@ -53,7 +53,7 @@ public class OrderPersistedEntityListener {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
-                public void afterCommit() {
+                public void afterCompletion(int status) {
                     ApplicationContextHolder.getApplicationContext().publishEvent(new OrderPersistedEvent((Order) entity));
                 }
             });
