@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivi
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -420,7 +421,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      *
      * @return the multivalued attributes for this Sku
      */
-    public Map<String, SkuAttribute> getMultiValueSkuAttributes();
+    public Map<String, Collection<SkuAttribute>> getMultiValueSkuAttributes();
 
     /**
      * Sets the denormalized set of key-value pairs on a Sku
