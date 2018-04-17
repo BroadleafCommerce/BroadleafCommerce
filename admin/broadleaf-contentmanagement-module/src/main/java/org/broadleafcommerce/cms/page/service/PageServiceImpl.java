@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -65,13 +65,13 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name="blPageDao")
     protected PageDao pageDao;
-    
+
     @Resource(name="blPageRuleProcessors")
-    protected List<RuleProcessor<PageDTO>> pageRuleProcessors;    
+    protected List<RuleProcessor<PageDTO>> pageRuleProcessors;
 
     @Resource(name="blLocaleService")
     protected LocaleService localeService;
-    
+
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
@@ -107,11 +107,11 @@ public class PageServiceImpl implements PageService {
     public Map<String, PageField> findPageFieldMapByPageId(Long pageId) {
         Map<String, PageField> returnMap = new HashMap<>();
         List<PageField> pageFields = pageDao.readPageFieldsByPageId(pageId);
-        
+
         for (PageField pf : pageFields) {
             returnMap.put(pf.getFieldKey(), pf);
         }
-        
+
         return returnMap;
     }
 
@@ -119,7 +119,7 @@ public class PageServiceImpl implements PageService {
     public PageTemplate findPageTemplateById(Long id) {
         return pageDao.readPageTemplateById(id);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public PageTemplate savePageTemplate(PageTemplate template) {
@@ -164,19 +164,20 @@ public class PageServiceImpl implements PageService {
         final String cacheKey = buildKey(uri, locale, secure);
         if (getPageCache().get(cacheKey) != null) {
             Object pageDto = ((List) this.getPageCache().get(cacheKey).getObjectValue()).get(0);
-            if (pageDto instanceof NullPageDTO)
+            if (pageDto instanceof NullPageDTO) {
                 result = true;
+            }
         }
         return result;
     }
-    
+
     protected List<PageDTO> getPageDTOListForURI(final Locale locale, final String uri, final boolean secure) {
         final List<PageDTO> dtoList;
-        
+
         if (uri != null) {
             final String key = buildKey(uri, locale, secure);
             addCachedDate(key);
-            
+
             final List<Page> pageList = pageDao.findPageByURIAndActiveDate(uri, getCachedDate(key));
 
             // if page doesn't exist - cached NullPageDTO to reduce queries to DB
@@ -189,26 +190,26 @@ public class PageServiceImpl implements PageService {
         } else {
             dtoList = null;
         }
-        
+
         return dtoList;
     }
-    
+
     protected void addCachedDate(final String key) {
         if (getPageCache().get(key) == null) {
             getUriCachedDateCache().put(new Element(key, new Date()));
         }
     }
-    
+
     protected Date getCachedDate(final String key) {
         final Element element = getUriCachedDateCache().get(key);
         final Date cachedDate;
-        
+
         if (element != null && element.getObjectValue() != null) {
             cachedDate = (Date) element.getObjectValue();
         } else {
             cachedDate = new Date();
         }
-        
+
         return cachedDate;
     }
 
@@ -229,7 +230,7 @@ public class PageServiceImpl implements PageService {
 
         return copyDTOList(dtoList);
     }
-    
+
     @SuppressWarnings("unchecked")
     protected List<PageDTO> buildPageDTOListUsingCache(List<Page> pageList, String identifier, Locale locale, boolean secure) {
         List<PageDTO> dtoList = getCachedPageDTOList(pageList, identifier, locale, secure);
@@ -262,14 +263,14 @@ public class PageServiceImpl implements PageService {
         if (pageList != null) {
             for(Page page : pageList) {
                 PageDTO pageDTO = pageServiceUtility.buildPageDTO(page, secure);
-                
+
                 if (!dtoList.contains(pageDTO)) {
                     dtoList.add(pageDTO);
                 }
             }
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     protected List<PageDTO> getPageListFromCache(String key) {
         if (key != null) {
@@ -279,7 +280,7 @@ public class PageServiceImpl implements PageService {
                 statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
                 return (List<PageDTO>) cacheElement.getObjectValue();
             }
-            
+
             statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
         }
 
@@ -364,13 +365,13 @@ public class PageServiceImpl implements PageService {
         }
         return pageMapCache;
     }
-    
+
     @Override
     public Cache getUriCachedDateCache() {
         if (uriCachedDateCache == null) {
             uriCachedDateCache = CacheManager.getInstance().getCache("uriCachedDateCache");
         }
-        
+
         return uriCachedDateCache;
     }
 
