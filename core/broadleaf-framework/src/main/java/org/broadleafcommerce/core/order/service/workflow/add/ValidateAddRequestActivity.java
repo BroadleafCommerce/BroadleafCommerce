@@ -172,8 +172,11 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             if (canSellDefaultSku(product)) {
                 sku = product.getDefaultSku();
             } else {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
+                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", "outOfStock");
             }
+        }
+        if (!sku.isActive()){
+            throw new RequiredAttributeNotProvidedException("Sku is not active", "outOfStock");
         }
 
         return sku;
