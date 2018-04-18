@@ -2,6 +2,22 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
+ * Copyright (C) 2009 - 2018 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+/*
+ * BroadleafCommerce CMS Module
+ * %%
  * Copyright (C) 2009 - 2016 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
@@ -19,6 +35,7 @@ package org.broadleafcommerce.cms.file.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tika.Tika;
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.StaticAssetMultiTenantExtensionManager;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
@@ -48,11 +65,6 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
-
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
-import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 /**
  * Created by bpolster.
@@ -99,11 +111,6 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Override
     public Long findTotalStaticAssetCount() {
         return staticAssetDao.readTotalStaticAssetCount();
-    }
-
-    static {
-        MimeUtil.registerMimeDetector(ExtensionMimeDetector.class.getName());
-        MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
     }
 
     protected String getFileExtension(String fileName) {
@@ -282,16 +289,17 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     protected void getMimeType(InputStream inputStream, String fileName, StaticAsset newAsset) {
-        Collection mimeTypes = MimeUtil.getMimeTypes(fileName);
-        if (!mimeTypes.isEmpty()) {
-            MimeType mimeType = (MimeType) mimeTypes.iterator().next();
-            newAsset.setMimeType(mimeType.toString());
-        } else {
-            mimeTypes = MimeUtil.getMimeTypes(inputStream);
-            if (!mimeTypes.isEmpty()) {
-                MimeType mimeType = (MimeType) mimeTypes.iterator().next();
-                newAsset.setMimeType(mimeType.toString());
+        Tika tika = new Tika();
+        String tikaMimeType = tika.detect(fileName);
+        if (tikaMimeType == null) {
+            try {
+                tikaMimeType = tika.detect(inputStream);
+            } catch (IOException e) {
+                //if tika can't resolve, don't throw exception
             }
+        }
+        if (tikaMimeType != null) {
+            newAsset.setMimeType(tikaMimeType);
         }
     }
 
