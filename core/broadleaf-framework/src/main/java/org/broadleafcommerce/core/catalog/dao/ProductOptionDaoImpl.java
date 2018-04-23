@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -27,6 +29,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.hibernate.Criteria;
@@ -40,6 +44,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -47,8 +52,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -72,6 +77,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         return query.getResultList();
     }
     
+    @Override
     public ProductOption saveProductOption(ProductOption option) {
         return em.merge(option);
     }
@@ -139,15 +145,15 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
     @Override
     public List<Long> readSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> criteria = cb.createQuery(Long.class);
+        CriteriaQuery<Sku> criteria = cb.createQuery(Sku.class);
         Root<SkuProductOptionValueXrefImpl> root = criteria.from(SkuProductOptionValueXrefImpl.class);
-        criteria.select(root.get("sku").get("id").as(Long.class));
+        criteria.select(root.get("sku").as(Sku.class));
 
         List<Predicate> predicates = new ArrayList<>();
 
         // restrict archived values
         predicates.add(cb.or(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'),
-                             cb.isNull(root.get("sku").get("archiveStatus").get("archived"))));
+                cb.isNull(root.get("sku").get("archiveStatus").get("archived"))));
 
         // restrict to skus that match the product
         predicates.add(root.get("sku").get("product").get("id").in(sandBoxHelper.mergeCloneIds(ProductImpl.class, productId)));
@@ -159,17 +165,54 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         predicates.add(cb.equal(root.get("productOptionValue").get("attributeValue"), attributeValue));
 
         // restrict to skus that have ids within the given list of skus ids
-        Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
-        if (skuDomainPredicate != null) {
-            predicates.add(skuDomainPredicate);
+        if (CollectionUtils.isNotEmpty(possibleSkuIds)) {
+            possibleSkuIds = sandBoxHelper.mergeCloneIds(SkuImpl.class, possibleSkuIds.toArray(new Long[possibleSkuIds.size()]));
+            Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
+            if (skuDomainPredicate != null) {
+                predicates.add(skuDomainPredicate);
+            }
         }
+
+        // restrict archived values
+        attachArchivalConditionIfPossible(SkuProductOptionValueXrefImpl.class, root, cb, predicates);
+        attachArchivalConditionIfPossible(SkuImpl.class, root.get("sku"), cb, predicates);
 
         criteria.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 
-        TypedQuery<Long> query = em.createQuery(criteria);
+        TypedQuery<Sku> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        return query.getResultList();
+        List<Sku> candidateSkus = query.getResultList();
+
+        return filterCandidateSkusForArchivedStatus(candidateSkus);
+    }
+
+    protected List<Long> filterCandidateSkusForArchivedStatus(final List<Sku> candidateSkus) {
+        final List<Long> validCandidateSkuIds = new ArrayList<>();
+
+        for (final Sku sku : candidateSkus) {
+            if (Status.class.isAssignableFrom(sku.getClass())) {
+                if (!Objects.equals(((Status) sku).getArchived(), 'Y')) {
+                    validCandidateSkuIds.add(sku.getId());
+                }
+            } else {
+                // if Sku doesn't implement Status from bytecode weaving, assume it's non-archived
+                validCandidateSkuIds.add(sku.getId());
+            }
+        }
+
+        return validCandidateSkuIds;
+    }
+
+    protected void attachArchivalConditionIfPossible(Class<?> clazz, Path<?> path, CriteriaBuilder cb, List<Predicate> predicates) {
+        if (Status.class.isAssignableFrom(clazz)) {
+            predicates.add(
+                    cb.or(
+                            cb.isNull(path.get("archiveStatus").get("archived")),
+                            cb.equal(path.get("archiveStatus").get("archived"), 'N')
+                    )
+            );
+        }
     }
 
     @SuppressWarnings("unchecked")
