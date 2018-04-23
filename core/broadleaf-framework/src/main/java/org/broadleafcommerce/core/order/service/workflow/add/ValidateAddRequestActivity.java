@@ -30,13 +30,17 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
+import org.broadleafcommerce.core.order.service.exception.SkuNotActiveException;
+import org.broadleafcommerce.core.order.service.exception.SkuNotAvailableException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -84,7 +88,6 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             Product product = determineProduct(orderItemRequestDTO);
             Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
                                    (ActivityMessages) context);
-
             addSkuToCart(sku, orderItemRequestDTO, product, request);
 
             if (!hasSameCurrency(orderItemRequestDTO, request, sku)) {
@@ -118,7 +121,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     
     protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
         Sku sku = null;
-        
+
         //If sku browsing is enabled, product option data will not be available.
         if (!useSku) {
             // Check whether the sku is correct given the product options.
@@ -132,12 +135,11 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         if (sku == null && product != null) {
             // Set to the default sku
             if (cannotSellDefaultSku(product)) {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
+                throw new SkuNotAvailableException("Sku is not Available");
             } else {
                 sku = product.getDefaultSku();
             }
         }
-
         return sku;
     }
 
@@ -201,15 +203,16 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return matchingSku;
     }
 
-    protected void addSkuToCart(Sku sku, OrderItemRequestDTO orderItemRequestDTO, Product product, CartOperationRequest request) {
+    protected void addSkuToCart(Sku sku, OrderItemRequestDTO orderItemRequestDTO, Product product, CartOperationRequest request) throws InventoryUnavailableException{
         // If we couldn't find a sku, then we're unable to add to cart.
         if (!hasSkuOrIsNonDiscreteOI(sku, orderItemRequestDTO)) {
             handleIfNoSku(orderItemRequestDTO, product);
         } else if (sku == null) {
             handleIfNonDiscreteOI(orderItemRequestDTO);
         } else if (!sku.isActive()) {
-            throw new IllegalArgumentException("The requested skuId (" + sku.getId() + ") is no longer active");
-        } else {
+            throw new SkuNotActiveException("Sku is not Active");
+        }
+        else {
             // We know which sku we're going to add, so we can add it
             request.getItemRequest().setSkuId(sku.getId());
         }
