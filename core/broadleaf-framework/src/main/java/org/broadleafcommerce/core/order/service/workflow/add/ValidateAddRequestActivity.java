@@ -39,6 +39,8 @@ import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequest
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
+import org.broadleafcommerce.core.order.service.exception.SkuNotActiveException;
+import org.broadleafcommerce.core.order.service.exception.SkuNotAvailableException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -84,15 +86,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             throw new IllegalArgumentException("Order is required when adding item to order");
         } else {
             Product product = determineProduct(orderItemRequestDTO);
-            Sku sku;
-            try {
-                sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
+            Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
                                    (ActivityMessages) context);
-                addSkuToCart(sku, orderItemRequestDTO, product, request);
-
-            }catch(InventoryUnavailableException e){
-                throw e;
-            }
+            addSkuToCart(sku, orderItemRequestDTO, product, request);
 
             if (!hasSameCurrency(orderItemRequestDTO, request, sku)) {
                 throw new IllegalArgumentException("Cannot have items with differing currencies in one cart");
@@ -123,7 +119,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return product;
     }
     
-    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws InventoryUnavailableException {
+    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
         Sku sku = null;
 
         //If sku browsing is enabled, product option data will not be available.
@@ -139,7 +135,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         if (sku == null && product != null) {
             // Set to the default sku
             if (cannotSellDefaultSku(product)) {
-                throw new InventoryUnavailableException("Sku is not Available");
+                throw new SkuNotAvailableException("Sku is not Available");
             } else {
                 sku = product.getDefaultSku();
             }
@@ -214,7 +210,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         } else if (sku == null) {
             handleIfNonDiscreteOI(orderItemRequestDTO);
         } else if (!sku.isActive()) {
-            throw new InventoryUnavailableException("Sku is not Active");
+            throw new SkuNotActiveException("Sku is not Active");
         }
         else {
             // We know which sku we're going to add, so we can add it
