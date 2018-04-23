@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -25,7 +26,17 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.domain.FetchPageRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
@@ -37,7 +48,12 @@ import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteria
 import org.broadleafcommerce.openadmin.server.service.extension.FilterProductTypePersistenceHandlerExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.*;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -45,14 +61,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin.
@@ -433,7 +450,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
 
-        if (requestParams != null || !requestParams.isEmpty()) {
+        if (MapUtils.isNotEmpty(requestParams)) {
 
             for (Entry<String, List<String>> entry : requestParams.entrySet()) {
                 if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
@@ -486,7 +503,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         try {
             filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
         } catch (ServiceException e) {
-            e.printStackTrace();
+            LOG.error("An error occurred when calling FilterProductTypePersistenceHandlerExtensionManager#manageAdditionalFilterMappings", e);
         }
         result.addAll(criteriaTransferObject.getCriteriaMap().values());
         return result.toArray(new FilterAndSortCriteria[result.size()]);
