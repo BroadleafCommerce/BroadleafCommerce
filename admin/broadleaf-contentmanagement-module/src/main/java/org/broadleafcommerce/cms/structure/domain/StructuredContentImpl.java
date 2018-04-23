@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,8 +20,6 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
 import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -117,7 +115,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Column(name = "SC_ID")
     protected Long id;
 
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Name", order = 1, 
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Name", order = 1,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     @Column(name = "CONTENT_NAME", nullable = false)
@@ -164,20 +162,18 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "key")
     @BatchSize(size = 20)
-    @ClonePolicyMapOverride
-    @ClonePolicyArchive
     @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "structuredContentFields")
     protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();
 
     @Transient
     protected Map<String, StructuredContentField> legacyStructuredContentFields = new HashMap<String, StructuredContentField>();
 
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4, 
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     @Column(name = "OFFLINE_FLAG")
     @Index(name="SC_OFFLN_FLG_INDX", columnNames={"OFFLINE_FLAG"})
     protected Boolean offlineFlag = false;
-    
+
     @Transient
     protected Map<String, String> fieldValuesMap = null;
 
@@ -231,7 +227,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         }
         return Collections.unmodifiableMap(legacyStructuredContentFields);
     }
-    
+
     @Override
     public void setStructuredContentFields(Map<String, StructuredContentField> structuredContentFields) {
         this.structuredContentFields.clear();
@@ -240,7 +236,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
             this.structuredContentFields.put(entry.getKey(), new StructuredContentFieldXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
-    
+
     @Override
     public Map<String, StructuredContentFieldXref> getStructuredContentFieldXrefs() {
         return structuredContentFields;
@@ -250,7 +246,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentFieldXref> structuredContentFields) {
         this.structuredContentFields = structuredContentFields;
     }
-    
+
     @Override
     public String getFieldValue(String fieldName) {
         if (structuredContentFields.containsKey(fieldName)) {
@@ -258,7 +254,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         }
         return null;
     }
-    
+
     @Override
     public void setFieldValues(Map<String, String> fieldValuesMap) {
         this.fieldValuesMap = fieldValuesMap;
@@ -318,7 +314,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     public void setQualifyingItemCriteria(Set<StructuredContentItemCriteria> qualifyingItemCriteria) {
         this.qualifyingItemCriteria = qualifyingItemCriteria;
     }
-    
+
     @Override
     public String getMainEntityName() {
         return getContentName();
@@ -364,19 +360,19 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
             public static class Name {
                 public static final String Rules = "StructuredContentImpl_Rules_Tab";
             }
-            
+
             public static class Order {
                 public static final int Rules = 1000;
             }
         }
-            
+
         public static class Group {
             public static class Name {
                 public static final String Description = "StructuredContentImpl_Description";
                 public static final String Internal = "StructuredContentImpl_Internal";
                 public static final String Rules = "StructuredContentImpl_Rules";
             }
-            
+
             public static class Order {
                 public static final int Description = 1000;
                 public static final int Internal = 2000;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.cms.admin.web.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.service.AbstractFormBuilderExtensionHandler;
@@ -52,10 +53,12 @@ public class CMSFormBuilderExtensionHandler extends AbstractFormBuilderExtension
     @Override
     public ExtensionResultStatusType modifyDetailEntityForm(EntityForm ef) {
         try {
+            // These fields on page and structured content are really only modified under the covers
+            // in custom persistence handlers and are not designed to be modified on the frontend
             if (Page.class.isAssignableFrom(Class.forName(ef.getCeilingEntityClassname()))) {
-                //pageFields should be a managed map for programatic handling, but should not be visible in the admin. Instead,
-                //the page fields are handled via the dynamic form fields in the UI.
                 ef.removeListGrid("pageFields");
+            } else if (StructuredContent.class.isAssignableFrom(Class.forName(ef.getCeilingEntityClassname()))) {
+                ef.removeListGrid("structuredContentFields");
             }
 
             return ExtensionResultStatusType.HANDLED;
