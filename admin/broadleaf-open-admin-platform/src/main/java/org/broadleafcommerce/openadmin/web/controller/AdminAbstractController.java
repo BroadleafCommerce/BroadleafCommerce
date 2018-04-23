@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -445,7 +446,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         Map<String, FilterAndSortCriteria> fasMap = new HashMap<>();
         List<FilterAndSortCriteria> result = new ArrayList<>();
 
-        if (requestParams != null || !requestParams.isEmpty()) {
+        if (MapUtils.isNotEmpty(requestParams)) {
 
             for (Entry<String, List<String>> entry : requestParams.entrySet()) {
                 if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
@@ -498,7 +499,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         try {
             filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
         } catch (ServiceException e) {
-            e.printStackTrace();
+            LOG.error("An error occurred when calling FilterProductTypePersistenceHandlerExtensionManager#manageAdditionalFilterMappings", e);
         }
         result.addAll(criteriaTransferObject.getCriteriaMap().values());
         return result.toArray(new FilterAndSortCriteria[result.size()]);
