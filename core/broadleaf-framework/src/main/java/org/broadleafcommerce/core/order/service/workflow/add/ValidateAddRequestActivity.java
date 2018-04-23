@@ -37,6 +37,8 @@ import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemReques
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
+import org.broadleafcommerce.core.order.service.exception.SkuNotActiveException;
+import org.broadleafcommerce.core.order.service.exception.SkuNotAvailableException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.service.workflow.add.extension.ValidateAddRequestActivityExtensionManager;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
@@ -154,7 +156,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return product;
     }
     
-    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
+    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
         Sku sku = null;
         
         //If sku browsing is enabled, product option data will not be available.
@@ -172,7 +174,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             if (canSellDefaultSku(product)) {
                 sku = product.getDefaultSku();
             } else {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
+                throw new SkuNotAvailableException("Unable to find non-default sku matching given options");
             }
         }
 
@@ -239,14 +241,14 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return matchingSku;
     }
 
-    protected void addSkuToCart(Sku sku, OrderItemRequestDTO orderItemRequestDTO, Product product, CartOperationRequest request) {
+    protected void addSkuToCart(Sku sku, OrderItemRequestDTO orderItemRequestDTO, Product product, CartOperationRequest request){
         // If we couldn't find a sku, then we're unable to add to cart.
         if (!hasSkuOrIsNonDiscreteOI(sku, orderItemRequestDTO)) {
             handleIfNoSku(orderItemRequestDTO, product);
         } else if (sku == null) {
             handleIfNonDiscreteOI(orderItemRequestDTO);
         } else if (!sku.isActive()) {
-            throw new IllegalArgumentException("The requested skuId (" + sku.getId() + ") is no longer active");
+            throw new SkuNotActiveException("The requested skuId (" + sku.getId() + ") is no longer active");
         } else {
             // We know which sku we're going to add, so we can add it
             request.getItemRequest().setSkuId(sku.getId());
