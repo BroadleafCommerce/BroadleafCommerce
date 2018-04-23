@@ -18,6 +18,8 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -29,7 +31,9 @@ import org.broadleafcommerce.common.util.BLCMoneyFormatUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
@@ -46,6 +50,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -96,11 +101,12 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<>();
         for (Sku sku : skus) {
-
-            List<Long> productOptionValueIds = new ArrayList<>();
-
-            List<ProductOptionValue> productOptionValues = sku.getProductOptionValues();
-            for (ProductOptionValue productOptionValue : productOptionValues) {
+            
+            List<Long> productOptionValueIds = new ArrayList<Long>();
+            
+            Set<SkuProductOptionValueXref> productOptionValueXrefs = SetUtils.emptyIfNull(sku.getProductOptionValueXrefs());
+            for (SkuProductOptionValueXref skuProductOptionValueXref : productOptionValueXrefs) {
+                ProductOptionValue productOptionValue = skuProductOptionValueXref.getProductOptionValue();
                 productOptionValueIds.add(productOptionValue.getId());
             }
             ProductOptionPricingDTO pricingDto = createPricingDto(sku, productOptionValueIds, tagAttributes, context);
@@ -134,19 +140,31 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
         dto.setSelectedOptions(values);
         return dto;
     }
-
+    
     protected void addAllProductOptionsToModel(Map<String, Object> newModelVars, Product product) {
-        List<ProductOption> productOptions = product.getProductOptions();
+        List<ProductOptionXref> productOptionXrefs = ListUtils.emptyIfNull(product.getProductOptionXrefs());
         List<ProductOptionDTO> dtos = new ArrayList<>();
-        for (ProductOption option : productOptions) {
+
+        for (ProductOptionXref optionXref : productOptionXrefs) {
             ProductOptionDTO dto = new ProductOptionDTO();
-            dto.setId(option.getId());
-            dto.setType(option.getType().getType());
+            ProductOption productOption = optionXref.getProductOption();
+
+            dto.setId(productOption.getId());
+            dto.setType(productOption.getType().getType());
+
             Map<Long, String> values = new HashMap<>();
-            for (ProductOptionValue value : option.getAllowedValues()) {
+            Map<Long, Double> priceAdjustments = new HashMap<>();
+
+            for (ProductOptionValue value : productOption.getAllowedValues()) {
                 values.put(value.getId(), value.getAttributeValue());
+
+                Money priceAdjustment = value.getPriceAdjustment();
+                Double priceAdjustmentValue = (priceAdjustment != null) ? priceAdjustment.doubleValue() : null;
+                priceAdjustments.put(value.getId(), priceAdjustmentValue);
             }
+
             dto.setValues(values);
+            dto.setPriceAdjustments(priceAdjustments);
             dtos.add(dto);
         }
         writeJSONToModel(newModelVars, "allProductOptions", dtos);
@@ -174,9 +192,9 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
         private Long id;
         private String type;
         private Map<Long, String> values;
+        private Map<Long, Double> priceAdjustments;
         private String selectedValue;
 
-        @SuppressWarnings("unused")
         public Long getId() {
             return id;
         }
@@ -185,7 +203,6 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.id = id;
         }
 
-        @SuppressWarnings("unused")
         public String getType() {
             return type;
         }
@@ -194,7 +211,6 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.type = type;
         }
 
-        @SuppressWarnings("unused")
         public Map<Long, String> getValues() {
             return values;
         }
@@ -203,14 +219,20 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.values = values;
         }
 
-        @SuppressWarnings("unused")
         public String getSelectedValue() {
             return selectedValue;
         }
 
-        @SuppressWarnings("unused")
         public void setSelectedValue(String selectedValue) {
             this.selectedValue = selectedValue;
+        }
+
+        public Map<Long, Double> getPriceAdjustments() {
+            return priceAdjustments;
+        }
+
+        public void setPriceAdjustments(Map<Long, Double> priceAdjustments) {
+            this.priceAdjustments = priceAdjustments;
         }
 
         @Override
@@ -227,16 +249,19 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
 
             ProductOptionDTO that = (ProductOptionDTO) o;
 
-            if (id != null ? !id.equals(that.id) : that.id != null) {
+            if ((id != null) ? !id.equals(that.id) : (that.id != null)) {
                 return false;
             }
-            if (selectedValue != null ? !selectedValue.equals(that.selectedValue) : that.selectedValue != null) {
+            if ((selectedValue != null) ? !selectedValue.equals(that.selectedValue) : (that.selectedValue != null)) {
                 return false;
             }
-            if (type != null ? !type.equals(that.type) : that.type != null) {
+            if ((type != null) ? !type.equals(that.type) : (that.type != null)) {
                 return false;
             }
-            if (values != null ? !values.equals(that.values) : that.values != null) {
+            if ((values != null) ? !values.equals(that.values) : (that.values != null)) {
+                return false;
+            }
+            if ((priceAdjustments != null) ? !priceAdjustments.equals(that.priceAdjustments) : (that.priceAdjustments != null)) {
                 return false;
             }
 
@@ -245,10 +270,11 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
 
         @Override
         public int hashCode() {
-            int result = id != null ? id.hashCode() : 0;
+            int result = (id != null) ? id.hashCode() : 0;
             result = 31 * result + (type != null ? type.hashCode() : 0);
             result = 31 * result + (values != null ? values.hashCode() : 0);
             result = 31 * result + (selectedValue != null ? selectedValue.hashCode() : 0);
+            result = 31 * result + (priceAdjustments != null ? priceAdjustments.hashCode() : 0);
             return result;
         }
     }
@@ -262,7 +288,6 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
         private String salePrice;
         private boolean onSale;
 
-        @SuppressWarnings("unused")
         public Long[] getSelectedOptions() {
             return skuOptions;
         }
@@ -271,7 +296,6 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.skuOptions = skuOptions;
         }
 
-        @SuppressWarnings("unused")
         public String getPrice() {
             return price;
         }
