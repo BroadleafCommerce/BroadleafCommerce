@@ -79,6 +79,10 @@
             <artifactId>broadleaf-open-admin-platform</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
             <classifier>tests</classifier>
