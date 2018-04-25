@@ -23,6 +23,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -66,12 +69,15 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     @Column(name = "SC_FLD_ID")
     protected Long id;
 
+    @AdminPresentation
     @Column (name = "FLD_KEY")
     protected String fieldKey;
 
+    @AdminPresentation
     @Column (name = "VALUE")
     protected String stringValue;
 
+    @AdminPresentation
     @Column (name = "LOB_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
