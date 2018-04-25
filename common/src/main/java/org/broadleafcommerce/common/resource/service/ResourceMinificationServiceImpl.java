@@ -106,7 +106,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
 
         String type = getFileType(originalResource, filename);
         if (type == null) {
-            LOG.trace("Unsupported minification resource: " + filename);
+            LOG.info("Unsupported minification resource: " + filename);
             return originalResource;
         }
 
@@ -136,7 +136,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         } catch (ResourceMinificationException e) {
             // We're throwing and catching ResourceMinificationException for backwards compatibility. 
             // In 5.4 this method will throw a ResourceMinificationException
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
 

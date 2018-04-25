@@ -20,7 +20,24 @@ package org.broadleafcommerce.common.resource.service;
 import java.io.Reader;
 import java.io.Writer;
 
+/**
+ * Service that's used to minify Javascript
+ * 
+ * @see YUIJavascriptMinificationServiceImpl
+ * @see GoogleClosureJavascriptMinificationServiceImpl
+ * 
+ * @author Jay Aisenbrey (cja769)
+ *
+ */
 public interface JavascriptMinificationService {
 
+    /**
+     * Minifies the file in "reader" and writes the minified version to "writer"
+     * 
+     * @param filename Name of the file to be minified
+     * @param reader The original file
+     * @param writer The writer that the minified version of the file in "reader" will be written to
+     * @throws ResourceMinificationException Failure to successfully minify the bytes in "reader"
+     */
     public void minifyJs(String filename, Reader reader, Writer writer) throws ResourceMinificationException;
 }

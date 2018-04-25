@@ -38,18 +38,27 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Javascript minification service implemented using the Google Closure Compiler
+ * This will be used for minification if the Google Closure Compiler dependency is included in the project
+ * 
+ * This library also supports extra aggressive minification, transpiling, code optimizing, and bundleing
+ * 
  * <ul>
- *  <li>minify.closure.compiler.languageIn - Sets ECMAScript version to use for the input.
- *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT, "
- * "ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016, "
- * "ECMASCRIPT_2017, ECMASCRIPT_NEXT</li>
+ *  <li>minify.closure.compiler.languageIn - Sets ECMAScript version to use for the input.<br/>
+ *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT,
+ *  ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016,
+ *  ECMASCRIPT_2017, ECMASCRIPT_NEXT<br/>
+ *  Default: ECMASCRIPT5
+ *  </li>
  *
- *  <li>minify.closure.compiler.languageOut - Sets ECMAScript version to use for the output.
- *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT, "
- * "ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016, "
- * "ECMASCRIPT_2017, ECMASCRIPT_NEXT, NO_TRANSPILE</li>
+ *  <li>minify.closure.compiler.languageOut - Sets ECMAScript version to use for the output.<br/>
+ *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT,
+ *  ECMASCRIPT6_TYPED (experimental), ECMASCRIPT_2015, ECMASCRIPT_2016,
+ *  ECMASCRIPT_2017, ECMASCRIPT_NEXT, NO_TRANSPILE<br/>
+ *  Default: NO_TRANSPILE</li>
  *
- *  <li>minify.closure.compiler.warningLevel - Warnings level. Possible values: QUIET, DEFAULT, VERBOSE</li>
+ *  <li>minify.closure.compiler.warningLevel - Warnings level. Possible values: QUIET, DEFAULT, VERBOSE<br/>
+ *  Default: SILENT</li>
  * </ul>
  * 
  * @author Jay Aisenbrey (cja769)

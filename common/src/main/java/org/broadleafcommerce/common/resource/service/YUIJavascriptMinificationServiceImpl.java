@@ -32,22 +32,37 @@ import java.io.Reader;
 import java.io.Writer;
 
 /** 
+ * Javascript minification service implemented using the YUICompressor library
+ * This will be used for minification if the Google Closure Compiler dependency is not included in the project
+ * 
  * Properties used by YUICompressor for JS minification
  * 
  * <ul>
- *  <li>minify.linebreak - if set to a value other than -1, will enforce a linebreak at that value</li>
- *  <li>minify.munge - if true, will replace variable names with shorter versions</li>
- *  <li>minify.verbose - if true, will display extra logging information to the console</li>
- *  <li>minify.preserveAllSemiColons - if true, will never remove semi-colons, even if two in a row exist</li>
- *  <li>minify.disableOptimizations - if true, will disable some micro-optimizations that are performed</li>
+ *  <li>minify.linebreak - if set to a value other than -1, will enforce a linebreak at that value<br/>
+ *      Default: -1
+ *  </li>
+ *  <li>minify.munge - if true, will replace variable names with shorter versions<br/>
+ *      Default: true
+ *  </li>
+ *  <li>minify.verbose - if true, will display extra logging information to the console<br/>
+ *      Default: false
+ *  </li>
+ *  <li>minify.preserveAllSemiColons - if true, will never remove semi-colons, even if two in a row exist<br/>
+ *      Default: true
+ *  </li>
+ *  <li>minify.disableOptimizations - if true, will disable some micro-optimizations that are performed<br/>
+ *      Default: false
+ *  </li>
  * </ul>
+ * 
+ * @author Jay Aisenbrey (cja769)
  * 
  **/
 @Service("blJavascriptMinificationService")
 @ConditionalOnMissingClass(value = "com.google.javascript.jscomp.Compiler")
-public class YUIJavscriptionMinificationServiceImpl implements JavascriptMinificationService {
+public class YUIJavascriptMinificationServiceImpl implements JavascriptMinificationService {
 
-    protected static final Log LOG = LogFactory.getLog(YUIJavscriptionMinificationServiceImpl.class);
+    protected static final Log LOG = LogFactory.getLog(YUIJavascriptMinificationServiceImpl.class);
 
     @Value("${minify.linebreak}")
     protected int linebreak;

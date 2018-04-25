@@ -25,6 +25,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
+/**
+ * CSS minification service implemented using the YUICompressor library
+ * 
+ * @author Jay Aisenbrey (cja769)
+ *
+ */
 @Service("blCssMinificationService")
 public class YUICssMinificationServiceImpl implements CssMinificationService {
 
