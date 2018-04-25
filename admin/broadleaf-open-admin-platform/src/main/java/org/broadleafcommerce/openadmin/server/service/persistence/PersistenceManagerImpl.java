@@ -575,6 +575,23 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
+        for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+            for (Map.Entry<ChangeType, List<PersistencePackage>> entry : subPackage.getValue().getDeferredOperations().entrySet()) {
+                for (PersistencePackage change : entry.getValue()) {
+                    switch (entry.getKey()) {
+                        case UPDATE:
+                            update(change);
+                            break;
+                        case ADD:
+                            add(change);
+                            break;
+                        case DELETE:
+                            remove(change);
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     /**
