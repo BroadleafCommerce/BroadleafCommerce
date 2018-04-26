@@ -54,7 +54,7 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
                     && Objects.equals(Long.valueOf(offerPriceData.getIdentifierValue()), doi.getSku().getId()))
                     || (offerPriceData.getIdentifierType().equals(OfferPriceDataIdentifierType.PRODUCT_EXTERNAL_ID)
                     && Objects.equals(String.valueOf(offerPriceData.getIdentifierValue()), doi.getProduct().getExternalId()))
-                    || (offerPriceData.getIdentifierType().equals(OfferPriceDataIdentifierType.PRODUCT_ID)
+                    || (offerPriceData.getIdentifierType().equals(OfferPriceDataIdentifierType.SKU_EXTERNAL_ID)
                     && Objects.equals(String.valueOf(offerPriceData.getIdentifierValue()), doi.getSku().getExternalId()))) {
                 return true;
             }
