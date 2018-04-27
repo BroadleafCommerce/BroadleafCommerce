@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * <p>
@@ -524,19 +523,16 @@ public class SolrConfiguration implements InitializingBean {
                         break;
                     }
                 }
-
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
-
-                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
+                // TODO SOLRUPGRADE How many replicas? Before we didn't specify
+                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
+                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
+                    // TODO SOLRUPGRADE How many replicas? Before we didn't specify
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
                 }
             }
 
@@ -559,19 +555,17 @@ public class SolrConfiguration implements InitializingBean {
                         break;
                     }
                 }
+                // TODO SOLRUPGRADE How many replicas? Before we didn't specify
+                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
+                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName).process(primary);
 
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
-
-                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
+                    // TODO SOLRUPGRADE How many replicas? Before we didn't specify
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
                 }
             }
         }
@@ -615,11 +609,11 @@ public class SolrConfiguration implements InitializingBean {
     }
     
     protected void createCollectionIfNotExist(CloudSolrClient client, String collectionName) {
-        Set<String> collectionNames = client.getZkStateReader().getClusterState().getCollections();
-        if (!collectionNames.contains(collectionName)) {
+        if (!client.getZkStateReader().getClusterState().hasCollection(collectionName)) {
             try {
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(getSolrCloudNumShards())
-                        .setMaxShardsPerNode(getSolrCloudNumShards()).setConfigName(getSolrCloudConfigName()).process(client);
+                // TODO SOLRUPGRADE How many replicas? Before we didn't specify
+                CollectionAdminRequest.createCollection(collectionName, getSolrCloudConfigName(), getSolrCloudNumShards(), 0)
+                        .setMaxShardsPerNode(getSolrCloudNumShards()).process(client);
             } catch (SolrServerException e) {
                 throw ExceptionHelper.refineException(e);
             } catch (IOException e) {
@@ -633,8 +627,7 @@ public class SolrConfiguration implements InitializingBean {
         Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
         if (!aliasCollectionMap.containsKey(aliasName)) {
             try {
-                new CollectionAdminRequest.CreateAlias().setAliasName(aliasName)
-                        .setAliasedCollections(collectionName).process(client);
+                CollectionAdminRequest.createAlias(aliasName, collectionName).process(client);
             } catch (SolrServerException e) {
                 throw ExceptionHelper.refineException(e);
             } catch (IOException e) {
