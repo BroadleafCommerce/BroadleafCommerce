@@ -19,7 +19,7 @@ package org.broadleafcommerce.test;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.core.annotation.AnnotationUtils;;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
