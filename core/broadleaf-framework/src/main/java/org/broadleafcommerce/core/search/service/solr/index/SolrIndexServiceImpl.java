@@ -525,7 +525,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     
     @Override
     public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales) {
-        final SolrInputDocument document = new SolrInputDocument();
+        final SolrInputDocument document = new SolrInputDocument(new String[0]);
 
         attachBasicDocumentFields(indexable, document);
 
