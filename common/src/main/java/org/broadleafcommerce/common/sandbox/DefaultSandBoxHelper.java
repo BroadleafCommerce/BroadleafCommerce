@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -63,6 +63,11 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     @Override
     public BiMap<Long, Long> getSandBoxToOriginalMap(Class<?> type, Long... originalIds) {
         return HashBiMap.create();
+    }
+
+    @Override
+    public Long getTopmostProductionOriginalId(Class<?> type, Long id) {
+        return id;
     }
 
     @Override
@@ -121,4 +126,5 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     public void ignoreCloneCache(boolean ignoreCache) {
         //do nothing
     }
+
 }
