@@ -23,7 +23,10 @@ import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author Nick Crum (ncrum)
@@ -34,35 +37,59 @@ public class BroadleafCloudSolrClient extends CloudSolrClient {
     protected boolean reindexClient;
 
     public BroadleafCloudSolrClient(String zkHost) {
-        super(zkHost);
+        super(createBuilder(Arrays.asList(zkHost), null, null));
     }
 
     public BroadleafCloudSolrClient(String zkHost, HttpClient httpClient) {
-        super(zkHost, httpClient);
+        super(createBuilder(Arrays.asList(zkHost), null, httpClient));
     }
 
     public BroadleafCloudSolrClient(Collection<String> zkHosts, String chroot) {
-        super(zkHosts, chroot);
+        super(createBuilder(zkHosts, chroot, null));
     }
 
     public BroadleafCloudSolrClient(Collection<String> zkHosts, String chroot, HttpClient httpClient) {
-        super(zkHosts, chroot, httpClient);
+        super(createBuilder(zkHosts, chroot, httpClient));
     }
 
     public BroadleafCloudSolrClient(String zkHost, boolean updatesToLeaders) {
-        super(zkHost, updatesToLeaders);
+        super(createBuilder(zkHost, Optional.of(updatesToLeaders), null));
     }
 
     public BroadleafCloudSolrClient(String zkHost, boolean updatesToLeaders, HttpClient httpClient) {
-        super(zkHost, updatesToLeaders, httpClient);
+        super(createBuilder(zkHost, Optional.of(updatesToLeaders), httpClient));
     }
 
     public BroadleafCloudSolrClient(String zkHost, LBHttpSolrClient lbClient) {
-        super(zkHost, lbClient);
+        super(createBuilder(zkHost, lbClient, null));
     }
 
     public BroadleafCloudSolrClient(String zkHost, LBHttpSolrClient lbClient, boolean updatesToLeaders) {
-        super(zkHost, lbClient, updatesToLeaders);
+        super(createBuilder(zkHost, lbClient, Optional.of(updatesToLeaders)));
+    }
+
+    private static CloudSolrClient.Builder createBuilder(Collection<String> zkHosts, String chroot, HttpClient httpClient) {
+        return new Builder(new ArrayList<>(zkHosts), Optional.of(chroot)).withHttpClient(httpClient);
+    }
+
+    private static CloudSolrClient.Builder createBuilder(String zkHost, Optional<Boolean> updatesToLeaders, HttpClient httpClient) {
+        Builder builder = new Builder(Arrays.asList(zkHost), null).withHttpClient(httpClient);
+        if (updatesToLeaders.orElse(true)) {
+            builder.sendUpdatesOnlyToShardLeaders();
+        } else {
+            builder.sendUpdatesToAllReplicasInShard();
+        }
+        return builder;
+    }
+
+    private static CloudSolrClient.Builder createBuilder(String zkHost, LBHttpSolrClient lbClient, Optional<Boolean> updatesToLeaders) {
+        Builder builder = new Builder(Arrays.asList(zkHost), null).withLBHttpSolrClient(lbClient);
+        if (updatesToLeaders.orElse(true)) {
+            builder.sendUpdatesOnlyToShardLeaders();
+        } else {
+            builder.sendUpdatesToAllReplicasInShard();
+        }
+        return builder;
     }
 
     @Override
