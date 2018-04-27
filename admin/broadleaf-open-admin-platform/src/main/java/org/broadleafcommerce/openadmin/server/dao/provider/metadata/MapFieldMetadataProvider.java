@@ -556,7 +556,7 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
                 Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
                 Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
                 if (!ArrayUtils.isEmpty(entities)) {
-                    metadata.setValueClassName(entities[entities.length-1].getName());
+                    metadata.setValueClassName(entities[0].getName());
                 }
             }
         }
