@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -136,6 +136,44 @@ public interface SandBoxHelper {
      * @return
      */
     OriginalIdResponse getProductionOriginalId(Class<?> type, Long id);
+
+    /**
+     * <p>
+     * Returns the topmost production id for the given type. The given id can exist anywhere in the hierarchy of
+     * production clones. The most hiearchies that can exist is this:
+     *
+     * <p>
+     *   <ul>
+     *     <li>A TEMPLATE site owns catalog1 and catalog2</li>
+     *     <li>catalog2 is derived from catalog1 using SYNCED_COPY</li>
+     *     <li>catalog2 is assigned to a STANDARD site as CUSTOMIZABLE</li>
+     *   </ul>
+     *
+     * <p>
+     * Production versions of entities can thus exist in 3 places: catalog1, catalog2, and the STANDARD site overrides.
+     * This supports IDs at all levels in the hierarchy, and will <i>always</i> return the production id from catalog1:
+     *
+     * <ul>
+     *   <li>Production id from catalog1</li>
+     *   <li>Sandbox clone id from catalog1</li>
+     *   <li>Production id from catalog2</li>
+     *   <li>Sandbox clone id from catalog2</li>
+     *   <li>Production id from the standard site override</li>
+     *   <li>Sandbox clone from the standard site</li>
+     * </ul>
+     *
+     * <p>
+     * If no results are found for the given type and id (or the <b>id</b> is already the topmost production id) then
+     * <b>id</b> is returned.
+     *
+     * <p>
+     * While the example given was for catalog hierarchies, this method also supports PROFILE hierarchies for CMS data
+     *
+     * @param type the class name of the entity type to get the clone for
+     * @param id a primary key anywhere in the hiearchy of overrides
+     * @return the topmost production id in a multitenant hierarchy
+     */
+    Long getTopmostProductionOriginalId(Class<?> type, Long id);
 
     Long getOriginalId(Object test);
 

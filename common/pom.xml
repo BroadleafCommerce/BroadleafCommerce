@@ -257,7 +257,7 @@
         <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
             <artifactId>mime-util</artifactId>
-        </dependency>
+	    </dependency>
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
@@ -359,6 +359,11 @@
                     <groupId>rhino</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.javascript</groupId>
+            <artifactId>closure-compiler</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

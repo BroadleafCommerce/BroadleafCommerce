@@ -7,7 +7,15 @@
     <meta http-equiv="Content-Author" content="Broadleaf Commerce" />
     <meta name="viewport" content="width=device-width" />
 
-    <title th:text="#{Admin_Title}" ></title>
+    <title>
+        [[#{Admin_Title}]]
+        <th:block th:if="${entityFriendlyName}">
+             - [[#{#{${currentAdminSection.sectionKey}}}]]
+        </th:block>
+        <th:block th:if="${entityForm}">
+             - [[${entityForm.mainEntityName}]]
+        </th:block>
+    </title>
     
     <!--[if IE 7]>
     <link rel="stylesheet" th:href="@{/css/font-awesome-ie7.min.css}" />

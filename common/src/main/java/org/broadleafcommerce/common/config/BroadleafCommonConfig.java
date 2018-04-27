@@ -18,6 +18,7 @@
 /**
  * 
  */
+
 package org.broadleafcommerce.common.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

@@ -37,25 +37,15 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.ejb.AvailableSettings;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.UUID;
+import java.util.*;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -85,6 +75,13 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderById(final Long orderId) {
         return em.find(OrderImpl.class, orderId);
+    }
+
+    @Override
+    public Order readOrderByIdIgnoreCache(final Long orderId) {
+        Map<String, Object> m = new HashMap<>();
+        m.put(AvailableSettings.SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
+        return em.find(OrderImpl.class, orderId, m);
     }
 
     @Override

@@ -208,7 +208,7 @@
                             clearOtherAlerts: true
                         });
 
-                        if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
+                        if (!$form.closest('.modal').length) {
                             if (BLCAdmin.entityForm.status) {
                                 BLCAdmin.entityForm.status.clearEntityFormChanges();
                             }
@@ -393,7 +393,7 @@ $(document).ready(function() {
         var isVisitedBefore = BLCAdmin.entityForm.visitedTabs.contains($tab);
         if (!isVisitedBefore) BLCAdmin.entityForm.visitedTabs.add($tab);
 
-     	if (!isVisitedBefore && !$tab.hasClass('first-tab') && !currentAction.endsWith('/add')) {
+        if (!isVisitedBefore && !$tab.hasClass('first-tab') && currentAction.indexOf('/add') === -1) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({

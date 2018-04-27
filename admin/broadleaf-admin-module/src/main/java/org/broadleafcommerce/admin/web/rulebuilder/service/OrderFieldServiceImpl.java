@@ -53,7 +53,7 @@ public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_localeCode")
-                .name("locale")
+                .name("locale.localeCode")
                 .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)

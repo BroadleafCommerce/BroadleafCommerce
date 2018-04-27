@@ -554,7 +554,11 @@
          * @returns {boolean}
          */
         checkIfShouldTrackChanges : function(el) {
-
+            // if changes are explcitly tracked on this input, track it
+            if ($(el).data('track-changes')) {
+                return true;
+            }
+            
             // if this element is in an OMS tab, we don't want to track
             if (el !== undefined && $(el).closest('.oms-tab').length) {
                 return false;
@@ -639,7 +643,7 @@ $(document).ready(function() {
      * This event handler is fired for `input` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('input', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
+    $body.on('input paste', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 

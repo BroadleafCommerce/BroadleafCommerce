@@ -240,9 +240,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     public void handleProcessingException(Exception e, RedirectAttributes redirectAttributes) throws PaymentException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("A Processing Exception Occurred finalizing the order. Adding Error to Redirect Attributes.");
-        }
+        LOG.error("A Processing Exception Occurred finalizing the order. Adding Error to Redirect Attributes.", e);
 
         redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
                 PaymentGatewayAbstractController.getProcessingErrorMessage());
