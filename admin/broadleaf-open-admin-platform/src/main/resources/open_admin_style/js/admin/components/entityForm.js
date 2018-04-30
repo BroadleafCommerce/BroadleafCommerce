@@ -393,7 +393,7 @@ $(document).ready(function() {
         var isVisitedBefore = BLCAdmin.entityForm.visitedTabs.contains($tab);
         if (!isVisitedBefore) BLCAdmin.entityForm.visitedTabs.add($tab);
 
-        if (!isVisitedBefore && !$tab.hasClass('first-tab') && currentAction.indexOf('/add') === -1) {
+        if (!isVisitedBefore && !$tab.hasClass('first-tab') && currentAction.search(/\/add($|\W)/) === -1) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({
