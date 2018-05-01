@@ -61,7 +61,7 @@
         <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.4.11</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
-        <broadleaf-presentation.version>1.0.4-SNAPSHOT</broadleaf-presentation.version>
+        <broadleaf-presentation.version>1.1.0-SNAPSHOT</broadleaf-presentation.version>
         <lombok.version>1.16.18</lombok.version>
         <database.starter.version>1.0.1-GA</database.starter.version>
         <closure.compiler.version>v20180204</closure.compiler.version>
