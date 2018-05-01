@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 /**
  * Delegate standard {@link ServletOutputStream} write calls to standard buffered IO.
@@ -55,5 +56,16 @@ public class ServletOutputStreamWrapper extends ServletOutputStream {
     protected void flushInternalBuffer() throws IOException {
         outputStream.write(baos.toByteArray());
         baos.reset();
+    }
+
+    @Override
+    public boolean isReady() {
+        return false;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        // TODO Auto-generated method stub
+
     }
 }
