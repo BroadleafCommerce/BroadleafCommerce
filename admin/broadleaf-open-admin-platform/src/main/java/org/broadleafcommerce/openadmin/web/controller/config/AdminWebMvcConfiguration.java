@@ -50,7 +50,7 @@ import java.util.Locale;
 public class AdminWebMvcConfiguration {
 
     @Configuration
-    public static class AdminDefaultWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
+    public static class AdminDefaultWebMvcConfigurerAdapter implements WebMvcConfigurer {
 
         /**
          * Set the default media type to JSON because AJAX calls from the admin UI are expecting JSON.

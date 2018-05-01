@@ -20,7 +20,7 @@ package org.broadleafcommerce.profile.core.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,6 +43,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_CUSTOMER_ADDRESSES_BY_CUSTOMER_ID");
@@ -51,10 +52,12 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         return query.getResultList();
     }
 
+    @Override
     public CustomerAddress save(CustomerAddress customerAddress) {
             return em.merge(customerAddress);
     }
 
+    @Override
     public CustomerAddress create() {
         return (CustomerAddress) entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
     }
@@ -85,10 +88,12 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         return query.getSingleResult();
     }
 
+    @Override
     public CustomerAddress readCustomerAddressById(Long customerAddressId) {
-        return (CustomerAddress) em.find(CustomerAddressImpl.class, customerAddressId);
+        return em.find(CustomerAddressImpl.class, customerAddressId);
     }
 
+    @Override
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId) {
         List<CustomerAddress> customerAddresses = readActiveCustomerAddressesByCustomerId(customerId);
         for (CustomerAddress customerAddress : customerAddresses) {
@@ -97,6 +102,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         }
     }
 
+    @Override
     public void deleteCustomerAddressById(Long customerAddressId) {
         CustomerAddress customerAddress = readCustomerAddressById(customerAddressId);
         if (customerAddress != null) {
@@ -104,6 +110,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public CustomerAddress findDefaultCustomerAddress(Long customerId) {
         Query query = em.createNamedQuery("BC_FIND_DEFAULT_ADDRESS_BY_CUSTOMER_ID");
