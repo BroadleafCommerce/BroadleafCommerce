@@ -34,6 +34,7 @@
         <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
         <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
         <property name="persistenceUnitName" value="blPU"/>
+        <property name="entityManagerInterface" value="org.hibernate.engine.spi.SessionImplementor"/>
     </bean>
 
     <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
