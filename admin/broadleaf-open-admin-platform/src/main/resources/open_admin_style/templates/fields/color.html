@@ -4,8 +4,12 @@
 </label>
 
 <div>
-    <input type="text" class="two color-picker-value" style="display: inline-block;" th:required="${field.required}" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}"/>
-    <input type="text" class="twelve color-picker" th:required="${field.required}" th:value="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}"/>
+    <input type="text" class="two color-picker-value js-color-picker" style="display: inline-block;"
+           maxlength="7" min="4" placeholder="Example Colors: #1fa or #30de1c" pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+           th:required="${field.required}" th:field="*{fields['__${field.name}__'].value}"
+           th:disabled="${field.readOnly}"/>
+    <input type="text" class="twelve color-picker" th:required="${field.required}"
+           th:value="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}"/>
 </div>
 
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
