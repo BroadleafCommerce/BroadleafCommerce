@@ -76,9 +76,10 @@
         showErrors : function (data, alertMessage) {
             $.each( data.errors , function( idx, error ){
                 if (error.errorType == "field") {
-                    var fieldGroup = $("#field-" + error.field);
+                    //escape the | character - from dynamic form fields - for jquery to be able to process
+                    var fieldGroup = $("#field-" + (error.field).replace(/\|/g, "-").replace(/ /g, "-"));
                     if (BLCAdmin.currentModal() !== undefined) {
-                        fieldGroup = BLCAdmin.currentModal().find("#field-" + error.field);
+                        fieldGroup = BLCAdmin.currentModal().find("#field-" + (error.field).replace(/\|/g, "-")).replace(/ /g, "-");
                     }
 
                     if (fieldGroup.length) {
