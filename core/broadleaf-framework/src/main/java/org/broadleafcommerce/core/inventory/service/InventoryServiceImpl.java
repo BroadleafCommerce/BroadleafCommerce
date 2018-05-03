@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.inventory.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.event.BroadleafJobsEvent;
+import org.broadleafcommerce.common.event.BroadleafJobsEventDetail;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -30,8 +32,12 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,6 +58,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     
     @Resource(name = "blInventoryServiceExtensionManager")
     protected InventoryServiceExtensionManager extensionManager;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
@@ -200,6 +209,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                     int newInventory = inventoryAvailable - quantity;
                     sku.setQuantityAvailable(newInventory);
                     catalogService.saveSku(sku);
+                    invalidateSkuInventory(sku);
                 } else {
                     LOG.info("Not decrementing inventory as the Sku has been marked as always available");
                 }
@@ -241,6 +251,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 int newInventory = currentInventoryAvailable + quantity;
                 sku.setQuantityAvailable(newInventory);
                 catalogService.saveSku(sku);
+                invalidateSkuInventory(sku);
             } else {
                 LOG.info("Not incrementing inventory as the Sku has been marked as always available");
             }
@@ -302,6 +313,31 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         }
 
         return skuInventoryMap;
+    }
+
+    protected void invalidateSkuInventory(Sku sku) {
+        final String className = sku.getClass().getName();
+        final String id = sku.getId().toString();
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+                @Override
+                public void afterCommit() {
+                    invalidateSkuInventoryNonTransactional(className, id);
+                }
+            });
+        } else {
+            invalidateSkuInventoryNonTransactional(className, id);
+        }
+    }
+
+    protected void invalidateSkuInventoryNonTransactional(String className, String id) {
+        Map<String, BroadleafJobsEventDetail> detailMap = new HashMap<>();
+        detailMap.put("CACHE_REGION", new BroadleafJobsEventDetail("CACHE_REGION", "Cache Region", "blProducts"));
+        detailMap.put("ENTITY_TYPE", new BroadleafJobsEventDetail("ENTITY_TYPE", "Entity Type", className));
+        detailMap.put("IDENTIFIER", new BroadleafJobsEventDetail("IDENTIFIER", "Identifier", id));
+        BroadleafJobsEvent event = new BroadleafJobsEvent("CACHE", detailMap, "GLOBAL", "ANY", true);
+        applicationContext.publishEvent(event);
     }
 
 }
