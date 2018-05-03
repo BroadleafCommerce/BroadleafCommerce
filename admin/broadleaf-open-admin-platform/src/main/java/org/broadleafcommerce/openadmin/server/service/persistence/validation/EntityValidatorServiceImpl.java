@@ -113,9 +113,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             FieldMetadata metadata = metadataEntry.getValue();
 
             //Don't test this field if it was not inherited from our polymorphic type (or supertype)
-            if ((types.contains(metadata.getInheritedFromType())
-                 || entity.getType()[0].getClass().getName().equals(metadata.getInheritedFromType()))) {
-
+            if (instance != null && (types.contains(metadata.getInheritedFromType())
+                    || instance.getClass().getName().equals(metadata.getInheritedFromType()))) {
+                
                 Property property = entity.getPMap().get(metadataEntry.getKey());
 
                 // This property should be set to false only in the case where we are adding a member to a collection
