@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -52,25 +52,28 @@ public class PasswordFieldMetadataProvider extends AbstractFieldMetadataProvider
 
     @Override
     public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
-        if (addMetadataFromFieldTypeRequest.getPresentationAttribute() instanceof BasicFieldMetadata && 
+        if (addMetadataFromFieldTypeRequest.getPresentationAttribute() instanceof BasicFieldMetadata &&
                 SupportedFieldType.PASSWORD.equals(((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute()).getExplicitFieldType())) {
             //build the metadata for the password field
             addMetadataFromFieldTypeRequest.getDynamicEntityDao().getDefaultFieldMetadataProvider().addMetadataFromFieldType(addMetadataFromFieldTypeRequest, metadata);
-            ((BasicFieldMetadata)addMetadataFromFieldTypeRequest.getPresentationAttribute()).setFieldType(SupportedFieldType.PASSWORD);
-            
+            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute()).setFieldType(SupportedFieldType.PASSWORD);
+
+            BasicFieldMetadata originalMd = (BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();
+
             //clone the password field and add in a custom one
-            BasicFieldMetadata confirmMd = (BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute().cloneFieldMetadata();
+            BasicFieldMetadata confirmMd = (BasicFieldMetadata) originalMd.cloneFieldMetadata();
             confirmMd.setFieldName("passwordConfirm");
             confirmMd.setFriendlyName("AdminUserImpl_Admin_Password_Confirm");
             confirmMd.setExplicitFieldType(SupportedFieldType.PASSWORD_CONFIRM);
             confirmMd.setValidationConfigurations(new HashMap<String, List<Map<String,String>>>());
+            confirmMd.setOrder(originalMd.getOrder() + 1);
             metadata.put("passwordConfirm", confirmMd);
             return MetadataProviderResponse.HANDLED;
         } else {
             return MetadataProviderResponse.NOT_HANDLED;
         }
     }
-    
+
     @Override
     public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         return MetadataProviderResponse.NOT_HANDLED;
