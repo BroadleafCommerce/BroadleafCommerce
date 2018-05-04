@@ -1388,7 +1388,7 @@ $(document).ready(function() {
 
     //moved show-translations to an initializationHandler so it gets fired for modals as well 
     BLCAdmin.addInitializationHandler(function($container) {
-        $('a.show-translations').removeClass('disabled');
+        $('a.show-translations:not(.always-disabled)').removeClass('disabled');
      });
     
     $(window).resize(function() {
