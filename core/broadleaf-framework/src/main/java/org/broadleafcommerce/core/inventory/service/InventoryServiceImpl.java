@@ -20,8 +20,10 @@ package org.broadleafcommerce.core.inventory.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.event.BroadleafJobsEvent;
-import org.broadleafcommerce.common.event.BroadleafJobsEventDetail;
+import org.broadleafcommerce.common.event.BroadleafSystemEvent;
+import org.broadleafcommerce.common.event.BroadleafSystemEvent.BroadleafEventScopeType;
+import org.broadleafcommerce.common.event.BroadleafSystemEvent.BroadleafEventWorkerType;
+import org.broadleafcommerce.common.event.BroadleafSystemEventDetail;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -332,11 +334,11 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     }
 
     protected void invalidateSkuInventoryNonTransactional(String className, String id) {
-        Map<String, BroadleafJobsEventDetail> detailMap = new HashMap<>();
-        detailMap.put("CACHE_REGION", new BroadleafJobsEventDetail("CACHE_REGION", "Cache Region", "blProducts"));
-        detailMap.put("ENTITY_TYPE", new BroadleafJobsEventDetail("ENTITY_TYPE", "Entity Type", className));
-        detailMap.put("IDENTIFIER", new BroadleafJobsEventDetail("IDENTIFIER", "Identifier", id));
-        BroadleafJobsEvent event = new BroadleafJobsEvent("CACHE", detailMap, "GLOBAL", "ANY", true);
+        Map<String, BroadleafSystemEventDetail> detailMap = new HashMap<>();
+        detailMap.put("CACHE_REGION", new BroadleafSystemEventDetail("Cache Region", "blProducts"));
+        detailMap.put("ENTITY_TYPE", new BroadleafSystemEventDetail("Entity Type", className));
+        detailMap.put("IDENTIFIER", new BroadleafSystemEventDetail("Identifier", id));
+        BroadleafSystemEvent event = new BroadleafSystemEvent("CACHE", detailMap, BroadleafEventScopeType.GLOBAL, BroadleafEventWorkerType.ANY, true);
         applicationContext.publishEvent(event);
     }
 
