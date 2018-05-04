@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -70,7 +70,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
     @Resource(name="blStructuredContentService")
     protected StructuredContentService structuredContentService;
-    
+
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
 
@@ -216,18 +216,18 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         try {
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
             StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
-            
+
             Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentType.class);
             Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
             }
-            
-            boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
+
+            boolean validated = helper.validate(persistencePackage.getEntity(), new StructuredContentTypeImpl(), md);
             if (!validated) {
                 throw new ValidationException(persistencePackage.getEntity(), "Structured Content dynamic fields failed validation");
             }
-            
+
             List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
                 for (FieldDefinition def : group.getFieldDefinitions()) {
