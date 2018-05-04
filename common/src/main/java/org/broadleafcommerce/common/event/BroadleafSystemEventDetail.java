@@ -21,47 +21,35 @@ import java.io.Serializable;
 
 /**
  * Effectively a copy of com.broadleafcommerce.jobsevents.domain.dto.SystemEventDetailDTO
- * to be used when creating a org.broadleafcommerce.common.event.BroadleafJobsEvent
+ * to be used when creating a org.broadleafcommerce.common.event.BroadleafSystemEvent
  * 
  * @author Jay Aisenbrey (cja769)
  *
  */
-public class BroadleafJobsEventDetail implements Serializable {
+public class BroadleafSystemEventDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected String name;
     protected String friendlyName;
     protected String value;
-    protected String longValue;
     protected Serializable blob;
 
-    public BroadleafJobsEventDetail(String name, String friendlyName, String value) {
-        this(name, friendlyName);
+    public BroadleafSystemEventDetail(String friendlyName, String value) {
+        this.friendlyName = friendlyName;
         this.value = value;
     }
 
-    public BroadleafJobsEventDetail(String name, String friendlyName, Long longValue) {
-        this(name, friendlyName);
-        this.longValue = longValue.toString();
-    }
-
-    public BroadleafJobsEventDetail(String name, String friendlyName, Serializable blob) {
-        this(name, friendlyName);
+    public BroadleafSystemEventDetail(String friendlyName, Serializable blob) {
+        this.friendlyName = friendlyName;
         this.blob = blob;
     }
 
-    protected BroadleafJobsEventDetail(String name, String friendlyName) {
-        this.name = name;
-        this.friendlyName = friendlyName;
+    public BroadleafSystemEventDetail(String value) {
+        this.value = value;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public BroadleafSystemEventDetail(Serializable blob) {
+        this.blob = blob;
     }
 
     public String getFriendlyName() {
@@ -78,14 +66,6 @@ public class BroadleafJobsEventDetail implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public String getLongValue() {
-        return longValue;
-    }
-
-    public void setLongValue(String longValue) {
-        this.longValue = longValue;
     }
 
     public Serializable getBlob() {

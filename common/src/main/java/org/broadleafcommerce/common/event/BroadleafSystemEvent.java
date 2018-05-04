@@ -27,27 +27,17 @@ import java.util.Map;
  * @author Jay Aisenbrey (cja769)
  *
  */
-public class BroadleafJobsEvent extends BroadleafApplicationEvent {
+public class BroadleafSystemEvent extends BroadleafApplicationEvent {
 
     private static final long serialVersionUID = 1L;
 
-    protected Map<String, BroadleafJobsEventDetail> detailMap;
+    protected Map<String, BroadleafSystemEventDetail> detailMap;
     protected String type;
-
-    /**
-     * @see com.broadleafcommerce.jobsevents.service.type.EventScopeType
-     * Use the "type" field and not the "friendlyType" field
-     */
-    protected String scopeType;
-
-    /**
-     * @see com.broadleafcommerce.jobsevents.service.type.EventScopeType
-     * Use the "type" field and not the "friendlyType" field
-     */
-    protected String workerType;
+    protected BroadleafEventScopeType scopeType;
+    protected BroadleafEventWorkerType workerType;
     protected boolean universal;
 
-    public BroadleafJobsEvent(String type, Map<String, BroadleafJobsEventDetail> detailMap, String scopeType, String workerType, boolean universal) {
+    public BroadleafSystemEvent(String type, Map<String, BroadleafSystemEventDetail> detailMap, BroadleafEventScopeType scopeType, BroadleafEventWorkerType workerType, boolean universal) {
         super(type);
         this.detailMap = detailMap;
         this.type = type;
@@ -56,11 +46,19 @@ public class BroadleafJobsEvent extends BroadleafApplicationEvent {
         this.universal = universal;
     }
 
-    public Map<String, BroadleafJobsEventDetail> getDetailMap() {
+    public BroadleafSystemEvent(String type, BroadleafEventScopeType scopeType, BroadleafEventWorkerType workerType, boolean universal) {
+        super(type);
+        this.type = type;
+        this.scopeType = scopeType;
+        this.workerType = workerType;
+        this.universal = universal;
+    }
+
+    public Map<String, BroadleafSystemEventDetail> getDetailMap() {
         return detailMap;
     }
 
-    public void setDetailMap(Map<String, BroadleafJobsEventDetail> detailMap) {
+    public void setDetailMap(Map<String, BroadleafSystemEventDetail> detailMap) {
         this.detailMap = detailMap;
     }
 
@@ -72,19 +70,19 @@ public class BroadleafJobsEvent extends BroadleafApplicationEvent {
         this.type = type;
     }
 
-    public String getScopeType() {
+    public BroadleafEventScopeType getScopeType() {
         return scopeType;
     }
 
-    public void setScopeType(String scopeType) {
+    public void setScopeType(BroadleafEventScopeType scopeType) {
         this.scopeType = scopeType;
     }
 
-    public String getWorkerType() {
+    public BroadleafEventWorkerType getWorkerType() {
         return workerType;
     }
 
-    public void setWorkerType(String workerType) {
+    public void setWorkerType(BroadleafEventWorkerType workerType) {
         this.workerType = workerType;
     }
 
@@ -96,4 +94,29 @@ public class BroadleafJobsEvent extends BroadleafApplicationEvent {
         this.universal = universal;
     }
 
+    public static enum BroadleafEventScopeType {
+        //All nodes will execute
+        GLOBAL,
+
+        //Limit execution to a single, arbitrary node
+        VM,
+
+        //Consume the event locally only
+        LOCAL,
+
+        //Consume the event locally only in the same thread
+        NON_ASYNC_LOCAL,
+
+        //Consume the event locally only in the same thread and do not allow auto resume
+        NON_ASYNC_LOCAL_NO_RESUME,
+
+        //Durable events are always global, but are not removed from the system, allowing them to be consumed across server restarts,
+        //or when new nodes enter the cluster (VM level events already exhibit behavior that allow them to execute even after
+        //system restarts and do not require additional "durable" classification)
+        DURABLE_GLOBAL
+    }
+
+    public static enum BroadleafEventWorkerType {
+        SITE, ADMIN, ANY
+    }
 }
