@@ -11,12 +11,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Controller("blAdminBaseProductController")
-@RequestMapping("/"+ AdminProductController.SECTION_KEY + ":" + AdminBaseProductController.SECTION_KEY)
-public class AdminBaseProductController extends AdminProductController {
+@Controller("blAdminBundleProductController")
+@RequestMapping("/" + AdminProductController.SECTION_KEY + ":" + AdminBundleProductController.SECTION_KEY)
+public class AdminBundleProductController extends AdminProductController {
 
-    public static final String SECTION_KEY = "product";
-
+    public static final String SECTION_KEY = "bundle";
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
