@@ -844,8 +844,8 @@
 
                             var valueString = undefined;
                             if (valArray != null) {
-                                for(var i = 0; i < valArray.length; i++){
-                                    var val = ruleBuilder.getFieldValueById(ruleDTO.id, valArray[i]);
+                                for(var j = 0; j < valArray.length; j++){
+                                    var val = ruleBuilder.getFieldValueById(ruleDTO.id, valArray[j]);
 
                                     if (allRules[key] === undefined) {
                                         allRules[key] = ['<strong>' + val + '</strong>'];
