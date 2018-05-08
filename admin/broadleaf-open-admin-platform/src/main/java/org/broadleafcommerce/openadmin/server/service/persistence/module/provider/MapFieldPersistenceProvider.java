@@ -166,7 +166,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
             parent = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(parent);
             assignableValue = establishAssignableValue(populateValueRequest, parent);
         }
-        if (populateValueRequest.getProperty().getValue() == null) {
+        if (populateValueRequest.getRequestedValue() == null) {
             populateValueRequest.getPersistenceManager().getDynamicEntityDao()
                 .getStandardEntityManager().remove(assignableValue);
             return;
@@ -177,7 +177,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         populateValueRequest.getProperty().setOriginalValue(String.valueOf(assignableValue));
         populateValueRequest.getProperty().setOriginalDisplayValue(String.valueOf(assignableValue));
         assignableValue.setName(key);
-        assignableValue.setValue(populateValueRequest.getProperty().getValue());
+        assignableValue.setValue(populateValueRequest.getRequestedValue());
         String fieldName = populateValueRequest.getProperty().getName().substring(0,
                 populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR));
         Field field = populateValueRequest.getFieldManager().getField(instance.getClass(), fieldName);

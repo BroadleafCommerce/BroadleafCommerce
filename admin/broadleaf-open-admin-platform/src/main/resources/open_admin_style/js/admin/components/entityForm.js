@@ -76,7 +76,9 @@
         showErrors : function (data, alertMessage) {
             $.each( data.errors , function( idx, error ){
                 if (error.errorType == "field") {
-                    var fieldGroup = $("#field-" + error.field);
+                    // escape the | character from dynamic form fields for jquery to be able to process
+                    // replace all '|' and ' ' characters with '-'
+                    var fieldGroup = $("#field-" + (error.field).replace(/\|/g, "-").replace(/ /g, "-"));
                     if (BLCAdmin.currentModal() !== undefined) {
                         fieldGroup = BLCAdmin.currentModal().find("#field-" + error.field);
                     }
@@ -393,7 +395,7 @@ $(document).ready(function() {
         var isVisitedBefore = BLCAdmin.entityForm.visitedTabs.contains($tab);
         if (!isVisitedBefore) BLCAdmin.entityForm.visitedTabs.add($tab);
 
-        if (!isVisitedBefore && !$tab.hasClass('first-tab') && currentAction.indexOf('/add') === -1) {
+        if (!isVisitedBefore && !$tab.hasClass('first-tab') && currentAction.search(/\/add($|\W)/) === -1) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({

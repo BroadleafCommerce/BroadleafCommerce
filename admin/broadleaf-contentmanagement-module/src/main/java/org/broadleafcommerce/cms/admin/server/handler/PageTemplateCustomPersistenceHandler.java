@@ -76,7 +76,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
-    
+
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
 
@@ -151,10 +151,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         if (pageTemplateId != null) {
             template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
         }
-        
+
         return getFieldGroups(page, template);
     }
-    
+
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -296,11 +296,11 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
-            
+
             if (StringUtils.isBlank(pageId)) {
                 return persistencePackage.getEntity();
             }
-            
+
             Page page = pageService.findPageById(Long.valueOf(pageId));
 
             Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(getFieldGroups(page, null), PageTemplate.class);
@@ -308,8 +308,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
             }
-            
-            boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
+
+            boolean validated = helper.validate(persistencePackage.getEntity(), new PageTemplateImpl(), md);
             if (!validated) {
                 throw new ValidationException(persistencePackage.getEntity(), "Page dynamic fields failed validation");
             }
