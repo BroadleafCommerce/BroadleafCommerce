@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -75,6 +76,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -525,7 +527,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     
     @Override
     public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales) {
-        final SolrInputDocument document = new SolrInputDocument(new String[0]);
+        final SolrInputDocument document = new SolrInputDocument(new LinkedHashMap<String,SolrInputField>());
 
         attachBasicDocumentFields(indexable, document);
 
