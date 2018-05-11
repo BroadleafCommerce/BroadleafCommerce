@@ -100,7 +100,7 @@ public interface SolrHelperService {
     public String getIdFieldName();
     
     /**
-     * @return either <b>"productId"</b> (99% of cases) or <b>"skuId"</b> if the <i>solr.index.use.sku</i> system property is true
+     * @return the id field name. Usually "productId"
      */
     public String getIndexableIdFieldName();
 

@@ -68,9 +68,6 @@ public class BroadleafCartController extends AbstractCartController {
 
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
 
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Value("${automatically.add.complete.items}")
     protected boolean automaticallyAddCompleteItems;
 
@@ -302,11 +299,7 @@ public class BroadleafCartController extends AbstractCartController {
         
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<>();
-            if(useSku) {
-                extraData.put("skuId", itemRequest.getSkuId());
-            } else {
-                extraData.put("productId", itemRequest.getProductId());
-            }
+            extraData.put("productId", itemRequest.getProductId());
             extraData.put("cartItemCount", cart.getItemCount());
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
             return getCartView();
@@ -345,11 +338,7 @@ public class BroadleafCartController extends AbstractCartController {
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<>();
             extraData.put("cartItemCount", cart.getItemCount());
-            if(useSku) {
-                extraData.put("skuId", itemRequest.getSkuId());
-            } else {
-                extraData.put("productId", itemRequest.getProductId());
-            }
+            extraData.put("productId", itemRequest.getProductId());
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
             return getCartView();
         } else {

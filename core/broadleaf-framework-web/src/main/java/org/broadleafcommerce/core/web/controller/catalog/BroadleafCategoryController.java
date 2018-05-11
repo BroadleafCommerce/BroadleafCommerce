@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
@@ -40,11 +39,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * This class works in combination with the CategoryHandlerMapping which finds a category based upon
@@ -57,7 +62,6 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected static String defaultCategoryView = "catalog/category";
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
-    protected static String SKUS_ATTRIBUTE_NAME = "skus";
     protected static String FACETS_ATTRIBUTE_NAME = "facets";  
     protected static String PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME = "result";  
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
@@ -121,7 +125,6 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             
             model.addObject(CATEGORY_ATTRIBUTE_NAME, category);
             model.addObject(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
-            model.addObject(SKUS_ATTRIBUTE_NAME, result.getSkus());
             model.addObject(FACETS_ATTRIBUTE_NAME, result.getFacets());
             model.addObject(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
             if (request.getParameterMap().containsKey("q")) {
@@ -132,10 +135,6 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
                 model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
             }
             
-            if (result.getSkus() != null) {
-                model.addObject(ALL_SKUS_ATTRIBUTE_NAME, new HashSet<Sku>(result.getSkus()));
-            }
-
             addDeepLink(model, deepLinkService, category);
             
             String templatePath = null;

@@ -23,7 +23,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.IndexField;
 
 import java.io.IOException;
@@ -225,22 +224,6 @@ public interface SolrIndexService {
      */
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
     
-    /**
-     * <p>
-     * Filters out Skus that shouldn't be indexed if any of the following are true:
-     * 
-     * <p>
-     * <ol>
-     *  <li>If it's inactive</li>
-     *  <li>If it's a default Sku and shouldn't be sold without product options</li>
-     *  <li>If it's a default Sku for a Product Bundle</li>
-     * </ol>
-     * 
-     * @param skus
-     * @return a new list based on the given set of <b>skus</b> that only contains Skus that should be indexed
-     */
-    public List<Sku> filterIndexableSkus(List<Sku> skus);
-
     /**
      * Iterates through the fields for this indexable and indexes any SearchField's or SearchFacet's.
      *  @param document

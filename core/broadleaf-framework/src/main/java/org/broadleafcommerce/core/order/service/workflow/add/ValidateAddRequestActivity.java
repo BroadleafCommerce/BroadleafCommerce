@@ -42,7 +42,6 @@ import org.broadleafcommerce.core.order.service.workflow.add.extension.ValidateA
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -57,9 +56,6 @@ import javax.annotation.Resource;
 public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
 
     public static final int ORDER = 1000;
-    
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -157,11 +153,8 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Sku sku = null;
         
-        //If sku browsing is enabled, product option data will not be available.
-        if (!useSku) {
-            // Check whether the sku is correct given the product options.
-            sku = findMatchingSku(product, attributeValues, messages);
-        }
+        // Check whether the sku is correct given the product options.
+        sku = findMatchingSku(product, attributeValues, messages);
 
         if (sku == null && skuId != null) {
             sku = catalogService.findSkuById(skuId);

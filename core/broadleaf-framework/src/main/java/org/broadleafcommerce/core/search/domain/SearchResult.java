@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.List;
 
@@ -31,7 +30,6 @@ import java.util.List;
 public class SearchResult {
     
     protected List<Product> products;
-    protected List<Sku> skus;
     protected List<SearchFacetDTO> facets;
     
     protected Integer totalResults;
@@ -46,14 +44,6 @@ public class SearchResult {
 
     public void setProducts(List<Product> products) {
         this.products = products;
-    }
-
-    public List<Sku> getSkus() {
-        return skus;
-    }
-
-    public void setSkus(List<Sku> skus) {
-        this.skus = skus;
     }
 
     public List<SearchFacetDTO> getFacets() {
@@ -89,7 +79,7 @@ public class SearchResult {
     }
     
     public Integer getStartResult() {
-        return ((products == null || products.size() == 0) && (skus == null || skus.size() == 0)) ? 0 : ((page - 1) * pageSize) + 1;
+        return (products == null || products.size() == 0) ? 0 : ((page - 1) * pageSize) + 1;
     }
     
     public Integer getEndResult() {
@@ -97,7 +87,7 @@ public class SearchResult {
     }
     
     public Integer getTotalPages() {
-        return ((products == null || products.size() == 0) && (skus == null || skus.size() == 0)) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
+        return (products == null || products.size() == 0) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
     }
 
     public QueryResponse getQueryResponse() {
