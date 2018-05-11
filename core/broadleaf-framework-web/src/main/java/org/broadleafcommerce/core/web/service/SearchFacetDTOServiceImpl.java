@@ -135,7 +135,7 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
 
     @Override
     public String getValue(SearchFacetResultDTO result) {
-        return result.getValueKey();
+        return result.getUnencodedValueKey();
     }
 
     @Override
