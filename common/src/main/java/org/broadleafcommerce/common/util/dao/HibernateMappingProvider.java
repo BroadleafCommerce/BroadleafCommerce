@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,9 +22,13 @@ import org.hibernate.boot.spi.MetadataImplementor;
 import org.hibernate.boot.spi.SessionFactoryBuilderFactory;
 import org.hibernate.boot.spi.SessionFactoryBuilderImplementor;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.type.Type;
 import org.springframework.lang.NonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,6 +43,7 @@ import javax.annotation.Nullable;
  * to the session factory being created with all of the metadata
  *
  * @author Jeff Fischer
+ * @author Phillip Verheyden (phillipuniverse)
  */
 public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
 
@@ -74,6 +79,48 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
     @Nullable
     public static PersistentClass getMapping(String entityClass) {
         return metadataMap.get(entityClass);
+    }
+
+    /**
+     * Retrieve the names of all of the Hibernate mapped properties for the given <b>entityClass</b>
+     * @param entityClass mapped class
+     * @return all property names or empty list if the class is not mapped by Hibernate or has no properties
+     * @see #getPropertyTypes(String)
+     */
+    @NonNull
+    public static List<String> getPropertyNames(String entityClass) {
+        List<String> propertyNames = new ArrayList<>();
+        PersistentClass metadata = getMapping(entityClass);
+        if (metadata == null) {
+            return propertyNames;
+        }
+        Iterator propertyIterator = metadata.getPropertyIterator();
+        while (propertyIterator.hasNext()) {
+            org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
+            propertyNames.add(prop.getName());
+        }
+        return propertyNames;
+    }
+
+    /**
+     * Retrieve all of the types of all of the Hibernate mapped properties for the given <b>entityClass</b>
+     * @param entityClass mapped class
+     * @return all property types or empty list if the class is not mapped by Hibernate or has no properties
+     * @see #getPropertyNames(String)
+     */
+    @NonNull
+    public static List<Type> getPropertyTypes(String entityClass) {
+        List<Type> propertyTypes = new ArrayList<>();
+        PersistentClass metadata = getMapping(entityClass);
+        if (metadata == null) {
+            return propertyTypes;
+        }
+        Iterator propertyIterator = metadata.getPropertyIterator();
+        while (propertyIterator.hasNext()) {
+            org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
+            propertyTypes.add(prop.getType());
+        }
+        return propertyTypes;
     }
 
     /**

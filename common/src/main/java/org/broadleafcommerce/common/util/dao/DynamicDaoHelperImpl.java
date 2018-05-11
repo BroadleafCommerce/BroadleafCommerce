@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
-import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
@@ -234,10 +233,10 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         if (!isEntity) {
             return null;
         }
-        ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
-        String idProperty = metadata.getIdentifierPropertyName();
+        PersistentClass metadata = HibernateMappingProvider.getMapping(entityClass.getName());
+        String idProperty = metadata.getIdentifierProperty().getName();
         response.put("name", idProperty);
-        Type idType = metadata.getIdentifierType();
+        Type idType = metadata.getIdentifierProperty().getType();
         response.put("type", idType);
 
         return response;
@@ -247,25 +246,13 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     @SuppressWarnings("unchecked")
     public List<String> getPropertyNames(Class<?> entityClass) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
-        List<String> propertyNames = new ArrayList<>();
-        Iterator propertyIterator = HibernateMappingProvider.getMapping(entityClass.getName()).getPropertyIterator();
-        while (propertyIterator.hasNext()) {
-            org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
-            propertyNames.add(prop.getName());
-        }
-        return propertyNames;
+        return HibernateMappingProvider.getPropertyNames(entityClass.getName());
     }
 
     @Override
     public List<Type> getPropertyTypes(Class<?> entityClass) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
-        List<Type> propertyTypes = new ArrayList<>();
-        Iterator propertyIterator = HibernateMappingProvider.getMapping(entityClass.getName()).getPropertyIterator();
-        while (propertyIterator.hasNext()) {
-            org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
-            propertyTypes.add(prop.getType());
-        }
-        return propertyTypes;
+        return HibernateMappingProvider.getPropertyTypes(entityClass.getName());
     }
 
     @Override
