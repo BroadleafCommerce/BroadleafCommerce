@@ -17,31 +17,18 @@
  */
 package org.broadleafcommerce.common.persistence.transaction;
 
-import org.hibernate.boot.Metadata;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.integrator.spi.ServiceContributingIntegrator;
-import org.hibernate.service.spi.SessionFactoryServiceRegistry;
+import org.hibernate.service.spi.ServiceContributor;
 
 /**
  * Support introduction of customized or additional services to the Hibernate service registry.
  *
  * @author Jeff Fischer
  */
-public class CommonServiceIntegrator implements ServiceContributingIntegrator {
+public class BroadleafCommonServiceContributor implements ServiceContributor {
 
     @Override
-    public void prepareServices(StandardServiceRegistryBuilder serviceRegistryBuilder) {
+    public void contribute(StandardServiceRegistryBuilder serviceRegistryBuilder) {
         serviceRegistryBuilder.addInitiator(LifecycleAwareJDBCServicesInitiator.INSTANCE);
-    }
-
-    @Override
-    public void disintegrate(SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
-        //do nothing
-    }
-
-    @Override
-    public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
-        //do nothing
     }
 }
