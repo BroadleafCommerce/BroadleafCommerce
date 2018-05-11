@@ -704,7 +704,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Boolean getUseListForDiscounts() {
-        if (useListForDiscounts == null) {
+        if (useListForDiscounts == null || offerPriceData.size() == 0) {
             return false;
         }
         return useListForDiscounts;
