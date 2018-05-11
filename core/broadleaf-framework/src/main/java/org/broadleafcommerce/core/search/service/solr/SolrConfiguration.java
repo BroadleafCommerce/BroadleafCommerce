@@ -68,6 +68,9 @@ public class SolrConfiguration implements InitializingBean {
     //This is the default number of shards that should be created if a SolrCloud collection is created via API
     protected Integer solrCloudNumShards = null;
 
+    //This is the default number of replicas that should be created if a SolrCloud collection is created via API
+    protected Integer solrCloudNumReplicas = null;
+
     protected String solrHomePath = null;
     
     @Value("${solr.index.site.collections:false}")
@@ -109,6 +112,14 @@ public class SolrConfiguration implements InitializingBean {
 
     public void setSolrCloudNumShards(Integer solrCloudNumShards) {
         this.solrCloudNumShards = solrCloudNumShards;
+    }
+    
+    public Integer getSolrCloudNumReplicas() {
+        return solrCloudNumReplicas;
+    }
+    
+    public void setSolrCloudNumReplicas(Integer solrCloudNumReplicas) {
+        this.solrCloudNumReplicas = solrCloudNumReplicas;
     }
 
     public String getSolrHomePath() {
@@ -523,16 +534,14 @@ public class SolrConfiguration implements InitializingBean {
                         break;
                     }
                 }
-                // TODO SOLRUPGRADE How many replicas? Before we didn't specify
-                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
+                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
                 CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    // TODO SOLRUPGRADE How many replicas? Before we didn't specify
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
                 }
             }
 
@@ -555,8 +564,7 @@ public class SolrConfiguration implements InitializingBean {
                         break;
                     }
                 }
-                // TODO SOLRUPGRADE How many replicas? Before we didn't specify
-                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
+                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
                 CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName).process(primary);
 
             } else {
@@ -564,8 +572,7 @@ public class SolrConfiguration implements InitializingBean {
                 String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    // TODO SOLRUPGRADE How many replicas? Before we didn't specify
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, 0).process(primary);
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
                 }
             }
         }
@@ -611,8 +618,7 @@ public class SolrConfiguration implements InitializingBean {
     protected void createCollectionIfNotExist(CloudSolrClient client, String collectionName) {
         if (!client.getZkStateReader().getClusterState().hasCollection(collectionName)) {
             try {
-                // TODO SOLRUPGRADE How many replicas? Before we didn't specify
-                CollectionAdminRequest.createCollection(collectionName, getSolrCloudConfigName(), getSolrCloudNumShards(), 0)
+                CollectionAdminRequest.createCollection(collectionName, getSolrCloudConfigName(), getSolrCloudNumShards(), getSolrCloudNumReplicas())
                         .setMaxShardsPerNode(getSolrCloudNumShards()).process(client);
             } catch (SolrServerException e) {
                 throw ExceptionHelper.refineException(e);
