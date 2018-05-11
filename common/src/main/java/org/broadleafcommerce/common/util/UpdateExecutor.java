@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,13 +19,13 @@ package org.broadleafcommerce.common.util;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.cache.spi.UpdateTimestampsCache;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.CacheImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
@@ -145,16 +145,17 @@ public class UpdateExecutor {
      * @param ids
      */
     public static void executeTargetedCacheInvalidation(EntityManager em, Class<?> entityType, List<Long> ids) {
-        Session session = em.unwrap(Session.class);
+        SharedSessionContractImplementor session = em.unwrap(SharedSessionContractImplementor.class);
+        CacheImplementor hibernateCache = session.getFactory().getCache();
         for (Long id : ids) {
-            session.getSessionFactory().getCache().evictEntity(entityType, id);
+            hibernateCache.evictEntity(entityType, id);
         }
         //update the timestamp cache for the table so that queries will be refreshed
-        ClassMetadata metadata = session.getSessionFactory().getClassMetadata(entityType);
-        String tableName = ((AbstractEntityPersister) metadata).getTableName();
-        UpdateTimestampsCache timestampsCache = em.unwrap(SessionImplementor.class).getFactory().getCache().getUpdateTimestampsCache();
+        PersistentClass metadata = HibernateMappingProvider.getMapping(entityType.getName());
+        String tableName = metadata.getTable().getName();
+        UpdateTimestampsCache timestampsCache = hibernateCache.getUpdateTimestampsCache();
         if (timestampsCache != null) {
-            timestampsCache.invalidate(new Serializable[]{tableName}, (SharedSessionContractImplementor) session);
+            timestampsCache.invalidate(new Serializable[]{tableName}, session);
         }
     }
 
