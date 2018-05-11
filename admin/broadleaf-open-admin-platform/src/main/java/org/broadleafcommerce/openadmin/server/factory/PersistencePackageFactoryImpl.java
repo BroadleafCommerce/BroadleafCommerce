@@ -33,8 +33,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -59,9 +57,9 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
 
         persistencePerspective.setAdditionalForeignKeys(request.getAdditionalForeignKeys());
         persistencePerspective.setAdditionalNonPersistentProperties(new String[] {});
-        
+
         if (request.getForeignKey() != null) {
-            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, 
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY,
                     request.getForeignKey());
         }
 
@@ -155,7 +153,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         operationTypes.setInspectType(OperationType.BASIC);
         return operationTypes;
     }
-    
+
     protected OperationTypes getOperationTypes(OperationType nonInspectOperationType) {
         OperationTypes operationTypes = new OperationTypes();
         operationTypes.setFetchType(nonInspectOperationType);
@@ -175,8 +173,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
                 throw new RuntimeException("Could not determine the class related to the following Section: " + section.getName());
             }
 
-            SessionFactory sessionFactory = getEntityManager(className).unwrap(Session.class).getSessionFactory();
-            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), sessionFactory, true, true);
+            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), true, true);
 
             return entities[entities.length - 1].getName();
         } catch (ClassNotFoundException e) {

@@ -23,12 +23,9 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
 import org.hibernate.query.criteria.internal.path.PluralAttributePath;
-import org.hibernate.query.criteria.internal.path.SingularAttributePath;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Embeddable;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,12 +42,12 @@ import javax.persistence.metamodel.Metamodel;
  * @author Jeff Fischer
  */
 public class FieldPathBuilder {
-    
+
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
-    
+
     protected CriteriaQuery criteria;
     protected List<Predicate> restrictions;
-    
+
     public FieldPath getFieldPath(From root, String fullPropertyName) {
         String[] pieces = fullPropertyName.split("\\.");
         List<String> associationPath = new ArrayList<String>();
@@ -91,16 +88,16 @@ public class FieldPathBuilder {
             myRoot = myRoot.join(pathElement);
         }
         Path path = myRoot;
-        
+
         for (int i = 0; i < myFieldPath.getTargetPropertyPieces().size(); i++) {
             String piece = myFieldPath.getTargetPropertyPieces().get(i);
-            
+
             //if (path.getJavaType().isAnnotationPresent(Embeddable.class)) {
                 //String original = ((SingularAttributePath) path).getAttribute().getDeclaringType().getJavaType().getName() + "." + ((SingularAttributePath) path).getAttribute().getName() + "." + piece;
                 //String copy = path.getJavaType().getName() + "." + piece;
                 //copyCollectionPersister(original, copy, ((CriteriaBuilderImpl) builder).getEntityManagerFactory());
             //}
-            
+
             try {
                 path = path.get(piece);
             } catch (IllegalArgumentException e) {
@@ -110,10 +107,10 @@ public class FieldPathBuilder {
         	    SessionFactoryImpl em = ((CriteriaBuilderImpl) builder).getEntityManagerFactory();
         	    Metamodel mm = em.getMetamodel();
         	    boolean found = false;
-        	    
+
         	    Class<?>[] polyClasses = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
-        	            path.getJavaType(), em, true, true);
-        	    
+        	            path.getJavaType(), true, true);
+
         	    for (Class<?> clazz : polyClasses) {
             		ManagedType mt = mm.managedType(clazz);
             		try {
@@ -129,13 +126,13 @@ public class FieldPathBuilder {
             		    // Do nothing - we'll try the next class and see if it has the attribute
             		}
         	    }
-        	    
+
         	    if (!found) {
         	        throw new IllegalArgumentException("Could not resolve requested attribute against path, including" +
         	        		" known polymorphic versions of the root", e);
         	    }
             }
-            
+
             if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class) && path instanceof PluralAttributePath) {
                 //We need a workaround for this problem until it is resolved in Hibernate (loosely related to and likely resolved by https://hibernate.atlassian.net/browse/HHH-8802)
                 //We'll throw a specialized exception (and handle in an alternate flow for calls from BasicPersistenceModule)
@@ -177,7 +174,7 @@ public class FieldPathBuilder {
 //            throw new RuntimeException(e);
 //        }
 //    }
-    
+
     public CriteriaQuery getCriteria() {
         return criteria;
     }
@@ -189,9 +186,9 @@ public class FieldPathBuilder {
     public List<Predicate> getRestrictions() {
         return restrictions;
     }
-    
+
     public void setRestrictions(List<Predicate> restrictions) {
         this.restrictions = restrictions;
     }
-    
+
 }

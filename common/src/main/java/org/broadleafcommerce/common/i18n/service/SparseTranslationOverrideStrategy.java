@@ -35,9 +35,7 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.hibernate.SessionFactory;
 import org.hibernate.jpa.QueryHints;
-import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
@@ -294,8 +292,7 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
             if (restrictAssociation) {
                 try {
                     Class<?> type = Class.forName(entityType.getType());
-                    SessionFactory sessionFactory = ((CriteriaBuilderImpl) em.getCriteriaBuilder()).getEntityManagerFactory().getSessionFactory();
-                    Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(type, sessionFactory, true, true);
+                    Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(type, true, true);
                     //This should already be in level 1 cache and this should not cause a hit to the database.
                     Map<String, Object> idMetadata = helper.getIdMetadata(entities[entities.length - 1], em);
                     Type idType = (Type) idMetadata.get("type");

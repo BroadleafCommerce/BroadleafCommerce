@@ -105,17 +105,17 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
     public int getOrder() {
         return CustomPersistenceHandler.DEFAULT_ORDER;
     }
-    
+
     /**
      * This is a helper method that can be invoked as a first step in a custom inspect phase
      */
-    protected Map<String, FieldMetadata> getMetadata(PersistencePackage persistencePackage, InspectHelper helper) 
+    protected Map<String, FieldMetadata> getMetadata(PersistencePackage persistencePackage, InspectHelper helper)
             throws ServiceException {
         String entityName = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         PersistencePerspective perspective = persistencePackage.getPersistencePerspective();
         return helper.getSimpleMergedProperties(entityName, perspective);
     }
-    
+
     /**
      * This is a helper method that can be invoked as the last step in a custom inspect phase. It will assemble the
      * appropriate DynamicResultSet from the given parameters.
@@ -126,7 +126,7 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
         try {
             if (helper instanceof PersistenceManager) {
                 Class<?>[] entities = ((PersistenceManager) helper).getPolymorphicEntities(entityName);
-                Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = 
+                Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties =
                         new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
                 allMergedProperties.put(MergedPropertyType.PRIMARY, metadata);
                 ClassMetadata mergedMetadata = helper.buildClassMetadata(entities, persistencePackage, allMergedProperties);
@@ -141,8 +141,7 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
 
     protected String[] getPolymorphicClasses(Class<?> clazz, EntityManager em, boolean useCache) {
         DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
-        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
-                helper.getSessionFactory(em), true, useCache);
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz, true, useCache);
         String[] result = new String[classes.length];
         for (int i = 0; i < classes.length; i++) {
             result[i] = classes[i].getName();

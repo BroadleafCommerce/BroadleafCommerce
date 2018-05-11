@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
-import org.hibernate.SessionFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ public class BLCFieldUtils {
     public static final Map<String,Object> FIELD_CACHE = new LRUMap<>(100000);
     public static final Object NULL_FIELD = new Object();
 
-    protected SessionFactory sessionFactory;
     protected boolean includeUnqualifiedPolymorphicEntities;
     protected boolean useCache;
     protected EntityConfiguration entityConfiguration;
@@ -58,9 +56,8 @@ public class BLCFieldUtils {
      * @param entityConfiguration contains any explicitly defined entity types for the system
      * @param helper helper class for retrieving polymorphic types for a ceiling domain class
      */
-    public BLCFieldUtils(SessionFactory sessionFactory, boolean includeUnqualifiedPolymorphicEntities,
+    public BLCFieldUtils(boolean includeUnqualifiedPolymorphicEntities,
                          boolean useCache, EntityConfiguration entityConfiguration, DynamicDaoHelper helper) {
-        this.sessionFactory = sessionFactory;
         this.includeUnqualifiedPolymorphicEntities = includeUnqualifiedPolymorphicEntities;
         this.useCache = useCache;
         this.entityConfiguration = entityConfiguration;
@@ -124,7 +121,7 @@ public class BLCFieldUtils {
 
         for (int j=0;j<tokens.length;j++) {
             String propertyName = tokens[j];
-            Class<?>[] myEntities = helper.getUpDownInheritance(clazz, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
+            Class<?>[] myEntities = helper.getUpDownInheritance(clazz, includeUnqualifiedPolymorphicEntities, useCache);
             Class<?> myClass;
             if (ArrayUtils.isEmpty(myEntities)) {
                 myClass = clazz;
@@ -138,7 +135,7 @@ public class BLCFieldUtils {
             }
             field = getSingleField(myClass, propertyName);
             if (field != null && j < tokens.length - 1) {
-                Class<?>[] fieldEntities = helper.getUpDownInheritance(field.getType(), sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
+                Class<?>[] fieldEntities = helper.getUpDownInheritance(field.getType(), includeUnqualifiedPolymorphicEntities, useCache);
                 if (!ArrayUtils.isEmpty(fieldEntities)) {
                     clazz = getClassForField(helper, tokens[j + 1], field, fieldEntities);
                     if (clazz == null) {
@@ -187,7 +184,7 @@ public class BLCFieldUtils {
         Class<?> myClass = field != null?field.getType():entities[0];
         if (getSingleField(matchedClasses.get(0), token) != null) {
             clazz = matchedClasses.get(0);
-            Class<?>[] entities2 = helper.getUpDownInheritance(clazz, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
+            Class<?>[] entities2 = helper.getUpDownInheritance(clazz, includeUnqualifiedPolymorphicEntities, useCache);
             if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
                 try {
                     clazz = entityConfiguration.lookupEntityClass(myClass.getName());
