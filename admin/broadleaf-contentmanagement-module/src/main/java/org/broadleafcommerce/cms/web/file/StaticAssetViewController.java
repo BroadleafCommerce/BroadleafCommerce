@@ -29,9 +29,11 @@ import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import java.io.FileNotFoundException;
@@ -64,6 +66,9 @@ public class StaticAssetViewController extends AbstractController {
 
     @Autowired
     protected Environment env;
+
+    @Autowired
+    protected ApplicationContext appCtx;
 
     @PostConstruct
     protected void init() {
@@ -137,7 +142,8 @@ public class StaticAssetViewController extends AbstractController {
         context.setNonPersistentSite(siteResolver.resolveSite(new ServletWebRequest(request, response)));
         try {
             Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, convertParameterMap(request.getParameterMap()));
-            return new ModelAndView(viewResolverName, model);
+            View assetView = appCtx.getBean(viewResolverName, View.class);
+            return new ModelAndView(assetView, model);
         } catch (AssetNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
