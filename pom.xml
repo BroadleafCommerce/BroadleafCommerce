@@ -688,22 +688,6 @@
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
                 <version>2.4.0</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jsr173_api</artifactId>
-                <version>1.0</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.4.9</version>
-                <type>jar</type>
-                <scope>runtime</scope>
             </dependency>
 
             <!-- Allow JAXB Annotations with Jackson -->
@@ -748,15 +732,6 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.1.0</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <!--Presentation Layer Related Libraries -->
-            <dependency>
-                <groupId>jstl</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.1.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
 
             <!-- Testing Libraries -->
@@ -1008,18 +983,9 @@
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
                 <version>2.2.1.Final</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
 
             <!--Regular Expression Libraries -->
-            <dependency>
-                <groupId>oro</groupId>
-                <artifactId>oro</artifactId>
-                <version>2.0.8</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
             <dependency>
                 <groupId>jakarta-regexp</groupId>
                 <artifactId>jakarta-regexp</artifactId>
@@ -1305,21 +1271,6 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>1.6.5</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr-runtime</artifactId>
-                <version>3.0</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>1.7.1</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>eu.medsea.mimeutil</groupId>
