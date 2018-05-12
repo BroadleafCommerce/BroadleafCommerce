@@ -722,48 +722,6 @@
                 <optional>true</optional>
             </dependency>
 
-            <!--Email System Libraries -->
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity-tools</artifactId>
-                <version>2.0</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-logging</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                    <!-- Struts has security vulnerabilities and we do not utilize any struts features -->
-                    <exclusion>
-                        <artifactId>struts-core</artifactId>
-                        <groupId>org.apache.struts</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>struts-taglib</artifactId>
-                        <groupId>org.apache.struts</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>struts-tiles</artifactId>
-                        <groupId>org.apache.struts</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>sslext</artifactId>
-                        <groupId>sslext</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-validator</groupId>
-                        <artifactId>commons-validator</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>1.6.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
