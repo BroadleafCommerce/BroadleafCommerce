@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
-import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -30,7 +29,6 @@ import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
@@ -43,7 +41,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.EntityManager;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
@@ -62,9 +60,9 @@ public interface DynamicEntityDao {
     ClassTree getClassTreeFromCeiling(Class<?> ceilingClass);
 
     ClassTree getClassTree(Class<?>[] polymorphicClasses);
-    
+
     Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType);
-    
+
     Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix);
 
     /**
@@ -74,27 +72,27 @@ public interface DynamicEntityDao {
      * @return
      */
     Map<String, FieldMetadata> getMergedProperties(@Nonnull Class<?> cls);
-    
+
     <T> T persist(T entity);
-    
+
     <T> T merge(T entity);
 
     Serializable retrieve(Class<?> entityClass, Object primaryKey);
-    
+
     void remove(Serializable entity);
-    
+
     void clear();
-    
+
     void flush();
-    
+
     void detach(Serializable entity);
-    
+
     void refresh(Serializable entity);
 
     Object find(Class<?> entityClass, Object key);
 
     EntityManager getStandardEntityManager();
-    
+
     void setStandardEntityManager(EntityManager entityManager);
 
     /**
@@ -105,7 +103,7 @@ public interface DynamicEntityDao {
      * @return The PersistentClass instance
      */
     PersistentClass getPersistentClass(String targetClassName);
-    
+
     Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective);
 
     FieldManager getFieldManager();
@@ -127,16 +125,10 @@ public interface DynamicEntityDao {
     Metadata getMetadata();
 
     void setMetadata(Metadata metadata);
-    
+
     FieldMetadataProvider getDefaultFieldMetadataProvider();
 
-    SessionFactory getSessionFactory();
-
     boolean useCache();
-
-    EJB3ConfigurationDao getEjb3ConfigurationDao();
-
-    void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao);
 
     DynamicDaoHelper getDynamicDaoHelper();
 

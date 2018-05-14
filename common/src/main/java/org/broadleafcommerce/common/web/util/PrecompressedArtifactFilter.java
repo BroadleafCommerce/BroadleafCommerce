@@ -18,8 +18,6 @@
 package org.broadleafcommerce.common.web.util;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.web.filter.GenericFilterBean;
@@ -50,7 +48,7 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
     @Value("#{blPrecompressedArtifactFileExtensionWhitelist}")
     List<String> fileExtensionWhitelist;
-    
+
     @Resource
     Environment environment;
 

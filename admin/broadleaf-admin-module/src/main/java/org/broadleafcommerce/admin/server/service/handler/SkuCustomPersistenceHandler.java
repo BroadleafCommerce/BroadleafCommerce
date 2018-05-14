@@ -75,9 +75,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +87,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -175,7 +176,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * exception to this rule is when we are pulling back Media, since the admin actually uses Sku for the ceiling entity
      * class name. That should be handled by the map structure module though, so only handle things in the Sku custom
      * persistence handler for OperationType.BASIC
-     * 
+     *
      */
     protected Boolean canHandle(PersistencePackage persistencePackage, OperationType operationType) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -183,7 +184,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
             return Sku.class.isAssignableFrom(testClass) &&
                     //ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
-                    OperationType.BASIC.equals(operationType) && 
+                    OperationType.BASIC.equals(operationType) &&
                     (persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST) == null);
         } catch (ClassNotFoundException e) {
             return false;
@@ -204,7 +205,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 productIdStr = persistencePackage.getCustomCriteria()[0];
             }
             String cacheKey = skuMetadataCacheService.buildCacheKey(productIdStr);
-            
+
             Map<String, FieldMetadata> properties = null;
             boolean useCache = skuMetadataCacheService.useCache();
             if (useCache) {
@@ -248,18 +249,18 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 //also build the consolidated field; if using the SkuBasicClientEntityModule then this field will be
                 //permanently hidden
                 properties.put(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, createConsolidatedOptionField(SkuImpl.class));
-                
+
                 if (useCache) {
                     skuMetadataCacheService.addToCache(cacheKey, properties);
                 }
             }
 
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
-            
+
             //allow the adorned list to contribute properties as well in the case of Sku bundle items
             adornedPersistenceModule.setPersistenceManager((PersistenceManager)helper);
             adornedPersistenceModule.updateMergedProperties(persistencePackage, allMergedProperties);
-            
+
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SkuImpl.class);
 
             for (Map.Entry<MergedPropertyType, Map<String, FieldMetadata>> entry : allMergedProperties.entrySet()) {
@@ -295,11 +296,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * Creates the metadata necessary for displaying all of the product option values in a single field. The display of this
      * field is a single string with every product option value appended to it separated by a semicolon. This method should
      * be invoked on an inspect for whatever is utilizing this so that the property will be ready to be populated on fetch.
-     * 
+     *
      * The metadata that is returned will also be set to prominent by default so that it will be ready to display on whatever
      * grid is being inspected. If you do not want this behavior you will need to override this functionality in the metadata
      * that is returned.
-     * 
+     *
      * @param inheritedFromType which type this should appear on. This would normally be SkuImpl.class, but if you want to
      * display this field with a different entity then this should be that entity
      * @return
@@ -309,7 +310,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         metadata.setFieldType(SupportedFieldType.STRING);
         metadata.setMutable(false);
         metadata.setInheritedFromType(inheritedFromType.getName());
-        
+
         metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class, em, skuMetadataCacheService.useCache()));
         metadata.setForeignKeyCollection(false);
         metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
@@ -331,7 +332,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     /**
      * Returns a {@link Property} filled out with a delimited list of the <b>values</b> that are passed in. This should be
      * invoked on a fetch and the returned property should be added to the fetched {@link Entity} dto.
-     * 
+     *
      * @param values
      * @return
      * @see {@link #createConsolidatedOptionField(Class)};
@@ -362,7 +363,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         optionValueProperty.setValue(StringUtils.join(stringValues, CONSOLIDATED_PRODUCT_OPTIONS_DELIMETER));
         return optionValueProperty;
     }
-    
+
     /**
      * @return a blank {@link Property} corresponding to the CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME
      */
@@ -379,7 +380,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * own field in a grid so that you can further filter by product option values.</p>
      * <p>In order for these fields to be utilized property on the fetch, in the GWT frontend you must use the
      * for your datasource.</p>
-     * 
+     *
      * @param option
      * @param order
      * @return
@@ -497,7 +498,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             //Pull back the Skus based on the criteria from the client
             List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
-            
+
             //allow subclasses to provide additional criteria before executing the query
             applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, null);
             applySkuBundleItemValueCriteria(filterMappings, cto, persistencePackage);
@@ -508,7 +509,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             Entity[] payload = helper.getRecords(originalProps, records);
 
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
-            
+
             //Now fill out the relevant properties for the product options for the Skus that were returned
             updateProductOptionFieldsForFetch(records, payload);
 
@@ -626,7 +627,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             //the criteria in this case would be a semi-colon delimeter value list
             productOptionValueFilterValues.addAll(Arrays.asList(StringUtils.split(consolidatedCriteria.getFilterValues().get(0), CONSOLIDATED_PRODUCT_OPTIONS_DELIMETER)));
         }
-        
+
         if (productOptionValueFilterIDs.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
                 .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValueXrefs.productOptionValue.id"))
@@ -667,7 +668,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * override from there as well.</p>
      * <p>Subclasses that choose to override this should also call this super method so that correct filter criteria
      * can be applied for product option values</p>
-     * 
+     *
      */
     public void applyAdditionalFetchCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
         //unimplemented
@@ -757,8 +758,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     @Override
     protected String[] getPolymorphicClasses(Class<?> clazz, EntityManager em, boolean useCache) {
         DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
-        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
-                helper.getSessionFactory((HibernateEntityManager) em), true, useCache);
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz, true, useCache);
         String[] result = new String[classes.length];
         for (int i = 0; i < classes.length; i++) {
             result[i] = classes[i].getName();
@@ -814,12 +814,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     }
 
     /**
-     * Ensures that the given list of {@link ProductOptionValue} IDs is unique for the given {@link Product}.  
-     * 
+     * Ensures that the given list of {@link ProductOptionValue} IDs is unique for the given {@link Product}.
+     *
      * If sku browsing is enabled, then it is assumed that a single combination of {@link ProductOptionValue} IDs
      * is not unique and more than one {@link Sku} could have the exact same combination of {@link ProductOptionValue} IDs.
      * In this case, the following validation is skipped.
-     * 
+     *
      * @param product
      * @param productOptionProperties
      * @param currentSku - for update operations, this is the current Sku that is being updated; should be excluded from
@@ -836,7 +836,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             for (Property property : productOptionProperties) {
                 productOptionValueIds.add(Long.parseLong(property.getValue()));
             }
-    
+
             boolean validated = true;
             for (Sku sku : product.getAdditionalSkus()) {
                 if (currentSku == null || !sku.getId().equals(currentSku.getId())) {
@@ -845,15 +845,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                         testList.add(optionValue.getId());
                     }
 
-                    if (CollectionUtils.isNotEmpty(testList) && 
-                            productOptionValueIds.containsAll(testList) && 
+                    if (CollectionUtils.isNotEmpty(testList) &&
+                            productOptionValueIds.containsAll(testList) &&
                             productOptionValueIds.size() == testList.size()) {
                         validated = false;
                         break;
                     }
                 }
             }
-    
+
             if (!validated) {
                 Entity errorEntity = new Entity();
                 for (Property productOptionProperty : productOptionProperties) {

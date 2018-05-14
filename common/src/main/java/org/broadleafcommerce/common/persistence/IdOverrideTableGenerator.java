@@ -21,7 +21,9 @@ import org.apache.commons.collections.MapUtils;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.enhanced.TableGenerator;
+import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
@@ -66,7 +68,7 @@ public class IdOverrideTableGenerator extends TableGenerator {
     }
 
     @Override
-    public Serializable generate(SessionImplementor session, Object obj) {
+    public Serializable generate(final SharedSessionContractImplementor session, final Object obj) {
         /*
         This works around an issue in Hibernate where if the entityPersister is retrieved
         from the session and used to get the Id, the entity configuration can be recycled,
@@ -96,7 +98,7 @@ public class IdOverrideTableGenerator extends TableGenerator {
     }
 
     @Override
-    public void configure(Type type, Properties params, Dialect dialect) throws MappingException {
+    public void configure(Type type, Properties params, ServiceRegistry registry) throws MappingException {
         if (params.get("table_name") == null) {
             params.put("table_name", "SEQUENCE_GENERATOR");
         }
@@ -112,7 +114,7 @@ public class IdOverrideTableGenerator extends TableGenerator {
         if (params.get("increment_size") == null) {
             params.put("increment_size", DEFAULT_INCREMENT_SIZE);
         }
-        super.configure(type, params, dialect);
+        super.configure(type, params, registry);
         entityName = (String) params.get(ENTITY_NAME_PARAM);
     }
 

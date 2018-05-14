@@ -182,10 +182,6 @@
             <artifactId>broadleaf-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail</artifactId>
         </dependency>
@@ -200,8 +196,7 @@
                  caution as tests will likely fail with deadlocks, etc -->
             <!-- If you want to use TestNG elsewhere, you should be using the latest version
                 and not use this version -->
-            <version>6.0</version>
-            <type>jar</type>
+            <version>6.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -219,8 +214,8 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>

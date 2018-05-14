@@ -25,6 +25,10 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 public class UrlUtil {
+
+    protected static final String VALID_SCHEME_CHARS =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
+
     public static String generateUrlKey(String toConvert) {
         if (toConvert != null) {
             toConvert = toConvert.replaceAll(" ", "-");
@@ -39,7 +43,7 @@ public class UrlUtil {
         }
         return toConvert;
     }
-    
+
     /**
      * If the url does not include "//" then the system will ensure that the
      * application context is added to the start of the URL.
@@ -84,5 +88,39 @@ public class UrlUtil {
             throw new IOException("Redirect failed");
         }
     }
-        
+
+    /**
+     * Returns <tt>true</tt> if our current URL is absolute,
+     * <tt>false</tt> otherwise.
+     *
+     * @param url the url to check out
+     * @return true if the url is absolute
+     */
+    public static boolean isAbsoluteUrl(String url) {
+        // a null URL is not absolute, by our definition
+        if (url == null)
+        {
+            return false;
+        }
+
+        // do a fast, simple check first
+        int colonPos;
+        if ((colonPos = url.indexOf(':')) == -1)
+        {
+            return false;
+        }
+
+        // if we DO have a colon, make sure that every character
+        // leading up to it is a valid scheme character
+        for (int i = 0; i < colonPos; i++)
+        {
+            if (VALID_SCHEME_CHARS.indexOf(url.charAt(i)) == -1)
+            {
+                return false;
+            }
+        }
+        // if so, we've got an absolute url
+        return true;
+    }
+
 }

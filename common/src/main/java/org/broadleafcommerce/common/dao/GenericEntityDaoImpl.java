@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
@@ -35,7 +34,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -75,20 +73,20 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
     @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transactionUtil;
-    
+
     protected DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
+
     @Override
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        Map<String, Object> md = daoHelper.getIdMetadata(clazz, (HibernateEntityManager) em);
+        Map<String, Object> md = daoHelper.getIdMetadata(clazz, em);
         AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
-        
+
         if (type instanceof LongType) {
             id = Long.parseLong(String.valueOf(id));
         } else if (type instanceof IntegerType) {
@@ -146,7 +144,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
         }
         return clazz;
     }
-    
+
     @Override
     public Class<?> getCeilingImplClass(final String className) {
         final Class<?>[] clazz = new Class<?>[1];
@@ -159,10 +157,10 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
         transactionUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
             @Override
             public void execute() throws Throwable {
-                Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz[0], em.unwrap(Session.class).getSessionFactory(), true, true);
+                Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz[0], true, true);
                 if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
                     clazz[0] = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz[0]);
-                    entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz[0], em.unwrap(Session.class).getSessionFactory(), true, true);
+                    entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz[0], true, true);
                 }
                 if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
                     throw new IllegalArgumentException(String.format("Unable to find ceiling implementation for the requested class name (%s)", className));
@@ -175,13 +173,13 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
     @Override
     public Serializable getIdentifier(Object entity) {
-        return daoHelper.getIdentifier(entity, em);
+        return daoHelper.getIdentifier(entity);
     }
 
     protected Field getIdField(Class<?> clazz) {
-        return daoHelper.getIdField(clazz, em);
+        return daoHelper.getIdField(clazz);
     }
-    
+
     @Override
     public <T> T save(T object) {
         return em.merge(object);
@@ -204,12 +202,12 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
     @Override
     public void clearAutoFlushMode() {
-        em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+        em.unwrap(Session.class).setHibernateFlushMode(FlushMode.MANUAL);
     }
 
     @Override
     public void enableAutoFlushMode() {
-        em.unwrap(Session.class).setFlushMode(FlushMode.AUTO);
+        em.unwrap(Session.class).setHibernateFlushMode(FlushMode.AUTO);
     }
 
     @Override

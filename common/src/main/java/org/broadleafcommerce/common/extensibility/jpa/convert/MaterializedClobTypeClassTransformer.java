@@ -17,21 +17,13 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.convert;
 
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.FieldInfo;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.StringMemberValue;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.MaterializedClobType;
-import org.hibernate.type.StringClobType;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -43,6 +35,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import javax.annotation.Resource;
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.FieldInfo;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.StringMemberValue;
+
 /**
  * Broadleaf defines the Hibernate type for Clob fields as {@link StringClobType}. This has been deprecated in favor of
  * {@link MaterializedClobType}. However, this is not a panacea, as this can map to the wrong type for Postgres. However,
@@ -52,27 +56,19 @@ import java.util.Properties;
  * Opening the character stream causes the Oracle jdbc driver to allocate a very large buffer array, which contributes to
  * wasteful short-term memory allocation.
  * </p>
- * Add this class transformer to any implementation by adding it to the blMergedClassTransformers list in app context:
- * <pre>
- * {@code
- * <bean id="myMaterializedClobTypeClassTransfomer" class="org.broadleafcommerce.common.extensibility.jpa.convert.MaterializedClobTypeClassTransformer"/>
- * <bean id="myClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
- *     <property name="sourceList">
- *         <list>
- *             <ref bean="myMaterializedClobTypeClassTransfomer"/>
- *         </list>
- *     </property>
- * </bean>
- * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- *     <property name="collectionRef" value="myClassTransformers" />
- *     <property name="targetRef" value="blMergedClassTransformers" />
- * </bean>
- * }
- * </pre>
+ *
+ * <p>
+ * Hibernate 5.2 completely removed the org.hibernate.type.StringClobType that was used in all {literal @}Lob fields
+ * within Broadleaf. In order to improve forwards-compatiblity, this finds any instances in entities that
+ * were using StringClobType for {@literal @}Lob {@literal @}Type and swaps it out with org.hibernate.type.MaterializedClobType
  *
  * @author Jeff Fischer
+ * @author Phillip Verheyden (phillipuniverse)
  */
+@Component("blMaterializedClobTypeClassTransformer")
 public class MaterializedClobTypeClassTransformer implements BroadleafClassTransformer {
+
+    private static final Log logger = LogFactory.getLog(MaterializedClobTypeClassTransformer.class);
 
     @Resource(name = "blDirectCopyIgnorePatterns")
     protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
@@ -108,8 +104,8 @@ public class MaterializedClobTypeClassTransformer implements BroadleafClassTrans
             if (containsTypeLevelAnnotation) {
                 List<FieldInfo> fieldInfos = classFile.getFields();
                 ConstPool constantPool = classFile.getConstPool();
-                for (FieldInfo myField : fieldInfos) {
-                    List<?> attributes = myField.getAttributes();
+                for (FieldInfo field : fieldInfos) {
+                    List<?> attributes = field.getAttributes();
                     Iterator<?> itr = attributes.iterator();
                     AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
                     while (itr.hasNext()) {
@@ -121,7 +117,16 @@ public class MaterializedClobTypeClassTransformer implements BroadleafClassTrans
                                 String typeName = annotation.getTypeName();
                                 if (typeName.equals(Type.class.getName())) {
                                     StringMemberValue annot = (StringMemberValue) annotation.getMemberValue("type");
-                                    if (annot != null && annot.getValue().equals(StringClobType.class.getName())) {
+                                    if (annot != null && annot.getValue().equals("org.hibernate.type.StringClobType")) {
+                                        if (!convertedClassName.startsWith("org.broadleafcommerce") || !convertedClassName.startsWith("com.broadleafcommerce")) {
+                                            logger.warn(String.format("org.hibernate.type.StringClobType found on %s#%s which is no longer a class in Hibernate, automatically replacing with org.hibernate.type.MaterializedClobType. Please replace"
+                                                + " all instances of @Type(type = \"org.hibernate.type.StringClobType\") with @Type(type = \"org.hibernate.type.MaterializedClobType\")",
+                                                convertedClassName, field.getName()));
+                                        } else {
+                                            logger.debug(String.format("org.hibernate.type.StringClobType found on %s#%s which is no longer a class in Hibernate, automatically replacing with.",
+                                                convertedClassName, field.getName()));
+                                        }
+
                                         Annotation clobType = new Annotation(Type.class.getName(), constantPool);
                                         StringMemberValue type = new StringMemberValue(constantPool);
                                         type.setValue(MaterializedClobType.class.getName());
@@ -141,7 +146,7 @@ public class MaterializedClobTypeClassTransformer implements BroadleafClassTrans
                         }
                     }
                     if (transformed) {
-                        myField.addAttribute(annotationsAttribute);
+                        field.addAttribute(annotationsAttribute);
                     }
                 }
             }

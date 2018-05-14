@@ -26,9 +26,7 @@ import org.broadleafcommerce.common.exception.ProxyDetectionException;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.PersistentClass;
-import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
@@ -54,8 +52,8 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
     private static final Log LOG = LogFactory.getLog(DynamicDaoHelperImpl.class);
     public static final Object LOCK_OBJECT = new Object();
-    public static final Map<SessionFactory, Map<Class<?>, Class<?>[]>> POLYMORPHIC_ENTITY_CACHE = new LRUMap<>(1000);
-    public static final Map<SessionFactory, Map<Class<?>, Class<?>[]>> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<>(1000);
+    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<>(1000);
+    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<>(1000);
     public static final String JAVASSIST_PROXY_KEY_PHRASE = "_$$_";
 
     public static Class<?> getNonProxyImplementationClassIfNecessary(Class<?> candidate) {
@@ -80,25 +78,23 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
         return response;
     }
-    
+
     @Override
-    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory,
-            boolean includeUnqualifiedPolymorphicEntities, boolean useCache) {
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache) {
         ceilingClass = getNonProxyImplementationClassIfNecessary(ceilingClass);
         Class<?>[] cache = null;
         synchronized(LOCK_OBJECT) {
             if (useCache) {
                 if (includeUnqualifiedPolymorphicEntities) {
-                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE, sessionFactory, ceilingClass);
+                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE, ceilingClass);
                 } else {
-                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS, sessionFactory, ceilingClass);
+                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS, ceilingClass);
                 }
             }
             if (cache == null) {
                 List<Class<?>> entities = new ArrayList<>();
-                for (Object item : sessionFactory.getAllClassMetadata().values()) {
-                    ClassMetadata metadata = (ClassMetadata) item;
-                    Class<?> mappedClass = metadata.getMappedClass();
+                for (PersistentClass item : HibernateMappingProvider.getAllMappings()) {
+                    Class<?> mappedClass = item.getMappedClass();
                     if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
                         entities.add(mappedClass);
                     }
@@ -124,11 +120,9 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 filteredEntities = filteredSortedEntities.toArray(filteredEntities);
                 cache = filteredEntities;
                 if (includeUnqualifiedPolymorphicEntities) {
-                    Map<Class<?>, Class<?>[]> polymorphicEntityMap = buildPolymorphicEntityMap(POLYMORPHIC_ENTITY_CACHE.get(sessionFactory), ceilingClass, filteredEntities);
-                    POLYMORPHIC_ENTITY_CACHE.put(sessionFactory, polymorphicEntityMap);
+                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
                 } else {
-                    Map<Class<?>, Class<?>[]> polymorphicEntityMap = buildPolymorphicEntityMap(POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(sessionFactory), ceilingClass, filteredEntities);
-                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(sessionFactory, polymorphicEntityMap);
+                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
                 }
             }
         }
@@ -136,27 +130,14 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         return cache;
     }
 
-    protected Class<?>[] getCachedPolymorphicEntityList(Map<SessionFactory, Map<Class<?>, Class<?>[]>> polymorphicEntityCache,
-            SessionFactory sessionFactory, Class<?> ceilingClass) {
-        Map<Class<?>, Class<?>[]> polymorphicEntityMap = polymorphicEntityCache.get(sessionFactory);
-
-        return polymorphicEntityMap == null ? null : polymorphicEntityMap.get(ceilingClass);
-    }
-
-    protected Map<Class<?>, Class<?>[]> buildPolymorphicEntityMap(Map<Class<?>, Class<?>[]> polymorphicEntityMap,
-            Class<?> ceilingClass, Class<?>[] filteredEntities) {
-        if (polymorphicEntityMap == null) {
-            polymorphicEntityMap = new LRUMap<>(1000);
-        }
-
-        polymorphicEntityMap.put(ceilingClass, filteredEntities);
-        return polymorphicEntityMap;
+    protected Class<?>[] getCachedPolymorphicEntityList(Map<Class<?>, Class<?>[]> polymorphicEntityCache, Class<?> ceilingClass) {
+        Class<?>[] polymorphicEntities = polymorphicEntityCache.get(ceilingClass);
+        return polymorphicEntities == null ? null : polymorphicEntities;
     }
 
     @Override
-    public Class<?>[] getUpDownInheritance(Class<?> testClass, SessionFactory sessionFactory,
-                boolean includeUnqualifiedPolymorphicEntities, boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao) {
-        Class<?>[] pEntities = getAllPolymorphicEntitiesFromCeiling(testClass, sessionFactory, includeUnqualifiedPolymorphicEntities, useCache);
+    public Class<?>[] getUpDownInheritance(Class<?> testClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache) {
+        Class<?>[] pEntities = getAllPolymorphicEntitiesFromCeiling(testClass, includeUnqualifiedPolymorphicEntities, useCache);
         if (ArrayUtils.isEmpty(pEntities)) {
             return pEntities;
         }
@@ -167,7 +148,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         boolean eof = false;
         while (!eof) {
             Class<?> superClass = topConcreteClass.getSuperclass();
-            PersistentClass persistentClass = ejb3ConfigurationDao.getConfiguration().getClassMapping(superClass.getName());
+            PersistentClass persistentClass = HibernateMappingProvider.getMapping(superClass.getName());
             if (persistentClass == null) {
                 eof = true;
             } else {
@@ -178,7 +159,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
         return temp.toArray(new Class<?>[temp.size()]);
     }
-    
+
     @Override
     public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities) {
         /*
@@ -225,7 +206,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         ArrayUtils.reverse(sortedEntities);
         return sortedEntities;
     }
-    
+
     @Override
     public boolean isExcludeClassFromPolymorphism(Class<?> clazz) {
         //We filter out abstract classes because they can't be instantiated.
@@ -242,54 +223,43 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
         return false;
     }
-    
+
     @Override
-    public Map<String, Object> getIdMetadata(Class<?> entityClass, HibernateEntityManager entityManager) {
+    public Map<String, Object> getIdMetadata(Class<?> entityClass, EntityManager entityManager) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         Map<String, Object> response = new HashMap<>();
-        SessionFactory sessionFactory = entityManager.getSession().getSessionFactory();
-        
-        ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
-        if (metadata == null) {
+        SessionFactory sessionFactory = entityManager.unwrap(Session.class).getSessionFactory();
+        boolean isEntity = sessionFactory.getMetamodel().entity(entityClass.getName()) != null;
+        if (!isEntity) {
             return null;
         }
-        
-        String idProperty = metadata.getIdentifierPropertyName();
+        PersistentClass metadata = HibernateMappingProvider.getMapping(entityClass.getName());
+        String idProperty = metadata.getIdentifierProperty().getName();
         response.put("name", idProperty);
-        Type idType = metadata.getIdentifierType();
+        Type idType = metadata.getIdentifierProperty().getType();
         response.put("type", idType);
 
         return response;
     }
 
     @Override
-    public List<String> getPropertyNames(Class<?> entityClass, HibernateEntityManager entityManager) {
+    @SuppressWarnings("unchecked")
+    public List<String> getPropertyNames(Class<?> entityClass) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
-        ClassMetadata metadata = getSessionFactory(entityManager).getClassMetadata(entityClass);
-        List<String> propertyNames = new ArrayList<>();
-        Collections.addAll(propertyNames, metadata.getPropertyNames());
-        return propertyNames;
+        return HibernateMappingProvider.getPropertyNames(entityClass.getName());
     }
 
     @Override
-    public List<Type> getPropertyTypes(Class<?> entityClass, HibernateEntityManager entityManager) {
+    public List<Type> getPropertyTypes(Class<?> entityClass) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
-        ClassMetadata metadata = getSessionFactory(entityManager).getClassMetadata(entityClass);
-        List<Type> propertyTypes = new ArrayList<>();
-        Collections.addAll(propertyTypes, metadata.getPropertyTypes());
-        return propertyTypes;
+        return HibernateMappingProvider.getPropertyTypes(entityClass.getName());
     }
 
     @Override
-    public SessionFactory getSessionFactory(HibernateEntityManager entityManager) {
-        return entityManager.getSession().getSessionFactory();
-    }
-
-    @Override
-    public Serializable getIdentifier(Object entity, EntityManager em) {
+    public Serializable getIdentifier(Object entity) {
         Class<?> entityClass = getNonProxyImplementationClassIfNecessary(entity.getClass());
         if (entityClass.getAnnotation(Entity.class) != null) {
-            Field idField = getIdField(entityClass, em);
+            Field idField = getIdField(entityClass);
             try {
                 return (Serializable) idField.get(entity);
             } catch (IllegalAccessException e) {
@@ -300,33 +270,9 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     }
 
     @Override
-    public Serializable getIdentifier(Object entity, Session session) {
-        Class<?> entityClass = getNonProxyImplementationClassIfNecessary(entity.getClass());
-        if (entityClass.getAnnotation(Entity.class) != null) {
-            Field idField = getIdField(entityClass, session);
-            try {
-                return (Serializable) idField.get(entity);
-            } catch (IllegalAccessException e) {
-                throw ExceptionHelper.refineException(e);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Field getIdField(Class<?> clazz, EntityManager em) {
+    public Field getIdField(Class<?> clazz) {
         clazz = getNonProxyImplementationClassIfNecessary(clazz);
-        ClassMetadata metadata = em.unwrap(Session.class).getSessionFactory().getClassMetadata(clazz);
-        Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
-        idField.setAccessible(true);
-        return idField;
-    }
-
-    @Override
-    public Field getIdField(Class<?> clazz, Session session) {
-        clazz = getNonProxyImplementationClassIfNecessary(clazz);
-        ClassMetadata metadata = session.getSessionFactory().getClassMetadata(clazz);
-        Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
+        Field idField = ReflectionUtils.findField(clazz, HibernateMappingProvider.getMapping(clazz.getName()).getIdentifierProperty().getName());
         idField.setAccessible(true);
         return idField;
     }

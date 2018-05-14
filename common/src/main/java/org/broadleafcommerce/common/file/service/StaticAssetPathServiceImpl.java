@@ -18,7 +18,7 @@
 package org.broadleafcommerce.common.file.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.velocity.tools.view.ImportSupport;
+import org.broadleafcommerce.common.util.UrlUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -95,7 +95,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
     /**
      * This method will take in an assetPath (think image url) and prepend the
      * staticAssetUrlPrefix if one exists.
-     * 
+     *
      * Will append any contextPath onto the request.    If the incoming assetPath contains
      * the internalStaticAssetPrefix and the image is being prepended, the prepend will be
      * removed.
@@ -116,7 +116,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
      * Given contextPath = "myApp"
      *
      * The result should yield: "/myApp/cmsstatic/my_image.jpg"
-     * 
+     *
      * Also, since all paths are intended to be URLs, there should be no system-specific separator characters like '\' for
      * Windows. All paths should be unix file paths as URLs.
      *
@@ -130,7 +130,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
     @Override
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest) {
         String returnValue = assetPath;
-        
+
         if (assetPath != null && getStaticAssetEnvironmentUrlPrefix() != null && ! "".equals(getStaticAssetEnvironmentUrlPrefix())) {
             String envPrefix;
             if (secureRequest) {
@@ -158,7 +158,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
                 returnValue = envPrefix + returnValue;
             }
         } else {
-            if (returnValue != null && ! ImportSupport.isAbsoluteUrl(returnValue)) {
+            if (returnValue != null && ! UrlUtil.isAbsoluteUrl(returnValue)) {
                 if (! returnValue.startsWith("/")) {
                     returnValue = "/" + returnValue;
                 }
@@ -213,7 +213,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
         return fixEnvironmentUrlPrefix(staticAssetEnvironmentSecureUrlPrefix);
     }
 
-    public void setStaticAssetEnvironmentSecureUrlPrefix(String staticAssetEnvironmentSecureUrlPrefix) {        
+    public void setStaticAssetEnvironmentSecureUrlPrefix(String staticAssetEnvironmentSecureUrlPrefix) {
         this.staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentSecureUrlPrefix;
     }
 

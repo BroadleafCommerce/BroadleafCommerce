@@ -100,7 +100,9 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
 
     private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
         FrameworkMapping frameworkMapping = element.getAnnotation(FrameworkMapping.class);
-        frameworkMapping = AnnotationUtils.synthesizeAnnotation(frameworkMapping, null);
+        if (frameworkMapping != null) {
+            frameworkMapping = AnnotationUtils.synthesizeAnnotation(frameworkMapping, null);
+        }
         return (frameworkMapping != null ? createRequestMappingInfo(convertFrameworkMappingToRequestMapping(frameworkMapping), null) : null);
     }
 

@@ -64,7 +64,7 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
         // Third, check the session 
         if (timeZone == null && BLCRequestUtils.isOKtoUseSession(request)) {
             //@TODO verify if we should take this from global session
-            timeZone = (TimeZone) request.getAttribute(TIMEZONE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            timeZone = (TimeZone) request.getAttribute(TIMEZONE_VAR, WebRequest.SCOPE_SESSION);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find timezone from session resulted in " + timeZone);
             }
@@ -80,7 +80,7 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
         }
 
         if (BLCRequestUtils.isOKtoUseSession(request)) {
-            request.setAttribute(TIMEZONE_VAR, timeZone, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(TIMEZONE_VAR, timeZone, WebRequest.SCOPE_SESSION);
         }
         return timeZone;
     }

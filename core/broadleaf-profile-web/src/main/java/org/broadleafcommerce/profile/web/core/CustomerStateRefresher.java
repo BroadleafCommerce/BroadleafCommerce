@@ -59,12 +59,12 @@ public class CustomerStateRefresher implements ApplicationListener<CustomerPersi
             String customerAttribute = CustomerStateRequestProcessor.getAnonymousCustomerSessionAttributeName();
             String customerIdAttribute = CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName();
             if (BLCRequestUtils.isOKtoUseSession(request)) {
-                Customer sessionCustomer = (Customer) request.getAttribute(customerAttribute, WebRequest.SCOPE_GLOBAL_SESSION);
+                Customer sessionCustomer = (Customer) request.getAttribute(customerAttribute, WebRequest.SCOPE_SESSION);
                 //invalidate the session-based customer if it's there and the ID is the same as the Customer that has been
                 //persisted
                 if (sessionCustomer != null && sessionCustomer.getId().equals(dbCustomer.getId())) {
-                    request.removeAttribute(customerAttribute, WebRequest.SCOPE_GLOBAL_SESSION);
-                    request.setAttribute(customerIdAttribute, dbCustomer.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+                    request.removeAttribute(customerAttribute, WebRequest.SCOPE_SESSION);
+                    request.setAttribute(customerIdAttribute, dbCustomer.getId(), WebRequest.SCOPE_SESSION);
                 }
             }
             

@@ -23,7 +23,7 @@ package org.broadleafcommerce.openadmin.web.controller.config;
 import org.broadleafcommerce.common.config.PostAutoConfiguration;
 import org.broadleafcommerce.openadmin.web.controller.AdminRequestMappingHandlerMapping;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;

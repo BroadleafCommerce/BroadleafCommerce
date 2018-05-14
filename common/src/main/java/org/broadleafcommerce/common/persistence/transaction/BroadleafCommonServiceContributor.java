@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,17 +15,20 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.util.dao;
+package org.broadleafcommerce.common.persistence.transaction;
 
-import org.hibernate.ejb.Ejb3Configuration;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.service.spi.ServiceContributor;
 
 /**
- * 
- * @author jfischer
+ * Support introduction of customized or additional services to the Hibernate service registry.
  *
+ * @author Jeff Fischer
  */
-public interface EJB3ConfigurationDao {
+public class BroadleafCommonServiceContributor implements ServiceContributor {
 
-    public abstract Ejb3Configuration getConfiguration();
-
+    @Override
+    public void contribute(StandardServiceRegistryBuilder serviceRegistryBuilder) {
+        serviceRegistryBuilder.addInitiator(LifecycleAwareJDBCServicesInitiator.INSTANCE);
+    }
 }

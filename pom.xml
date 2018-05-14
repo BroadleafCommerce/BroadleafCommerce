@@ -42,14 +42,18 @@
             <name>public snapshots</name>
             <url>http://nexus.broadleafcommerce.org/nexus/content/groups/community-snapshots/</url>
         </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <url>http://repo.spring.io/milestone</url>
+        </repository>
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>4.3.17.RELEASE</spring.version>
-        <spring.security.version>4.2.6.RELEASE</spring.security.version>
-        <spring.boot.version>1.5.13.RELEASE</spring.boot.version>
-        <spring.mobile.version>1.1.5.RELEASE</spring.mobile.version>
-        <jackson.version>2.8.11</jackson.version>
+        <spring.version>5.0.6.RELEASE</spring.version>
+        <spring.security.version>5.0.5.RELEASE</spring.security.version>
+        <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+        <spring.mobile.version>2.0.0.M3</spring.mobile.version>
+        <jackson.version>2.9.5</jackson.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <geb.version>1.0</geb.version>
         <spock.core.version>1.1-groovy-2.4</spock.core.version>
@@ -57,10 +61,11 @@
         <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.4.11</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
-        <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
+        <broadleaf-presentation.version>1.1.0-SNAPSHOT</broadleaf-presentation.version>
         <lombok.version>1.16.18</lombok.version>
         <database.starter.version>1.0.1-GA</database.starter.version>
         <closure.compiler.version>v20180204</closure.compiler.version>
+        <hibernate.version>5.2.17.Final</hibernate.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
@@ -76,8 +81,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
                     <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -229,7 +234,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.15</version>
+                <version>1.16</version>
                 <executions>
                     <execution>
                         <id>sniff</id>
@@ -242,7 +247,7 @@
                 <configuration>
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java17</artifactId>
+                        <artifactId>java18</artifactId>
                         <version>1.0</version>
                     </signature>
                 </configuration>
@@ -502,116 +507,76 @@
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile-web</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework-web</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-admin-module</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contentmanagement-module</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-open-admin-platform</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>integration</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-common</artifactId>
                 <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-common</artifactId>
                 <version>${project.version}</version>
                 <classifier>tests</classifier>
-                <type>jar</type>
                 <scope>test</scope>
             </dependency>
 
             <!-- Hibernate Libraries -->
             <dependency>
-                <groupId>org.hibernate.javax.persistence</groupId>
-                <artifactId>hibernate-jpa-2.0-api</artifactId>
-                <version>1.0.0.Final</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>4.1.11.Final</version>
-                <scope>compile</scope>
+                <version>${hibernate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>4.1.11.Final</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <version>${hibernate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>4.1.11.Final</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib</artifactId>
-                    </exclusion>
-                </exclusions>
+                <version>${hibernate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-ehcache</artifactId>
-                <version>4.1.11.Final</version>
-                <scope>compile</scope>
+                <version>${hibernate.version}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>ehcache-core</artifactId>
@@ -625,8 +590,6 @@
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
                 <version>1.5.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -642,15 +605,11 @@
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>3.2.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>4.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -661,14 +620,11 @@
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.8.3</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>1.1</version>
-                <type>jar</type>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
@@ -687,51 +643,29 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <version>2.6</version>
             </dependency>
             <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
-                <version>1.2.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>2.2.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <version>1.11</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.3.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-digester</groupId>
-                <artifactId>commons-digester</artifactId>
-                <version>1.8</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <version>3.7</version>
             </dependency>
 
             <!-- Logging -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
-                <version>2.8.1</version>
+                <version>2.10.0</version>
                 <scope>import</scope>
                 <type>pom</type>
                 <optional>true</optional>
@@ -740,59 +674,13 @@
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.17</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <optional>true</optional>
             </dependency>
 
-            <!--Email System Libraries -->
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity-tools</artifactId>
-                <version>2.0</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-logging</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                    <!-- Struts has security vulnerabilities and we do not utilize any struts features -->
-                    <exclusion>
-                        <artifactId>struts-core</artifactId>
-                        <groupId>org.apache.struts</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>struts-taglib</artifactId>
-                        <groupId>org.apache.struts</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>struts-tiles</artifactId>
-                        <groupId>org.apache.struts</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>sslext</artifactId>
-                        <groupId>sslext</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-validator</groupId>
-                        <artifactId>commons-validator</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>1.6.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>1.4.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
 
             <!-- XML Libraries -->
@@ -800,22 +688,6 @@
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
                 <version>2.4.0</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jsr173_api</artifactId>
-                <version>1.0</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>1.4.9</version>
-                <type>jar</type>
-                <scope>runtime</scope>
             </dependency>
 
             <!-- Allow JAXB Annotations with Jackson -->
@@ -851,7 +723,6 @@
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
                 <version>1.1.1</version>
-                <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
@@ -859,18 +730,8 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-                <version>3.0.1</version>
-                <type>jar</type>
+                <version>3.1.0</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <!--Presentation Layer Related Libraries -->
-            <dependency>
-                <groupId>jstl</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.1.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
 
             <!-- Testing Libraries -->
@@ -878,7 +739,6 @@
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
                 <version>1.5.2</version>
-                <type>jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -891,7 +751,6 @@
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>2.5.1</version>
-                <type>jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -949,8 +808,6 @@
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
                 <version>5.3.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
                         Jackson dependencies -->
@@ -964,166 +821,34 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <artifactId>solr-core</artifactId>
-                <groupId>org.apache.solr</groupId>
-                <version>5.3.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>slf4j-jdk14</artifactId>
-                        <groupId>org.slf4j</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.servlet.jsp</groupId>
-                        <artifactId>jsp-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.jetty.orbit</groupId>
-                        <artifactId>javax.servlet</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
-                        Jackson dependencies -->
-                    <exclusion>
-                        <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.dataformat</groupId>
-                        <artifactId>jackson-dataformat-smile</artifactId>
-                    </exclusion>
-                    <!-- The jdk.tools transitive dependency uses system scope -->
-                        <!-- which has to be resolved in a platform agnostic way -->
-                        <!-- in order to have a clean compile in Eclipse. That -->
-                        <!-- turned out to be surprisingly difficult to achieve. -->
-        
-                        <!-- From the dependency tree below we can see that -->
-                        <!-- jdk.tools is pulled in by hadoop-annotations -->
-                        <!-- and since this is a normal JDK system jar we can avoid the -->
-                        <!-- problem by excluding the jdk.tools dependency. -->
-        
-                        <!-- Relevant output from mvn dependency:tree follows -->
-                        <!-- +- org.broadleafcommerce:broadleaf-framework:jar:{version}:compile -->
-                        <!--    +- org.apache.solr:solr-core:jar:4.4.0:compile -->
-                        <!--        +- org.apache.hadoop:hadoop-annotations:jar:2.0.5-alpha:compile -->
-                        <!--            \- jdk.tools:jdk.tools:jar:1.6:system -->
-                    <exclusion>
-                        <groupId>jdk.tools</groupId>
-                        <artifactId>jdk.tools</artifactId>
-                    </exclusion>
-                    <!-- security vulnerability in version 1.2.1. We explicity include version 1.3.1 elsewhere -->
-                    <exclusion>
-                        <groupId>commons-fileupload</groupId>
-                        <artifactId>commons-fileupload</artifactId>
-                    </exclusion>
-                    <!-- BLC is dependent on ASM 3.3 while Solr Core is dependent on 4.1. These dependencies should
-                         thusly be excluded here -->
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-commons</artifactId>
-                    </exclusion>
-                    <!-- security vulnerability in version 2.5.4. We explicity include version 2.8.6 elsewhere -->
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.dataformat</groupId>
-                        <artifactId>jackson-dataformat-smile</artifactId>
-                    </exclusion>
-                    <!-- security vulnerability in version 2.6.0. We explicity include version 2.6.5 elsewhere -->
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-annotations</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-auth</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-common</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-hdfs</artifactId>
-                    </exclusion>
-                    <!-- security vulnerability in version 3.4.6. We explicity include version 3.4.9 elsewhere -->
-                    <exclusion>
-                        <groupId>org.apache.zookeeper</groupId>
-                        <artifactId>zookeeper</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-annotations</artifactId>
-                <version>2.6.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-auth</artifactId>
-                <version>2.6.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-common</artifactId>
-                <version>2.6.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-hdfs</artifactId>
-                <version>2.6.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.zookeeper</groupId>
-                <artifactId>zookeeper</artifactId>
-                <version>3.4.9</version>
-            </dependency>
 
             <!-- Byte Code Manipulation Libraries -->
             <dependency>
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
                 <version>2.1_3</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>3.3</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm-commons</artifactId>
                 <version>3.3</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.17.1-GA</version>
-                <scope>compile</scope>
+                <version>3.22.0-GA</version>
             </dependency>
 
             <!--Scheduling Libraries -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>2.2.0</version>
+                <version>2.3.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1133,18 +858,9 @@
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
                 <version>2.2.1.Final</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
 
             <!--Regular Expression Libraries -->
-            <dependency>
-                <groupId>oro</groupId>
-                <artifactId>oro</artifactId>
-                <version>2.0.8</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
             <dependency>
                 <groupId>jakarta-regexp</groupId>
                 <artifactId>jakarta-regexp</artifactId>
@@ -1174,8 +890,6 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -1183,82 +897,56 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-instrument</artifactId>
-                <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>provided</scope>
-            </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jms</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-oxm</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
-                <type>jar</type>
                 <scope>test</scope>
             </dependency>
 
@@ -1267,7 +955,6 @@
                 <artifactId>spring-boot-autoconfigure</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.springframework.mobile</groupId>
@@ -1280,8 +967,6 @@
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-web</artifactId>
                 <version>1.0.2.RELEASE</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
 
             <!-- Spring Security -->
@@ -1289,8 +974,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>
                 <version>${spring.security.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1318,8 +1001,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
                 <version>${spring.security.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1347,8 +1028,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
                 <version>${spring.security.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1376,8 +1055,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-taglibs</artifactId>
                 <version>${spring.security.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1405,8 +1082,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-ldap</artifactId>
                 <version>${spring.security.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1455,8 +1130,7 @@
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.3.2</version>
-                <type>jar</type>
+                <version>2.4.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -1472,28 +1146,11 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>1.6.5</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr-runtime</artifactId>
-                <version>3.0</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>1.7.1</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>eu.medsea.mimeutil</groupId>
                 <artifactId>mime-util</artifactId>
                 <version>2.1.3</version>
-                <type>jar</type>
-                <scope>compile</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -1535,7 +1192,7 @@
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
-                <version>2.1.0</version>
+                <version>2.1.0.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-fileupload</groupId>
@@ -1563,14 +1220,14 @@
                 <version>2.7.2</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.4.1.Final</version>
+                <version>6.0.9.Final</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
-                <version>1.1.0.Final</version>
+                <version>2.0.1.Final</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

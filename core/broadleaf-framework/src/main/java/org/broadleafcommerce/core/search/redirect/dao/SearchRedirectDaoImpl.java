@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.search.redirect.dao;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 

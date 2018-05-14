@@ -19,10 +19,15 @@ package org.broadleafcommerce.test.common.util;
 
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.hibernate.ejb.HibernateEntityManagerFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.metamodel.EntityType;
 
 /**
  * Utility class that can be substituted for StreamingTransactionCapableUtil to allow targeted testing of
@@ -60,8 +65,11 @@ public class StreamTransactionCapableUtilFailureSimulator extends StreamingTrans
         if (context.getAdditionalProperties().containsKey(FAILURE_MODE_KEY)) {
             String failureModePU = (String) context.getAdditionalProperties().get(FAILURE_MODE_PU);
             String checkClassName = failureModePU.equals("blPU")?blPUCheckClassName:blEventPUCheckClassName;
-            if (((HibernateEntityManagerFactory) ((JpaTransactionManager) transactionManager).getEntityManagerFactory())
-                                    .getSessionFactory().getAllClassMetadata().containsKey(checkClassName)){
+            List<String> entities = new ArrayList<>();
+            for (EntityType<?> item : ((JpaTransactionManager) transactionManager).getEntityManagerFactory().unwrap(SessionFactory.class).getMetamodel().getEntities())  {
+                entities.add(item.getJavaType().getName());
+            }
+            if (entities.contains(checkClassName)){
                 throw (RuntimeException) context.getAdditionalProperties().get(FAILURE_MODE_EXCEPTION);
             }
         }

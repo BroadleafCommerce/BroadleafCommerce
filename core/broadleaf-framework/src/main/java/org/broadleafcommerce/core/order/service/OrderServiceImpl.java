@@ -328,13 +328,13 @@ public class OrderServiceImpl implements OrderService {
             boolean isValid = false;
             while (!isValid) {
                 Session session = em.unwrap(Session.class);
-                FlushMode current = session.getFlushMode();
+                FlushMode current = session.getHibernateFlushMode();
                 try {
                     if (!autoFlushSaveCart) {
                         //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
                         //be expensive. It is possible to avoid the autoflush if there's no concern about queries in the flow returning
                         //incorrect results because something has not been flushed to the database yet.
-                        session.setFlushMode(FlushMode.MANUAL);
+                        session.setHibernateFlushMode(FlushMode.MANUAL);
                     }
                     order = pricingService.executePricing(order);
                     isValid = true;
@@ -382,7 +382,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                 } finally {
                     if (!autoFlushSaveCart) {
-                        session.setFlushMode(current);
+                        session.setHibernateFlushMode(current);
                     }
                 }
             }
@@ -391,13 +391,13 @@ public class OrderServiceImpl implements OrderService {
             status = TransactionUtils.createTransaction("saveOrder",
                                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             Session session = em.unwrap(Session.class);
-            FlushMode current = session.getFlushMode();
+            FlushMode current = session.getHibernateFlushMode();
             try {
                 if (!autoFlushSaveCart) {
                     //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
                     //be expensive. It is possible to avoid the autoflush if there's no concern about queries in the flow returning
                     //incorrect results because something has not been flushed to the database yet.
-                    session.setFlushMode(FlushMode.MANUAL);
+                    session.setHibernateFlushMode(FlushMode.MANUAL);
                 }
                 order = persist(order);
 
@@ -413,7 +413,7 @@ public class OrderServiceImpl implements OrderService {
                 throw ex;
             } finally {
                 if (!autoFlushSaveCart && !session.getFlushMode().equals(current)) {
-                    session.setFlushMode(current);
+                    session.setHibernateFlushMode(current);
                 }
             }
         }
@@ -666,19 +666,19 @@ public class OrderServiceImpl implements OrderService {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
 
             Session session = em.unwrap(Session.class);
-            FlushMode current = session.getFlushMode();
+            FlushMode current = session.getHibernateFlushMode();
             if (!autoFlushAddToCart) {
                 //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
                 //be expensive. It is possible to avoid the autoflush if there's no concern about queries in the flow returning
                 //incorrect results because something has not been flushed to the database yet.
-                session.setFlushMode(FlushMode.MANUAL);
+                session.setHibernateFlushMode(FlushMode.MANUAL);
             }
             ProcessContext<CartOperationRequest> context;
             try {
                 context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
             } finally {
                 if (!autoFlushAddToCart) {
-                    session.setFlushMode(current);
+                    session.setHibernateFlushMode(current);
                 }
             }
 
@@ -718,19 +718,19 @@ public class OrderServiceImpl implements OrderService {
                 if (childRequest.getQuantity() > 0) {
                     CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
                     Session session = em.unwrap(Session.class);
-                    FlushMode current = session.getFlushMode();
+                    FlushMode current = session.getHibernateFlushMode();
                     if (!autoFlushAddToCart) {
                         //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
                         //be expensive. It is possible to avoid the autoflush if there's no concern about queries in the flow returning
                         //incorrect results because something has not been flushed to the database yet.
-                        session.setFlushMode(FlushMode.MANUAL);
+                        session.setHibernateFlushMode(FlushMode.MANUAL);
                     }
                     ProcessContext<CartOperationRequest> childContext;
                     try {
                         childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
                     } finally {
                         if (!autoFlushAddToCart) {
-                            session.setFlushMode(current);
+                            session.setHibernateFlushMode(current);
                         }
                     }
                     orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
@@ -759,19 +759,19 @@ public class OrderServiceImpl implements OrderService {
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             Session session = em.unwrap(Session.class);
-            FlushMode current = session.getFlushMode();
+            FlushMode current = session.getHibernateFlushMode();
             if (!autoFlushUpdateCart) {
                 //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
                 //be expensive. It is possible to avoid the autoflush if there's no concern about queries in the flow returning
                 //incorrect results because something has not been flushed to the database yet.
-                session.setFlushMode(FlushMode.MANUAL);
+                session.setHibernateFlushMode(FlushMode.MANUAL);
             }
             ProcessContext<CartOperationRequest> context;
             try {
                 context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
             } finally {
                 if (!autoFlushUpdateCart) {
-                    session.setFlushMode(current);
+                    session.setHibernateFlushMode(current);
                 }
             }
             context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
@@ -823,19 +823,19 @@ public class OrderServiceImpl implements OrderService {
         orderItemRequestDTO.setOrderItemId(orderItemId);
         CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
         Session session = em.unwrap(Session.class);
-        FlushMode current = session.getFlushMode();
+        FlushMode current = session.getHibernateFlushMode();
         if (!autoFlushRemoveFromCart) {
             //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
             //be expensive. It is possible to avoid the autoflush if there's no concern about queries in the flow returning
             //incorrect results because something has not been flushed to the database yet.
-            session.setFlushMode(FlushMode.MANUAL);
+            session.setHibernateFlushMode(FlushMode.MANUAL);
         }
         ProcessContext<CartOperationRequest> context;
         try {
             context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
         } finally {
             if (!autoFlushRemoveFromCart) {
-                session.setFlushMode(current);
+                session.setHibernateFlushMode(current);
             }
         }
         context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());

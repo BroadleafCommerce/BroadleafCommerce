@@ -258,14 +258,14 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     
     protected void clearBroadleafSessionAttrs(WebRequest request) {
         if (BLCRequestUtils.isOKtoUseSession(request)) {
-            request.removeAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
-            request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
-            request.removeAttribute(BroadleafTimeZoneResolverImpl.TIMEZONE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
-            request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.removeAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_SESSION);
+            request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_SESSION);
+            request.removeAttribute(BroadleafTimeZoneResolverImpl.TIMEZONE_VAR, WebRequest.SCOPE_SESSION);
+            request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
 
             // From CustomerStateRequestProcessorImpl, using explicit String because it's out of module
-            request.removeAttribute("_blc_anonymousCustomer", WebRequest.SCOPE_GLOBAL_SESSION);
-            request.removeAttribute("_blc_anonymousCustomerId", WebRequest.SCOPE_GLOBAL_SESSION);
+            request.removeAttribute("_blc_anonymousCustomer", WebRequest.SCOPE_SESSION);
+            request.removeAttribute("_blc_anonymousCustomerId", WebRequest.SCOPE_SESSION);
         }
     }
 }

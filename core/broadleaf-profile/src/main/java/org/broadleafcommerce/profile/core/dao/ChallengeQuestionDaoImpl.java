@@ -18,7 +18,7 @@
 package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

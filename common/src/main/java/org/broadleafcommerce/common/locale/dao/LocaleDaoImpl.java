@@ -50,7 +50,7 @@ public class LocaleDaoImpl implements LocaleDao {
     public Locale findLocaleByCode(String localeCode) {
         Query query = em.createNamedQuery("BC_READ_LOCALE_BY_CODE");
         query.setParameter("localeCode", localeCode);
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, true);
         List<Locale> localeList = (List<Locale>) query.getResultList();
         if (localeList.size() >= 1) {
             if (localeList.size() > 1) {
@@ -69,7 +69,7 @@ public class LocaleDaoImpl implements LocaleDao {
     @Override
     public Locale findDefaultLocale() {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_LOCALE");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, true);
         List<Locale> localeList = (List<Locale>) query.getResultList();
         if (localeList.size() >= 1) {
             if (localeList.size() > 1) {
@@ -86,7 +86,7 @@ public class LocaleDaoImpl implements LocaleDao {
      */
     public List<Locale> findAllLocales() {
         Query query = em.createNamedQuery("BC_READ_ALL_LOCALES");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, true);
         return (List<Locale>) query.getResultList();
     }
     

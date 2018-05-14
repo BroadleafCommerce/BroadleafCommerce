@@ -38,7 +38,6 @@
 
     <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
 
     <bean id="blTransactionManager" primary="true" class="org.broadleafcommerce.common.persistence.transaction.LifecycleAwareJpaTransactionManager">
@@ -54,13 +53,7 @@
         </tx:attributes>
     </tx:advice>
 
-    <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.common.util.dao.EJB3ConfigurationDaoImpl">
-        <property name="persistenceUnitInfo">
-            <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
-        </property>
-    </bean>
-
-    <!-- EntityManager,TransactionManager, & EJB3ConfigurationDao sets -->
+    <!-- EntityManager,TransactionManager sets -->
     <bean id="blDefaultTargetModeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -68,21 +61,18 @@
                     <map>
                         <entry key="entityManager" value-ref="prodEntityManager"/>
                         <entry key="transactionManager" value-ref="blTransactionManager"/>
-                        <entry key="ejb3ConfigurationDao" value-ref="blEJB3ConfigurationDao"/>
                     </map>
                 </entry>
                 <entry key="stage">
                     <map>
                         <entry key="entityManager" value-ref="prodEntityManager"/>
                         <entry key="transactionManager" value-ref="blTransactionManager"/>
-                        <entry key="ejb3ConfigurationDao" value-ref="blEJB3ConfigurationDao"/>
                     </map>
                 </entry>
                 <entry key="production">
                     <map>
                         <entry key="entityManager" value-ref="prodEntityManager"/>
                         <entry key="transactionManager" value-ref="blTransactionManager"/>
-                        <entry key="ejb3ConfigurationDao" value-ref="blEJB3ConfigurationDao"/>
                     </map>
                 </entry>
             </map>

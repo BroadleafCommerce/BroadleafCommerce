@@ -19,9 +19,6 @@
 package org.broadleafcommerce.common.util.dao;
 
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
@@ -33,7 +30,7 @@ import javax.persistence.EntityManager;
 
 /**
  * Provides utility methods for interacting with dynamic entities
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  */
@@ -49,7 +46,7 @@ public interface DynamicDaoHelper {
      * @param entityManager
      * @return
      */
-    Map<String, Object> getIdMetadata(Class<?> entityClass, HibernateEntityManager entityManager);
+    Map<String, Object> getIdMetadata(Class<?> entityClass, EntityManager entityManager);
 
     /**
      * Retrieve the list of property names known to Hibernate for the entity class.
@@ -58,7 +55,7 @@ public interface DynamicDaoHelper {
      * @param entityManager
      * @return
      */
-    List<String> getPropertyNames(Class<?> entityClass, HibernateEntityManager entityManager);
+    List<String> getPropertyNames(Class<?> entityClass);
 
     /**
      * Retrieve the list of property types ({@link Type} known to Hibernate for the entity class.
@@ -67,15 +64,7 @@ public interface DynamicDaoHelper {
      * @param entityManager
      * @return
      */
-    List<Type> getPropertyTypes(Class<?> entityClass, HibernateEntityManager entityManager);
-
-    /**
-     * Get the SessionFactory instance from a HibernateEntityManager instance.
-     *
-     * @param entityManager
-     * @return
-     */
-    SessionFactory getSessionFactory(HibernateEntityManager entityManager);
+    List<Type> getPropertyTypes(Class<?> entityClass);
 
     /**
      * Get all the polymorphic types known to Hibernate for the ceiling class provided. The ceiling class should be an
@@ -83,12 +72,11 @@ public interface DynamicDaoHelper {
      * is sorted with the most derived entities appearing first in the list.
      *
      * @param ceilingClass
-     * @param sessionFactory
      * @param includeUnqualifiedPolymorphicEntities Some entities may be excluded from polymorphism (Abstract class and those marked with {@link AdminPresentationClass#excludeFromPolymorphism()}). Override that exlusion behavior.
      * @param useCache Cache the polymorphic types discovered for the ceilingClass.
      * @return The list of Hibernate registered entities that derive from the ceilingClass (including the ceilingClass)
      */
-    Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
+    Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
 
     /**
      * Sort a list of polymorphic types with the most derived appearing first.
@@ -112,37 +100,17 @@ public interface DynamicDaoHelper {
      * The value of the Hibernate registered identifier property for the entity instance.
      *
      * @param entity
-     * @param em
      * @return
      */
-    Serializable getIdentifier(Object entity, EntityManager em);
-
-    /**
-     * The value of the Hibernate registered identifier property for the entity instance.
-     *
-     * @param entity
-     * @param session
-     * @return
-     */
-    Serializable getIdentifier(Object entity, Session session);
+    Serializable getIdentifier(Object entity);
 
     /**
      * The Field that represents the Hibernate registered identifier property for the entity class.
      *
      * @param clazz
-     * @param em
      * @return
      */
-    Field getIdField(Class<?> clazz, EntityManager em);
-
-    /**
-     * The Field that represents the Hibernate registered identifier property for the entity class.
-     *
-     * @param clazz
-     * @param session
-     * @return
-     */
-    Field getIdField(Class<?> clazz, Session session);
+    Field getIdField(Class<?> clazz);
 
     /**
      * Retrieve a complete polymorphic type list for an entity class, even if the entity class is not the ceiling class (or
@@ -151,13 +119,10 @@ public interface DynamicDaoHelper {
      * first and the most derived classes appearing last.
      *
      * @param testClass An entity class to look for polymorphic types both above and below
-     * @param sessionFactory
      * @param includeUnqualifiedPolymorphicEntities Some entities may be excluded from polymorphism (Abstract class and those marked with {@link AdminPresentationClass#excludeFromPolymorphism()}). Override that exlusion behavior.
      * @param useCache Cache the polymorphic types discovered for the ceilingClass.
-     * @param ejb3ConfigurationDao
      * @return The list of Hibernate registered entities that appear above and below the testClass in an entity inheritance hierarchy
      */
-    Class<?>[] getUpDownInheritance(Class<?> testClass, SessionFactory sessionFactory,
-                    boolean includeUnqualifiedPolymorphicEntities, boolean useCache, EJB3ConfigurationDao ejb3ConfigurationDao);
+    Class<?>[] getUpDownInheritance(Class<?> testClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
 
 }

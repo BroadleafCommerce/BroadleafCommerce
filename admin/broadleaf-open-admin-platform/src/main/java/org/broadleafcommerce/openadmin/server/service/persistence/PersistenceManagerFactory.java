@@ -87,7 +87,7 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     }
 
     /**
-     * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager and EJB3ConfigurationDao.
+     * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager.
      *  It also uses a {@link TargetModeType} of {@link TargetModeType#SANDBOX}
      */
     public static PersistenceManager getDefaultPersistenceManager() {
@@ -95,7 +95,7 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     }
 
     /**
-     * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager and EJB3ConfigurationDao
+     * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager
      *  using the passed in {@link TargetModeType}
      */
     public static PersistenceManager getDefaultPersistenceManager(TargetModeType targetModeType) {

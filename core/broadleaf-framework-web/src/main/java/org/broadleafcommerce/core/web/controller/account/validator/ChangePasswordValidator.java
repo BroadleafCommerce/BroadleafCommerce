@@ -54,7 +54,7 @@ public class ChangePasswordValidator implements Validator {
 
         if (!errors.hasErrors()) {
             //validate current password
-            if (enableCurrentPasswordCheck && !customerService.isPasswordValid(currentPassword, CustomerState.getCustomer().getPassword(), CustomerState.getCustomer())) {
+            if (enableCurrentPasswordCheck && !customerService.isPasswordValid(currentPassword, CustomerState.getCustomer().getPassword())) {
                 errors.rejectValue("currentPassword", "currentPassword.invalid");
             }
             //password and confirm password fields must be equal
