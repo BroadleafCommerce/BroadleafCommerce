@@ -299,6 +299,7 @@ public class BroadleafCartController extends AbstractCartController {
         
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<>();
+            extraData.put("skuId", itemRequest.getSkuId());
             extraData.put("productId", itemRequest.getProductId());
             extraData.put("cartItemCount", cart.getItemCount());
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
@@ -338,6 +339,7 @@ public class BroadleafCartController extends AbstractCartController {
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<>();
             extraData.put("cartItemCount", cart.getItemCount());
+            extraData.put("skuId", itemRequest.getSkuId());
             extraData.put("productId", itemRequest.getProductId());
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
             return getCartView();
