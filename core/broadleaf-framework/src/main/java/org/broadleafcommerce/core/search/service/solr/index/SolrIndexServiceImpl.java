@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -39,10 +40,7 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
@@ -75,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -104,9 +103,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Value("${solr.index.product.pageSize}")
     protected int pageSize;
 
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Value("${solr.index.commit}")
     protected boolean commit;
 
@@ -121,9 +117,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
-
-    @Resource(name = "blSkuDao")
-    protected SkuDao skuDao;
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -293,11 +286,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @return
      */
     protected Long countIndexableItems() {
-        if (useSku) {
-            return skuDao.readCountAllActiveSkus();
-        } else {
-            return productDao.readCountAllActiveProducts();
-        }
+        return productDao.readCountAllActiveProducts();
     }
 
     /**
@@ -465,41 +454,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     protected List<? extends Indexable> readAllActiveIndexables(int pageSize, Long lastId) {
-        if (useSku) {
-            List<Sku> skus = skuDao.readAllActiveSkus(pageSize, lastId);
-            return filterIndexableSkus(skus);
-        } else {
-            return productDao.readAllActiveProducts(pageSize, lastId);
-        }
-    }
-
-    @Override
-    public List<Sku> filterIndexableSkus(List<Sku> skus) {
-        ArrayList<Sku> skusToIndex = new ArrayList<>();
-
-        if (CollectionUtils.isNotEmpty(skus)) {
-            for (Sku sku : skus) {
-                //If the sku is not active, don't index it...
-                if (!sku.isActive()) {
-                    continue;
-                }
-
-                //If this is the default sku and the product has product options
-                //and is not allowed to be sold without product options
-                if (sku.getDefaultProduct() != null
-                        && !sku.getProduct().getCanSellWithoutOptions()
-                        && !sku.getProduct().getAdditionalSkus().isEmpty()) {
-                    continue;
-                }
-                
-                if (sku.getDefaultProduct() instanceof ProductBundle) {
-                    continue;
-                }
-
-                skusToIndex.add(sku);
-            }
-        }
-        return skusToIndex;
+        return productDao.readAllActiveProducts(pageSize, lastId);
     }
 
     @Override
@@ -525,7 +480,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     
     @Override
     public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales) {
-        final SolrInputDocument document = new SolrInputDocument();
+        final SolrInputDocument document = new SolrInputDocument(new LinkedHashMap<String,SolrInputField>());
 
         attachBasicDocumentFields(indexable, document);
 

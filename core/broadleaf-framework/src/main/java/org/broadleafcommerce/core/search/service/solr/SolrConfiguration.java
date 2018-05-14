@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * <p>
@@ -68,6 +67,9 @@ public class SolrConfiguration implements InitializingBean {
 
     //This is the default number of shards that should be created if a SolrCloud collection is created via API
     protected Integer solrCloudNumShards = null;
+
+    //This is the default number of replicas that should be created if a SolrCloud collection is created via API
+    protected Integer solrCloudNumReplicas = null;
 
     protected String solrHomePath = null;
     
@@ -110,6 +112,14 @@ public class SolrConfiguration implements InitializingBean {
 
     public void setSolrCloudNumShards(Integer solrCloudNumShards) {
         this.solrCloudNumShards = solrCloudNumShards;
+    }
+    
+    public Integer getSolrCloudNumReplicas() {
+        return solrCloudNumReplicas;
+    }
+    
+    public void setSolrCloudNumReplicas(Integer solrCloudNumReplicas) {
+        this.solrCloudNumReplicas = solrCloudNumReplicas;
     }
 
     public String getSolrHomePath() {
@@ -524,19 +534,14 @@ public class SolrConfiguration implements InitializingBean {
                         break;
                     }
                 }
-
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
-
-                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
+                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
+                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
                 }
             }
 
@@ -559,19 +564,15 @@ public class SolrConfiguration implements InitializingBean {
                         break;
                     }
                 }
+                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
+                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName).process(primary);
 
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                        .setConfigName(solrCloudConfigName).process(primary);
-
-                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
-                        .setAliasedCollections(collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
-                            .setConfigName(solrCloudConfigName).process(primary);
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
                 }
             }
         }
@@ -615,11 +616,10 @@ public class SolrConfiguration implements InitializingBean {
     }
     
     protected void createCollectionIfNotExist(CloudSolrClient client, String collectionName) {
-        Set<String> collectionNames = client.getZkStateReader().getClusterState().getCollections();
-        if (!collectionNames.contains(collectionName)) {
+        if (!client.getZkStateReader().getClusterState().hasCollection(collectionName)) {
             try {
-                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(getSolrCloudNumShards())
-                        .setMaxShardsPerNode(getSolrCloudNumShards()).setConfigName(getSolrCloudConfigName()).process(client);
+                CollectionAdminRequest.createCollection(collectionName, getSolrCloudConfigName(), getSolrCloudNumShards(), getSolrCloudNumReplicas())
+                        .setMaxShardsPerNode(getSolrCloudNumShards()).process(client);
             } catch (SolrServerException e) {
                 throw ExceptionHelper.refineException(e);
             } catch (IOException e) {
@@ -633,8 +633,7 @@ public class SolrConfiguration implements InitializingBean {
         Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
         if (!aliasCollectionMap.containsKey(aliasName)) {
             try {
-                new CollectionAdminRequest.CreateAlias().setAliasName(aliasName)
-                        .setAliasedCollections(collectionName).process(client);
+                CollectionAdminRequest.createAlias(aliasName, collectionName).process(client);
             } catch (SolrServerException e) {
                 throw ExceptionHelper.refineException(e);
             } catch (IOException e) {

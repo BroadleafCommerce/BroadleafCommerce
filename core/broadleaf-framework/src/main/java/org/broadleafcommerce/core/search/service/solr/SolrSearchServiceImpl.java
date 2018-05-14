@@ -36,7 +36,6 @@ import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
@@ -85,9 +84,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Qualifier("blCatalogSolrConfiguration")
     @Autowired(required = false)
     protected SolrConfiguration solrConfiguration;
-
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
 
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
@@ -280,14 +276,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         result.setQueryResponse(response);
         setPagingAttributes(result, numResults, searchCriteria);
 
-        if (useSku) {
-            List<Sku> skus = getSkus(responseDocuments);
-            result.setSkus(skus);
-        } else {
-            // Get the products
-            List<Product> products = getProducts(responseDocuments);
-            result.setProducts(products);
-        }
+        // Get the products
+        List<Product> products = getProducts(responseDocuments);
+        result.setProducts(products);
 
         return result;
     }
@@ -428,9 +419,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         ExtensionResultStatusType status = extensionManager.getProxy().getSearchFacets(searchFacets);
 
         if (Objects.equals(ExtensionResultStatusType.NOT_HANDLED, status)) {
-            if (useSku) {
-                return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
-            }
             return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
         }
 
@@ -580,35 +568,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         extensionManager.getProxy().modifySearchResults(responseDocuments, products);
 
         return products;
-    }
-
-    /**
-     * Given a list of Sku IDs from solr, this method will look up the IDs via the skuDao and build out
-     * actual Sku instances. It will return a Sku list that is sorted by the order of the IDs in the passed
-     * in list.
-     * 
-     * @param response
-     * @return the actual Sku instances as a result of the search
-     */
-    protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
-        final List<Long> skuIds = new ArrayList<>();
-        for (SolrDocument doc : responseDocuments) {
-            skuIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
-        }
-
-        List<Sku> skus = skuDao.readSkusByIds(skuIds);
-
-        // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
-        if (skus != null) {
-            Collections.sort(skus, new Comparator<Sku>() {
-                @Override
-                public int compare(Sku o1, Sku o2) {
-                    return new Integer(skuIds.indexOf(o1.getId())).compareTo(skuIds.indexOf(o2.getId()));
-                }
-            });
-        }
-
-        return skus;
     }
 
     /**

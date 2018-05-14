@@ -61,74 +61,10 @@ class SolrIndexServiceSpec extends Specification {
         service.indexFieldDao = mockFieldDao
         service.transactionManager = mockTransactionManager
         service.productDao = mockProductDao
-        service.skuDao = mockSkuDao
         service.localeService = mockLocaleService
         service.shs = mockShs
         service.extensionManager = mockExtensionManager
         service.sandBoxHelper = mockSandBoxHelper
     }
     
-    def "Test that Categories are being properly associated to skus when creating the solr index"(){
-        setup:
-        mockFieldDao.readFieldsByEntityType(FieldEntity.SKU) >> new ArrayList<Field>()
-        
-        service.buildDocument(*_) >> null
-        service.useSku = true;
-
-        SkuImpl testSku1 = Mock(SkuImpl)
-        SkuImpl testSku2 = Mock(SkuImpl)
-        ProductImpl testProduct1 = Mock(ProductImpl)
-        ProductImpl testProduct2 = Mock(ProductImpl)
-        
-        testProduct1.getId() >> 1
-        testProduct2.getId() >> 2
-        
-        testSku1.getProduct() >> testProduct1
-        testSku2.getProduct() >> testProduct2
-        
-        List<Sku> skus = [testSku1, testSku2]
-        
-        List<Long> productIds = [1, 2]
-     
-        when:
-        service.buildIncrementalIndex(skus, mockSolrClient)
-        
-        then:
-        1 * mockSolrIndexDao.populateProductCatalogStructure(productIds, _)
-        
-    }
-    
-    def "Test that Categories are being properly associated to skus when creating the solr index for out of order skus"(){
-        setup:
-        mockFieldDao.readFieldsByEntityType(FieldEntity.SKU) >> new ArrayList<Field>()
-        
-        service.buildDocument(*_) >> null
-        service.useSku = true;
-
-        SkuImpl testSku1 = Mock(SkuImpl)
-        SkuImpl testSku2 = Mock(SkuImpl)
-        SkuImpl testSku3 = Mock(SkuImpl)
-        ProductImpl testProduct1 = Mock(ProductImpl)
-        ProductImpl testProduct2 = Mock(ProductImpl)
-        ProductImpl testProduct3 = Mock(ProductImpl)
-        
-        testProduct1.getId() >> 1
-        testProduct2.getId() >> 2
-        testProduct3.getId() >> 3
-        
-        testSku1.getProduct() >> testProduct1
-        testSku2.getProduct() >> testProduct2
-        testSku3.getProduct() >> testProduct3
-        
-        List<Sku> skus = [testSku3, testSku1, testSku2]
-        
-        List<Long> productIds = [3, 1, 2]
-     
-        when:
-        service.buildIncrementalIndex(skus, mockSolrClient)
-        
-        then:
-        1 * mockSolrIndexDao.populateProductCatalogStructure(productIds, _)
-        
-    }
 }

@@ -33,7 +33,6 @@ import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotPr
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -56,9 +55,6 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
 
     public static final int ORDER = 2000;
     
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
 
@@ -68,42 +64,39 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
     
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
-        if(!useSku) {
-            Order order = context.getSeedData().getOrder();
-            List<DiscreteOrderItem> orderItems = getOrderItems(order);
+        Order order = context.getSeedData().getOrder();
+        List<DiscreteOrderItem> orderItems = getOrderItems(order);
 
-            for (DiscreteOrderItem discreteOI : orderItems) {
-                Map<String, OrderItemAttribute> attributeValues = discreteOI.getOrderItemAttributes();
-                Product product = discreteOI.getProduct();
+        for (DiscreteOrderItem discreteOI : orderItems) {
+            Map<String, OrderItemAttribute> attributeValues = discreteOI.getOrderItemAttributes();
+            Product product = discreteOI.getProduct();
 
-                if (product != null) {
-                    for (ProductOptionXref productOptionXref : ListUtils.emptyIfNull(product.getProductOptionXrefs())) {
-                        ProductOption productOption = productOptionXref.getProductOption();
-                        String attributeName = productOption.getAttributeName();
-                        OrderItemAttribute attribute = attributeValues.get(attributeName);
-                        String attributeValue = (attribute != null) ? attribute.getValue() : null;
-                        boolean isRequired = productOption.getRequired();
-                        boolean hasStrategy = productOptionValidationService.hasProductOptionValidationStrategy(productOption);
-                        boolean isAddOrNoneType = productOptionValidationService.isAddOrNoneType(productOption);
-                        boolean isSubmitType = productOptionValidationService.isSubmitType(productOption);
+            if (product != null) {
+                for (ProductOptionXref productOptionXref : ListUtils.emptyIfNull(product.getProductOptionXrefs())) {
+                    ProductOption productOption = productOptionXref.getProductOption();
+                    String attributeName = productOption.getAttributeName();
+                    OrderItemAttribute attribute = attributeValues.get(attributeName);
+                    String attributeValue = (attribute != null) ? attribute.getValue() : null;
+                    boolean isRequired = productOption.getRequired();
+                    boolean hasStrategy = productOptionValidationService.hasProductOptionValidationStrategy(productOption);
+                    boolean isAddOrNoneType = productOptionValidationService.isAddOrNoneType(productOption);
+                    boolean isSubmitType = productOptionValidationService.isSubmitType(productOption);
 
-                        if (isMissingRequiredAttribute(isRequired, hasStrategy, isAddOrNoneType, isSubmitType, attributeValue)) {
-                            String message = "Unable to validate cart, product  (" + product.getId() + ") required"
-                                             + " attribute was not provided: " + attributeName;
-                            throw new RequiredAttributeNotProvidedException(message, attributeName, String.valueOf(product.getId()));
-                        }
+                    if (isMissingRequiredAttribute(isRequired, hasStrategy, isAddOrNoneType, isSubmitType, attributeValue)) {
+                        String message = "Unable to validate cart, product  (" + product.getId() + ") required" + " attribute was not provided: " + attributeName;
+                        throw new RequiredAttributeNotProvidedException(message, attributeName, String.valueOf(product.getId()));
+                    }
 
-                        boolean hasValidationType = productOption.getProductOptionValidationType() != null;
+                    boolean hasValidationType = productOption.getProductOptionValidationType() != null;
 
-                        if (shouldValidateWithException(hasValidationType, hasStrategy, isAddOrNoneType, isSubmitType)) {
-                            productOptionValidationService.validate(productOption, attributeValue);
-                        }
+                    if (shouldValidateWithException(hasValidationType, hasStrategy, isAddOrNoneType, isSubmitType)) {
+                        productOptionValidationService.validate(productOption, attributeValue);
+                    }
 
-                        if (hasStrategy && !(isAddOrNoneType || isSubmitType)) {
-                            //we need to validate however, we will not error out
-                            ActivityMessages messages = (ActivityMessages) context;
-                            productOptionValidationService.validateWithoutException(productOption, attributeValue, messages);
-                        }
+                    if (hasStrategy && !(isAddOrNoneType || isSubmitType)) {
+                        //we need to validate however, we will not error out
+                        ActivityMessages messages = (ActivityMessages) context;
+                        productOptionValidationService.validateWithoutException(productOption, attributeValue, messages);
                     }
                 }
             }

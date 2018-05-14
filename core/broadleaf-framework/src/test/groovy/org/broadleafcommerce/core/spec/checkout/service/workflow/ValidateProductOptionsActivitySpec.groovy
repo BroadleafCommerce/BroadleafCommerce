@@ -65,21 +65,6 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
         mockProductOptionValidationService = Spy(ProductOptionValidationServiceImpl)
     }
 
-    def "Test that validation is skipped when useSku is set"() {
-        setup:
-        activity = new ValidateProductOptionsActivity().with {
-            useSku = true
-            productOptionValidationService = mockProductOptionValidationService
-            it
-        }
-
-        when: "I execute the ValidateProductOptionsActivity"
-        context = activity.execute(context)
-
-        then: "No validation steps should be taken, and the ProductOptionValidationService should never be used"
-        0 * mockProductOptionValidationService._
-    }
-
     def "Test that exception is thrown when attributeValues for a DiscreteOrder Item when ProductOptions are required are not provided"() {
         setup:
 
@@ -96,7 +81,6 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
         context.seedData.order.setOrderItems(orderItems)
 
         activity = new ValidateProductOptionsActivity().with {
-            useSku = false
             productOptionValidationService = mockProductOptionValidationService
             it
         }
@@ -130,7 +114,6 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
         context.seedData.order.setOrderItems(orderItems)
 
         activity = new ValidateProductOptionsActivity().with {
-            useSku = false
             productOptionValidationService = mockProductOptionValidationService
             it
         }
@@ -162,7 +145,6 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
 
 
         activity = new ValidateProductOptionsActivity().with {
-            useSku = false
             productOptionValidationService = mockProductOptionValidationService
             it
         }

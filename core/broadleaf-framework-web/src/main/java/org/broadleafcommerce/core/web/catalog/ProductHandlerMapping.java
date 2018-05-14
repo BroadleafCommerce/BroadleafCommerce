@@ -59,9 +59,6 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Value("${request.uri.encoding}")
     public String charEncoding;
 
@@ -89,10 +86,6 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     }
 
     public boolean shouldSkipExecution(HttpServletRequest request) throws ServletRequestBindingException {
-        if (useSku) {
-            return true;
-        }
-
         if (allowCategoryResolutionUsingIdParam()
                 && ServletRequestUtils.getLongParameter(request, "categoryId") != null) {
             return true;

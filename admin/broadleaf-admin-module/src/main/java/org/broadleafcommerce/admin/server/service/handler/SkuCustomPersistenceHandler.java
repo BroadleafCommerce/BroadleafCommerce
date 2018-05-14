@@ -109,10 +109,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
     public static String INVENTORY_ONLY_CRITERIA = "onlyInventoryProperties";
 
-
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Value("${use.to.one.lookup.sku.product.option.value:false}")
     protected boolean useToOneLookupSkuProductOptionValue = false;
 
@@ -827,9 +823,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
     protected Entity validateUniqueProductOptionValueCombination(Product product, List<Property> productOptionProperties, Sku currentSku) {
-        if(useSku) {
-            return null;
-        }
         //do not attempt POV validation if no PO properties were passed in
         if (CollectionUtils.isNotEmpty(productOptionProperties)) {
             List<Long> productOptionValueIds = new ArrayList<>();

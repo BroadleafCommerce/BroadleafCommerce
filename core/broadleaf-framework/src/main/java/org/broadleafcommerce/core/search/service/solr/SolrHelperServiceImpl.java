@@ -132,9 +132,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
 
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Value(value = "${using.solr.server:true}")
     protected boolean isSolrConfigured;
 
@@ -175,10 +172,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 reindexCollectionName = reindexCollectionName.split(",")[0];
 
                 //Essentially "swap cores" here by reassigning the aliases
-                new CollectionAdminRequest.CreateAlias().setAliasName(primaryCloudClient.getDefaultCollection())
-                        .setAliasedCollections(reindexCollectionName).process(primaryCloudClient);
-                new CollectionAdminRequest.CreateAlias().setAliasName(reindexCloudClient.getDefaultCollection())
-                        .setAliasedCollections(primaryCollectionName).process(reindexCloudClient);
+                CollectionAdminRequest.createAlias(primaryCloudClient.getDefaultCollection(), reindexCollectionName).process(primaryCloudClient);
+                CollectionAdminRequest.createAlias(reindexCloudClient.getDefaultCollection(), primaryCollectionName).process(reindexCloudClient);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
@@ -288,7 +283,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getPrimaryDocumentType() {
-        return (useSku) ? FieldEntity.SKU.getType() : FieldEntity.PRODUCT.getType();
+        return FieldEntity.PRODUCT.getType();
     }
 
     @Override
@@ -336,11 +331,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getIndexableIdFieldName() {
-        if (useSku) {
-            return "skuId";
-        } else {
-            return "productId";
-        }
+        return "productId";
     }
 
     @Override
@@ -983,11 +974,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         ExtensionResultStatusType status = searchExtensionManager.getProxy().getSearchableIndexFields(fields);
 
         if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
-            if (useSku) {
-                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.SKU);
-            } else {
-                fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.PRODUCT);
-            }
+            fields = indexFieldDao.readSearchableFieldsByEntityType(FieldEntity.PRODUCT);
         }
 
         return fields;

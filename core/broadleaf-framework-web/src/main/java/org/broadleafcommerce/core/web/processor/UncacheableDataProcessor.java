@@ -41,7 +41,6 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -76,9 +75,6 @@ import javax.annotation.Resource;
 @ConditionalOnTemplating
 public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementProcessor {
     
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
-
     @Resource(name = "blInventoryService")
     protected InventoryService inventoryService;
 
@@ -196,18 +192,13 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
                 if (item instanceof SkuAccessor) {
                     Sku sku = ((SkuAccessor) item).getSku();
                     if (sku != null && sku.getProduct() != null && item.getParentOrderItem() == null) {
-                        if (useSku) {
-                            cartItemIdsWithoutOptions.add(sku.getId());
+                        Product product = sku.getProduct();
+                        List<ProductOptionXref> optionXrefs = product.getProductOptionXrefs();
+                        if (optionXrefs == null || optionXrefs.isEmpty()) {
+                            cartItemIdsWithoutOptions.add(product.getId());
                         } else {
-                            Product product = sku.getProduct();
-                            List<ProductOptionXref> optionXrefs = product.getProductOptionXrefs();
-                            if (optionXrefs == null || optionXrefs.isEmpty()) {
-                                cartItemIdsWithoutOptions.add(product.getId());
-                            } else {
-                                cartItemIdsWithOptions.add(product.getId());
-                            } 
+                            cartItemIdsWithOptions.add(product.getId());
                         }
-                        
                     }
                 }
             }
