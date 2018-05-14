@@ -19,10 +19,12 @@ package org.broadleafcommerce.profile.web.core.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -66,6 +68,9 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     @Resource(name = "blAnonymousCustomerExtensionManager")
     protected AnonymousCustomerExtensionManager anonymousCustomerExtensionManager;
 
+    @Resource(name="blEntityExtensionManagers")
+    protected Map<String, ExtensionManager> entityExtensionManagers;
+
     protected ApplicationEventPublisher eventPublisher;
 
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomer";
@@ -77,6 +82,10 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
 
     @Override
     public void process(WebRequest request) {
+
+        BroadleafRequestContext brc = new BroadleafRequestContext();
+        brc.getAdditionalProperties().putAll(entityExtensionManagers);
+
         Customer customer = null;
         Long overrideId = null;
         if (BLCRequestUtils.isOKtoUseSession(request)) {
