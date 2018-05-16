@@ -77,8 +77,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -844,6 +846,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     String[] selectedValues = entry.getValue().clone();
                     boolean rangeQuery = false;
                     for (int i = 0; i < selectedValues.length; i++) {
+                        try {
+                            selectedValues[i] = URLDecoder.decode(selectedValues[i], "UTF-8");
+                        } catch (UnsupportedEncodingException e){
+                            throw new RuntimeException("UTF-8 was somehow an unsupported encoding type", e);
+                        }
                         if (selectedValues[i].contains("range[")) {
                             rangeQuery = true;
                             String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
