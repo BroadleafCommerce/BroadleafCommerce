@@ -1532,7 +1532,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 continue;
             }
 
-            if (collectionRecords != null) {
+            if (collectionRecords != null && !collectionRecords.isEmpty()) {
                 DynamicResultSet subCollectionEntities = collectionRecords.get(p.getName());
                 String containingEntityId = entity.getPMap().get(ef.getIdProperty()).getValue();
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
