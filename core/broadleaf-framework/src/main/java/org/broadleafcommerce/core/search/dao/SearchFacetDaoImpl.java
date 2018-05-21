@@ -52,24 +52,34 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
     
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
     @Override
     public List<SearchFacet> readAllSearchFacets(FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<SearchFacet> criteria = builder.createQuery(SearchFacet.class);
-        
+
         Root<SearchFacetImpl> facet = criteria.from(SearchFacetImpl.class);
-        
+
         criteria.select(facet);
+
+        Path<Character> archived = facet.get("archiveStatus").get("archived");
+
         criteria.where(
                 builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
-                facet.join("fieldType").join("indexField").join("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
+                builder.or(builder.isNull(archived.as(String.class)),
+                           builder.notEqual(archived.as(Character.class), 'Y')),
+                facet.join("fieldType")
+                        .join("indexField")
+                        .join("field")
+                        .get("entityType")
+                        .as(String.class)
+                        .in(entityType.getAllLookupTypes())
         );
 
         TypedQuery<SearchFacet> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
-        
+
         return query.getResultList();
     }
     
