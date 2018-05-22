@@ -57,7 +57,9 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -177,15 +179,18 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 case DATE:
                     Date date = (Date) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
                     String oldValue = null;
+
+                    DateFormat dateFormat = getDateFormatToPopulateValue(populateValueRequest, instance);
+
                     if (date != null) {
-                        oldValue = populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().format(date);
+                        oldValue = dateFormat.format(date);
                     }
+
                     prop.setOriginalValue(oldValue);
                     prop.setOriginalDisplayValue(prop.getOriginalValue());
                     dirty = !StringUtils.equals(oldValue, populateValueRequest.getRequestedValue());
                     populateValueRequest.getFieldManager().setFieldValue(instance,
-                            populateValueRequest.getProperty().getName(), populateValueRequest.getDataFormatProvider().
-                                    getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue()));
+                            populateValueRequest.getProperty().getName(), dateFormat.parse(populateValueRequest.getRequestedValue()));
                     break;
                 case DECIMAL:
                     if (origInstanceValue != null) {
@@ -415,6 +420,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         try {
             if (extractValueRequest.getRequestedValue() != null) {
                 String val = null;
+
+                DateFormat dataFormat = getDateFormatToExtractValue(extractValueRequest);
+
                 if (extractValueRequest.getMetadata().getForeignKeyCollection()) {
                     ((BasicFieldMetadata) property.getMetadata()).setFieldType(extractValueRequest.getMetadata()
                             .getFieldType());
@@ -422,14 +430,11 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         extractValueRequest.getRequestedValue() instanceof Character) {
                     val = (extractValueRequest.getRequestedValue().equals('Y')) ? "true" : "false";
                 } else if (Date.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = extractValueRequest.getDataFormatProvider().getSimpleDateFormatter
-                            ().format((Date) extractValueRequest.getRequestedValue());
+                    val = dataFormat.format((Date) extractValueRequest.getRequestedValue());
                 } else if (Timestamp.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = extractValueRequest.getDataFormatProvider().getSimpleDateFormatter
-                            ().format(new Date(((Timestamp) extractValueRequest.getRequestedValue()).getTime()));
+                    val = dataFormat.format(new Date(((Timestamp) extractValueRequest.getRequestedValue()).getTime()));
                 } else if (Calendar.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = extractValueRequest.getDataFormatProvider().getSimpleDateFormatter
-                            ().format(((Calendar) extractValueRequest.getRequestedValue()).getTime());
+                    val = dataFormat.format(((Calendar) extractValueRequest.getRequestedValue()).getTime());
                 } else if (Double.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
                     val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format
                             (extractValueRequest.getRequestedValue());
@@ -704,6 +709,14 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             }
         }
         return MetadataProviderResponse.HANDLED;
+    }
+
+    protected SimpleDateFormat getDateFormatToPopulateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+        return populateValueRequest.getDataFormatProvider().getSimpleDateFormatter();
+    }
+
+    protected SimpleDateFormat getDateFormatToExtractValue(ExtractValueRequest extractValueRequest) {
+        return extractValueRequest.getDataFormatProvider().getSimpleDateFormatter();
     }
 
     @Override
