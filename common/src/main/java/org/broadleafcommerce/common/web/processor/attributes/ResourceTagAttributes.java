@@ -13,6 +13,7 @@ public class ResourceTagAttributes {
     private boolean defer;
     private boolean includeAsyncDeferUnbundled;
     private String dependencyEvent;
+    private String files;
 
     /**
      * Construct a {@link ResourceTagAttributes} with all default values.
@@ -33,6 +34,7 @@ public class ResourceTagAttributes {
         this.defer = toCopy.defer;
         this.includeAsyncDeferUnbundled = toCopy.includeAsyncDeferUnbundled;
         this.dependencyEvent = toCopy.dependencyEvent;
+        this.files = toCopy.files;
     }
 
     public String src() {
@@ -97,6 +99,15 @@ public class ResourceTagAttributes {
 
     public ResourceTagAttributes dependencyEvent(String dependencyEvent) {
         this.dependencyEvent = dependencyEvent;
+        return this;
+    }
+
+    public String files() {
+        return files;
+    }
+
+    public ResourceTagAttributes files(String files) {
+        this.files = files;
         return this;
     }
 }
