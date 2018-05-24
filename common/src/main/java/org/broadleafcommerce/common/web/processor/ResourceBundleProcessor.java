@@ -135,6 +135,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  * @author apazzolini
  * @author bpolster
+ * @author Jacob Mitash (jmitash)
  * @see ResourceBundlingService
  */
 @Component("blResourceBundleProcessor")
@@ -336,6 +337,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     /**
      * @deprecated Use {@link #getScriptAttributes(ResourceTagAttributes)} instead
      */
+    @Deprecated
     protected Map<String, String> getScriptAttributes(String src, boolean async, boolean defer) {
         ResourceTagAttributes resourceTagAttributes = new ResourceTagAttributes()
                 .src(src)
@@ -367,6 +369,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     /**
      * @deprecated Use {@link #getLinkAttributes(ResourceTagAttributes)} instead
      */
+    @Deprecated
     protected Map<String, String> getLinkAttributes(String src) {
         return getLinkAttributes(new ResourceTagAttributes().src(src));
     }
@@ -381,8 +384,5 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         attributes.put("rel", "stylesheet");
         attributes.put("href", tagAttributes.src());
         return attributes;
-    }
-
-    static {
     }
 }

@@ -16,7 +16,9 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.springframework.core.env.Environment;
 
 /**
- * @author Jacob Mitash
+ * An abstract tag replacement processor that provides methods to help get resource/bundle information
+ *
+ * @author Jacob Mitash (jmitash)
  */
 public abstract class AbstractResourceProcessor extends AbstractBroadleafTagReplacementProcessor {
 
