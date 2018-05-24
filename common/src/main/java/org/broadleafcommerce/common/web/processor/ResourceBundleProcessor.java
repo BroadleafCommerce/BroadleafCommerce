@@ -326,27 +326,34 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         methodName = methodName.replaceAll("-", "_");
         methodName = methodName.replaceAll("\\.", "_");
 
-        String script = "<script>\n" +
-                "if (typeof(" + dependencyEvent + "Event) !== 'undefined'){" +
-                "$(function() {" +
-                "handle" + methodName + "();" +
-                "});" +
+        String script =
+                "<script>" +
+                "function runOnReady(callback, event) {" +
+                "    var watchEvent = typeof(event) == 'undefined' ? 'DOMContentLoaded' : event;" +
+                "    if (document.readyState != 'loading' && !event) {" +
+                "        callback();" +
+                "    } else {" +
+                "        document.addEventListener(watchEvent, callback);" +
+                "    }" +
+                "}; " +
+                "" +
+                "if (typeof(" + dependencyEvent + "Event) !== 'undefined') {" +
+                "    runOnReady(handle" + methodName + ");" +
                 "} else {" +
-                "document.body.addEventListener('" + dependencyEvent + "'," +
-                "function (elem) {" +
-                "$(function() {" +
-                "handle" + methodName + "();" +
-                "});" +
-                "}, false" +
-                ");" +
-                "}" +
+                "    runOnReady(function() {" +
+                "            runOnReady(handle" + methodName + ");" +
+                "        }," +
+                "        '" + dependencyEvent + "');" +
+                "} " +
+                "" +
                 "function handle" + methodName + "() {" +
-                "var script= document.createElement('script');" +
-                "script.type= 'text/javascript';" +
-                "script.src= '" + attributes.src() + "';" +
-                "document.body.append(script);" +
-                "}" +
-                "\n</script>";
+                "    var script = document.createElement('script');" +
+                "    script.type = 'text/javascript';" +
+                "    script.src = '" + attributes.src() + "';" +
+                "    document.body.append(script);" +
+                "};" +
+                "</script>";
+
         BroadleafTemplateElement linkedData = context.createTextElement(script);
         model.addElement(linkedData);
     }
