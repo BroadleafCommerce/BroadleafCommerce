@@ -12,6 +12,7 @@ import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.springframework.core.env.Environment;
 
 /**
@@ -32,6 +33,40 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
     protected boolean getBundleEnabled() {
         return Boolean.parseBoolean(environment.getProperty("bundle.enabled"));
     }
+
+    @Override
+    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        ResourceTagAttributes resourceTagAttributes = buildResourceTagAttributes(tagAttributes);
+
+        final List<String> files = getAllBundleFiles(resourceTagAttributes);
+
+        BroadleafTemplateModel model;
+        if (getBundleEnabled()) {
+            model = buildModelBundled(files, resourceTagAttributes, context);
+        } else {
+            model = buildModelUnbundled(files, resourceTagAttributes, context);
+        }
+
+        return model;
+    }
+
+    /**
+     * Builds the model that contains the unbundled resources the tag should be replaced with
+     * @param files list of files that were requested
+     * @param attributes the attributes of the original tag this processor replaces
+     * @param context the context of the original tag
+     * @return model containing resources the tag should be replaced with
+     */
+    protected abstract BroadleafTemplateModel buildModelUnbundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context);
+
+    /**
+     * Builds the model that contains the bundled resources the tag should be replaced with
+     * @param files list of files that were requested
+     * @param attributes the attributes of the original tag this processor replaces
+     * @param context the context of the original tag
+     * @return model containing resources the tag should be replaced with
+     */
+    protected abstract BroadleafTemplateModel buildModelBundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context);
 
     /**
      * Gets a list of the requested files for bundling
@@ -105,5 +140,21 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
         }
 
         return bundleUrl;
+    }
+
+    /**
+     * Gets all the files that should be included in the bundle
+     * @param tagAttributes the tag attributes of the resource tag to replace
+     * @return list of all the files to include in the bundle
+     */
+    protected List<String> getAllBundleFiles(ResourceTagAttributes tagAttributes) {
+        final List<String> allFiles = new ArrayList<>(getRequestedFiles(tagAttributes.files()));
+
+        final List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(tagAttributes.name());
+        if (additionalBundleFiles != null) {
+            allFiles.addAll(additionalBundleFiles);
+        }
+
+        return allFiles;
     }
 }

@@ -38,28 +38,6 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
     }
 
     @Override
-    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        ResourceTagAttributes resourceTagAttributes = buildResourceTagAttributes(tagAttributes);
-
-        List<String> files = getRequestedFiles(resourceTagAttributes.files());
-
-        BroadleafTemplateModel model;
-        if (getBundleEnabled()) {
-            model = buildModelBundled(files, resourceTagAttributes, context);
-        } else {
-            model = buildModelUnbundled(files, resourceTagAttributes, context);
-        }
-
-        return model;
-    }
-
-    /**
-     * Builds a model for the bundled resource
-     * @param files list of files to build the bundle of
-     * @param resourceTagAttributes the tag attributes of the &lt;blc:bundlepreload&gt; tag
-     * @param context the context of the bundlepreload tag
-     * @return a model containing a preload link for the bundled files
-     */
     protected BroadleafTemplateModel buildModelBundled(List<String> files, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
         BroadleafTemplateModel model = context.createModel();
 
@@ -75,13 +53,7 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
         return model;
     }
 
-    /**
-     * Builds a model for the unbundled resources
-     * @param files the list of files to build preload links for
-     * @param resourceTagAttributes the tag attributes of the &lt;blc:bundlepreload&gt; tag
-     * @param context the context of the bundlepreload tag
-     * @return a model containing preload links for the unbundled files
-     */
+    @Override
     protected BroadleafTemplateModel buildModelUnbundled(List<String> files, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
         BroadleafTemplateModel model = context.createModel();
 

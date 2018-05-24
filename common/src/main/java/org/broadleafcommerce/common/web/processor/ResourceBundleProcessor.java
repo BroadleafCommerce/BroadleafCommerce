@@ -17,23 +17,17 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 
@@ -153,51 +147,22 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     public int getPrecedence() {
         return 10000;
     }
-    
+
     @Override
-    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        ResourceTagAttributes resourceTagAttributes = buildResourceTagAttributes(tagAttributes);
-
-        List<String> files = getRequestedFiles(resourceTagAttributes.files());
-
-        List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(resourceTagAttributes.name());
-        if (additionalBundleFiles != null) {
-            files.addAll(additionalBundleFiles);
-        }
-
-        BroadleafTemplateModel model = context.createModel();
-        if (getBundleEnabled()) {
-            buildReplacementModelBundled(resourceTagAttributes, files, context, model);
-        } else {
-            buildReplacementModelUnbundled(resourceTagAttributes, files, context, model);
-        }
-
-        return model;
-    }
-
-    /**
-     * Adds the unbundled files to replacement model
-     * @param attributes the original bundle tag attributes
-     * @param files the list of files to add to the model
-     * @param context the context of the original bundle tag
-     * @param model the model to add the script to
-     */
-    protected void buildReplacementModelUnbundled(ResourceTagAttributes attributes, List<String> files, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+    protected BroadleafTemplateModel buildModelUnbundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        final BroadleafTemplateModel model = context.createModel();
         for (String fileName : files) {
             ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
                     .src(getFullUnbundledFileName(fileName, attributes, context));
             addElementToModel(unbundledAttributes, context, model);
         }
+
+        return model;
     }
 
-    /**
-     * Adds the bundle to replacement model
-     * @param attributes the original bundle tag attributes
-     * @param files the list of files to add to the model
-     * @param context the context of the original bundle tag
-     * @param model the model to add the script to
-     */
-    protected void buildReplacementModelBundled(ResourceTagAttributes attributes, List<String> files, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+    @Override
+    protected BroadleafTemplateModel buildModelBundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        final BroadleafTemplateModel model = context.createModel();
         final String bundleResourceName = bundlingService.resolveBundleResourceName(attributes.name(),
                 attributes.mappingPrefix(),
                 files);
@@ -206,6 +171,8 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         attributes.src(bundleUrl);
 
         addElementToModel(attributes, context, model);
+
+        return model;
     }
 
     /**
