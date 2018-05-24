@@ -25,6 +25,9 @@ import org.springframework.stereotype.Component;
  * looking it up with the bundle name. See {@link org.broadleafcommerce.common.web.request.ResourcesRequest} for
  * more information. This helps with not having to duplicate the bundle information across the &lt;blc:bundlepreload&gt;
  * and &lt;blc:bundle&gt; tags.
+ * <p>
+ * The &lt;bundlepreload&gt; accepts all the parameters that {@link ResourceBundleProcessor} accepts including one more:
+ * <br/>
  *
  * @author Jacob Mitash
  */
@@ -55,12 +58,16 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
         return model;
     }
 
-
     @Override
     protected BroadleafTemplateModel buildModelUnbundled(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
         BroadleafTemplateModel model = context.createModel();
 
         final List<String> files = postProcessUnbundledFileList(attributeFiles, resourceTagAttributes);
+
+        if (!getBundleEnabled() && !resourceTagAttributes.preloadWhenUnbundled()) {
+            //this needs to run after the post process so that the files can be updated on the request
+            return model;
+        }
 
         for (final String file : files) {
             final String fullFileName = getFullUnbundledFileName(file, resourceTagAttributes, context);

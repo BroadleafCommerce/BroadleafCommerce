@@ -114,7 +114,10 @@ import org.springframework.stereotype.Component;
  * <ul>
  *     <li>name - (required) the final name prefix of the bundle</li>
  *     <li>mapping-prefix - (required) the prefix appended to the final tag output whether that be</li>
- *     <li>files - (required) a comma-separated list of files that should be bundled together</li>
+ *     <li>
+ *         files - (required) a comma-separated list of files that should be bundled together. May be excluded
+ *         in some cases. See note at bottom.
+ *     </li>
  *     <li>async - (optional) true to set <code>async="true"</code> on the resulting tags</li>
  *     <li>defer - (optional) true to set <code>defer="true"</code> on JS or to add non-render-blocking CSS</li>
  *     <li>
