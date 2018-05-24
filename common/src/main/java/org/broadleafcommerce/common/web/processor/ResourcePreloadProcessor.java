@@ -20,6 +20,11 @@ import org.springframework.stereotype.Component;
  * <p>
  * This processor adds preload link tags which tell the browser to preload (download) a resource even though it isn't
  * yet in the DOM. Doing so decreases the latency when the script is ready to execute.
+ * <p>
+ * This processor has the ability to retrieve a bundle that has already been requested earlier in the template
+ * looking it up with the bundle name. See {@link org.broadleafcommerce.common.web.request.ResourcesRequest} for
+ * more information. This helps with not having to duplicate the bundle information across the &lt;blc:bundlepreload&gt;
+ * and &lt;blc:bundle&gt; tags.
  *
  * @author Jacob Mitash
  */
@@ -38,14 +43,11 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
     }
 
     @Override
-    protected BroadleafTemplateModel buildModelBundled(List<String> files, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
+    protected BroadleafTemplateModel buildModelBundled(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
         BroadleafTemplateModel model = context.createModel();
 
-        final String bundleResourceName = bundlingService.resolveBundleResourceName(resourceTagAttributes.name(),
-                resourceTagAttributes.mappingPrefix(),
-                files);
-
-        final String bundleUrl = getBundleUrl(bundleResourceName, context);
+        final String bundleResourcePath = getBundlePath(resourceTagAttributes, attributeFiles);
+        final String bundleUrl = getBundleUrl(bundleResourcePath, context);
 
         BroadleafTemplateElement bundlePreload = buildPreloadElement(bundleUrl, context);
         model.addElement(bundlePreload);
@@ -53,9 +55,12 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
         return model;
     }
 
+
     @Override
-    protected BroadleafTemplateModel buildModelUnbundled(List<String> files, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
+    protected BroadleafTemplateModel buildModelUnbundled(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
         BroadleafTemplateModel model = context.createModel();
+
+        final List<String> files = postProcessUnbundledFileList(attributeFiles, resourceTagAttributes);
 
         for (final String file : files) {
             final String fullFileName = getFullUnbundledFileName(file, resourceTagAttributes, context);
@@ -111,5 +116,4 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
             return null;
         }
     }
-
 }

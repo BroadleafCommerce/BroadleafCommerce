@@ -133,6 +133,13 @@ import org.springframework.stereotype.Component;
  *         <code>var testEvent = new CustomEvent("test"); document.body.dispatchEvent(testEvent);</code>
  *     </li>
  * </ul>
+ * <p>
+ *
+ * This processor has the ability to retrieve a bundle that has already been requested earlier in the template
+ * looking it up with the bundle name. See {@link org.broadleafcommerce.common.web.request.ResourcesRequest} for
+ * more information. This helps with not having to duplicate the bundle information across the &lt;blc:bundlepreload&gt;
+ * and &lt;blc:bundle&gt; tags.
+ *
  * @author apazzolini
  * @author bpolster
  * @author Jacob Mitash (jmitash)
@@ -168,8 +175,11 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     }
 
     @Override
-    protected BroadleafTemplateModel buildModelUnbundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+    protected BroadleafTemplateModel buildModelUnbundled(List<String> attributeFiles, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
         final BroadleafTemplateModel model = context.createModel();
+
+        final List<String> files = postProcessUnbundledFileList(attributeFiles, attributes);
+
         for (String fileName : files) {
             ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
                     .src(getFullUnbundledFileName(fileName, attributes, context));
@@ -180,13 +190,11 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     }
 
     @Override
-    protected BroadleafTemplateModel buildModelBundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+    protected BroadleafTemplateModel buildModelBundled(List<String> attributeFiles, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
         final BroadleafTemplateModel model = context.createModel();
-        final String bundleResourceName = bundlingService.resolveBundleResourceName(attributes.name(),
-                attributes.mappingPrefix(),
-                files);
 
-        final String bundleUrl = getBundleUrl(bundleResourceName, context);
+        final String bundleResourcePath = getBundlePath(attributes, attributeFiles);
+        final String bundleUrl = getBundleUrl(bundleResourcePath, context);
         attributes.src(bundleUrl);
 
         addElementToModel(attributes, context, model);
@@ -265,6 +273,12 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         }
     }
 
+    /**
+     * Gets a list of elements to add to the model for deferred CSS
+     * @param attributes the attributes of the original resource tag and the src of the CSS to include
+     * @param context the context of the original resource tag
+     * @return list of elements needed for deferred CSS
+     */
     protected List<BroadleafTemplateElement> getDeferredCssElements(ResourceTagAttributes attributes, BroadleafTemplateContext context) {
         List<BroadleafTemplateElement> elements = new ArrayList<>();
 

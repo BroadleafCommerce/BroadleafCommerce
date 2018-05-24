@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
+import org.broadleafcommerce.common.web.request.ResourcesRequest;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
@@ -25,8 +26,11 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
     @Resource
     protected Environment environment;
 
-    @Resource(name = "blResourceBundlingService")
+    @Resource
     protected ResourceBundlingService bundlingService;
+
+    @Resource
+    protected ResourcesRequest resourcesRequest;
 
     /**
      * Tells if bundling is enabled
@@ -40,9 +44,9 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
     public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         ResourceTagAttributes resourceTagAttributes = buildResourceTagAttributes(tagAttributes);
 
-        final List<String> files = getAllBundleFiles(resourceTagAttributes);
+        final List<String> files = buildBundledFilesList(resourceTagAttributes);
 
-        BroadleafTemplateModel model;
+        final BroadleafTemplateModel model;
         if (getBundleEnabled()) {
             model = buildModelBundled(files, resourceTagAttributes, context);
         } else {
@@ -54,28 +58,31 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
 
     /**
      * Builds the model that contains the unbundled resources the tag should be replaced with
-     * @param files list of files that were requested
+     * @param attributeFiles list of files that are to be included
      * @param attributes the attributes of the original tag this processor replaces
      * @param context the context of the original tag
      * @return model containing resources the tag should be replaced with
      */
-    protected abstract BroadleafTemplateModel buildModelUnbundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context);
+    protected abstract BroadleafTemplateModel buildModelUnbundled(List<String> attributeFiles, ResourceTagAttributes attributes, BroadleafTemplateContext context);
 
     /**
      * Builds the model that contains the bundled resources the tag should be replaced with
-     * @param files list of files that were requested
+     * @param attributeFiles list of files that are to be bundled
      * @param attributes the attributes of the original tag this processor replaces
      * @param context the context of the original tag
      * @return model containing resources the tag should be replaced with
      */
-    protected abstract BroadleafTemplateModel buildModelBundled(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context);
+    protected abstract BroadleafTemplateModel buildModelBundled(List<String> attributeFiles, ResourceTagAttributes attributes, BroadleafTemplateContext context);
 
     /**
      * Gets a list of the requested files for bundling
      * @param rawFiles comma separated list of files
-     * @return list of requested files with space trimmed
+     * @return list of requested files with space trimmed or null if rawFiles is null
      */
     protected List<String> getRequestedFiles(String rawFiles) {
+        if (rawFiles == null) {
+            return null;
+        }
         final String[] splitFiles = rawFiles.split(",");
         List<String> files = new ArrayList<>(splitFiles.length);
 
@@ -122,7 +129,6 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
      *
      * @param bundleName the path of the bundle to add
      * @param context the context of the original bundle tag
-     *
      * @return the full bundle URL
      */
     protected String getBundleUrl(String bundleName, BroadleafTemplateContext context) {
@@ -149,8 +155,13 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
      * @param tagAttributes the tag attributes of the resource tag to replace
      * @return list of all the files to include in the bundle
      */
-    protected List<String> getAllBundleFiles(ResourceTagAttributes tagAttributes) {
-        final List<String> allFiles = new ArrayList<>(getRequestedFiles(tagAttributes.files()));
+    protected List<String> buildBundledFilesList(ResourceTagAttributes tagAttributes) {
+        final List<String> requestedFiles = getRequestedFiles(tagAttributes.files());
+        if (requestedFiles == null) {
+            return null;
+        }
+
+        final List<String> allFiles = new ArrayList<>(requestedFiles);
 
         final List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(tagAttributes.name());
         if (additionalBundleFiles != null) {
@@ -158,5 +169,59 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
         }
 
         return allFiles;
+    }
+
+    /**
+     * Gets the bundle path. The path should still be put through {@link #getBundleUrl(String, BroadleafTemplateContext)}
+     * to get the href/src appropriate for the HTML.
+     * @param attributes the attributes on the original resource tag
+     * @param files the files requested with the bundle or null if not included
+     * @return the bundle path
+     */
+    protected String getBundlePath(ResourceTagAttributes attributes, List<String> files) {
+        final String requestBundle = resourcesRequest.getBundleForBundleName(attributes.name());
+        final String bundleResourceName;
+
+        if (requestBundle == null) {
+            //lookup the bundle normally
+            bundleResourceName = bundlingService.resolveBundleResourceName(attributes.name(),
+                    attributes.mappingPrefix(),
+                    files);
+        } else {
+            //this bundle was already requested somewhere in the template
+            bundleResourceName = requestBundle;
+        }
+
+        if (requestBundle == null) {
+            //save this for any other bundles that may be on the page
+            resourcesRequest.saveBundleForBundleName(attributes.name(), bundleResourceName);
+        }
+
+        return bundleResourceName;
+    }
+
+    /**
+     * Performs post processing on an unbundled file list to either grab the file list stored on the request (see
+     * {@link ResourcesRequest}) or use the files from the tag attributes and save them so they can be used
+     * again later without the files attribute.
+     * @param attributeFiles the files that were on the attribute (and any additional files to include)
+     * @param resourceTagAttributes the attributes that were on the original resource tag
+     * @return list of files to use as resources
+     */
+    protected List<String> postProcessUnbundledFileList(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes) {
+
+        final List<String> filesOnRequest = resourcesRequest.getFilesForBundleName(resourceTagAttributes.name());
+
+        if (filesOnRequest != null) {
+            // this bundle has already been requested earlier in the template
+            // we can use the stored files and not have to pull the information from the attributes
+            return filesOnRequest;
+        } else {
+            // store these files on the request in case they're requested again
+            // so we can pull them without the template having to have the files attribute again
+            resourcesRequest.saveFilesForBundleName(resourceTagAttributes.name(), attributeFiles);
+
+            return attributeFiles;
+        }
     }
 }
