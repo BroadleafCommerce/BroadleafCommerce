@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
 import org.springframework.stereotype.Component;
 
 
@@ -113,7 +116,7 @@ import org.springframework.stereotype.Component;
  *     <li>mapping-prefix - (required) the prefix appended to the final tag output whether that be</li>
  *     <li>files - (required) a comma-separated list of files that should be bundled together</li>
  *     <li>async - (optional) true to set <code>async="true"</code> on the resulting tags</li>
- *     <li>defer - (optional) true to set <code>defer="true"</code> on the resulting tags</li>
+ *     <li>defer - (optional) true to set <code>defer="true"</code> on JS or to add non-render-blocking CSS</li>
  *     <li>
  *         includeAsyncDeferUnbundled - (optional) true to include async and defer (if enabled) on the unbundled
  *         replacement tags. They are not included by default when unbundled due to race conditions between
@@ -137,6 +140,21 @@ import org.springframework.stereotype.Component;
 @Component("blResourceBundleProcessor")
 @ConditionalOnTemplating
 public class ResourceBundleProcessor extends AbstractResourceProcessor {
+
+    protected Map<String, String> deferredCssAttributes;
+    protected Map<String, String> normalCssAttributes;
+
+    public ResourceBundleProcessor() {
+        Map<String, String> deferredCssAttributes = new HashMap<>();
+        deferredCssAttributes.put("rel", "preload");
+        deferredCssAttributes.put("as", "style");
+        deferredCssAttributes.put("onload", "this.onload=null;this.rel='stylesheet';");
+        this.deferredCssAttributes = Collections.unmodifiableMap(deferredCssAttributes);
+
+        Map<String, String> normalCssAttributes = new HashMap<>();
+        normalCssAttributes.put("rel", "stylesheet");
+        this.normalCssAttributes = Collections.unmodifiableMap(normalCssAttributes);
+    }
 
     @Override
     public String getName() {
@@ -236,7 +254,30 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
      * @param model the model to add the link to
      */
     protected void addCssToModel(ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
-        model.addElement(context.createNonVoidElement("link", getLinkAttributes(attributes), true));
+        if (attributes.defer()) {
+            List<BroadleafTemplateElement> deferredCssElements = getDeferredCssElements(attributes, context);
+            for (BroadleafTemplateElement element : deferredCssElements) {
+                model.addElement(element);
+            }
+        } else {
+            model.addElement(context.createNonVoidElement("link", getLinkAttributes(attributes), true));
+        }
+    }
+
+    protected List<BroadleafTemplateElement> getDeferredCssElements(ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        List<BroadleafTemplateElement> elements = new ArrayList<>();
+
+        Map<String, String> deferredCssAttributes = new HashMap<>(this.deferredCssAttributes);
+        deferredCssAttributes.put("href", attributes.src());
+        elements.add(context.createStandaloneElement("link", deferredCssAttributes, true));
+
+        Map<String, String> normalCssAttributes = new HashMap<>(this.normalCssAttributes);
+        normalCssAttributes.put("href", attributes.src());
+        BroadleafTemplateNonVoidElement noScriptElement = context.createNonVoidElement("noscript");
+        noScriptElement.addChild(context.createStandaloneElement("link", normalCssAttributes, true));
+        elements.add(noScriptElement);
+
+        return elements;
     }
 
     /**
@@ -342,4 +383,6 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         return attributes;
     }
 
+    static {
+    }
 }

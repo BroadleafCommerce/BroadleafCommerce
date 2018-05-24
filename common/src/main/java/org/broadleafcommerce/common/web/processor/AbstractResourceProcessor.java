@@ -93,9 +93,9 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
         return new ResourceTagAttributes()
             .name(tagAttributes.get("name"))
             .mappingPrefix(tagAttributes.get("mapping-prefix"))
-            .async(tagAttributes.containsKey("async"))
-            .defer(tagAttributes.containsKey("defer"))
-            .includeAsyncDeferUnbundled(tagAttributes.containsKey("includeAsyncDeferUnbundled") && Boolean.parseBoolean(tagAttributes.get("includeAsyncDeferUnbundled")))
+            .async(Boolean.parseBoolean(tagAttributes.get("async")))
+            .defer(Boolean.parseBoolean(tagAttributes.get("defer")))
+            .includeAsyncDeferUnbundled(Boolean.parseBoolean(tagAttributes.get("includeAsyncDeferUnbundled")))
             .dependencyEvent(tagAttributes.get("bundle-dependency-event"))
             .files(tagAttributes.get("files"));
     }
