@@ -152,8 +152,8 @@ import org.springframework.stereotype.Component;
 @ConditionalOnTemplating
 public class ResourceBundleProcessor extends AbstractResourceProcessor {
 
-    protected Map<String, String> deferredCssAttributes;
-    protected Map<String, String> normalCssAttributes;
+    protected final Map<String, String> deferredCssAttributes;
+    protected final Map<String, String> normalCssAttributes;
 
     public ResourceBundleProcessor() {
         Map<String, String> deferredCssAttributes = new HashMap<>();
@@ -181,12 +181,18 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     protected BroadleafTemplateModel buildModelUnbundled(List<String> attributeFiles, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
         final BroadleafTemplateModel model = context.createModel();
 
-        final List<String> files = postProcessUnbundledFileList(attributeFiles, attributes);
+        final List<String> files = postProcessUnbundledFileList(attributeFiles, attributes, context);
 
-        for (String fileName : files) {
-            ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
-                    .src(getFullUnbundledFileName(fileName, attributes, context));
-            addElementToModel(unbundledAttributes, context, model);
+        if (StringUtils.isEmpty(attributes.dependencyEvent())) {
+            for (String fileName : files) {
+                ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
+                        .src(getFullUnbundledFileName(fileName, attributes, context));
+                addElementToModel(unbundledAttributes, context, model);
+            }
+        } else {
+            // Since everything here needs to be added to the DOM after the dependency event, the only thing we add
+            // is the JS that handles the dependency event itself
+            addDependentUnbundledRestrictionToModel(files, attributes, context, model);
         }
 
         return model;
@@ -246,7 +252,8 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     }
 
     /**
-     * Adds JavaScript to the model in a &lt;script&gt; tag
+     * Adds JavaScript to the model in a &lt;script&gt; tag or if a dependency event is specified, add JavaScript that
+     * will load the requested script once the dependency is satisfied.
      * @param attributes the original bundle tag attributes and the src of the JavaScript to add
      * @param context the context of the original bundle tag
      * @param model the model to add the script to
@@ -318,16 +325,83 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
      * @param model the model to add the script to
      */
     protected void addDependentBundleRestrictionToModel(ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
-        String methodName = attributes.src();
-        String dependencyEvent = attributes.dependencyEvent();
-        if (methodName.contains("/")) {
-            methodName = methodName.substring(methodName.lastIndexOf("/")+1, methodName.length());
-        }
-        methodName = methodName.replaceAll("-", "_");
-        methodName = methodName.replaceAll("\\.", "_");
+        final String functionName = cleanUpJavaScriptName(attributes.src() + attributes.name());
+        final String dependencyEvent = attributes.dependencyEvent();
 
-        String script =
+        final String script =
                 "<script>" +
+                getFoundationalDependentJavaScript(dependencyEvent, functionName) +
+                "function handle" + functionName + "() {" +
+                "    var script = document.createElement('script');" +
+                "    script.type = 'text/javascript';" +
+                "    script.src = '" + attributes.src() + "';" +
+                "    script.async = " + useAsyncJavaScript(attributes) + ";" +
+                "    document.body.append(script);" +
+                "};" +
+                "</script>";
+
+        BroadleafTemplateElement linkedData = context.createTextElement(script);
+        model.addElement(linkedData);
+    }
+
+    /**
+     * Adds JavaScript to the model that will add the bundle scripts when the dependency requirements are met
+     * @param files the files to add to the DOM
+     * @param attributes the attributes of the original bundle tag
+     * @param context the context of the original bundle tag
+     * @param model the model to add the JavaScript to
+     */
+    protected void addDependentUnbundledRestrictionToModel(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        final String functionName = cleanUpJavaScriptName(attributes.name());
+        final String dependencyEvent = attributes.dependencyEvent();
+
+        List<String> formattedFiles = new ArrayList<>(files.size());
+        for (String file : files) {
+            formattedFiles.add("'" + file + "'");
+        }
+
+        final String script =
+                "<script>" +
+                getFoundationalDependentJavaScript(dependencyEvent, functionName) +
+                "function handle" + functionName + "() {" +
+                "    [" + StringUtils.join(formattedFiles, ",") + "].forEach(function (elem) {" +
+                "        var script = document.createElement('script');" +
+                "        script.type = 'text/javascript';" +
+                "        script.src = elem;" +
+                "        script.async = " + useAsyncJavaScript(attributes) + ";" +
+                "        document.body.append(script);" +
+                "    });" +
+                "};" +
+                "</script>";
+
+        BroadleafTemplateElement element = context.createTextElement(script);
+        model.addElement(element);
+    }
+
+    /**
+     * Cleans up the name that will be used in the dependency handling JavaScript
+     * @param original the original name
+     * @return clean name
+     */
+    protected String cleanUpJavaScriptName(final String original) {
+        String cleanName = original;
+        if (cleanName.contains("/")) {
+            cleanName = cleanName.substring(cleanName.lastIndexOf("/") + 1, cleanName.length());
+        }
+        cleanName = cleanName.replaceAll("-", "_");
+        cleanName = cleanName.replaceAll("\\.", "_");
+
+        return cleanName;
+    }
+
+    /**
+     * Gets the foundational JavaScript needed for waiting for dependencies
+     * @param dependencyEvent the name of the dependency event to listen for
+     * @param functionName the name of the function to call when dependencies are met
+     * @return foundational JavaScript
+     */
+    protected String getFoundationalDependentJavaScript(final String dependencyEvent, final String functionName) {
+        return
                 "function runOnReady(callback, event) {" +
                 "    var watchEvent = typeof(event) == 'undefined' ? 'DOMContentLoaded' : event;" +
                 "    if (document.readyState != 'loading' && !event) {" +
@@ -338,24 +412,13 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                 "}; " +
                 "" +
                 "if (typeof(" + dependencyEvent + "Event) !== 'undefined') {" +
-                "    runOnReady(handle" + methodName + ");" +
+                "    runOnReady(handle" + functionName + ");" +
                 "} else {" +
                 "    runOnReady(function() {" +
-                "            runOnReady(handle" + methodName + ");" +
+                "            runOnReady(handle" + functionName + ");" +
                 "        }," +
                 "        '" + dependencyEvent + "');" +
-                "} " +
-                "" +
-                "function handle" + methodName + "() {" +
-                "    var script = document.createElement('script');" +
-                "    script.type = 'text/javascript';" +
-                "    script.src = '" + attributes.src() + "';" +
-                "    document.body.append(script);" +
-                "};" +
-                "</script>";
-
-        BroadleafTemplateElement linkedData = context.createTextElement(script);
-        model.addElement(linkedData);
+                "} ";
     }
 
     /**
@@ -408,5 +471,14 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         attributes.put("rel", "stylesheet");
         attributes.put("href", tagAttributes.src());
         return attributes;
+    }
+
+    /**
+     * Tells if the JavaScript added to the page should be asynchronous
+     * @param attributes the attributes on the original bundle tag
+     * @return true if the JavaScript should be async and false otherwise
+     */
+    protected boolean useAsyncJavaScript(ResourceTagAttributes attributes) {
+        return attributes.async() && (getBundleEnabled() || attributes.includeAsyncDeferUnbundled());
     }
 }

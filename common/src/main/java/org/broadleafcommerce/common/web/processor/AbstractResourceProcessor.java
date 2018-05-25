@@ -1,3 +1,20 @@
+/*
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2018 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
 package org.broadleafcommerce.common.web.processor;
 
 import java.util.ArrayList;
@@ -207,9 +224,10 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
      * again later without the files attribute.
      * @param attributeFiles the files that were on the attribute (and any additional files to include)
      * @param resourceTagAttributes the attributes that were on the original resource tag
+     * @param context the context of the original resource tag
      * @return list of files to use as resources
      */
-    protected List<String> postProcessUnbundledFileList(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes) {
+    protected List<String> postProcessUnbundledFileList(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
 
         final List<String> filesOnRequest = resourcesRequest.getFilesForBundleName(resourceTagAttributes.name());
 
@@ -220,7 +238,12 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
         } else {
             // store these files on the request in case they're requested again
             // so we can pull them without the template having to have the files attribute again
-            resourcesRequest.saveFilesForBundleName(resourceTagAttributes.name(), attributeFiles);
+
+            List<String> fullFileUrls = new ArrayList<>(attributeFiles.size());
+            for (String file : attributeFiles) {
+                fullFileUrls.add(getFullUnbundledFileName(file, resourceTagAttributes, context));
+            }
+            resourcesRequest.saveFilesForBundleName(resourceTagAttributes.name(), fullFileUrls);
 
             return attributeFiles;
         }
