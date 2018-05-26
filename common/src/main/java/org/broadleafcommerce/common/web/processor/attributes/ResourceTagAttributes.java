@@ -18,8 +18,11 @@
 package org.broadleafcommerce.common.web.processor.attributes;
 
 /**
- * Builder class that holds attributes relevant to resources.
+ * Builder class that holds attributes relevant to resources, namely those that go on &lt;blc:bundle&gt; and
+ * &lt;blc:bundlepreload&gt; tags.
  *
+ * @see org.broadleafcommerce.common.web.processor.ResourcePreloadProcessor
+ * @see org.broadleafcommerce.common.web.processor.ResourceBundleProcessor
  * @author Jacob Mitash
  */
 public class ResourceTagAttributes {
@@ -32,6 +35,7 @@ public class ResourceTagAttributes {
     private String dependencyEvent;
     private String files;
     private boolean preloadWhenUnbundled;
+    private String bundleCompletedEvent;
 
     /**
      * Construct a {@link ResourceTagAttributes} with all default values.
@@ -54,6 +58,7 @@ public class ResourceTagAttributes {
         this.dependencyEvent = toCopy.dependencyEvent;
         this.files = toCopy.files;
         this.preloadWhenUnbundled = toCopy.preloadWhenUnbundled;
+        this.bundleCompletedEvent = toCopy.bundleCompletedEvent;
     }
 
     public String src() {
@@ -102,7 +107,6 @@ public class ResourceTagAttributes {
         return this;
     }
 
-
     public boolean includeAsyncDeferUnbundled() {
         return includeAsyncDeferUnbundled;
     }
@@ -136,6 +140,15 @@ public class ResourceTagAttributes {
 
     public ResourceTagAttributes preloadWhenUnbundled(boolean preloadWhenUnbundled) {
         this.preloadWhenUnbundled = preloadWhenUnbundled;
+        return this;
+    }
+
+    public String bundleCompletedEvent() {
+        return bundleCompletedEvent;
+    }
+
+    public ResourceTagAttributes bundleCompletedEvent(String bundleCompletedEvent) {
+        this.bundleCompletedEvent = bundleCompletedEvent;
         return this;
     }
 }

@@ -87,8 +87,7 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
         }
 
         for (final String file : files) {
-            final String fullFileName = getFullUnbundledFileName(file, resourceTagAttributes, context);
-            BroadleafTemplateElement element = buildPreloadElement(fullFileName, context);
+            BroadleafTemplateElement element = buildPreloadElement(file, context);
             model.addElement(element);
         }
 

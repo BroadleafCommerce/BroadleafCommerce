@@ -60,6 +60,7 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
     @Override
     public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         ResourceTagAttributes resourceTagAttributes = buildResourceTagAttributes(tagAttributes);
+        validateTagAttributes(resourceTagAttributes);
 
         final List<String> files = buildBundledFilesList(resourceTagAttributes);
 
@@ -124,7 +125,8 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             .includeAsyncDeferUnbundled(Boolean.parseBoolean(tagAttributes.get("includeAsyncDeferUnbundled")))
             .dependencyEvent(tagAttributes.get("bundle-dependency-event"))
             .files(tagAttributes.get("files"))
-            .preloadWhenUnbundled(Boolean.parseBoolean(tagAttributes.get("preload-when-unbundled")));
+            .preloadWhenUnbundled(Boolean.parseBoolean(tagAttributes.get("preload-when-unbundled")))
+            .bundleCompletedEvent(tagAttributes.get("bundle-completed-event"));
     }
 
     /**
@@ -204,7 +206,8 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             //lookup the bundle normally
             bundleResourceName = bundlingService.resolveBundleResourceName(attributes.name(),
                     attributes.mappingPrefix(),
-                    files);
+                    files,
+                    getBundleAppendText(attributes));
         } else {
             //this bundle was already requested somewhere in the template
             bundleResourceName = requestBundle;
@@ -245,7 +248,57 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             }
             resourcesRequest.saveFilesForBundleName(resourceTagAttributes.name(), fullFileUrls);
 
-            return attributeFiles;
+            return fullFileUrls;
+        }
+    }
+
+    /**
+     * Gets the bundle append text, text that will be appended to the end of a bundle
+     * @param attributes the original resource tag attributes
+     * @return bundle append text
+     */
+    protected String getBundleAppendText(ResourceTagAttributes attributes) {
+        if (!StringUtils.isEmpty(attributes.bundleCompletedEvent()) && attributes.name().endsWith(".js")) {
+            return getBundleCompleteEventJavaScript(attributes);
+        }
+        return null;
+    }
+
+    /**
+     * Gets the JavaScript that fires an event when a bundle is completed
+     * @param attributes the attributes to build the event off of
+     * @return JavaScript that fires an event or null if none requested
+     */
+    protected String getBundleCompleteEventJavaScript(ResourceTagAttributes attributes) {
+        final String event = attributes.bundleCompletedEvent();
+        return "var " + event + "Event = new CustomEvent('" + event + "');" +
+                "document.dispatchEvent(" + event + "Event);";
+
+    }
+
+    /**
+     * Validates the requested tag attributes
+     * @param resourceTagAttributes the tag attributes from the original resource tag
+     */
+    protected void validateTagAttributes(ResourceTagAttributes resourceTagAttributes) {
+        if (StringUtils.isEmpty(resourceTagAttributes.name())) {
+            throw new IllegalArgumentException("A 'name' attribute is required for " + getPrefix() + ":" + getName() + " tags");
+        }
+
+        boolean hasSavedResources;
+        if (getBundleEnabled()) {
+            hasSavedResources = resourcesRequest.getBundleForBundleName(resourceTagAttributes.name()) != null;
+        } else {
+            hasSavedResources = resourcesRequest.getFilesForBundleName(resourceTagAttributes.name()) != null;
+        }
+
+        if (!hasSavedResources) {
+            if (resourceTagAttributes.mappingPrefix() == null) {
+                throw new IllegalArgumentException("A 'mapping-prefix' attribute is required for " + getPrefix() + ":" + getName() + " tags");
+            }
+            if (StringUtils.isEmpty(resourceTagAttributes.files())) {
+                throw new IllegalArgumentException("A 'files' attribute is required for " + getPrefix() + ":" + getName() + " tags");
+            }
         }
     }
 }

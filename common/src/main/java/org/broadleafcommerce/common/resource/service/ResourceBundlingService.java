@@ -53,6 +53,8 @@ public interface ResourceBundlingService {
      */
     public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files);
 
+    String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files, String bundleAppend);
+
     /**
      * Returns a Resource for passed in versionedBundleResourceName.
      * 

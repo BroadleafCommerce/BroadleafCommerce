@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -118,22 +119,36 @@ import org.springframework.stereotype.Component;
  *         files - (required) a comma-separated list of files that should be bundled together. May be excluded
  *         in some cases. See note at bottom.
  *     </li>
- *     <li>async - (optional) true to set <code>async="true"</code> on the resulting tags</li>
- *     <li>defer - (optional) true to set <code>defer="true"</code> on JS or to add non-render-blocking CSS</li>
+ *     <li>
+ *         async - (optional) true to set <code>async="true"</code> on the resulting tags. Note, this will be ignored
+ *         when unbundled for JavaScript unless <code>includeAsyncDeferUnbundled</code> is specified.
+ *     </li>
+ *     <li>
+ *         defer - (optional) true to set <code>defer="true"</code> on JS or to add non-render-blocking CSS. Note,
+ *         this will be ignored when unbundled for JavaScript unless <code>includeAsyncDeferUnbundled</code> is
+ *         specified.
+ *     </li>
  *     <li>
  *         includeAsyncDeferUnbundled - (optional) true to include async and defer (if enabled) on the unbundled
  *         replacement tags. They are not included by default when unbundled due to race conditions between
  *         JavaScript dependencies.
  *     </li>
  *     <li>
- *         bundle-dependency-event - name of a JavaScript event to wait for before adding this bundle to the DOM.
- *         The JavaScript event must be named the value of this attribute. The event must also be added as a global
+ *         bundle-dependency-event - (optional) name of a JavaScript event to wait for before adding this bundle to the
+ *         DOM. The JavaScript event must be named the value of this attribute. The event must also be added as a global
  *         variable of the value of this attribute with "Event" on the end
  *         (<code>bundleDependencyEventValue</code>Event). Lastly, the event must be dispatched to the body.
  *         <br/>
  *         For example, if the value of this attribute was "test",
  *         <br/>
  *         <code>var testEvent = new CustomEvent("test"); document.body.dispatchEvent(testEvent);</code>
+ *     </li>
+ *     <li>
+ *         bundle-completed-event - (optional) name of JS event to fire when this bundle has completed. See
+ *         bundle-dependency-event for specifics. Use this together with bundle-dependency-event to chain load
+ *         dependencies. Note that if using this along with a &lt;blc:bundlepreload&gt;, both the &lt;blc:bundle&gt; and
+ *         &lt;blc:bundlepreload&gt; tags need to have this event, otherwise the <code>bundlepreload</code> may generate
+ *         the bundle without the JS that fires the event.
  *     </li>
  * </ul>
  * <p>
@@ -184,10 +199,17 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         final List<String> files = postProcessUnbundledFileList(attributeFiles, attributes, context);
 
         if (StringUtils.isEmpty(attributes.dependencyEvent())) {
-            for (String fileName : files) {
+            // add files one by one
+            for (String file : files) {
                 ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
-                        .src(getFullUnbundledFileName(fileName, attributes, context));
+                        .src(file);
                 addElementToModel(unbundledAttributes, context, model);
+            }
+
+            // add bundle complete script if needed/supported
+            final BroadleafTemplateElement bundleCompleteElement = buildUnbundledSyncBundleCompletedEventElement(attributes, context);
+            if (bundleCompleteElement != null) {
+                model.addElement(bundleCompleteElement);
             }
         } else {
             // Since everything here needs to be added to the DOM after the dependency event, the only thing we add
@@ -334,6 +356,20 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
             formattedFiles.add("'" + file + "'");
         }
 
+        String completedJavaScript = "";
+
+        // Unbundled, async bundle complete events not supported, only add when unbundled and sync. Bundled JS has
+        // the event baked in, so we don't need to add it here
+        if (!getBundleEnabled() && !useAsyncJavaScript(attributes)) {
+            completedJavaScript =
+                    "" +
+                            "if (idx === arr.length - 1) {" + //last script
+                            "    script.addEventListener('load', function () {" +
+                            "        " + getBundleAppendText(attributes) + ";" +
+                            "    });" +
+                            "}";
+        }
+
         final String script =
                 "<script>" +
                         "function runOnReady(callback, event) {" +
@@ -354,12 +390,14 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                         "        '" + dependencyEvent + "');" +
                         "} " +
                         "function handle" + functionName + "() {" +
-                        "    [" + StringUtils.join(formattedFiles, ",") + "].forEach(function (elem) {" +
+                        "    var lastScript = null;" +
+                        "    [" + StringUtils.join(formattedFiles, ",") + "].forEach(function (elem, idx, arr) {" +
                         "        var script = document.createElement('script');" +
                         "        script.type = 'text/javascript';" +
                         "        script.src = elem;" +
                         "        script.async = " + useAsyncJavaScript(attributes) + ";" +
                         "        document.body.append(script);" +
+                        completedJavaScript +
                         "    });" +
                         "};" +
                         "</script>";
@@ -443,5 +481,48 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
      */
     protected boolean useAsyncJavaScript(ResourceTagAttributes attributes) {
         return attributes.async() && (getBundleEnabled() || attributes.includeAsyncDeferUnbundled());
+    }
+
+    @Override
+    protected void validateTagAttributes(ResourceTagAttributes attributes) {
+        super.validateTagAttributes(attributes);
+
+        if (!attributes.name().endsWith(".js")) {
+            if (attributes.dependencyEvent() != null) {
+                throw new InvalidParameterException("A 'bundle-dependency-event' attribute was specified but is only " +
+                        "supported for JavaScript bundles.");
+            }
+            if (attributes.bundleCompletedEvent() != null) {
+                throw new InvalidParameterException("A 'bundle-completed-event' attribute was specified but is only " +
+                        "supported for JavaScript bundles.");
+            }
+        }
+
+        if (attributes.bundleCompletedEvent() != null && !getBundleEnabled() && useAsyncJavaScript(attributes)) {
+            throw new InvalidParameterException("A 'bundle-completed-event' attribute was specified, but is not " +
+                    "supported when using asynchronous, unbundled JavaScript");
+        }
+    }
+
+    /**
+     * Builds a script element that fires the bundle complete event only when supported
+     * @param attributes the attributes of the bundle tag
+     * @param context the context of the bundle tag
+     * @return the script element or null if not supported
+     */
+    protected BroadleafTemplateElement buildUnbundledSyncBundleCompletedEventElement(ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        if (getBundleEnabled() || useAsyncJavaScript(attributes) || attributes.bundleCompletedEvent() == null) {
+            return null;
+        }
+
+        final String bundleCompleteEventJavaScript = getBundleCompleteEventJavaScript(attributes);
+        if (bundleCompleteEventJavaScript == null) {
+            return null;
+        }
+
+        final BroadleafTemplateNonVoidElement script = context.createNonVoidElement("script");
+        script.addChild(context.createTextElement(bundleCompleteEventJavaScript));
+
+        return script;
     }
 }

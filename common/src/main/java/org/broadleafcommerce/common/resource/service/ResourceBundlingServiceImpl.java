@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
+import de.jkeylockmanager.manager.KeyLockManager;
+import de.jkeylockmanager.manager.KeyLockManagers;
+import de.jkeylockmanager.manager.LockCallback;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -42,24 +45,20 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
-import de.jkeylockmanager.manager.KeyLockManager;
-import de.jkeylockmanager.manager.KeyLockManagers;
-import de.jkeylockmanager.manager.LockCallback;
 
 /**
  * @see ResourceBundlingService
@@ -149,7 +148,11 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     @Override
     public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files) {
-     
+        return resolveBundleResourceName(requestedBundleName, mappingPrefix, files, null);
+    }
+
+    @Override
+    public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files, String bundleAppend) {
         ResourceHttpRequestHandler resourceRequestHandler = findResourceHttpRequestHandler(requestedBundleName);
         if (resourceRequestHandler != null && CollectionUtils.isNotEmpty(files)) {
             ResourceResolverChain resolverChain = new BroadleafDefaultResourceResolverChain(
@@ -181,7 +184,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             int version = Math.abs(combinedPathString.toString().hashCode());
             String versionedBundleName = mappingPrefix + addVersion(requestedBundleName, "-" + String.valueOf(version));
         
-            createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations);
+            createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations, bundleAppend);
 
             return versionedBundleName;
         } else {
@@ -227,7 +230,12 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     }
 
     protected void createBundleIfNeeded(final String versionedBundleName, final List<String> filePaths,
-            final ResourceResolverChain resolverChain, final List<Resource> locations) {
+                                        final ResourceResolverChain resolverChain, final List<Resource> locations) {
+        createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations, null);
+    }
+
+    protected void createBundleIfNeeded(final String versionedBundleName, final List<String> filePaths,
+            final ResourceResolverChain resolverChain, final List<Resource> locations, final String bundleAppend) {
         if (!createdBundles.containsKey(versionedBundleName)) {
             keyLockManager.executeLocked(versionedBundleName, new LockCallback() {
 
@@ -235,7 +243,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                 public void doInLock() {
                     Resource bundleResource = getBundledResource(versionedBundleName);
                     if (bundleResource == null || !bundleResource.exists()) {
-                        bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
+                        bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations, bundleAppend);
                         if (bundleResource != null) {
                             saveBundle(bundleResource);
                         }
@@ -247,9 +255,13 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             });
         }
     }
-    
     protected Resource createBundle(String versionedBundleName, List<String> filePaths,
-            ResourceResolverChain resolverChain, List<Resource> locations) {
+                                    ResourceResolverChain resolverChain, List<Resource> locations) {
+        return createBundle(versionedBundleName, filePaths, resolverChain, locations, null);
+    }
+
+    protected Resource createBundle(String versionedBundleName, List<String> filePaths,
+            ResourceResolverChain resolverChain, List<Resource> locations, String bundleAppend) {
 
         HttpServletRequest req = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
@@ -285,6 +297,15 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                     baos.write(System.getProperty("line.separator").getBytes());
                 }
             }
+
+            // Append the requested text to the bundle
+            if (bundleAppend != null) {
+                if (versionedBundleName.endsWith(".js")) {
+                    baos.write(";".getBytes());
+                }
+                baos.write(bundleAppend.getBytes(StandardCharsets.UTF_8));
+            }
+
             bytes = baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
