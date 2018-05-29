@@ -17,14 +17,16 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
+import org.broadleafcommerce.common.web.processor.ResourceBundleProcessor;
+import org.broadleafcommerce.common.web.processor.ResourcePreloadProcessor;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
 
 /**
  * This service is responsible for interaction with
- * {@link org.broadleafcommerce.common.web.processor.ResourceBundleProcessor} and
- * {@link org.broadleafcommerce.common.web.processor.ResourcePreloadProcessor} to generate bundles for static resources.
+ * {@link ResourceBundleProcessor} and
+ * {@link ResourcePreloadProcessor} to generate bundles for static resources.
  * @author Andre Azzolini (apazzolini)
  * @author Brian Polster (bpolster)
  */
@@ -32,7 +34,7 @@ public interface ResourceBundlingService {
 
     /**
      * Returns a newly rebuilt bundled resource given that the passed requestedBundleName had previously been built and cached/persisted via
-     * the {@code resolveBundleResourceName} method.
+     * the {@link #resolveBundleResourceName(String, String, List)} method.
      * @param requestedBundleName the requested bundle name
      * @return the rebuilt bundled resource
      */
@@ -69,7 +71,7 @@ public interface ResourceBundlingService {
      * <p>
      * If the bundle does not exist, this method will attempt to create it by using the list
      * of files that were registered with the initial call to
-     * {@link #resolveBundleResourceName(String, String, List)} (String, List)}
+     * {@link #resolveBundleResourceName(String, String, List)}
      * @param versionedBundleResourceName the versioned bundle resource name
      * @return the bundle resource
      */
