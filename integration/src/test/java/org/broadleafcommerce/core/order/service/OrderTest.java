@@ -758,7 +758,15 @@ public class OrderTest extends OrderBaseTest {
         orderService.addPaymentToOrder(order, paymentInfo, null);
 
         order = orderService.findOrderById(orderId);
-        OrderPayment payment = order.getPayments().get(order.getPayments().indexOf(paymentInfo));
+        OrderPayment payment = null;
+        for (OrderPayment op : order.getPayments()) {
+            Long oldId = op.getId();
+            op.setId(null);
+            if (op.equals(paymentInfo)) {
+                op.setId(oldId);
+                payment = op;
+            }
+        }
         assert payment != null;
         assert payment.getOrder() != null;
         assert payment.getOrder().equals(order);

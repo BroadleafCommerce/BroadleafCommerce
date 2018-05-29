@@ -108,7 +108,6 @@
                             <exclude>**/browsertest/**</exclude>
                         </excludes>
                         <argLine>${surefire.argLine}</argLine>
-                        <skipTests>true</skipTests>
                     </configuration>
                 </plugin>
                 <plugin>

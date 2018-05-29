@@ -196,7 +196,7 @@
                  caution as tests will likely fail with deadlocks, etc -->
             <!-- If you want to use TestNG elsewhere, you should be using the latest version
                 and not use this version -->
-            <version>6.11</version>
+            <version>6.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
