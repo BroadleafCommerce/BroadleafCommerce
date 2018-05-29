@@ -230,10 +230,22 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
                 model.addElement(context.createNonVoidElement("script", getScriptAttributes(src, async, defer), true));
             }
         } else if (src.endsWith(".css")) {
-            model.addElement(context.createNonVoidElement("link", getLinkAttributes(src), true));
+            if (defer) {
+                addDeferredCSS(src, context, model);
+            } else {
+                model.addElement(context.createNonVoidElement("link", getLinkAttributes(src), true));
+            }
         } else {
             throw new IllegalArgumentException("Unknown extension for: " + src + " - only .js and .css are supported");
         }
+    }
+
+    protected void addDeferredCSS(String src, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("<link rel=\"preload\" href=\"%s\" as=\"style\" onload=\"this.onload=null;this.rel='stylesheet'\">\n", src));
+        sb.append(String.format("<noscript><link rel=\"stylesheet\" href=\"%s\"></noscript>", src));
+        BroadleafTemplateElement linkedData = context.createTextElement(sb.toString());
+        model.addElement(linkedData);
     }
 
     protected void addDependentBundleRestrictionToModel(String src, boolean async, boolean defer, String dependencyEvent, BroadleafTemplateContext context, BroadleafTemplateModel model) {
