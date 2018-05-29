@@ -207,7 +207,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
             }
 
             // add bundle complete script if needed/supported
-            final BroadleafTemplateElement bundleCompleteElement = buildUnbundledSyncBundleCompletedEventElement(attributes, context);
+            final BroadleafTemplateElement bundleCompleteElement = buildUnbundledSyncCompletedEventElement(attributes, context);
             if (bundleCompleteElement != null) {
                 model.addElement(bundleCompleteElement);
             }
@@ -302,7 +302,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                 model.addElement(element);
             }
         } else {
-            model.addElement(context.createNonVoidElement("link", getLinkAttributes(attributes), true));
+            model.addElement(context.createNonVoidElement("link", getNormalCssAttributes(attributes), true));
         }
     }
 
@@ -319,10 +319,8 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         deferredCssAttributes.put("href", attributes.src());
         elements.add(context.createStandaloneElement("link", deferredCssAttributes, true));
 
-        Map<String, String> normalCssAttributes = new HashMap<>(this.normalCssAttributes);
-        normalCssAttributes.put("href", attributes.src());
         BroadleafTemplateNonVoidElement noScriptElement = context.createNonVoidElement("noscript");
-        noScriptElement.addChild(context.createStandaloneElement("link", normalCssAttributes, true));
+        noScriptElement.addChild(context.createStandaloneElement("link", getNormalCssAttributes(attributes), true));
         elements.add(noScriptElement);
 
         return elements;
@@ -455,21 +453,20 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
     }
 
     /**
-     * @deprecated Use {@link #getLinkAttributes(ResourceTagAttributes)} instead
+     * @deprecated Use {@link #getNormalCssAttributes(ResourceTagAttributes)} instead
      */
     @Deprecated
     protected Map<String, String> getLinkAttributes(String src) {
-        return getLinkAttributes(new ResourceTagAttributes().src(src));
+        return getNormalCssAttributes(new ResourceTagAttributes().src(src));
     }
 
     /**
-     * Builds a map of the attributes to put on a &lt;link&gt; tag
+     * Builds a map of normal (non-deferred) attributes to put on a CSS &lt;link&gt; tag
      * @param tagAttributes the attributes on the original bundle tag
      * @return map of attributes to put on the link tag
      */
-    protected Map<String, String> getLinkAttributes(ResourceTagAttributes tagAttributes) {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("rel", "stylesheet");
+    protected Map<String, String> getNormalCssAttributes(ResourceTagAttributes tagAttributes) {
+        Map<String, String> attributes = new HashMap<>(normalCssAttributes);
         attributes.put("href", tagAttributes.src());
         return attributes;
     }
@@ -510,7 +507,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
      * @param context the context of the bundle tag
      * @return the script element or null if not supported
      */
-    protected BroadleafTemplateElement buildUnbundledSyncBundleCompletedEventElement(ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+    protected BroadleafTemplateElement buildUnbundledSyncCompletedEventElement(ResourceTagAttributes attributes, BroadleafTemplateContext context) {
         if (getBundleEnabled() || useAsyncJavaScript(attributes) || attributes.bundleCompletedEvent() == null) {
             return null;
         }

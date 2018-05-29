@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -92,6 +94,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    @Autowired
+    protected Environment environment;
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
@@ -292,18 +297,18 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                     // If we're creating a JavaScript bundle, we'll put a semicolon between each
                     // file to ensure it won't fail to compile.
                     if (versionedBundleName.endsWith(".js")) {
-                        outputStream.write(";".getBytes());
+                        outputStream.write(";".getBytes(getBundleCharSet()));
                     }
-                    outputStream.write(System.getProperty("line.separator").getBytes());
+                    outputStream.write(System.getProperty("line.separator").getBytes(getBundleCharSet()));
                 }
             }
 
             // Append the requested text to the bundle
             if (bundleAppend != null) {
                 if (versionedBundleName.endsWith(".js")) {
-                    outputStream.write(";".getBytes());
+                    outputStream.write(";".getBytes(getBundleCharSet()));
                 }
-                outputStream.write(bundleAppend.getBytes(StandardCharsets.UTF_8));
+                outputStream.write(bundleAppend.getBytes(getBundleCharSet()));
             }
 
             bytes = outputStream.toByteArray();
@@ -432,6 +437,15 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             return "bundles" + name;
         } else {
             return "bundles/" + name;
+        }
+    }
+
+    protected Charset getBundleCharSet() {
+        final String charsetProperty = environment.getProperty("bundle.charset");
+        if (StringUtils.isEmpty(charsetProperty)) {
+            return StandardCharsets.UTF_8;
+        } else {
+            return Charset.forName(charsetProperty);
         }
     }
 }

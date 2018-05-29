@@ -294,10 +294,12 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
 
         if (!hasSavedResources) {
             if (resourceTagAttributes.mappingPrefix() == null) {
-                throw new IllegalArgumentException("A 'mapping-prefix' attribute is required for " + getPrefix() + ":" + getName() + " tags");
+                throw new IllegalArgumentException("A 'mapping-prefix' attribute is required for "
+                        + getPrefix() + ":" + getName() + " tags when they first appear on the template");
             }
             if (StringUtils.isEmpty(resourceTagAttributes.files())) {
-                throw new IllegalArgumentException("A 'files' attribute is required for " + getPrefix() + ":" + getName() + " tags");
+                throw new IllegalArgumentException("A 'files' attribute is required for "
+                        + getPrefix() + ":" + getName() + " tags when they first appear on the template");
             }
         }
     }
