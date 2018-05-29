@@ -34,7 +34,6 @@ public class ResourceTagAttributes {
     private boolean includeAsyncDeferUnbundled;
     private String dependencyEvent;
     private String files;
-    private boolean preloadWhenUnbundled;
     private String bundleCompletedEvent;
 
     /**
@@ -57,7 +56,6 @@ public class ResourceTagAttributes {
         this.includeAsyncDeferUnbundled = toCopy.includeAsyncDeferUnbundled;
         this.dependencyEvent = toCopy.dependencyEvent;
         this.files = toCopy.files;
-        this.preloadWhenUnbundled = toCopy.preloadWhenUnbundled;
         this.bundleCompletedEvent = toCopy.bundleCompletedEvent;
     }
 
@@ -131,15 +129,6 @@ public class ResourceTagAttributes {
 
     public ResourceTagAttributes files(String files) {
         this.files = files;
-        return this;
-    }
-
-    public boolean preloadWhenUnbundled() {
-        return preloadWhenUnbundled;
-    }
-
-    public ResourceTagAttributes preloadWhenUnbundled(boolean preloadWhenUnbundled) {
-        this.preloadWhenUnbundled = preloadWhenUnbundled;
         return this;
     }
 

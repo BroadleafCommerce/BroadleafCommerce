@@ -43,7 +43,8 @@ import org.springframework.stereotype.Component;
  * more information. This helps with not having to duplicate the bundle information across the &lt;blc:bundlepreload&gt;
  * and &lt;blc:bundle&gt; tags.
  * <p>
- * The &lt;bundlepreload&gt; accepts all the parameters that {@link ResourceBundleProcessor} accepts including one more:
+ * The &lt;bundlepreload&gt; accepts all the parameters that {@link ResourceBundleProcessor} accepts, but will only ever
+ * use them if they are relevant to generating the bundle.
  * <br/>
  *
  * @author Jacob Mitash
@@ -80,11 +81,6 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
         BroadleafTemplateModel model = context.createModel();
 
         final List<String> files = postProcessUnbundledFileList(attributeFiles, resourceTagAttributes, context);
-
-        if (!getBundleEnabled() && !resourceTagAttributes.preloadWhenUnbundled()) {
-            //this needs to run after the post process so that the files can be updated on the request
-            return model;
-        }
 
         for (final String file : files) {
             BroadleafTemplateElement element = buildPreloadElement(file, context);
