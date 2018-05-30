@@ -879,7 +879,7 @@
             if (filterData.rules.length > 0) {
                 if (!$filterButton.closest('.button-group').length) {
 
-                    $filterButton.text("Edit Filter");
+                    $filterButton.text(BLCAdmin.messages.editFilter);
                     $filterButton.removeClass('disabled').removeAttr('disabled');
 
                     var clearButton = $('<button>', {
@@ -899,9 +899,9 @@
                 }
                 $filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
             } else {
-                if ($filterButton.text() !== 'Filter') {
+                if ($filterButton.text() !== BLCAdmin.messages.filter) {
                     // change "edit filter" button back to "filter"
-                    $filterButton.text("Filter");
+                    $filterButton.text(BLCAdmin.messages.filter);
                     $filterButton.insertBefore($filterButton.parent());
                     $filterButton.siblings('.button-group:visible').remove();
                     $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
@@ -1113,7 +1113,7 @@ $(document).ready(function() {
         BLCAdmin.filterBuilders.applyFilters(hiddenId);
 
         // change "edit filter" button back to "filter"
-        $filterButton.text("Filter");
+        $filterButton.text(BLCAdmin.messages.filter);
         $filterButton.insertBefore($filterButton.parent());
         $filterButton.siblings('.button-group').remove();
 
@@ -1270,9 +1270,9 @@ $(document).ready(function() {
                     }
                 }
             } else {
-                if ($filterButton.text() !== 'Filter') {
+                if ($filterButton.text() !== BLCAdmin.messages.filter) {
                     // change "edit filter" button back to "filter"
-                    $filterButton.text("Filter");
+                    $filterButton.text(BLCAdmin.messages.filter);
                     $filterButton.insertBefore($filterButton.parent());
                     $filterButton.siblings('.button-group:visible').remove();
                     $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
