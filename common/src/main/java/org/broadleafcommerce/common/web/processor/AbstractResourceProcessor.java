@@ -124,7 +124,7 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             .async(Boolean.parseBoolean(tagAttributes.get("async")))
             .defer(Boolean.parseBoolean(tagAttributes.get("defer")))
             .includeAsyncDeferUnbundled(Boolean.parseBoolean(tagAttributes.get("includeAsyncDeferUnbundled")))
-            .dependencyEvent(tagAttributes.get("bundle-dependency-event"))
+            .bundleDependencyEvent(tagAttributes.get("bundle-dependency-event"))
             .files(tagAttributes.get("files"))
             .bundleCompletedEvent(tagAttributes.get("bundle-completed-event"));
     }

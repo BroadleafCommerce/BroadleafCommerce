@@ -17,13 +17,6 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
@@ -33,6 +26,13 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
 import org.springframework.stereotype.Component;
+
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -198,7 +198,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
 
         final List<String> files = postProcessUnbundledFileList(attributeFiles, attributes, context);
 
-        if (StringUtils.isEmpty(attributes.dependencyEvent())) {
+        if (StringUtils.isEmpty(attributes.bundleDependencyEvent())) {
             // add files one by one
             for (String file : files) {
                 ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
@@ -228,7 +228,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         final String bundleUrl = getBundleUrl(bundleResourcePath, context);
         attributes.src(bundleUrl);
 
-        if (StringUtils.isEmpty(attributes.dependencyEvent())) {
+        if (StringUtils.isEmpty(attributes.bundleDependencyEvent())) {
             addElementToModel(attributes, context, model);
         } else {
             // Since the bundle needs to be added to the DOM after the dependency event, the only thing we add
@@ -256,7 +256,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                 .src(src)
                 .async(async)
                 .defer(defer)
-                .dependencyEvent(dependencyEvent);
+                .bundleDependencyEvent(dependencyEvent);
         addElementToModel(tagAttributes, context, model);
     }
 
@@ -335,7 +335,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                 .src(src)
                 .async(async)
                 .defer(defer)
-                .dependencyEvent(dependencyEvent);
+                .bundleDependencyEvent(dependencyEvent);
         addDependencyRestrictionToModel(Collections.singletonList(src), attributes, context, model);
     }
 
@@ -347,7 +347,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
      */
     protected void addDependencyRestrictionToModel(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
         final String functionName = cleanUpJavaScriptName(attributes.name());
-        final String dependencyEvent = attributes.dependencyEvent();
+        final String dependencyEvent = attributes.bundleDependencyEvent();
 
         List<String> formattedFiles = new ArrayList<>(files.size());
         for (String file : files) {
@@ -485,7 +485,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         super.validateTagAttributes(attributes);
 
         if (!attributes.name().endsWith(".js")) {
-            if (attributes.dependencyEvent() != null) {
+            if (attributes.bundleDependencyEvent() != null) {
                 throw new InvalidParameterException("A 'bundle-dependency-event' attribute was specified but is only " +
                         "supported for JavaScript bundles.");
             }

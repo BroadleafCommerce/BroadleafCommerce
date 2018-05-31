@@ -32,7 +32,7 @@ public class ResourceTagAttributes {
     private boolean async;
     private boolean defer;
     private boolean includeAsyncDeferUnbundled;
-    private String dependencyEvent;
+    private String bundleDependencyEvent;
     private String files;
     private String bundleCompletedEvent;
 
@@ -54,7 +54,7 @@ public class ResourceTagAttributes {
         this.async = toCopy.async;
         this.defer = toCopy.defer;
         this.includeAsyncDeferUnbundled = toCopy.includeAsyncDeferUnbundled;
-        this.dependencyEvent = toCopy.dependencyEvent;
+        this.bundleDependencyEvent = toCopy.bundleDependencyEvent;
         this.files = toCopy.files;
         this.bundleCompletedEvent = toCopy.bundleCompletedEvent;
     }
@@ -114,12 +114,12 @@ public class ResourceTagAttributes {
         return this;
     }
 
-    public String dependencyEvent() {
-        return dependencyEvent;
+    public String bundleDependencyEvent() {
+        return bundleDependencyEvent;
     }
 
-    public ResourceTagAttributes dependencyEvent(String dependencyEvent) {
-        this.dependencyEvent = dependencyEvent;
+    public ResourceTagAttributes bundleDependencyEvent(String bundleDependencyEvent) {
+        this.bundleDependencyEvent = bundleDependencyEvent;
         return this;
     }
 
