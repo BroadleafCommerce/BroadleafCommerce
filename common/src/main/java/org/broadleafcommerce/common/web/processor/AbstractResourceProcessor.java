@@ -17,13 +17,7 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
@@ -32,6 +26,13 @@ import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacemen
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.springframework.core.env.Environment;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * An abstract tag replacement processor that provides methods to help get resource/bundle information
@@ -94,21 +95,21 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
 
     /**
      * Gets a list of the requested files for bundling
-     * @param rawFiles comma separated list of files
-     * @return list of requested files with space trimmed or null if rawFiles is null
+     * @param rawFileNames comma separated list of files
+     * @return list of requested files with space trimmed or null if rawFileNames is null
      */
-    protected List<String> getRequestedFiles(String rawFiles) {
-        if (rawFiles == null) {
-            return null;
-        }
-        final String[] splitFiles = rawFiles.split(",");
-        List<String> files = new ArrayList<>(splitFiles.length);
+    protected List<String> getRequestedFileNames(String rawFileNames) {
+        List<String> fileNames = new ArrayList<>();
 
-        for (String file : splitFiles) {
-            files.add(file.trim());
+        if (StringUtils.isNotBlank(rawFileNames)) {
+            final String[] splitFileNames = rawFileNames.split(",");
+
+            for (String fileName : splitFileNames) {
+                fileNames.add(fileName.trim());
+            }
         }
 
-        return files;
+        return fileNames;
     }
 
     /**
@@ -175,19 +176,18 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
      * @return list of all the files to include in the bundle
      */
     protected List<String> buildBundledFilesList(ResourceTagAttributes tagAttributes) {
-        final List<String> requestedFiles = getRequestedFiles(tagAttributes.files());
-        if (requestedFiles == null) {
-            return null;
+        final List<String> requestedFileNames = getRequestedFileNames(tagAttributes.files());
+        final List<String> allFileNames = new ArrayList<>(requestedFileNames);
+
+        if (CollectionUtils.isNotEmpty(allFileNames)) {
+            final List<String> additionalBundleFileNames = bundlingService.getAdditionalBundleFiles(tagAttributes.name());
+
+            if (additionalBundleFileNames != null) {
+                allFileNames.addAll(additionalBundleFileNames);
+            }
         }
 
-        final List<String> allFiles = new ArrayList<>(requestedFiles);
-
-        final List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(tagAttributes.name());
-        if (additionalBundleFiles != null) {
-            allFiles.addAll(additionalBundleFiles);
-        }
-
-        return allFiles;
+        return allFileNames;
     }
 
     /**
