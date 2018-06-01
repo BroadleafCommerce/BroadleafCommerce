@@ -1007,9 +1007,14 @@ $(document).ready(function() {
         }
         valueText = valueArray.join(" and ");
 
-        // if no value is set, this is probably an empty row
-        if (!valueText || valueText == ' and ') {
+        var $errorContainer = el.find('.error-container');
+        var errorMessage = validateRule(filterText, operatorText, valueText);
+
+        if (errorMessage) {
+            showError($errorContainer, errorMessage);
             return;
+        } else {
+            hideError($errorContainer);
         }
 
         el.find('.read-only').remove();
@@ -1035,6 +1040,26 @@ $(document).ready(function() {
 
         $('.filter-text').show();
     });
+
+    function validateRule(filterText, operatorText, valueText) {
+        if (!operatorText) return BLCAdmin.messages.emptyOperatorValue;
+        if (!valueText || valueText === ' and ') return BLCAdmin.messages.emptyFilterValue;
+        return "";
+    }
+
+    function showError($errorContainer, errorMessage) {
+        $errorContainer.html(
+            "<span class='error'>" +
+            errorMessage +
+            "</span>"
+        );
+        $errorContainer.css("cssText", "display: block !important; width: 80%; margin-left: 20px");
+    }
+
+    function hideError($errorContainer) {
+        $errorContainer.html("");
+        $errorContainer.css("cssText", "none !important;");
+    }
 
     /**
      * Invoked from a Filter Builder with display type : "MODAL"
