@@ -68,7 +68,7 @@ import java.util.List;
 @ConditionalOnClass(name = "com.google.javascript.jscomp.Compiler")
 public class GoogleClosureJavascriptMinificationServiceImpl implements JavascriptMinificationService {
 
-    @Value("${minify.closure.compiler.warningLevel:SILENT}")
+    @Value("${minify.closure.compiler.warningLevel:QUIET}")
     protected String warningLevel;
     
     protected CompilerOptions.LanguageMode languageIn;

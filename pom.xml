@@ -60,7 +60,7 @@
         <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
         <lombok.version>1.16.18</lombok.version>
         <database.starter.version>1.0.1-GA</database.starter.version>
-        <closure.compiler.version>v20180204</closure.compiler.version>
+        <closure.compiler.version>v20180506</closure.compiler.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
@@ -1601,7 +1601,7 @@
             </dependency>
             <dependency>
                 <groupId>com.google.javascript</groupId>
-                <artifactId>closure-compiler</artifactId>
+                <artifactId>closure-compiler-unshaded</artifactId>
                 <version>${closure.compiler.version}</version>
             </dependency>
         </dependencies>
