@@ -62,12 +62,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     }
 
     @Override
-    @Deprecated
-    public boolean getAllowSingleMinification() {
-        return environment.getProperty("minify.allowSingleMinification", Boolean.class);
-    }
-    
-    @Override
     public byte[] minify(String filename, byte[] bytes) {
         if (!getEnabled()) {
             LOG.trace(MINIFICATION_IS_DISABLED_RETURNING_ORIGINAL_RESOURCE);

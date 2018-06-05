@@ -46,17 +46,6 @@ public interface ResourceMinificationService {
     public boolean getEnabled();
 
     /**
-     * Indicates whether or not the system is allowed to attempt to minify individual files. This can be useful if
-     * the YUI compressor is failing to minify JavaScript/CSS due to syntax errors and you are attempting to track
-     * down which file is problematic. It should not be enabled in a production environment.
-     *
-     * @deprecated not used by YUICompressor anymore
-     * @return the value of the system property "minify.allowSingleMinification"
-     */
-    @Deprecated
-    boolean getAllowSingleMinification();
-
-    /**
      * Delegates to {@link #minify(Resource, String)} where the filename argument is originalResource.getFilename().
      * @param originalResource
      * @return
