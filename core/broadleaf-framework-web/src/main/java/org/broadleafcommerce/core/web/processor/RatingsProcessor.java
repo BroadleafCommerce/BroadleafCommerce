@@ -59,7 +59,8 @@ public class RatingsProcessor extends AbstractBroadleafVariableModifierProcessor
 
     @Override
     public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        String itemId = String.valueOf(context.parseExpression(tagAttributes.get("itemId")));
+        Object obj = context.parseExpression(tagAttributes.get("itemId"));
+        String itemId = obj.toString();
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         Map<String, Object> newModelVars = new HashMap<>();
         if (ratingSummary != null) {
