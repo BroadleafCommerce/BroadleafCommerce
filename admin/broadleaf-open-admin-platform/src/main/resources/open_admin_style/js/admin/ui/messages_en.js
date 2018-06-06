@@ -59,6 +59,10 @@
         primaryMediaAttrsAltText : 'Alt Text',
         primaryMediaAttrsTags : 'Tags',
         primaryMediaAttrsBtnApply : 'Apply',
+
+        // Filter error messages
+        emptyOperatorValue: "Operator value must not be empty",
+        emptyFilterValue: "Filter value must not be empty",
     };
             
 })(jQuery, BLCAdmin);

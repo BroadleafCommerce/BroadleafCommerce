@@ -642,9 +642,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         } catch (ValidationException e) {
             response = e.getEntity();
+            LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
         } catch (ServiceException e) {
             if (e.getCause() instanceof ValidationException) {
                 response = ((ValidationException) e.getCause()).getEntity();
+                LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
             } else {
                 throw e;
             }
