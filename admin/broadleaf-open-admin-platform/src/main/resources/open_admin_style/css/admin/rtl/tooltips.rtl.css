@@ -1,0 +1,87 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+
+a.tooltip {
+  outline: none;
+}
+
+a.tooltip strong {
+  line-height: 30px;
+}
+
+a.tooltip:hover {
+  text-decoration: none;
+  cursor: default;
+}
+
+a.tooltip span {
+  z-index: 11;
+  display: none;
+  padding: 8px 10px;
+  margin-top: -26px;
+  margin-right: 29px;
+  width: 500px;
+  line-height: 16px;
+  text-transform: none !important;
+}
+
+a.tooltip span.left {
+  margin-right: -508px;
+}
+
+a.tooltip:hover span {
+  display: inline;
+  position: absolute;
+  color: #111;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  -moz-box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+  -webkit-box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+  box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+}
+
+a.tooltip span table {
+  font-size: 10px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+a.tooltip span table td {
+  vertical-align: top;
+}
+
+a.tooltip span table td:first-child {
+  font-weight: bold;
+}
+
+a.tooltip span .callout {
+  z-index: 20;
+  position: absolute;
+  top: 6px;
+  border: 0;
+  right: -12px;
+}
+
+a.tooltip span.left .callout {
+  right: 498px;
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}

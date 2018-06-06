@@ -1,0 +1,549 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+
+/****************************************
+ ADMIN LISTGRID SEARCH, FILTER, SORT, RESIZER STYLES
+****************************************/
+
+.listgrid-search {
+  margin-bottom: 6px;
+}
+
+.listgrid-search input {
+  -webkit-appearance: none;
+  /* for safari */
+  height: 36px !important;
+  vertical-align: bottom;
+  width: 300px;
+  display: inline-block;
+}
+
+.listgrid-search .col6 {
+  height: 45px;
+  white-space: nowrap;
+}
+
+.listgrid-search-actions {
+  display: inline-block;
+}
+
+.listgrid-search-actions .button {
+  top: -1px;
+  position: relative;
+}
+
+.listgrid-filter-sort-container {
+  position: absolute;
+  left: 8px;
+  display: inline-block;
+  background: #E1E0DD;
+  padding: 0 5px;
+  float: left;
+}
+
+.listgrid-filter-sort-container i {
+  color: #B9B9B9;
+  margin: 0px 4px 0px 0px;
+  cursor: pointer;
+}
+
+.listgrid-filter-sort-container i.active {
+  color: #2c2c2c;
+}
+
+.listgrid-header-wrapper table.list-grid-table thead tr th div.resizer {
+  color: #B9B9B9;
+  left: 0;
+  position: absolute;
+  display: inline-block;
+  cursor: col-resize;
+  border-right: 1px solid;
+  border-left: 1px solid;
+  height: 18px;
+  width: 4px;
+  margin-top: 2px;
+}
+
+.modal .listgrid-search .col6 {
+  padding: 0;
+  white-space: nowrap;
+}
+
+.listgrid-table-spinner-container {
+  text-align: center;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+}
+
+.listgrid-table-spinner-container .spinner-backdrop {
+  width: 100%;
+  height: 100%;
+  background: #313131;
+  opacity: 0.3;
+  position: absolute;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  top: -6px;
+}
+
+.listgrid-table-spinner-container .listgrid-table-spinner {
+  font-size: 26px;
+}
+
+/****************************************
+ ADMIN COMMON LISTGRID STYLES
+****************************************/
+
+.listgrid-container .listgrid-icon {
+  color: #CAC8C4;
+}
+
+.listgrid-container a.sub-list-grid-reorder {
+  padding-left: 5px;
+  color: #2c2c2c !important;
+}
+
+.listgrid-container a.sub-list-grid-reorder:hover {
+  cursor: move;
+}
+
+.button.button-action.sub-list-grid-edit {
+  margin-right: 0;
+  margin-top: -1px;
+}
+
+.content-yield h4.empty-main-list-grid {
+  text-align: center;
+}
+
+.table.list-grid-table,
+.table>tbody>tr.selected>td:first-child,
+.table>tbody>tr.selected>td:last-child {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.list-grid-table .workflow-icon {
+  font-weight: bold;
+  color: #efbc62;
+  margin-right: -6px;
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+.table thead>tr>th,
+.table tbody>tr>th,
+.table tfoot>tr>th,
+.table thead>tr>td,
+.table tbody>tr>td,
+.table tfoot>tr>td {
+  padding: 6px 15px;
+}
+
+.table tbody>tr>td .column-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  position: relative;
+  width: 88%;
+  height: 26px;
+}
+
+.table tbody>tr>td .column-text.hovered {
+  display: inline-block;
+  padding: 1px 0;
+}
+
+/****************************************
+ ADMIN LISTGRID TITLE/HEADER  STYLES
+****************************************/
+
+.listgrid-title {
+  padding: 0;
+  overflow: hidden;
+  max-width: 100%;
+  height: 22px;
+}
+
+.listgrid-title span {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listgrid-header-wrapper {
+  background-color: #E1E0DD;
+  margin-bottom: -1px;
+  border: 1px solid #B4B3B0;
+}
+
+/****************************************
+ ADMIN LISTGRID ALERT  STYLES
+****************************************/
+
+div.alert-box.list-grid-alert.save-alert {
+  display: inline-block;
+  margin-bottom: 0;
+  margin-right: 0px;
+  padding-left: 7px;
+  background: none;
+  border: none;
+  color: #98B30A;
+  text-shadow: none;
+}
+
+div.alert-box.list-grid-alert.save-alert a.close {
+  display: none;
+}
+
+/****************************************
+ ADMIN LISTGRID TOOLBAR STYLES
+****************************************/
+
+.listgrid-toolbar .button,
+.listgrid-toolbar .button-group li {
+  height: 30px;
+  line-height: 30px;
+}
+
+.listgrid-toolbar .button-group li {
+  font-size: 11px;
+  text-transform: none;
+}
+
+.listgrid-toolbar .listgrid-toolbar-actions,
+.listgrid-toolbar .listgrid-row-actions {
+  display: inline-block;
+}
+
+.listgrid-toolbar .toolbar-action i.fa-spinner,
+.listgrid-toolbar .row-action i.fa-spinner {
+  margin-left: 2px;
+}
+
+.listgrid-toolbar .listgrid-row-actions {
+  border-right: 1px solid #D8D5D0;
+  margin-right: 7px;
+  padding-right: 10px;
+}
+
+.listgrid-toolbar .button:not(.dropdown-toggle) {
+  min-width: 55px;
+}
+
+.listgrid-toolbar .button.dropdown-toggle {
+  margin-right: -3px;
+}
+
+.listgrid-toolbar li {
+  float: right;
+  padding: 0 2px;
+  width: 100%;
+}
+
+.listgrid-toolbar .dropdown-menu-right {
+  margin: 0;
+}
+
+.listgrid-toolbar li.alert-box {
+  padding-top: 8px;
+  padding-right: 10px;
+  color: #94AF39;
+}
+
+.listgrid-toolbar .filter-info {
+  border-right: 1px solid #D8D5D0;
+  margin-right: 10px;
+  padding-right: 10px;
+  float: left;
+  text-align: left;
+}
+
+.listgrid-toolbar .filter-info > .filter-button {
+  margin: 0;
+}
+
+.listgrid-toolbar .filter-info .button-group {
+  margin: 0;
+}
+
+.listgrid-toolbar .filter-info .clear-filters i {
+  padding-top: 0;
+}
+
+/****************************************
+ ADMIN LISTGRID/TABLES STYLES
+****************************************/
+
+.table {
+  margin-bottom: 0 !important;
+  border-collapse: separate;
+}
+
+.table {
+  border-collapse: separate;
+}
+
+.table-actions > button.button {
+  float: right;
+}
+
+/****************************************
+ ADMIN LISTGRID TABLE HEADER STYLES
+****************************************/
+
+.table thead {
+  background-color: #E1E0DD;
+  border-bottom: 1px solid #E4E2DF;
+  color: #2c2c2c;
+  font-weight: 600;
+}
+
+.table thead > tr > th {
+  padding-left: 0;
+  border-bottom: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/****************************************
+ ADMIN LISTGRID TABLE ROWS AND RECORDS STYLES
+****************************************/
+
+tr {
+  position: relative;
+}
+
+.table tbody > tr.list-grid-no-results > td {
+  line-height: 28px;
+}
+
+.table tbody > tr > td {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  position: relative;
+  height: 40px;
+  line-height: 24px;
+}
+
+.table tbody > tr > td > a.list-grid-primary-field {
+  display: inline;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+  background-color: #F9F7F3;
+  border-right: 1px solid #E4E3E2;
+}
+
+.table-striped>tbody>tr:nth-of-type(even) {
+  background-color: #F1EFEB;
+  border-right: 1px solid #E4E3E2;
+}
+
+.table-striped>tbody>tr.dirty:nth-of-type(even):not(.selected) {
+  background-color: #F7EFDC;
+}
+
+.table-striped>tbody>tr.dirty:nth-of-type(odd):not(.selected) {
+  background-color: #F7EFDC;
+}
+
+.listgrid-container tr.dirty {
+  background-color: #F7EFDC;
+}
+
+.list-grid-table tbody tr.selected {
+  background-color: #F7EFDC !important;
+}
+
+.list-grid-table tbody tr.progress {
+  background-color: #E3F7D8 !important;
+}
+
+.list-grid-table tbody tr.progress td {
+  position: inherit;
+}
+
+.list-grid-table tbody tr.clickable {
+  cursor: pointer;
+}
+
+.list-grid-table tbody tr:not(.list-grid-no-results):hover {
+  background-color: #E1E0DD;
+}
+
+.listgrid-body-wrapper .table tbody>tr:first-child>td {
+  border-top: none;
+  height: 40px;
+}
+
+.listgrid-body-wrapper tbody tr td a:not(.workflow-icon),
+tbody tr td a:not(.workflow-icon) {
+  color: #809831;
+  text-decoration: underline;
+}
+
+.listgrid-body-wrapper tbody tr.dirty td a:not(.workflow-icon),
+tbody tr.dirty td a:not(.workflow-icon) {
+  color: #efbc62;
+  text-decoration: underline;
+}
+
+/****************************************
+ ADMIN LISTGRID ROW ACTION  STYLES
+****************************************/
+
+.listgrid-row-actions {
+  text-align: left;
+}
+
+td .listgrid-row-actions {
+  text-align: left;
+  position: absolute;
+  left: 10px;
+  top: 6px;
+}
+
+.listgrid-row-actions span.listgrid-row-action a {
+  color: white !important;
+  vertical-align: middle;
+  font-size: 16px;
+  text-decoration: none !important;
+}
+
+.listgrid-row-actions .button:not(:first-child),
+.listgrid-toolbar-actions .button:not(:first-child) {
+  margin-right: 10px;
+}
+
+.listgrid-row-actions .listgrid-row-action:not(:first-child) {
+  margin-right: 5px;
+}
+
+/****************************************
+ ADMIN LISTGRID TABLE HOLDER STYLES
+****************************************/
+
+.table-holder.warning a.entity {
+  text-decoration: underline;
+  color: #EEBB69;
+}
+
+.table-holder.warning .listgrid-row-actions a:hover {
+  color: #EEBB69;
+}
+
+.table-holder.success a.entity {
+  text-decoration: underline;
+  color: #94AF39;
+}
+
+.table-holder.success .listgrid-row-actions a:hover {
+  color: #94AF39;
+}
+
+.table-holder.danger a.entity {
+  text-decoration: underline;
+  color: #D20A33;
+}
+
+.table-holder.danger .listgrid-row-actions a:hover {
+  color: #D20A33;
+}
+
+/****************************************
+ ADMIN LISTGRID FIELDS AND FIELDGROUP  STYLES
+****************************************/
+
+.fieldset-card .titlebar .listgrid-toolbar {
+  display: inline-block;
+  float: left;
+  margin: 6px 0;
+}
+
+.fieldset-card-content .fieldgroup-listgrid {
+  position: relative;
+  background-color: white;
+  border: 1px solid #D8D5D0;
+}
+
+.fieldgroup-listgrid-wrapper-header {
+  height: 43px;
+}
+
+.fieldgroup-listgrid .row {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header {
+  margin: 0;
+  background-color: #FCFBF9;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 10px;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #757575;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header.hidden-body {
+  border: none;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header span {
+  display: inline-block;
+  margin: 10px 0;
+  line-height: 20px;
+}
+
+.fieldgroup-listgrid-wrapper-header span.listgrid-friendly-name {
+  text-overflow: ellipsis;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.fieldgroup-listgrid-wrapper-header span.listgrid-total-records {
+  margin-right: 5px;
+  text-transform: none;
+  opacity: 0.5;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper-header .listgrid-toolbar {
+  display: inline-block;
+  float: left;
+  margin: 6px 0;
+}
+
+.fieldset-card-content .fieldgroup-listgrid-wrapper {
+  padding: 10px 10px 0;
+}
+
+.fieldgroup-listgrid {
+  margin-bottom: 20px;
+}

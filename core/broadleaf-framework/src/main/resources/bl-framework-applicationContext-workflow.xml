@@ -92,6 +92,7 @@
                 <property name="unloggedExceptionClasses">
                     <list>
                         <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                        <value>org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException</value>
                     </list>
                 </property>
             </bean>
@@ -122,6 +123,7 @@
                 <property name="unloggedExceptionClasses">
                     <list>
                         <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                        <value>org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException</value>
                     </list>
                 </property>
             </bean>

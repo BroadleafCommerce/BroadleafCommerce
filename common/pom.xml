@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.2.3-SNAPSHOT</version>
+        <version>5.2.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
@@ -257,14 +257,24 @@
         <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
             <artifactId>mime-util</artifactId>
-        </dependency>
+	    </dependency>
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-httpclient</artifactId>
+                    <groupId>commons-httpclient</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
         <!--update xalan dependency for esapi for a xalan security vulnerability-->
         <dependency>
@@ -349,6 +359,11 @@
                     <groupId>rhino</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.javascript</groupId>
+            <artifactId>closure-compiler</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

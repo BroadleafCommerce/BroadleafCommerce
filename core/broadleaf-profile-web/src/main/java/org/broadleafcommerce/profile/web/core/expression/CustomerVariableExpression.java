@@ -20,7 +20,9 @@ package org.broadleafcommerce.profile.web.core.expression;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ import javax.annotation.Resource;
 @ConditionalOnTemplating
 public class CustomerVariableExpression implements BroadleafVariableExpression {
 
+    @Resource(name = "blCustomerAddressService")
+    protected CustomerAddressService customerAddressService;
+
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
 
@@ -57,6 +62,12 @@ public class CustomerVariableExpression implements BroadleafVariableExpression {
     
     public Customer getCurrent() {
         return CustomerState.getCustomer();
+    }
+
+    public List<CustomerAddress> getCustomerAddresses() {
+        Customer customer = CustomerState.getCustomer();
+
+        return customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
     }
 
     public boolean savedPaymentsAreEnabled() {

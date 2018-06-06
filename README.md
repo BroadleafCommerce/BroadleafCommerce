@@ -1,14 +1,25 @@
 ## Introduction
 
-BroadleafCommerce is an open-source, e-commerce framework written entirely in Java on top of the Spring framework. It is targeted at facilitating the development of enterprise-class, commerce-driven sites by providing a robust data model, services and specialized tooling that take care of most of the "heavy lifting" work. To accomplish this goal, we have developed our platform based on the key feature sets required by world-class online retailers - and we're committed to continually expanding our feature offering. We've also taken extra steps to guarantee interoperability with today's enterprise by utilizing standards wherever possible and incorporating best-of-breed, open-source software libraries from the community.
+BroadleafCommerce is an e-commerce framework written entirely in Java and leveraging the Spring framework. It is targeted at facilitating the development of enterprise-class, commerce-driven sites by providing a robust data model, services and specialized tooling that take care of most of the "heavy lifting" work. To accomplish this goal, we have developed our platform based on the key feature sets required by world-class online retailers - and we're committed to continually expanding our feature offering. We've also taken extra steps to guarantee interoperability with today's enterprise by utilizing standards wherever possible and incorporating best-of-breed, open-source software libraries.
+
+See overview and features of Broadleaf at [www.broadleafcommerce.com](http://broadleafcommerce.com) 
+
+## Editions
+
+Broadleaf has a number of editions available commercially including a Marketplace Edition, B2B Edition, B2C Edition, and Multi-Teant Edition.   Each of these are described on the [Editions Page](https://www.broadleafcommerce.com/editions) of the Broadleaf website.
 
 ## Getting Started
 
 Check out our [Getting Started guide](http://docs.broadleafcommerce.org/current/Getting-Started.html) to quickly kick off your Broadleaf-enabled website.
 
+## License
+
+Broadleaf Commerce core is released under a dual license format. It may be used under the terms of the Fair Use License 1.0 (http://license.broadleafcommerce.org/fair_use_license-1.0.txt) unless the restrictions on use therein are violated and require payment to Broadleaf, in which case the Broadleaf End User License Agreement (EULA), Version 1.1 (http://license.broadleafcommerce.org/commercial_license-1.1.txt) shall apply. Alternatively, the Commercial License may be replaced with a mutually agreed upon license between you and Broadleaf Commerce.
+
+
 ## Support
 
-Broadleaf commerce offers [commercial support and training](http://broadleafcommerce.com/services) which can also include professional services. Community support is offered through the [Broadleaf forums](http://forum.broadleafcommerce.org) and/or [our GitHub issues](https://github.com/BroadleafCommerce/BroadleafCommerce).
+We also offer various levels of [enterprise support licenses](http://broadleafcommerce.com/support). Please [contact us](http://broadleafcommerce.com/contact) for information.
 
 ## Key Features and Technologies
 
@@ -101,52 +112,5 @@ BroadleafCommerce includes a robust content management system for creating and
 managing static pages and content. We also include a powerful content targeting feature that allows
 business users to dynamically drive the most appropriate content to users.
 
-
-## Local Framework Development
-
-Broadleaf Commerce recommends JDK 1.7, but will build/run with JDK 1.6 or 1.7. At this time Broadleaf has not been tested with Java 8.
-
-Most developers won't need to modify the framework code and instead should rely on the [Getting Started guide](http://docs.broadleafcommerce.org/current/Getting-Started.html) to quickly kick off your Broadleaf-enabled website.
-
-If you do want to fix a bug or contribute to Broadleaf, see our [CONTRIBUTING.md](CONTRIBUTING.md) guidelines.
-
-The easiest way to make changes to the core framework (again not typical) is to clone this repository and execute a clean install via Maven:
-
-```sh
-mvn clean install
-```
-
-If you are using JRebel for development, add the Maven profile 'blc-development' to include the necessary rebel.xml files in the built jars:
-
-```sh
-mvn clean install -Pblc-development
-```
-
-Our integration tests take a while to execute so you might also want to temporarily skip tests:
-
-```sh
-mvn clean install -Pblc-development -DskipTests
-```
-
-> Note: all contributed code must have passing tests via Maven
-
-If you need to use a specific version of Broadleaf, simply check out that version using either the branch or tag. All releases are tagged 'broadleaf-<version>' whereas all active development versions are tagged 'BroadleafCommerce-<major.minor>.x'. For instance, if you would like to actively develop on the Broadleaf 3.0 line in order for your changes to be in the next GA patch release of Broadleaf 3.0, you would check out the 'BroadleafCommerce-3.0.x' branch.
-
-```sh
-git clone git@github.com:BroadleafCommerce/BroadleafCommerce
-cd BroadleafCommerce
-
-# use 3.0.x-SNAPSHOT
-git checkout BroadleafCommerce-3.0.x
-mvn clean install -Pblc-development
-```
-
-
-## Contributing
-See [CONTRIBUTING.md](CONTRIBUTING.md)
-
-## License
-
-Broadleaf Commerce core is released under the terms of the Apache Software License 2 (see license.txt). However, various commercial modules that are also available (for instance, price list management) are released under a different commercial license. These are not included with the core Broadleaf framework.
 
 We also offer various levels of [enterprise support licenses](http://broadleafcommerce.com/support). Please [contact us](http://broadleafcommerce.com/contact) for information.

@@ -129,7 +129,7 @@
                     $mediaImageContainer.find('img.thumbnail').data("fullurl", BLC.servletContext + origVal);
                     $mediaImageContainer.find('img.thumbnail').parent().attr("href", BLC.servletContext + origVal);
                     $mediaImageContainer.find('img.thumbnail').removeClass('placeholder-image');
-                    $mediaImageContainer.find('button.clear-asset-selector').show();
+                    $mediaImageContainer.find('button.edit-asset-selector, button.clear-asset-selector').show();
 
                     origVal = '{ "url": "' + origVal + '" }';
                 }
@@ -279,7 +279,7 @@
                     this.removeChangesForId(id);
                 }
             }
-            
+
             this.updateEntityFormActions();
         },
 
@@ -288,14 +288,20 @@
          * It is called once when the page first loads, and then on every subsequent change.
          */
         updateEntityFormActions : function() {
+            var $currModal = BLCAdmin.currentModal();
+            if ($currModal && $currModal.has('.modal-add-entity-form').length) {
+                // in community, modal submit gets disabled when there is a validation error
+                $('.submit-button', $currModal).prop('disabled', !this.getEntityFormChangesCount());
+            }
+            
             // Grab all buttons we might want to enable/disable
             var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
             var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
             var $approveBtn = $('.sandbox-actions').find('.button a:contains("Approve")').parent();
 
-            // Check to see if there are any changes in the `entityFormChangeMap`
-            // If there are, we want to make sure the 'Save' button is active and any workflow buttons are not.
             if (this.getEntityFormChangesCount()) {
+                // Check to see if there are any changes in the `entityFormChangeMap`
+                // If there are, we want to make sure the 'Save' button is active and any workflow buttons are not.
                 $saveBtn.prop('disabled', false);
                 $promoteBtn.addClass('confirm');
                 $approveBtn.addClass('confirm');
@@ -303,10 +309,9 @@
                 $("#headerChangeBoxContainer").removeClass("hidden");
                 $(".change-box-message").html(BLCAdmin.messages.unsavedChangesRevert);
                 $('#headerChangeBox').show();
-            }
-            // Otherwise, we don't have any unsaved changes.  So disable the 'Save' button and make sure the
-            // workflow buttons are enabled
-            else {
+            } else {
+                // Otherwise, we don't have any unsaved changes.  So disable the 'Save' button and make sure the
+                // workflow buttons are enabled
                 $saveBtn.prop('disabled', true);
                 $promoteBtn.removeClass('confirm');
                 $approveBtn.removeClass('confirm');
@@ -549,15 +554,19 @@
          * @returns {boolean}
          */
         checkIfShouldTrackChanges : function(el) {
-
+            // if changes are explcitly tracked on this input, track it
+            if ($(el).data('track-changes')) {
+                return true;
+            }
+            
             // if this element is in an OMS tab, we don't want to track
             if (el !== undefined && $(el).closest('.oms-tab').length) {
                 return false;
             }
 
-            // Don't track if we are in a modal, on an OMS page, or not on a page with an entity form
-            if ((el !== undefined && $(el).closest('.modal').length) ||
-                $('.oms').length ||
+            // Don't track if we are on an OMS page, in a modal (except add entity modal) or not on a page with an entity form
+            if ((el !== undefined && $('.oms').length) ||
+                $(el).closest('.modal:not(:has(.modal-add-entity-form))').length ||
                 !$('.entity-form').length) {
                 return false;
             }
@@ -616,9 +625,10 @@ $(document).ready(function() {
                 return;
             }
             // This is a special case for rule builders, we need to capture the match quantity value
-            else if ($(this).hasClass('rules-group-header-item-qty')) {
+            else if ($(this).hasClass('rules-group-header-item-qty')
+                    && $(this).closest('.rules-group-container').attr('data-orig-val') === undefined) {
                 var $ruleGroupContainer = $(this).closest('.rules-group-container');
-                $ruleGroupContainer.attr('orig-val', $(this).val());
+                $ruleGroupContainer.attr('data-orig-val', $(this).val());
                 return;
             }
             // If this is a redactor field, we have to set its text attribute, not its value
@@ -633,7 +643,7 @@ $(document).ready(function() {
      * This event handler is fired for `input` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('input', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
+    $body.on('input paste', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 
@@ -641,7 +651,7 @@ $(document).ready(function() {
      * This event handler is fired for `change` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('change', 'select, input:radio, input.query-builder-selectize-input', function() {
+    $body.on('change', 'select, input:radio, input.query-builder-selectize-input, input:file', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 

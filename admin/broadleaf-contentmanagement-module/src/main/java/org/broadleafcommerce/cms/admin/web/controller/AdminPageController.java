@@ -45,7 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Handles admin operations for the {@link Page} entity. This entity has fields that are 
  * dependent on the value of the {@link Page#getPageTemplate()} field, and as such,
- * it deviates from the typical {@link AdminAbstractEntityController}.
+ * it deviates from the typical {@link AdminBasicEntityController}.
  * 
  * @author Andre Azzolini (apazzolini)
  */
@@ -92,6 +92,10 @@ public class AdminPageController extends AdminBasicEntityController {
             dynamicForm = getDynamicFieldTemplateForm(info, id, null);
         } else {
             dynamicForm = getEntityForm(info, null);
+        }
+        if (dynamicForm.getCeilingEntityClassname().equals(PageTemplate.class.getName())) {
+            dynamicForm.setTranslationCeilingEntity(Page.class.getName());
+            dynamicForm.setTranslationId(id);
         }
         ef.putDynamicFormInfo("pageTemplate", info);
         ef.putDynamicForm("pageTemplate", dynamicForm);

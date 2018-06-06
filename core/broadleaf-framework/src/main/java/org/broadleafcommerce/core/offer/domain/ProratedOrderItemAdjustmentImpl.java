@@ -199,7 +199,7 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
         if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
-        OrderItemAdjustmentImpl other = (OrderItemAdjustmentImpl) obj;
+        ProratedOrderItemAdjustmentImpl other = (ProratedOrderItemAdjustmentImpl) obj;
 
         if (id != null && other.id != null) {
             return id.equals(other.id);

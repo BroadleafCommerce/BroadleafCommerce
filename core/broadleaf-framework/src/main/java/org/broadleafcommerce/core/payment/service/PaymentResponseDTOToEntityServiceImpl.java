@@ -75,7 +75,7 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     @Override
     public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress, boolean isUseBillingAddressFromGateway) {
         Address billingAddress = tempBillingAddress;
-        if (responseDTO.getBillTo() != null && isUseBillingAddressFromGateway) {
+        if (responseDTO.getBillTo() != null && responseDTO.getBillTo().addressPopulated() && isUseBillingAddressFromGateway) {
             billingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
             populateAddressInfo(billToDTO, billingAddress);
@@ -87,9 +87,8 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     @Override
     public void populateShippingInfo(PaymentResponseDTO responseDTO, Order order) {
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
-        Address shippingAddress = null;
-        if (responseDTO.getShipTo() != null && shippableFulfillmentGroup != null) {
-            shippingAddress = addressService.create();
+        if (responseDTO.getShipTo() != null && responseDTO.getShipTo().addressPopulated() && shippableFulfillmentGroup != null) {
+            Address shippingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();
             populateAddressInfo(shipToDTO, shippingAddress);
 

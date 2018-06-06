@@ -45,9 +45,11 @@ import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedClosure;
@@ -71,7 +73,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -218,6 +219,13 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix) {
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<>();
+        ExtensionResultStatusType result = searchExtensionManager.getProxy().getPropertyNameForIndexField(field, fieldType, prefix, erh);
+
+        if (!ExtensionResultStatusType.NOT_HANDLED.equals(result) && erh.getResult() != null) {
+            return erh.getResult();
+        }
+
         String fieldName = field.getField().getAbbreviation();
         if (StringUtils.isEmpty(fieldName)) {
             fieldName = field.getField().getPropertyName();
@@ -930,6 +938,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     propertyObject = newCollection;
                 } else {
                     propertyObject = getPropertyValueInternal(propertyObject, components, currentPosition + 1);
+                }
+            } else {
+                if (Money.class.isAssignableFrom(propertyObject.getClass())) {
+                    propertyObject = ((Money) propertyObject).getAmount().toPlainString();
+                } else if (BigDecimal.class.isAssignableFrom(propertyObject.getClass())) {
+                    propertyObject = ((BigDecimal) propertyObject).toPlainString();
                 }
             }
         }

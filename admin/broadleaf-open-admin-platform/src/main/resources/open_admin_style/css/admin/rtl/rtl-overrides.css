@@ -1,0 +1,47 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ * 
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+ 
+/*
+ * Swap left and right arrows for RTL
+ */
+.fa-angle-left:before {
+  content: "\f104";
+  content: "\f105";
+}
+ 
+.fa-angle-right:before {
+  content: "\f105";
+  content: "\f104";
+}
+
+/*
+ * Fix the navbar in RTL so that the menu slides out from the right side and slides into the right side
+ */
+.app-content .content .section-content #secondary-nav .secondary-nav {
+  transform: translateX(100%);
+}
+
+@keyframes slide-out {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}

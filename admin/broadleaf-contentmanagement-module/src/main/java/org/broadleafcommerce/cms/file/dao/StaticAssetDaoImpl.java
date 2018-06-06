@@ -17,6 +17,14 @@
  */
 package org.broadleafcommerce.cms.file.dao;
 
+import org.broadleafcommerce.cms.file.domain.StaticAsset;
+import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +38,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Created by bpolster.
@@ -68,20 +67,26 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         criteria.select(handler);
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(handler.get("id"), id));
+        try {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().setup(StaticAssetImpl.class, null);
+                queryExtensionManager.getProxy().refineRetrieve(StaticAssetImpl.class, null, builder, criteria, handler, restrictions);
 
-        if (queryExtensionManager != null) {
-            queryExtensionManager.getProxy().setup(StaticAssetImpl.class, null);
-            queryExtensionManager.getProxy().refineRetrieve(StaticAssetImpl.class, null, builder, criteria, handler, restrictions);
-        }
-        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+            }
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
-        TypedQuery<StaticAsset> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        List<StaticAsset> response = query.getResultList();
-        if (response.size() > 0) {
-            return response.get(0);
+            TypedQuery<StaticAsset> query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            List<StaticAsset> response = query.getResultList();
+            if (response.size() > 0) {
+                return response.get(0);
+            }
+            return null;
+        } finally {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().breakdown(StaticAssetImpl.class, null);
+            }
         }
-        return null;
     }
     
     public List<StaticAsset> readAllStaticAssets() {
@@ -101,7 +106,22 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
             return em.createQuery(criteria).getResultList();
         } catch (NoResultException e) {
             return new ArrayList<StaticAsset>();
+        } finally {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().breakdown(StaticAssetImpl.class, null);
+            }
         }
+    }
+
+    @Override
+    public Long readTotalStaticAssetCount() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(StaticAssetImpl.class)));
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getSingleResult();
     }
 
     @Override

@@ -45,6 +45,7 @@ INSERT INTO BLC_FLD_DEF(FLD_DEF_ID, NAME, FRIENDLY_NAME, FLD_TYPE, SECURITY_LEVE
 -- Map both the english template to this field group.
 --
 INSERT INTO BLC_PGTMPLT_FLDGRP_XREF(PG_TMPLT_FLD_GRP_ID, PAGE_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-100,1,1,0);
+INSERT INTO BLC_PGTMPLT_FLDGRP_XREF(PG_TMPLT_FLD_GRP_ID, PAGE_TMPLT_ID, FLD_GROUP_ID, GROUP_ORDER) VALUES (-200,2,1,0);
 
 
 -----------------------------------------------------------------------------------------------------------------------------------

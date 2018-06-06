@@ -65,13 +65,13 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name="blPageDao")
     protected PageDao pageDao;
-    
+
     @Resource(name="blPageRuleProcessors")
-    protected List<RuleProcessor<PageDTO>> pageRuleProcessors;    
+    protected List<RuleProcessor<PageDTO>> pageRuleProcessors;
 
     @Resource(name="blLocaleService")
     protected LocaleService localeService;
-    
+
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
@@ -107,11 +107,11 @@ public class PageServiceImpl implements PageService {
     public Map<String, PageField> findPageFieldMapByPageId(Long pageId) {
         Map<String, PageField> returnMap = new HashMap<>();
         List<PageField> pageFields = pageDao.readPageFieldsByPageId(pageId);
-        
+
         for (PageField pf : pageFields) {
             returnMap.put(pf.getFieldKey(), pf);
         }
-        
+
         return returnMap;
     }
 
@@ -119,7 +119,7 @@ public class PageServiceImpl implements PageService {
     public PageTemplate findPageTemplateById(Long id) {
         return pageDao.readPageTemplateById(id);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public PageTemplate savePageTemplate(PageTemplate template) {
@@ -131,59 +131,85 @@ public class PageServiceImpl implements PageService {
      */
     @Override
     public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure) {
-        final List<PageDTO> returnList = getPageDTOListForURI(locale, uri, secure);
-        PageDTO dto = evaluatePageRules(returnList, locale, ruleDTOs);
-        
-        if (dto.getId() != null) {
-            final Page page = findPageById(dto.getId());
-            final ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<>();
+        PageDTO dto;
 
-            // Allow an extension point to override the page to render.
-            extensionManager.getProxy().overridePageDto(newDTO, dto, page);
-            if (newDTO.getResult() != null) {
-                dto = newDTO.getResult();
+        if (!isNullPageCached(locale, uri, secure)) {
+            final List<PageDTO> returnList = getPageDTOListForURI(locale, uri, secure);
+            dto = evaluatePageRules(returnList, locale, ruleDTOs);
+
+            if (dto.getId() != null) {
+                final Page page = findPageById(dto.getId());
+                final ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<>();
+
+                // Allow an extension point to override the page to render.
+                extensionManager.getProxy().overridePageDto(newDTO, dto, page);
+                if (newDTO.getResult() != null) {
+                    dto = newDTO.getResult();
+                }
             }
+
+            if (dto != null) {
+                dto = pageServiceUtility.hydrateForeignLookups(dto);
+            }
+
+        } else {
+            dto = NULL_PAGE;
         }
-        
-        if (dto != null) {
-            dto = pageServiceUtility.hydrateForeignLookups(dto);
-        }
-        
+
         return dto;
     }
-    
+
+    protected boolean isNullPageCached(Locale locale, String uri, boolean secure) {
+        boolean result = false;
+        final String cacheKey = buildKey(uri, locale, secure);
+        if (getPageCache().get(cacheKey) != null) {
+            Object pageDto = ((List) this.getPageCache().get(cacheKey).getObjectValue()).get(0);
+            if (pageDto instanceof NullPageDTO) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
     protected List<PageDTO> getPageDTOListForURI(final Locale locale, final String uri, final boolean secure) {
         final List<PageDTO> dtoList;
-        
+
         if (uri != null) {
             final String key = buildKey(uri, locale, secure);
             addCachedDate(key);
-            
+
             final List<Page> pageList = pageDao.findPageByURIAndActiveDate(uri, getCachedDate(key));
+
+            // if page doesn't exist - cached NullPageDTO to reduce queries to DB
+            if (pageList.isEmpty()) {
+                getPageCache().put(new Element(key, Collections.singletonList(NULL_PAGE)));
+                addPageMapCacheEntry(uri, key);
+            }
+
             dtoList = buildPageDTOList(pageList, secure, uri, locale);
         } else {
             dtoList = null;
         }
-        
+
         return dtoList;
     }
-    
+
     protected void addCachedDate(final String key) {
         if (getPageCache().get(key) == null) {
             getUriCachedDateCache().put(new Element(key, new Date()));
         }
     }
-    
+
     protected Date getCachedDate(final String key) {
         final Element element = getUriCachedDateCache().get(key);
         final Date cachedDate;
-        
+
         if (element != null && element.getObjectValue() != null) {
             cachedDate = (Date) element.getObjectValue();
         } else {
             cachedDate = new Date();
         }
-        
+
         return cachedDate;
     }
 
@@ -204,7 +230,7 @@ public class PageServiceImpl implements PageService {
 
         return copyDTOList(dtoList);
     }
-    
+
     @SuppressWarnings("unchecked")
     protected List<PageDTO> buildPageDTOListUsingCache(List<Page> pageList, String identifier, Locale locale, boolean secure) {
         List<PageDTO> dtoList = getCachedPageDTOList(pageList, identifier, locale, secure);
@@ -237,14 +263,14 @@ public class PageServiceImpl implements PageService {
         if (pageList != null) {
             for(Page page : pageList) {
                 PageDTO pageDTO = pageServiceUtility.buildPageDTO(page, secure);
-                
+
                 if (!dtoList.contains(pageDTO)) {
                     dtoList.add(pageDTO);
                 }
             }
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     protected List<PageDTO> getPageListFromCache(String key) {
         if (key != null) {
@@ -254,7 +280,7 @@ public class PageServiceImpl implements PageService {
                 statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
                 return (List<PageDTO>) cacheElement.getObjectValue();
             }
-            
+
             statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
         }
 
@@ -339,13 +365,13 @@ public class PageServiceImpl implements PageService {
         }
         return pageMapCache;
     }
-    
+
     @Override
     public Cache getUriCachedDateCache() {
         if (uriCachedDateCache == null) {
             uriCachedDateCache = CacheManager.getInstance().getCache("uriCachedDateCache");
         }
-        
+
         return uriCachedDateCache;
     }
 

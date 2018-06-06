@@ -21,6 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
@@ -28,7 +30,6 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -50,8 +51,9 @@ import javax.servlet.http.HttpServletResponse;
 @Deprecated
 public class CsrfFilter extends GenericFilterBean {
     protected static final Log LOG = LogFactory.getLog(CsrfFilter.class);
-    
-    @Resource(name="blExploitProtectionService")
+
+    @Autowired
+    @Qualifier("blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
     protected List<String> excludedRequestPatterns;
@@ -81,7 +83,7 @@ public class CsrfFilter extends GenericFilterBean {
                 throw new ServletException(e);
             }
         }
-        
+
         chain.doFilter(request, response);
     }
 

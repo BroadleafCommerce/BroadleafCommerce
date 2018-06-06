@@ -202,6 +202,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Long findTotalCategoryCount() {
+        return categoryDao.readTotalCategoryCount();
+    }
+
+    @Override
     public List<Category> findAllSubCategories(Category category) {
         return categoryDao.readAllSubCategories(category);
     }
@@ -234,6 +239,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public List<Sku> findAllSkus() {
         return skuDao.readAllSkus();
+    }
+
+    @Override
+    public List<Sku> findAllSkus(int offset, int limit) {
+        return skuDao.readAllSkus(offset, limit);
     }
 
     @Override
@@ -452,5 +462,4 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Long> findProductIdsUsingProductOptionById(Long productId, int start, int pageSize) {
         return productOptionDao.findProductIdsUsingProductOptionById(productId, start, pageSize);
     }
-
 }

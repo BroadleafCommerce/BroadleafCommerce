@@ -19,7 +19,7 @@ if (!RedactorPlugins) var RedactorPlugins = {};
 
 (function($)
 {
-    RedactorPlugins.selectasset = function()
+    $.Redactor.prototype.selectasset = function()
     {
         return {
             init: function()

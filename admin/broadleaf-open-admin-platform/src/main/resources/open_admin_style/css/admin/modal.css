@@ -181,3 +181,26 @@
     float: left;
     margin: 10px 10px;
 }
+
+/****************************************
+ ADMIN CUSTOMIZED MODAL STYLES
+****************************************/
+.modal.primary-media-attrs-modal {
+    top: 20%;
+    width: 400px;
+    margin-left: -200px;
+}
+.modal.primary-media-attrs-modal .modal-header h3 {
+    font-weight: 400;
+}
+.modal.primary-media-attrs-modal .modal-body textarea {
+    resize: vertical;
+}
+.modal.primary-media-attrs-modal .modal-body label {
+    text-transform: uppercase;
+    color: #2C2C2C;
+}
+
+.modal.primary-media-attrs-modal .modal-footer button:last-of-type {
+    margin-right: 15px;
+}

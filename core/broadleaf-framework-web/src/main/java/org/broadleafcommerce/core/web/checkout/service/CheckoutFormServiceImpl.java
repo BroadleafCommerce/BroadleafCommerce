@@ -125,9 +125,9 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         String emailAddress = getKnownEmailAddress(cart, customer);
         paymentInfoForm.setEmailAddress(emailAddress);
 
-        Address orderPaymentBillingAddress = getAddressFromCCOrderPayment(cart);
-        if (orderPaymentBillingAddress != null) {
-            paymentInfoForm.setAddress(orderPaymentBillingAddress);
+        Address billingAddress = getBillingAddress(cart);
+        if (billingAddress != null) {
+            paymentInfoForm.setAddress(billingAddress);
         }
 
         CustomerPayment customerPaymentUsedForOrder = getCustomerPaymentUsedForOrder();
@@ -157,6 +157,10 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         }
 
         return emailAddress;
+    }
+
+    protected Address getBillingAddress(Order cart) {
+        return getAddressFromCCOrderPayment(cart);
     }
 
     protected Address getAddressFromCCOrderPayment(Order cart) {

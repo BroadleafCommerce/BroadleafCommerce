@@ -169,18 +169,18 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
 
         if (sku == null && product != null) {
             // Set to the default sku
-            if (cannotSellDefaultSku(product)) {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
-            } else {
+            if (canSellDefaultSku(product)) {
                 sku = product.getDefaultSku();
+            } else {
+                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
             }
         }
 
         return sku;
     }
 
-    protected boolean cannotSellDefaultSku(Product product) {
-        return CollectionUtils.isNotEmpty(product.getAdditionalSkus()) && !product.getCanSellWithoutOptions();
+    protected boolean canSellDefaultSku(Product product) {
+        return CollectionUtils.isEmpty(product.getAdditionalSkus()) || product.getCanSellWithoutOptions();
     }
     
     protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {

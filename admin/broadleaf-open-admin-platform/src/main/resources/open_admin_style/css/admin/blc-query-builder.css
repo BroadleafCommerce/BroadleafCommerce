@@ -193,9 +193,10 @@
 }
 
 .query-builder-rules .rules-group-header-item-qty {
-    width: 40px;
+    min-width: 40px;
+    width: auto;
     margin: 5px 0 5px 3px;
-    text-align:right;
+    text-align: center;
 }
 
 .query-builder-rules .query-builder-selectize-input {

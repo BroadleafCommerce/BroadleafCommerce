@@ -31,6 +31,8 @@ import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.util.StatusExposingServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.google.common.cache.Cache;
@@ -52,7 +54,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -63,7 +64,7 @@ import javax.servlet.http.HttpSession;
 /**
  * @deprecated In favor of org.broadleafcommerce.common.web.BroadleafRequestFilter.
  * formally component name "blProcessURLFilter"
- * 
+ *
  * This filter sets up the CMS system by setting the current sandbox, locale, time of day, and languageCode
  * that used by content items.
  * <p/>
@@ -93,10 +94,12 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     private Cache<String, URLProcessor> urlCache;
 
 
-    @Resource(name = "blSandBoxService")
+    @Autowired
+    @Qualifier("blSandBoxService")
     private SandBoxService sandBoxService;
 
-    @Resource(name = "blLocaleService")
+    @Autowired
+    @Qualifier("blLocaleService")
     private LocaleService localeService;
 
     protected Boolean sandBoxPreviewEnabled = true;
@@ -216,7 +219,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
             } else {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("URL about to be processed by a Broadleaf URLProcessor " + requestURIWithoutContext);
-                }                
+                }
                 urlProcessor.processURL(requestURIWithoutContext);
             }
         } finally {
@@ -288,7 +291,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
      * @return true if the {@code HttpServletRequest} should be processed
      */
     protected boolean shouldProcessURL(HttpServletRequest request, String requestURI) {
-        if (requestURI.contains(BLC_ADMIN_GWT) || 
+        if (requestURI.contains(BLC_ADMIN_GWT) ||
             requestURI.endsWith(BLC_ADMIN_SERVICE) ||
             requestURI.contains(BLC_ADMIN_PREFIX)) {
             if (LOG.isTraceEnabled()) {

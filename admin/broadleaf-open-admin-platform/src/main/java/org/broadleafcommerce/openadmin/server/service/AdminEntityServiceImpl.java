@@ -393,6 +393,23 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
+    public Map<String, DynamicResultSet> getAllRecordsForAllSubCollections(ClassMetadata cmd, Entity containingEntity,
+                                                                           List<SectionCrumb> sectionCrumb) throws ServiceException {
+        Map<String, DynamicResultSet> map = new HashMap<>();
+        for (Property p : cmd.getProperties()) {
+            FieldMetadata fieldMetadata = p.getMetadata();
+            boolean fieldAvailable = ArrayUtils.contains(fieldMetadata.getAvailableToTypes(), containingEntity.getType()[0]);
+            if (fieldAvailable && fieldMetadata instanceof CollectionMetadata) {
+                FetchPageRequest pageRequest = new FetchPageRequest()
+                        .withPageSize(Integer.MAX_VALUE);
+                PersistenceResponse resp = getPagedRecordsForCollection(cmd, containingEntity, p, null, pageRequest, null, sectionCrumb);
+                map.put(p.getName(), resp.getDynamicResultSet());
+            }
+        }
+        return map;
+    }
+
+    @Override
     public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
             throws ServiceException {
 
@@ -963,7 +980,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(owningClass);
         Class<?> clazz = dynamicEntityDao.getImplClass(owningClass);
-        Object foreignEntity = dynamicEntityDao.find(clazz, id);
+        Object foreignEntity = dynamicEntityDao.find(clazz, toIdFieldType(id, clazz));
 
         if (foreignEntity instanceof AdminMainEntity) {
             return ((AdminMainEntity) foreignEntity).getMainEntityName();
@@ -980,4 +997,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return BLCSystemProperty.resolveIntSystemProperty("admin.default.max.results", 50);
     }
 
+    protected Object toIdFieldType(String id, Class<?> entityClass) {
+        Class<?> idFieldClass = dynamicDaoHelper.getIdField(entityClass, em).getType();
+        if (Long.class.isAssignableFrom(idFieldClass)) {
+            return Long.parseLong(id);
+        } else if (Integer.class.isAssignableFrom(idFieldClass)) {
+            return Integer.parseInt(id);
+        }
+        return id;
+    }
 }

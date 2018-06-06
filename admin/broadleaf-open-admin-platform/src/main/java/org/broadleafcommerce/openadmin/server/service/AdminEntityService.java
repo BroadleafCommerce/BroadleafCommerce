@@ -312,6 +312,17 @@ public interface AdminEntityService {
             throws ServiceException;
 
     /**
+     * overloading containing paging parameters
+     * @param cmd
+     * @param containingEntity
+     * @param sectionCrumb
+     * @return
+     * @throws ServiceException
+     */
+    Map<String, DynamicResultSet> getAllRecordsForAllSubCollections(ClassMetadata cmd, Entity containingEntity,
+                                                                    List<SectionCrumb> sectionCrumb) throws ServiceException;
+
+    /**
      * Adds an item into the specified collection
      * 
      * @param entityForm
