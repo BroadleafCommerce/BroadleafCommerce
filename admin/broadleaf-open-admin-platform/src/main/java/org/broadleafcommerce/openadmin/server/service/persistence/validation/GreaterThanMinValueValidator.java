@@ -17,7 +17,6 @@ import java.util.Map;
 public class GreaterThanMinValueValidator extends ValidationConfigurationBasedPropertyValidator {
 
     protected final String INVALID_VALUE_MESSAGE = "Entered value must be greater than %s.";
-    protected final String VALUE_NON_NUMBER_MESSAGE = "Value is not a number.";
 
     @Override
     public PropertyValidationResult validate(Entity entity,
@@ -40,7 +39,7 @@ public class GreaterThanMinValueValidator extends ValidationConfigurationBasedPr
                 return new PropertyValidationResult(false, String.format(INVALID_VALUE_MESSAGE, minValue));
             }
         } catch (NumberFormatException e) {
-            return new PropertyValidationResult(false, VALUE_NON_NUMBER_MESSAGE);
+            return new PropertyValidationResult(false);
         }
 
         return new PropertyValidationResult(true);
