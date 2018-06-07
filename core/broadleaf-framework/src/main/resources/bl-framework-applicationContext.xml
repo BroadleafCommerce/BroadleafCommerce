@@ -190,7 +190,7 @@
         <property name="sourceMap">
             <map>
                 <entry key="optionalOfferUsesFields" value="org.broadleafcommerce.core.offer.weave.WeaveLegacyOfferUses"/>
-                <entry key="optionalSkuMinOrderQuantityField" value="org.broadleafcommerce.core.catalog.domain.WeaveSkuMinOrderQuantityImpl"/>
+                <entry key="optionalSkuMinOrderQuantityField" value="org.broadleafcommerce.core.catalog.domain.WeaveSkuMinOrderQuantity"/>
             </map>
         </property>
     </bean>

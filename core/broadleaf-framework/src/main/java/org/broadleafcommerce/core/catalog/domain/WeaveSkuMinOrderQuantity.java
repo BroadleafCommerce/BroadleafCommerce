@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 
 import javax.persistence.Column;
 
-public class WeaveSkuMinOrderQuantityImpl implements SkuMinOrderQuantity {
+public class WeaveSkuMinOrderQuantity implements SkuMinOrderQuantity {
 
     @Column(name = "HAS_MIN_ORDER_QUANTITY")
     @AdminPresentation(friendlyName = "SkuImpl_hasMinOrderQuantity",
@@ -38,7 +38,7 @@ public class WeaveSkuMinOrderQuantityImpl implements SkuMinOrderQuantity {
         group = SkuAdminPresentation.GroupName.Advanced, order = 2000,
         validationConfigurations = {
             @ValidationConfiguration(validationImplementation = "blGreaterThanMinValueValidator",
-                    configurationItems = { @ConfigurationItem(itemName = "minValue", itemValue = "1") }
+                    configurationItems = { @ConfigurationItem(itemName = "minValue", itemValue = "0") }
             )
         },
         defaultValue = "1")
