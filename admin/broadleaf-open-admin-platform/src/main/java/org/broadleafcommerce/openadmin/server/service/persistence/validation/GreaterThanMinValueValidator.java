@@ -16,7 +16,7 @@ import java.util.Map;
 @Component("blGreaterThanMinValueValidator")
 public class GreaterThanMinValueValidator extends ValidationConfigurationBasedPropertyValidator {
 
-    protected final String INVALID_VALUE_MESSAGE = "Entered value must be less than %s.";
+    protected final String INVALID_VALUE_MESSAGE = "Entered value must be greater than %s.";
     protected final String VALUE_NON_NUMBER_MESSAGE = "Value is not a number.";
 
     @Override
