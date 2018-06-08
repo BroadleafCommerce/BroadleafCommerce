@@ -17,12 +17,6 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,6 +26,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 /**
  * 
@@ -103,11 +104,13 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
 
     protected void removeCache(String cacheRegion, Serializable key) {
         String cacheName = cacheRegion;
-        //TODO Migration: What is the key an instance of now
-//        if (key instanceof CacheKey) {
-//            cacheName = ((CacheKey) key).getEntityOrRoleName();
-//            key = ((CacheKey) key).getKey();
-//        }
+        if (key.getClass().getName().equals("org.hibernate.cache.internal.CacheKeyImplementation")) {
+            // Since CacheKeyImplementation is a protected Class we can't cast it nor can we access the entityOrRoleName property
+            // therefore, to match how this worked in pre Hibernate 5, we split the toString since it's comprised of the fields we need
+            String[] keyPieces = key.toString().split("#");
+            cacheName = keyPieces[0];
+            key = keyPieces[1];
+        }
         String nameKey = cacheRegion + '_' + cacheName + '_' + key;
         if (cacheMemberNamesByEntity.containsKey(nameKey)) {
             String[] members = new String[cacheMemberNamesByEntity.get(nameKey).size()];

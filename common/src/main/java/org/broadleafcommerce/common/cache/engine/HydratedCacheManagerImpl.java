@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.event.CacheEventListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,6 +24,11 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Map;
+
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.event.CacheEventListener;
 
 /**
  * 
@@ -69,6 +70,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
         return hydratedCacheContainer.containsKey(cacheRegion + "_" + cacheName);
     }
     
+    @Override
     public HydrationDescriptor getHydrationDescriptor(Object entity) {
         if (hydrationDescriptors.containsKey(entity.getClass().getName())) {
             return hydrationDescriptors.get(entity.getClass().getName());
@@ -103,6 +105,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
         return myClass;
     }
     
+    @Override
     public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
         Object response = null;
         HydratedCache hydratedCache = getHydratedCache(cacheRegion, cacheName);
@@ -113,6 +116,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
         return response;
     }
     
+    @Override
     public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
         HydratedCache hydratedCache = getHydratedCache(cacheRegion, cacheName);
         HydratedCacheElement element = hydratedCache.getCacheElement(cacheRegion, cacheName, elementKey);
@@ -123,6 +127,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
         element.putCacheElementItem(elementItemName, elementKey, elementValue);
     }
 
+    @Override
     public void dispose() {
         if (LOG.isInfoEnabled()) {
             LOG.info("Disposing of all hydrated cache members");
@@ -132,11 +137,13 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
 
     private void removeCache(String cacheRegion, Serializable key) {
         String cacheName = cacheRegion;
-        //if (key instanceof CacheKey) {
-            //cacheName = ((CacheKey) key).getEntityOrRoleName();
-            //key = ((CacheKey) key).getKey();
-        //}
-        //TODO 3064 what is this an instance of now?
+        if (key.getClass().getName().equals("org.hibernate.cache.internal.CacheKeyImplementation")) {
+            // Since CacheKeyImplementation is a protected Class we can't cast it nor can we access the entityOrRoleName property
+            // therefore, to match how this worked in pre Hibernate 5, we split the toString since it's comprised of the fields we need
+            String[] keyPieces = key.toString().split("#");
+            cacheName = keyPieces[0];
+            key = keyPieces[1];
+        }
         if (containsCache(cacheRegion, cacheName)) {
             HydratedCache cache = hydratedCacheContainer.get(cacheRegion + "_" + cacheName);
             String myKey = cacheRegion + "_" + cacheName + "_" + key;
@@ -158,26 +165,32 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
         }
     }
 
+    @Override
     public void notifyElementEvicted(Ehcache arg0, Element arg1) {
         removeCache(arg0.getName(), arg1.getKey());
     }
 
+    @Override
     public void notifyElementExpired(Ehcache arg0, Element arg1) {
         removeCache(arg0.getName(), arg1.getKey());
     }
 
+    @Override
     public void notifyElementPut(Ehcache arg0, Element arg1) throws CacheException {
         //do nothing
     }
 
+    @Override
     public void notifyElementRemoved(Ehcache arg0, Element arg1) throws CacheException {
         removeCache(arg0.getName(), arg1.getKey());
     }
 
+    @Override
     public void notifyElementUpdated(Ehcache arg0, Element arg1) throws CacheException {
         removeCache(arg0.getName(), arg1.getKey());
     }
 
+    @Override
     public void notifyRemoveAll(Ehcache arg0) {
         removeAll(arg0.getName());
     }
