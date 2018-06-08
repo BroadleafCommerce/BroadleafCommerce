@@ -69,6 +69,10 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
 
     public void setEmailAddress(String emailAddress);
 
+    public String getExternalId();
+
+    public void setExternalId(String externalId);
+
     public ChallengeQuestion getChallengeQuestion();
 
     public void setChallengeQuestion(ChallengeQuestion challengeQuestion);

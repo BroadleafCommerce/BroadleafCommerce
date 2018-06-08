@@ -53,12 +53,12 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public Customer readCustomerByExternalId(String id) {
+    public Customer readCustomerByExternalId(String externalId) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
         Root<? extends Customer> customer = criteria.from(entityConfiguration.lookupEntityClass(Customer.class.getName(), Customer.class));
         criteria.select(customer);
-        criteria.where(builder.equal(customer.get("externalId"), id));
+        criteria.where(builder.equal(customer.get("externalId"), externalId));
 
         TypedQuery<Customer> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, false);

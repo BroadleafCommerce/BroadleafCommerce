@@ -17,16 +17,15 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.List;
 
 public interface CustomerDao {
 
     public Customer readCustomerById(Long id);
 
-    public Customer readCustomerByExternalId(String id);
+    public Customer readCustomerByExternalId(String externalId);
 
     public List<Customer> readCustomersByIds(List<Long> ids);
 

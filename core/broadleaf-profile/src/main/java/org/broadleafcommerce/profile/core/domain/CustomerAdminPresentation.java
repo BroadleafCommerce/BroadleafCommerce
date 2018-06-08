@@ -92,6 +92,7 @@ public interface CustomerAdminPresentation {
         public static final int LAST_NAME = 2000;
         public static final int EMAIL = 3000;
         public static final int USERNAME = 4000;
+        public static final int EXTERNAL_ID = 5000;
 
         public static final int ADDRESSES = 1000;
         public static final int PHONES = 2000;
