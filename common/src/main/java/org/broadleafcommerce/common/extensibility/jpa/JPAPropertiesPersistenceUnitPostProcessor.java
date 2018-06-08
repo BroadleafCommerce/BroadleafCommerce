@@ -39,9 +39,9 @@ import javax.annotation.Resource;
  *   PersistenceUnitManager allows us to pass in a list of PersistenceUnitPostProcessors.  This class will allow us to override
  *   or add custom JPA properties to the Persistence Unit.  This is useful when different environments have different requirements
  *   for JPA properties.  The best example of this is SQL Dialect.  You may want to use a dialect such as Oracle for production
- *   and test environments, and perhaps HSQLDB for local and integration testing.  You can set the dialect property using the
- *   <code>RuntimeEnvironmentPropertiesConfigurer</code>.  The keys will be the same in each environment, but the values
- *   would be defined the environment-specific properties files.  If you want the property to be added only to certain environments,
+ *   and test environments, and perhaps HSQLDB for local and integration testing.  You can set the dialect property using
+ *   Spring profiles and properties.  The keys will be the same in each environment, but the values would be defined in the
+ *   environment-specific properties files.  If you want the property to be added only to certain environments,
  *   add the value "null" to the properties file.  For example:
  *
  *

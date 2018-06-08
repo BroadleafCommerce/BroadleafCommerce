@@ -19,8 +19,10 @@ package org.broadleafcommerce.common.encryption;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.config.RuntimeEnvironmentKeyResolver;
-import org.broadleafcommerce.common.config.SystemPropertyRuntimeEnvironmentKeyResolver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+
+import javax.annotation.PostConstruct;
 
 /**
  * The default encryption module simply passes through the decrypt and encrypt text.
@@ -37,10 +39,12 @@ public class PassthroughEncryptionModule implements EncryptionModule {
 
     private static final Log LOG = LogFactory.getLog(PassthroughEncryptionModule.class);
 
-    protected RuntimeEnvironmentKeyResolver keyResolver = new SystemPropertyRuntimeEnvironmentKeyResolver();
+    @Autowired
+    protected Environment env;
 
-    public PassthroughEncryptionModule() {
-        if ("production".equals(keyResolver.resolveRuntimeEnvironmentKey())) {
+    @PostConstruct
+    public void init() {
+        if (env.acceptsProfiles("production")) {
             LOG.warn("This passthrough encryption module provides NO ENCRYPTION and should NOT be used in production.");
         }
     }
