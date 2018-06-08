@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.add;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +39,7 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.service.workflow.add.extension.ValidateAddRequestActivityExtensionManager;
+import org.broadleafcommerce.core.order.service.workflow.service.OrderItemRequestValidationService;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -56,6 +57,9 @@ import javax.annotation.Resource;
 public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
 
     public static final int ORDER = 1000;
+
+    @Resource(name = "blOrderItemRequestValidationService")
+    protected OrderItemRequestValidationService orderItemRequestValidationService;
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -102,12 +106,17 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             context.stopProcess();
         } else if (orderItemQuantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative");
+        } else if (!orderItemRequestValidationService.satisfiesMinQuantityCondition(orderItemRequestDTO, context)) {
+            throw new IllegalArgumentException("This item requires a minimum quantity of " +
+                    orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context));
         } else if (request.getOrder() == null) {
             throw new IllegalArgumentException("Order is required when adding item to order");
         } else {
+            // TODO: In the next minor release, refactor this to leverage OrderItemRequestValidationService. Leaving as-is to maintain the API for now.
             Product product = determineProduct(orderItemRequestDTO);
             Sku sku;
             try {
+                // TODO: In the next minor release, refactor this to leverage OrderItemRequestValidationService. Leaving as-is to maintain the API for now.
                 sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
                     (ActivityMessages) context);
             } catch (RequiredAttributeNotProvidedException e) {
