@@ -137,6 +137,12 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             prominent = true, gridOrder = 3000)
     protected String lastName;
 
+    @Column(name = "EXTERNAL_ID")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_ExternalId",
+            group = GroupName.Customer, order = FieldOrder.EXTERNAL_ID,
+            visibility = VisibilityEnum.GRID_HIDDEN)
+    protected String externalId;
+
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
@@ -324,6 +330,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @Override
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    @Override
+    public String getExternalId() {
+        return externalId;
+    }
+
+    @Override
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     @Override

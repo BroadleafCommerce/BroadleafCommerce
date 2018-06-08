@@ -105,10 +105,6 @@ public class CustomerServiceImpl implements CustomerService {
     protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
     protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
 
-    //will be externalId field weaved to Customer entity or not
-    @Value("${enable.weave.customer.externalId:false}")
-    protected boolean enableCustomerExternalId = false;
-
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer saveCustomer(Customer customer) {
@@ -276,12 +272,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer readCustomerByExternalId(String userExternalId) {
-        if (enableCustomerExternalId) {
-            return customerDao.readCustomerByExternalId(userExternalId);
-        }else{
-            LOG.error("attempt to find customer by externalId while property enable.weave.customer.externalId is false. Import module is responsible for weaving externalId field to customer");
-            return null;
-        }
+        return customerDao.readCustomerByExternalId(userExternalId);
     }
 
     public void setCustomerDao(CustomerDao customerDao) {
