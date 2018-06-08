@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.resource.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Service;
 
 import com.google.javascript.jscomp.AbstractCommandLineRunner;
@@ -65,7 +64,6 @@ import java.util.List;
  *
  */
 @Service("blJavascriptMinificationService")
-@ConditionalOnClass(name = "com.google.javascript.jscomp.Compiler")
 public class GoogleClosureJavascriptMinificationServiceImpl implements JavascriptMinificationService {
 
     @Value("${minify.closure.compiler.warningLevel:QUIET}")
@@ -93,7 +91,6 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
         if (this.languageIn == null) {
             throw new IllegalArgumentException("Please set properties \"minify.closure.compiler.languageIn\" or \"minify.closure.compiler.languageOut\" if you wish to use Google Closure Compiler for Javascript minification");
         }
-
     }
     
     @Override
