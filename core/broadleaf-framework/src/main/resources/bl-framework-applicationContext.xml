@@ -190,6 +190,7 @@
         <property name="sourceMap">
             <map>
                 <entry key="optionalOfferUsesFields" value="org.broadleafcommerce.core.offer.weave.WeaveLegacyOfferUses"/>
+                <entry key="optionalSkuMinOrderQuantityField" value="org.broadleafcommerce.core.catalog.domain.WeaveSkuMinOrderQuantity"/>
             </map>
         </property>
     </bean>
@@ -206,10 +207,16 @@
         <property name="conditionalProperty" value="enable.optional.offer.uses.fields"/>
     </bean>
 
+    <bean id="blSkuMinOrderQuantityConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+        <property name="templateTokens" value="optionalSkuMinOrderQuantityField"/>
+        <property name="conditionalProperty" value="enable.sku.minOrderQuantity.field"/>
+    </bean>
+
     <bean id="blFrameworkConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry key="org.broadleafcommerce.core.offer.domain.OfferImpl" value-ref="blOfferUsesConditionalDirectCopyTransformerMember" />
+                <entry key="org.broadleafcommerce.core.catalog.domain.SkuImpl" value-ref="blSkuMinOrderQuantityConditionalDirectCopyTransformerMember" />
             </map>
         </property>
     </bean>

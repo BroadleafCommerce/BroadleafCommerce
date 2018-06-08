@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
+import org.broadleafcommerce.core.order.service.workflow.service.OrderItemRequestValidationService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,9 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+
+    @Resource(name = "blOrderItemRequestValidationService")
+    protected OrderItemRequestValidationService orderItemRequestValidationService;
     
     public ValidateUpdateRequestActivity() {
         setOrder(ORDER);
@@ -53,6 +57,11 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
         // Throw an exception if the user tried to update an item to a negative quantity
         if (orderItemRequestDTO.getQuantity() < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative");
+        }
+
+        if (!orderItemRequestValidationService.satisfiesMinQuantityCondition(orderItemRequestDTO, context)) {
+            throw new IllegalArgumentException("This item requires a minimum quantity of " +
+                    orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context));
         }
 
         // Throw an exception if the user did not specify an order to add the item to
