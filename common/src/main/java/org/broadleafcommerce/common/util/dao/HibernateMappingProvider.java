@@ -63,8 +63,8 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
 
     @Override
     public SessionFactoryBuilder getSessionFactoryBuilder(MetadataImplementor metadata, SessionFactoryBuilderImplementor defaultBuilder) {
-        // TODO: separate these out into which metadata they are from; for instance, the blSecurePU vs the blPU
-        // TODO: check entity scanning works with entity bindings and not just classes listed in the persistence.xml
+        // This aggregates all of the metadata for all persistence untis. No need to discriminate by persistence unit since the map is 
+        // keyed by class name
         Collection<PersistentClass> classes = metadata.getEntityBindings();
         classes.forEach(clazz -> metadataMap.put(clazz.getClassName(), clazz));
         return defaultBuilder;
