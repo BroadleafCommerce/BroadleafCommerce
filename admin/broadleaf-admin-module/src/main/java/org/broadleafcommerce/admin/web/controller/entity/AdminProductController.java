@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -379,12 +380,14 @@ public class AdminProductController extends AdminBasicEntityController {
     @Override
     protected void modifyCriteria(Map<String, FilterAndSortCriteria> fasMap) {
         super.modifyCriteria(fasMap);
-        CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
-        criteriaTransferObject.setCriteriaMap(fasMap);
-        try {
-            filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
-        } catch (ServiceException e) {
-            e.printStackTrace();
+        if(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getRequestURL().toString().contains("product:")) {
+            CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
+            criteriaTransferObject.setCriteriaMap(fasMap);
+            try {
+                filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
