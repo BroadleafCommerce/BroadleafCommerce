@@ -56,8 +56,6 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.Over
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -70,6 +68,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 
 /**
@@ -864,26 +869,37 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             DynamicEntityDao dynamicEntityDao = PersistenceManagerFactory.getDefaultPersistenceManager().getDynamicEntityDao();
             FieldManager fieldManager = dynamicEntityDao.getFieldManager();
 
-            Criteria criteria = dynamicEntityDao.createCriteria(Class.forName(metadata.getOptionListEntity()));
+            Class criteriaClass = Class.forName(metadata.getOptionListEntity());
+
+            CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+            CriteriaQuery criteria = builder.createQuery(criteriaClass);
+            Root root = criteria.from(criteriaClass);
+            List<Predicate> restrictions = new ArrayList<>();
+
             if (metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
-                criteria.add(Restrictions.eq("hidden", false));
+                restrictions.add(builder.equal(root.get("hidden"), false));
             }
+
             if (metadata.getOptionFilterParams() != null) {
                 for (String[] param : metadata.getOptionFilterParams()) {
-                    Criteria current = criteria;
+                    Path current = root;
                     String key = param[0];
                     if (!key.equals(".ignore")) {
                         if (key.contains(".")) {
                             String[] parts = key.split("\\.");
-                            for (int j = 0; j < parts.length - 1; j++) {
-                                current = current.createCriteria(parts[j], parts[j]);
+                            for (int j = 0; j < parts.length; j++) {
+                                current = current.get(parts[j]);
                             }
                         }
-                        current.add(Restrictions.eq(key, convertType(param[1], OptionFilterParamType.valueOf(param[2]))));
+                        restrictions.add(builder.equal(current, convertType(param[1], OptionFilterParamType.valueOf(param[2]))));
                     }
                 }
             }
-            List results = criteria.list();
+
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+            TypedQuery query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
+            List results = query.getResultList();
+
             String[][] enumerationValues = new String[results.size()][2];
             int j = 0;
             for (Object param : results) {
