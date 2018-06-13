@@ -97,22 +97,23 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
             record.setId(String.valueOf(t.getId()));
 
             Locale locale = localeService.findLocaleByCode(t.getLocaleCode());
+            if (locale != null) {
+                record.getFields().add(new Field()
+                        .withName("localeCode")
+                        .withFriendlyName("Translation_localeCode")
+                        .withOrder(0)
+                        .withValue(locale.getLocaleCode())
+                        .withDisplayValue(locale.getFriendlyName()));
 
-            record.getFields().add(new Field()
-                    .withName("localeCode")
-                    .withFriendlyName("Translation_localeCode")
-                    .withOrder(0)
-                    .withValue(locale.getLocaleCode())
-                    .withDisplayValue(locale.getFriendlyName()));
+                record.getFields().add(new Field()
+                        .withName("translatedValue")
+                        .withFriendlyName("Translation_translatedValue")
+                        .withOrder(10)
+                        .withValue(t.getTranslatedValue())
+                        .withDisplayValue(isRte ? getLocalizedEditToViewMessage() : t.getTranslatedValue()));
 
-            record.getFields().add(new Field()
-                    .withName("translatedValue")
-                    .withFriendlyName("Translation_translatedValue")
-                    .withOrder(10)
-                    .withValue(t.getTranslatedValue())
-                    .withDisplayValue(isRte ? getLocalizedEditToViewMessage() : t.getTranslatedValue()));
-
-            listGrid.getRecords().add(record);
+                listGrid.getRecords().add(record);
+            }
         }
 
         listGrid.setTotalRecords(listGrid.getRecords().size());
