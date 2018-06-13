@@ -91,6 +91,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             String fieldName = request.getParameter("facetField");
             List<String> activeFieldFilters = new ArrayList<String>();
             Map<String, String[]> parameters = new HashMap<String, String[]>(request.getParameterMap());
+            parameters.remove("blLocaleCode");
             
             for (Iterator<Entry<String,String[]>> iter = parameters.entrySet().iterator(); iter.hasNext();){
                 Map.Entry<String, String[]> entry = iter.next();
