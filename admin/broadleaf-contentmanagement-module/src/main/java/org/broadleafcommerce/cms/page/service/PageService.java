@@ -103,9 +103,10 @@ public interface PageService {
      *
      * @param uri
      * @param localeCode
+     * @param isSecure
      * @return whether successful
      */
-    Boolean removeTranslationPageFromCache(String uri, String localeCode);
+    Boolean removeTranslationPageFromCache(String uri, String localeCode, boolean isSecure);
 
     Cache getPageCache();
 

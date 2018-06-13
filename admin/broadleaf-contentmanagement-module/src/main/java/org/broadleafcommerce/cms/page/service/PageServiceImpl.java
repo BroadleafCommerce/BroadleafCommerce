@@ -463,9 +463,9 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
-    public Boolean removeTranslationPageFromCache(final String uri, String localeCode) {
+    public Boolean removeTranslationPageFromCache(final String uri, String localeCode, boolean isSecure) {
         Locale locale = localeService.findLocaleByCode(localeCode);
-        String key = buildKey(uri, locale, true);
+        String key = buildKey(uri, locale, isSecure);
         return getPageCache().remove(key);
     }
 }
