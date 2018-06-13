@@ -22,6 +22,12 @@ import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
 
 import java.sql.Types;
 
+/**
+ * This custom dialect will treat all Clob types as if they contain a string instead of an OID.
+ *
+ * https://github.com/hibernate/hibernate-orm/wiki/Migration-Guide---5.2#changes-to-how-clob-values-are-processed-using-postgresql81dialect-and-its-subclasses
+ *
+ */
 public class BroadleafPostgreSQLDialect extends PostgreSQL95Dialect {
 
     @Override
