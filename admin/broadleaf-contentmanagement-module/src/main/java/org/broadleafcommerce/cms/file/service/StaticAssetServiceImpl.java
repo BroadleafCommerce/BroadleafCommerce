@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,7 +26,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -58,7 +58,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,12 +79,12 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Value("${asset.use.filesystem.storage}")
     protected boolean storeAssetsOnFileSystem = false;
 
-    @Resource(name="blStaticAssetDao")
+    @Resource(name = "blStaticAssetDao")
     protected StaticAssetDao staticAssetDao;
 
-    @Resource(name="blStaticAssetStorageService")
+    @Resource(name = "blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
-    
+
     @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
 
@@ -102,7 +101,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     public StaticAsset findStaticAssetById(Long id) {
         return staticAssetDao.readStaticAssetById(id);
     }
-    
+
     @Override
     public List<StaticAsset> readAllStaticAssets() {
         return staticAssetDao.readAllStaticAssets();
@@ -125,6 +124,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     /**
      * Generates a filename as a set of Hex digits.
+     *
      * @param size
      * @return
      */
@@ -138,12 +138,12 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     /**
-     * Will assemble the url from the passed in properties as 
-     *     /{entityType}/{fileName}
-     *     /product/7001-ab12
-     * 
+     * Will assemble the url from the passed in properties as
+     * /{entityType}/{fileName}
+     * /product/7001-ab12
+     * <p>
      * If the properties above are not set, it will generate the fileName randomly.
-     *     
+     *
      * @param url
      * @param asset
      * @param assetProperties
@@ -151,11 +151,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
      */
     protected String buildAssetURL(Map<String, String> assetProperties, String originalFilename) {
         StringBuilder path = new StringBuilder("/");
-        
+
         String entityType = assetProperties.get("entityType");
         String entityId = assetProperties.get("entityId");
         String fileName = assetProperties.get("fileName");
-        
+
         if (entityType != null && !"null".equals(entityType)) {
             path = path.append(entityType).append("/");
         }
@@ -178,12 +178,17 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
         return path.append(fileName).toString();
     }
+    
+    private static String normalizeFileExtension(MultipartFile file) {
+        int index = file.getOriginalFilename().lastIndexOf(".");
+        return file.getOriginalFilename().substring(0, index + 1) + file.getOriginalFilename().substring(index + 1, file.getOriginalFilename().length()).toLowerCase();
+    }
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties) {
         try {
-            return createStaticAsset(file.getInputStream(), file.getOriginalFilename(), file.getSize(), properties);
+            return createStaticAsset(file.getInputStream(), normalizeFileExtension(file), file.getSize(), properties);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -204,7 +209,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         StaticAsset newAsset = staticAssetDao.readStaticAssetByFullUrl(fullUrl);
         // If no ExtensionManager modified the URL to handle duplicates, then go ahead and run default
         // logic for handling duplicate files.
-        if(resultStatusType != ExtensionResultStatusType.HANDLED){
+        if (resultStatusType != ExtensionResultStatusType.HANDLED) {
             int count = 0;
             while (newAsset != null) {
                 count++;
@@ -219,7 +224,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 fullUrl = getCountUrl(fullUrl, count, false);
             }
         }
-        
+
         try {
             ImageMetadata metadata = imageArtifactProcessor.getImageMetadata(inputStream);
             newAsset = new ImageStaticAssetImpl();
@@ -229,11 +234,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             //must not be an image stream
             LOG.warn("unable to convert asset:" + fileName + " into Image");
             LOG.debug(e);
-            
+
             if (getShouldAcceptNonImageAsset()) {
-                newAsset =  createNonImageAsset(inputStream, fileName, properties);
-            }
-            else {
+                newAsset = createNonImageAsset(inputStream, fileName, properties);
+            } else {
                 throw new RuntimeException("Selected Asset/File was not valid image.");
             }
         }
@@ -266,17 +270,16 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     /**
      * Gets the count URL based on the original fullUrl. If requested in legacy format this will return URLs like:
-     * 
-     *  /path/to/image.jpg-1
-     *  /path/to/image.jpg-2
-     *  
+     * <p>
+     * /path/to/image.jpg-1
+     * /path/to/image.jpg-2
+     * <p>
      * Whereas if this is in non-legacy format (<b>legacy</b> == false):
-     * 
-     *  /path/to/image-1.jpg
-     *  /path/to/image-2.jpg
-     *  
+     * <p>
+     * /path/to/image-1.jpg
+     * /path/to/image-2.jpg
+     * <p>
      * Used to deal with duplicate URLs of uploaded assets
-     *  
      */
     protected String getCountUrl(String fullUrl, int count, boolean legacyFormat) {
         String countUrl = fullUrl + '-' + count;
@@ -284,7 +287,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         if (dotIndex != -1 && !legacyFormat) {
             countUrl = fullUrl.substring(0, dotIndex) + '-' + count + '.' + fullUrl.substring(dotIndex + 1);
         }
-        
+
         return countUrl;
     }
 
