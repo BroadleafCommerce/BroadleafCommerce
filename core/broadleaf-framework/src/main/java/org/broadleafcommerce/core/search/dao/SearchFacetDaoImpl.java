@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -146,14 +146,13 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         Root<SearchFacetRangeImpl> ranges = criteria.from(SearchFacetRangeImpl.class);
         criteria.select(ranges);
         Predicate facetRestriction = builder.equal(ranges.get("searchFacet"), searchFacet);
-        // ArchiveStatus could have been dynamically weaved onto SearchFacet, this query will fail
-        // if it hadn't
-        if (ArchiveStatus.class.isAssignableFrom(SearchFacetRangeImpl.class)) {
+
+        if (isSearchFacetRangeArchivable()) {
             criteria.where(
                     builder.and(
                         facetRestriction,
-                        builder.or(builder.isNull(ranges.get("archiveStatus").get("archived").as(String.class)),
-                                builder.notEqual(ranges.get("archiveStatus").get("archived").as(Character.class), 'Y'))
+                        builder.or(builder.isNull(ranges.get("archiveStatus").get("archived").as(String.class)), 
+                                   builder.notEqual(ranges.get("archiveStatus").get("archived").as(Character.class), 'Y'))
                     )
             );
         } else {
@@ -169,5 +168,9 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         } catch (NoResultException e) {
             return new ArrayList<>();
         }
+    }
+    
+    protected boolean isSearchFacetRangeArchivable() {
+        return Status.class.isAssignableFrom(SearchFacetRangeImpl.class);
     }
 }
