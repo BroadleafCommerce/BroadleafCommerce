@@ -34,6 +34,13 @@ public class AssignedProductOptionDTO {
     private ProductOptionValue productOptionValue;
     private Sku sku;
 
+    public AssignedProductOptionDTO(Long productId, String productOptionAttrName, ProductOptionValue productOptionValue, Sku sku) {
+        this.productId = productId;
+        this.productOptionAttrName = productOptionAttrName;
+        this.productOptionValue = productOptionValue;
+        this.sku = sku;
+    }
+
     public Long getProductId() {
         return productId;
     }
