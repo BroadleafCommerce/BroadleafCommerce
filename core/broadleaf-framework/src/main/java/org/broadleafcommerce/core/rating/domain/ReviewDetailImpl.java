@@ -29,12 +29,10 @@ import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +52,8 @@ import javax.persistence.Table;
 @AdminPresentationClass(friendlyName = "ReviewDetail", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "ReviewDetailId")
     @GenericGenerator(
@@ -65,7 +65,6 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
         }
     )
     @Column(name = "REVIEW_DETAIL_ID")
-    @AdminPresentation(excluded = true)
     private Long id;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
@@ -80,7 +79,7 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
     protected Date reivewSubmittedDate;
 
     @Column(name = "REVIEW_TEXT", nullable = false)
-    @AdminPresentation(friendlyName = "ReviewDetail_reviewText")
+    @AdminPresentation(friendlyName = "ReviewDetail_reviewText", largeEntry = true)
     protected String reviewText;
 
     @Column(name = "REVIEW_STATUS", nullable = false)
@@ -92,27 +91,27 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
     protected String reviewStatus;
 
     @Column(name = "HELPFUL_COUNT", nullable = false)
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "ReviewDetail_helpfulCount")
     protected Integer helpfulCount;
 
     @Column(name = "NOT_HELPFUL_COUNT", nullable = false)
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "ReviewDetail_notHelpfulCount")
     protected Integer notHelpfulCount;
 
     @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
     @JoinColumn(name = "RATING_SUMMARY_ID")
     @Index(name="REVIEWDETAIL_SUMMARY_INDEX", columnNames={"RATING_SUMMARY_ID"})
-    @AdminPresentationToOneLookup
-    @AdminPresentation(friendlyName = "ReviewDetail_summary")
     protected RatingSummary ratingSummary;
 
     @OneToMany(mappedBy = "reviewDetail", targetEntity = ReviewFeedbackImpl.class, cascade = {CascadeType.ALL})
-    @AdminPresentationCollection(friendlyName = "ReviewDeatil_feedback")
+    @AdminPresentationCollection(friendlyName = "ReviewDetail_feedback")
     protected List<ReviewFeedback> reviewFeedback;
 
     @OneToOne(targetEntity = RatingDetailImpl.class)
     @JoinColumn(name = "RATING_DETAIL_ID")
     @Index(name="REVIEWDETAIL_RATING_INDEX", columnNames={"RATING_DETAIL_ID"})
+    @AdminPresentation(friendlyName = "ReviewDetail_ratingDetail")
+    @AdminPresentationToOneLookup
     protected RatingDetail ratingDetail;
 
     public ReviewDetailImpl() {}

@@ -10,42 +10,56 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.rating.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class RatingSortType implements Serializable {
+public class RatingSortType implements BroadleafEnumerationType, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, RatingSortType> TYPES = new HashMap<String, RatingSortType>();
 
-    public static final RatingSortType MOST_HELPFUL = new RatingSortType("MOST_HELPFUL");
-    public static final RatingSortType MOST_RECENT = new RatingSortType("MOST_RECENT");
-    public static final RatingSortType DEFAULT = new RatingSortType("DEFAULT");
+    public static final RatingSortType MOST_HELPFUL = new RatingSortType("MOST_HELPFUL", "Most Helpful");
+    public static final RatingSortType MOST_RECENT = new RatingSortType("MOST_RECENT", "Most Recent");
+    public static final RatingSortType DEFAULT = new RatingSortType("DEFAULT", "Default");
 
     public static RatingSortType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public RatingSortType() {
+        //do nothing
     }
 
-    public RatingSortType(final String type) {
-        setType(type);
+    public RatingSortType(String type) {
+        this(type, type);
     }
 
+    public RatingSortType(String type, String friendlyType) {
+        this.friendlyType = friendlyType;
+        this.setType(type);
+    }
+
+    @Override
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     private void setType(final String type) {

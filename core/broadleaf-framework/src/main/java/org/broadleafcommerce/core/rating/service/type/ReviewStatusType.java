@@ -10,17 +10,19 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.rating.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReviewStatusType {
+public class ReviewStatusType implements BroadleafEnumerationType, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, ReviewStatusType> TYPES = new HashMap<String, ReviewStatusType>();
@@ -34,19 +36,32 @@ public class ReviewStatusType {
     }
 
     private String type;
+    private String friendlyType;
 
     public ReviewStatusType() {
+        //do nothing
     }
 
-    public ReviewStatusType(final String type) {
-        setType(type);
+    public ReviewStatusType(String type) {
+        this(type, type);
     }
 
+    public ReviewStatusType(String type, String friendlyType) {
+        this.friendlyType = friendlyType;
+        this.setType(type);
+    }
+
+    @Override
     public String getType() {
         return type;
     }
 
-    private void setType(String type) {
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
+    }
+
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
