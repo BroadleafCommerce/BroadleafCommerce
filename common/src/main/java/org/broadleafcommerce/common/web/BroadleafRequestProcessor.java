@@ -199,6 +199,10 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         brc.setSandBox(currentSandbox);
         brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
 
+        // Note that this must happen after the request context is set up as resolving a theme is dependent on site
+        Theme theme = themeResolver.resolveTheme(request);
+        brc.setTheme(theme);
+
         brc.setMessageSource(messageSource);
         brc.setTimeZone(timeZone);
         brc.setRequestDTO(requestDTO);
