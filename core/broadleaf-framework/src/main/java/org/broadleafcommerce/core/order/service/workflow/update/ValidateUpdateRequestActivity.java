@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.MinQuantityNotFulfilledException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.service.workflow.service.OrderItemRequestValidationService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -60,8 +61,8 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
         }
 
         if (!orderItemRequestValidationService.satisfiesMinQuantityCondition(orderItemRequestDTO, context)) {
-            throw new IllegalArgumentException("This item requires a minimum quantity of " +
-                    orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context));
+            throw new MinQuantityNotFulfilledException("This item requires a minimum quantity of " +
+                                                       orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context));
         }
 
         // Throw an exception if the user did not specify an order to add the item to
