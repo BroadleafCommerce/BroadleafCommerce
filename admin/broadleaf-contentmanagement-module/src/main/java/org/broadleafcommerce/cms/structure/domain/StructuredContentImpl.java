@@ -137,7 +137,9 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_SC_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
+    @JoinTable(name = "BLC_SC_RULE_MAP", 
+               joinColumns = @JoinColumn(name = "BLC_SC_SC_ID", referencedColumnName = "SC_ID"),
+               inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
