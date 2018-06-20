@@ -4,9 +4,9 @@ public class MinQuantityNotFulfilledException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
 
-    protected String productId;
+    protected Long productId;
 
-    public MinQuantityNotFulfilledException (String message, String productId) {
+    public MinQuantityNotFulfilledException (String message, Long productId) {
         super(message);
         setProductId(productId);
     }
@@ -19,11 +19,11 @@ public class MinQuantityNotFulfilledException extends RuntimeException{
         super(message, cause);
     }
 
-    public String getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 }

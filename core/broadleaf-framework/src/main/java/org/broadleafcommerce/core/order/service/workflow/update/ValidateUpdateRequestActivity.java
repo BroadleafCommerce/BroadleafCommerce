@@ -61,9 +61,10 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
         }
 
         if (!orderItemRequestValidationService.satisfiesMinQuantityCondition(orderItemRequestDTO, context)) {
-            throw new MinQuantityNotFulfilledException("This item requires a minimum quantity of " +
-                                                       orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context),
-                                                       String.valueOf(orderItemRequestDTO.getProductId()));
+            Integer minQuantity = orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context);
+            Long productId = orderItemRequestDTO.getProductId();
+
+            throw new MinQuantityNotFulfilledException("This item requires a minimum quantity of " + minQuantity, productId);
         }
 
         // Throw an exception if the user did not specify an order to add the item to
