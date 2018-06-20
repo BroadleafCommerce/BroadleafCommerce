@@ -113,7 +113,8 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             throw new IllegalArgumentException("Quantity cannot be negative");
         } else if (!orderItemRequestValidationService.satisfiesMinQuantityCondition(orderItemRequestDTO, context)) {
             throw new MinQuantityNotFulfilledException("This item requires a minimum quantity of " +
-                                                       orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context));
+                                                       orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context),
+                                                       String.valueOf(orderItemRequestDTO.getProductId()));
         } else if (request.getOrder() == null) {
             throw new IllegalArgumentException("Order is required when adding item to order");
         } else {
