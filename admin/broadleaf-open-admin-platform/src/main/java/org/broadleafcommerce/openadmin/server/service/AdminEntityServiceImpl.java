@@ -124,7 +124,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistenceResponse response = fetch(request);
         Entity[] entities = response.getDynamicResultSet().getRecords();
         if (ArrayUtils.isEmpty(entities)) {
-            throw new EntityNotFoundException();
+            String celiningEntity = request.getCeilingEntityClassname();
+            throw new EntityNotFoundException(String.format("Could not find Entity %s with ID %s", celiningEntity, id));
         }
 
         return response;
@@ -279,7 +280,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             response = fetch(ppr);
             Entity[] entities = response.getDynamicResultSet().getRecords();
             if (ArrayUtils.isEmpty(entities)) {
-                throw new EntityNotFoundException();
+                String altId = (!StringUtils.isEmpty(alternateId)) ? alternateId : "";
+                throw new EntityNotFoundException(String.format("Could not find Entity for [%s], field [%s], id [%s], targetId [%s], alternateId [%s] ", 
+                        ppr.getCeilingEntityClassname(), ppr.getAdornedList().getCollectionFieldName(), containingEntityId, collectionItemId, altId));
             }
         } else if (md instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) md;

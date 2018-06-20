@@ -490,21 +490,18 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                     }
                 }
             }
-
+            modifyCriteria(fasMap);
             result.addAll(fasMap.values());
         }
 
-        CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
-        criteriaTransferObject.setCriteriaMap(fasMap);
-        try {
-            filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
-        } catch (ServiceException e) {
-            LOG.error("An error occurred when calling FilterProductTypePersistenceHandlerExtensionManager#manageAdditionalFilterMappings", e);
-        }
-        result.addAll(criteriaTransferObject.getCriteriaMap().values());
+
         return result.toArray(new FilterAndSortCriteria[result.size()]);
     }
-    
+
+
+    protected void modifyCriteria( Map<String, FilterAndSortCriteria> fasMap){
+
+    }
     /**
      * Obtains the list of sort directions from the bound request parameters. Note that these should appear in the same
      * relative order as {@link #getSortPropertyNames(Map)}

@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.MinQuantityNotFulfilledException;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.service.workflow.add.extension.ValidateAddRequestActivityExtensionManager;
@@ -107,8 +108,10 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         } else if (orderItemQuantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative");
         } else if (!orderItemRequestValidationService.satisfiesMinQuantityCondition(orderItemRequestDTO, context)) {
-            throw new IllegalArgumentException("This item requires a minimum quantity of " +
-                    orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context));
+            Integer minQuantity = orderItemRequestValidationService.getMinQuantity(orderItemRequestDTO, context);
+            Long productId = orderItemRequestDTO.getProductId();
+
+            throw new MinQuantityNotFulfilledException("This item requires a minimum quantity of " + minQuantity, productId);
         } else if (request.getOrder() == null) {
             throw new IllegalArgumentException("Order is required when adding item to order");
         } else {

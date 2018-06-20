@@ -95,7 +95,7 @@ public class CustomerStateRefresher implements ApplicationListener<CustomerPersi
         postMergedCustomer.setUnencodedChallengeAnswer(preMergedCustomer.getUnencodedChallengeAnswer());
         postMergedCustomer.setAnonymous(preMergedCustomer.isAnonymous());
         postMergedCustomer.setCookied(preMergedCustomer.isCookied());
-        postMergedCustomer.setLoggedIn(preMergedCustomer.isLoggedIn());
+        postMergedCustomer.setLoggedIn(preMergedCustomer.isRegistered());
         postMergedCustomer.getTransientProperties().putAll(preMergedCustomer.getTransientProperties());
     }
 

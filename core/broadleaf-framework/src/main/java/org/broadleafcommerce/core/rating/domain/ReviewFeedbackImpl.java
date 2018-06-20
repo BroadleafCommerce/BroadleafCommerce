@@ -10,19 +10,21 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.rating.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +38,9 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_REVIEW_FEEDBACK")
-public class ReviewFeedbackImpl implements ReviewFeedback {
+public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "ReviewFeedbackId")
@@ -54,14 +58,19 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="REVIEWFEED_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
+    @AdminPresentation(friendlyName="ReviewFeedback_customer")
+    @AdminPresentationToOneLookup
     protected Customer customer;
 
     @Column(name = "IS_HELPFUL", nullable = false)
+    @AdminPresentation(friendlyName = "ReviewFeedback_isHelpful")
     protected Boolean isHelpful = false;
 
     @ManyToOne(optional = false, targetEntity = ReviewDetailImpl.class)
     @JoinColumn(name = "REVIEW_DETAIL_ID")
     @Index(name="REVIEWFEED_DETAIL_INDEX", columnNames={"REVIEW_DETAIL_ID"})
+    @AdminPresentationToOneLookup
+    @AdminPresentation(friendlyName = "ReviewFeedback_reviewDetail")
     protected ReviewDetail reviewDetail;
 
     @Override

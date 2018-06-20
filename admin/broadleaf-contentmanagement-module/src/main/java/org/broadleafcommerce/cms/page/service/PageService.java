@@ -98,6 +98,16 @@ public interface PageService {
      */
     Boolean removePageFromCache(String key);
 
+    /**
+     * Call to evict translated page from cache
+     *
+     * @param uri
+     * @param localeCode
+     * @param isSecure
+     * @return whether successful
+     */
+    Boolean removeTranslationPageFromCache(String uri, String localeCode, boolean isSecure);
+
     Cache getPageCache();
 
     Cache getPageMapCache();
