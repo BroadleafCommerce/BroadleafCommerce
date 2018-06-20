@@ -17,9 +17,10 @@
  */
 package org.broadleafcommerce.common.web.request;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
@@ -27,12 +28,6 @@ import org.springframework.web.context.annotation.RequestScope;
 /**
  * Keeps track of the resources needed for &lt;blc:bundle&gt; and &lt;blc:bundlepreload&gt; tags so that the list
  * of files does not need to be duplicated across both tags.
- * <p>
- * If bundling is enabled and appropriate, use the {@link #getBundleForBundleName(String)} and
- * {@link #saveBundleForBundleName(String, String)} to fetch and store the bundled file for the bundle name.
- * <p>
- * If not using bundling, use {@link #getFilesForBundleName(String)} and {@link #saveFilesForBundleName(String, List)}
- * to fetch and store the files associated with the bundle name.
  *
  * @author Jacob Mitash
  */
@@ -40,43 +35,62 @@ import org.springframework.web.context.annotation.RequestScope;
 @Component("blResourcesRequest")
 public class ResourcesRequest {
 
-    protected Map<String, String> bundlesRequested = new HashMap<>();
-
-    protected Map<String, List<String>> filesRequested = new HashMap<>();
+    protected List<ResourcesRequestBundle> bundlesRequested = new ArrayList<>();
 
     /**
-     * Gets the bundle for the bundle name if previously used on this request
+     * Gets the bundle for the bundle name, prefix, and file list if previously used on this request.
+     * <p>
+     * Note that the mapping prefix and file list will be assumed to be the same if not provided.
      * @param name the name of the bundle to search for
-     * @return the bundle if found, otherwise null
+     * @param mappingPrefix the mapping prefix of the bundle request, or null if not provided
+     * @param files the list of files of the bundle request, or null if not provided
+     * @return the bundle request if found, otherwise null
      */
-    public String getBundleForBundleName(String name) {
-        return bundlesRequested.get(name);
+    public ResourcesRequestBundle getBundle(@Nonnull String name, String mappingPrefix, List<String> files) {
+        for (ResourcesRequestBundle resourcesRequestBundle : bundlesRequested) {
+            //names are same
+            if (name.equals(resourcesRequestBundle.getBundleName())) {
+
+                if (mappingPrefix != null && !mappingPrefix.equalsIgnoreCase(resourcesRequestBundle.getMappingPrefix())) {
+                    //the prefixes are different
+                    continue;
+                }
+
+                final List<String> bundleFiles = resourcesRequestBundle.getFiles();
+                if (files != null && !(files.containsAll(bundleFiles)) && files.size() == bundleFiles.size()) {
+                    //files are different
+                    continue;
+                }
+
+                return resourcesRequestBundle;
+            }
+        }
+
+        return null;
     }
 
     /**
-     * Saves the bundle with the given name to the request so it can be recalled later in the template
-     * @param name the name of the bundle to save
-     * @param bundle the path of the bundle
+     * Saves the bundled file to the request so it can be recalled later in the template
+     * @param name the name of the bundle
+     * @param mappingPrefix the mapping prefix of the bundle
+     * @param files the list of files in the bundle
+     * @param bundlePath the path of the resulting bundle
      */
-    public void saveBundleForBundleName(String name, String bundle) {
-        bundlesRequested.put(name, bundle);
+    public void saveBundle(String name, String mappingPrefix, List<String> files, String bundlePath) {
+        ResourcesRequestBundle resourcesRequestBundle = new ResourcesRequestBundle(name, mappingPrefix, files, bundlePath);
+        bundlesRequested.add(resourcesRequestBundle);
     }
 
     /**
-     * Gets the files included in a bundle if previously used on this request
-     * @param name the name of the bundle to search for
-     * @return the list of files in the bundle if found, otherwise null
+     * Saves the bundled file to the request so it can be recalled later in the template
+     * @param name the name of the bundle
+     * @param mappingPrefix the mapping prefix of the bundle
+     * @param files the list of files in the bundle
+     * @param bundledFilePaths the list of unbundled file paths to include in the template
      */
-    public List<String> getFilesForBundleName(String name) {
-        return filesRequested.get(name);
+    public void saveBundle(String name, String mappingPrefix, List<String> files, List<String> bundledFilePaths) {
+        ResourcesRequestBundle resourcesRequestBundle = new ResourcesRequestBundle(name, mappingPrefix, files, bundledFilePaths);
+        bundlesRequested.add(resourcesRequestBundle);
     }
 
-    /**
-     * Saves the bundle with the given name and files so it can be recalled later in the template
-     * @param name the name of the bundle to save
-     * @param files the files to include in the bundle
-     */
-    public void saveFilesForBundleName(String name, List<String> files) {
-        filesRequested.put(name, files);
-    }
 }

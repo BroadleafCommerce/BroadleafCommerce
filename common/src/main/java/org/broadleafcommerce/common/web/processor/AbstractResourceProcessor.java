@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
 import org.broadleafcommerce.common.web.request.ResourcesRequest;
+import org.broadleafcommerce.common.web.request.ResourcesRequestBundle;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
@@ -198,26 +199,25 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
      * @return the bundle path
      */
     protected String getBundlePath(ResourceTagAttributes attributes, List<String> files) {
-        final String requestBundle = resourcesRequest.getBundleForBundleName(attributes.name());
-        final String bundleResourceName;
+        ResourcesRequestBundle bundle = resourcesRequest.getBundle(attributes.name(), attributes.mappingPrefix(), files);
+        final String requestBundlePath = bundle == null ? null : bundle.getBundlePath();
+        final String bundleResourcePath;
 
-        if (requestBundle == null) {
+        if (requestBundlePath == null) {
             //lookup the bundle normally
-            bundleResourceName = bundlingService.resolveBundleResourceName(attributes.name(),
+            bundleResourcePath = bundlingService.resolveBundleResourceName(attributes.name(),
                     attributes.mappingPrefix(),
                     files,
                     getBundleAppendText(attributes));
+
+            //save this for any other bundles that may be on the page
+            resourcesRequest.saveBundle(attributes.name(), attributes.mappingPrefix(), files, bundleResourcePath);
         } else {
             //this bundle was already requested somewhere in the template
-            bundleResourceName = requestBundle;
+            bundleResourcePath = requestBundlePath;
         }
 
-        if (requestBundle == null) {
-            //save this for any other bundles that may be on the page
-            resourcesRequest.saveBundleForBundleName(attributes.name(), bundleResourceName);
-        }
-
-        return bundleResourceName;
+        return bundleResourcePath;
     }
 
     /**
@@ -225,27 +225,27 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
      * {@link ResourcesRequest}) or use the files from the tag attributes and save them so they can be used
      * again later without the files attribute.
      * @param attributeFiles the files that were on the attribute (and any additional files to include)
-     * @param resourceTagAttributes the attributes that were on the original resource tag
+     * @param tagAttributes the attributes that were on the original resource tag
      * @param context the context of the original resource tag
      * @return list of files to use as resources
      */
-    protected List<String> postProcessUnbundledFileList(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
+    protected List<String> postProcessUnbundledFileList(List<String> attributeFiles, ResourceTagAttributes tagAttributes, BroadleafTemplateContext context) {
 
-        final List<String> filesOnRequest = resourcesRequest.getFilesForBundleName(resourceTagAttributes.name());
+        final ResourcesRequestBundle resourcesRequestBundle = resourcesRequest.getBundle(tagAttributes.name(), tagAttributes.mappingPrefix(), attributeFiles);
+        final List<String> filesOnSavedBundle = resourcesRequestBundle == null ? null : resourcesRequestBundle.getBundleFilePaths();
 
-        if (filesOnRequest != null) {
+        if (filesOnSavedBundle != null) {
             // this bundle has already been requested earlier in the template
             // we can use the stored files and not have to pull the information from the attributes
-            return filesOnRequest;
+            return filesOnSavedBundle;
         } else {
             // store these files on the request in case they're requested again
             // so we can pull them without the template having to have the files attribute again
-
             List<String> fullFileUrls = new ArrayList<>(attributeFiles.size());
             for (String file : attributeFiles) {
-                fullFileUrls.add(getFullUnbundledFileName(file, resourceTagAttributes, context));
+                fullFileUrls.add(getFullUnbundledFileName(file, tagAttributes, context));
             }
-            resourcesRequest.saveFilesForBundleName(resourceTagAttributes.name(), fullFileUrls);
+            resourcesRequest.saveBundle(tagAttributes.name(), tagAttributes.mappingPrefix(), attributeFiles, fullFileUrls);
 
             return fullFileUrls;
         }
@@ -284,12 +284,9 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             throw new IllegalArgumentException("A 'name' attribute is required for " + getPrefix() + ":" + getName() + " tags");
         }
 
-        boolean hasSavedResources;
-        if (getBundleEnabled()) {
-            hasSavedResources = resourcesRequest.getBundleForBundleName(resourceTagAttributes.name()) != null;
-        } else {
-            hasSavedResources = resourcesRequest.getFilesForBundleName(resourceTagAttributes.name()) != null;
-        }
+        boolean hasSavedResources = resourcesRequest.getBundle(resourceTagAttributes.name(),
+                    resourceTagAttributes.mappingPrefix(),
+                    buildBundledFilesList(resourceTagAttributes)) != null;
 
         if (!hasSavedResources) {
             if (resourceTagAttributes.mappingPrefix() == null) {
