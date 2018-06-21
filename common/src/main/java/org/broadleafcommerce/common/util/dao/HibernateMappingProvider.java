@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,12 +24,14 @@ import org.hibernate.boot.spi.SessionFactoryBuilderImplementor;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 import org.springframework.lang.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.Nullable;
 
 /**
@@ -92,7 +94,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         if (metadata == null) {
             return propertyNames;
         }
-        Iterator propertyIterator = metadata.getReferenceablePropertyIterator();
+        Iterator propertyIterator = metadata.getPropertyClosureIterator();
         while (propertyIterator.hasNext()) {
             org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
             propertyNames.add(prop.getName());
@@ -113,7 +115,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         if (metadata == null) {
             return propertyTypes;
         }
-        Iterator propertyIterator = metadata.getReferenceablePropertyIterator();
+        Iterator propertyIterator = metadata.getPropertyClosureIterator();
         while (propertyIterator.hasNext()) {
             org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
             propertyTypes.add(prop.getType());
