@@ -63,7 +63,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
 
     @Override
     public SessionFactoryBuilder getSessionFactoryBuilder(MetadataImplementor metadata, SessionFactoryBuilderImplementor defaultBuilder) {
-        // This aggregates all of the metadata for all persistence untis. No need to discriminate by persistence unit since the map is 
+        // This aggregates all of the metadata for all persistence untis. No need to discriminate by persistence unit since the map is
         // keyed by class name
         Collection<PersistentClass> classes = metadata.getEntityBindings();
         classes.forEach(clazz -> metadataMap.put(clazz.getClassName(), clazz));
@@ -94,7 +94,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         if (metadata == null) {
             return propertyNames;
         }
-        Iterator propertyIterator = metadata.getPropertyIterator();
+        Iterator propertyIterator = metadata.getPropertyClosureIterator();
         while (propertyIterator.hasNext()) {
             org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
             propertyNames.add(prop.getName());
@@ -115,7 +115,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         if (metadata == null) {
             return propertyTypes;
         }
-        Iterator propertyIterator = metadata.getPropertyIterator();
+        Iterator propertyIterator = metadata.getPropertyClosureIterator();
         while (propertyIterator.hasNext()) {
             org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
             propertyTypes.add(prop.getType());
