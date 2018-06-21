@@ -598,6 +598,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         List<Sku> skus = skuDao.readSkusByIds(skuIds);
 
+        extensionManager.getProxy().batchFetchCatalogDataForSkus(skus);
+
         // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
         if (skus != null) {
             Collections.sort(skus, new Comparator<Sku>() {

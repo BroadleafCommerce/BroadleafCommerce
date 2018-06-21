@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
+import de.jkeylockmanager.manager.KeyLockManager;
+import de.jkeylockmanager.manager.KeyLockManagers;
+import de.jkeylockmanager.manager.LockCallback;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -34,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -42,24 +46,21 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
-import de.jkeylockmanager.manager.KeyLockManager;
-import de.jkeylockmanager.manager.KeyLockManagers;
-import de.jkeylockmanager.manager.LockCallback;
 
 /**
  * @see ResourceBundlingService
@@ -93,6 +94,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    @Autowired
+    protected Environment environment;
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
@@ -134,22 +138,29 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     public Resource rebuildBundledResource(String requestedBundleName) {
         String resourceName = lookupBundlePath(requestedBundleName);
         BundledResourceInfo bundleInfo = createdBundles.get(resourceName);
+
         if (bundleInfo != null) {
             createdBundles.remove(resourceName);
-            ResourceHttpRequestHandler resourceRequestHandler = findResourceHttpRequestHandler(requestedBundleName);
-            if (resourceRequestHandler != null) {
-                ResourceResolverChain resolverChain = new BroadleafDefaultResourceResolverChain(
-                        resourceRequestHandler.getResourceResolvers());
-                List<Resource> locations = resourceRequestHandler.getLocations();
-                createBundleIfNeeded(bundleInfo.getVersionedBundleName(), bundleInfo.getBundledFilePaths(), resolverChain, locations);
+            ResourceHttpRequestHandler handler = findResourceHttpRequestHandler(requestedBundleName);
+            if (handler != null) {
+                ResourceResolverChain resolverChain = new BroadleafDefaultResourceResolverChain(handler.getResourceResolvers());
+                List<Resource> locations = handler.getLocations();
+                List<String> bundledFilePaths = bundleInfo.getBundledFilePaths();
+
+                createBundleIfNeeded(bundleInfo.getVersionedBundleName(), bundledFilePaths, resolverChain, locations);
             }
         }
-        return resourceName != null ? getBundledResource(resourceName) : null;
+
+        return getBundledResource(resourceName);
     }
     
     @Override
     public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files) {
-     
+        return resolveBundleResourceName(requestedBundleName, mappingPrefix, files, null);
+    }
+
+    @Override
+    public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files, String bundleAppend) {
         ResourceHttpRequestHandler resourceRequestHandler = findResourceHttpRequestHandler(requestedBundleName);
         if (resourceRequestHandler != null && CollectionUtils.isNotEmpty(files)) {
             ResourceResolverChain resolverChain = new BroadleafDefaultResourceResolverChain(
@@ -169,27 +180,25 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                     filePaths.add(resourcePath);
                     combinedPathString.append(resourcePath);
                 } else {
-                    LOG.warn(new StringBuilder().append("Could not resolve resource path specified in bundle as [")
-                            .append(file)
-                            .append("] or as [")
-                            .append(mappingPrefix + file)
-                            .append("]. Skipping file.")
-                            .toString());
+                    LOG.warn("Could not resolve resource path specified in bundle as [" +
+                            file +
+                            "] or as [" +
+                            mappingPrefix + file +
+                            "]. Skipping file.");
                 }
             }
 
             int version = Math.abs(combinedPathString.toString().hashCode());
             String versionedBundleName = mappingPrefix + addVersion(requestedBundleName, "-" + String.valueOf(version));
         
-            createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations);
+            createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations, bundleAppend);
 
             return versionedBundleName;
         } else {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("");
-            }
-            return null;
+            LOG.warn("No resource request handler could be found for " + requestedBundleName);
         }
+
+        return null;
     }
 
     @Override
@@ -227,7 +236,12 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     }
 
     protected void createBundleIfNeeded(final String versionedBundleName, final List<String> filePaths,
-            final ResourceResolverChain resolverChain, final List<Resource> locations) {
+                                        final ResourceResolverChain resolverChain, final List<Resource> locations) {
+        createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations, null);
+    }
+
+    protected void createBundleIfNeeded(final String versionedBundleName, final List<String> filePaths,
+            final ResourceResolverChain resolverChain, final List<Resource> locations, final String bundleAppend) {
         if (!createdBundles.containsKey(versionedBundleName)) {
             keyLockManager.executeLocked(versionedBundleName, new LockCallback() {
 
@@ -235,7 +249,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                 public void doInLock() {
                     Resource bundleResource = getBundledResource(versionedBundleName);
                     if (bundleResource == null || !bundleResource.exists()) {
-                        bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
+                        bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations, bundleAppend);
                         if (bundleResource != null) {
                             saveBundle(bundleResource);
                         }
@@ -247,14 +261,18 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             });
         }
     }
-    
     protected Resource createBundle(String versionedBundleName, List<String> filePaths,
-            ResourceResolverChain resolverChain, List<Resource> locations) {
+                                    ResourceResolverChain resolverChain, List<Resource> locations) {
+        return createBundle(versionedBundleName, filePaths, resolverChain, locations, null);
+    }
+
+    protected Resource createBundle(String versionedBundleName, List<String> filePaths,
+            ResourceResolverChain resolverChain, List<Resource> locations, String bundleAppend) {
 
         HttpServletRequest req = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] bytes = null;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] bytes;
         
         // Join all of the resources for this bundle together into a byte[]
         try {
@@ -263,14 +281,13 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                 InputStream is = null;
                 
                 if (r == null) {
-                    LOG.warn(new StringBuilder().append("Could not resolve resource specified in bundle as [")
-                            .append(fileName)
-                            .append("]. Turn on trace logging to determine resolution failure. Skipping file.")
-                            .toString());
+                    LOG.warn("Could not resolve resource specified in bundle as [" +
+                            fileName +
+                            "]. Turn on trace logging to determine resolution failure. Skipping file.");
                 } else {
                     try {
                         is = r.getInputStream();
-                        StreamUtils.copy(is, baos);
+                        StreamUtils.copy(is, outputStream);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     } finally {
@@ -280,21 +297,29 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                     // If we're creating a JavaScript bundle, we'll put a semicolon between each
                     // file to ensure it won't fail to compile.
                     if (versionedBundleName.endsWith(".js")) {
-                        baos.write(";".getBytes());
+                        outputStream.write(";".getBytes(getBundleCharSet()));
                     }
-                    baos.write(System.getProperty("line.separator").getBytes());
+                    outputStream.write(System.getProperty("line.separator").getBytes(getBundleCharSet()));
                 }
             }
-            bytes = baos.toByteArray();
+
+            // Append the requested text to the bundle
+            if (bundleAppend != null) {
+                if (versionedBundleName.endsWith(".js")) {
+                    outputStream.write(";".getBytes(getBundleCharSet()));
+                }
+                outputStream.write(bundleAppend.getBytes(getBundleCharSet()));
+            }
+
+            bytes = outputStream.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            IOUtils.closeQuietly(baos);
+            IOUtils.closeQuietly(outputStream);
         }
         
         // Create our GenerateResource that holds our combined bundle
-        GeneratedResource r = new GeneratedResource(bytes, versionedBundleName);
-        return r;
+        return new GeneratedResource(bytes, versionedBundleName);
     }
     
     protected void saveBundle(Resource resource) {
@@ -337,8 +362,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     protected String getBundleName(String bundleName, String version) {
         String bundleWithoutExtension = bundleName.substring(0, bundleName.lastIndexOf('.'));
         String bundleExtension = bundleName.substring(bundleName.lastIndexOf('.'));
-        String versionedName = bundleWithoutExtension + version + bundleExtension;
-        return versionedName;
+        return bundleWithoutExtension + version + bundleExtension;
     }
     
     protected String getBundleVersion(LinkedHashMap<String, Resource> foundResources) throws IOException {
@@ -354,8 +378,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             
             sb.append("\r\n");
         }
-        String version = String.valueOf(sb.toString().hashCode());
-        return version;
+        return String.valueOf(sb.toString().hashCode());
     }
     
     @Override
@@ -414,6 +437,15 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             return "bundles" + name;
         } else {
             return "bundles/" + name;
+        }
+    }
+
+    protected Charset getBundleCharSet() {
+        final String charsetProperty = environment.getProperty("bundle.charset");
+        if (StringUtils.isEmpty(charsetProperty)) {
+            return StandardCharsets.UTF_8;
+        } else {
+            return Charset.forName(charsetProperty);
         }
     }
 }
