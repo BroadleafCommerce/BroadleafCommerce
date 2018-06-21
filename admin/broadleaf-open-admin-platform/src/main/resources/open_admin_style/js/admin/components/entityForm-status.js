@@ -288,10 +288,22 @@
          * It is called once when the page first loads, and then on every subsequent change.
          */
         updateEntityFormActions : function() {
+            var numModals = BLCAdmin.getModals().length;
+            var modals = BLCAdmin.getModals();
+            var $prevModal = numModals > 1 ? modals[numModals - 2] : null;
             var $currModal = BLCAdmin.currentModal();
+
+            var $addEntityFormModal;
             if ($currModal && $currModal.has('.modal-add-entity-form').length) {
+                $addEntityFormModal = $currModal;
+            } else if ($prevModal && $prevModal.has('.modal-add-entity-form').length) {
+                //on actions like to-one lookups, the modal that needs the save button updated is the previous one
+                $addEntityFormModal = $prevModal;
+            }
+
+            if ($addEntityFormModal) {
                 // in community, modal submit gets disabled when there is a validation error
-                $('.submit-button', $currModal).prop('disabled', !this.getEntityFormChangesCount());
+                $('.submit-button', $addEntityFormModal).prop('disabled', !this.getEntityFormChangesCount());
             }
             
             // Grab all buttons we might want to enable/disable
