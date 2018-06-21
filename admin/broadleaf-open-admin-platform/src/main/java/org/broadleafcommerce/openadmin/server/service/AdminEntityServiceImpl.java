@@ -550,6 +550,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             if (maintainedFields == null || maintainedFields.length == 0) {
                 ppr.setValidateUnsubmittedProperties(false);
             }
+
+            // Fix for an adorned target collection where the link is maintained from a
+            // ToOne property on a main entity
+            String linkedProperty = ppr.getAdornedList().getLinkedObjectPath() + "." + ppr.getAdornedList().getLinkedIdProperty();
+            for (Property p : properties) {
+                if (p.getName().equals(linkedProperty)) {
+                    p.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
+                }
+            }
         } else if (md instanceof MapMetadata) {
             ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
             
