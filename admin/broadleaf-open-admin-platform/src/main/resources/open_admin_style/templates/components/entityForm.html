@@ -124,8 +124,8 @@
                                                     <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" th:utext="#{${listGrid.friendlyName}}"></span>
                                                 </div>
                                                 <div class="collapser">
-                                                    <span th:unless="${#lists.isEmpty(listGrid.records)}" class="expanded" href="#">(hide)</span>
-                                                    <span th:if="${#lists.isEmpty(listGrid.records)}" class="collapsed" href="#">(show)</span>
+                                                    <span th:unless="${#lists.isEmpty(listGrid.records)}" class="expanded" href="#" th:inline="text">([[#{form.hide}]])</span>
+                                                    <span th:if="${#lists.isEmpty(listGrid.records)}" class="collapsed" href="#" th:inline="text">([[#{form.show}]])</span>
                                                 </div>
                                             </a>
                                             <div class="fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records) ? 'content-collapsed' : ''}">

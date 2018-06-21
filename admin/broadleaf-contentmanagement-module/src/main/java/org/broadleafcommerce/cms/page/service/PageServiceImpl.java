@@ -18,6 +18,7 @@
 package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -28,6 +29,7 @@ import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
@@ -87,6 +89,10 @@ public class PageServiceImpl implements PageService {
     @Resource(name = "blPageServiceExtensionManager")
     protected PageServiceExtensionManager extensionManager;
 
+    @Resource(name = "blPageQueryExtensionManager")
+    protected PageQueryExtensionManager queryExtensionManager;
+
+    
     protected Cache pageCache;
     protected Cache pageMapCache;
     protected Cache uriCachedDateCache;
@@ -321,25 +327,38 @@ public class PageServiceImpl implements PageService {
     }
 
     protected String buildKey(String identifier, Locale locale, Boolean secure) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        Site site = context.getNonPersistentSite();
-        Long siteId = (site != null) ? site.getId() : null;
-        locale = findLanguageOnlyLocale(locale);
-        StringBuilder key = new StringBuilder(identifier);
+        String localeCode = locale != null ? locale.getLocaleCode() : "";
+        return buildKey(identifier, localeCode, secure, null);
+    }
 
-        if (locale != null) {
-            key.append("-").append(locale.getLocaleCode());
+    
+    protected String buildKey(String identifier, String localeCode, Boolean secure, ResultType resultType) {
+        if (resultType == null) {
+            resultType = ResultType.STANDARD;
+        }
+        String cacheKey = buildBaseKey(identifier, localeCode, secure);
+        //if we have a queryExtensionManager then the cacheKey will be modified (usually for multitenant sites)
+        if (queryExtensionManager != null) {
+            ExtensionResultHolder<String> result = new ExtensionResultHolder<String>();
+            queryExtensionManager.getProxy().getCacheKey(cacheKey, resultType, result);
+            if (result.getResult() != null) {
+                cacheKey = result.getResult();
+            }
+        }
+        return cacheKey;
+    }
+
+    protected String buildBaseKey(String identifier, String localeCode, Boolean secure) {
+        StringBuilder key = new StringBuilder(identifier);
+        if (localeCode != null) {
+            key.append("-").append(localeCode);
         }
         if (secure != null) {
             key.append("-").append(secure);
         }
-        if (siteId != null) {
-            key.append("-").append(siteId);
-        }
-
         return key.toString();
     }
-
+        
     protected Locale findLanguageOnlyLocale(Locale locale) {
         if (locale != null ) {
             Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
@@ -462,4 +481,23 @@ public class PageServiceImpl implements PageService {
         return success == null ? Boolean.FALSE : success;
     }
 
+    @Override
+    public Boolean removeTranslationPageFromCache(final String uri, String localeCode, boolean isSecure) {
+        String cacheKey = buildBaseKey(uri, localeCode, isSecure);
+        List<String> cacheKeys = new ArrayList<>();
+        cacheKeys.add(cacheKey);
+        if (queryExtensionManager != null) {
+            ExtensionResultHolder<List<String>> response = new ExtensionResultHolder<List<String>>();
+            queryExtensionManager.getProxy().getCacheKeyListForTemplateSite(cacheKey, response);
+            cacheKeys = response.getResult();
+        }
+        for (String cKey : cacheKeys) {
+            // cacheKeys from the templateSites (extensionManager) are returned with a "templateSiteId:" prefix.  Parsing those out to get just the child site keys
+            if (cKey.contains(":")) {
+                cKey = cKey.substring(cKey.indexOf(":")+1);
+            }
+            getPageCache().remove(cKey);
+        }
+        return true;
+    }
 }

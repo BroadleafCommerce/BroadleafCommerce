@@ -17,31 +17,46 @@
  */
 package org.broadleafcommerce.core.rating.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RatingType {
+public class RatingType implements BroadleafEnumerationType, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, RatingType> TYPES = new HashMap<String, RatingType>();
 
-    public static final RatingType PRODUCT = new RatingType("PRODUCT");
+    public static final RatingType PRODUCT = new RatingType("PRODUCT", "Product");
 
     public static RatingType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public RatingType() {
+        //do nothing
     }
 
-    public RatingType(final String type) {
-        setType(type);
+    public RatingType(String type) {
+        this(type, type);
     }
 
+    public RatingType(String type, String friendlyType) {
+        this.friendlyType = friendlyType;
+        this.setType(type);
+    }
+
+    @Override
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     private void setType(final String type) {

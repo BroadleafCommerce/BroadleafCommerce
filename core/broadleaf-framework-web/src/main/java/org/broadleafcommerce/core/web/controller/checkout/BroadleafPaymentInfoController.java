@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
@@ -46,6 +47,9 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
 
     @Resource(name = "blSavedPaymentService")
     protected SavedPaymentService savedPaymentService;
+
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
 
     /**
      * Processes the request to save an {@link OrderPayment} based on an existing or new {@link CustomerPayment}.
@@ -168,8 +172,8 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
      * to the billing address on the PaymentInfoForm that is passed in.
      */
     protected void copyShippingAddressToBillingAddress(Order order, PaymentInfoForm paymentInfoForm) {
-        if (order.getFulfillmentGroups().get(0) != null) {
-            Address shipping = order.getFulfillmentGroups().get(0).getAddress();
+        if (fulfillmentGroupService.getFirstShippableFulfillmentGroup(order) != null) {
+            Address shipping = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order).getAddress();
             if (shipping != null) {
                 Address billing = addressService.copyAddress(shipping) ;
                 paymentInfoForm.setAddress(billing);
