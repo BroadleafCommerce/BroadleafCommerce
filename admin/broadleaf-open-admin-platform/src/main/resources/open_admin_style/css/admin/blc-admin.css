@@ -5512,7 +5512,7 @@ label.checkmark span.checkmark {
 }
 
 label.checkmark:hover input ~ span.checkmark {
-    background-color: #CCC;
+    background-color: #EEE;
 }
 
 label.checkmark input:checked ~ span.checkmark {
