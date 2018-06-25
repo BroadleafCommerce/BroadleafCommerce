@@ -41,6 +41,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -200,6 +202,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     ClassFile templateFile = template.getClassFile();
                     ConstPool constantPool = classFile.getConstPool();
                     buildClassLevelAnnotations(classFile, templateFile, constantPool);
+                    transformIndexAnnotations(classFile, templateFile, constantPool);
 
                     // Copy over all declared fields from the template class
                     // Note that we do not copy over fields with the @NonCopiedField annotation
@@ -486,6 +489,114 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             }
         }
         return addedTemplates;
+    }
+
+    protected void transformIndexAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+        List<?> templateAttributes = templateClassFile.getAttributes();
+        Iterator<?> templateItr = templateAttributes.iterator();
+        Annotation templateTable = null;
+        while (templateItr.hasNext()) {
+            Object object = templateItr.next();
+            if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                Annotation[] items = attr.getAnnotations();
+                for (Annotation annotation : items) {
+                    String typeName = annotation.getTypeName();
+                    if (typeName.equals(Table.class.getName())) {
+                        templateTable = annotation;
+                    }
+                }
+            }
+        }
+
+        if (templateTable != null) {
+            AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+            List<?> attributes = classFile.getAttributes();
+            Iterator<?> itr = attributes.iterator();
+            Annotation existingTable = null;
+            while (itr.hasNext()) {
+                Object object = itr.next();
+                if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                    AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                    Annotation[] items = attr.getAnnotations();
+                    for (Annotation annotation : items) {
+                        String typeName = annotation.getTypeName();
+                        if (typeName.equals(Table.class.getName())) {
+                            logger.debug("Stripping out previous Table annotation at the class level - will merge into new Table");
+                            existingTable = annotation;
+                            continue;
+                        }
+                        annotationsAttribute.addAnnotation(annotation);
+                    }
+                    itr.remove();
+                }
+            }
+
+            Annotation newTable = getIndexes(constantPool, existingTable, templateTable);
+            annotationsAttribute.addAnnotation(newTable);
+
+            classFile.addAttribute(annotationsAttribute);
+        }
+    }
+
+    protected Annotation getIndexes(ConstPool constantPool, Annotation existingTable, Annotation templateTable) {
+        Annotation newTable = new Annotation(Table.class.getName(), constantPool);
+        ArrayMemberValue indexArray = new ArrayMemberValue(constantPool);
+        Set<MemberValue> indexMemberValues = new HashSet<>();
+        {
+            ArrayMemberValue templateIndexValues = (ArrayMemberValue) templateTable.getMemberValue("indexes");
+            if (templateIndexValues != null) {
+                indexMemberValues.addAll(Arrays.asList(templateIndexValues.getValue()));
+                logger.debug("Adding template values to new Table");
+            }
+        }
+        if (existingTable != null) {
+            if (existingTable.getMemberValue("name") != null) {
+                StringMemberValue name = new StringMemberValue(constantPool);
+                name.setValue(((StringMemberValue) existingTable.getMemberValue("name")).getValue());
+                newTable.addMemberValue("name", name);
+            }
+            ArrayMemberValue oldIndexValues = (ArrayMemberValue) existingTable.getMemberValue("indexes");
+            if (oldIndexValues != null) {
+                indexMemberValues.addAll(Arrays.asList(oldIndexValues.getValue()));
+                logger.debug("Adding previous values to new Table");
+            }
+        }
+        List<MemberValue> deepCopyIndexes = new ArrayList<>();
+        for (MemberValue value : indexMemberValues) {
+            if (AnnotationMemberValue.class.isAssignableFrom(value.getClass())) {
+                AnnotationMemberValue annotationMember = (AnnotationMemberValue) value;
+                AnnotationMemberValue newAnnotationMember = new AnnotationMemberValue(constantPool);
+                Annotation annotation = annotationMember.getValue();
+                newAnnotationMember.setValue(cloneIndexAnnotation(annotation, constantPool));
+                deepCopyIndexes.add(newAnnotationMember);
+            }
+        }
+        indexArray.setValue(deepCopyIndexes.toArray(new MemberValue[deepCopyIndexes.size()]));
+        newTable.addMemberValue("indexes", indexArray);
+
+        return newTable;
+
+    }
+
+    protected Annotation cloneIndexAnnotation(Annotation annotation, ConstPool constantPool) {
+        Annotation newAnnotation = new Annotation(Index.class.getName(), constantPool);
+        if (annotation.getMemberValue("name") != null) {
+            StringMemberValue name = new StringMemberValue(constantPool);
+            name.setValue(((StringMemberValue) annotation.getMemberValue("name")).getValue());
+            newAnnotation.addMemberValue("name", name);
+        }
+        if (annotation.getMemberValue("columnList") != null) {
+            StringMemberValue columnList = new StringMemberValue(constantPool);
+            columnList.setValue(((StringMemberValue) annotation.getMemberValue("columnList")).getValue());
+            newAnnotation.addMemberValue("columnList", columnList);
+        }
+        if (annotation.getMemberValue("unique") != null) {
+            BooleanMemberValue unique = new BooleanMemberValue(constantPool);
+            unique.setValue(((BooleanMemberValue) annotation.getMemberValue("unique")).getValue());
+            newAnnotation.addMemberValue("unique", unique);
+        }
+        return newAnnotation;
     }
 
     protected void buildClassLevelAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
