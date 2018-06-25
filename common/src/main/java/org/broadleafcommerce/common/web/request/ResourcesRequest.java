@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.common.web.request;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
 
 /**
  * Keeps track of the resources needed for &lt;blc:bundle&gt; and &lt;blc:bundlepreload&gt; tags so that the list
@@ -51,13 +51,14 @@ public class ResourcesRequest {
             //names are same
             if (name.equals(resourcesRequestBundle.getBundleName())) {
 
-                if (mappingPrefix != null && !mappingPrefix.equalsIgnoreCase(resourcesRequestBundle.getMappingPrefix())) {
+                if (!StringUtils.equalsIgnoreCase(mappingPrefix, resourcesRequestBundle.getMappingPrefix())) {
                     //the prefixes are different
                     continue;
                 }
 
                 final List<String> bundleFiles = resourcesRequestBundle.getFiles();
-                if (files != null && !(files.containsAll(bundleFiles)) && files.size() == bundleFiles.size()) {
+
+                if (!CollectionUtils.isEqualCollection(files, bundleFiles)) {
                     //files are different
                     continue;
                 }
