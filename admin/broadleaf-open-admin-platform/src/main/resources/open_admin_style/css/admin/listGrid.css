@@ -33,6 +33,25 @@
     height: 45px;
     white-space: nowrap;
 }
+.listgrid-search .applied-filters-container {
+    width: calc(100% - 120px);
+    height: 38px;
+    display: inline-block;
+    margin-top: 6px;
+    margin-right: 10px;
+    float: left;
+    overflow: auto;
+}
+.listgrid-search .applied-filters-container ul {
+    margin-bottom: 0;
+    float: right;
+    text-align: left;
+    line-height: 18px;
+}
+.listgrid-search .applied-filters-container .single-filter {
+    position: relative;
+    top: 6px;
+}
 .listgrid-search-actions {
     display: inline-block;
 }

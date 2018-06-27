@@ -907,6 +907,62 @@
                     $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
+
+            BLCAdmin.filterBuilders.updateAppliedFiltersContainerHtml(filterBuilder);
+        },
+
+        updateAppliedFiltersContainerHtml(filterBuilder) {
+            var $container = $('#applied-filters-container-' + filterBuilder.hiddenId);
+            if ($container.length) {
+                $container.html(this.buildAppliedFiltersContainerHtml(filterBuilder));
+            }
+        },
+
+        buildAppliedFiltersContainerHtml(filterBuilder) {
+            var ruleJson = JSON.parse($("#" + filterBuilder.hiddenId).val());
+            if (!ruleJson || !ruleJson.data || ruleJson.data.length === 0) {
+                return ""
+            }
+            var rules = ruleJson.data[0].rules;
+            if (!rules || rules.length === 0) {
+                return "";
+            }
+            if (rules.length === 1) {
+                return "<span class='single-filter'>" + asInnerHtml(filterBuilder, rules[0]) + "</span>";
+            }
+            var $list = $("<ul></ul>");
+            for (var i = 0; i < rules.length; i++) {
+                var item = "<li>" + asInnerHtml(filterBuilder, rules[i]) + "</li>";
+                $list.append(item);
+            }
+            return $list.prop('outerHTML');
+            
+            function asInnerHtml(filterBuilder, rule) {
+                var label = "<b>" + filterBuilder.getFieldLabelById(rule.id) + "</b>";
+                var operator = filterBuilder.getOperatorLabelByOperatorType(rule.operator);
+                var value = "";
+
+                switch(rule.operator) {
+                    case "IS_NULL":
+                        break;
+                    case "BETWEEN":
+                        var arr = JSON.parse(rule.value);
+                        value = "<b>" + arr[0] + " AND " + arr[1] + "</b>";
+                        break;
+                    case "COLLECTION_IN":
+                    case "COLLECTION_NOT_IN":
+                        var arr = JSON.parse(rule.value);
+                        for (var i = 0; i < arr.length - 1; i++) {
+                            value += "<b>" + arr[i] + "</b>" + ", ";
+                        }
+                        value += "<b>" + arr[arr.length - 1] + "</b>";
+                        break;
+                    default:
+                        value = "<b>" + rule.value + "</b>";
+                }
+
+                return label + " " + operator + " " + value;
+            }
         },
 
         getListGridFiltersAsURLParams: function($listGridContainer) {
@@ -1066,6 +1122,9 @@ $(document).ready(function() {
      * Invoked from the "Close" button on a modal filter builder
      */
     $('body').on('click', 'button.set-modal-filter-builder', function () {
+        var hiddenId = $('#hidden-id').data('hiddenid');
+        var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+        BLCAdmin.filterBuilders.updateAppliedFiltersContainerHtml(filterBuilder);
         BLCAdmin.hideCurrentModal();
     });
 
@@ -1143,6 +1202,9 @@ $(document).ready(function() {
         $filterButton.siblings('.button-group').remove();
 
         $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+
+        var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+        BLCAdmin.filterBuilders.updateAppliedFiltersContainerHtml(filterBuilder);
     });
 
     /**
@@ -1193,6 +1255,7 @@ $(document).ready(function() {
         var $modal = BLCAdmin.getModalSkeleton();
         //$modal.addClass('sm');
         $modal.find('.modal-header').find('h3').html('Filters Applied');
+        $modal.find('.modal-header').find('.close').attr("onclick", "$('button.set-modal-filter-builder').click()");
         //$modal.find('.modal-header').append(addFilterBtn);
         $modal.find('.modal-body').append(hiddenInput);
         $modal.find('.modal-body').append($modalContainer);
