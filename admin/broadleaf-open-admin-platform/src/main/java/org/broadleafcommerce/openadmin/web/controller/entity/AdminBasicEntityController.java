@@ -91,11 +91,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1022,8 +1025,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
-                .withMaxIndex(getMaxIndex(requestParams))
-                .withCustomCriteria(buildSelectizeCustomCriteria());
+                .withMaxIndex(getMaxIndex(requestParams));
+        String[] both = Stream.concat(Arrays.stream(ppr.getCustomCriteria()), Arrays.stream(buildSelectizeCustomCriteria()))
+                .toArray(String[]::new);
+        ppr = ppr.withCustomCriteria( both);
 
         if (md instanceof AdornedTargetCollectionMetadata) {
             ppr.setOperationTypesOverride(null);
