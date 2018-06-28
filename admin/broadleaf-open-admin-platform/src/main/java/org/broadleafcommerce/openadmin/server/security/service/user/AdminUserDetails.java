@@ -33,7 +33,7 @@ import java.util.Collection;
  * @see {@link AdminUserDetailsServiceImpl}
  */
 public class AdminUserDetails extends User {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * ID of the persistent {@link org.broadleafcommerce.openadmin.server.security.domain.AdminUser}
