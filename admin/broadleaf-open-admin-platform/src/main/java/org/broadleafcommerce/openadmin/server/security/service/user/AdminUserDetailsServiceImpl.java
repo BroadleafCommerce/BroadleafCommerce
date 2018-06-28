@@ -52,7 +52,6 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
     public static final String LEGACY_ROLE_PREFIX = "PERMISSION_";
     public static final String DEFAULT_SPRING_SECURITY_ROLE_PREFIX = "ROLE_";
-    public static final String ROLE_SKIP_APPROVAL = "ROLE_SKIP_APPROVAL";
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -75,12 +74,9 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
         addRoles(adminUser, authorities);
         addPermissions(adminUser, authorities);
-        
-        final AtomicBoolean canSkipApproval = new AtomicBoolean(false);
-        
-        convertPermissionPrefixToRole(authorities, canSkipApproval);
+        convertPermissionPrefixToRole(authorities);
 
-        return createDetails(username, adminUser, authorities, canSkipApproval.get());
+        return createDetails(username, adminUser, authorities);
     }
 
     protected void addRoles(final AdminUser adminUser,
@@ -102,8 +98,7 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
-    protected void convertPermissionPrefixToRole(final List<SimpleGrantedAuthority> authorities,
-            final AtomicBoolean canSkipApproval) {
+    protected void convertPermissionPrefixToRole(final List<SimpleGrantedAuthority> authorities) {
         // Spring security expects everything to begin with ROLE_ for things like hasRole() 
         // expressions so this adds additional authorities with those mappings, as well as new ones 
         // with ROLE_ instead of PERMISSION_.
@@ -120,15 +115,13 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
                         + auth.getAuthority()));
                 it.add(new SimpleGrantedAuthority(auth.getAuthority()
                         .replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
-            } else if (!canSkipApproval.get() && ROLE_SKIP_APPROVAL.equals(auth.getAuthority())) {
-                canSkipApproval.set(true);
             }
         }
     }
     
     protected UserDetails createDetails(final String username, final AdminUser adminUser, 
-            final List<SimpleGrantedAuthority> authorities, final boolean canSkipApproval) {
-        return new AdminUserDetails(adminUser.getId(), canSkipApproval, username, 
+            final List<SimpleGrantedAuthority> authorities) {
+        return new AdminUserDetails(adminUser.getId(), username, 
                 adminUser.getPassword(), true, true, true, true, authorities);
     }
 }
