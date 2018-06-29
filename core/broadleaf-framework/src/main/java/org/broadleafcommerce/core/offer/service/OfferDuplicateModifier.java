@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.persistence.AbstractEntityDuplicationHelper;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,7 +34,9 @@ import org.springframework.stereotype.Component;
 public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offer> {
 
     @Autowired
-    public OfferDuplicateModifier() {
+    public OfferDuplicateModifier(final Environment environment) {
+        super(environment);
+        
         addCopyHint(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, Boolean.TRUE.toString());
     }
     
@@ -45,7 +48,7 @@ public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offe
     @Override
     public void modifyInitialDuplicateState(final Offer copy) {
         String currentName = copy.getName();
-        copy.setName(currentName + " - Copy");
+        copy.setName(currentName + getCopySuffix());
         copy.setStartDate(null);
         copy.setEndDate(null);
     }
