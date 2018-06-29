@@ -34,7 +34,7 @@ public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offe
 
     @Autowired
     public OfferDuplicateModifier() {
-        addCopyHint(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, "true");
+        addCopyHint(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, Boolean.TRUE.toString());
     }
     
     @Override
@@ -45,7 +45,7 @@ public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offe
     @Override
     public void modifyInitialDuplicateState(final Offer copy) {
         String currentName = copy.getName();
-        copy.setName("Copy of " + currentName);
+        copy.setName(currentName + " - Copy");
         copy.setStartDate(null);
         copy.setEndDate(null);
     }
