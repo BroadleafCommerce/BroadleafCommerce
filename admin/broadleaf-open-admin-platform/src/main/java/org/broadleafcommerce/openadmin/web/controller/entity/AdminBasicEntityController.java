@@ -33,8 +33,6 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
-import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
-import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
@@ -74,11 +72,8 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
@@ -1508,8 +1503,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return
      * @throws ServiceException
      */
-    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
-            String id, String collectionField, String collectionItemId, String alternateId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
+    protected String showViewUpdateCollection(HttpServletRequest request, 
+            Model model, 
+            Map<String, String> pathVars,
+            String id, 
+            String collectionField, 
+            String collectionItemId, 
+            String alternateId, 
+            String modalHeaderType, 
+            EntityForm entityForm, 
+            Entity entity) throws ServiceException {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
@@ -1544,15 +1547,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
-            if (entityForm == null) {
-                entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
-            } else {
-                entityForm.clearFieldsMap();
-                formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm, sectionCrumbs);
-                //remove all the actions since we're not trying to redisplay them on the form
-                entityForm.removeAllActions();
-            }
+            
+            entityForm = reinitializeEntityForm(entityForm, collectionMetadata, entity, 
+                    subRecordsMap, sectionCrumbs);
+            
             entityForm.removeAction(DefaultEntityFormActions.DELETE);
+            entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
+            
             addAuditableDisplayFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/simpleEditEntity");
@@ -1676,6 +1677,25 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, sectionKey);
         return MODAL_CONTAINER_VIEW;
+    }
+    
+    protected EntityForm reinitializeEntityForm(final EntityForm entityForm, 
+            final ClassMetadata collectionMetadata,
+            final Entity entity,
+            final Map<String, DynamicResultSet> subRecordsMap,
+            final List<SectionCrumb> sectionCrumbs) throws ServiceException {
+        if (entityForm == null) {
+            return formService
+                    .createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
+        }
+        
+        entityForm.clearFieldsMap();
+        formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm,
+                sectionCrumbs);
+        //remove all the actions since we're not trying to redisplay them on the form
+        entityForm.removeAllActions();
+    
+        return entityForm;
     }
 
     /**

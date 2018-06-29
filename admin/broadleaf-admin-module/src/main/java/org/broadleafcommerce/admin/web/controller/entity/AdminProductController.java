@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -149,6 +150,7 @@ public class AdminProductController extends AdminBasicEntityController {
         formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
 
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
+        entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
 
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleAddEntity");
@@ -196,17 +198,14 @@ public class AdminProductController extends AdminBasicEntityController {
         Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
 
         String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
-        if (entityForm == null) {
-            entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
-        } else {
-            entityForm.clearFieldsMap();
-            formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm, sectionCrumbs);
-            //remove all the actions since we're not trying to redisplay them on the form
-            entityForm.removeAllActions();
-        }
+        Map<String, DynamicResultSet> subRecordsMap = service
+                .getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
+
+        entityForm = reinitializeEntityForm(entityForm, collectionMetadata, entity, subRecordsMap, 
+                sectionCrumbs);
 
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
+        entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
 
         // Ensure that operations on the Sku subcollections go to the proper URL
         for (ListGrid lg : entityForm.getAllListGrids()) {

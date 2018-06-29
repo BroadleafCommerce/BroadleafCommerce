@@ -31,13 +31,17 @@ import java.util.Map;
  * </p>
  * </p>
  *      The feature must first be enabled before use. To enable, add the following property to your 
- *      Spring property file: {@code admin.entity.duplication.isactive=true}
+ *      Spring property file: {@code admin.entity.duplication.isactive=true}. Furthermore, 
+ *      for any entity you wish to be able to duplicate, you must implement an
+ *      {@link EntityDuplicationHelper}. Consider extending {@link AbstractEntityDuplicationHelper} 
+ *      because it implements {@link EntityDuplicationHelper#getCopyHints()} and 
+ *      {@link EntityDuplicationHelper#addCopyHint(String, String)} for you. 
  * </p>
  * <p>
- *     Furthermore, for any entity you wish to be able to duplicate, you must implement an
- *     {@link EntityDuplicationHelper}. Consider extending {@link AbstractEntityDuplicationHelper} 
- *     because it implements {@link EntityDuplicationHelper#getCopyHints()} and 
- *     {@link EntityDuplicationHelper#addCopyHint(String, String)} for you.
+ *     CopyHints can be added to change the behavior of 
+ *     {@link MultiTenantCloneable#createOrRetrieveCopyInstance(MultiTenantCopyContext)} for a
+ *     specific entity. See {@code org.broadleafcommerce.core.offer.service.OfferDuplicateModifier}
+ *     and {@code org.broadleafcommerce.core.offer.domain.OfferImpl} for an example.
  * </p>
  *
  * @author Jeff Fischer

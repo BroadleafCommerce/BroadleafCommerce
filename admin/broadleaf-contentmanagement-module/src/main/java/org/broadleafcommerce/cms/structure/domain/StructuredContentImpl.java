@@ -102,7 +102,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
 
     private static final long serialVersionUID = 1L;
     
-    public static final String SC_SC_TYPE_DONT_DUPLICATE_HINT = "dont-duplicate-sc-type";
+    public static final String SC_DONT_DUPLICATE_SC_TYPE_HINT = "dont-duplicate-sc-type";
 
     @Id
     @GeneratedValue(generator = "StructuredContentId")
@@ -335,7 +335,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         cloned.setPriority(priority);
         
         if (structuredContentType != null) {
-            if (Boolean.valueOf(context.getCopyHints().get(SC_SC_TYPE_DONT_DUPLICATE_HINT))) {
+            if (Boolean.valueOf(context.getCopyHints().get(SC_DONT_DUPLICATE_SC_TYPE_HINT))) {
                 cloned.setStructuredContentType(structuredContentType);
             } else {
                 CreateResponse<StructuredContentType> clonedType = 
