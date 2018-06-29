@@ -17,8 +17,11 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
-import org.broadleafcommerce.common.persistence.EntityDuplicateModifier;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.persistence.AbstractEntityDuplicationHelper;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,12 +30,22 @@ import org.springframework.stereotype.Component;
  * @author Jeff Fischer
  */
 @Component("blOfferDuplicateModifier")
-public class OfferDuplicateModifier implements EntityDuplicateModifier<Offer> {
+public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offer> {
 
+    @Autowired
+    public OfferDuplicateModifier() {
+        addCopyHint(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, "true");
+    }
+    
     @Override
-    public void modifyInitialDuplicateState(Offer copy) {
+    public boolean canHandle(final MultiTenantCloneable candidate) {
+        return Offer.class.isAssignableFrom(candidate.getClass());
+    }
+    
+    @Override
+    public void modifyInitialDuplicateState(final Offer copy) {
         String currentName = copy.getName();
-        copy.setName("Copy Of ("+currentName+")");
+        copy.setName("Copy of " + currentName);
         copy.setStartDate(null);
         copy.setEndDate(null);
     }
