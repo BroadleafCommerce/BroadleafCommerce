@@ -44,7 +44,13 @@
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
         </mvc:message-converters>
+        <mvc:path-matching path-matcher="pathMatcher" />
     </mvc:annotation-driven>
+
+    <!-- Override default value of trim tokens for security reasons -->
+    <bean id="pathMatcher" class="org.springframework.util.AntPathMatcher">
+        <property name="trimTokens" value="false" />
+    </bean>
     
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
         <property name="useSuffixPatternMatch" value="false" />
