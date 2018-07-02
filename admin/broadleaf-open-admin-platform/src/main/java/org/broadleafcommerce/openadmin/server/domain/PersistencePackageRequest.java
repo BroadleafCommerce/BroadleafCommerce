@@ -61,6 +61,7 @@ public class PersistencePackageRequest {
     protected boolean isTreeCollection = false;
     protected boolean isAddOperationInspect = false;
     protected boolean isFolderedLookup = false;
+    protected Long folderId;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -314,6 +315,11 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest withIsFolderedLookup(boolean isFolderedLookup) {
         this.isFolderedLookup = isFolderedLookup;
+        return this;
+    }
+
+    public PersistencePackageRequest withFolderId(Long folderId) {
+        this.folderId = folderId;
         return this;
     }
 
@@ -720,6 +726,14 @@ public class PersistencePackageRequest {
 
     public void setFolderedLookup(boolean isFolderedLookup) {
         this.isFolderedLookup = isFolderedLookup;
+    }
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
     }
 }
 
