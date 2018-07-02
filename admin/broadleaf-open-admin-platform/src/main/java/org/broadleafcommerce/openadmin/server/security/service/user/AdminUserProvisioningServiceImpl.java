@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityHelp
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,11 +59,22 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
     protected Map<String, String[]> roleNameSubstitutions;
 
     @Override
-    public AdminUserDetails provisionAdminUser(BroadleafExternalAuthenticationUserDetails details) {
-        HashSet<String> parsedRoleNames = parseRolesFromUserDetails(details);
+    public AdminUserDetails provisionAdminUser(
+            final BroadleafExternalAuthenticationUserDetails details) {
+        final HashSet<AdminRole> parsedRoles = parseAdminRoles(details);
+        final Set<SimpleGrantedAuthority> adminUserAuthorities = 
+                extractAdminUserAuthorities(parsedRoles);
+        final AdminUser adminUser = getAdminUser(details, parsedRoles);
 
-        HashSet<AdminRole> parsedRoles = new HashSet<AdminRole>();
-        List<AdminRole> adminRoles = securityService.readAllAdminRoles();
+        return createDetails(adminUser, details, adminUserAuthorities);
+    }
+    
+    protected HashSet<AdminRole> parseAdminRoles(
+            final BroadleafExternalAuthenticationUserDetails details) {
+        final HashSet<String> parsedRoleNames = parseRolesFromUserDetails(details);
+        final HashSet<AdminRole> parsedRoles = new HashSet<>();
+        final List<AdminRole> adminRoles = securityService.readAllAdminRoles();
+
         if (adminRoles != null) {
             for (AdminRole role : adminRoles) {
                 if (parsedRoleNames.contains(role.getName())) {
@@ -70,9 +82,63 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
                 }
             }
         }
-
-        Set<SimpleGrantedAuthority> adminUserAuthorities = extractAdminUserAuthorities(parsedRoles);
         
+        return parsedRoles;
+    } 
+
+    /**
+     * Extracts the {@code SimpleGrantedAuthority}s for the given List of {@code AdminRole}s. In addition, this will handle
+     * populating the default roles. This method returns a Set in order to avoid the duplication between the permissions of different roles.
+     *
+     * @param parsedRoles a List of AdminRole
+     * @return a Set of unique authorities for the given roles
+     */
+    protected Set<SimpleGrantedAuthority> extractAdminUserAuthorities(HashSet<AdminRole> parsedRoles) {
+        List<SimpleGrantedAuthority> adminUserAuthorities = new ArrayList<>();
+        addPermissions(parsedRoles, adminUserAuthorities);
+        convertPermissionPrefixToRole(adminUserAuthorities);
+
+        return new HashSet<>(adminUserAuthorities);
+    }
+    
+    protected void addPermissions(final HashSet<AdminRole> parsedRoles,
+            final List<SimpleGrantedAuthority> adminUserAuthorities) {
+        for (final String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
+            adminUserAuthorities.add(new SimpleGrantedAuthority(perm));
+        }
+
+        for (final AdminRole role : parsedRoles) {
+            adminSecurityHelper
+                    .addAllPermissionsToAuthorities(adminUserAuthorities, role.getAllPermissions());
+        }
+    }
+    
+    protected void convertPermissionPrefixToRole(
+            final List<SimpleGrantedAuthority> adminUserAuthorities) {
+        // Spring security expects everything to begin with ROLE_ for things like hasRole() 
+        // expressions so this adds additional authorities with those mappings, as well as new ones 
+        // with ROLE_ instead of PERMISSION_.
+        // At the end of this, given a permission set like: PERMISSION_ALL_PRODUCT
+        // The following authorities will appear in the final list to Spring security:
+        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
+        final ListIterator<SimpleGrantedAuthority> it = adminUserAuthorities.listIterator();
+        
+        while (it.hasNext()) {
+            final SimpleGrantedAuthority auth = it.next();
+            
+            if (auth.getAuthority().startsWith(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX)) {
+                it.add(new SimpleGrantedAuthority(
+                        AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth
+                                .getAuthority()));
+                it.add(new SimpleGrantedAuthority(auth.getAuthority()
+                        .replaceAll(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX,
+                                AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
+            }
+        }
+    }
+    
+    protected AdminUser getAdminUser(final BroadleafExternalAuthenticationUserDetails details,
+            final HashSet<AdminRole> parsedRoles) {
         AdminUser adminUser = securityService.readAdminUserByUserName(details.getUsername());
         if (adminUser == null) {
             adminUser = new AdminUserImpl();
@@ -102,49 +168,19 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         adminUser.setAllRoles(new HashSet<>(parsedRoles));
 
         //Add optional support for things like Multi-Tenant, etc...
-        adminExternalLoginExtensionManager.getProxy().performAdditionalAuthenticationTasks(adminUser, details);
+        adminExternalLoginExtensionManager.getProxy()
+                .performAdditionalAuthenticationTasks(adminUser, details);
 
         //Save the user data and all of the roles...
-        adminUser = securityService.saveAdminUser(adminUser);
-
-        return new AdminUserDetails(adminUser.getId(), details.getUsername(), "", true, true, true, true, adminUserAuthorities);
+        return securityService.saveAdminUser(adminUser);
     }
-
-    /**
-     * Extracts the {@code SimpleGrantedAuthority}s for the given List of {@code AdminRole}s. In addition, this will handle
-     * populating the default roles. This method returns a Set in order to avoid the duplication between the permissions of different roles.
-     *
-     * @param parsedRoles a List of AdminRole
-     * @return a Set of unique authorities for the given roles
-     */
-    protected Set<SimpleGrantedAuthority> extractAdminUserAuthorities(HashSet<AdminRole> parsedRoles) {
-        List<SimpleGrantedAuthority> adminUserAuthorities = new ArrayList<>();
-        for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
-            adminUserAuthorities.add(new SimpleGrantedAuthority(perm));
-        }
-
-        for (AdminRole role : parsedRoles) {
-            adminSecurityHelper.addAllPermissionsToAuthorities(adminUserAuthorities, role.getAllPermissions());
-        }
-
-        // Spring security expects everything to begin with ROLE_ for things like hasRole() expressions so this adds additional
-        // authorities with those mappings, as well as new ones with ROLE_ instead of PERMISSION_.
-        // At the end of this, given a permission set like:
-        // PERMISSION_ALL_PRODUCT
-        // The following authorities will appear in the final list to Spring security:
-        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
-        ListIterator<SimpleGrantedAuthority> it = adminUserAuthorities.listIterator();
-        while (it.hasNext()) {
-            SimpleGrantedAuthority auth = it.next();
-            if (auth.getAuthority().startsWith(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX)) {
-                it.add(new SimpleGrantedAuthority(AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()));
-                it.add(new SimpleGrantedAuthority(auth.getAuthority().replaceAll(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX,
-                        AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
-            }
-        }
-
-        return new HashSet<>(adminUserAuthorities);
-    }
+    
+    protected AdminUserDetails createDetails(final AdminUser adminUser, 
+            final BroadleafExternalAuthenticationUserDetails details,
+            final Set<SimpleGrantedAuthority> adminUserAuthorities) {
+        return new AdminUserDetails(adminUser.getId(), details.getUsername(), "", true, true, true,
+                true, adminUserAuthorities);
+    } 
 
     /**
      * Uses the provided role name substitutions to map the LDAP roles to Broadleaf roles.
