@@ -52,6 +52,27 @@
     position: relative;
     top: 6px;
 }
+.listgrid-search .filter-info .button-group {
+    position: relative;
+    top: -28px;
+}
+.listgrid-search .filter-pillow-wrapper {
+    display: none;
+    width: calc(100% - 111px);
+    height: 46px;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+.listgrid-search .filter-pillow-wrapper .filter-pillow-container {
+    width: auto;
+    padding: 4px;
+}
+.listgrid-search .filter-pillow-wrapper .filter-pillow-container .filter-pillow {
+    border-radius: 5px;
+}
+.listgrid-search .filter-pillow-wrapper .filter-pillow-container .filter-pillow:not(:last-child) {
+    margin-right: 5px;
+}
 .listgrid-search-actions {
     display: inline-block;
 }
@@ -252,6 +273,31 @@ div.alert-box.list-grid-alert.save-alert a.close {
 }
 .listgrid-toolbar .filter-info .clear-filters i {
     padding-top: 0;
+}
+.listgrid-toolbar .filter-info .button-group {
+    vertical-align: top;
+}
+.listgrid-toolbar .filter-pillow-wrapper {
+    display: none;
+    vertical-align: top;
+    max-width: 140px;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+@media (min-width: 1200px) {
+    .listgrid-toolbar .filter-pillow-wrapper {
+        max-width: 300px;
+    }
+}
+.listgrid-toolbar .filter-pillow-wrapper .filter-pillow-container {
+    padding: 2px;
+    overflow: auto;
+}
+.listgrid-toolbar .filter-pillow-wrapper .filter-pillow-container .filter-pillow {
+    border-radius: 5px;
+}
+.listgrid-toolbar .filter-pillow-wrapper .filter-pillow-container .filter-pillow:not(:last-child) {
+    margin-right: 5px;
 }
 /****************************************
  ADMIN LISTGRID/TABLES STYLES

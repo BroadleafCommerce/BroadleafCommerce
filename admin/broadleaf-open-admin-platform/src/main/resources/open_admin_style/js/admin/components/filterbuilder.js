@@ -115,13 +115,18 @@
                 data : data.data,
                 builders : [],
 
-                getFieldLabelById : function(fieldId) {
-                    for (var i=0; i<this.fields.length; i++) {
+                getFieldById: function(fieldId) {
+                    for (var i = 0; i < this.fields.length; i++) {
                         if (this.fields[i].id === fieldId) {
-                            return this.fields[i].label;
+                            return this.fields[i];
                         }
                     }
                     return null;
+                },
+
+                getFieldLabelById : function(fieldId) {
+                    var field = this.getFieldById(fieldId);
+                    return field ? field.label : null;
                 },
 
                 getOperatorLabelByOperatorType : function(operatorType)  {
@@ -907,39 +912,36 @@
                     $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
-
-            BLCAdmin.filterBuilders.updateAppliedFiltersContainerHtml(filterBuilder);
         },
 
-        updateAppliedFiltersContainerHtml(filterBuilder) {
-            var $container = $('#applied-filters-container-' + filterBuilder.hiddenId);
-            if ($container.length) {
-                $container.html(this.buildAppliedFiltersContainerHtml(filterBuilder));
-            }
-        },
+        updateAppliedFiltersView(filterBuilder) {
+            var $container = $("#filter-pillow-container-" + filterBuilder.hiddenId);
+            var $wrapper = $container.closest('.filter-pillow-wrapper');
 
-        buildAppliedFiltersContainerHtml(filterBuilder) {
-            var ruleJson = JSON.parse($("#" + filterBuilder.hiddenId).val());
-            if (!ruleJson || !ruleJson.data || ruleJson.data.length === 0) {
-                return ""
+            if (!$container.length || !$wrapper.length) {
+                return;
             }
-            var rules = ruleJson.data[0].rules;
-            if (!rules || rules.length === 0) {
-                return "";
+
+            var json = JSON.parse($("#" + filterBuilder.hiddenId).val());
+            var rules = json && json.data && json.data[0] && json.data[0].rules ? json.data[0].rules : [];
+
+            $container.html('');
+
+            if (!rules.length) {
+                $wrapper.hide();
+                return;
             }
-            if (rules.length === 1) {
-                return "<span class='single-filter'>" + asInnerHtml(filterBuilder, rules[0]) + "</span>";
-            }
-            var $list = $("<ul></ul>");
+
             for (var i = 0; i < rules.length; i++) {
-                var item = "<li>" + asInnerHtml(filterBuilder, rules[i]) + "</li>";
-                $list.append(item);
+                $container.append(asFilterItemHtml(filterBuilder, rules[i]));
             }
-            return $list.prop('outerHTML');
-            
-            function asInnerHtml(filterBuilder, rule) {
-                var label = "<b>" + filterBuilder.getFieldLabelById(rule.id) + "</b>";
-                var operator = filterBuilder.getOperatorLabelByOperatorType(rule.operator);
+
+            $wrapper.css({ 'display': 'inline-block' });
+
+            function asFilterItemHtml(filterBuilder, rule) {
+                var field = filterBuilder.getFieldById(rule.id);
+                var label = "<b>" + field.label + "</b>";
+                var operator = filterBuilder.builders.length ? filterBuilder.getOperatorLabelByOperatorType(rule.operator) : rule.operator;
                 var value = "";
 
                 switch(rule.operator) {
@@ -951,17 +953,30 @@
                         break;
                     case "COLLECTION_IN":
                     case "COLLECTION_NOT_IN":
-                        var arr = JSON.parse(rule.value);
-                        for (var i = 0; i < arr.length - 1; i++) {
-                            value += "<b>" + arr[i] + "</b>" + ", ";
+                        var ruleVal = JSON.parse(rule.value);
+                        var arr = Array.isArray(ruleVal) ? ruleVal : [ruleVal];
+                        var sectionKey = field.selectizeSectionKey;
+                        var url = BLC.servletContext + "/" + sectionKey + "/selectize?id=" + arr.join("|");
+                        var data = $.ajax({
+                            url: encodeURI(url),
+                            async: false,
+                        });
+                        if (data && data.responseJSON && data.responseJSON.options) {
+                            arr = $.map(data.responseJSON.options, function(o) {
+                                return "<b>" + o.name + "</b>";
+                            });
+                        } else {
+                            arr = $.map(arr, function (v) {
+                                return "<b>" + v + "</b>";
+                            });
                         }
-                        value += "<b>" + arr[arr.length - 1] + "</b>";
+                        value = arr.join(", ");
                         break;
                     default:
                         value = "<b>" + rule.value + "</b>";
                 }
 
-                return label + " " + operator + " " + value;
+                return "<div class='item filter-pillow'>" + label + " " + operator + " " + value + "</div>";
             }
         },
 
@@ -1017,6 +1032,8 @@
             BLCAdmin.filterBuilders.initializeFilterBuilder($this.parent(), filterBuilder);
 
             BLCAdmin.filterBuilders.addExistingFilters(filterBuilder);
+
+            BLCAdmin.filterBuilders.updateAppliedFiltersView(filterBuilder);
         });
 
         ////Once all the query builders have been initialized - show or render the component based on its display type
@@ -1124,7 +1141,7 @@ $(document).ready(function() {
     $('body').on('click', 'button.set-modal-filter-builder', function () {
         var hiddenId = $('#hidden-id').data('hiddenid');
         var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
-        BLCAdmin.filterBuilders.updateAppliedFiltersContainerHtml(filterBuilder);
+        BLCAdmin.filterBuilders.updateAppliedFiltersView(filterBuilder);
         BLCAdmin.hideCurrentModal();
     });
 
@@ -1204,7 +1221,7 @@ $(document).ready(function() {
         $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
 
         var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
-        BLCAdmin.filterBuilders.updateAppliedFiltersContainerHtml(filterBuilder);
+        BLCAdmin.filterBuilders.updateAppliedFiltersView(filterBuilder);
     });
 
     /**

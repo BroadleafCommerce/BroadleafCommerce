@@ -86,6 +86,9 @@
 
     <!-- Listgrid Filtering -->
     <div class="filter-info" style="white-space: nowrap;" th:if="${listGrid.canFilterAndSort}">
+        <div class="selectize-control multi filter-pillow-wrapper">
+            <div th:id="${'filter-pillow-container-' + listGrid.jsonFieldName}" class="selectize-input filter-pillow-container"></div>
+        </div>
         <button type="button" class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>
 
         <div class="filter-builder-data" style="display: none;"
