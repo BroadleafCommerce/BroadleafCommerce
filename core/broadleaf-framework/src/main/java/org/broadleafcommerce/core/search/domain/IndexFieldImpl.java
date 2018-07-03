@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.search.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -31,6 +33,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
@@ -85,6 +88,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
             prominent = true,
             group = GroupName.General,
             tooltip = "IndexFieldImpl_searchable_tooltip")
+    @Index(name="INDEX_FIELD_SEARCHABLE_INDEX", columnNames={"SEARCHABLE"})
     protected Boolean searchable;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
@@ -138,6 +142,22 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     @Override
     public void setFieldTypes(List<IndexFieldType> fieldTypes) {
         this.fieldTypes = fieldTypes;
+    }
+
+    @Override
+    public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        IndexField cloned = createResponse.getClone();
+        cloned.setSearchable(searchable);
+        cloned.setField(field);
+        for(IndexFieldType entry : fieldTypes){
+            cloned.getFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
+        }
+
+        return createResponse;
     }
 
     @Override

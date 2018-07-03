@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>5.1.4-GA-patch1</version>
+    <version>5.1.10-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -57,10 +57,10 @@
         <broadleaf-presentation.version>1.0.2-GA</broadleaf-presentation.version>
     </properties>
     <scm>
-        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
-        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
+        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
+        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>broadleaf-5.1.4-GA-patch1</tag>
+        <tag>HEAD</tag>
     </scm>
     <build>
         <pluginManagement>
@@ -1086,6 +1086,22 @@
                         <groupId>commons-io</groupId>
                         <artifactId>commons-io</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-common</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-auth</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1541,6 +1557,11 @@
                         <artifactId>commons-beanutils-core</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.3</version>
             </dependency>
             <!--update xalan dependency for esapi for a xalan security vulnerability-->
             <dependency>

@@ -25,6 +25,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -50,6 +53,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class StructuredContentFieldXrefImpl implements StructuredContentFieldXref, Serializable, ProfileEntity {
 
     /** The Constant serialVersionUID. */
@@ -75,6 +79,7 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
     @ManyToOne(targetEntity = StructuredContentFieldImpl.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "SC_FLD_ID")
     @ClonePolicy
+    @AdminPresentation(fieldType = SupportedFieldType.FOREIGN_KEY)
     protected StructuredContentField structuredContentField;
 
     @Column(name = "MAP_KEY", nullable = false)

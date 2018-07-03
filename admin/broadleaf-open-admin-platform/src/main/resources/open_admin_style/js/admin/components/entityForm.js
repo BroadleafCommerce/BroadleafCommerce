@@ -18,7 +18,7 @@
 
 (function($, BLCAdmin) {
 
-    var excludedEFSectionTabSelectors = [];
+    var excludedEFSectionTabSelectors = ['.workflow-tab', '.system-property-tab', '.upload-tab'];
 
     var originalStickyBarOffset;
     var originalStickyBarHeight;
@@ -59,11 +59,7 @@
         },
 
         getExcludedEFSectionTabSelectorString : function() {
-            var excludedSelectors = '';
-            for (var i=0;i<excludedEFSectionTabSelectors.length;i++){
-                excludedSelectors += ', ' + excludedEFSectionTabSelectors[i];
-            }
-            return excludedSelectors;
+            return excludedEFSectionTabSelectors.join(", ");
         },
 
         /**
@@ -309,8 +305,9 @@ $(document).ready(function() {
     });
     
     var tabs_action=null;
-    $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
-            BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + '")').click(function(event) {
+    var sectionTabsSelector = 'div.section-tabs li a:not(' + BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + ')';
+
+    $(document).on('click', sectionTabsSelector, function (event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
         var tabKey = $tab.find('span').data('tabkey');
@@ -327,7 +324,7 @@ $(document).ready(function() {
      		tabs_action = tabUrl;
      	}
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && !$tab.hasClass('first-tab')) {
+     	if (tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf('/add/') === -1 && !$tab.hasClass('first-tab')) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({
@@ -335,27 +332,31 @@ $(document).ready(function() {
      			type: "POST",
      			data: $form.serializeArray()
      		}, function(data) {
-     			$('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
+     			$('div.' + href + 'Tab .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
-                    var $tableWrapper = data.find('.listgrid-header-wrapper:has(table#' + tableId + ')');
-     				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
+                    var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
+                    BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
-     			$('div.' + href + 'Tab .selectize-wrapper').each(function() {
+     			$('div.' + href + 'Tab .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('div.' + href + 'Tab .media-container').each(function() {
+                $('div.' + href + 'Tab .media-container', $(data)).each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);
                     var $assetGrid = $($container).find('.asset-grid-container');
-                    var $assetListGrid = data.find('.asset-listgrid');
 
-                    BLCAdmin.assetGrid.initialize($assetGrid);
+                    if (BLCAdmin.assetGrid) {
+                        BLCAdmin.assetGrid.initialize($assetGrid);
+                    } else {
+                        initAssetGrid($assetGrid);
+                    }
 
-                    $(this).find('.asset-grid-container').replaceWith($assetGrid);
+                    var $assertGridContainer = $('#' + tableId + ' .asset-grid-body-wrapper').find('.asset-grid-container');
+                    $assertGridContainer.replaceWith($assetGrid);
                 });
 
                 hideTabSpinner($tab, $tabBody);
@@ -435,7 +436,7 @@ $(document).ready(function() {
             $('body').click(); // Defocus any current elements in case they need to act prior to form submission
             var $form = BLCAdmin.getForm($submitButton);
 
-            BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.content-area-title-bar.entity-form-actions'));
+            BLCAdmin.entityForm.showActionSpinner($submitButton.closest('.entity-form-actions'));
 
             // This is a save, we need to enable the page to be reloaded (in the case of an initial save)
             if (BLCAdmin.entityForm.status) {
@@ -449,6 +450,7 @@ $(document).ready(function() {
             }
 
             event.preventDefault();
+            event.stopPropagation();
         }
     });
 
@@ -571,7 +573,11 @@ $(document).ready(function() {
                     if ($assetGrid.length) {
                         var $assetListGrid = $(data).find('.asset-listgrid');
 
-                        BLCAdmin.assetGrid.initialize($assetGrid);
+                        if (BLCAdmin.assetGrid) {
+                            BLCAdmin.assetGrid.initialize($assetGrid);
+                        } else {
+                            initAssetGrid($assetGrid);
+                        }
 
                         $('.asset-grid-container').replaceWith($assetGrid);
                         $('.asset-listgrid').replaceWith($assetListGrid);
@@ -640,7 +646,11 @@ $(document).ready(function() {
                 var $assetGrid = $(data).find('.asset-grid-container');
                 var $assetListGrid = $(data).find('.asset-listgrid');
 
-                BLCAdmin.assetGrid.initialize($assetGrid);
+                if (BLCAdmin.assetGrid) {
+                    BLCAdmin.assetGrid.initialize($assetGrid);
+                } else {
+                    initAssetGrid($assetGrid);
+                }
 
                 $container.find('.asset-grid-container').replaceWith($assetGrid);
                 $container.find('.asset-listgrid').replaceWith($assetListGrid);
@@ -724,4 +734,87 @@ $(document).ready(function() {
     $('body').on('click', '.tooltip', function(event) {
        event.preventDefault();
     });
+
+    function initAssetGrid($container) {
+        initPaginate($container);
+        showSearchResults();
+
+        function initPaginate($container) {
+            var $modalBody = $container.closest('.modal-body');
+            $modalBody.css('overflow-y', 'hidden');
+            var $wrapper = $container.wrap($('<div>', { 'class' : 'asset-grid-body-wrapper' }));
+            $wrapper.mCustomScrollbar({
+                theme: 'dark',
+                scrollEasing: "linear",
+                scrollInertia: 500,
+                mouseWheelPixels: 100,
+                advanced:{
+                    updateOnContentResize:true,
+                    autoScrollOnFocus: false
+                }
+            });
+            var recordsBelow = getRecordBelow($container);
+            if (recordsBelow) {
+                $container.find('.asset-item:last').after(createLoadMoreButton());
+            }
+            updateGridSize($container);
+            $wrapper.mCustomScrollbar('update');
+            $modalBody.css('overflow-y', 'scroll');
+        }
+
+        function getRecordBelow($container) {
+            var rangeDescriptions = $container.data('recordranges').split(',');
+            if (rangeDescriptions.length) {
+                var range = rangeDescriptions[0].split('-');
+                return $container.data('totalrecords') - parseInt(range[1]) - 1;
+            }
+            return 0;
+        }
+
+        function createLoadMoreButton() {
+            var container = $('<div>', {
+                'class': 'asset-item load-more'
+            });
+            var wrapper = $('<div>', {
+                'class': 'load-more-wrapper'
+            });
+            container.append(wrapper);
+            var button = $('<a>', {
+                'href': '#',
+                'class': 'load-more-button',
+                'html': '<i class="fa fa-ellipsis-h"></i><br />Load More'
+            });
+            wrapper.append(button);
+            return container;
+        }
+
+        function showSearchResults() {
+            var params = BLCAdmin.history.getUrlParameters();
+            if (params) {
+                var nameProperty = params['name'];
+                if (nameProperty) {
+                    $('.select-column').hide();
+                    $('#asset-listgrid-search').val(nameProperty);
+                    $('.breadcrumb-wrapper').hide();
+                    $('.asset-title').html("Showing search results for '" + nameProperty + "'").show();
+                }
+            }
+        }
+    }
+
+    function updateGridSize($container) {
+        var $modalBody = $container.closest('.modal-body');
+        var $window = $(window);
+        var $wrapper = $container.closest('.asset-grid-body-wrapper');
+        var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+        if ($modalBody.length > 0) {
+            $modalBody.css('overflow-y', 'hidden');
+            wrapperHeight = $container.closest('.select-group').height();
+        }
+        $wrapper.css('max-height', wrapperHeight);
+        $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
+        $wrapper.css('height', wrapperHeight);
+        $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
+        $wrapper.mCustomScrollbar('update');
+    }
 });

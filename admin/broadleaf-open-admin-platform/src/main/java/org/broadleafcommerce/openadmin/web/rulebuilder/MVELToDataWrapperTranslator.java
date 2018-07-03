@@ -114,12 +114,10 @@ public class MVELToDataWrapperTranslator {
             group = group.getSubGroups().get(0);
             group.setOperatorType(operator);
         }
-        int j = 0;
         for (String phrase : group.getPhrases()) {
-            appendExpression(phrase, fieldService, j, parentDTO, myCriteriaList);
-            j++;
+            appendExpression(phrase, fieldService, parentDTO, myCriteriaList);
         }
-        if (myCriteriaList.size() > 0) {
+        if (!myCriteriaList.isEmpty()) {
             data.getRules().addAll(myCriteriaList);
         }
         for (Group subgroup : group.getSubGroups()) {
@@ -135,7 +133,7 @@ public class MVELToDataWrapperTranslator {
         }
     }
 
-    public void appendExpression(String phrase, RuleBuilderFieldService fieldService, int count, DataDTO parentDTO,
+    public void appendExpression(String phrase, RuleBuilderFieldService fieldService, DataDTO parentDTO,
                                  List<ExpressionDTO> myCriteriaList) throws MVELTranslationException {
         Expression expression = phraseTranslator.createExpression(phrase);
         FieldDTO field = fieldService.getField(expression.getField());
@@ -147,7 +145,7 @@ public class MVELToDataWrapperTranslator {
         SupportedFieldType type = fieldService.getSupportedFieldType(expression.getField());
         ExpressionDTO expressionDTO = createExpressionDTO(expression);
 
-        postProcessCriteria(parentDTO, myCriteriaList, count, expressionDTO, type);
+        postProcessCriteria(parentDTO, myCriteriaList, expressionDTO, type);
     }
 
     public ExpressionDTO createExpressionDTO(Expression expression) {
@@ -164,46 +162,35 @@ public class MVELToDataWrapperTranslator {
     }
 
     protected void postProcessCriteria(DataDTO parentDTO, List<ExpressionDTO> myCriteriaList,
-                                       int count, ExpressionDTO temp, SupportedFieldType type) {
-        if (
-            count > 0 &&
-                temp.getId().equals(myCriteriaList.get(count - 1).getId()) &&
-                myCriteriaList.get(count - 1).getOperator().equals(BLCOperator.GREATER_THAN.name()) &&
-                temp.getOperator().equals(BLCOperator.LESS_THAN.name())
-            ) {
-            myCriteriaList.get(count-1).setOperator(BLCOperator.BETWEEN.name());
-            String start;
-            String end;
+                                       ExpressionDTO temp, SupportedFieldType type) {
+        int lstIdx = myCriteriaList.size() - 1;
+        ExpressionDTO prevExpression = lstIdx != -1 ? myCriteriaList.get(lstIdx) : null;
+        boolean sameExpressionId = prevExpression != null && temp.getId().equals(prevExpression.getId());
+        if (sameExpressionId && isBetweenOperator(prevExpression, temp)) {
+            prevExpression.setOperator(BLCOperator.BETWEEN.name());
+            boolean hasTempSmallerVal = Long.parseLong(temp.getValue()) < Long.parseLong(prevExpression.getValue());
+            String start = hasTempSmallerVal ? temp.getValue() : prevExpression.getValue();
+            String end = hasTempSmallerVal ? prevExpression.getValue() : temp.getValue();
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
-                start = "\"" + myCriteriaList.get(count-1).getValue() + "\"" ;
-                end = "\"" + temp.getValue() + "\"";
-            } else {
-                start = myCriteriaList.get(count-1).getValue();
-                end = temp.getValue();
+                start = "\"" + start + "\"" ;
+                end = "\"" + end + "\"";
             }
-            myCriteriaList.get(count-1).setValue("[" + start + "," + end + "]");
+            prevExpression.setValue("[" + start + "," + end + "]");
             if (parentDTO != null) {
-                parentDTO.getRules().add(myCriteriaList.remove(count-1));
+                parentDTO.getRules().add(myCriteriaList.remove(lstIdx));
             }
-        } else if (
-            count > 0 &&
-                temp.getId().equals(myCriteriaList.get(count-1).getId()) &&
-                myCriteriaList.get(count-1).getOperator().equals(BLCOperator.GREATER_OR_EQUAL.name()) &&
-                temp.getOperator().equals(BLCOperator.LESS_OR_EQUAL.name())
-            ) {
-            myCriteriaList.get(count - 1).setOperator(BLCOperator.BETWEEN_INCLUSIVE.name());
-            String start;
-            String end;
+        } else if (sameExpressionId && isBetweenInclusiveOperator(prevExpression, temp)) {
+            prevExpression.setOperator(BLCOperator.BETWEEN_INCLUSIVE.name());
+            boolean hasTempSmallerVal = Long.parseLong(temp.getValue()) < Long.parseLong(prevExpression.getValue());
+            String start = hasTempSmallerVal ? temp.getValue() : prevExpression.getValue();
+            String end = hasTempSmallerVal ? prevExpression.getValue() : temp.getValue();
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
-                start = "\"" + myCriteriaList.get(count-1).getValue() + "\"";
-                end = "\"" + temp.getValue() + "\"";
-            } else {
-                start = myCriteriaList.get(count-1).getValue();
-                end = temp.getValue();
+                start = "\"" + start + "\"" ;
+                end = "\"" + end + "\"";
             }
-            myCriteriaList.get(count-1).setValue("[" + start + "," + end + "]");
+            prevExpression.setValue("[" + start + "," + end + "]");
             if (parentDTO != null) {
-                parentDTO.getRules().add(myCriteriaList.remove(count-1));
+                parentDTO.getRules().add(myCriteriaList.remove(lstIdx));
             }
         } else if (isProjection(temp.getValue())) {
             if (parentDTO != null) {
@@ -213,6 +200,42 @@ public class MVELToDataWrapperTranslator {
             }
         } else {
             myCriteriaList.add(temp);
+        }
+    }
+
+    protected boolean isBetweenOperator(ExpressionDTO prev, ExpressionDTO temp) {
+        String prevOperator = prev.getOperator();
+        String prevVal = prev.getValue();
+        String tempOperator = temp.getOperator();
+        String tempVal = temp.getValue();
+        try {
+            if (prevOperator.equals(BLCOperator.GREATER_THAN.name()) && tempOperator.equals(BLCOperator.LESS_THAN.name())) {
+                return Long.parseLong(tempVal) > Long.parseLong(prevVal);
+            } else if (prevOperator.equals(BLCOperator.LESS_THAN.name()) && tempOperator.equals(BLCOperator.GREATER_THAN.name())) {
+                return Long.parseLong(prevVal) > Long.parseLong(tempVal);
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            LOG.warn(String.format("Used string values in expression %s %s && %s %s", prevOperator, prevVal, tempOperator, tempVal));
+            return false;
+        }
+    }
+
+    protected boolean isBetweenInclusiveOperator(ExpressionDTO prev, ExpressionDTO temp) {
+        String prevOperator = prev.getOperator();
+        String prevVal = prev.getValue();
+        String tempOperator = temp.getOperator();
+        String tempVal = temp.getValue();
+        try {
+            if (prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name())) {
+                return Long.parseLong(tempVal) > Long.parseLong(prevVal);
+            } else if (prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name())) {
+                return Long.parseLong(prevVal) > Long.parseLong(tempVal);
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            LOG.warn(String.format("Used string values in expression %s %s && %s %s", prevOperator, prevVal, tempOperator, tempVal));
+            return false;
         }
     }
 

@@ -210,7 +210,7 @@ public class CustomerServiceImpl implements CustomerService {
         HashMap<String, Object> vars = new HashMap<String, Object>();
         vars.put("customer", retCustomer);
         
-        emailService.sendTemplateEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);        
+        sendEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);
         notifyPostRegisterListeners(retCustomer);
         return retCustomer;
     }
@@ -500,7 +500,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (activeUsernames.size() > 0) {
                 HashMap<String, Object> vars = new HashMap<String, Object>();
                 vars.put("userNames", activeUsernames);
-                emailService.sendTemplateEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
+                sendEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -552,7 +552,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
             vars.put("resetPasswordUrl", resetPasswordUrl); 
-            emailService.sendTemplateEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
+            sendEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
         }
         return response;
     }
@@ -685,6 +685,10 @@ public class CustomerServiceImpl implements CustomerService {
         long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
         long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
         return minutesSinceSave > tokenExpiredMinutes;
+    }
+
+    protected void sendEmail(String emailAddress, EmailInfo emailInfo, Map<String, Object> props) {
+        emailService.sendTemplateEmail(emailAddress, emailInfo, props);
     }
 
     public int getTokenExpiredMinutes() {

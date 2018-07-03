@@ -408,4 +408,68 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    public void testInBetweenRuleOrderLessThenAndGreaterThenAndCurrency() throws MVELTranslationException {
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+
+        Property[] properties = new Property[3];
+        Property mvelProperty = new Property();
+        mvelProperty.setName("orderMatchRule");
+        mvelProperty.setValue("order.?subTotal.getAmount()<75&&order.?subTotal.getAmount()>45&&order.?currency.?currencyCode==\"USD\"");
+        Property quantityProperty = new Property();
+        quantityProperty.setName("quantity");
+        quantityProperty.setValue("1");
+        Property idProperty = new Property();
+        idProperty.setName("id");
+        idProperty.setValue("100");
+        properties[0] = mvelProperty;
+        properties[1] = quantityProperty;
+        properties[2] = idProperty;
+        Entity[] entities = new Entity[1];
+        Entity entity = new Entity();
+        entity.setProperties(properties);
+        entities[0] = entity;
+
+        DataWrapper dataWrapper = translator.createRuleData(entities, "orderMatchRule", "quantity", "id", orderFieldService);
+        assert(dataWrapper.getData().size() == 1);
+        assert(dataWrapper.getData().get(0).getQuantity() == 1);
+        assert(dataWrapper.getData().get(0).getRules().size()==2);
+        assert(dataWrapper.getData().get(0).getRules().get(0) instanceof ExpressionDTO);
+        ExpressionDTO exp = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(0);
+        assert(exp.getId().equals("subTotal"));
+        assert(exp.getOperator().equals(BLCOperator.BETWEEN.name()));
+        assert(exp.getValue().equals("[45,75]"));
+    }
+
+    public void testInBetweenRuleOrderGreaterThenAndLessThenAndCurrency() throws MVELTranslationException {
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+
+        Property[] properties = new Property[3];
+        Property mvelProperty = new Property();
+        mvelProperty.setName("orderMatchRule");
+        mvelProperty.setValue("order.?subTotal.getAmount()>45&&order.?subTotal.getAmount()<75&&order.?currency.?currencyCode==\"USD\"");
+        Property quantityProperty = new Property();
+        quantityProperty.setName("quantity");
+        quantityProperty.setValue("1");
+        Property idProperty = new Property();
+        idProperty.setName("id");
+        idProperty.setValue("100");
+        properties[0] = mvelProperty;
+        properties[1] = quantityProperty;
+        properties[2] = idProperty;
+        Entity[] entities = new Entity[1];
+        Entity entity = new Entity();
+        entity.setProperties(properties);
+        entities[0] = entity;
+
+        DataWrapper dataWrapper = translator.createRuleData(entities, "orderMatchRule", "quantity", "id", orderFieldService);
+        assert(dataWrapper.getData().size() == 1);
+        assert(dataWrapper.getData().get(0).getQuantity() == 1);
+        assert(dataWrapper.getData().get(0).getRules().size() == 2);
+        assert(dataWrapper.getData().get(0).getRules().get(0) instanceof ExpressionDTO);
+        ExpressionDTO exp = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(0);
+        assert(exp.getId().equals("subTotal"));
+        assert(exp.getOperator().equals(BLCOperator.BETWEEN.name()));
+        assert(exp.getValue().equals("[45,75]"));
+    }
+
 }

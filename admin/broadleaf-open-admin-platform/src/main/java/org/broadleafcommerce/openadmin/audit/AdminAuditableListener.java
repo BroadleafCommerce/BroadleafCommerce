@@ -34,6 +34,11 @@ public class AdminAuditableListener extends AbstractAuditableListener {
     @PrePersist
     @Override
     public void setAuditCreationAndUpdateData(Object entity) throws Exception {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (!brc.getAdmin()) {
+            return;
+        }
+
         setAuditCreationData(entity, new AdminAuditable());
         setAuditUpdateData(entity, new AdminAuditable());
     }
@@ -41,6 +46,11 @@ public class AdminAuditableListener extends AbstractAuditableListener {
     @PreUpdate
     @Override
     public void setAuditUpdateData(Object entity) throws Exception {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (!brc.getAdmin()) {
+            return;
+        }
+
         setAuditUpdateData(entity, new AdminAuditable());
     }
 

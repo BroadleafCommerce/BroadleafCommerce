@@ -148,11 +148,13 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public void setSku(Sku sku) {
         this.sku = sku;
-        if (sku.hasRetailPrice()) {
-            this.baseRetailPrice = sku.getRetailPrice().getAmount();
+        Money retail = sku.getBaseRetailPrice();
+        if (retail != null) {
+            this.baseRetailPrice = retail.getAmount();
         }
-        if (sku.hasSalePrice()) {
-            this.baseSalePrice = sku.getSalePrice().getAmount();
+        Money sale = sku.getBaseSalePrice();
+        if (sale != null) {
+            this.baseSalePrice = sale.getAmount();
         }
         this.itemTaxable = sku.isTaxable();
         setName(sku.getName());

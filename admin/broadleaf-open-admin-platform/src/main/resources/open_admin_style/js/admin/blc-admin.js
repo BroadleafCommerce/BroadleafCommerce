@@ -414,7 +414,7 @@ var BLCAdmin = (function($) {
                     BLCAdmin.currentModal().trigger('content-loaded');
                 });
             } else {
-                showLinkAsModal(link);
+                BLCAdmin.showLinkAsModal(link);
             }
         },
 
@@ -627,7 +627,7 @@ var BLCAdmin = (function($) {
                     replaceDivs : false,
                     buttonSource: true,
                     paragraphize: false,
-                    minHeight: 140,
+                    minHeight: 300,
                     tabKey: true,
                     tabsAsSpaces: 4,
                     deniedTags: [],
@@ -1124,11 +1124,13 @@ var BLCAdmin = (function($) {
         /**
          * Splits out a comma-seperated string into a cleaned array
          * @param data
+         * @param delimiter
          * @returns {Array}
          */
-        stringToArray: function(data) {
+        stringToArray: function(data, delimiter) {
+            delimiter = typeof delimiter !== 'undefined' ? delimiter : ',';
             var dataArray = [];
-            $.each(data.split(","), function(index, item) {
+            $.each(data.split(delimiter), function(index, item) {
                 var item = item.replace(/(^\[")|("$)|(^")|("\]$)/g, '');
                 item = BLCAdmin.unescapeString(item);
                 dataArray.push(item);

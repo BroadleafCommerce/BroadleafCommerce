@@ -27,7 +27,7 @@ import java.io.Serializable;
  *
  * @author Nick Crum (ncrum)
  */
-public interface IndexFieldType extends Serializable {
+public interface IndexFieldType extends Serializable, MultiTenantCloneable<IndexFieldType>  {
 
     Long getId();
 
