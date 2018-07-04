@@ -936,7 +936,7 @@
                 $container.append(asFilterItemHtml(filterBuilder, rules[i]));
             }
 
-            $wrapper.css({ 'display': 'inline-block' });
+            $wrapper.show();
 
             function asFilterItemHtml(filterBuilder, rule) {
                 var field = filterBuilder.getFieldById(rule.id);
