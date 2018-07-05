@@ -1,0 +1,8 @@
+<div class="content-yield listgrid-container" id="folder-listgrid">
+    <th:block th:with="listGrid=${folderListGrid}">
+        <th:block th:include="components/listGrid" th:object="${listGrid}"></th:block>
+    </th:block>
+</div>
+<div class="content-yield listgrid-container" id="main">
+    <th:block th:include="components/listGrid" th:object="${listGrid}"></th:block>
+</div>
