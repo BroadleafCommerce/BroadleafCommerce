@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,12 +49,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
 public class FieldManager {
-    
+
     private static final Log LOG = LogFactory.getLog(FieldManager.class);
 
     public static final String MAPFIELDSEPARATOR = "---";
@@ -61,10 +62,18 @@ public class FieldManager {
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
+    protected Set<Class> classes = new HashSet<>();
+    protected Map<Class, Map<String, Field>> classFields = new HashMap<>();
 
     public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
         this.entityConfiguration = entityConfiguration;
         this.entityManager = entityManager;
+        if (entityManager != null) {
+            Set<EntityType<?>> managedEntities = entityManager.getMetamodel().getEntities();
+            for (EntityType managedEntity : managedEntities) {
+                classes.add(managedEntity.getJavaType());
+            }
+        }
     }
 
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
@@ -72,13 +81,25 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz).getDynamicEntityDao();
-        SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
-                getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
-        BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
-                dynamicEntityDao.getEjb3ConfigurationDao(), entityConfiguration,
-                dynamicEntityDao.getDynamicDaoHelper());
-        return fieldUtils.getField(clazz, fieldName);
+        Map<String, Field> stringFieldMap = classFields.get(clazz);
+        if(stringFieldMap==null){
+            stringFieldMap = new HashMap<>();
+            classFields.put(clazz, stringFieldMap);
+        }
+        Field field = stringFieldMap.get(fieldName);
+        if(field!=null){
+            return field;
+        }else {
+            DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz).getDynamicEntityDao();
+            SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
+                    getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
+            BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
+                    dynamicEntityDao.getEjb3ConfigurationDao(), entityConfiguration,
+                    dynamicEntityDao.getDynamicDaoHelper());
+            Field fld = fieldUtils.getField(clazz, fieldName);
+            stringFieldMap.put(fieldName, fld);
+            return fld;
+        }
     }
 
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
@@ -128,7 +149,7 @@ public class FieldManager {
         Field field;
         bean = HibernateUtils.deproxy(bean);
         Object value = bean;
-        
+
         int count = tokens.countTokens();
         int j=0;
         StringBuilder sb = new StringBuilder();
@@ -196,7 +217,7 @@ public class FieldManager {
             sb.append(".");
             j++;
         }
-        
+
         return value;
 
     }
@@ -224,17 +245,17 @@ public class FieldManager {
         }
         return response;
     }
-    
+
     public Map<String, Serializable> persistMiddleEntities() throws InstantiationException, IllegalAccessException {
         Map<String, Serializable> persistedEntities = new HashMap<String, Serializable>();
-        
+
         Collections.sort(middleFields);
         for (SortableValue val : middleFields) {
             Serializable s = entityManager.merge(val.entity);
             persistedEntities.put(val.getContainingPropertyName(), s);
             setFieldValue(val.getBean(), val.getContainingPropertyName(), s);
         }
-        
+
         return persistedEntities;
     }
 
@@ -256,14 +277,8 @@ public class FieldManager {
 
     protected boolean isPersistentClass(Class entityClass) {
         if (entityManager != null) {
-            Set<EntityType<?>> managedEntities = entityManager.getMetamodel().getEntities();
-            for (EntityType managedEntity : managedEntities) {
-                if (managedEntity.getJavaType().equals(entityClass)) {
-                    return true;
-                }
-            }
+            return classes.contains(entityClass);
         }
-
         return false;
     }
 
@@ -365,13 +380,13 @@ public class FieldManager {
     }
 
     private class SortableValue implements Comparable<SortableValue> {
-        
+
         private Integer pos;
         private Serializable entity;
         private Class<?> entityClass;
         private String containingPropertyName;
         private Object bean;
-        
+
         public SortableValue(Object bean, Serializable entity, Integer pos, String containingPropertyName) {
             this.bean = bean;
             this.entity = entity;
@@ -384,7 +399,7 @@ public class FieldManager {
         public int compareTo(SortableValue o) {
             return pos.compareTo(o.pos) * -1;
         }
-        
+
         public String getContainingPropertyName() {
             return containingPropertyName;
         }
@@ -432,5 +447,5 @@ public class FieldManager {
         }
 
     }
-    
+
 }
