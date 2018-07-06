@@ -297,7 +297,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     }
 
     protected boolean hasSameCurrency(OrderItemRequestDTO orderItemRequestDTO, CartOperationRequest request, Sku sku) {
-        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO || sku == null || sku.getCurrency() == null) {
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO || sku == null || sku.getCurrency() == null || request.getOrder().getCurrency() == null) {
             return true;
         } else {
             BroadleafCurrency orderCurrency = request.getOrder().getCurrency();
