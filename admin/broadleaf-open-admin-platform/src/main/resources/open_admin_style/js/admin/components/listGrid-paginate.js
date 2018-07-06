@@ -755,10 +755,13 @@
                 if ($wrapper.find('.mCS_no_scrollbar').length > 0 && $modalBody.length === 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                 }
-            } else if (BLCAdmin.assetGrid != undefined
-                && ($table.data('listgridtype') === 'asset_grid'
-                || $table.data('listgridtype') === 'asset_grid_folder'
-                || $table.data('listgridtype') === 'tree')) {
+            } else if (
+                (BLCAdmin.assetGrid != undefined
+                    && ($table.data('listgridtype') === 'asset_grid'
+                        || $table.data('listgridtype') === 'asset_grid_folder'
+                        || $table.data('listgridtype') === 'tree'))
+                || ($table.data('listgridtype') === 'main' && $table.closest('#folder-listgrid-container').length)
+                || ($table.data('listgridtype') === 'main' && $table.closest('.folder-items-container').length))  {
                 var $window = $(window);
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
 
