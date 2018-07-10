@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -357,6 +357,16 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 fulfillmentGroupItem.setQuantity(1);
                 fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
                 fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
+
+                // Do the same for any child order items (add-ons)
+                for (OrderItem childItem : option.getOrderItem().getChildOrderItems()) {
+                    FulfillmentGroupItem childFulfillmentGroupItem = fulfillmentGroupItemDao.create();
+                    childFulfillmentGroupItem.setFulfillmentGroup(fg);
+                    childFulfillmentGroupItem.setOrderItem(childItem);
+                    childFulfillmentGroupItem.setQuantity(1);
+                    childFulfillmentGroupItem = fulfillmentGroupItemDao.save(childFulfillmentGroupItem);
+                    fg.getFulfillmentGroupItems().add(childFulfillmentGroupItem);
+                }
             } else {
                 // There are three potential scenarios where a fulfillment group item exists:
                 //   1: It has been previously created and exists in the database and
