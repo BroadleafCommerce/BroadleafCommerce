@@ -63,7 +63,7 @@ public class FieldManager {
     protected EntityManager entityManager;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
     protected Set<Class> managedEntityClasses = new HashSet<>();
-    protected Map<Class, Map<String, Field>> classFields = new HashMap<>();
+    protected BLCFieldUtils fieldUtils;
 
     public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
         this.entityConfiguration = entityConfiguration;
@@ -81,25 +81,16 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        Map<String, Field> stringFieldMap = classFields.get(clazz);
-        if(stringFieldMap==null){
-            stringFieldMap = new HashMap<>();
-            classFields.put(clazz, stringFieldMap);
-        }
-        Field field = stringFieldMap.get(fieldName);
-        if(field!=null){
-            return field;
-        }else {
-            DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz).getDynamicEntityDao();
-            SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
-                    getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
-            BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
+        DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz).getDynamicEntityDao();
+        SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
+                getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
+        if(fieldUtils==null) {
+            fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
                     dynamicEntityDao.getEjb3ConfigurationDao(), entityConfiguration,
                     dynamicEntityDao.getDynamicDaoHelper());
-            Field fld = fieldUtils.getField(clazz, fieldName);
-            stringFieldMap.put(fieldName, fld);
-            return fld;
         }
+        Field fld = fieldUtils.getField(clazz, fieldName);
+        return fld;
     }
 
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
