@@ -278,8 +278,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
             }
         }
 
-        isNotReadOnly(cmd);
-
         final boolean canAdd = rowLevelSecurityService
                 .canAdd(adminRemoteSecurityService.getPersistentAdminUser(), sectionClassName, cmd);
         return isNotReadOnly(cmd) && canAdd;
