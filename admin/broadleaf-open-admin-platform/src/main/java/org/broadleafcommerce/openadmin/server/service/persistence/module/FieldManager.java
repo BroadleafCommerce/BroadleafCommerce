@@ -62,7 +62,7 @@ public class FieldManager {
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
-    protected Set<Class> classes = new HashSet<>();
+    protected Set<Class> managedEntityClasses = new HashSet<>();
     protected Map<Class, Map<String, Field>> classFields = new HashMap<>();
 
     public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
@@ -71,7 +71,7 @@ public class FieldManager {
         if (entityManager != null) {
             Set<EntityType<?>> managedEntities = entityManager.getMetamodel().getEntities();
             for (EntityType managedEntity : managedEntities) {
-                classes.add(managedEntity.getJavaType());
+                managedEntityClasses.add(managedEntity.getJavaType());
             }
         }
     }
@@ -277,7 +277,7 @@ public class FieldManager {
 
     protected boolean isPersistentClass(Class entityClass) {
         if (entityManager != null) {
-            return classes.contains(entityClass);
+            return managedEntityClasses.contains(entityClass);
         }
         return false;
     }
