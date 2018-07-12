@@ -154,7 +154,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     protected ApplicationContext applicationContext;
 
 
-    protected FieldManager fieldManager = new FieldManager(entityConfiguration, null);
+    protected FieldManager fieldManager;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -1572,6 +1572,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Override
     public FieldManager getFieldManager() {
+        if (fieldManager == null) {
+            //keep in mind that getStandardEntityManager() can return null, this is in general OK,
+            // we re-init fieldManager in setStandardEntityManager method
+            fieldManager = new FieldManager(entityConfiguration, getStandardEntityManager());
+        }
         return fieldManager;
     }
 
