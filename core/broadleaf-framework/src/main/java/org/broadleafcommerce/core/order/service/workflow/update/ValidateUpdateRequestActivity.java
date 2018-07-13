@@ -51,18 +51,18 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         
         Map <String, String> attributes = new HashMap<>();
-+        OrderItem requestedOrderItem = new OrderItemImpl();
-+        for (OrderItem oi : request.getOrder().getOrderItems()) {
-+            if (oi.getId() == orderItemRequestDTO.getOrderItemId()){
-+                requestedOrderItem = oi;
-+            }
-+        }
-+
-+        for (String key : requestedOrderItem.getOrderItemAttributes().keySet()) {
-+            attributes.put(key, requestedOrderItem.getOrderItemAttributes().get(key).getValue());
-+        }
-+
-+        orderItemRequestDTO.setItemAttributes(attributes);
+        OrderItem requestedOrderItem = new OrderItemImpl();
+        for (OrderItem oi : request.getOrder().getOrderItems()) {
+            if (oi.getId() == orderItemRequestDTO.getOrderItemId()){
+                requestedOrderItem = oi;
+            }
+        }
+
+        for (String key : requestedOrderItem.getOrderItemAttributes().keySet()) {
+            attributes.put(key, requestedOrderItem.getOrderItemAttributes().get(key).getValue());
+        }
+
+        orderItemRequestDTO.setItemAttributes(attributes);
         
         // Throw an exception if the user did not specify an orderItemId
         if (orderItemRequestDTO.getOrderItemId() == null) {
