@@ -233,4 +233,12 @@
         </property>
     </bean>
 
+    <bean id="blEntityDuplicationHelpers"
+          class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blOfferDuplicateModifier"/>
+            </list>
+        </property>
+    </bean>
 </beans>

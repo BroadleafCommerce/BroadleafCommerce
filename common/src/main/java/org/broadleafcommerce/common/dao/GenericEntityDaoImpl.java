@@ -35,7 +35,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
