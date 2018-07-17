@@ -340,50 +340,58 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 order.getFulfillmentGroups().add(fg);
             }
 
-            // See if there is a fulfillment group item that matches this OrderMultishipOption
-            // OrderItem request
-            FulfillmentGroupItem fulfillmentGroupItem = null;
-            for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-                if (fgi.getOrderItem().getId().equals(option.getOrderItem().getId())) {
-                    fulfillmentGroupItem = fgi;
-                }
-            }
+            // Build a list of all order items associated with this OrderMultishipOption
+            // This is necessary because an order item may have child items associated
+            List<OrderItem> fgItemOrderItems = new ArrayList<>();
+            fgItemOrderItems.add(option.getOrderItem());
+            fgItemOrderItems.addAll(option.getOrderItem().getChildOrderItems());
 
-            // If there is no matching fulfillment group item, create a new one with quantity 1
-            if (fulfillmentGroupItem == null) {
-                fulfillmentGroupItem = fulfillmentGroupItemDao.create();
-                fulfillmentGroupItem.setFulfillmentGroup(fg);
-                fulfillmentGroupItem.setOrderItem(option.getOrderItem());
-                fulfillmentGroupItem.setQuantity(1);
-                fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
-                fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
-            } else {
-                // There are three potential scenarios where a fulfillment group item exists:
-                //   1: It has been previously created and exists in the database and
-                //      has an id. This means it's in the fgItemQuantityMap. If there is
-                //      remaining quantity in that map, we will decrement it for future
-                //      usage. If the quantity is 0 in the map, that means that we have more
-                //      items than we did before, and we must simply increment the quantity.
-                //      (qty == 0 or qty is not null)
-                //   2: It was created in this request but has been saved to the database because
-                //      it is a brand new fulfillment group and so it has an id.
-                //      However, it does not have an entry in the fgItemQuantityMap,
-                //      so we can simply increment the quantity.
-                //      (qty == null)
-                //   3: It was created in this request and has not yet been saved to the database.
-                //      This is because it was a previously existing fulfillment group that has new
-                //      items. Therefore, we simply increment the quantity.
-                //      (fulfillmentGroupItem.getId() == null)
-                if (fulfillmentGroupItem.getId() != null) {
-                    Integer qty = fgItemQuantityMap.get(fulfillmentGroupItem.getId());
-                    if (qty == null || qty == 0) {
-                        fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
-                    } else {
-                        qty -= 1;
-                        fgItemQuantityMap.put(fulfillmentGroupItem.getId(), qty);
+            for (OrderItem orderItem : fgItemOrderItems) {
+                // See if there is a fulfillment group item that matches this OrderMultishipOption
+                // OrderItem request
+                FulfillmentGroupItem fulfillmentGroupItem = null;
+                for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+                    if (fgi.getOrderItem().getId().equals(orderItem.getId())) {
+                        fulfillmentGroupItem = fgi;
                     }
+                }
+
+                // If there is no matching fulfillment group item, create a new one with quantity 1
+                if (fulfillmentGroupItem == null) {
+                    fulfillmentGroupItem = fulfillmentGroupItemDao.create();
+                    fulfillmentGroupItem.setFulfillmentGroup(fg);
+                    fulfillmentGroupItem.setOrderItem(orderItem);
+                    fulfillmentGroupItem.setQuantity(orderItem.getQuantity());
+                    fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
+                    fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
                 } else {
-                    fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+                    // There are three potential scenarios where a fulfillment group item exists:
+                    //   1: It has been previously created and exists in the database and
+                    //      has an id. This means it's in the fgItemQuantityMap. If there is
+                    //      remaining quantity in that map, we will decrement it for future
+                    //      usage. If the quantity is 0 in the map, that means that we have more
+                    //      items than we did before, and we must simply increment the quantity.
+                    //      (qty == 0 or qty is not null)
+                    //   2: It was created in this request but has been saved to the database because
+                    //      it is a brand new fulfillment group and so it has an id.
+                    //      However, it does not have an entry in the fgItemQuantityMap,
+                    //      so we can simply increment the quantity.
+                    //      (qty == null)
+                    //   3: It was created in this request and has not yet been saved to the database.
+                    //      This is because it was a previously existing fulfillment group that has new
+                    //      items. Therefore, we simply increment the quantity.
+                    //      (fulfillmentGroupItem.getId() == null)
+                    if (fulfillmentGroupItem.getId() != null) {
+                        Integer qty = fgItemQuantityMap.get(fulfillmentGroupItem.getId());
+                        if (qty == null || qty == 0) {
+                            fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+                        } else {
+                            qty -= 1;
+                            fgItemQuantityMap.put(fulfillmentGroupItem.getId(), qty);
+                        }
+                    } else {
+                        fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+                    }
                 }
             }
 

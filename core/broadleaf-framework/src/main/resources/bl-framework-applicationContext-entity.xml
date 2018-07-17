@@ -53,6 +53,8 @@
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductBundle" class="org.broadleafcommerce.core.catalog.domain.ProductBundleImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductOption" class="org.broadleafcommerce.core.catalog.domain.ProductOptionImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductOptionValue" class="org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.catalog.domain.CrossSaleProduct" class="org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.catalog.domain.UpSaleProduct" class="org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl" scope="prototype" />    
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuBundleItem" class="org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.Sku" class="org.broadleafcommerce.core.catalog.domain.SkuImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuAttribute" class="org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl" scope="prototype"/>
