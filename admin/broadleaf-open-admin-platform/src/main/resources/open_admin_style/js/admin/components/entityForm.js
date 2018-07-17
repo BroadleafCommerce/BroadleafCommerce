@@ -327,7 +327,7 @@
             },
 
             _getTabKey: function ($tab) {
-                var tabKey = $tab.find('span').data('tabkey');
+                var tabKey = $tab.find('span[data-tabkey]').data('tabkey');
                 if ($tab.parents(".modal").length) {
                     tabKey = 'modal|' + tabKey;
                 }
@@ -379,7 +379,7 @@ $(document).ready(function() {
     $(document).on('click', sectionTabsSelector, function (event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
-        var tabKey = $tab.find('span').data('tabkey');
+        var tabKey = $tab.find('span[data-tabkey]').data('tabkey');
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');

@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -51,7 +52,7 @@ import java.math.BigDecimal;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CrossSaleProductImpl implements RelatedProduct, MultiTenantCloneable<CrossSaleProductImpl> {
+public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantCloneable<CrossSaleProductImpl> {
 
     protected static final long serialVersionUID = 1L;
 
@@ -69,7 +70,7 @@ public class CrossSaleProductImpl implements RelatedProduct, MultiTenantCloneabl
     protected Long id;
     
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message", largeEntry=true)
+    @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message", translatable=true, largeEntry=true)
     protected String promotionMessage;
 
     @Column(name = "SEQUENCE", precision = 10, scale = 6)
@@ -103,7 +104,7 @@ public class CrossSaleProductImpl implements RelatedProduct, MultiTenantCloneabl
 
     @Override
     public String getPromotionMessage() {
-        return promotionMessage;
+        return DynamicTranslationProvider.getValue(this, "promotionMessage", promotionMessage);
     }
     
     @Override

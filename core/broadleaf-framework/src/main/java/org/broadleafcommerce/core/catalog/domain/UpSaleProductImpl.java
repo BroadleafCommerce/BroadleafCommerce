@@ -52,7 +52,7 @@ import java.math.BigDecimal;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class UpSaleProductImpl implements RelatedProduct, MultiTenantCloneable<UpSaleProductImpl> {
+public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<UpSaleProductImpl> {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,7 +70,7 @@ public class UpSaleProductImpl implements RelatedProduct, MultiTenantCloneable<U
     private Long id;
     
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName = "UpSaleProductImpl_Upsale_Promotion_Message", largeEntry=true)
+    @AdminPresentation(friendlyName = "UpSaleProductImpl_Upsale_Promotion_Message", translatable=true, largeEntry=true)
     private String promotionMessage;
 
     @Column(name = "SEQUENCE", precision = 10, scale = 6)

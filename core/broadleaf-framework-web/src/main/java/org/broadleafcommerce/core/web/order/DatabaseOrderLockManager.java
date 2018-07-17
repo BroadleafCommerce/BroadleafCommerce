@@ -87,9 +87,9 @@ public class DatabaseOrderLockManager implements OrderLockManager {
 
     @Override
     public Object acquireLockIfAvailable(Order order) {
-        if (order instanceof NullOrderImpl) {
+        if (order == null || order instanceof NullOrderImpl) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Attempted to grab a lock for a NullOrderImpl. Not blocking");
+                LOG.debug("Attempted to grab a lock - order was null or it was a NullOrderImpl. Not blocking");
             }
             return order;
         }

@@ -394,7 +394,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                         "        script.type = 'text/javascript';" +
                         "        script.src = elem;" +
                         "        script.async = " + useAsyncJavaScript(attributes) + ";" +
-                        "        document.body.append(script);" +
+                        "        document.body.appendChild(script);" +
                         completedJavaScript +
                         "    });" +
                         "};" +

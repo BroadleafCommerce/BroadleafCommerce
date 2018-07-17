@@ -1509,6 +1509,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     collectionField,
                     collectionItemId, responseMap);
 
+            //For AdornedTargetCollections, we need to be specific on what translation ceilingEntity and Id is used.
+            //It should be the entity and referenced Id of the adorned entity (not the target entity and Id).
+            entityForm.setTranslationCeilingEntity(entityForm.getEntityType());
+            entityForm.setTranslationId(alternateId);
+
             ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             for (String field : fmd.getMaintainedAdornedTargetFields()) {
                 if (responseMap.containsKey(field) && responseMap.containsKey("autoSubmit")) {
