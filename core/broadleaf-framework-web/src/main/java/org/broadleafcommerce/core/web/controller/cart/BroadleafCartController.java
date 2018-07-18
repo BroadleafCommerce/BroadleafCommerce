@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.controller.cart;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
@@ -26,10 +27,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedExcep
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -43,15 +41,12 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various modify cart operations
@@ -68,11 +63,15 @@ public class BroadleafCartController extends AbstractCartController {
 
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
 
+    private String removeFlag = "removeFlag";
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
     @Value("${automatically.add.complete.items}")
     protected boolean automaticallyAddCompleteItems;
+
+    public static boolean REMOVE_FLAG;
 
     /**
      * Renders the cart page.
@@ -114,7 +113,10 @@ public class BroadleafCartController extends AbstractCartController {
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
             OrderItemRequestDTO itemRequest) throws IOException, AddToCartException, PricingException, NumberFormatException, RemoveFromCartException, IllegalArgumentException  {
         Order cart = CartState.getCart();
-        
+        if (cart.getOrderAttributes().containsKey(removeFlag)) {
+            REMOVE_FLAG=false;
+            cart.getOrderAttributes().get(removeFlag).setValue(String.valueOf(REMOVE_FLAG));
+        }
         // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
         // and provision a fresh cart for the current customer upon the first cart add
         if (cart == null || cart instanceof NullOrderImpl) {
@@ -296,7 +298,10 @@ public class BroadleafCartController extends AbstractCartController {
     public String updateQuantity(HttpServletRequest request, HttpServletResponse response, Model model,
             OrderItemRequestDTO itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
         Order cart = CartState.getCart();
-
+        if (cart.getOrderAttributes().containsKey(removeFlag)) {
+            REMOVE_FLAG=false;
+            cart.getOrderAttributes().get(removeFlag).setValue(String.valueOf(REMOVE_FLAG));
+        }
         cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
         cart = orderService.save(cart, false);
         
@@ -338,7 +343,13 @@ public class BroadleafCartController extends AbstractCartController {
     public String remove(HttpServletRequest request, HttpServletResponse response, Model model,
             OrderItemRequestDTO itemRequest) throws IOException, PricingException, RemoveFromCartException {
         Order cart = CartState.getCart();
-        
+        REMOVE_FLAG=true;
+        OrderAttribute remove = new OrderAttributeImpl();
+        remove.setOrder(cart);
+
+        remove.setName(removeFlag);
+        remove.setValue(String.valueOf(REMOVE_FLAG));
+        cart.getOrderAttributes().put(removeFlag,remove);
         cart = orderService.removeItem(cart.getId(), itemRequest.getOrderItemId(), false);
         cart = orderService.save(cart, true);
         
