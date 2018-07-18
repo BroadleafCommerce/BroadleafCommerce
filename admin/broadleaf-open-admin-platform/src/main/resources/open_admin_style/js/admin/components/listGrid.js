@@ -568,9 +568,12 @@ $(document).ready(function () {
         }
     });
 
-    $('body').on('click', '.list-grid-table tbody tr td.listgrid-checkbox', function (event) {
+    $('body').on('click',
+        '.list-grid-table tbody tr td.listgrid-checkbox,' +
+        ' .list-grid-table tbody tr td.listgrid-checkbox input.listgrid-checkbox', function (event) {
         if ($(this).closest('table').data('multi-select-checkbox-only')) {
             BLCAdmin.listGrid.multiSelectCheckBoxAreaSelected(event, $(this));
+            $('body').trigger('listGrid-multi-select-checkbox-selected', [$(this)]);
         }
     });
 
