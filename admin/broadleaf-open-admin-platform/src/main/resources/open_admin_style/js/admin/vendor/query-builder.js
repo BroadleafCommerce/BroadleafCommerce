@@ -1242,7 +1242,7 @@ QueryBuilder.prototype.setRules = function(data) {
 
             var subRules = item.rules;
 
-            if (subRules.length == 2) {
+            if (subRules && subRules.length === 2) {
                 var expression1 = subRules[0];
                 var expression2 = subRules[1];
 
