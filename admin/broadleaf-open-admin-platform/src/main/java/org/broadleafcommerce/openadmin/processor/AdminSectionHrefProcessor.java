@@ -41,6 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 @ConditionalOnTemplating
 public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifierProcessor {
 
+    protected static final String FOLDER_SUBSECTION = "/folder";
+
     @Override
     public String getName() {
         return "admin_section_href";
@@ -60,10 +62,11 @@ public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifie
     public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
         String href = "#";
         
-        AdminSection section = (AdminSection) context.parseExpression(attributeValue);
+        AdminSection section = context.parseExpression(attributeValue);
         if (section != null) {
             HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-            href = request.getContextPath() + section.getUrl();
+            String folderPart = (section.isFolderable() && section.isFolderedByDefault()) ? FOLDER_SUBSECTION : "";
+            href = request.getContextPath() + folderPart + section.getUrl();
         }
         
         Map<String, String> attrs = new HashMap<>();

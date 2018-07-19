@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,67 +21,77 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author elbertbautista
- *
  */
 public interface AdminSection extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public String getSectionKey();
+    String getSectionKey();
 
-    public void setSectionKey(String sectionKey);
+    void setSectionKey(String sectionKey);
 
-    public String getUrl();
+    String getUrl();
 
-    public void setUrl(String url);
+    void setUrl(String url);
 
-    public List<AdminPermission> getPermissions();
+    List<AdminPermission> getPermissions();
 
-    public void setPermissions(List<AdminPermission> permissions);
-
-    /**
-     * No longer needed after GWT removal
-     * @param displayController
-     */
-    @Deprecated
-    public void setDisplayController(String displayController);
+    void setPermissions(List<AdminPermission> permissions);
 
     /**
      * No longer needed after GWT removal
+     *
      * @param displayController
      */
     @Deprecated
-    public String getDisplayController();
-
-    public AdminModule getModule();
-
-    public void setModule(AdminModule module);
+    void setDisplayController(String displayController);
 
     /**
      * No longer needed after GWT removal
+     *
      * @param displayController
      */
     @Deprecated
-    public Boolean getUseDefaultHandler();
+    String getDisplayController();
+
+    AdminModule getModule();
+
+    void setModule(AdminModule module);
 
     /**
      * No longer needed after GWT removal
+     *
      * @param displayController
      */
     @Deprecated
-    public void setUseDefaultHandler(Boolean useDefaultHandler);
+    Boolean getUseDefaultHandler();
 
-    public String getCeilingEntity();
+    /**
+     * No longer needed after GWT removal
+     *
+     * @param displayController
+     */
+    @Deprecated
+    void setUseDefaultHandler(Boolean useDefaultHandler);
 
-    public void setCeilingEntity(String ceilingEntity);
+    String getCeilingEntity();
 
-    public Integer getDisplayOrder();
+    void setCeilingEntity(String ceilingEntity);
 
-    public void setDisplayOrder(Integer displayOrder);
+    Integer getDisplayOrder();
+
+    void setDisplayOrder(Integer displayOrder);
+
+    boolean isFolderable();
+
+    void setFolderable(boolean folderable);
+
+    boolean isFolderedByDefault();
+
+    void setFolderedByDefault(boolean folderedByDefault);
 }
