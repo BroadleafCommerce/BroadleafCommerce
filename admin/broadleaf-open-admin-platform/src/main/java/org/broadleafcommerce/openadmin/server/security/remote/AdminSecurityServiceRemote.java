@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -34,6 +35,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.extension.AdminSecurityCheckExtensionManager;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
@@ -83,6 +85,9 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService rowLevelSecurityService;
+
+    @Resource
+    protected AdminSecurityCheckExtensionManager securityCheckExtensionManager;
     
     @Override
     public org.broadleafcommerce.openadmin.server.security.remote.AdminUser getAdminUser() throws ServiceException {
@@ -209,6 +214,12 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
                 permissionType = PermissionType.OTHER;
                 break;
         }
+
+        final ExtensionResultStatusType resultStatusType = securityCheckExtensionManager.getProxy().handleAdminSecurityCheck(persistentAdminUser, permissionType, Arrays.asList(ceilingNames));
+        if (resultStatusType == ExtensionResultStatusType.HANDLED) {
+            return;
+        }
+
         SecurityServiceException primaryException = null;
         boolean isQualified = false;
         for (String ceilingEntityFullyQualifiedName : ceilingNames) {
