@@ -65,7 +65,29 @@ public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifie
         AdminSection section = context.parseExpression(attributeValue);
         if (section != null) {
             HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-            String folderPart = (section.isFolderable() && section.isFolderedByDefault()) ? FOLDER_SUBSECTION : "";
+
+            final boolean noFolder = Boolean.parseBoolean(tagAttributes.get("data-no-folder"));
+            final boolean requireFolder = Boolean.parseBoolean(tagAttributes.get("data-require-folder"));
+            final boolean allowFolder = section.isFolderable();
+            final boolean folderByDefault = section.isFolderedByDefault();
+
+            final boolean shouldFolder;
+
+            if (!allowFolder) {
+                shouldFolder = false;
+            } else {
+                if (noFolder) {
+                    shouldFolder = false;
+                } else if (requireFolder) {
+                    shouldFolder = true;
+                } else {
+                    // nothing specified, do default
+                    shouldFolder = folderByDefault;
+                }
+            }
+
+            final String folderPart = shouldFolder ? FOLDER_SUBSECTION : "";
+
             href = request.getContextPath() + folderPart + section.getUrl();
         }
         
