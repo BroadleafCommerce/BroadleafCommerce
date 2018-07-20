@@ -16,7 +16,8 @@
         <a th:if="${currentAdminSection.isFolderable()}"
            class="button primary"
            blc_admin:admin_section_href="${currentAdminSection}"
-           data-require-folder="true">
+           data-require-folder="true"
+           th:utext="#{folders.main.view.folder}">
             Folder View
         </a>
         <!-- Filter information -->
