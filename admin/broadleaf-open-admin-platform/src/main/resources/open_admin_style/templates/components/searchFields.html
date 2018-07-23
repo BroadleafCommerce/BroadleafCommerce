@@ -13,6 +13,13 @@
     </div>
 
     <div class="col6 filter-info" style="white-space: nowrap;">
+        <a th:if="${currentAdminSection.isFolderable()}"
+           class="button primary"
+           blc_admin:admin_section_href="${currentAdminSection}"
+           data-require-folder="true"
+           th:utext="#{folders.main.view.folder}">
+            Folder View
+        </a>
         <!-- Filter information -->
         <button type="button" class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>
 

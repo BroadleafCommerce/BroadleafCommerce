@@ -270,6 +270,11 @@ button:disabled:hover, button.disabled:hover {
 .filter-info > .filter-button {
     margin-top: 6px;
 }
+
+.listgrid-search.row .filter-info .filter-button {
+    margin-top: 0;
+}
+
 .rule-filter-container.admin-select,
  .rule-operator-container.admin-select,
  .rule-filter-container.admin-select > select,

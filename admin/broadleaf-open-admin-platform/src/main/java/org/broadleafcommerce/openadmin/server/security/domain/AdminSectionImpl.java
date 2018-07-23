@@ -124,6 +124,14 @@ public class AdminSectionImpl implements AdminSection {
             prominent = true)
     protected Integer displayOrder;
 
+    @Column(name = "FOLDERABLE")
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Folderable", order = 8, group = "AdminSectionImpl_Section")
+    protected Boolean folderable;
+
+    @Column(name = "FOLDERED_BY_DEFAULT")
+    @AdminPresentation(friendlyName = "AdminSectionImpl_FolderedByDefault", order = 9, group = "AdminSectionImpl_Section")
+    protected Boolean folderedByDefault;
+
     @Override
     public Long getId() {
         return id;
@@ -225,5 +233,25 @@ public class AdminSectionImpl implements AdminSection {
     @Override
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    @Override
+    public boolean isFolderable() {
+        return folderable == null ? false : folderable;
+    }
+
+    @Override
+    public void setFolderable(boolean folderable) {
+        this.folderable = folderable;
+    }
+
+    @Override
+    public boolean isFolderedByDefault() {
+        return folderedByDefault == null ? false : folderedByDefault;
+    }
+
+    @Override
+    public void setFolderedByDefault(boolean folderedByDefault) {
+        this.folderedByDefault = folderedByDefault;
     }
 }
