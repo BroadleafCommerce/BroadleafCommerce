@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -95,30 +95,30 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
 @Component("blDynamicEntityDao")
 @Scope("prototype")
 public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContextAware {
-    
+
     private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
-    
+
     protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<>(1000);
-    
+
     /**
      * Lifetime cache for the existence of DynamicEntityDaoImpl that just stores how many properties we have cached in METADATA_CACHE over the lifetime
      * of the application. This should survive evictions from METADATA_CACHE because it is for the purpose of diagnosing when we store different property
      * counts in METADATA_CACHE as a result of cache eviction
      */
     protected static final Map<String, Integer> METADATA_CACHE_SIZES = new HashMap<>();
-    
+
     /*
-     * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion 
+     * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion
      * from polymorphism
      */
-    
+
     protected EntityManager standardEntityManager;
 
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
@@ -142,13 +142,13 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
-    
+
     /**
      * Whether or not we should use {@link #METADATA_CACHE_SIZES} in the normal runtime of the application
      */
     @Value("${validate.metadata.cache.sizes:false}")
     protected boolean validateMetadataCacheSizes;
-    
+
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
     protected ApplicationContext applicationContext;
@@ -165,7 +165,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public Criteria createCriteria(Class<?> entityClass) {
         return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
     }
-    
+
     @Override
     public <T> T persist(T entity) {
         standardEntityManager.persist(entity);
@@ -184,27 +184,27 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         standardEntityManager.flush();
         return response;
     }
-    
+
     @Override
     public void flush() {
         standardEntityManager.flush();
     }
-    
+
     @Override
     public void detach(Serializable entity) {
         standardEntityManager.detach(entity);
     }
-    
+
     @Override
     public void refresh(Serializable entity) {
         standardEntityManager.refresh(entity);
     }
-    
+
     @Override
     public Serializable retrieve(Class<?> entityClass, Object primaryKey) {
         return (Serializable) standardEntityManager.find(entityClass, primaryKey);
     }
-    
+
     @Override
     public void remove(Serializable entity) {
         standardEntityManager.remove(entity);
@@ -395,7 +395,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 polymorphicClasses = temp;
             }
         }
-        
+
         ClassTree classTree = null;
         if (!ArrayUtils.isEmpty(polymorphicClasses)) {
             Class<?> topClass = polymorphicClasses[polymorphicClasses.length-1];
@@ -414,7 +414,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Class<?>[] sortedEntities = getAllPolymorphicEntitiesFromCeiling(ceilingClass);
         return getClassTree(sortedEntities);
     }
-    
+
     @Override
     public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) {
         Class<?>[] entityClasses;
@@ -482,7 +482,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             return mergedProperties;
         }
     }
-    
+
     @Override
     public Map<String, FieldMetadata> getMergedProperties(@Nonnull Class<?> cls) {
         Class<?>[] polymorphicTypes = getAllPolymorphicEntitiesFromCeiling(cls);
@@ -531,7 +531,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 "");
 
         final List<String> removeKeys = new ArrayList<>();
- 
+
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
                 removeKeys.add(key);
@@ -711,7 +711,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
         sb.append(mergedPropertyType);
         sb.append(populateManyToOneFields);
-        
+
         String digest;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -723,7 +723,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
 
         String key = pad(digest, 32, '0');
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created cache key: " + key + " from the following string: " + sb.toString());
         }
@@ -788,11 +788,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         }
                     }
                     METADATA_CACHE.put(cacheKey, props);
-                    
+
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Added " + props.size() + " to the metadata cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
                     }
-                    
+
                     if (validateMetadataCacheSizes) {
                         Integer previousSize = METADATA_CACHE_SIZES.get(cacheKey);
                         Integer currentSize = props.size();
@@ -804,7 +804,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                             throw new RuntimeException(msg);
                         }
                     }
-                    
+
                     cacheData = props;
                 } else {
                     if (LOG.isTraceEnabled()) {
@@ -835,7 +835,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 eof = true;
             }
         }
-        
+
         return allFields;
     }
 
@@ -1141,7 +1141,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             && StringUtils.isNotEmpty(fieldMetadata.getShowIfProperty())
             && propertyConfigurations.get(fieldMetadata.getShowIfProperty()) != null
             && !Boolean.valueOf(propertyConfigurations.get(fieldMetadata.getShowIfProperty()))) {
-            
+
             //do not include this in the display if it returns false.
             fieldMetadata.setExcluded(true);
         }
@@ -1372,7 +1372,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             foreignField,
             additionalNonPersistentProperties,
             additionalForeignFields,
-            MergedPropertyType.PRIMARY, 
+            MergedPropertyType.PRIMARY,
             populateManyToOneFields,
             includeFields,
             excludeFields,
@@ -1576,6 +1576,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             //keep in mind that getStandardEntityManager() can return null, this is in general OK,
             // we re-init fieldManager in setStandardEntityManager method
             fieldManager = new FieldManager(entityConfiguration, getStandardEntityManager());
+        } else {
+            fieldManager.clearMiddleFields();
         }
         return fieldManager;
     }
@@ -1629,5 +1631,5 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public void setDynamicDaoHelper(DynamicDaoHelper dynamicDaoHelper) {
         this.dynamicDaoHelper = dynamicDaoHelper;
     }
-    
+
 }
