@@ -134,10 +134,22 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
                         if (queryExtensionManager != null) {
                             ExtensionResultStatusType resultStatusType = queryExtensionManager.getProxy().refineResults(SystemPropertyImpl.class, null, response, resultHolder);
                             if (!resultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
-                                return (SystemProperty) resultHolder.getResult().get(0);
+                                response = resultHolder.getResult();
                             }
                         }
-                        return response.get(0);
+
+                        BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
+                        if (broadleafRequestContext == null || broadleafRequestContext.getNonPersistentSite() == null) {
+                            if (SiteDiscriminator.class.isAssignableFrom(SystemPropertyImpl.class)) {
+                                for (SystemProperty prop : response) {
+                                    if (((SiteDiscriminator) prop).getSiteDiscriminator() == null) {
+                                        return prop;
+                                    }
+                                }
+                            }
+                        } else {
+                            return response.get(0);
+                        }
                     }
                     return null;
                 } finally {
