@@ -238,10 +238,11 @@ public class FieldManager {
     }
 
     public Map<String, Serializable> persistMiddleEntities() throws InstantiationException, IllegalAccessException {
-        Map<String, Serializable> persistedEntities = new HashMap<String, Serializable>();
+        Map<String, Serializable> persistedEntities = new HashMap<>();
 
         Collections.sort(middleFields);
-        for (SortableValue val : middleFields) {
+        
+        for (SortableValue val : middleFields.toArray(new SortableValue[0])) {
             Serializable s = entityManager.merge(val.entity);
             persistedEntities.put(val.getContainingPropertyName(), s);
             setFieldValue(val.getBean(), val.getContainingPropertyName(), s);
