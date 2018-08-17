@@ -38,6 +38,8 @@ public interface AdminNavigationService {
 
     public AdminSection findAdminSectionBySectionKey(String sectionKey);
 
+    public AdminSection findBaseAdminSectionByClass(String clazz);
+
     /**
      * In some cases, a single class is served by more than one section.
      * 

@@ -102,7 +102,11 @@ public class OfferCodeImpl implements OfferCode {
 
     @Column(name = "OFFER_CODE", nullable=false)
     @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true, gridOrder = 1000)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true, gridOrder = 1000,
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blRegexPropertyValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "The name can contain alphanumeric or \"()-=*.?;,+/:&_\" symbols with a maximum length of 255"),
+                            @ConfigurationItem(itemName = "regularExpression", itemValue = "^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]{1,255}$")})})
     protected String offerCode;
 
     @Column(name = "START_DATE")
