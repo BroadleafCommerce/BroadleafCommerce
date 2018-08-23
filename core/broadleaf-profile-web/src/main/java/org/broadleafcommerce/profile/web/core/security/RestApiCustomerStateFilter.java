@@ -21,12 +21,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -38,6 +40,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is a basic filter for finding the customer ID on the request and setting the customer object on the request.
@@ -111,9 +114,15 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
                 }
             }
         }
+        if (CustomerState.getCustomer() == null) { //we need to create an anonymous customer for API calls
+            ServletWebRequest servletWebRequest = new ServletWebRequest(request, (HttpServletResponse)servletResponse);
+            BroadleafRequestContext.getBroadleafRequestContext().setWebRequest(servletWebRequest);
+            Customer customer = this.customerService.createCustomer();
+            CustomerState.setCustomer(customer);
+            setupCustomerForRuleProcessing(customer, request);
+        }
 
         filterChain.doFilter(request, servletResponse);
-
     }
 
     private void setupCustomerForRuleProcessing(Customer customer, HttpServletRequest request) {
