@@ -536,7 +536,18 @@
                             $.extend($selectize.options[this.value], $(this).data());
                         });
                     },
-                    onLoad: function() {
+                    onLoad: function(dataOptions) {//d = {options: []}
+                        //{"1024": "Label"}
+                        var labelsByItemId = {};
+
+                        if (dataOptions && Array.isArray(dataOptions.options)) {
+                            dataOptions.options.forEach(function (option) {
+                                if (option.id && option.name) {
+                                    labelsByItemId["\"" + option.id + "\""] = option.name;
+                                }
+                            })
+                        }
+
                         // Initialize selectize rule data
                         // after the options have been loaded
                         // (Values may contain multiple items and are sent back as a single String array)
@@ -547,7 +558,9 @@
                         for (var k = 0; k < dataHydrate.length; k++) {
                             var item = dataHydrate[k];
                             if ($selectize.getOption(item).length === 0 || allowAdd) {
-                                $selectize.addOption({id: item, label: item});
+                                var label = labelsByItemId[item] || item;
+
+                                $selectize.addOption({id: item, label: label});
                             }
                             if (!isNaN(item)) {
                                 $selectize.addItem(Number(item), false);
@@ -561,6 +574,9 @@
                         var queryData = {};
                         queryData["name"] = query;
                         queryData["criteria"] = "RULE";
+
+                        const loadUrlEvent = $.Event('ruleBuilder-modify-load-params');
+                        $('body').trigger(loadUrlEvent, [$selectize, query, queryData]);
 
                         if ("blcOperators_Selectize_Enumeration" === $selectize.opRef) {
                             var data = {options: []};

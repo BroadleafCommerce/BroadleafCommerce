@@ -70,7 +70,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Only delete the contents of the target folder so that 
+                <!-- Only delete the contents of the target folder so that
                     it doesn't lose its "derived" status in Eclipse -->
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>

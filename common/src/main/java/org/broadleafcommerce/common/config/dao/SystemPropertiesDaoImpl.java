@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -134,10 +134,20 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
                         if (queryExtensionManager != null) {
                             ExtensionResultStatusType resultStatusType = queryExtensionManager.getProxy().refineResults(SystemPropertyImpl.class, null, response, resultHolder);
                             if (!resultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
-                                return (SystemProperty) resultHolder.getResult().get(0);
+                                response = resultHolder.getResult();
                             }
                         }
-                        return response.get(0);
+
+                        BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
+                        if ((broadleafRequestContext == null || broadleafRequestContext.getNonPersistentSite() == null) && SiteDiscriminator.class.isAssignableFrom(SystemPropertyImpl.class)) {
+                            for (SystemProperty prop : response) {
+                                if (((SiteDiscriminator) prop).getSiteDiscriminator() == null) {
+                                    return prop;
+                                }
+                            }
+                        } else {
+                            return response.get(0);
+                        }
                     }
                     return null;
                 } finally {

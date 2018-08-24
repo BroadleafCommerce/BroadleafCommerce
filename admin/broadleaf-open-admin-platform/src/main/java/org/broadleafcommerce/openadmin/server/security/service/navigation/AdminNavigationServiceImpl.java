@@ -149,6 +149,23 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     }
 
     @Override
+    public AdminSection findBaseAdminSectionByClass(String clazz) {
+        List<AdminSection> sections = adminNavigationDao.readAdminSectionForClassName(clazz);
+        if (org.springframework.util.CollectionUtils.isEmpty(sections) && clazz.endsWith("Impl")) {
+            clazz = clazz.substring(0, clazz.length() - 4);
+            sections = adminNavigationDao.readAdminSectionForClassName(clazz);
+        }
+        for (AdminSection section : sections) {
+            //When identifying the "base" section, multiple can be returned.  "Type" sections (e.g. product:addon) will have a ":".
+            //  Since we are looking for the base section, the "type" sections should be ignored
+            if(!section.getUrl().contains(":")){
+                return section;
+            }
+        }
+        return sections.get(0);
+    }
+
+    @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
         List<AdminPermission> authorizedPermissions = section.getPermissions();
 
