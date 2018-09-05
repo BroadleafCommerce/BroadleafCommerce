@@ -847,8 +847,10 @@
 
                 // check for existing rules in the url
                 var queryString = BLCAdmin.filterBuilders.getQueryVariable(field.id);
+                // make sure its not modal
+                var modal = BLCAdmin.currentModal();
 
-                if (queryString != null) {
+                if ((queryString != null) && (modal == undefined)) {
                     var numInputs = 1;
                     // is this a 'BETWEEN' filter?
                     if (queryString.indexOf('|') > 0) {
