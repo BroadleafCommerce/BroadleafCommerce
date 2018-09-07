@@ -1,4 +1,4 @@
-\/*
+/*
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
