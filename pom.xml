@@ -1610,6 +1610,11 @@
                 <artifactId>closure-compiler-unshaded</artifactId>
                 <version>${closure.compiler.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.googlecode.htmlcompressor</groupId>
+                <artifactId>htmlcompressor</artifactId>
+                <version>1.5.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
