@@ -999,10 +999,17 @@ $(document).ready(function() {
         }
         valueText = valueArray.join(" and ");
 
-        // if no value is set, this is probably an empty row
-        if (!valueText || valueText == ' and ') {
+        var $errorContainer = el.find('.error-container');
+        var errorMessage = validateRule(filterText, operatorText, valueText);
+
+
+        if (errorMessage){
+            showError($errorContainer, errorMessage);
             return;
+        }else {
+            hideError($errorContainer);
         }
+
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
@@ -1027,6 +1034,30 @@ $(document).ready(function() {
 
         $('.filter-text').show();
     });
+
+    function validateRule(filterText, operatorText, valueText) {
+        var validationRegex = new RegExp(/<(.|\n)*?>/);
+        if (!operatorText) return BLCAdmin.messages.emptyOperatorValue;
+        if (!valueText || valueText === ' and ') return BLCAdmin.messages.emptyFilterValue;
+        if (validationRegex.test(valueText)) {
+            return BLCAdmin.messages.invalidFilterValue;
+        }
+        return "";
+    }
+
+    function showError($errorContainer, errorMessage) {
+        $errorContainer.html(
+            "<span class='error'>" +
+            errorMessage +
+            "</span>"
+        );
+        $errorContainer.css("cssText", "display: block !important; width: 80%; margin-left: 20px");
+    }
+
+    function hideError($errorContainer) {
+        $errorContainer.html("");
+        $errorContainer.css("cssText", "none !important;");
+    }
 
     /**
      * Invoked from a Filter Builder with display type : "MODAL"
@@ -1206,9 +1237,10 @@ $(document).ready(function() {
 
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
-                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
+                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong><span class='test'></span></strong>",
                 'class': "read-only"
-            });
+        });
+            readonlySpan.find('.test').text(valueText)
             el.append($(readonlySpan));
 
             el.find('div.rule-filter-container > div > div.selectize-input').hide();
