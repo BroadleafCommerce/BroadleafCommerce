@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -429,7 +429,7 @@
                 }
             }
         },
-        
+
         /**
          * A custom pre-init query builder field handler to modify the filters object
          * in order to support the Selectize widget in the Query Builder.
@@ -1019,6 +1019,7 @@ $(document).ready(function() {
             hideError($errorContainer);
         }
 
+
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
         var readonlySpan = $("<div>", {
@@ -1044,8 +1045,12 @@ $(document).ready(function() {
     });
 
     function validateRule(filterText, operatorText, valueText) {
+        var validationRegex = new RegExp(/<(.|\n)*?>/);
         if (!operatorText) return BLCAdmin.messages.emptyOperatorValue;
         if (!valueText || valueText === ' and ') return BLCAdmin.messages.emptyFilterValue;
+        if (validationRegex.test(valueText)) {
+            return BLCAdmin.messages.invalidFilterValue;
+        }
         return "";
     }
 
@@ -1241,9 +1246,10 @@ $(document).ready(function() {
 
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
-                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
+                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong><span class='test'></span></strong>",
                 'class': "read-only"
-            });
+        });
+            readonlySpan.find('.test').text(valueText)
             el.append($(readonlySpan));
 
             el.find('div.rule-filter-container > div > div.selectize-input').hide();
