@@ -31,6 +31,7 @@ var BLCAdmin = (function($) {
     var excludedSelectizeSelectors = [];
     var updateHandlers = [];
     var fieldInitializationHandlers = [];
+    var excludedRedactorFieldSelectors = [];
     var stackedModalOptions = {
         left: 20,
         top: 20
@@ -634,7 +635,20 @@ var BLCAdmin = (function($) {
         initializeTextAreaFields : function($container) {
             // Set up rich-text HTML editors
             if($.fn.redactor) {
-                $container.find('.redactor').redactor({
+                $container
+                    .find('.redactor')
+                    .filter(function () {
+                        var $elem = $(this);
+                        for (var i = 0; i < excludedRedactorFieldSelectors.length; i++) {
+                            var selector = excludedRedactorFieldSelectors[i];
+
+                            if ($elem.is(selector)) {
+                                return false; // excluded, filter this out
+                            }
+                        }
+                        return true;
+                    })
+                    .redactor({
                     plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
                     replaceDivs : false,
                     buttonSource: true,
@@ -1177,6 +1191,14 @@ var BLCAdmin = (function($) {
             } else {
                 processMethod(methodParams);
             }
+        },
+
+        /**
+         * Accepts function or CSS selector. Function should return true if excluded, false otherwise.
+         * @param selector
+         */
+        addExcludedRedactorFieldSelector: function (selector) {
+            excludedRedactorFieldSelectors.push(selector);
         }
     };
 
