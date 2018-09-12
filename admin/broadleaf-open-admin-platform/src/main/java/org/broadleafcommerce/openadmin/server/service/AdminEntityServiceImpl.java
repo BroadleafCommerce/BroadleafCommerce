@@ -655,6 +655,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         Property parentNameProp = parentEntity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
         if (parentNameProp != null) {
             ppr.setRequestingEntityName(parentNameProp.getValue());
+        } else {
+            Property name = parentEntity.getPMap().get("name");
+            if(name !=null) {
+                ppr.setRequestingEntityName(name.getValue());
+            }
         }
 
         Property p = new Property();
