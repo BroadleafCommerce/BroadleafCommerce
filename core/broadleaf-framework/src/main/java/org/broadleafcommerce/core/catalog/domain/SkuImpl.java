@@ -899,7 +899,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             }
         }
 
-        if (!getProduct().isActive()) {
+        if (!(getProduct() == null) && !getProduct().isActive()) {
             return false;
         }
 
