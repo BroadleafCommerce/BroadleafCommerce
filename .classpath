@@ -22,8 +22,10 @@
     <classpathentry kind="lib" path="lib/common/bin/jms.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/velocity-tools-1.4.jar"/>
     <classpathentry kind="lib" path="lib/test/bin/greenmail.jar"/>
+    <classpathentry kind="lib" path="lib/test/bin/jcommander-1.27.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/mvel2-2.0.7.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/asm.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/asm-2.2.1.jar/">
     <classpathentry kind="lib" path="lib/common/bin/aspectjweaver.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/drools-compiler-4.0.7.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/drools-core-4.0.7.jar"/>
@@ -141,5 +143,6 @@
     <classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/hibernate-annotations-3.4.0.GA.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/concurrentlinkedhashmap-lru-1.1.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
