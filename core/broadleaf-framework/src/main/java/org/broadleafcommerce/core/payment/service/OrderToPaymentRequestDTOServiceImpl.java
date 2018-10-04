@@ -110,6 +110,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
         //Will set the full amount to be charged on the transaction total/subtotal and not worry about shipping/tax breakdown
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
+                .paymentType(paymentTransaction.getOrderPayment().getType())
                 .transactionTotal(transactionAmount.getAmount().toPlainString())
                 .orderSubtotal(transactionAmount.getAmount().toPlainString())
                 .shippingTotal(ZERO_TOTAL)
