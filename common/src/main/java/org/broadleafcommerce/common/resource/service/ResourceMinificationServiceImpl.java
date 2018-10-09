@@ -46,6 +46,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     protected static final String COULD_NOT_MINIFY_RESOURCES_RETURNED_UNMINIFIED_BYTES = "Could not minify resources, returned unminified bytes";
     public static String CSS_TYPE = "css";
     public static String JS_TYPE = "js";
+    public static String JS_MIN = ".min.js";
 
     @Autowired
     protected Environment environment;
@@ -94,6 +95,19 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             LOG.warn("Attempted to modify resource without a filename, returning non-minified resource");
             return originalResource;
         }
+
+        Integer filenameLength = originalResource.getFilename().length();
+
+        if (filenameLength >= JS_MIN.length()) {
+
+            String lastSevenCharacters = originalResource.getFilename().substring(filenameLength-JS_MIN.length());
+            if (lastSevenCharacters.equals(JS_MIN)) {
+                LOG.info("Minification already have done for this resource: " + originalResource.getFilename());
+                return originalResource;
+            }
+
+        }
+
         return minify(originalResource, originalResource.getFilename());
     }
 
@@ -108,6 +122,18 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         if (type == null) {
             LOG.info("Unsupported minification resource: " + filename);
             return originalResource;
+        }
+
+        Integer filenameLength = originalResource.getFilename().length();
+
+        if (filenameLength >= JS_MIN.length()) {
+
+            String lastSevenCharacters = originalResource.getFilename().substring(filenameLength-JS_MIN.length());
+            if (lastSevenCharacters.equals(JS_MIN)) {
+                LOG.info("Minification already have done for this resource: " + filename);
+                return originalResource;
+            }
+
         }
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(originalResource.getInputStream(), "utf-8"));
