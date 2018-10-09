@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
@@ -47,6 +48,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     public static String CSS_TYPE = "css";
     public static String JS_TYPE = "js";
     public static String JS_MIN = ".min.js";
+    public static String CSS_MIN = ".min.css";
 
     @Autowired
     protected Environment environment;
@@ -96,18 +98,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             return originalResource;
         }
 
-        Integer filenameLength = originalResource.getFilename().length();
-
-        if (filenameLength >= JS_MIN.length()) {
-
-            String lastSevenCharacters = originalResource.getFilename().substring(filenameLength-JS_MIN.length());
-            if (lastSevenCharacters.equals(JS_MIN)) {
-                LOG.info("Minification already have done for this resource: " + originalResource.getFilename());
-                return originalResource;
-            }
-
-        }
-
         return minify(originalResource, originalResource.getFilename());
     }
 
@@ -124,16 +114,9 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             return originalResource;
         }
 
-        Integer filenameLength = originalResource.getFilename().length();
-
-        if (filenameLength >= JS_MIN.length()) {
-
-            String lastSevenCharacters = originalResource.getFilename().substring(filenameLength-JS_MIN.length());
-            if (lastSevenCharacters.equals(JS_MIN)) {
-                LOG.info("Minification already have done for this resource: " + filename);
-                return originalResource;
-            }
-
+        if (isPreviouslyMinifiedFile(originalResource)) {
+            LOG.info("Minification has already be done for this resource: " + filename);
+            return originalResource;
         }
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(originalResource.getInputStream(), "utf-8"));
@@ -179,6 +162,14 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             return CSS_TYPE;
         }
         return null;
+    }
+
+    protected boolean isPreviouslyMinifiedFile(Resource originalResource) {
+        String filename = originalResource.getFilename();
+        if (StringUtils.endsWith(filename, JS_MIN) || StringUtils.endsWith(filename, CSS_MIN)) {
+            return true;
+        }
+        return false;
     }
 
 }
