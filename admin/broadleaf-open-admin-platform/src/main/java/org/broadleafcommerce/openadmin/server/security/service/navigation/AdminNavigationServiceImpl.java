@@ -155,14 +155,17 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             clazz = clazz.substring(0, clazz.length() - 4);
             sections = adminNavigationDao.readAdminSectionForClassName(clazz);
         }
-        for (AdminSection section : sections) {
-            //When identifying the "base" section, multiple can be returned.  "Type" sections (e.g. product:addon) will have a ":".
-            //  Since we are looking for the base section, the "type" sections should be ignored
-            if(!section.getUrl().contains(":")){
-                return section;
+        if (CollectionUtils.isNotEmpty(sections)) {
+            for (AdminSection section : sections) {
+                //When identifying the "base" section, multiple can be returned.  "Type" sections (e.g. product:addon) will have a ":".
+                //  Since we are looking for the base section, the "type" sections should be ignored
+                if(!section.getUrl().contains(":")){
+                    return section;
+                }
             }
+            return sections.get(0);
         }
-        return sections.get(0);
+        return null;
     }
 
     @Override
