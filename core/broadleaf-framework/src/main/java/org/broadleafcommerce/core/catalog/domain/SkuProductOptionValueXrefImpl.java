@@ -30,6 +30,8 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
+import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -127,5 +129,21 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
             cloned.setProductOptionValue(productOptionValue.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SkuProductOptionValueXrefImpl that = (SkuProductOptionValueXrefImpl) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(getSku(), that.getSku()) &&
+                Objects.equals(getProductOptionValue(), that.getProductOptionValue());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, getSku(), getProductOptionValue());
     }
 }
