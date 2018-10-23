@@ -1520,7 +1520,7 @@
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.4.5</version>
+                <version>1.5.7</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -1561,7 +1561,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.3</version>
+                <version>4.5.6</version>
             </dependency>
             <!--update xalan dependency for esapi for a xalan security vulnerability-->
             <dependency>
