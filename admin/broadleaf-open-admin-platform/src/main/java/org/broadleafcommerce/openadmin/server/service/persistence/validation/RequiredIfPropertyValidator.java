@@ -58,10 +58,9 @@ public class RequiredIfPropertyValidator extends ValidationConfigurationBasedPro
             BasicFieldMetadata propertyMetadata,
             String propertyName,
             String value) {
-        String errorMessage = "";
 
         String compareFieldName = lookupCompareFieldName(propertyName, validationConfiguration);
-        String customErrorMessage = validationConfiguration.get("errorMessage");
+        String errorMessage = validationConfiguration.get("errorMessage");
         String compareFieldValue = validationConfiguration.get("compareFieldValue");
         String compareFieldRegEx = validationConfiguration.get("compareFieldRegEx");
         Property compareFieldProperty = null;
@@ -88,9 +87,7 @@ public class RequiredIfPropertyValidator extends ValidationConfigurationBasedPro
             FieldMetadata fmd = entityFieldMetadata.get(compareFieldName);
             String fieldName = messages.getMessage(fmd.getFriendlyName(), null, context.getJavaLocale());
 
-            if (!StringUtils.isEmpty(customErrorMessage)) {
-                errorMessage = customErrorMessage;
-            } else {
+            if (StringUtils.isBlank(errorMessage)) {
                 errorMessage = messages.getMessage("requiredIfValidationFailure",
                         new Object[] { fieldName, compareFieldProperty.getValue() },
                         context.getJavaLocale());
