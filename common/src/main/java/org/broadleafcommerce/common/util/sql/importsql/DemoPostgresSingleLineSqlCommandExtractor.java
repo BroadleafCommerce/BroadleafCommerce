@@ -73,6 +73,11 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
                 newCommand = charMatcher.replaceAll("CHR(" + charCode + ")");
             }
 
+            // Replace CURRENT_TIMESTAMP with date_trunc('second', CURRENT_TIMESTAMP) otherwise the time will be in fractions of a second
+            // This is an issue because when adding a collection item to a sandboxable item the time will be rounded and
+            // an attempt to save straight to production will occur resulting in an error
+            newCommand = newCommand.replaceAll("CURRENT_TIMESTAMP", "date_trunc('second', CURRENT_TIMESTAMP)");
+
             newCommands[i] = newCommand;
             i++;
         }
