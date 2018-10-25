@@ -183,6 +183,12 @@
                 fields['selectedRow'] = $tr;
             }
 
+            var $selectedAssetImg = $('.asset-item.active .image-wrapper img');
+
+            if ($selectedAssetImg.length) {
+                fields['altText'] = $selectedAssetImg.attr('alt');
+            }
+
             return fields;
         },
 
