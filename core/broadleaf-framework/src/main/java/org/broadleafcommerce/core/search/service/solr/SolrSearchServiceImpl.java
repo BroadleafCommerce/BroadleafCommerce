@@ -646,12 +646,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * Allows the user to choose the query method to use.  POST allows for longer, more complex queries with 
      * a higher number of facets.
      * 
-     * Default value is POST.  Implementors can override this to use GET if they wish.
+     * Default value is POST.  Implementors can change the value by setting the solr.search.method property
      * 
      * @return
      */
     protected METHOD getSolrQueryMethod() {
-        return METHOD.POST;
+        return environment.getProperty("solr.search.method", METHOD.class, METHOD.POST);
     }
 
     @Override
