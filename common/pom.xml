@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.2.1-SNAPSHOT</version>
+        <version>5.2.7-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
@@ -115,7 +115,7 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <exclusions>
                 <exclusion>
-                    <!--exclude the outdated javassist, since we explicitly 
+                    <!--exclude the outdated javassist, since we explicitly
                         declare the newer one (note that the groupId has changed) -->
                     <artifactId>javassist</artifactId>
                     <groupId>javassist</groupId>
@@ -257,14 +257,24 @@
         <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
             <artifactId>mime-util</artifactId>
-        </dependency>
+	    </dependency>
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-httpclient</artifactId>
+                    <groupId>commons-httpclient</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
         <!--update xalan dependency for esapi for a xalan security vulnerability-->
         <dependency>
@@ -351,6 +361,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.google.javascript</groupId>
+            <artifactId>closure-compiler-unshaded</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -360,8 +375,8 @@
         </dependency>
         <dependency>
             <groupId>de.jkeylockmanager</groupId>
-            <artifactId>jkeylockmanager</artifactId>            
-        </dependency>          
+            <artifactId>jkeylockmanager</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
@@ -420,6 +435,10 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.htmlcompressor</groupId>
+            <artifactId>htmlcompressor</artifactId>
         </dependency>
     </dependencies>
 </project>

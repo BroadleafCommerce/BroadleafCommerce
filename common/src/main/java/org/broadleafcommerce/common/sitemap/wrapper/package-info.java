@@ -23,9 +23,14 @@
 
 @XmlSchema(
         namespace = "http://www.sitemaps.org/schemas/sitemap/0.9",
-        elementFormDefault = XmlNsForm.QUALIFIED)
+        elementFormDefault = XmlNsForm.QUALIFIED,
+        xmlns = {
+                @XmlNs(prefix = "", namespaceURI = "http://www.sitemaps.org/schemas/sitemap/0.9"),
+                @XmlNs(prefix = "image", namespaceURI = "http://www.google.com/schemas/sitemap-image/1.1")
+        })
 package org.broadleafcommerce.common.sitemap.wrapper;
 
+import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 

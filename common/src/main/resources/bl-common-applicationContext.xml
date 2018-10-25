@@ -315,6 +315,13 @@
         </property>
     </bean>
 
+    <bean id="blLinkedDataGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
     <bean id="blStatisticsServiceLogAdapter" class="org.broadleafcommerce.common.cache.NoOpStatisticsServiceLogAdapter"/>
 
     <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">

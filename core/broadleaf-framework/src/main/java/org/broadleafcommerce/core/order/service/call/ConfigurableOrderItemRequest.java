@@ -20,12 +20,14 @@ package org.broadleafcommerce.core.order.service.call;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.List;
 
 public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     protected Product product;
+    protected Sku sku;
     protected List<ConfigurableOrderItemRequest> productChoices;
 
     protected Boolean isMultiSelect;
@@ -38,6 +40,10 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected Boolean hasConfigurationError;
     protected Boolean discountsAllowed;
 
+    protected boolean expandable;
+    protected boolean firstExpandable;
+    protected boolean lastExpandable;
+
     public Product getProduct() {
         return product;
     }
@@ -45,6 +51,13 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     public void setProduct(Product product) {
         super.setProductId(product.getId());
         this.product = product;
+    }
+
+    public Sku getSku() { return sku; }
+
+    public void setSku(Sku sku) {
+        super.setSkuId(sku.getId());
+        this.sku = sku;
     }
 
     public List<ConfigurableOrderItemRequest> getProductChoices() {
@@ -136,5 +149,29 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public void setDiscountsAllowed(Boolean discountsAllowed) {
         this.discountsAllowed = discountsAllowed;
+    }
+
+    public boolean isExpandable() {
+        return expandable;
+    }
+
+    public void setExpandable(boolean expandable) {
+        this.expandable = expandable;
+    }
+
+    public boolean isFirstExpandable() {
+        return firstExpandable;
+    }
+
+    public void setFirstExpandable(boolean firstExpandable) {
+        this.firstExpandable = firstExpandable;
+    }
+
+    public boolean isLastExpandable() {
+        return lastExpandable;
+    }
+
+    public void setLastExpandable(boolean lastExpandable) {
+        this.lastExpandable = lastExpandable;
     }
 }

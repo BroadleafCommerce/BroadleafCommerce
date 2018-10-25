@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -29,6 +28,8 @@ import java.util.List;
 public interface OrderDao {
 
     Order readOrderById(Long orderId);
+
+    Order readOrderByIdIgnoreCache(Long orderId);
     
     List<Order> readOrdersByIds(List<Long> orderIds);
 
@@ -43,6 +44,8 @@ public interface OrderDao {
     List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> statuses);
 
     Order readOrderById(Long orderId, boolean refresh);
+
+    Order readOrderByExternalId(String orderExternalId);
 
     List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
 
@@ -92,4 +95,7 @@ public interface OrderDao {
      */
     public boolean releaseLock(Order order);
 
+    List<Order> readOrdersByEmail(String email);
+
+    public Long readNumberOfOrders();
 }

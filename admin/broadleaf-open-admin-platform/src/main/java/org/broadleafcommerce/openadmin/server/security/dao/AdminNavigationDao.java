@@ -47,4 +47,6 @@ public interface AdminNavigationDao {
     public AdminModule readAdminModuleByModuleKey(String moduleKey);
 
     String getSectionKey(boolean withTypeKey);
+
+    List<AdminSection> readAdminSectionForClassName(String className);
 }

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.audit.AuditExcludeFieldValue;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -87,7 +88,7 @@ import javax.persistence.Transient;
     }
 )
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
@@ -114,6 +115,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @Column(name = "PASSWORD")
     @AdminPresentation(excluded = true)
+    @AuditExcludeFieldValue
     protected String password;
 
     @Column(name = "EMAIL_ADDRESS")
@@ -147,6 +149,20 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             excluded = true)
     protected String challengeAnswer;
 
+    /**
+     * <p>
+     *     If true, this customer must go through a reset password flow.
+     * </p>
+     * <p>
+     *     During a site conversion or security breach or a matter of routine security policy, 
+     *     it may be necessary to require users to change their password. This property will 
+     *     not allow a user whose credentials are managed within Broadleaf to login until 
+     *     they have reset their password. 
+     * </p>
+     * <p>
+     *     Used by blUserDetailsService.
+     * </p>
+     */
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
     @AdminPresentation(excluded = true)
     protected Boolean passwordChangeRequired = false;
@@ -154,7 +170,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @Column(name = "RECEIVE_EMAIL")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email",
             group = GroupName.QualificationOptions, order = FieldOrder.RECIEVE_EMAIL)
-    protected Boolean receiveEmail = true;
+    protected Boolean receiveEmail = false;
 
     @Column(name = "IS_REGISTERED")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered",

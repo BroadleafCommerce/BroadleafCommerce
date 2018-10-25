@@ -82,6 +82,9 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         if (form.getAddress().isDefault()) {
             customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
         }
+
+        form.setCustomerAddressId(customerAddress.getId());
+
         if (!isAjaxRequest(request)) {
             List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
             model.addAttribute("addresses", addresses);

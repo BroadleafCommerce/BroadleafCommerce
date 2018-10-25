@@ -156,7 +156,7 @@ public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaX
     @Override
     public boolean equals(Object o) {
         if (o != null && getClass().isAssignableFrom(o.getClass())) {
-            OfferTargetCriteriaXrefImpl that = (OfferTargetCriteriaXrefImpl) o;
+            OfferQualifyingCriteriaXrefImpl that = (OfferQualifyingCriteriaXrefImpl) o;
             return new EqualsBuilder()
                     .append(this.id, that.id)
                     .append(this.offer, that.offer)

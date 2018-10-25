@@ -418,8 +418,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Entity entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
 
-        TabMetadata firstTab = cmd.getFirstTab();
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
+        Map<String, DynamicResultSet> subRecordsMap = getViewSubRecords(request, pathVars, cmd, entity, crumbs);
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
@@ -464,6 +463,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
     }
 
+    protected Map<String, DynamicResultSet> getViewSubRecords(HttpServletRequest request, Map<String, String> pathVars,
+                                                              ClassMetadata cmd, Entity entity,
+                                                              List<SectionCrumb> crumbs) throws Exception {
+        String tabName = pathVars.get("tabName");
+        if (StringUtils.isEmpty(tabName)) {
+            tabName = cmd.getFirstTab() == null ? "General" : cmd.getFirstTab().getTabName();
+        }
+        return service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
+    }
+
     private boolean isAddRequest(Entity entity) {
         ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<>();
         ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
@@ -501,7 +510,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, pathVars);
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
+        Map<String, DynamicResultSet> subRecordsMap = getViewSubRecords(request, pathVars, cmd, entity, crumbs);
         entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
         if (isAddRequest(entity)) {
@@ -788,6 +797,22 @@ public class AdminBasicEntityController extends AdminAbstractController {
         varsForField.put("sectionKey", sectionUrlKey);
         return viewEntityForm(request, response, model, varsForField, id);
     }
+
+    @RequestMapping(
+            value = "/{id}/{collectionField:.*}/{collectionItemId}/{tab:[0-9]+}/{tabName}",
+            method = RequestMethod.POST
+    )
+    public String viewCollectionItemTab(HttpServletRequest request, HttpServletResponse response, Model model,
+                                        @PathVariable  Map<String, String> pathVars,
+                                        @PathVariable(value="id") String id,
+                                        @PathVariable(value="collectionField") String collectionField,
+                                        @PathVariable(value="collectionItemId") String collectionItemId,
+                                        @PathVariable(value="tabName") String tabName,
+                                        @ModelAttribute(value = "entityForm") EntityForm entityForm) throws Exception {
+
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, ModalHeaderType.VIEW_COLLECTION_ITEM.getType(), entityForm, null);
+    }
+
 
     /**
      * Returns the records for a given collectionField filtered by a particular criteria
@@ -1443,7 +1468,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
             }
 
-            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
+            String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
+            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
             if (entityForm == null) {
                 entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
             } else {
@@ -1482,6 +1508,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
             adornedTargetAutoPopulateExtensionManager.getProxy().autoSetAdornedTargetManagedFields(md, mainClassName, id,
                     collectionField,
                     collectionItemId, responseMap);
+
+            //For AdornedTargetCollections, we need to be specific on what translation ceilingEntity and Id is used.
+            //It should be the entity and referenced Id of the adorned entity (not the target entity and Id).
+            entityForm.setTranslationCeilingEntity(entityForm.getEntityType());
+            entityForm.setTranslationId(alternateId);
 
             ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             for (String field : fmd.getMaintainedAdornedTargetFields()) {
@@ -1885,6 +1916,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withOrder(auditableField.getOrder())
                 .withOwningEntityClass(auditableField.getOwningEntityClass())
                 .withReadOnly(true);
+    }
+
+    protected String getCurrentTabName(Map<String, String> pathVars, ClassMetadata cmd) {
+        String tabName = pathVars.get("tabName");
+        if (StringUtils.isBlank(tabName)) {
+            TabMetadata firstTab = cmd.getFirstTab();
+            return firstTab != null ? firstTab.getTabName() : "General";
+        }
+        return tabName;
     }
 
     // *****************************************

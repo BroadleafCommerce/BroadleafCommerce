@@ -436,11 +436,10 @@ input[type="radio"].radio {
     top: 0;
     visibility: hidden;
 }
-input[type="radio"].radio+label.radio-label,
-input[type="radio"].radio+label.radio-label.clr, .radio > input[type="radio"]+label {
-    padding-left: 25px;
+input[type="radio"].radio+::before,
+input[type="radio"].radio+label.radio-label.clr::before, .radio > input[type="radio"]+label::before {
+    padding-left: 10px;
     padding-right: 15px;
-    margin-bottom: 8px;
 }
 /****************************************
  ADMIN COMMON FIELD STYLES

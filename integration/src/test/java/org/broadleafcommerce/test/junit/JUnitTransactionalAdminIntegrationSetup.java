@@ -20,6 +20,7 @@
  */
 package org.broadleafcommerce.test.junit;
 
+import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 
@@ -28,6 +29,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
+@BroadleafAdminIntegrationTest
 public class JUnitTransactionalAdminIntegrationSetup extends AbstractTransactionalJUnit4SpringContextTests {
 
 }

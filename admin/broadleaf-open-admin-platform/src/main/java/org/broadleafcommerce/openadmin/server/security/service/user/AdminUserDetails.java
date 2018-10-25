@@ -27,43 +27,64 @@ import java.util.Collection;
 /**
  * Extended DTO class to support salts based on the primary key of the admin user. This allows username changes for
  * admin users.
- * 
+ *
+ * @author Phillip Verheyden (phillipuniverse)
  * @see {@link AdminSecurityService}
  * @see {@link AdminUserDetailsServiceImpl}
- * @author Phillip Verheyden (phillipuniverse)
  */
 public class AdminUserDetails extends User {
-    
     private static final long serialVersionUID = 1L;
-    
+
+    /**
+     * ID of the persistent {@link org.broadleafcommerce.openadmin.server.security.domain.AdminUser}
+     */
     protected Long id;
-    
-    public AdminUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+
+    public AdminUserDetails(final Long id,
+            final String username,
+            final String password,
+            final Collection<? extends GrantedAuthority> authorities) {
         this(id, username, password, true, true, true, true, authorities);
     }
-    
-    public AdminUserDetails(Long id, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-        this.id = id;
+
+    public AdminUserDetails(final Long id,
+            final String username,
+            final String password,
+            final boolean enabled,
+            final boolean accountNonExpired,
+            final boolean credentialsNonExpired,
+            final boolean accountNonLocked,
+            final Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, enabled, accountNonExpired, credentialsNonExpired,
+                accountNonLocked, authorities);
+        setId(id);
     }
-    
-    public AdminUserDetails withId(Long id) {
+
+    public AdminUserDetails withId(final Long id) {
         setId(id);
         return this;
     }
-    
+
     /**
      * @return the primary key of the Admin User
      */
     public Long getId() {
         return id;
     }
-    
+
     /**
      * @param id the primary key of the Admin User
      */
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(super.toString()).append(": ");
+        sb.append("Id: ").append(this.id).append("; ");
+
+        return sb.toString();
+    }
 }

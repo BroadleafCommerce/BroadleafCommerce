@@ -71,6 +71,8 @@ import org.broadleafcommerce.openadmin.server.security.service.ExceptionAwareRow
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
@@ -96,11 +98,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -117,7 +117,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -998,7 +997,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     f.withName(property.getName())
                      .withFieldType(fieldType)
-                     .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
+                     .withFieldComponentRenderer(getFieldComponentRenderer(fmd))
+                     .withGridFieldComponentRenderer(getGridFieldComponentRenderer(fmd))
                      .withOrder(fmd.getOrder())
                      .withFriendlyName(fmd.getFriendlyName())
                      .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
@@ -1032,6 +1032,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         f.setIsVisible(false);
                     }
 
+                    if (VisibilityEnum.VISIBLE_ALL.equals(fmd.getVisibility())) {
+                        f.setIsVisible(true);
+                    }
+
                     // Add the field to the appropriate FieldGroup
                     if (fmd.getGroup() == null) {
                         homelessFields.add(f);
@@ -1059,6 +1063,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 f.setAssociatedFieldName(null);
             }
         }
+    }
+
+    protected String getFieldComponentRenderer(BasicFieldMetadata fmd) {
+        if (StringUtils.isNotBlank(fmd.getFieldComponentRendererTemplate())) {
+            return fmd.getFieldComponentRendererTemplate();
+        }
+        return fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString();
+    }
+
+    protected String getGridFieldComponentRenderer(BasicFieldMetadata fmd) {
+        if (StringUtils.isNotBlank(fmd.getGridFieldComponentRendererTemplate())) {
+            return fmd.getGridFieldComponentRendererTemplate();
+        }
+        return fmd.getGridFieldComponentRenderer()==null?null:fmd.getGridFieldComponentRenderer().toString();
     }
 
     private Field findAssociatedField(EntityForm ef, Field f) {
@@ -1514,7 +1532,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 continue;
             }
 
-            if (collectionRecords != null) {
+            if (collectionRecords != null && !collectionRecords.isEmpty()) {
                 DynamicResultSet subCollectionEntities = collectionRecords.get(p.getName());
                 String containingEntityId = entity.getPMap().get(ef.getIdProperty()).getValue();
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
@@ -1876,14 +1894,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Property valueProp = cmd.getPMap().get("value");
             mapFormProperties.add(valueProp);
         } else {
+            String valueClassName = mapStructure.getValueClassName();
+            List<String> classNames = getValueClassNames(valueClassName);
+
             mapFormProperties = new ArrayList<>(Arrays.asList(cmd.getProperties()));
-            CollectionUtils.filter(mapFormProperties, new Predicate() {
-                @Override
-                public boolean evaluate(Object object) {
-                    Property p = (Property) object;
-                    return ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), mapStructure.getValueClassName());
-                }
-            });
+            filterMapFormProperties(mapFormProperties, classNames);
         }
 
         setEntityFormFields(cmd, ef, mapFormProperties);
@@ -1897,7 +1912,36 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         return ef;
     }
-    
+
+    protected List<String> getValueClassNames(String valueClassName) {
+        PersistenceManager pm = PersistenceManagerFactory.getPersistenceManager(valueClassName);
+        List<String> classNames = new ArrayList<>();
+        try {
+            Class<?>[] mapEntities = pm.getPolymorphicEntities(valueClassName);
+            for (Class clazz : mapEntities) {
+                classNames.add(clazz.getName());
+            }
+        } catch (ClassNotFoundException e) {
+            classNames.add(valueClassName);
+        }
+        return classNames;
+    }
+
+    protected void filterMapFormProperties(List<Property> mapFormProperties, final List<String> classNames) {
+        CollectionUtils.filter(mapFormProperties, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                Property p = (Property) object;
+                for (String availType : p.getMetadata().getAvailableToTypes()) {
+                    if (classNames.contains(availType)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
     protected EntityForm createStandardEntityForm() {
         EntityForm ef = new EntityForm();
         ef.addAction(DefaultEntityFormActions.SAVE);

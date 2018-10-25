@@ -38,6 +38,8 @@ public interface StaticAssetService {
 
     public StaticAsset findStaticAssetByFullUrl(String fullUrl);
 
+    Long findTotalStaticAssetCount();
+
     /**
      * <p>
      * Used when uploading a file to Broadleaf.    This method will create the corresponding 

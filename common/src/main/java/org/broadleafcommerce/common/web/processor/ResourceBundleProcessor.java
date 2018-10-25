@@ -19,20 +19,20 @@ package org.broadleafcommerce.common.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
+import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
 import org.springframework.stereotype.Component;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -109,27 +109,79 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * <p>
  * This processor only supports files that end in <b>.js</b> and <b>.css</b>
- * 
- * @param <b>name</b>           (required) the final name prefix of the bundle
- * @param <b>mapping-prefix</b> (required) the prefix appended to the final tag output whether that be 
- *                              the list of files or the single minified file
- * @param <b>files</b>          (required) a comma-separated list of files that should be bundled together
- * 
+ *
+ * <p>
+ * <b>Tag attributes:</b>
+ * <ul>
+ *     <li>name - (required) the final name prefix of the bundle</li>
+ *     <li>mapping-prefix - (required) the prefix appended to the final tag output whether that be</li>
+ *     <li>
+ *         files - (required) a comma-separated list of files that should be bundled together. May be excluded
+ *         in some cases. See note at bottom.
+ *     </li>
+ *     <li>
+ *         async - (optional) true to set <code>async="true"</code> on the resulting tags. Note, this will be ignored
+ *         when unbundled for JavaScript unless <code>includeAsyncDeferUnbundled</code> is specified.
+ *     </li>
+ *     <li>
+ *         defer - (optional) true to set <code>defer="true"</code> on JS or to add non-render-blocking CSS. Note,
+ *         this will be ignored when unbundled for JavaScript unless <code>includeAsyncDeferUnbundled</code> is
+ *         specified.
+ *     </li>
+ *     <li>
+ *         includeAsyncDeferUnbundled - (optional) true to include async and defer (if enabled) on the unbundled
+ *         replacement tags. They are not included by default when unbundled due to race conditions between
+ *         JavaScript dependencies.
+ *     </li>
+ *     <li>
+ *         bundle-dependency-event - (optional) name of a JavaScript event to wait for before adding this bundle to the
+ *         DOM. The JavaScript event must be named the value of this attribute. The event must also be added as a global
+ *         variable of the value of this attribute with "Event" on the end
+ *         (<code>bundleDependencyEventValue</code>Event). Lastly, the event must be dispatched to the body.
+ *         <br/>
+ *         For example, if the value of this attribute was "test",
+ *         <br/>
+ *         <code>var testEvent = new CustomEvent("test"); document.body.dispatchEvent(testEvent);</code>
+ *     </li>
+ *     <li>
+ *         bundle-completed-event - (optional) name of JS event to fire when this bundle has completed. See
+ *         bundle-dependency-event for specifics. Use this together with bundle-dependency-event to chain load
+ *         dependencies. Note that if using this along with a &lt;blc:bundlepreload&gt;, both the &lt;blc:bundle&gt; and
+ *         &lt;blc:bundlepreload&gt; tags need to have this event, otherwise the <code>bundlepreload</code> may generate
+ *         the bundle without the JS that fires the event.
+ *     </li>
+ * </ul>
+ * <p>
+ *
+ * This processor has the ability to retrieve a bundle that has already been requested earlier in the template
+ * looking it up with the bundle name. See {@link org.broadleafcommerce.common.web.request.ResourcesRequest} for
+ * more information. This helps with not having to duplicate the bundle information across the &lt;blc:bundlepreload&gt;
+ * and &lt;blc:bundle&gt; tags.
+ *
  * @author apazzolini
  * @author bpolster
- * @see {@link ResourceBundlingService}
+ * @author Jacob Mitash (jmitash)
+ * @see ResourceBundlingService
  */
 @Component("blResourceBundleProcessor")
 @ConditionalOnTemplating
-public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProcessor {
-    
-    @Resource(name = "blResourceBundlingService")
-    protected ResourceBundlingService bundlingService;
-    
-    protected boolean getBundleEnabled() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled");
+public class ResourceBundleProcessor extends AbstractResourceProcessor {
+
+    protected final Map<String, String> deferredCssAttributes;
+    protected final Map<String, String> normalCssAttributes;
+
+    public ResourceBundleProcessor() {
+        Map<String, String> deferredCssAttributes = new HashMap<>();
+        deferredCssAttributes.put("rel", "preload");
+        deferredCssAttributes.put("as", "style");
+        deferredCssAttributes.put("onload", "this.onload=null;this.rel='stylesheet';");
+        this.deferredCssAttributes = Collections.unmodifiableMap(deferredCssAttributes);
+
+        Map<String, String> normalCssAttributes = new HashMap<>();
+        normalCssAttributes.put("rel", "stylesheet");
+        this.normalCssAttributes = Collections.unmodifiableMap(normalCssAttributes);
     }
-    
+
     @Override
     public String getName() {
         return "bundle";
@@ -139,100 +191,335 @@ public class ResourceBundleProcessor extends AbstractBroadleafTagReplacementProc
     public int getPrecedence() {
         return 10000;
     }
-    
+
     @Override
-    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        String name = tagAttributes.get("name");
-        String mappingPrefix = tagAttributes.get("mapping-prefix");
-        boolean async = tagAttributes.containsKey("async");
-        boolean defer = tagAttributes.containsKey("defer");
-        
-        List<String> files = new ArrayList<>();
-        for (String file : tagAttributes.get("files").split(",")) {
-            files.add(file.trim());
-        }
-        List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
-        if (additionalBundleFiles != null) {
-            files.addAll(additionalBundleFiles);
-        }
-        BroadleafTemplateModel model = context.createModel();
-        if (getBundleEnabled()) {
-            String bundleResourceName = bundlingService.resolveBundleResourceName(name, mappingPrefix, files);
-            String bundleUrl = getBundleUrl(bundleResourceName, context);
-            
-            addElementToModel(bundleUrl, async, defer, context, model);
-        } else {
-            for (String fileName : files) {
-                fileName = fileName.trim();
-                String fullFileName = (String) context.parseExpression("@{'" + mappingPrefix + fileName + "'}");
-                addElementToModel(fullFileName, async, defer, context, model);
+    protected BroadleafTemplateModel buildModelUnbundled(List<String> attributeFiles, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        final BroadleafTemplateModel model = context.createModel();
+
+        final List<String> files = postProcessUnbundledFileList(attributeFiles, attributes, context);
+
+        if (StringUtils.isEmpty(attributes.bundleDependencyEvent())) {
+            // add files one by one
+            for (String file : files) {
+                ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
+                        .src(file);
+                addElementToModel(unbundledAttributes, context, model);
             }
+
+            // add bundle complete script if needed/supported
+            final BroadleafTemplateElement bundleCompleteElement = buildUnbundledSyncCompletedEventElement(attributes, context);
+            if (bundleCompleteElement != null) {
+                model.addElement(bundleCompleteElement);
+            }
+        } else {
+            // Since everything here needs to be added to the DOM after the dependency event, the only thing we add
+            // is the JS that handles the dependency event itself
+            addDependencyRestrictionToModel(files, attributes, context, model);
         }
+
         return model;
     }
-    
-    /**
-     * Adds the context path to the bundleUrl.    We don't use the Thymeleaf "@" syntax or any other mechanism to 
-     * encode this URL as the resolvers could have a conflict.   
-     * 
-     * For example, resolving a bundle named "style.css" that has a file also named "style.css" creates problems as
-     * the TF or version resolvers both want to version this file.
-     *  
-     * @param arguments
-     * @param bundleName
-     * @return
-     */
-    protected String getBundleUrl(String bundleName, BroadleafTemplateContext context) {
-        String bundleUrl = bundleName;
 
-        if (!StringUtils.startsWith(bundleUrl, "/")) {
-            bundleUrl = "/" + bundleUrl;
-        }
-        
-        HttpServletRequest request = context.getRequest();
-        String contextPath = "";
-        if (request != null) {
-            contextPath = request.getContextPath();
-        }
-        if (StringUtils.isNotEmpty(contextPath)) {
-            bundleUrl = contextPath + bundleUrl;
-        }
+    @Override
+    protected BroadleafTemplateModel buildModelBundled(List<String> attributeFiles, ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        final BroadleafTemplateModel model = context.createModel();
 
-        return bundleUrl;
-    }
-    
-    protected void addElementToModel(String src, boolean async, boolean defer, BroadleafTemplateContext context, BroadleafTemplateModel model) {
-        if (src.contains(";")) {
-            src = src.substring(0, src.indexOf(';'));
-        }
-        
-        if (src.endsWith(".js")) {
-            model.addElement(context.createNonVoidElement("script", getScriptAttributes(src, async, defer), true));
-        } else if (src.endsWith(".css")) {
-            model.addElement(context.createNonVoidElement("link", getLinkAttributes(src), true));
+        final String bundleResourcePath = getBundlePath(attributes, attributeFiles);
+        final String bundleUrl = getBundleUrl(bundleResourcePath, context);
+        attributes.src(bundleUrl);
+
+        if (StringUtils.isEmpty(attributes.bundleDependencyEvent())) {
+            addElementToModel(attributes, context, model);
         } else {
-            throw new IllegalArgumentException("Unknown extension for: " + src + " - only .js and .css are supported");
+            // Since the bundle needs to be added to the DOM after the dependency event, the only thing we add
+            // is the JS that handles the dependency event itself
+            addDependencyRestrictionToModel(Collections.singletonList(bundleUrl), attributes, context, model);
+        }
+
+        return model;
+    }
+
+    /**
+     * @deprecated Use {@link #addElementToModel(ResourceTagAttributes, BroadleafTemplateContext, BroadleafTemplateModel)} instead
+     */
+    @Deprecated
+    protected void addElementToModel(String src, boolean async, boolean defer, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        addElementToModel(src, async, defer, null, context, model);
+    }
+
+    /**
+     * @deprecated Use {@link #addElementToModel(ResourceTagAttributes, BroadleafTemplateContext, BroadleafTemplateModel)} instead
+     */
+    @Deprecated
+    protected void addElementToModel(String src, boolean async, boolean defer, String dependencyEvent, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        ResourceTagAttributes tagAttributes = new ResourceTagAttributes()
+                .src(src)
+                .async(async)
+                .defer(defer)
+                .bundleDependencyEvent(dependencyEvent);
+        addElementToModel(tagAttributes, context, model);
+    }
+
+    /**
+     * Adds the bundle to the model.
+     * @param attributes the original bundle tag attributes and the src of the bundle to add
+     * @param context the context of the original bundle tag
+     * @param model the model to add the script to
+     */
+    protected void addElementToModel(ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        String src = attributes.src();
+        src = attributes.src().contains(";") ? src.substring(0, src.indexOf(';')) : src;
+
+        if (src.endsWith(".js")) {
+            addJavaScriptToModel(attributes, context, model);
+        } else if (src.endsWith(".css")) {
+            addCssToModel(attributes, context, model);
+        } else {
+            throw new IllegalArgumentException("Unknown extension for: " + src + " - only .js and .css are supported by default.");
         }
     }
 
+    /**
+     * Adds JavaScript to the model in a &lt;script&gt; tag
+     * @param attributes the original bundle tag attributes and the src of the JavaScript to add
+     * @param context the context of the original bundle tag
+     * @param model the model to add the script to
+     */
+    protected void addJavaScriptToModel(ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        model.addElement(context.createNonVoidElement("script", getScriptAttributes(attributes), true));
+    }
+
+    /**
+     * Adds the CSS to the model in a &lt;link&gt; tag
+     * @param attributes the original bundle tag attributes and the src of the CSS to add
+     * @param context the context of the original bundle tag
+     * @param model the model to add the link to
+     */
+    protected void addCssToModel(ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        if (attributes.defer()) {
+            List<BroadleafTemplateElement> deferredCssElements = getDeferredCssElements(attributes, context);
+            for (BroadleafTemplateElement element : deferredCssElements) {
+                model.addElement(element);
+            }
+        } else {
+            model.addElement(context.createNonVoidElement("link", getNormalCssAttributes(attributes), true));
+        }
+    }
+
+    /**
+     * Gets a list of elements to add to the model for deferred CSS
+     * @param attributes the attributes of the original resource tag and the src of the CSS to include
+     * @param context the context of the original resource tag
+     * @return list of elements needed for deferred CSS
+     */
+    protected List<BroadleafTemplateElement> getDeferredCssElements(ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        List<BroadleafTemplateElement> elements = new ArrayList<>();
+
+        Map<String, String> deferredCssAttributes = new HashMap<>(this.deferredCssAttributes);
+        deferredCssAttributes.put("href", attributes.src());
+        elements.add(context.createStandaloneElement("link", deferredCssAttributes, true));
+
+        BroadleafTemplateNonVoidElement noScriptElement = context.createNonVoidElement("noscript");
+        noScriptElement.addChild(context.createStandaloneElement("link", getNormalCssAttributes(attributes), true));
+        elements.add(noScriptElement);
+
+        return elements;
+    }
+
+    /**
+     * @deprecated Use {@link #addDependencyRestrictionToModel(List, ResourceTagAttributes, BroadleafTemplateContext, BroadleafTemplateModel)} instead
+     */
+    @Deprecated
+    protected void addDependentBundleRestrictionToModel(String src, boolean async, boolean defer, String dependencyEvent, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        ResourceTagAttributes attributes = new ResourceTagAttributes()
+                .src(src)
+                .async(async)
+                .defer(defer)
+                .bundleDependencyEvent(dependencyEvent);
+        addDependencyRestrictionToModel(Collections.singletonList(src), attributes, context, model);
+    }
+
+    /**
+     * Adds JavaScript to the model that will insert a given script tag when the dependency event is fired
+     * @param attributes the original bundle tag attributes and src of the script to add
+     * @param context the context of the original bundle tag
+     * @param model the model to add the script to
+     */
+    protected void addDependencyRestrictionToModel(List<String> files, ResourceTagAttributes attributes, BroadleafTemplateContext context, BroadleafTemplateModel model) {
+        final String functionName = cleanUpJavaScriptName(attributes.name());
+        final String dependencyEvent = attributes.bundleDependencyEvent();
+
+        List<String> formattedFiles = new ArrayList<>(files.size());
+        for (String file : files) {
+            formattedFiles.add("'" + file + "'");
+        }
+
+        String completedJavaScript = "";
+
+        // Unbundled, async bundle complete events not supported, only add when unbundled and sync. Bundled JS has
+        // the event baked in, so we don't need to add it here
+        if (!getBundleEnabled() && !useAsyncJavaScript(attributes)) {
+            completedJavaScript =
+                    "" +
+                            "if (idx === arr.length - 1) {" + //last script
+                            "    script.addEventListener('load', function () {" +
+                            "        " + getBundleAppendText(attributes) + ";" +
+                            "    });" +
+                            "}";
+        }
+
+        final String script =
+                "<script>" +
+                        "function runOnReady(callback, event) {" +
+                        "    var watchEvent = typeof(event) == 'undefined' ? 'DOMContentLoaded' : event;" +
+                        "    if (document.readyState != 'loading' && !event) {" +
+                        "        callback();" +
+                        "    } else {" +
+                        "        document.addEventListener(watchEvent, callback);" +
+                        "    }" +
+                        "}; " +
+                        "" +
+                        "if (typeof(" + dependencyEvent + "Event) !== 'undefined') {" +
+                        "    runOnReady(handle" + functionName + ");" +
+                        "} else {" +
+                        "    runOnReady(function() {" +
+                        "            runOnReady(handle" + functionName + ");" +
+                        "        }," +
+                        "        '" + dependencyEvent + "');" +
+                        "} " +
+                        "function handle" + functionName + "() {" +
+                        "    var lastScript = null;" +
+                        "    [" + StringUtils.join(formattedFiles, ",") + "].forEach(function (elem, idx, arr) {" +
+                        "        var script = document.createElement('script');" +
+                        "        script.type = 'text/javascript';" +
+                        "        script.src = elem;" +
+                        "        script.async = " + useAsyncJavaScript(attributes) + ";" +
+                        "        document.body.appendChild(script);" +
+                        completedJavaScript +
+                        "    });" +
+                        "};" +
+                        "</script>";
+
+        BroadleafTemplateElement element = context.createTextElement(script);
+        model.addElement(element);
+    }
+
+    /**
+     * Cleans up the name that will be used in the dependency handling JavaScript
+     * @param original the original name
+     * @return clean name
+     */
+    protected String cleanUpJavaScriptName(final String original) {
+        String cleanName = original;
+        if (cleanName.contains("/")) {
+            cleanName = cleanName.substring(cleanName.lastIndexOf("/") + 1, cleanName.length());
+        }
+        cleanName = cleanName.replaceAll("-", "_");
+        cleanName = cleanName.replaceAll("\\.", "_");
+
+        return cleanName;
+    }
+
+    /**
+     * @deprecated Use {@link #getScriptAttributes(ResourceTagAttributes)} instead
+     */
+    @Deprecated
     protected Map<String, String> getScriptAttributes(String src, boolean async, boolean defer) {
+        ResourceTagAttributes resourceTagAttributes = new ResourceTagAttributes()
+                .src(src)
+                .async(async)
+                .defer(defer);
+        return getScriptAttributes(resourceTagAttributes);
+    }
+
+    /**
+     * Gets the attributes to put on the &lt;script&gt; tag
+     * @param tagAttributes the attributes of the original bundle tag and src of this script
+     * @return attributes to put on the replacement script tag
+     */
+    protected Map<String, String> getScriptAttributes(ResourceTagAttributes tagAttributes) {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("type", "text/javascript");
-        attributes.put("src", src);
-        if (async) {
-            attributes.put("async", null);
+        attributes.put("src", tagAttributes.src());
+        if (getBundleEnabled() || tagAttributes.includeAsyncDeferUnbundled()) {
+            if (tagAttributes.async()) {
+                attributes.put("async", null);
+            }
+            if (tagAttributes.defer()) {
+                attributes.put("defer", null);
+            }
         }
-        if (defer) {
-            attributes.put("defer", null);
-        }
-        return attributes;
-    }
-    
-    protected Map<String, String> getLinkAttributes(String src) {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("rel", "stylesheet");
-        attributes.put("href", src);
         return attributes;
     }
 
+    /**
+     * @deprecated Use {@link #getNormalCssAttributes(ResourceTagAttributes)} instead
+     */
+    @Deprecated
+    protected Map<String, String> getLinkAttributes(String src) {
+        return getNormalCssAttributes(new ResourceTagAttributes().src(src));
+    }
+
+    /**
+     * Builds a map of normal (non-deferred) attributes to put on a CSS &lt;link&gt; tag
+     * @param tagAttributes the attributes on the original bundle tag
+     * @return map of attributes to put on the link tag
+     */
+    protected Map<String, String> getNormalCssAttributes(ResourceTagAttributes tagAttributes) {
+        Map<String, String> attributes = new HashMap<>(normalCssAttributes);
+        attributes.put("href", tagAttributes.src());
+        return attributes;
+    }
+
+    /**
+     * Tells if the JavaScript added to the page should be asynchronous
+     * @param attributes the attributes on the original bundle tag
+     * @return true if the JavaScript should be async and false otherwise
+     */
+    protected boolean useAsyncJavaScript(ResourceTagAttributes attributes) {
+        return attributes.async() && (getBundleEnabled() || attributes.includeAsyncDeferUnbundled());
+    }
+
+    @Override
+    protected void validateTagAttributes(ResourceTagAttributes attributes) {
+        super.validateTagAttributes(attributes);
+
+        if (!attributes.name().endsWith(".js")) {
+            if (attributes.bundleDependencyEvent() != null) {
+                throw new InvalidParameterException("A 'bundle-dependency-event' attribute was specified but is only " +
+                        "supported for JavaScript bundles.");
+            }
+            if (attributes.bundleCompletedEvent() != null) {
+                throw new InvalidParameterException("A 'bundle-completed-event' attribute was specified but is only " +
+                        "supported for JavaScript bundles.");
+            }
+        }
+
+        if (attributes.bundleCompletedEvent() != null && !getBundleEnabled() && useAsyncJavaScript(attributes)) {
+            throw new InvalidParameterException("A 'bundle-completed-event' attribute was specified, but is not " +
+                    "supported when using asynchronous, unbundled JavaScript");
+        }
+    }
+
+    /**
+     * Builds a script element that fires the bundle complete event only when supported
+     * @param attributes the attributes of the bundle tag
+     * @param context the context of the bundle tag
+     * @return the script element or null if not supported
+     */
+    protected BroadleafTemplateElement buildUnbundledSyncCompletedEventElement(ResourceTagAttributes attributes, BroadleafTemplateContext context) {
+        if (getBundleEnabled() || useAsyncJavaScript(attributes) || attributes.bundleCompletedEvent() == null) {
+            return null;
+        }
+
+        final String bundleCompleteEventJavaScript = getBundleCompleteEventJavaScript(attributes);
+        if (bundleCompleteEventJavaScript == null) {
+            return null;
+        }
+
+        final BroadleafTemplateNonVoidElement script = context.createNonVoidElement("script");
+        script.addChild(context.createTextElement(bundleCompleteEventJavaScript));
+
+        return script;
+    }
 }

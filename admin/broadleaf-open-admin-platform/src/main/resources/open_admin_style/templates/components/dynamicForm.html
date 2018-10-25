@@ -17,8 +17,8 @@
                 </div>
 
                 <div class="collapser">
-                    <span class="collapsed" href="#" th:if="${group.collapsed}">(show)</span>
-                    <span class="expanded" href="#" th:unless="${group.collapsed}">(hide)</span>
+                    <span class="collapsed" href="#" th:if="${group.collapsed}" th:inline="text">([[#{form.show}]])</span>
+                    <span class="expanded" href="#" th:unless="${group.collapsed}" th:inline="text">([[#{form.hide}]])</span>
                 </div>
             </a>
             <div class="fieldset-card-content" th:classappend="${(group.collapsed ? 'content-collapsed' : '')}">

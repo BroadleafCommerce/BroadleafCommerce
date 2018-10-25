@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.2.1-SNAPSHOT</version>
+        <version>5.2.7-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>integration</artifactId>
@@ -70,7 +70,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Only delete the contents of the target folder so that 
+                <!-- Only delete the contents of the target folder so that
                     it doesn't lose its "derived" status in Eclipse -->
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
@@ -270,7 +270,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring.boot.test.version}</version>
+            <version>${spring.boot.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

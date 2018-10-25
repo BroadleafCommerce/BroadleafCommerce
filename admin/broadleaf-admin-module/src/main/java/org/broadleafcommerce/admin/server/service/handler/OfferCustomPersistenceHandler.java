@@ -17,15 +17,34 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
@@ -36,21 +55,23 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by Jon on 11/23/15.
@@ -66,6 +87,12 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     protected static final String OFFER_ITEM_QUALIFIER_RULE_TYPE = "offerItemQualifierRuleType";
     protected static final String STACKABLE = "stackableWithOtherOffers";
     protected static final String OFFER_ITEM_TARGET_RULE_TYPE = "offerItemTargetRuleType";
+    protected static final String IS_ACTIVE = "isActive";
+    protected static final String IS_TIERED_OFFER = "embeddableAdvancedOffer.isTieredOffer";
+    protected static final String OFFER_VALUE = "value";
+
+    @Value("${admin.offer.isactive.filter:false}")
+    protected boolean isActiveFilter = false;
 
     public OfferCustomPersistenceHandler() {
         super(Offer.class);
@@ -100,6 +127,9 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
         properties.put(QUALIFIERS_CAN_BE_QUALIFIERS, buildQualifiersCanBeQualifiersFieldMetaData());
         properties.put(QUALIFIERS_CAN_BE_TARGETS, buildQualifiersCanBeTargetsFieldMetaData());
         properties.put(STACKABLE, buildStackableFieldMetaData());
+        if (isActiveFilter) {
+            properties.put(IS_ACTIVE, buildIsActiveFieldMetaData());
+        }
 
         allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
         Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
@@ -119,6 +149,17 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
         advancedLabelMetadata.setOrder(5000);
         advancedLabelMetadata.setDefaultValue("true");
         return advancedLabelMetadata;
+    }
+
+    protected FieldMetadata buildIsActiveFieldMetaData() {
+        BasicFieldMetadata isActive = new BasicFieldMetadata();
+        isActive.setFieldType(SupportedFieldType.BOOLEAN);
+        isActive.setName(IS_ACTIVE);
+        isActive.setFriendlyName("OfferImpl_Is_Active");
+        isActive.setProminent(true);
+        isActive.setGridOrder(999999);
+        isActive.setVisibility(VisibilityEnum.FORM_HIDDEN);
+        return isActive;
     }
 
     protected FieldMetadata buildQualifiersCanBeQualifiersFieldMetaData() {
@@ -157,6 +198,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
 
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        addIsActiveFiltering(cto);
         DynamicResultSet resultSet = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
         String customCriteria = "";
         if (persistencePackage.getCustomCriteria().length > 0) {
@@ -195,8 +237,79 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 setValue = setValue.replaceAll("\\%", "").replaceAll("\\$", "");
                 discountValue.setValue(setValue);
             }
+
+            addIsActiveStatus(helper, entity);
         }
         return resultSet;
+    }
+
+    protected void addIsActiveFiltering(CriteriaTransferObject cto) {
+        if (isActiveFilter && cto.getCriteriaMap().containsKey(IS_ACTIVE)) {
+            FilterAndSortCriteria filter = cto.get(IS_ACTIVE);
+            final Boolean isActive = Boolean.parseBoolean(filter.getFilterValues().get(0));
+            FilterMapping filterMapping = new FilterMapping()
+                .withFieldPath(new FieldPath().withTargetProperty("id"))
+                .withDirectFilterValues(new EmptyFilterValues())
+                .withRestriction(new Restriction()
+                     .withPredicateProvider(new PredicateProvider() {
+                        @Override
+                        public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                        From root, String ceilingEntity, String fullPropertyName,
+                                                        Path explicitPath, List directValues) {
+                            Date currentTime = SystemTime.asDate(true);
+                            if (isActive) {
+                                return builder.and(
+                                        builder.isNotNull(root.get("startDate")),
+                                        builder.lessThan(root.get("startDate"), currentTime),
+                                        builder.or(
+                                            builder.isNull(root.get("endDate")),
+                                            builder.greaterThan(root.get("endDate"), currentTime)
+                                        )
+                                );
+                            } else {
+                                return builder.or(
+                                        builder.isNull(root.get("startDate")),
+                                        builder.greaterThan(root.get("startDate"), currentTime),
+                                        builder.and(
+                                            builder.isNotNull(root.get("endDate")),
+                                            builder.lessThan(root.get("endDate"), currentTime)
+                                        )
+                                );
+                            }
+                        }
+                    }
+                 )
+            );
+            cto.getAdditionalFilterMappings().add(filterMapping);
+        }
+    }
+
+    protected void addIsActiveStatus(RecordHelper helper, Entity entity) {
+        if (isActiveFilter) {
+            try {
+                boolean isActive = false;
+                Property startDate = entity.findProperty("startDate");
+                if (startDate != null && StringUtils.isNotBlank(startDate.getValue())) {
+                    Property endDate = entity.findProperty("endDate");
+                    Date end = null;
+                    if (endDate != null && StringUtils.isNotBlank(endDate.getValue())) {
+                        end = helper.getSimpleDateFormatter().parse(endDate.getValue());
+                    }
+                    Date date = helper.getSimpleDateFormatter().parse(startDate.getValue());
+                    isActive = DateUtil.isActive(date, end, true);
+                }
+                entity.addProperty(buildIsActiveProperty(isActive));
+            } catch (ParseException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+    }
+
+    protected Property buildIsActiveProperty(boolean isActive) {
+        Property property = new Property();
+        property.setName(IS_ACTIVE);
+        property.setValue(String.valueOf(isActive));
+        return property;
     }
 
     protected Property buildAdvancedVisibilityOptionsProperty(Property timeRule) {
@@ -248,6 +361,21 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
+
+        //This can't be on a validator since the field is dynamically added with JavaScript
+        Property isMultiTierOffer = entity.findProperty(IS_TIERED_OFFER);
+        if(isMultiTierOffer != null) {
+            String multiTierValue = isMultiTierOffer.getValue();
+            if("false".equalsIgnoreCase(multiTierValue)) {
+               Property offerValue = entity.findProperty(OFFER_VALUE);
+               if(offerValue != null) {
+                   String value = offerValue.getValue();
+                   if(value == null || "null".equalsIgnoreCase(value)) {
+                       entity.addValidationError(OFFER_VALUE, "requiredFieldMessage");
+                   }
+               }
+            }
+        }
 
         Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
         if (qualifiersCanBeQualifiers != null) {

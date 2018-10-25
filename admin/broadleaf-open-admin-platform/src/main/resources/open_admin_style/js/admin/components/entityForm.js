@@ -18,7 +18,7 @@
 
 (function($, BLCAdmin) {
 
-    var excludedEFSectionTabSelectors = [];
+    var excludedEFSectionTabSelectors = ['.workflow-tab', '.system-property-tab', '.upload-tab'];
 
     var originalStickyBarOffset;
     var originalStickyBarHeight;
@@ -59,11 +59,7 @@
         },
 
         getExcludedEFSectionTabSelectorString : function() {
-            var excludedSelectors = '';
-            for (var i=0;i<excludedEFSectionTabSelectors.length;i++){
-                excludedSelectors += ', ' + excludedEFSectionTabSelectors[i];
-            }
-            return excludedSelectors;
+            return excludedEFSectionTabSelectors.join(", ");
         },
 
         /**
@@ -80,7 +76,9 @@
         showErrors : function (data, alertMessage) {
             $.each( data.errors , function( idx, error ){
                 if (error.errorType == "field") {
-                    var fieldGroup = $("#field-" + error.field);
+                    // escape the | character from dynamic form fields for jquery to be able to process
+                    // replace all '|' and ' ' characters with '-'
+                    var fieldGroup = $("#field-" + (error.field).replace(/\|/g, "-").replace(/ /g, "-"));
                     if (BLCAdmin.currentModal() !== undefined) {
                         fieldGroup = BLCAdmin.currentModal().find("#field-" + error.field);
                     }
@@ -158,12 +156,46 @@
             var submit = BLCAdmin.runSubmitHandlers($form);
 
             if (submit) {
-                BLC.ajax({
-                    url: $form.attr('action'),
-                    dataType: "json",
-                    type: "POST",
-                    data: BLCAdmin.serializeArray($form)
-                }, function (data) {
+                var options = {};
+                if ($form.attr('enctype') == 'multipart/form-data') {
+                    // Got some files I need to upload, use FormData
+                    // so that they are POSTed correctly
+                    // Un-disabling these fields allows us to replicate the same
+                    // functionality as BLC.serializeArray()
+                    var $disabledFields = $form.find(':disabled').attr('disabled', false);
+                    var formData = new FormData();
+                    // First append all the files (works even if there are multiple
+                    // in the same file input)
+                    $.each($form.find("input[type='file']"), function(i, tag) {
+                        $.each($(tag)[0].files, function(i, file) {
+                            formData.append(tag.name, file);
+                        });
+                    });
+                    // Then get the other normal properties
+                    var params = $form.serializeArray();
+                    $.each(params, function (i, val) {
+                        formData.append(val.name, val.value);
+                    });
+                    // clean up after ourselves and put disabled back
+                    $disabledFields.attr('disabled', true);
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        data: formData
+                    };
+                } else {
+                    // normal case, no multipart
+                    options = {
+                        url: $form.attr('action'),
+                        dataType: "json",
+                        type: "POST",
+                        data: BLCAdmin.serializeArray($form)
+                    };
+                }
+                BLC.ajax(options, function (data) {
                     BLCAdmin.entityForm.hideActionSpinner();
 
                     $(".errors, .error, .tab-error-indicator, .tabError").remove();
@@ -178,7 +210,7 @@
                             clearOtherAlerts: true
                         });
 
-                        if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
+                        if (!$form.closest('.modal').length) {
                             if (BLCAdmin.entityForm.status) {
                                 BLCAdmin.entityForm.status.clearEntityFormChanges();
                             }
@@ -204,11 +236,10 @@
             $tabsContent.find('input').prop('disabled', true).addClass('disabled');
 
             // Redactor fields
-            $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled').show();
+
+            $tabsContent.find('.redactor-field').addClass("disabled");
+            $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled');
             $tabsContent.find('textarea').css({color: 'rgb(84, 84, 84)', padding: 'padding: 12px', border: 'none'});
-            $tabsContent.find('.redactor-box').css('border', 'none');
-            $tabsContent.find('.redactor-toolbar').hide();
-            $tabsContent.find('.redactor-editor').hide();
 
             // Radio buttons
             $tabsContent.find('label.radio-label').prop('disabled', true).addClass('disabled');
@@ -267,6 +298,40 @@
             }
 
             hideGroupIfFieldsAreHidden($field);
+        },
+
+
+        visitedTabs: {
+            _tabs: [],
+
+            contains: function ($tab) {
+                var tabKey = this._getTabKey($tab);
+                return this._tabs.indexOf(tabKey) !== -1;
+            },
+
+            add: function ($tab) {
+                var tabKey = this._getTabKey($tab);
+                this._tabs.push(tabKey);
+            },
+
+            removeModalTabs: function () {
+                var tmp = [];
+                for (var i = 0; i < this._tabs.length; i++) {
+                    var tabName = this._tabs[i];
+                    if (tabName.indexOf('modal|') === -1) {
+                        tmp.push(tabName);
+                    }
+                }
+                this._tabs = tmp;
+            },
+
+            _getTabKey: function ($tab) {
+                var tabKey = $tab.find('span[data-tabkey]').data('tabkey');
+                if ($tab.parents(".modal").length) {
+                    tabKey = 'modal|' + tabKey;
+                }
+                return tabKey;
+            },
         }
     };
 })(jQuery, BLCAdmin);
@@ -307,27 +372,29 @@ $(document).ready(function() {
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
     });
-    
-    var tabs_action=null;
-    $('body div.section-tabs li').find('a:not(".workflow-tab, .system-property-tab' +
-            BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + '")').click(function(event) {
+
+    var sectionTabsSelector = 'div.section-tabs li a:not(' + BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + ')';
+
+    $(document).on('click', sectionTabsSelector, function (event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
-        var tabKey = $tab.find('span').data('tabkey');
+        var tabKey = $tab.find('span[data-tabkey]').data('tabkey');
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');
-        var tabUrl = encodeURI(currentAction + '/1/' + tabKey);
+        var tabUrlSlug = '/1/' + tabKey;
+        if (currentAction.indexOf('?') >= 0) {
+            var questionIdx = currentAction.indexOf('?');
+            currentAction = currentAction.substring(0, questionIdx) + tabUrlSlug + currentAction.substring(questionIdx, currentAction.length);
+        } else {
+            currentAction += tabUrlSlug;
+        }
+        var tabUrl = encodeURI(currentAction);
 
-     	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
-     		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
-     	} else if (tabs_action && tabs_action.indexOf(tabUrl) == -1) {
-     		tabs_action += ' / ' + tabUrl;
-     	} else if (tabs_action == null) {
-     		tabs_action = tabUrl;
-     	}
+        var isVisitedBefore = BLCAdmin.entityForm.visitedTabs.contains($tab);
+        if (!isVisitedBefore) BLCAdmin.entityForm.visitedTabs.add($tab);
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && !$tab.hasClass('first-tab')) {
+        if (!isVisitedBefore && !$tab.hasClass('first-tab') && currentAction.search(/\/add($|\W)/) === -1) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({
@@ -335,27 +402,31 @@ $(document).ready(function() {
      			type: "POST",
      			data: $form.serializeArray()
      		}, function(data) {
-     			$('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
+     			$('div.' + href + 'Tab .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
-                    var $tableWrapper = data.find('.listgrid-header-wrapper:has(table#' + tableId + ')');
-     				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
+                    var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
+                    BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
-     			$('div.' + href + 'Tab .selectize-wrapper').each(function() {
+     			$('div.' + href + 'Tab .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('div.' + href + 'Tab .media-container').each(function() {
+                $('div.' + href + 'Tab .media-container', $(data)).each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);
                     var $assetGrid = $($container).find('.asset-grid-container');
-                    var $assetListGrid = data.find('.asset-listgrid');
 
-                    BLCAdmin.assetGrid.initialize($assetGrid);
+                    if (BLCAdmin.assetGrid) {
+                        BLCAdmin.assetGrid.initialize($assetGrid);
+                    } else {
+                        initAssetGrid($assetGrid);
+                    }
 
-                    $(this).find('.asset-grid-container').replaceWith($assetGrid);
+                    var $assertGridContainer = $('#' + tableId + ' .asset-grid-body-wrapper').find('.asset-grid-container');
+                    $assertGridContainer.replaceWith($assetGrid);
                 });
 
                 hideTabSpinner($tab, $tabBody);
@@ -385,7 +456,14 @@ $(document).ready(function() {
             var $form = BLCAdmin.getForm($deleteButton);
 
             var currentAction = $form.attr('action');
-            var deleteUrl = currentAction + '/delete';
+            var deleteUrl = currentAction;
+            var deleteAppend = '/delete';
+            if (deleteUrl.indexOf('?') >= 0) {
+                var questionIdx = deleteUrl.indexOf('?');
+                deleteUrl = deleteUrl.substring(0, questionIdx) + deleteAppend + deleteUrl.substring(questionIdx, deleteUrl.length);
+            } else {
+                deleteUrl += deleteAppend;
+            }
 
             BLCAdmin.entityForm.showActionSpinner($deleteButton.closest('.entity-form-actions'));
 
@@ -416,6 +494,43 @@ $(document).ready(function() {
 
             event.preventDefault();
         }
+    });
+
+    $('body').on('click', 'button.duplicate-button, a.duplicate-button', function(event) {
+        var $button = $(this);
+        var $form = BLCAdmin.getForm($button);
+
+        var currentAction = $form.attr('action');
+        var dupUrl = currentAction + '/duplicate';
+
+        BLCAdmin.entityForm.showActionSpinner($button.closest('.entity-form-actions'));
+
+        // On success this should redirect, on failure we'll get some JSON back
+        BLC.ajax({
+            url: dupUrl,
+            type: "POST",
+            data: $form.serializeArray(),
+            complete: BLCAdmin.entityForm.hideActionSpinner()
+        }, function (data) {
+            $("#headerFlashAlertBoxContainer").removeClass("hidden");
+            $(".errors, .error, .tab-error-indicator, .tabError").remove();
+            $('.has-error').removeClass('has-error');
+
+            if (!data.errors) {
+                var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.duplicated + '!', {
+                    alertType: 'save-alert',
+                    autoClose: 2000,
+                    clearOtherAlerts: true
+                });
+            } else {
+                BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDuplicating);
+            }
+
+            BLCAdmin.runPostFormSubmitHandlers($form, data);
+        });
+
+        event.preventDefault();
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {
@@ -572,7 +687,11 @@ $(document).ready(function() {
                     if ($assetGrid.length) {
                         var $assetListGrid = $(data).find('.asset-listgrid');
 
-                        BLCAdmin.assetGrid.initialize($assetGrid);
+                        if (BLCAdmin.assetGrid) {
+                            BLCAdmin.assetGrid.initialize($assetGrid);
+                        } else {
+                            initAssetGrid($assetGrid);
+                        }
 
                         $('.asset-grid-container').replaceWith($assetGrid);
                         $('.asset-listgrid').replaceWith($assetListGrid);
@@ -641,7 +760,11 @@ $(document).ready(function() {
                 var $assetGrid = $(data).find('.asset-grid-container');
                 var $assetListGrid = $(data).find('.asset-listgrid');
 
-                BLCAdmin.assetGrid.initialize($assetGrid);
+                if (BLCAdmin.assetGrid) {
+                    BLCAdmin.assetGrid.initialize($assetGrid);
+                } else {
+                    initAssetGrid($assetGrid);
+                }
 
                 $container.find('.asset-grid-container').replaceWith($assetGrid);
                 $container.find('.asset-listgrid').replaceWith($assetListGrid);
@@ -725,4 +848,87 @@ $(document).ready(function() {
     $('body').on('click', '.tooltip', function(event) {
        event.preventDefault();
     });
+
+    function initAssetGrid($container) {
+        initPaginate($container);
+        showSearchResults();
+
+        function initPaginate($container) {
+            var $modalBody = $container.closest('.modal-body');
+            $modalBody.css('overflow-y', 'hidden');
+            var $wrapper = $container.wrap($('<div>', { 'class' : 'asset-grid-body-wrapper' }));
+            $wrapper.mCustomScrollbar({
+                theme: 'dark',
+                scrollEasing: "linear",
+                scrollInertia: 500,
+                mouseWheelPixels: 100,
+                advanced:{
+                    updateOnContentResize:true,
+                    autoScrollOnFocus: false
+                }
+            });
+            var recordsBelow = getRecordBelow($container);
+            if (recordsBelow) {
+                $container.find('.asset-item:last').after(createLoadMoreButton());
+            }
+            updateGridSize($container);
+            $wrapper.mCustomScrollbar('update');
+            $modalBody.css('overflow-y', 'scroll');
+        }
+
+        function getRecordBelow($container) {
+            var rangeDescriptions = $container.data('recordranges').split(',');
+            if (rangeDescriptions.length) {
+                var range = rangeDescriptions[0].split('-');
+                return $container.data('totalrecords') - parseInt(range[1]) - 1;
+            }
+            return 0;
+        }
+
+        function createLoadMoreButton() {
+            var container = $('<div>', {
+                'class': 'asset-item load-more'
+            });
+            var wrapper = $('<div>', {
+                'class': 'load-more-wrapper'
+            });
+            container.append(wrapper);
+            var button = $('<a>', {
+                'href': '#',
+                'class': 'load-more-button',
+                'html': '<i class="fa fa-ellipsis-h"></i><br />Load More'
+            });
+            wrapper.append(button);
+            return container;
+        }
+
+        function showSearchResults() {
+            var params = BLCAdmin.history.getUrlParameters();
+            if (params) {
+                var nameProperty = params['name'];
+                if (nameProperty) {
+                    $('.select-column').hide();
+                    $('#asset-listgrid-search').val(nameProperty);
+                    $('.breadcrumb-wrapper').hide();
+                    $('.asset-title').html("Showing search results for '" + nameProperty + "'").show();
+                }
+            }
+        }
+    }
+
+    function updateGridSize($container) {
+        var $modalBody = $container.closest('.modal-body');
+        var $window = $(window);
+        var $wrapper = $container.closest('.asset-grid-body-wrapper');
+        var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+        if ($modalBody.length > 0) {
+            $modalBody.css('overflow-y', 'hidden');
+            wrapperHeight = $container.closest('.select-group').height();
+        }
+        $wrapper.css('max-height', wrapperHeight);
+        $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
+        $wrapper.css('height', wrapperHeight);
+        $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
+        $wrapper.mCustomScrollbar('update');
+    }
 });

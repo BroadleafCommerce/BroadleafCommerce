@@ -95,7 +95,7 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         return orderContainsPaymentOfType(order, PaymentType.THIRD_PARTY_ACCOUNT);
     }
 
-    protected boolean orderContainsPaymentOfType(Order order, PaymentType paymentType) {
+    public boolean orderContainsPaymentOfType(Order order, PaymentType paymentType) {
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(order);
 
         for (OrderPayment payment : orderPayments) {

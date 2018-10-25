@@ -17,12 +17,15 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -38,7 +41,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_RATING_DETAIL")
-public class RatingDetailImpl implements RatingDetail {
+public class RatingDetailImpl implements RatingDetail, Serializable {
 
     @Id
     @GeneratedValue(generator = "RatingDetailId")
@@ -54,25 +57,31 @@ public class RatingDetailImpl implements RatingDetail {
     private Long id;
 
     @Column(name = "RATING", nullable = false)
+    @AdminPresentation(friendlyName = "RatingDetail_rating", prominent = true)
     protected Double rating;
 
     @Column(name = "RATING_SUBMITTED_DATE", nullable = false)
+    @AdminPresentation(friendlyName = "RatingDetail_submittedDate", prominent = true)
     protected Date ratingSubmittedDate;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="RATING_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
+    @AdminPresentation(friendlyName = "RatingDetail_customer", prominent = true)
+    @AdminPresentationToOneLookup
     protected Customer customer;
 
     @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
     @JoinColumn(name = "RATING_SUMMARY_ID")
+    @AdminPresentation(friendlyName = "RatingDetail_summary")
+    @AdminPresentationToOneLookup
     protected RatingSummary ratingSummary;
 
     @Override
     public Long getId() {
         return id;
     }
-    
+
     @Override
     public void setId(Long id) {
         this.id = id;
@@ -82,7 +91,7 @@ public class RatingDetailImpl implements RatingDetail {
     public Double getRating() {
         return rating;
     }
-    
+
     @Override
     public void setRating(Double newRating) {
         this.rating = newRating;
@@ -92,7 +101,7 @@ public class RatingDetailImpl implements RatingDetail {
     public Date getRatingSubmittedDate() {
         return ratingSubmittedDate;
     }
-    
+
     @Override
     public void setRatingSubmittedDate(Date ratingSubmittedDate) {
         this.ratingSubmittedDate = ratingSubmittedDate;
@@ -102,7 +111,7 @@ public class RatingDetailImpl implements RatingDetail {
     public Customer getCustomer() {
         return customer;
     }
-    
+
     @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
@@ -112,11 +121,11 @@ public class RatingDetailImpl implements RatingDetail {
     public RatingSummary getRatingSummary() {
         return ratingSummary;
     }
-    
+
     @Override
     public void setRatingSummary(RatingSummary ratingSummary) {
         this.ratingSummary = ratingSummary;
     }
-    
-    
+
+
 }
