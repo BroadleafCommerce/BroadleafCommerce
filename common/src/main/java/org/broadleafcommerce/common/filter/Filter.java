@@ -33,6 +33,7 @@ public class Filter {
     String condition;
     String entityImplementationClassName;
     List<String> indexColumnNames;
+    String overrideIndexNameKey;
 
     public String getCondition() {
         return condition;
@@ -66,6 +67,14 @@ public class Filter {
         this.indexColumnNames = indexColumnNames;
     }
 
+    public String getOverrideIndexNameKey() {
+        return overrideIndexNameKey;
+    }
+
+    public void setOverrideIndexNameKey(String overrideIndexNameKey) {
+        this.overrideIndexNameKey = overrideIndexNameKey;
+    }
+
     public Filter copy() {
         Filter copy = new Filter();
         copy.setName(name);
@@ -74,6 +83,7 @@ public class Filter {
         if (!CollectionUtils.isEmpty(indexColumnNames)) {
             copy.setIndexColumnNames(new ArrayList<String>(indexColumnNames));
         }
+        copy.setOverrideIndexNameKey(overrideIndexNameKey);
         return copy;
     }
 }
