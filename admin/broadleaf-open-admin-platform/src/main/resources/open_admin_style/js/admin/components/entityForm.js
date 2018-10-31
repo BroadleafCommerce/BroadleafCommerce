@@ -26,8 +26,11 @@
     BLCAdmin.entityForm = {
 
         initializeStickyHeader : function () {
-            originalStickyBarOffset = $('.sticky-container').offset().top;
-            originalStickyBarHeight = $('.sticky-container').height();
+            var $stickyContainer = $('.sticky-container');
+            if ($stickyContainer.length) {
+                originalStickyBarOffset = $stickyContainer.offset().top;
+                originalStickyBarHeight = $stickyContainer.height();
+            }
 
             if ($('form.entity-form').length && !$('.oms').length) {
                 var $sc = $('.sticky-container');
