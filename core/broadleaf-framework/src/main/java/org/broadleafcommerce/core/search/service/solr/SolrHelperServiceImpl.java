@@ -154,26 +154,28 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             CloudSolrClient primaryCloudClient = (CloudSolrClient) solrConfiguration.getServer();
             CloudSolrClient reindexCloudClient = (CloudSolrClient) solrConfiguration.getReindexServer();
             try {
+                String queryAlias = solrConfiguration.getQueryCollectionName();
+                String reindexAlias = solrConfiguration.getReindexCollectionName();
                 primaryCloudClient.connect();
                 Aliases aliases = primaryCloudClient.getZkStateReader().getAliases();
                 Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
-                if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primaryCloudClient.getDefaultCollection())
-                        || !aliasCollectionMap.containsKey(reindexCloudClient.getDefaultCollection())) {
+                if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(queryAlias)
+                        || !aliasCollectionMap.containsKey(reindexAlias)) {
                     throw new IllegalStateException("Could not determine the PRIMARY or REINDEX "
                             + "collection or collections from the Solr aliases.");
                 }
 
-                String primaryCollectionName = aliasCollectionMap.get(primaryCloudClient.getDefaultCollection());
+                String primaryCollectionName = aliasCollectionMap.get(queryAlias);
                 //Do this just in case primary is aliased to more than one collection
                 primaryCollectionName = primaryCollectionName.split(",")[0];
 
-                String reindexCollectionName = aliasCollectionMap.get(reindexCloudClient.getDefaultCollection());
+                String reindexCollectionName = aliasCollectionMap.get(reindexAlias);
                 //Do this just in case primary is aliased to more than one collection
                 reindexCollectionName = reindexCollectionName.split(",")[0];
 
                 //Essentially "swap cores" here by reassigning the aliases
-                CollectionAdminRequest.createAlias(primaryCloudClient.getDefaultCollection(), reindexCollectionName).process(primaryCloudClient);
-                CollectionAdminRequest.createAlias(reindexCloudClient.getDefaultCollection(), primaryCollectionName).process(reindexCloudClient);
+                CollectionAdminRequest.createAlias(queryAlias, reindexCollectionName).process(primaryCloudClient);
+                CollectionAdminRequest.createAlias(reindexAlias, primaryCollectionName).process(reindexCloudClient);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
@@ -425,12 +427,17 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public void optimizeIndex(SolrClient server) throws ServiceException, IOException {
+        optimizeIndex(null, server);
+    }
+
+    @Override
+    public void optimizeIndex(String collection, SolrClient server) throws ServiceException, IOException {
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Optimizing the index...");
             }
             if (isSolrConfigured) {
-                server.optimize();
+                server.optimize(collection);
             }
         } catch (SolrServerException e) {
             throw new ServiceException("Could not optimize index", e);

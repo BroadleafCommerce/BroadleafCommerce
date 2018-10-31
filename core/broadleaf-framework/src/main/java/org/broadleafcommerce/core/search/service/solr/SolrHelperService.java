@@ -293,12 +293,27 @@ public interface SolrHelperService {
     public Object getPropertyValue(Object object, String propertyName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
     /**
-     * Tells Solr to optimize the index.  This is an expensive operation and should be use rarely or never.
+     * Tells Solr to optimize the index.  This is an expensive operation and should be used rarely or never.
      * 
-     * @param server
+     * @param collection The collection to operate on
+     * @param server The server to use to do the operation
+     * 
      * @throws ServiceException
      * @throws IOException
      */
+    public void optimizeIndex(String collection, SolrClient server) throws ServiceException, IOException;
+
+    /**
+     * Tells Solr to optimize the index. This is an expensive operation and should be used rarely or never.
+     * 
+     * @param server The server to use to do the operation
+     * 
+     * @throws ServiceException
+     * @throws IOException
+     * 
+     * @deprecated Use {@link #optimizeIndex(String, SolrClient)} instead so that the collection that's being used can be customized otherwise the default collection will always be used. Generally use {@link SolrConfiguration#getQueryCollectionName()} or {@link SolrConfiguration#getReindexCollectionName()}
+     */
+    @Deprecated
     public void optimizeIndex(SolrClient server) throws ServiceException, IOException;
 
     /**
