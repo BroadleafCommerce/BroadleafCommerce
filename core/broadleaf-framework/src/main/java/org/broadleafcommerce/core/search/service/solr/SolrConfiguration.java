@@ -172,10 +172,6 @@ public class SolrConfiguration implements InitializingBean {
                 }
             }
             
-            if (BroadleafCloudSolrClient.class.isAssignableFrom(server.getClass())) {
-                ((BroadleafCloudSolrClient) server).setReindexClient(false);
-                ((BroadleafCloudSolrClient) server).setSolrConfig(this);
-            }
         }
 
         primaryServer = server;
@@ -214,10 +210,6 @@ public class SolrConfiguration implements InitializingBean {
                                 + cs.getDefaultCollection());
                     }
                 }
-            }
-            if (BroadleafCloudSolrClient.class.isAssignableFrom(server.getClass())) {
-                ((BroadleafCloudSolrClient) server).setReindexClient(true);
-                ((BroadleafCloudSolrClient) server).setSolrConfig(this);
             }
         }
         reindexServer = server;
@@ -719,6 +711,24 @@ public class SolrConfiguration implements InitializingBean {
 
     public void setSolrCloudNumShards(int solrCloudNumShards) {
         this.solrCloudNumShards = solrCloudNumShards;
+    }
+
+    public String getQueryCollectionName() {
+        if (isSiteCollections()) {
+            Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            return getSiteAliasName(site);
+        }
+
+        return primaryName;
+    }
+
+    public String getReindexCollectionName() {
+        if (isSiteCollections()) {
+            Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            return getSiteReindexAliasName(site);
+        }
+
+        return reindexName;
     }
 
     protected String determineCoreName(HttpSolrClient httpSolrClient) {
