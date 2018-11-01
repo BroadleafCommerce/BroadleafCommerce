@@ -196,13 +196,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 .setStart((start) * searchCriteria.getPageSize())
                 .setRequestHandler(searchCriteria.getRequestHandler());
 
-        //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
-        if (solrConfiguration.isSiteCollections()) {
-            solrQuery.setParam("collection", solrConfiguration.getSiteAliasName(BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite()));
-        } else {
-            solrQuery.setParam("collection", solrConfiguration.getPrimaryName()); //This should be ignored if not using SolrCloud
-        }
-
         solrQuery.setFields(shs.getIndexableIdFieldName());
         if (filterQueries != null) {
             solrQuery.setFilterQueries(filterQueries);
@@ -249,7 +242,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         List<SolrDocument> responseDocuments;
         int numResults = 0;
         try {
-            response = solrConfiguration.getServer().query(solrQuery, getSolrQueryMethod());
+            response = solrConfiguration.getServer().query(solrConfiguration.getQueryCollectionName(), solrQuery, getSolrQueryMethod());
             responseDocuments = getResponseDocuments(response);
             numResults = (int) response.getResults().getNumFound();
 

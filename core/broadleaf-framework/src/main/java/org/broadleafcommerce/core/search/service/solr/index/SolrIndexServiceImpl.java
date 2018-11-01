@@ -173,7 +173,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void preBuildIndex() throws ServiceException {
-        deleteAllNamespaceDocuments(solrConfiguration.getReindexServer());
+        deleteAllNamespaceDocuments(solrConfiguration.getReindexCollectionName(), solrConfiguration.getReindexServer());
     }
 
     @Override
@@ -184,7 +184,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public void postBuildIndex() throws IOException, ServiceException {
         // this is required to be at the very very very end after rebuilding the whole index
-        optimizeIndex(solrConfiguration.getReindexServer());
+        optimizeIndex(solrConfiguration.getReindexCollectionName(), solrConfiguration.getReindexServer());
         // Swap the active and the reindex cores
         if (!solrConfiguration.isSingleCoreMode()) {
             shs.swapActiveCores(solrConfiguration);
@@ -207,7 +207,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             @Override
             public void buildPage(List<? extends Indexable> indexables) throws ServiceException {
-                buildIncrementalIndex(indexables, getSolrServerForIndexing());
+                buildIncrementalIndex(getSolrCollectionForIndexing(), indexables, getSolrServerForIndexing());
             }
         };
     }
@@ -308,19 +308,19 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @throws ServiceException if there was a problem removing the documents
      */
     protected void deleteAllReindexCoreDocuments() throws ServiceException {
-        deleteAllNamespaceDocuments(solrConfiguration.getReindexServer());
+        deleteAllNamespaceDocuments(solrConfiguration.getReindexCollectionName(), solrConfiguration.getReindexServer());
     }
 
     @Override
-    public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException {
+    public void deleteAllNamespaceDocuments(String collection, SolrClient server) throws ServiceException {
         try {
             String deleteQuery = StringUtil.sanitize(shs.getNamespaceFieldName()) + ":(\"" 
                     + StringUtil.sanitize(solrConfiguration.getNamespace()) + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
-            server.deleteByQuery(deleteQuery);
+            server.deleteByQuery(collection, deleteQuery);
 
             //Explicitly do a hard commit here since we just deleted the entire index
-            server.commit();
+            server.commit(collection);
         } catch (Exception e) {
             if (ServiceException.class.isAssignableFrom(e.getClass())) {
                 throw (ServiceException) e;
@@ -330,12 +330,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
     
     @Override
-    public void deleteAllDocuments(SolrClient server) throws ServiceException {
+    public void deleteAllDocuments(String collection, SolrClient server) throws ServiceException {
         try {
             String deleteQuery = "*:*";
             LOG.debug("Deleting by query: " + deleteQuery);
-            server.deleteByQuery(deleteQuery);
-            server.commit();
+            server.deleteByQuery(collection, deleteQuery);
+            server.commit(collection);
         } catch (Exception e) {
             throw new ServiceException("Could not delete documents", e);
         }
@@ -379,7 +379,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException {
+    public Collection<SolrInputDocument> buildIncrementalIndex(String collection, List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalIndex",
                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
@@ -428,8 +428,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             logDocuments(documents);
 
             if (!CollectionUtils.isEmpty(documents) && solrServer != null) {
-                solrServer.add(documents);
-                commit(solrServer);
+                solrServer.add(collection, documents);
+                commit(collection, solrServer);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
 
@@ -721,21 +721,21 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      }
      
     @Override
-    public void optimizeIndex(SolrClient server) throws ServiceException, IOException {
-        shs.optimizeIndex(server);
+    public void optimizeIndex(String collection, SolrClient server) throws ServiceException, IOException {
+        shs.optimizeIndex(collection, server);
     }
 
     @Override
-    public void commit(SolrClient server) throws ServiceException, IOException {
+    public void commit(String collection, SolrClient server) throws ServiceException, IOException {
         if (this.commit) {
-            commit(server, this.softCommit, this.waitSearcher, this.waitFlush);
+            commit(collection, server, this.softCommit, this.waitSearcher, this.waitFlush);
         } else if (LOG.isDebugEnabled()) {
             LOG.debug("The flag / property \"solr.index.commit\" is false. Not committing! Ensure autoCommit is configured.");
         }
     }
 
     @Override
-    public void commit(SolrClient server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
+    public void commit(String collection, SolrClient server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
         try {
             if (!this.commit) {
                 LOG.warn("The flag / property \"solr.index.commit\" is set to false but a commit is being forced via the API.");
@@ -746,7 +746,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         + ", waitSearcher: " + waitSearcher + ", waitFlush: " + waitFlush);
             }
 
-            server.commit(waitFlush, waitSearcher, softCommit);
+            server.commit(collection, waitFlush, waitSearcher, softCommit);
         } catch (SolrServerException e) {
             throw new ServiceException("Could not commit changes to Solr index", e);
         }
@@ -787,8 +787,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         deleteQuery = productFilter + " AND (" + deleteQuery + ")";
 
         String childDeleteQuery = "{!child of=" + productFilter + "} " + deleteQuery;
-        solrConfiguration.getServer().deleteByQuery(childDeleteQuery);
-        solrConfiguration.getServer().deleteByQuery(deleteQuery);
+        solrConfiguration.getServer().deleteByQuery(solrConfiguration.getQueryCollectionName(), childDeleteQuery);
+        solrConfiguration.getServer().deleteByQuery(solrConfiguration.getQueryCollectionName(), deleteQuery);
 
         logDeleteQuery(childDeleteQuery);
         logDeleteQuery(deleteQuery);
@@ -796,7 +796,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void addDocuments(Collection<SolrInputDocument> documents) throws IOException, SolrServerException {
-        solrConfiguration.getServer().add(documents);
+        solrConfiguration.getServer().add(solrConfiguration.getQueryCollectionName(), documents);
         logDocuments(documents);
     }
 
@@ -805,6 +805,36 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Delete query: " + deleteQuery);
         }
+    }
+
+    @Override
+    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException {
+        return buildIncrementalIndex(null, indexables, solrServer);
+    }
+
+    @Override
+    public void optimizeIndex(SolrClient server) throws ServiceException, IOException {
+        optimizeIndex(null, server);
+    }
+
+    @Override
+    public void commit(SolrClient server) throws ServiceException, IOException {
+        commit(null, server);
+    }
+
+    @Override
+    public void commit(SolrClient server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
+        commit(null, server, softCommit, waitSearcher, waitFlush);
+    }
+
+    @Override
+    public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException {
+        deleteAllNamespaceDocuments(null, server);
+    }
+
+    @Override
+    public void deleteAllDocuments(SolrClient server) throws ServiceException {
+        deleteAllDocuments(null, server);
     }
 
 }

@@ -172,10 +172,6 @@ public class SolrConfiguration implements InitializingBean {
                 }
             }
             
-            if (BroadleafCloudSolrClient.class.isAssignableFrom(server.getClass())) {
-                ((BroadleafCloudSolrClient) server).setReindexClient(false);
-                ((BroadleafCloudSolrClient) server).setSolrConfig(this);
-            }
         }
 
         primaryServer = server;
@@ -214,10 +210,6 @@ public class SolrConfiguration implements InitializingBean {
                                 + cs.getDefaultCollection());
                     }
                 }
-            }
-            if (BroadleafCloudSolrClient.class.isAssignableFrom(server.getClass())) {
-                ((BroadleafCloudSolrClient) server).setReindexClient(true);
-                ((BroadleafCloudSolrClient) server).setSolrConfig(this);
             }
         }
         reindexServer = server;
@@ -719,6 +711,28 @@ public class SolrConfiguration implements InitializingBean {
 
     public void setSolrCloudNumShards(int solrCloudNumShards) {
         this.solrCloudNumShards = solrCloudNumShards;
+    }
+
+    public String getQueryCollectionName() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            return getSiteAliasName(site);
+        } else if (isSolrCloudMode()) {
+            return primaryName;
+        }
+        // If it's not SolrCloud mode then we just want to operate on the primary core for that server and we do that by not specifying a collection
+        return null;
+    }
+
+    public String getReindexCollectionName() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            return getSiteReindexAliasName(site);
+        } else if (isSolrCloudMode()) {
+            return reindexName;
+        }
+        // If it's not SolrCloud mode then we just want to operate on the primary core for that server and we do that by not specifying a collection
+        return null;
     }
 
     protected String determineCoreName(HttpSolrClient httpSolrClient) {

@@ -85,6 +85,11 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
     }
 
     @Override
+    public String getSolrCollectionForIndexing() {
+        return solrConfiguration.getReindexCollectionName();
+    }
+
+    @Override
     public void beforeCountIndexables() {
         // By default we want to do nothing here
     }

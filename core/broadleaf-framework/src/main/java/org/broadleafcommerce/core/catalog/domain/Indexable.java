@@ -48,7 +48,7 @@ public interface Indexable {
      * Which type of {@link Field} should be queried for when looking up database-driven search fields to store in the
      * search index
      * 
-     * @see SolrIndexService#buildIncrementalIndex(java.util.List, org.apache.solr.client.solrj.SolrClient)
+     * @see SolrIndexService#buildIncrementalIndex(String, java.util.List, org.apache.solr.client.solrj.SolrClient)
      * @see FieldDao#readFieldsByEntityType(FieldEntity)
      */
     public FieldEntity getFieldEntityType();

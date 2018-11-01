@@ -20,8 +20,6 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +28,11 @@ import java.util.Optional;
 
 /**
  * @author Nick Crum (ncrum)
+ *
+ * @deprecated Functionality for determining the default collection has been moved to {@link SolrConfiguration} 
+ * therefore there's no need to use the BroadleafCloudSolrClient. Simply use {@link CloudSolrClient}
  */
+@Deprecated
 public class BroadleafCloudSolrClient extends CloudSolrClient {
 
     protected SolrConfiguration solrConfig;
@@ -90,16 +92,6 @@ public class BroadleafCloudSolrClient extends CloudSolrClient {
             builder.sendUpdatesToAllReplicasInShard();
         }
         return builder;
-    }
-
-    @Override
-    public String getDefaultCollection() {
-        if (solrConfig != null && solrConfig.isSiteCollections()) {
-            Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
-            return (reindexClient) ? solrConfig.getSiteReindexAliasName(site) : solrConfig.getSiteAliasName(site);
-        }
-
-        return super.getDefaultCollection();
     }
 
     public boolean isReindexClient() {
