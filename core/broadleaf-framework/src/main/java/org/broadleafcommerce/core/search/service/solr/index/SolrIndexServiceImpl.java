@@ -317,7 +317,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             String deleteQuery = StringUtil.sanitize(shs.getNamespaceFieldName()) + ":(\"" 
                     + StringUtil.sanitize(solrConfiguration.getNamespace()) + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
-            server.deleteByQuery(deleteQuery);
+            server.deleteByQuery(collection, deleteQuery);
 
             //Explicitly do a hard commit here since we just deleted the entire index
             server.commit(collection);
@@ -334,7 +334,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         try {
             String deleteQuery = "*:*";
             LOG.debug("Deleting by query: " + deleteQuery);
-            server.deleteByQuery(deleteQuery);
+            server.deleteByQuery(collection, deleteQuery);
             server.commit(collection);
         } catch (Exception e) {
             throw new ServiceException("Could not delete documents", e);
