@@ -714,21 +714,25 @@ public class SolrConfiguration implements InitializingBean {
     }
 
     public String getQueryCollectionName() {
-        if (isSiteCollections()) {
+        if (isSiteCollections() && isSolrCloudMode()) {
             Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
             return getSiteAliasName(site);
+        } else if (isSolrCloudMode()) {
+            return primaryName;
         }
-
-        return primaryName;
+        // If it's not SolrCloud mode then we just want to operate on the primary core for that server and we do that by not specifying a collection
+        return null;
     }
 
     public String getReindexCollectionName() {
-        if (isSiteCollections()) {
+        if (isSiteCollections() && isSolrCloudMode()) {
             Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
             return getSiteReindexAliasName(site);
+        } else if (isSolrCloudMode()) {
+            return reindexName;
         }
-
-        return reindexName;
+        // If it's not SolrCloud mode then we just want to operate on the primary core for that server and we do that by not specifying a collection
+        return null;
     }
 
     protected String determineCoreName(HttpSolrClient httpSolrClient) {
