@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -429,7 +429,7 @@
                 }
             }
         },
-        
+
         /**
          * A custom pre-init query builder field handler to modify the filters object
          * in order to support the Selectize widget in the Query Builder.
@@ -847,8 +847,10 @@
 
                 // check for existing rules in the url
                 var queryString = BLCAdmin.filterBuilders.getQueryVariable(field.id);
+                // make sure its not modal
+                var modal = BLCAdmin.currentModal();
 
-                if (queryString != null) {
+                if ((queryString != null) && (modal == undefined)) {
                     var numInputs = 1;
                     // is this a 'BETWEEN' filter?
                     if (queryString.indexOf('|') > 0) {
@@ -879,7 +881,7 @@
             if (filterData.rules.length > 0) {
                 if (!$filterButton.closest('.button-group').length) {
 
-                    $filterButton.text("Edit Filter");
+                    $filterButton.text(BLCAdmin.messages.editFilter);
                     $filterButton.removeClass('disabled').removeAttr('disabled');
 
                     var clearButton = $('<button>', {
@@ -899,9 +901,9 @@
                 }
                 $filterButton.closest('.main-content').find('.sticky-container .filter-text').show();
             } else {
-                if ($filterButton.text() !== 'Filter') {
+                if ($filterButton.text() !== BLCAdmin.messages.filter) {
                     // change "edit filter" button back to "filter"
-                    $filterButton.text("Filter");
+                    $filterButton.text(BLCAdmin.messages.filter);
                     $filterButton.insertBefore($filterButton.parent());
                     $filterButton.siblings('.button-group:visible').remove();
                     $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
@@ -1007,10 +1009,16 @@ $(document).ready(function() {
         }
         valueText = valueArray.join(" and ");
 
-        // if no value is set, this is probably an empty row
-        if (!valueText || valueText == ' and ') {
+        var $errorContainer = el.find('.error-container');
+        var errorMessage = validateRule(filterText, operatorText, valueText);
+
+        if (errorMessage) {
+            showError($errorContainer, errorMessage);
             return;
+        } else {
+            hideError($errorContainer);
         }
+
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
@@ -1035,6 +1043,30 @@ $(document).ready(function() {
 
         $('.filter-text').show();
     });
+
+    function validateRule(filterText, operatorText, valueText) {
+        var validationRegex = new RegExp(/<(.|\n)*?>/);
+        if (!operatorText) return BLCAdmin.messages.emptyOperatorValue;
+        if (!valueText || valueText === ' and ') return BLCAdmin.messages.emptyFilterValue;
+        if (validationRegex.test(valueText)) {
+            return BLCAdmin.messages.invalidFilterValue;
+        }
+        return "";
+    }
+
+    function showError($errorContainer, errorMessage) {
+        $errorContainer.html(
+            "<span class='error'>" +
+            errorMessage +
+            "</span>"
+        );
+        $errorContainer.css("cssText", "display: block !important; width: 80%; margin-left: 20px");
+    }
+
+    function hideError($errorContainer) {
+        $errorContainer.html("");
+        $errorContainer.css("cssText", "none !important;");
+    }
 
     /**
      * Invoked from a Filter Builder with display type : "MODAL"
@@ -1113,7 +1145,7 @@ $(document).ready(function() {
         BLCAdmin.filterBuilders.applyFilters(hiddenId);
 
         // change "edit filter" button back to "filter"
-        $filterButton.text("Filter");
+        $filterButton.text(BLCAdmin.messages.filter);
         $filterButton.insertBefore($filterButton.parent());
         $filterButton.siblings('.button-group').remove();
 
@@ -1214,9 +1246,10 @@ $(document).ready(function() {
 
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
-                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
+                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong><span class='test'></span></strong>",
                 'class': "read-only"
-            });
+        });
+            readonlySpan.find('.test').text(valueText)
             el.append($(readonlySpan));
 
             el.find('div.rule-filter-container > div > div.selectize-input').hide();
@@ -1270,9 +1303,9 @@ $(document).ready(function() {
                     }
                 }
             } else {
-                if ($filterButton.text() !== 'Filter') {
+                if ($filterButton.text() !== BLCAdmin.messages.filter) {
                     // change "edit filter" button back to "filter"
-                    $filterButton.text("Filter");
+                    $filterButton.text(BLCAdmin.messages.filter);
                     $filterButton.insertBefore($filterButton.parent());
                     $filterButton.siblings('.button-group:visible').remove();
                     $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();

@@ -581,6 +581,23 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
+        for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+            for (Map.Entry<ChangeType, List<PersistencePackage>> entry : subPackage.getValue().getDeferredOperations().entrySet()) {
+                for (PersistencePackage change : entry.getValue()) {
+                    switch (entry.getKey()) {
+                        case UPDATE:
+                            update(change);
+                            break;
+                        case ADD:
+                            add(change);
+                            break;
+                        case DELETE:
+                            remove(change);
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -626,9 +643,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         } catch (ValidationException e) {
             response = e.getEntity();
+            LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
         } catch (ServiceException e) {
             if (e.getCause() instanceof ValidationException) {
                 response = ((ValidationException) e.getCause()).getEntity();
+                LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
             } else {
                 throw e;
             }

@@ -110,6 +110,9 @@ public class FieldMetadataOverride extends MetadataOverride {
     private String broadleafEnumeration;
     private Boolean hideEnumerationIfEmpty;
     private SupportedFieldType fieldComponentRenderer;
+    private String fieldComponentRendererTemplate;
+    private SupportedFieldType gridFieldComponentRenderer;
+    private String gridFieldComponentRendererTemplate;
     private Boolean readOnly;
     private Map<String, List<Map<String, String>>> validationConfigurations;
     private Boolean requiredOverride;
@@ -341,7 +344,6 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
     }
 
-    
     public SupportedFieldType getFieldComponentRenderer() {
         return fieldComponentRenderer;
     }
@@ -349,6 +351,31 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setFieldComponentRenderer(SupportedFieldType fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
     }
+
+    public String getFieldComponentRendererTemplate() {
+        return fieldComponentRendererTemplate;
+    }
+
+    public void setFieldComponentRendererTemplate(String fieldComponentRendererTemplate) {
+        this.fieldComponentRendererTemplate = fieldComponentRendererTemplate;
+    }
+
+    public String getGridFieldComponentRendererTemplate() {
+        return gridFieldComponentRendererTemplate;
+    }
+
+    public void setGridFieldComponentRendererTemplate(String gridFieldComponentRendererTemplate) {
+        this.gridFieldComponentRendererTemplate = gridFieldComponentRendererTemplate;
+    }
+
+    public SupportedFieldType getGridFieldComponentRenderer() {
+        return gridFieldComponentRenderer;
+    }
+
+    public void setGridFieldComponentRenderer(SupportedFieldType gridFieldComponentRenderer) {
+        this.gridFieldComponentRenderer = gridFieldComponentRenderer;
+    }
+
 
     public Boolean getReadOnly() {
         return readOnly;

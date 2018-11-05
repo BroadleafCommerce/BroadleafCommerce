@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -137,6 +138,11 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
 
     @Override
     public ExtensionResultStatusType batchFetchCatalogData(List<Product> products) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType batchFetchCatalogDataForSkus(List<Sku> skus) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

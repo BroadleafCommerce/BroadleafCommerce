@@ -48,14 +48,14 @@ import java.util.Map;
  */
 @Component("blDynamicFieldPersistenceHandlerHelper")
 public class DynamicFieldPersistenceHandlerHelper {
-    
+
     public Property buildDynamicProperty(FieldDefinition definition, Class<?> inheritedType) {
         Property property = new Property();
         property.setName(definition.getName());
         BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
         property.setMetadata(fieldMetadata);
         fieldMetadata.setFieldType(definition.getFieldType());
-        
+
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(inheritedType.getName());
         fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
@@ -78,6 +78,7 @@ public class DynamicFieldPersistenceHandlerHelper {
         fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
         fieldMetadata.setTab("General");
         fieldMetadata.setTabOrder(100);
+        fieldMetadata.setOrder(definition.getFieldOrder());
         fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         fieldMetadata.setLargeEntry(definition.getTextAreaFlag());
         fieldMetadata.setProminent(false);
@@ -97,8 +98,8 @@ public class DynamicFieldPersistenceHandlerHelper {
             configurationItems.add(itemMap);
             fieldMetadata.getValidationConfigurations().put(RegexPropertyValidator.class.getName(), configurationItems);
         }
-        
-        
+
+
         if (definition.getFieldType().equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) {
             fieldMetadata.setForeignKeyClass(definition.getAdditionalForeignKeyClass());
             fieldMetadata.setOwningClass(definition.getAdditionalForeignKeyClass());
@@ -111,7 +112,7 @@ public class DynamicFieldPersistenceHandlerHelper {
     /**
      * Builds all of the metadata for all of the dynamic properties within a {@link StructuredContentType}, gleaned from
      * the {@link FieldGroup}s and {@link FieldDefinition}s.
-     * 
+     *
      * @param fieldGroups groups that the {@link Property}s are built from
      * @param inheritedType the value that each built {@link FieldMetadata} for each property will use to notate where the
      * dynamic field actually came from (meaning {@link FieldMetadata#setAvailableToTypes(String[])} and {@link FieldMetadata#setInheritedFromType(String)}
@@ -119,21 +120,15 @@ public class DynamicFieldPersistenceHandlerHelper {
      */
     public Property[] buildDynamicPropertyList(List<FieldGroup> fieldGroups, Class<?> inheritedType) {
         List<Property> propertiesList = new ArrayList<Property>();
-        int groupCount = 1;
-        int fieldCount = 0;
         for (FieldGroup group : fieldGroups) {
             List<FieldDefinition> definitions = group.getFieldDefinitions();
             for (FieldDefinition def : definitions) {
                 Property property = buildDynamicProperty(def, inheritedType);
                 BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) property.getMetadata();
-                fieldMetadata.setOrder(fieldCount++);
                 fieldMetadata.setGroup(group.getName());
-                fieldMetadata.setGroupOrder(groupCount);
                 fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
                 propertiesList.add(property);
             }
-            groupCount++;
-            fieldCount = 0;
         }
         Property property = new Property();
         property.setName("id");

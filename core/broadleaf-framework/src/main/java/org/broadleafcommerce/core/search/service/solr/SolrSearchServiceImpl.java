@@ -48,14 +48,15 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
-import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -63,6 +64,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -108,8 +110,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
+    @Autowired
+    protected Environment environment;
+
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
+
+    /**
+     * @return whether or not to enable debug query info for the SolrQuery
+     */
+    protected boolean shouldShowDebugQuery() {
+        return environment.getProperty("solr.showDebugQuery", Boolean.class, false);
+    }
 
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
@@ -185,7 +197,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(searchCriteria.getQuery())
                 .setRows(searchCriteria.getPageSize())
-                .setStart((start) * searchCriteria.getPageSize());
+                .setStart((start) * searchCriteria.getPageSize())
+                .setRequestHandler(searchCriteria.getRequestHandler());
 
         //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
         if (solrConfiguration.isSiteCollections()) {
@@ -225,7 +238,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         attachSortClause(solrQuery, searchCriteria, defaultSort);
 
-        solrQuery.setShowDebugInfo(true);
+        solrQuery.setShowDebugInfo(shouldShowDebugQuery());
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -260,6 +273,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Get the facets
         setFacetResults(namedFacetMap, response);
         sortFacetResults(namedFacetMap);
+        filterEmptyFacets(facets);
 
         SearchResult result = new SearchResult();
         result.setFacets(facets);
@@ -276,6 +290,23 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         }
 
         return result;
+    }
+
+    protected void filterEmptyFacets(List<SearchFacetDTO> facets) {
+        Iterator<SearchFacetDTO> iter = facets.iterator();
+        while (iter.hasNext()) {
+            SearchFacetDTO dto = iter.next();
+            boolean shouldRemove = true;
+            for (SearchFacetResultDTO result : dto.getFacetValues()) {
+                if (result.getQuantity() != null && result.getQuantity() > 0) {
+                    shouldRemove = false;
+                    break;
+                }
+            }
+            if (shouldRemove) {
+                iter.remove();
+            }
+        }
     }
 
     protected String getDefaultSort(SearchCriteria criteria) {
@@ -566,6 +597,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         }
 
         List<Sku> skus = skuDao.readSkusByIds(skuIds);
+
+        extensionManager.getProxy().batchFetchCatalogDataForSkus(skus);
 
         // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
         if (skus != null) {

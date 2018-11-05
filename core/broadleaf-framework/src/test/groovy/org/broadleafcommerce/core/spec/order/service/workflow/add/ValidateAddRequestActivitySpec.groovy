@@ -24,11 +24,8 @@ import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.OrderService
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO
-import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
 import org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity
-
-
-
+import org.broadleafcommerce.core.order.service.workflow.service.OrderItemRequestValidationService
 /**
  * execute:
  * <ol>
@@ -55,13 +52,17 @@ class ValidateAddRequestActivitySpec extends BaseAddItemActivitySpec {
     OrderItemService mockOrderItemService = Mock()
     CatalogService mockCatalogService = Mock()
     ProductOptionValidationService mockProductOptionValidationService = Mock()
+    OrderItemRequestValidationService mockOrderItemRequestValidationService = Mock()
 
     def setup() {
+        mockOrderItemRequestValidationService.satisfiesMinQuantityCondition(*_) >> true
+
         activity = Spy(ValidateAddRequestActivity).with {
             orderService = mockOrderService
             orderItemService = mockOrderItemService
             catalogService = mockCatalogService
             productOptionValidationService = mockProductOptionValidationService
+            orderItemRequestValidationService = mockOrderItemRequestValidationService
             it
         }
     }

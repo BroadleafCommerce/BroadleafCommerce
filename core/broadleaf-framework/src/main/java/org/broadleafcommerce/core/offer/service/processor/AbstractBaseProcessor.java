@@ -42,14 +42,17 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -427,56 +430,64 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return List of Offers with valid dates
      */
     protected List<Offer> removeOutOfDateOffers(List<Offer> offers){
-        List<Offer> offersToRemove = new ArrayList<Offer>();
-        for (Offer offer : offers) {
-            TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
+        Iterator<Offer> offersIterator = offers.iterator();
 
-            Calendar current = timeZone == null ? SystemTime.asCalendar() : SystemTime.asCalendar(timeZone);
+        while (offersIterator.hasNext()) {
+            Offer offer = offersIterator.next();
+
+            TimeZone offerTimeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
+
+            if (offerTimeZone == null) {
+                offerTimeZone = TimeZone.getDefault();
+            }
+
+            Calendar current = SystemTime.asCalendar(offerTimeZone);
+
             Calendar start = null;
-            if (offer.getStartDate() != null) {
-                LocalDateTime startDate = new LocalDateTime(offer.getStartDate());
-                start = timeZone == null ? new GregorianCalendar() : new GregorianCalendar(timeZone);
-                start.set(Calendar.YEAR, startDate.getYear());
-                start.set(Calendar.MONTH, startDate.getMonthOfYear() - 1);
-                start.set(Calendar.DAY_OF_MONTH, startDate.getDayOfMonth());
-                start.set(Calendar.HOUR_OF_DAY, startDate.getHourOfDay());
-                start.set(Calendar.MINUTE, startDate.getMinuteOfHour());
-                start.set(Calendar.SECOND, startDate.getSecondOfMinute());
-                start.get(Calendar.HOUR_OF_DAY);//do not delete this line
-                start.get(Calendar.MINUTE);
-                if (LOG.isTraceEnabled()) {
-                    LOG.debug("Offer: " + offer.getName() + " timeZone:" + timeZone + " startTime:" + start.getTime() + " currentTime:" + current.getTime());
-                }
-            }
             Calendar end = null;
-            if (offer.getEndDate() != null) {
-                LocalDateTime endDate = new LocalDateTime(offer.getEndDate());
-                end = timeZone == null ? new GregorianCalendar() : new GregorianCalendar(timeZone);
-                end.set(Calendar.YEAR, endDate.getYear());
-                end.set(Calendar.MONTH, endDate.getMonthOfYear() - 1);
-                end.set(Calendar.DAY_OF_MONTH, endDate.getDayOfMonth());
-                end.set(Calendar.HOUR_OF_DAY, endDate.getHourOfDay());
-                end.set(Calendar.MINUTE, endDate.getMinuteOfHour());
-                end.set(Calendar.SECOND, endDate.getSecondOfMinute());
-                end.get(Calendar.HOUR_OF_DAY);//do not delete this line
-                end.get(Calendar.MINUTE);
+
+            if (offer.getStartDate() != null) {
+                start = dateToCalendar(offer.getStartDate(), offerTimeZone);
+
                 if (LOG.isTraceEnabled()) {
-                    LOG.debug("Offer: " + offer.getName() + " endTime:" + start.getTime());
+                    LOG.debug("Offer: " + offer.getName() + " timeZone:" + offerTimeZone + " startTime:" + start.getTime() + " currentTime:" + current.getTime());
                 }
             }
-            if ((offer.getStartDate() == null) || (start.after(current))) {
-                offersToRemove.add(offer);
-            } else if (offer.getEndDate() != null && end.before(current)) {
-                offersToRemove.add(offer);
+
+            if (offer.getEndDate() != null) {
+                end = dateToCalendar(offer.getEndDate(), offerTimeZone);
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.debug("Offer: " + offer.getName() + " endTime:" + end.getTime());
+                }
+            }
+
+            if (start == null || start.after(current)) {
+                offersIterator.remove();
+            } else if (end != null && end.before(current)) {
+                offersIterator.remove();
             }
         }
-        // remove all offers in the offersToRemove list from original offers list
-        for (Offer offer : offersToRemove) {
-            offers.remove(offer);
-        }
-        return offers;
 
-        // return offers;
+        return offers;
+    }
+
+    protected Calendar dateToCalendar(Date date, TimeZone offerTimeZone) {
+        DateTimeZone offerDateTimeZone = DateTimeZone.forTimeZone(offerTimeZone);
+        LocalDateTime offerDateTime = new LocalDateTime(date, offerDateTimeZone);
+
+        Calendar calendar = new GregorianCalendar(offerTimeZone);
+
+        calendar.set(Calendar.YEAR, offerDateTime.getYear());
+        calendar.set(Calendar.MONTH, offerDateTime.getMonthOfYear() - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, offerDateTime.getDayOfMonth());
+        calendar.set(Calendar.HOUR_OF_DAY, offerDateTime.getHourOfDay());
+        calendar.set(Calendar.MINUTE, offerDateTime.getMinuteOfHour());
+        calendar.set(Calendar.SECOND, offerDateTime.getSecondOfMinute());
+        calendar.get(Calendar.HOUR_OF_DAY);//do not delete this line
+        calendar.get(Calendar.MINUTE);
+
+        return calendar;
     }
 
     /**

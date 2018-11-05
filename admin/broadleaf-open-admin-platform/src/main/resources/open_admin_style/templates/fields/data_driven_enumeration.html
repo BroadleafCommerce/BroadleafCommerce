@@ -14,7 +14,7 @@
 
 <th:block th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) lt #props.getAsInt('admin.enum.minCountForDropDown')}">
     <div class="radio-container">
-        <div th:if="!${field.required}" class="radio-option">
+        <div th:if="${field.allowNoValueEnumOption}" class="radio-option">
             <input th:field="*{fields['__${field.name}__'].value}" type="radio" class="radio" value=""/>
             <label class="radio-label" th:utext="#{No_Value_Selected}" th:classappend="${field.readOnly}? 'disabled'"></label>
         </div>

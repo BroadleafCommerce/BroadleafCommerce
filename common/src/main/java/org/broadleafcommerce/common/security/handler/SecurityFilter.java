@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,15 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -54,7 +52,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Jeff Fischer
  */
-public class SecurityFilter extends GenericFilterBean {
+public class SecurityFilter extends OncePerRequestFilter {
 
     protected static final Log LOG = LogFactory.getLog(SecurityFilter.class);
 
@@ -69,9 +67,7 @@ public class SecurityFilter extends GenericFilterBean {
     protected List<String> excludedRequestPatterns;
 
     @Override
-    public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) baseRequest;
-        HttpServletResponse response = (HttpServletResponse) baseResponse;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         boolean excludedRequestFound = false;
         if (excludedRequestPatterns != null && excludedRequestPatterns.size() > 0) {
@@ -107,7 +103,7 @@ public class SecurityFilter extends GenericFilterBean {
             }
         }
 
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 
     public List<String> getExcludedRequestPatterns() {
@@ -129,4 +125,5 @@ public class SecurityFilter extends GenericFilterBean {
     public void setExcludedRequestPatterns(List<String> excludedRequestPatterns) {
         this.excludedRequestPatterns = excludedRequestPatterns;
     }
+
 }

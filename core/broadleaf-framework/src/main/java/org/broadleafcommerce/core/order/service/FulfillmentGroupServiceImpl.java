@@ -53,13 +53,13 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
     @Resource(name="blFulfillmentGroupDao")
     protected FulfillmentGroupDao fulfillmentGroupDao;
-    
+
     @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
-    
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
 
@@ -105,7 +105,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             FulfillmentGroupItemRequest request = fulfillmentGroupRequest.getFulfillmentGroupItemRequests().get(i);
             request.setFulfillmentGroup(fg);
             request.setOrder(fulfillmentGroupRequest.getOrder());
-            
+
             boolean shouldPriceOrder = (priceOrder && (i == (fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size() - 1)));
             fg = addItemToFulfillmentGroup(request, shouldPriceOrder);
         }
@@ -115,14 +115,14 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
     @Override
     //@Transactional("blTransactionManager")
-    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, 
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest,
             boolean priceOrder) throws PricingException {
         return addItemToFulfillmentGroup(fulfillmentGroupItemRequest, priceOrder, true);
     }
 
     @Override
     //@Transactional("blTransactionManager")
-    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, 
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest,
             boolean priceOrder, boolean save) throws PricingException {
         if (priceOrder && !save) {
             throw new IllegalArgumentException("Pricing requires a save");
@@ -131,7 +131,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         Order order = fulfillmentGroupItemRequest.getOrder();
         OrderItem item = fulfillmentGroupItemRequest.getOrderItem();
         FulfillmentGroup fulfillmentGroup = fulfillmentGroupItemRequest.getFulfillmentGroup();
-        
+
         if (order == null) {
             if (item.getOrder() != null) {
                 order = item.getOrder();
@@ -139,7 +139,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 throw new IllegalArgumentException("Order must not be null");
             }
         }
-        
+
         // 1) Find the order item's existing fulfillment group, if any
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
@@ -177,7 +177,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
         return fulfillmentGroup;
     }
-    
+
     @Override
     public List<FulfillmentGroupItem> getFulfillmentGroupItemsForOrderItem(Order order, OrderItem orderItem) {
         List<FulfillmentGroupItem> fgis = new ArrayList<FulfillmentGroupItem>();
@@ -198,10 +198,10 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 }
             }
         }
-        
+
         return fgis;
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem) {
@@ -226,14 +226,14 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             }
         }
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Order collapseToOneShippableFulfillmentGroup(Order order, boolean priceOrder) throws PricingException {
         if (order.getFulfillmentGroups() == null || order.getFulfillmentGroups().size() < 2) {
             return order;
         }
-        
+
         List<FulfillmentGroup> shippableFulfillmentGroupList =  new ArrayList<FulfillmentGroup>();
         List<FulfillmentGroup> nonShippableFulfillmentGroupList = new ArrayList<FulfillmentGroup>();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
@@ -250,7 +250,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         // Get the default (first) shippable fulfillment group to collapse the others into
         ListIterator<FulfillmentGroup> fgIter = shippableFulfillmentGroupList.listIterator();
         FulfillmentGroup collapsedFg = fgIter.next();
-        
+
         List<FulfillmentGroup> newFulfillmentGroupList = nonShippableFulfillmentGroupList;
         newFulfillmentGroupList.add(collapsedFg);
         order.setFulfillmentGroups(newFulfillmentGroupList);
@@ -260,17 +260,17 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         for (FulfillmentGroupItem fgi : collapsedFg.getFulfillmentGroupItems()) {
             fgOrderItemMap.put(fgi.getOrderItem().getId(), fgi);
         }
-        
+
         // For all non default shippable fgs, collapse the items into the default shippable fg
         while (fgIter.hasNext()) {
             FulfillmentGroup fg = fgIter.next();
             ListIterator<FulfillmentGroupItem> fgItemIter = fg.getFulfillmentGroupItems().listIterator();
             while (fgItemIter.hasNext()) {
                 FulfillmentGroupItem fgi = fgItemIter.next();
-                
+
                 Long orderItemId = fgi.getOrderItem().getId();
                 FulfillmentGroupItem matchingFgi = fgOrderItemMap.get(orderItemId);
-                
+
                 if (matchingFgi == null) {
                     matchingFgi = fulfillmentGroupItemDao.create();
                     matchingFgi.setFulfillmentGroup(collapsedFg);
@@ -282,7 +282,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 } else {
                     matchingFgi.setQuantity(matchingFgi.getQuantity() + fgi.getQuantity());
                 }
-                
+
                 fulfillmentGroupItemDao.delete(fgi);
                 fgItemIter.remove();
             }
@@ -290,15 +290,15 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             fgIter.remove();
         }
 
-        
+
         return orderService.save(order, priceOrder);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException {
         List<OrderMultishipOption> multishipOptions =  orderMultishipOptionService.findOrderMultishipOptions(order.getId());
-        
+
         // Build map of fulfillmentGroupItemId --> FulfillmentGroupItem.quantity
         // Also build map of addressId:fulfillmentOptionId --> FulfillmentGroup
         Map<Long, Integer> fgItemQuantityMap = new HashMap<Long, Integer>();
@@ -309,87 +309,95 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             }
             String key = getKey(fg.getAddress(), fg.getFulfillmentOption(), fg.getType());
             multishipGroups.put(key, fg);
-            
+
             for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
                 fgItemQuantityMap.put(fgi.getId(), fgi.getQuantity());
             }
         }
-        
+
         for (OrderMultishipOption option : multishipOptions) {
             String key = getKey(option.getAddress(), option.getFulfillmentOption(), ((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType());
             FulfillmentGroup fg = multishipGroups.get(key);
-            
+
             // Get or create a fulfillment group that matches this OrderMultishipOption destination
             if (fg == null) {
                 FulfillmentGroupRequest fgr = new FulfillmentGroupRequest();
-                
+
                 fgr.setOrder(order);
-                
+
                 if (option.getAddress() != null) {
                     fgr.setAddress(option.getAddress());
                 }
-                
+
                 if (option.getFulfillmentOption() != null) {
                     fgr.setOption(option.getFulfillmentOption());
                 }
-                
+
                 fgr.setFulfillmentType(((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType());
 
                 fg = addFulfillmentGroupToOrder(fgr, false);
                 fg = save(fg);
                 order.getFulfillmentGroups().add(fg);
             }
-            
-            // See if there is a fulfillment group item that matches this OrderMultishipOption
-            // OrderItem request
-            FulfillmentGroupItem fulfillmentGroupItem = null;
-            for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-                if (fgi.getOrderItem().getId().equals(option.getOrderItem().getId())) {
-                    fulfillmentGroupItem = fgi;
-                }
-            }
-            
-            // If there is no matching fulfillment group item, create a new one with quantity 1
-            if (fulfillmentGroupItem == null) {
-                fulfillmentGroupItem = fulfillmentGroupItemDao.create();
-                fulfillmentGroupItem.setFulfillmentGroup(fg);
-                fulfillmentGroupItem.setOrderItem(option.getOrderItem());
-                fulfillmentGroupItem.setQuantity(1);
-                fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
-                fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
-            } else {
-                // There are three potential scenarios where a fulfillment group item exists:
-                //   1: It has been previously created and exists in the database and
-                //      has an id. This means it's in the fgItemQuantityMap. If there is 
-                //      remaining quantity in that map, we will decrement it for future
-                //      usage. If the quantity is 0 in the map, that means that we have more
-                //      items than we did before, and we must simply increment the quantity.
-                //      (qty == 0 or qty is not null)
-                //   2: It was created in this request but has been saved to the database because
-                //      it is a brand new fulfillment group and so it has an id. 
-                //      However, it does not have an entry in the fgItemQuantityMap,
-                //      so we can simply increment the quantity.
-                //      (qty == null)
-                //   3: It was created in this request and has not yet been saved to the database.
-                //      This is because it was a previously existing fulfillment group that has new
-                //      items. Therefore, we simply increment the quantity.
-                //      (fulfillmentGroupItem.getId() == null)
-                if (fulfillmentGroupItem.getId() != null) {
-                    Integer qty = fgItemQuantityMap.get(fulfillmentGroupItem.getId());
-                    if (qty == null || qty == 0) {
-                        fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
-                    } else {
-                        qty -= 1;
-                        fgItemQuantityMap.put(fulfillmentGroupItem.getId(), qty);
+
+            // Build a list of all order items associated with this OrderMultishipOption
+            // This is necessary because an order item may have child items associated
+            List<OrderItem> fgItemOrderItems = new ArrayList<>();
+            fgItemOrderItems.add(option.getOrderItem());
+            fgItemOrderItems.addAll(option.getOrderItem().getChildOrderItems());
+
+            for (OrderItem orderItem : fgItemOrderItems) {
+                // See if there is a fulfillment group item that matches this OrderMultishipOption
+                // OrderItem request
+                FulfillmentGroupItem fulfillmentGroupItem = null;
+                for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+                    if (fgi.getOrderItem().getId().equals(orderItem.getId())) {
+                        fulfillmentGroupItem = fgi;
                     }
+                }
+
+                // If there is no matching fulfillment group item, create a new one with quantity 1
+                if (fulfillmentGroupItem == null) {
+                    fulfillmentGroupItem = fulfillmentGroupItemDao.create();
+                    fulfillmentGroupItem.setFulfillmentGroup(fg);
+                    fulfillmentGroupItem.setOrderItem(orderItem);
+                    fulfillmentGroupItem.setQuantity(orderItem.getQuantity());
+                    fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
+                    fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
                 } else {
-                    fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+                    // There are three potential scenarios where a fulfillment group item exists:
+                    //   1: It has been previously created and exists in the database and
+                    //      has an id. This means it's in the fgItemQuantityMap. If there is
+                    //      remaining quantity in that map, we will decrement it for future
+                    //      usage. If the quantity is 0 in the map, that means that we have more
+                    //      items than we did before, and we must simply increment the quantity.
+                    //      (qty == 0 or qty is not null)
+                    //   2: It was created in this request but has been saved to the database because
+                    //      it is a brand new fulfillment group and so it has an id.
+                    //      However, it does not have an entry in the fgItemQuantityMap,
+                    //      so we can simply increment the quantity.
+                    //      (qty == null)
+                    //   3: It was created in this request and has not yet been saved to the database.
+                    //      This is because it was a previously existing fulfillment group that has new
+                    //      items. Therefore, we simply increment the quantity.
+                    //      (fulfillmentGroupItem.getId() == null)
+                    if (fulfillmentGroupItem.getId() != null) {
+                        Integer qty = fgItemQuantityMap.get(fulfillmentGroupItem.getId());
+                        if (qty == null || qty == 0) {
+                            fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+                        } else {
+                            qty -= 1;
+                            fgItemQuantityMap.put(fulfillmentGroupItem.getId(), qty);
+                        }
+                    } else {
+                        fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+                    }
                 }
             }
-            
+
             multishipGroups.put(key, fg);
         }
-        
+
         // Go through all of the items in the fgItemQuantityMap. For all items that have a
         // zero quantity, we don't need to do anything because we've already matched them
         // to the newly requested OrderMultishipOption. For items that have a non-zero quantity,
@@ -410,7 +418,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                         order.getFulfillmentGroups().remove(fg);
                         fulfillmentGroupDao.delete(fg);
                     }
-                } else { 
+                } else {
                     fgi.setQuantity(fgi.getQuantity() - entry.getValue());
                     fulfillmentGroupItemDao.save(fgi);
                 }
@@ -419,14 +427,14 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
         return orderService.save(order, priceOrder);
     }
-    
+
     protected String getKey(Address address, FulfillmentOption option, FulfillmentType fulfillmentType) {
         Long addressKey = (address == null) ? -1 : address.getId();
         Long fulfillmentOptionKey = (option == null) ? -1 : option.getId();
         String fulfillmentTypeKey = (fulfillmentType == null) ? "-1" : fulfillmentType.getType();
         return addressKey + ":" + fulfillmentOptionKey + ":" + fulfillmentTypeKey;
     }
-    
+
     protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
         FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
         fgi.setFulfillmentGroup(fulfillmentGroup);
@@ -453,7 +461,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     public FulfillmentGroupFee createFulfillmentGroupFee() {
         return fulfillmentGroupDao.createFulfillmentGroupFee();
     }
-    
+
     @Override
     public List<FulfillmentGroup> findUnfulfilledFulfillmentGroups(int start,
             int maxResults) {
@@ -509,6 +517,20 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<FulfillmentGroup> getAllShippableFulfillmentGroups(Order order) {
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        List<FulfillmentGroup> shippable = new ArrayList<FulfillmentGroup>();
+        if (fulfillmentGroups != null) {
+            for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+                if (isShippable(fulfillmentGroup.getType())) {
+                    shippable.add(fulfillmentGroup);
+                }
+            }
+        }
+        return shippable;
     }
 
     @Override

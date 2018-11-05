@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -84,6 +86,16 @@ public class SearchFacetResultDTO {
     }
     
     public String getValueKey() {
+        String value = getUnencodedValueKey();
+
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return value;
+        }
+    }
+
+    public String getUnencodedValueKey() {
         String value = getValue();
         
         if (value == null) {

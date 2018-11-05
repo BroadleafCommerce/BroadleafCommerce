@@ -92,7 +92,6 @@ var BLCAdmin = (function($) {
             }
         });
 
-
         // Only initialize all fields if NOT a normal EntityForm in modal
         // Should initialize for lookups
         if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
@@ -103,6 +102,16 @@ var BLCAdmin = (function($) {
 
         BLCAdmin.initializeModalButtons($data);
         BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
+    }
+
+    function wrapInModal($data) {
+        var id = ($data.attr('id') || 'wrapped') + '-modal';
+        return $(
+            '<div class="modal in" id="' + id + '">' +
+            '    <div class="modal-header"><button class="close" type="button" data-dismiss="modal" aria-hidden="true">×</button></div>' +
+            '    <div class="modal-body" style="padding: 0 20px">' + $data.html() + '</div>' +
+            '</div>'
+        );
     }
 
     function getDependentFieldFilterKey(className, childFieldName) {
@@ -336,6 +345,9 @@ var BLCAdmin = (function($) {
             if (!$element.find('.content-yield').length) {
                 var content = $('<div>', { 'class': 'content-yield'});
                 $element.find('.modal-body').wrapInner(content);
+            }
+            if($element.hasClass('wrap-in-modal')) {
+                $element = wrapInModal($element);
             }
             $('body').append($element);
             showModal($element, onModalHide, onModalHideArgs);
@@ -631,6 +643,8 @@ var BLCAdmin = (function($) {
                     tabKey: true,
                     tabsAsSpaces: 4,
                     deniedTags: [],
+                    direction: $('html').attr('dir') || 'ltr',
+                    lang: $('html').attr('lang') || 'en',
                     initCallback: function() {
                         // reset the redactor contents to ensure correct rendering
                         this.code.set(this.code.get());
@@ -1180,13 +1194,13 @@ $.fn.blSelectize = function (settings_user) {
             settings_user = {};
         }
         // add default settings here
-        settings_user['dropdownParent'] = 'body';
-        settings_user['hideSelected'] = true;
-        settings_user['selectOnTab'] = true;
-        settings_user['plugins'] = ['clear_on_type', 'enter_key_blur'];
-        settings_user['placeholder'] = 'Click here to select ...';
-        settings_user['positionDropdown'] = 'auto';
-        settings_user['onInitialize'] = function() {
+        settings_user['dropdownParent'] = settings_user['dropdownParent'] || 'body';
+        settings_user['hideSelected'] = settings_user['hideSelected'] !== undefined ? settings_user['hideSelected'] : true;
+        settings_user['selectOnTab'] = settings_user['selectOnTab'] !== undefined ? settings_user['selectOnTab'] : true;
+        settings_user['plugins'] = settings_user['plugins'] || ['clear_on_type', 'enter_key_blur'];
+        settings_user['placeholder'] = settings_user['placeholder'] || 'Click here to select ...';
+        settings_user['positionDropdown'] = settings_user['positionDropdown'] || 'auto';
+        settings_user['onInitialize'] = settings_user['onInitialize'] || function() {
             if (Object.keys(this.options).length <= 1) {
                 // Remove the dropdown css
                 this.$control.addClass('remove-caret');
@@ -1370,9 +1384,13 @@ $(document).ready(function() {
     // primary entity buttons should be disabled until page is loaded
     $(window).load(function () {
         $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
-        $('a.show-translations').removeClass('disabled');
     });
 
+    //moved show-translations to an initializationHandler so it gets fired for modals as well 
+    BLCAdmin.addInitializationHandler(function($container) {
+        $('a.show-translations:not(.always-disabled)').removeClass('disabled');
+     });
+    
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
             if (BLCAdmin.currentModal() != null) {
@@ -1563,4 +1581,13 @@ $('.main-content').scroll(function () {
     if (h > (content + title + tabs) && h < (contentWrapper + title + tabs)) {
         $(this).find('.content-yield').height(h - title - tabs);
     }
+});
+
+$('body').on('input', 'input.resize-as-needed', function () {
+    var minSize = $(this).data('min-size') || 1;
+    var maxSize = $(this).data('max-size') || $(this).attr('maxlength') || 30;
+    var newSize = $(this).val().length;
+    newSize = Math.max(minSize, newSize);
+    newSize = Math.min(maxSize, newSize);
+    $(this).attr('size', newSize);
 });

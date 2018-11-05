@@ -124,7 +124,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistenceResponse response = fetch(request);
         Entity[] entities = response.getDynamicResultSet().getRecords();
         if (ArrayUtils.isEmpty(entities)) {
-            throw new EntityNotFoundException();
+            String celiningEntity = request.getCeilingEntityClassname();
+            throw new EntityNotFoundException(String.format("Could not find Entity %s with ID %s", celiningEntity, id));
         }
 
         return response;
@@ -278,7 +279,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             response = fetch(ppr);
             Entity[] entities = response.getDynamicResultSet().getRecords();
             if (ArrayUtils.isEmpty(entities)) {
-                throw new EntityNotFoundException();
+                String altId = (!StringUtils.isEmpty(alternateId)) ? alternateId : "";
+                throw new EntityNotFoundException(String.format("Could not find Entity for [%s], field [%s], id [%s], targetId [%s], alternateId [%s] ", 
+                        ppr.getCeilingEntityClassname(), ppr.getAdornedList().getCollectionFieldName(), containingEntityId, collectionItemId, altId));
             }
         } else if (md instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) md;
@@ -570,8 +573,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         Property parentNameProp = parentEntity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
         if (parentNameProp != null) {
             ppr.setRequestingEntityName(parentNameProp.getValue());
+        }else {
+            Property name = parentEntity.getPMap().get("name");
+            if(name !=null) {
+                ppr.setRequestingEntityName(name.getValue());
+            }
         }
-
         Property[] propArr = new Property[properties.size()];
         properties.toArray(propArr);
         ppr.getEntity().setProperties(propArr);
@@ -648,6 +655,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         Property parentNameProp = parentEntity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
         if (parentNameProp != null) {
             ppr.setRequestingEntityName(parentNameProp.getValue());
+        } else {
+            Property name = parentEntity.getPMap().get("name");
+            if(name !=null) {
+                ppr.setRequestingEntityName(name.getValue());
+            }
         }
 
         Property p = new Property();
@@ -980,7 +992,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(owningClass);
         Class<?> clazz = dynamicEntityDao.getImplClass(owningClass);
-        Object foreignEntity = dynamicEntityDao.find(clazz, id);
+        Object foreignEntity = dynamicEntityDao.find(clazz, toIdFieldType(id, clazz));
 
         if (foreignEntity instanceof AdminMainEntity) {
             return ((AdminMainEntity) foreignEntity).getMainEntityName();
@@ -997,4 +1009,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return BLCSystemProperty.resolveIntSystemProperty("admin.default.max.results", 50);
     }
 
+    protected Object toIdFieldType(String id, Class<?> entityClass) {
+        Class<?> idFieldClass = dynamicDaoHelper.getIdField(entityClass, em).getType();
+        if (Long.class.isAssignableFrom(idFieldClass)) {
+            return Long.parseLong(id);
+        } else if (Integer.class.isAssignableFrom(idFieldClass)) {
+            return Integer.parseInt(id);
+        }
+        return id;
+    }
 }

@@ -73,6 +73,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -897,6 +898,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
                 LOG.debug("sku, " + id + ", inactive due to date");
             }
         }
+
+        if (!(getProduct() == null) && !getProduct().isActive()) {
+            return false;
+        }
+
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
@@ -1143,8 +1149,9 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
-    public Map<String, SkuAttribute> getMultiValueSkuAttributes() {
-        Map<String, SkuAttribute> multiValueMap = new MultiValueMap();
+    @SuppressWarnings("unchecked")
+    public Map<String, Collection<SkuAttribute>> getMultiValueSkuAttributes() {
+        MultiValueMap multiValueMap = new MultiValueMap();
 
         for (SkuAttribute skuAttribute : skuAttributes) {
             multiValueMap.put(skuAttribute.getName(), skuAttribute);

@@ -24,6 +24,7 @@
         done : 'Done',
         updated : 'Updated',
         deleted : 'Deleted',
+        duplicated : 'Duplicated',
         
         // Rule builder messages
         rule : 'Rule',
@@ -48,6 +49,7 @@
 
         problemSaving : 'There was a problem saving. See errors below',
         problemDeleting : 'There was a problem deleting this record. See errors below',
+        problemDuplicating : 'There was a problem duplicating this record. See errors below',
         problemReverting : 'There was a problem reverting this record.',
         globalErrors : 'Global Errors',
 
@@ -57,6 +59,10 @@
         primaryMediaAttrsAltText : 'Alt Text',
         primaryMediaAttrsTags : 'Tags',
         primaryMediaAttrsBtnApply : 'Apply',
+
+        // Filter error messages
+        emptyOperatorValue: "Operator value must not be empty",
+        emptyFilterValue: "Filter value must not be empty",
     };
             
 })(jQuery, BLCAdmin);

@@ -336,8 +336,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
                 String value = property.getValue();
                 if (metadata != null) {
-                    Boolean mutable = metadata.getMutable();
-                    Boolean readOnly = metadata.getReadOnly();
 
                     if (metadata.getFieldType().equals(SupportedFieldType.BOOLEAN)) {
                         if (value == null) {
@@ -345,55 +343,46 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     }
 
-                    if ((mutable == null || mutable) && (readOnly == null || !readOnly) && property.getEnabled()) {
+                    if (attemptToPopulateValue(property, fieldManager, instance, setId, metadata, entity, value)) {
+                        boolean isValid = true;
+                        PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
+                        handled = false;
                         if (value != null) {
-                            handled = false;
-                            PopulateValueRequest request = new PopulateValueRequest(setId,
-                                    fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
-
-                            boolean attemptToPopulate = true;
                             for (PopulateValueRequestValidator validator : populateValidators) {
                                 PropertyValidationResult validationResult = validator.validate(request, instance);
                                 if (!validationResult.isValid()) {
                                     entity.addValidationError(property.getName(), validationResult.getErrorMessage());
-                                    attemptToPopulate = false;
+                                    isValid = false;
                                 }
                             }
-
-                            if (attemptToPopulate) {
-                                try {
-                                    boolean isBreakDetected = false;
-                                    for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                        if (!isBreakDetected || fieldPersistenceProvider.alwaysRun()) {
-                                            MetadataProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
-                                            if (MetadataProviderResponse.NOT_HANDLED != response) {
-                                                handled = true;
-                                            }
-                                            if (MetadataProviderResponse.HANDLED_BREAK == response) {
-                                                isBreakDetected = true;
-                                            }
+                        }
+                        if (isValid) {
+                            try {
+                                boolean isBreakDetected = false;
+                                for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
+                                    if ((!isBreakDetected || fieldPersistenceProvider.alwaysRun()) && (value != null || fieldPersistenceProvider.canHandlePopulateNull())) {
+                                        MetadataProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
+                                        if (MetadataProviderResponse.NOT_HANDLED != response) {
+                                            handled = true;
+                                        }
+                                        if (MetadataProviderResponse.HANDLED_BREAK == response) {
+                                            isBreakDetected = true;
                                         }
                                     }
-                                    if (!handled) {
-                                        defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
-                                                fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd()), instance);
+                                }
+                                if (!handled) {
+                                    if (value == null) {
+                                        property.setIsDirty(true);
                                     }
-                                } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
-                                    entityPersistenceException = e;
-                                    cleanupFailedPersistenceAttempt(instance);
-                                    break;
+                                    defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd()), instance);
+                                    if (value == null) {
+                                        fieldManager.setFieldValue(instance, property.getName(), null);
+                                    }
                                 }
-                            }
-                        } else {
-                            try {
-                                if (fieldManager.getFieldValue(instance, property.getName()) != null && !entity.isPreAdd() && (metadata.getFieldType() != SupportedFieldType.ID || setId) && metadata.getFieldType() != SupportedFieldType.PASSWORD) {
-                                    property.setIsDirty(true);
-                                    PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
-                                    defaultFieldPersistenceProvider.populateValue(request, instance);
-                                    fieldManager.setFieldValue(instance, property.getName(), null);
-                                }
-                            } catch (FieldNotAvailableException e) {
-                                throw new IllegalArgumentException(e);
+                            } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
+                                entityPersistenceException = e;
+                                cleanupFailedPersistenceAttempt(instance);
+                                break;
                             }
                         }
                     }
@@ -433,6 +422,28 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             session.setFlushMode(originalFlushMode);
         }
         return instance;
+    }
+
+    protected boolean attemptToPopulateValue(Property property, FieldManager fieldManager, Serializable instance,
+                                             Boolean setId, BasicFieldMetadata metadata, Entity entity, String value) throws IllegalAccessException {
+        Boolean mutable = metadata.getMutable();
+        Boolean readOnly = metadata.getReadOnly();
+        boolean generalConditionsMet = (mutable == null || mutable) && (readOnly == null || !readOnly) && property.getEnabled();
+
+        if (generalConditionsMet && value == null) {
+            boolean currentValueIsNotNull = false;
+            try {
+                currentValueIsNotNull = fieldManager.getFieldValue(instance, property.getName()) != null;
+            } catch (FieldNotAvailableException e) {
+                throw new IllegalArgumentException(e);
+            }
+
+            boolean valueIsNotNullId = metadata.getFieldType() != SupportedFieldType.ID || setId;
+            boolean valueIsNotPassword = metadata.getFieldType() != SupportedFieldType.PASSWORD;
+
+            return currentValueIsNotNull && !entity.isPreAdd() && valueIsNotNullId && valueIsNotPassword;
+        }
+        return generalConditionsMet;
     }
 
     @Override
