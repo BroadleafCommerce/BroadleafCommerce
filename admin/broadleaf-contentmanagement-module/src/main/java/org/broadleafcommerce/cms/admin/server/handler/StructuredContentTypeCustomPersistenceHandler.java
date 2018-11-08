@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
@@ -187,7 +188,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     property.setIsDirty(true);
                 }
 
-                if (SupportedFieldType.ADDITIONAL_FOREIGN_KEY.equals(def.getFieldType()) && value != null) {
+                if (SupportedFieldType.ADDITIONAL_FOREIGN_KEY.equals(def.getFieldType()) && StringUtils.isNotEmpty(value)) {
                     // we need to look up the display value
                     String display = service.getForeignEntityName(def.getAdditionalForeignKeyClass(), value);
                     property.setDisplayValue(display);
