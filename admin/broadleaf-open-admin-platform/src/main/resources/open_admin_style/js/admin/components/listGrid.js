@@ -162,8 +162,10 @@
          *
          * @param {element} $listGridContainer - the ListGrid collection's container element
          * @param {String} url - the url that will return the latest collection data
+         * @param {function} callBack - callback to execute after AJAX call.
+         * @param {element} callBackParams - Data to pass to callback function.
          */
-        refreshCollection: function ($listGridContainer, url) {
+        refreshCollection: function ($listGridContainer, url, callBack, callBackParams) {
             var params = BLCAdmin.filterBuilders.getListGridFiltersAsURLParams($listGridContainer);
 
             BLC.ajax({
@@ -171,6 +173,7 @@
                 type: "GET"
             }, function (data) {
                 BLCAdmin.listGrid.replaceRelatedCollection($(data));
+                if(callBack) callBack(callBackParams);
             });
         },
 

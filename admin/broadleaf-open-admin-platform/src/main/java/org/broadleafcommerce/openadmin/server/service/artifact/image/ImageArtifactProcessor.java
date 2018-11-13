@@ -17,16 +17,25 @@
  */
 package org.broadleafcommerce.openadmin.server.service.artifact.image;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactProcessor;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.EffectsManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.googlecode.pngtastic.core.PngImage;
+import com.googlecode.pngtastic.core.PngOptimizer;
+
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -54,6 +63,9 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
 
     protected String[] supportedUploadTypes = {"gif", "jpg", "jpeg", "png", "bmp", "wbmp"};
     protected float compressionQuality = 0.9F;
+
+    @Value("${image.artifact.recompress.formats:png}")
+    protected String recompressFormats = "png";
 
     @Override
     public boolean isSupported(InputStream artifactStream, String filename) {
@@ -105,36 +117,127 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
                 image = effectsManager.renderEffect(operation.getName(), operation.getFactor(), operation.getParameters(), image);
             }
 
-            //and after - some applications have a problem reading jpeg images with an alpha channel associated
-            if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
-                image = stripAlpha(image);
-            }
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            BufferedOutputStream bos = new BufferedOutputStream(byteArrayOutputStream);
             if (formatName.toLowerCase().equals("gif")) {
                 formatName = "png";
             }
-            Iterator<ImageWriter> writerIter = ImageIO.getImageWritersByFormatName(formatName);
-            ImageWriter writer = writerIter.next();
-            ImageWriteParam iwp = writer.getDefaultWriteParam();
-
-            if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
-                iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                iwp.setCompressionQuality(compressionQuality);
+            InputStream result = compress(image, formatName);
+            if (formatName.equals("png")) {
+                result = compressPNG(result);
             }
-
-            MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(bos);
-            writer.setOutput(output);
-
-            IIOImage iomage = new IIOImage(image, null,null);
-            writer.write(null, iomage, iwp);
-            bos.flush();
-
-            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            return result;
         } else {
-            return artifactStream;
+            String[] formats = null;
+            if (!StringUtils.isEmpty(recompressFormats)) {
+                formats = recompressFormats.split(",");
+            }
+            //A static PNG asset uploaded by the user will rarely be compressed correctly
+            return recompress(artifactStream, formats);
         }
+    }
+
+    public InputStream convert(InputStream artifactStream, BufferedImageOp filter) throws Exception {
+        ImageInputStream iis = ImageIO.createImageInputStream(artifactStream);
+        Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+        ImageReader reader = iter.next();
+        String formatName = reader.getFormatName();
+        artifactStream.reset();
+        BufferedImage image = ImageIO.read(ImageIO.createImageInputStream(artifactStream));
+
+        //before
+        if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
+            image = stripAlpha(image);
+        }
+
+        image = filter.filter(image, null);
+
+        if (formatName.toLowerCase().equals("gif")) {
+            formatName = "png";
+        }
+        InputStream result = compress(image, formatName);
+        if (formatName.equals("png")) {
+            result = compressPNG(result);
+        }
+        return result;
+    }
+
+    /**
+     * Given an input stream on a media file, recompress the file according to best practice optimization standards.
+     *
+     * @param artifactStream The media input stream
+     * @param filterFormats A list of formats to reduce the scope of influence. When specified, only media matching the
+     *                      included formats will be processed. Can be null to cause all formats to be processed.
+     * @return
+     * @throws Exception
+     */
+    public InputStream recompress(InputStream artifactStream, String[] filterFormats) throws Exception {
+        ByteArrayInputStream inMemoryStream;
+        if (artifactStream instanceof ByteArrayInputStream) {
+            inMemoryStream = (ByteArrayInputStream) artifactStream;
+        } else {
+            inMemoryStream = new ByteArrayInputStream(IOUtils.toByteArray(artifactStream));
+        }
+        ImageInputStream iis = ImageIO.createImageInputStream(inMemoryStream);
+        Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+        ImageReader reader = iter.next();
+        String formatName = reader.getFormatName();
+        if (!ArrayUtils.isEmpty(filterFormats)) {
+            Arrays.sort(filterFormats);
+            int pos = Arrays.binarySearch(filterFormats, formatName.toLowerCase());
+            if (pos < 0) {
+                return artifactStream;
+            }
+        }
+        inMemoryStream.reset();
+        InputStream responseStream;
+        if (formatName.toLowerCase().equals("png")) {
+            responseStream = compressPNG(inMemoryStream);
+        } else {
+            BufferedImage image = ImageIO.read(ImageIO.createImageInputStream(inMemoryStream));
+            responseStream = compress(image, formatName);
+            if (formatName.toLowerCase().equals("gif")) {
+                responseStream = compressPNG(responseStream);
+            }
+        }
+        return responseStream;
+    }
+
+    protected InputStream compressPNG(InputStream artifactStream) throws Exception {
+        PngImage pngImage = new PngImage(artifactStream);
+        PngOptimizer optimizer = new PngOptimizer();
+        PngImage response = optimizer.optimize(pngImage, true, null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        response.writeDataOutputStream(baos);
+        return new ByteArrayInputStream(baos.toByteArray());
+    }
+
+    protected InputStream compress(BufferedImage image, String formatName) throws Exception {
+        if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
+            image = stripAlpha(image);
+        }
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        BufferedOutputStream bos = new BufferedOutputStream(byteArrayOutputStream);
+        if (formatName.toLowerCase().equals("gif")) {
+            formatName = "png";
+        }
+        Iterator<ImageWriter> writerIter = ImageIO.getImageWritersByFormatName(formatName);
+        ImageWriter writer = writerIter.next();
+        ImageWriteParam iwp = writer.getDefaultWriteParam();
+
+        if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
+            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            iwp.setCompressionQuality(0.85F);
+            iwp.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+        }
+
+        MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(bos);
+        writer.setOutput(output);
+
+        IIOImage iomage = new IIOImage(image, null,null);
+        writer.write(null, iomage, iwp);
+        bos.flush();
+
+        return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
 
     protected BufferedImage stripAlpha(BufferedImage image){

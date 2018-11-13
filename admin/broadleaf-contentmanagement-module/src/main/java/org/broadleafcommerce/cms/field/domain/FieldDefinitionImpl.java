@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -91,24 +92,31 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected String fieldType;
 
     @Column (name = "SECURITY_LEVEL")
+    @AdminPresentation(excluded = true)
     protected String securityLevel;
 
     @Column (name = "HIDDEN_FLAG")
+    @AdminPresentation(excluded = true)
     protected Boolean hiddenFlag = false;
 
     @Column (name = "VLDTN_REGEX")
+    @AdminPresentation(excluded = true)
     protected String validationRegEx;
 
     @Column (name = "VLDTN_ERROR_MSSG_KEY")
+    @AdminPresentation(excluded = true)
     protected String validationErrorMesageKey;
 
     @Column (name = "MAX_LENGTH")
+    @AdminPresentation(excluded = true)
     protected Integer maxLength;
 
     @Column (name = "COLUMN_WIDTH")
+    @AdminPresentation(excluded = true)
     protected String columnWidth;
 
     @Column (name = "TEXT_AREA_FLAG")
+    @AdminPresentation(excluded = true)
     protected Boolean textAreaFlag = false;
     
     @Column(name = "REQUIRED_FLAG")
@@ -120,6 +128,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected DataDrivenEnumeration dataDrivenEnumeration;
 
     @Column (name = "ALLOW_MULTIPLES")
+    @AdminPresentation(excluded = true)
     protected Boolean allowMultiples = false;
 
     @ManyToOne(targetEntity = FieldGroupImpl.class)
@@ -131,12 +140,15 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected Integer fieldOrder = 0;
 
     @Column (name = "TOOLTIP")
+    @AdminPresentation(excluded = true)
     protected String tooltip;
 
     @Column (name = "HELP_TEXT")
+    @AdminPresentation(excluded = true)
     protected String helpText;
 
     @Column (name = "HINT")
+    @AdminPresentation(excluded = true)
     protected String hint;
 
     @Override
@@ -163,18 +175,25 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     public SupportedFieldType getFieldType() {
         if (fieldType == null) {
             return null;
-        }
-        
-        if (fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+        } else if (fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
             return SupportedFieldType.ADDITIONAL_FOREIGN_KEY;
+        } else {
+            return SupportedFieldType.valueOf(fieldType);
         }
-        
-        return SupportedFieldType.valueOf(fieldType);
     }
 
     @Override
     public String getFieldTypeVal() {
         return fieldType;
+    }
+    
+    @Override
+    public DynamicSupportedFieldType getDynamicSupportedFieldType() {
+        if (fieldType == null) {
+            return null;
+        } else {
+            return DynamicSupportedFieldType.getInstance(fieldType);
+        }
     }
     
     @Override
