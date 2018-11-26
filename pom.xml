@@ -301,7 +301,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.2.201409121644</version>
+                <version>0.7.9</version>
                 <executions>
                     <!-- Unit test coverage prep; generates jacoco.exec -->
                     <execution>
@@ -813,7 +813,7 @@
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>4.1.4</version>
             </dependency>
-            
+
             <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
             <dependency>
                 <groupId>javax.ws.rs</groupId>
@@ -832,7 +832,7 @@
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
                 <version>2.5.0</version>
             </dependency>
-            
+
 
             <!-- JMS Libraries -->
             <dependency>
@@ -1024,12 +1024,12 @@
                         <!-- which has to be resolved in a platform agnostic way -->
                         <!-- in order to have a clean compile in Eclipse. That -->
                         <!-- turned out to be surprisingly difficult to achieve. -->
-        
+
                         <!-- From the dependency tree below we can see that -->
                         <!-- jdk.tools is pulled in by hadoop-annotations -->
                         <!-- and since this is a normal JDK system jar we can avoid the -->
                         <!-- problem by excluding the jdk.tools dependency. -->
-        
+
                         <!-- Relevant output from mvn dependency:tree follows -->
                         <!-- +- org.broadleafcommerce:broadleaf-framework:jar:{version}:compile -->
                         <!--    +- org.apache.solr:solr-core:jar:4.4.0:compile -->
@@ -1457,7 +1457,7 @@
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.4.5</version>
+                <version>1.5.7</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -1479,7 +1479,7 @@
                 <groupId>de.jkeylockmanager</groupId>
                 <artifactId>jkeylockmanager</artifactId>
                 <version>1.1.0</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>

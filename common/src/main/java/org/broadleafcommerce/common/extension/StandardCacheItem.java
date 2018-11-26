@@ -29,6 +29,7 @@ import java.io.Serializable;
  */
 public class StandardCacheItem implements Serializable {
 
+    private String key;
     private Object cacheItem;
     private ItemStatus itemStatus;
 
@@ -48,4 +49,11 @@ public class StandardCacheItem implements Serializable {
         this.itemStatus = itemStatus;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

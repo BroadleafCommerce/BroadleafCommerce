@@ -72,7 +72,7 @@
         </profile>
     </profiles>
     <dependencies>
-    
+
         <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -86,7 +86,7 @@
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -160,6 +160,12 @@
                     <groupId>commons-logging</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+                <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>20020423</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

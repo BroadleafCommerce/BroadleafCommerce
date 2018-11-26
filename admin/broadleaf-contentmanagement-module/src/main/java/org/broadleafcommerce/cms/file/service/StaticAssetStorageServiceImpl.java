@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
-import org.apache.commons.io.FileExistsException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -36,6 +34,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.file.service.GloballySharedInputStream;
+import org.broadleafcommerce.common.io.ConcurrentFileOutputStream;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,6 +94,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Resource(name = "blStaticAssetServiceExtensionManager")
     protected StaticAssetServiceExtensionManager extensionManager;
 
+    @Resource(name = "blConcurrentFileOutputStream")
+    protected ConcurrentFileOutputStream concurrentFileOutputStream;
+
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
 
@@ -149,8 +151,6 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
     
     protected void createLocalFileFromInputStream(InputStream is, File baseLocalFile) throws IOException {
-        FileOutputStream tos = null;
-        FileWorkArea workArea = null;
         try {
             if (!baseLocalFile.getParentFile().exists()) {
                 boolean directoriesCreated = false;
@@ -166,37 +166,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     }
                 }
             }
-            
-            workArea = broadleafFileService.initializeWorkArea();
-            File tmpFile = new File(FilenameUtils.concat(workArea.getFilePathLocation(), baseLocalFile.getName()));
-            
-            tos = new FileOutputStream(tmpFile);
 
-            IOUtils.copy(is, tos);
-            
-            // close the input/output streams before trying to move files around
-            is.close();
-            tos.close();
+            concurrentFileOutputStream.write(is, baseLocalFile);
 
-            // Adding protection against this file already existing / being written by another thread.
-            // Adding locks would be useless here since another VM could be executing the code. 
-            if (!baseLocalFile.exists()) {
-                try {
-                    FileUtils.moveFile(tmpFile, baseLocalFile);
-                } catch (FileExistsException e) {
-                    // No problem
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("File exists error moving file " + tmpFile.getAbsolutePath(), e);
-                    }
-                }
-            }
         } finally {
             IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(tos);
-            
-            if (workArea != null) {
-                broadleafFileService.closeWorkArea(workArea);
-            }
         }
     }    
 

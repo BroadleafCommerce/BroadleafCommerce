@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2017 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.extension;
+package org.broadleafcommerce.common.io;
 
-/**
- * @author Jeff Fischer
- */
-public enum ItemStatus {
-    DELETED,NORMAL,NONE
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+public interface ConcurrentFileOutputStream {
+    int write(InputStream src, File dest)  throws IOException;
+    int write(InputStream src, File dest, int bufferSize)  throws IOException;
 }

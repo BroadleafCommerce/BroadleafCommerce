@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.extension;
+package org.broadleafcommerce.common.extensibility.jpa.convert;
 
 /**
- * @author Jeff Fischer
+ * Allow a class transformer to explicitly declare which persistence unit it will influence
+ *
+ * @author jfischer
+ *
  */
-public enum ItemStatus {
-    DELETED,NORMAL,NONE
+public interface BroadleafPersistenceUnitDeclaringClassTransformer extends BroadleafClassTransformer {
+
+    String getPersistenceUnitName();
+
 }

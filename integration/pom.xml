@@ -94,7 +94,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Only delete the contents of the target folder so that 
+                <!-- Only delete the contents of the target folder so that
                     it doesn't lose its "derived" status in Eclipse -->
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
@@ -118,7 +118,7 @@
     </build>
     <profiles>
         <profile>
-            <!-- Skip legacy tests by default, activated with the Maven 'legacy-test' 
+            <!-- Skip legacy tests by default, activated with the Maven 'legacy-test'
                 profile -->
             <id>legacy-test</id>
             <build>
