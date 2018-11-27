@@ -405,18 +405,22 @@ $(document).ready(function() {
      			type: "POST",
      			data: $form.serializeArray()
      		}, function(data) {
-     			$('div.' + href + 'Tab .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
+
+     		    // using tabKey instead of href. Href is not dependable because of hidden tabs
+                var tabKey = $tab.find('span').data('tabkey');
+
+                $('#' + tabKey + 'Contents .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
                     BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
-     			$('div.' + href + 'Tab .selectize-wrapper', $(data)).each(function() {
+     			$('#' + tabKey + 'Contents .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('div.' + href + 'Tab .media-container', $(data)).each(function() {
+                $('#' + tabKey + 'Contents .media-container', $(data)).each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);
