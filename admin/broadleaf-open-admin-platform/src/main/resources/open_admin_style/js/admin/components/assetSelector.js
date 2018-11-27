@@ -55,8 +55,9 @@
             $redactor.on('assetInfoSelected', function(event, fields) {
                 currentRedactor.selection.restore();
                 var assetUrl =   fields['assetUrl'];
+                var altText = fields['altText'];
                 if (assetUrl.charAt(0) == "/") assetUrl = assetUrl.substr(1);
-                var $img = $('<img>', { 'src' : assetUrl });
+                var $img = $('<img>', { 'src' : assetUrl, 'alt': altText });
                 currentRedactor.insert.html($img.outerHTML());
                 BLCAdmin.hideCurrentModal();
             });
@@ -145,6 +146,7 @@ $(document).ready(function() {
                 } else {
                     var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
                     mediaJson.url = fields['assetUrl'];
+                    mediaJson.altText = fields['altText'];
                     mediaItem.val(JSON.stringify(mediaJson)).trigger('input');
                 }
             }
