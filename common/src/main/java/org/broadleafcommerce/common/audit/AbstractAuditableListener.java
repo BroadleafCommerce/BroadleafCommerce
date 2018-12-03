@@ -94,10 +94,10 @@ public abstract class AbstractAuditableListener {
                         auditable = field.get(entity);
                     }
 
-                Field temporalField = auditable.getClass().getDeclaredField(dateField);
-                Field agentField = auditable.getClass().getDeclaredField(userField);
-                setAuditValueTemporal(temporalField, auditable);
-                setAuditValueAgent(agentField, auditable);
+                    Field temporalField = auditable.getClass().getDeclaredField(dateField);
+                    Field agentField = auditable.getClass().getDeclaredField(userField);
+                    setAuditValueTemporal(temporalField, auditable);
+                    setAuditValueAgent(agentField, auditable);
                 }
             }
         }
