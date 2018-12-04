@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceExc
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Service;
@@ -61,9 +62,10 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
     
     @Resource(name = "blGlobalEntityPropertyValidators")
     protected List<GlobalPropertyValidator> globalEntityValidators;
-    
-    protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
+    
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService securityService;
     
