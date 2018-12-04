@@ -122,7 +122,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 if (includeUnqualifiedPolymorphicEntities) {
                     POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
                 } else {
-                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
+                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(ceilingClass, filteredEntities);
                 }
             }
         }
