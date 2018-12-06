@@ -56,7 +56,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (customer == null) {
             throw new UsernameNotFoundException("The customer was not found");
         }
-        boolean isActive = ((Status) customer).isActive() && !customer.isDeactivated();
+        boolean isActive = !customer.isDeactivated();
+        if (Status.class.isAssignableFrom(customer.getClass())) {
+            isActive = isActive && ((Status) customer).isActive();
+        }
         List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(roleService.findCustomerRolesByCustomerId(customer.getId()));
         return new CustomerUserDetails(customer.getId(), username, customer.getPassword(), isActive, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
     }
