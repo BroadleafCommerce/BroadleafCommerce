@@ -18,10 +18,11 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.extensibility.jpa.DirtyFallback;
 
 import java.io.Serializable;
 
-public interface CustomerPhone extends Serializable, MultiTenantCloneable<CustomerPhone> {
+public interface CustomerPhone extends Serializable, MultiTenantCloneable<CustomerPhone>, DirtyFallback {
 
     public void setId(Long id);
 

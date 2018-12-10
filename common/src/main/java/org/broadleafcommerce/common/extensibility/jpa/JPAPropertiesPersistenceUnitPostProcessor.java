@@ -138,6 +138,7 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
 
     @PostConstruct
     public void populatePresetProperties() {
+        persistenceUnitProperties.put("blPU.hibernate.entity_dirtiness_strategy", FrameworkCustomEntityDirtinessStrategy.class.getName());
         if (!blPUHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.auto", blPUHibernateHbm2ddlAuto);
         if (!blPUHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.dialect", blPUHibernateDialect);
         if (!blPUHibernateShow_sql.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.show_sql", blPUHibernateShow_sql);

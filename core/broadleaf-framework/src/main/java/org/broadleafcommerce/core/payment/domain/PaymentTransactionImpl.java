@@ -36,7 +36,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
@@ -65,7 +64,6 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT_TRANSACTION")
-@SQLDelete(sql="UPDATE BLC_ORDER_PAYMENT_TRANSACTION SET ARCHIVED = 'Y' WHERE PAYMENT_TRANSACTION_ID = ?")
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "", mergeEntries =

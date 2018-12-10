@@ -34,6 +34,9 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -46,6 +49,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class, CustomerAddressPersistedEntityListener.class })
@@ -97,6 +101,9 @@ public class CustomerAddressImpl implements CustomerAddress {
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
+
+    @Transient
+    protected boolean isDirty = false;
 
     @Override
     public Long getId() {
@@ -167,6 +174,26 @@ public class CustomerAddressImpl implements CustomerAddress {
     @Override
     public boolean isActive() {
         return 'Y'!=getArchived();
+    }
+
+    @Override
+    public Set<String> getDirtyProperties() {
+        return Collections.singleton("addressName");
+    }
+
+    @Override
+    public void clearDirtyState() {
+        isDirty = false;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        this.isDirty = dirty;
     }
 
     @Override

@@ -45,6 +45,7 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     }
 
     public CustomerPhone save(CustomerPhone customerPhone) {
+        customerPhone.setDirty(true);
         return em.merge(customerPhone);
     }
 

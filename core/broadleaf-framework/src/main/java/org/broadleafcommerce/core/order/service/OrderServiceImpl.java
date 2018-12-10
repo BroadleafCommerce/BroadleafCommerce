@@ -399,13 +399,14 @@ public class OrderServiceImpl implements OrderService {
                     //incorrect results because something has not been flushed to the database yet.
                     session.setHibernateFlushMode(FlushMode.MANUAL);
                 }
+                order.setDirty(true);
                 order = persist(order);
 
                 if (extensionManager != null) {
                     extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
                 }
                 if (!autoFlushSaveCart) {
-                    session.setFlushMode(current);
+                    session.setHibernateFlushMode(current);
                 }
                 TransactionUtils.finalizeTransaction(status, transactionManager, false);
             } catch (RuntimeException ex) {

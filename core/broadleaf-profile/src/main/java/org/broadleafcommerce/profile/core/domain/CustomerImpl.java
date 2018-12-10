@@ -51,9 +51,11 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -261,6 +263,9 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @Transient
     protected Map<String, Object> transientProperties = new HashMap<String, Object>();
+
+    @Transient
+    protected boolean isDirty = false;
 
     @Override
     public Long getId() {
@@ -544,6 +549,26 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @Override
     public Map<String, Object> getTransientProperties() {
         return transientProperties;
+    }
+
+    @Override
+    public Set<String> getDirtyProperties() {
+        return Collections.singleton("firstName");
+    }
+
+    @Override
+    public void clearDirtyState() {
+        isDirty = false;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        this.isDirty = dirty;
     }
 
     @Override

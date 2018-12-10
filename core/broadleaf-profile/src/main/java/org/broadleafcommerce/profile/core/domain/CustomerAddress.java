@@ -18,11 +18,12 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.extensibility.jpa.DirtyFallback;
 import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
 
-public interface CustomerAddress extends Status, Serializable, MultiTenantCloneable<CustomerAddress> {
+public interface CustomerAddress extends Status, Serializable, MultiTenantCloneable<CustomerAddress>, DirtyFallback {
 
     public void setId(Long id);
 
@@ -39,8 +40,5 @@ public interface CustomerAddress extends Status, Serializable, MultiTenantClonea
     public Address getAddress();
 
     public void setAddress(Address address);
-    
-   
-    
 
 }

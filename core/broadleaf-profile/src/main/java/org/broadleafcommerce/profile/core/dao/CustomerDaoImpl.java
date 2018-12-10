@@ -134,6 +134,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer save(Customer customer) {
+        customer.setDirty(true);
         return em.merge(customer);
     }
 

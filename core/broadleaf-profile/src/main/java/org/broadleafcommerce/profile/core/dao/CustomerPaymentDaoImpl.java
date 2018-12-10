@@ -48,6 +48,7 @@ public class CustomerPaymentDaoImpl implements CustomerPaymentDao {
 
     @Override
     public CustomerPayment save(CustomerPayment customerPayment) {
+        customerPayment.setDirty(true);
         return em.merge(customerPayment);
     }
 

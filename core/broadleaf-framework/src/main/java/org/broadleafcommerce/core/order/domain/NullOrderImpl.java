@@ -38,6 +38,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * NullOrderImpl is a class that represents an unmodifiable, empty order. This class is used as the default order
@@ -388,5 +389,25 @@ public class NullOrderImpl implements Order {
     @Override
     public <G extends Order> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         return null;
+    }
+
+    @Override
+    public Set<String> getDirtyProperties() {
+        return null;
+    }
+
+    @Override
+    public void clearDirtyState() {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 }

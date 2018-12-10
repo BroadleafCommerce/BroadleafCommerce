@@ -29,6 +29,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +43,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -95,6 +99,9 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     @Index(name="CUSTPHONE_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
 
+    @Transient
+    protected boolean isDirty = false;
+
     @Override
     public Long getId() {
         return id;
@@ -133,6 +140,26 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     @Override
     public void setPhone(Phone phone) {
         this.phone = phone;
+    }
+
+    @Override
+    public Set<String> getDirtyProperties() {
+        return Collections.singleton("phoneName");
+    }
+
+    @Override
+    public void clearDirtyState() {
+        this.isDirty = false;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        this.isDirty = dirty;
     }
 
     @Override

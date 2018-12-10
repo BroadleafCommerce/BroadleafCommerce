@@ -19,13 +19,14 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.extensibility.jpa.DirtyFallback;
 import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
+public interface Customer extends Serializable, MultiTenantCloneable<Customer>, DirtyFallback {
 
     public Long getId();
 

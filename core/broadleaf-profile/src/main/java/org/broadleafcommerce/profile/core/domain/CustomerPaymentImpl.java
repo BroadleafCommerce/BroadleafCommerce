@@ -41,8 +41,10 @@ import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -59,6 +61,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -145,6 +148,9 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
             forceFreeFormKeys = true)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
+    @Transient
+    protected boolean isDirty = false;
+
     @Override
     public void setId(Long id) {
         this.id = id;
@@ -229,6 +235,26 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @Override
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
+    }
+
+    @Override
+    public Set<String> getDirtyProperties() {
+        return Collections.singleton("isDefault");
+    }
+
+    @Override
+    public void clearDirtyState() {
+        isDirty = false;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        this.isDirty = dirty;
     }
 
     @Override

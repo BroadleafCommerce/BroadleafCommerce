@@ -71,10 +71,12 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -237,8 +239,8 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
+    //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Payments",
                 tab = TabName.Payment)
     protected List<OrderPayment> payments = new ArrayList<>();
@@ -275,6 +277,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Column(name = "TAX_OVERRIDE")
     protected Boolean taxOverride;
+
+    @Transient
+    protected boolean isDirty = false;
 
     @Transient
     protected List<ActivityMessageDTO> orderMessages;
@@ -802,6 +807,26 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public void setOrderMessages(List<ActivityMessageDTO> orderMessages) {
         this.orderMessages = orderMessages;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        isDirty = dirty;
+    }
+
+    @Override
+    public Set<String> getDirtyProperties() {
+        return Collections.singleton("status");
+    }
+
+    @Override
+    public void clearDirtyState() {
+        setDirty(false);
     }
 
     @Override
