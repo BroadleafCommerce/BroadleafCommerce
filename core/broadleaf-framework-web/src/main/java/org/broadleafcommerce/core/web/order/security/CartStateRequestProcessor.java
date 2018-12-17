@@ -208,8 +208,6 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
                     WebRequest.SCOPE_GLOBAL_SESSION);
             request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName(),
                     WebRequest.SCOPE_GLOBAL_SESSION);
-
-            request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
         }
         return mergeCartResponse.getOrder();
     }
