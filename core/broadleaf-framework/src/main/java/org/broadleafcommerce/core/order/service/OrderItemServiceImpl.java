@@ -489,6 +489,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         Product product = null;
         if (orderItemRequestDTO.getProductId() != null) {
             product = catalogService.findProductById(orderItemRequestDTO.getProductId());
+        } else if (sku != null) {
+            product = sku.getProduct();
         }
 
         Category category = null;
