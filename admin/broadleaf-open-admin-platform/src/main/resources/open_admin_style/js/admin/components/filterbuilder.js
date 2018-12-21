@@ -711,7 +711,13 @@
                     BLCAdmin.assetGrid.initialize($(assetGrid).find('.asset-grid-container'));
                     BLCAdmin.listGrid.initialize($(assetListgrid));
                 } else {
-                    BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
+                    $(data).find('div.listgrid-header-wrapper').each(function(i, el) {
+                        var $oldTable = BLCAdmin.listGrid.findRelatedTable($(el));
+
+                        if ($oldTable.closest('.mCSB_container').length) {
+                            BLCAdmin.listGrid.replaceRelatedCollection($(el), null, {isRefresh: false});
+                        }
+                    })
                 }
 
                 BLCAdmin.filterBuilders.runPostApplyFilterHandlers(data);
@@ -1246,10 +1252,9 @@ $(document).ready(function() {
 
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
-                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong><span class='test'></span></strong>",
+                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
                 'class': "read-only"
-        });
-            readonlySpan.find('.test').text(valueText)
+            });
             el.append($(readonlySpan));
 
             el.find('div.rule-filter-container > div > div.selectize-input').hide();
