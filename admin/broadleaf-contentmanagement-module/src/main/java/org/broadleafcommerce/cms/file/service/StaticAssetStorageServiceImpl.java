@@ -17,8 +17,13 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AssetNotFoundException;
@@ -39,7 +44,8 @@ import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.MultipartProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,11 +112,15 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
+    @Value("${image.artifact.recompress.formats:png}")
+    protected String recompressFormats = "png";
+
     @Autowired(required = false)
     protected MultipartProperties defaultMultipartSettings;
 
     @Resource(name = "blConcurrentFileOutputStream")
     protected ConcurrentFileOutputStream concurrentFileOutputStream;
+
 
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
@@ -198,8 +208,16 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         String mimeType = staticAsset.getMimeType();
 
         //extract the values for any named parameters
+        boolean shouldRecompress = shouldRecompress(mimeType);
         Map<String, String> convertedParameters = namedOperationManager.manageNamedParameters(parameterMap);
+        if (shouldRecompress && MapUtils.isEmpty(convertedParameters)) {
+            convertedParameters.put("recompress","true");
+        }
         String cachedFileName = constructCacheFileName(staticAsset, convertedParameters);
+      
+        if (shouldRecompress) {
+            convertedParameters.remove("recompress");
+        }
 
         // Look for a shared file (this represents a file that was based on a file originally in the classpath.
         File cacheFile = getFileFromLocalRepository(cachedFileName);
@@ -221,9 +239,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
         }
 
-        if (convertedParameters.isEmpty()) {
+
+        if (!shouldRecompress && convertedParameters.isEmpty()) {
             return buildModel(baseLocalFile.getAbsolutePath(), mimeType);
-        } else {
+        } 
+        else {
             FileInputStream assetStream = new FileInputStream(baseLocalFile);
             BufferedInputStream original = new BufferedInputStream(assetStream);
             original.mark(0);
@@ -237,6 +257,23 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
             return buildModel(cacheFile.getAbsolutePath(), mimeType);
         }
+    }
+
+    protected boolean shouldRecompress(String mimeType) {
+        String[] formats = null;
+        if (!StringUtils.isEmpty(recompressFormats)) {
+            formats = recompressFormats.split(",");
+        }
+        boolean response = false;
+        if (!ArrayUtils.isEmpty(formats)) {
+            for (String format : formats) {
+                if (mimeType.toLowerCase().contains(format.toLowerCase())) {
+                    response = true;
+                    break;
+                }
+            }
+        }
+        return response;
     }
 
     protected Map<String, String> buildModel(String returnFilePath, String mimeType) {

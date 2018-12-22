@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -67,7 +68,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
-        if (order != null) {
+        if (order != null && !(order instanceof NullOrderImpl)) {
             final Long id = order.getId();
             final BroadleafCurrency currency = order.getCurrency();
             PaymentRequestDTO requestDTO = new PaymentRequestDTO().orderId(id.toString());

@@ -603,7 +603,7 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public Boolean getAllowNoValueEnumOption() {
         return StringUtils.isEmpty(getDefaultValue())
-            || (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
+            && (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
     }
 
     public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {

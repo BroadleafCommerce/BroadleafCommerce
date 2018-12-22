@@ -39,7 +39,8 @@ import java.lang.reflect.Method;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_ORDER_ITEM_ATTRIBUTE")
+@Table(name="BLC_ORDER_ITEM_ATTRIBUTE",
+        uniqueConstraints = @UniqueConstraint(name = "ATTR_NAME_ORDER_ITEM_ID", columnNames = {"NAME", "ORDER_ITEM_ID"}))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "OrderItemAttributeImpl_baseProductAttribute")
 public class OrderItemAttributeImpl implements OrderItemAttribute {

@@ -186,6 +186,10 @@
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-jpeg</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.depsypher</groupId>
+            <artifactId>pngtastic</artifactId>
+        </dependency>
         <!-- Tests -->
         <dependency>
             <groupId>org.springframework.security</groupId>

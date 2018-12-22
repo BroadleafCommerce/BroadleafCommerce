@@ -26,8 +26,11 @@
     BLCAdmin.entityForm = {
 
         initializeStickyHeader : function () {
-            originalStickyBarOffset = $('.sticky-container').offset().top;
-            originalStickyBarHeight = $('.sticky-container').height();
+            var $stickyContainer = $('.sticky-container');
+            if ($stickyContainer.length) {
+                originalStickyBarOffset = $stickyContainer.offset().top;
+                originalStickyBarHeight = $stickyContainer.height();
+            }
 
             if ($('form.entity-form').length && !$('.oms').length) {
                 var $sc = $('.sticky-container');
@@ -236,11 +239,10 @@
             $tabsContent.find('input').prop('disabled', true).addClass('disabled');
 
             // Redactor fields
-            $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled').show();
+
+            $tabsContent.find('.redactor-field').addClass("disabled");
+            $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled');
             $tabsContent.find('textarea').css({color: 'rgb(84, 84, 84)', padding: 'padding: 12px', border: 'none'});
-            $tabsContent.find('.redactor-box').css('border', 'none');
-            $tabsContent.find('.redactor-toolbar').hide();
-            $tabsContent.find('.redactor-editor').hide();
 
             // Radio buttons
             $tabsContent.find('label.radio-label').prop('disabled', true).addClass('disabled');
@@ -403,18 +405,22 @@ $(document).ready(function() {
      			type: "POST",
      			data: $form.serializeArray()
      		}, function(data) {
-     			$('div.' + href + 'Tab .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
+
+     		    // using tabKey instead of href. Href is not dependable because of hidden tabs
+                var tabKey = $tab.find('span').data('tabkey');
+
+                $('#' + tabKey + 'Contents .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
                     BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
-     			$('div.' + href + 'Tab .selectize-wrapper', $(data)).each(function() {
+     			$('#' + tabKey + 'Contents .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('div.' + href + 'Tab .media-container', $(data)).each(function() {
+                $('#' + tabKey + 'Contents .media-container', $(data)).each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);

@@ -963,3 +963,18 @@ body .redactor-box-fullscreen {
   font-size: 12px;
   text-transform: uppercase;
 }
+
+.redactor-field.disabled {
+  pointer-events: none;
+}
+
+.redactor-field.disabled .redactor-toolbar,
+.redactor-field.disabled .redactor-editor,
+.redactor-field.disabled textarea
+{
+  background-color: #eee;
+  opacity: 0.5;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}

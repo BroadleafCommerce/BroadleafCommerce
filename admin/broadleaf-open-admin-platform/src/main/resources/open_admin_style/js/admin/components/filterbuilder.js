@@ -429,7 +429,7 @@
                 }
             }
         },
-        
+
         /**
          * A custom pre-init query builder field handler to modify the filters object
          * in order to support the Selectize widget in the Query Builder.
@@ -711,7 +711,13 @@
                     BLCAdmin.assetGrid.initialize($(assetGrid).find('.asset-grid-container'));
                     BLCAdmin.listGrid.initialize($(assetListgrid));
                 } else {
-                    BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
+                    $(data).find('div.listgrid-header-wrapper').each(function(i, el) {
+                        var $oldTable = BLCAdmin.listGrid.findRelatedTable($(el));
+
+                        if ($oldTable.closest('.mCSB_container').length) {
+                            BLCAdmin.listGrid.replaceRelatedCollection($(el), null, {isRefresh: false});
+                        }
+                    })
                 }
 
                 BLCAdmin.filterBuilders.runPostApplyFilterHandlers(data);
@@ -847,8 +853,10 @@
 
                 // check for existing rules in the url
                 var queryString = BLCAdmin.filterBuilders.getQueryVariable(field.id);
+                // make sure its not modal
+                var modal = BLCAdmin.currentModal();
 
-                if (queryString != null) {
+                if ((queryString != null) && (modal == undefined)) {
                     var numInputs = 1;
                     // is this a 'BETWEEN' filter?
                     if (queryString.indexOf('|') > 0) {
@@ -1017,6 +1025,7 @@ $(document).ready(function() {
             hideError($errorContainer);
         }
 
+
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
         var readonlySpan = $("<div>", {
@@ -1042,8 +1051,12 @@ $(document).ready(function() {
     });
 
     function validateRule(filterText, operatorText, valueText) {
+        var validationRegex = new RegExp(/<(.|\n)*?>/);
         if (!operatorText) return BLCAdmin.messages.emptyOperatorValue;
         if (!valueText || valueText === ' and ') return BLCAdmin.messages.emptyFilterValue;
+        if (validationRegex.test(valueText)) {
+            return BLCAdmin.messages.invalidFilterValue;
+        }
         return "";
     }
 

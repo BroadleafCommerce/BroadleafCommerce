@@ -27,7 +27,9 @@
 
     <named-query name="BC_READ_PRODUCTS_BY_NAME" >
         <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product
-        WHERE product.defaultSku.name LIKE :name ORDER BY product.id</query>
+            WHERE product.defaultSku.name LIKE :name
+            AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
+            ORDER BY product.id</query>
     </named-query>
     
     <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >

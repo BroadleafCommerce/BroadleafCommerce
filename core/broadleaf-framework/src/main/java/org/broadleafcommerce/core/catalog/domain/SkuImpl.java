@@ -898,6 +898,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
                 LOG.debug("sku, " + id + ", inactive due to date");
             }
         }
+
+        if (!(getProduct() == null) && !getProduct().isActive()) {
+            return false;
+        }
+
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
