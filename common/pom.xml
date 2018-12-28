@@ -337,6 +337,10 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+		<dependency>
+		    <groupId>com.googlecode.htmlcompressor</groupId>
+		    <artifactId>htmlcompressor</artifactId>
+		</dependency>        
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
