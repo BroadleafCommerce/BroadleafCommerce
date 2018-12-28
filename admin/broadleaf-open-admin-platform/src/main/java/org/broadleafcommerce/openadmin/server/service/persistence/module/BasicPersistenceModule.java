@@ -341,6 +341,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         if (value == null) {
                             value = "false";
                         }
+                    } else if (metadata.getFieldType().equals(SupportedFieldType.DATE)) {
+                        if (StringUtils.isEmpty(value)) {
+                            value = null;
+                        }
                     }
 
                     if (attemptToPopulateValue(property, fieldManager, instance, setId, metadata, entity, value)) {

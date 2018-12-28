@@ -354,6 +354,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     }
 
     protected Long getRuleId(SimpleRule rule, EntityManager em) {
+        if (!em.contains(rule)) {
+            rule = em.merge(rule);
+        }
+
         Long id = (Long) em.unwrap(Session.class).getIdentifier(rule);
         id = transformId(id, rule);
         return id;
@@ -364,8 +368,13 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
         Object containedRule = findContainedRuleIfApplicable(simpleRule);
         if (containedRule != null) {
+            if (!em.contains(containedRule)) {
+                containedRule = em.merge(containedRule);
+            }
+
             containedId = (Long) em.unwrap(Session.class).getIdentifier(containedRule);
             containedId = transformId(containedId, containedRule);
+
         }
 
         return containedId;

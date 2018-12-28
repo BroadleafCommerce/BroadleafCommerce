@@ -19,9 +19,11 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
+import org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
@@ -32,6 +34,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -41,6 +44,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.handler.DynamicEntityRetriever;
@@ -76,6 +80,9 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
+
+    @Resource(name = "blAdminEntityService")
+    protected AdminEntityService service;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -179,6 +186,12 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                 property.setValue(value);
                 if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
                     property.setIsDirty(true);
+                }
+
+                if (SupportedFieldType.ADDITIONAL_FOREIGN_KEY.equals(def.getFieldType()) && StringUtils.isNotEmpty(value)) {
+                    // we need to look up the display value
+                    String display = service.getForeignEntityName(def.getAdditionalForeignKeyClass(), value);
+                    property.setDisplayValue(display);
                 }
                 propertiesList.add(property);
             }

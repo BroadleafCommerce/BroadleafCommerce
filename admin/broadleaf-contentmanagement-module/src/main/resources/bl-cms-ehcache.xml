@@ -22,7 +22,7 @@
     <defaultCache
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="60"/>
 
     <!-- 1 hour cache -->
@@ -30,21 +30,21 @@
         name="blCMSElements"
         maxElementsInMemory="10000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
 
     <!-- Page Cache - 1 hour cache -->
     <cache name="cmsPageCache"
         maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
 
     <!-- Page Map Cache - 1 hour cache -->
     <cache name="cmsPageMapCache"
         maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
     
     <!-- Caches Page URIs by date added to Cache to reduce 
@@ -53,21 +53,21 @@
     <cache name="uriCachedDateCache"
            maxElementsInMemory="1000"
            eternal="false"
-           overflowToDisk="true"
+           overflowToDisk="false"
            timeToLiveSeconds="86400"/>
 
     <!-- Structured Content Cache - 1 hour cache -->
     <cache name="cmsStructuredContentCache"
         maxElementsInMemory="5000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>             
     
     <!--  URLHandlerCache -->
     <cache name="cmsUrlHandlerCache"
         maxElementsInMemory="5000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
 
 </ehcache>

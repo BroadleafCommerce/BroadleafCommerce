@@ -34,13 +34,14 @@ public class Resize extends BaseFilter {
     private boolean highQuality;
     private Object hint;
     private boolean maintainAspectRatio;
+    private boolean remainUnderBoundsWhileKeepingAspectRatio;
     private boolean reduceOnly;
 
     public Resize() {
         //do nothing
     }
 
-    public Resize(int targetWidth, int targetHeight, boolean highQuality, boolean maintainAspectRatio, boolean reduceOnly, RenderingHints hints) {
+    public Resize(int targetWidth, int targetHeight, boolean highQuality, boolean maintainAspectRatio, boolean reduceOnly, boolean remainUnderBoundsWhileKeepingAspectRatio, RenderingHints hints) {
         this.hints = hints;
         this.targetWidth = targetWidth;
         this.targetHeight = targetHeight;
@@ -48,6 +49,7 @@ public class Resize extends BaseFilter {
         this.hint = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
         this.maintainAspectRatio = maintainAspectRatio;
         this.reduceOnly = reduceOnly;
+        this.remainUnderBoundsWhileKeepingAspectRatio = remainUnderBoundsWhileKeepingAspectRatio;
     }
 
     @Override
@@ -92,7 +94,12 @@ public class Resize extends BaseFilter {
         reduceOnly.setType(ParameterTypeEnum.BOOLEAN.toString());
         reduceOnly.setValue(parameterMap.get(key + "-reduce-only") == null ? "false" : parameterMap.get(key + "-reduce-only"));
 
-        operation.setParameters(new UnmarshalledParameter[]{targetWidth, targetHeight, highQuality, maintainAspectRatio, reduceOnly});
+        UnmarshalledParameter remainUnderBoundsWhileKeepingAspectRatio = new UnmarshalledParameter();
+        remainUnderBoundsWhileKeepingAspectRatio.setName("remain-under-bounds-while-keeping-aspect-ratio");
+        remainUnderBoundsWhileKeepingAspectRatio.setType(ParameterTypeEnum.BOOLEAN.toString());
+        remainUnderBoundsWhileKeepingAspectRatio.setValue(parameterMap.get(key + "-remain-under-bounds-while-keeping-aspect-ratio") == null ? "false" : parameterMap.get(key + "-remain-under-bounds-while-keeping-aspect-ratio"));
+
+        operation.setParameters(new UnmarshalledParameter[]{targetWidth, targetHeight, highQuality, maintainAspectRatio, reduceOnly, remainUnderBoundsWhileKeepingAspectRatio});
         return operation;
     }
 
@@ -135,9 +142,19 @@ public class Resize extends BaseFilter {
             if (wDiff > hDiff) {
                 destH = targetHeight;
                 destW = Double.valueOf((((double) img.getWidth()) * ((double) destH))/((double) img.getHeight())).intValue();
+                if (remainUnderBoundsWhileKeepingAspectRatio && destW > targetWidth) {
+                    int newW = targetWidth;
+                    destH = Double.valueOf((((double) destH) * ((double) newW))/((double) destW)).intValue();
+                    destW = newW;
+                }
             } else {
                 destW = targetWidth;
                 destH = Double.valueOf((((double) img.getHeight()) * ((double) destW))/((double) img.getWidth())).intValue();
+                if (remainUnderBoundsWhileKeepingAspectRatio && destH > targetHeight) {
+                    int newH = targetHeight;
+                    destW = Double.valueOf((((double) destW) * ((double) newH))/((double) destH)).intValue();
+                    destH = newH;
+                }
             }
         } else {
             destW = targetWidth;
