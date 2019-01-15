@@ -30,7 +30,6 @@ import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -54,11 +53,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.net.URLDecoder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -134,32 +134,14 @@ public class AdminProductController extends AdminBasicEntityController {
         if (request.getParameter("entityType") != null) {
             entityType = request.getParameter("entityType");
         }
-        if (StringUtils.isBlank(entityType)) {
-            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
-                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
-            } else {
-                entityType = getDefaultEntityType();
-            }
-        } else {
-            entityType = URLDecoder.decode(entityType, "UTF-8");
-        }
+        
+        entityType = determineEntityType(entityType, cmd);
 
         if (StringUtils.isBlank(entityType)) {
-            List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
-            model.addAttribute("entityTypes", entityTypes);
-            model.addAttribute("viewType", "modal/entityTypeSelection");
-            model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
-            String requestUri = request.getRequestURI();
-            if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
-                requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
-            }
-            model.addAttribute("currentUri", requestUri);
-            model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
-            setModelAttributes(model, SECTION_KEY);
-            return "modules/modalContainer";
-        } else {
-            ppr = ppr.withCeilingEntityClassname(entityType);
+            return getModalForBlankEntityType(request, model, SECTION_KEY, cmd);
         }
+        
+        ppr = ppr.withCeilingEntityClassname(entityType);
 
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
@@ -168,6 +150,7 @@ public class AdminProductController extends AdminBasicEntityController {
         formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
 
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
+        entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
 
         if(StringUtils.isBlank(entityForm.getParentId())) {
             entityForm.setParentId(id);
@@ -180,7 +163,7 @@ public class AdminProductController extends AdminBasicEntityController {
         model.addAttribute("modalHeaderType", ModalHeaderType.ADD_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
 
     @Override
@@ -219,17 +202,14 @@ public class AdminProductController extends AdminBasicEntityController {
         Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
 
         String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
-        if (entityForm == null) {
-            entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
-        } else {
-            entityForm.clearFieldsMap();
-            formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm, sectionCrumbs);
-            //remove all the actions since we're not trying to redisplay them on the form
-            entityForm.removeAllActions();
-        }
+        Map<String, DynamicResultSet> subRecordsMap = service
+                .getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
+
+        entityForm = reinitializeEntityForm(entityForm, collectionMetadata, entity, subRecordsMap, 
+                sectionCrumbs);
 
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
+        entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
 
         // Ensure that operations on the Sku subcollections go to the proper URL
         for (ListGrid lg : entityForm.getAllListGrids()) {
@@ -244,7 +224,7 @@ public class AdminProductController extends AdminBasicEntityController {
         model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
 
     @Override

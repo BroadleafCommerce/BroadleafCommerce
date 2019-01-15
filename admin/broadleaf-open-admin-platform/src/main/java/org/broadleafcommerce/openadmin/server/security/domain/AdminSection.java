@@ -21,67 +21,77 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author elbertbautista
- *
  */
 public interface AdminSection extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public String getSectionKey();
+    String getSectionKey();
 
-    public void setSectionKey(String sectionKey);
+    void setSectionKey(String sectionKey);
 
-    public String getUrl();
+    String getUrl();
 
-    public void setUrl(String url);
+    void setUrl(String url);
 
-    public List<AdminPermission> getPermissions();
+    List<AdminPermission> getPermissions();
 
-    public void setPermissions(List<AdminPermission> permissions);
-
-    /**
-     * No longer needed after GWT removal
-     * @param displayController
-     */
-    @Deprecated
-    public void setDisplayController(String displayController);
+    void setPermissions(List<AdminPermission> permissions);
 
     /**
      * No longer needed after GWT removal
+     *
      * @param displayController
      */
     @Deprecated
-    public String getDisplayController();
-
-    public AdminModule getModule();
-
-    public void setModule(AdminModule module);
+    void setDisplayController(String displayController);
 
     /**
      * No longer needed after GWT removal
+     *
      * @param displayController
      */
     @Deprecated
-    public Boolean getUseDefaultHandler();
+    String getDisplayController();
+
+    AdminModule getModule();
+
+    void setModule(AdminModule module);
 
     /**
      * No longer needed after GWT removal
+     *
      * @param displayController
      */
     @Deprecated
-    public void setUseDefaultHandler(Boolean useDefaultHandler);
+    Boolean getUseDefaultHandler();
 
-    public String getCeilingEntity();
+    /**
+     * No longer needed after GWT removal
+     *
+     * @param displayController
+     */
+    @Deprecated
+    void setUseDefaultHandler(Boolean useDefaultHandler);
 
-    public void setCeilingEntity(String ceilingEntity);
+    String getCeilingEntity();
 
-    public Integer getDisplayOrder();
+    void setCeilingEntity(String ceilingEntity);
 
-    public void setDisplayOrder(Integer displayOrder);
+    Integer getDisplayOrder();
+
+    void setDisplayOrder(Integer displayOrder);
+
+    boolean isFolderable();
+
+    void setFolderable(boolean folderable);
+
+    boolean isFolderedByDefault();
+
+    void setFolderedByDefault(boolean folderedByDefault);
 }

@@ -43,6 +43,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
+import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -118,7 +119,10 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name="blEntityDuplicator")
     protected EntityDuplicator duplicator;
 
-    @Resource(name="blOfferDuplicateModifier")
+    /**
+     * @deprecated Add {@link EntityDuplicateModifier}s to {@code blEntityDuplicationHelpers}
+     */
+    @Deprecated
     protected EntityDuplicateModifier<Offer> offerDuplicateModifier;
 
     @Override
@@ -506,10 +510,15 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public boolean verifyMaxCustomerUsageThreshold(Order order, Offer offer) {
-        Customer customer = order.getCustomer();
-        
         if (offer.isLimitedUsePerCustomer()) {
-            Long currentUses = offerAuditService.countUsesByCustomer(order, customer.getId(), offer.getId());
+            CustomerMaxUsesStrategyType strategy = offer.getMaxUsesStrategyType();
+            boolean checkUsingCustomer = (strategy == null || strategy.equals(CustomerMaxUsesStrategyType.CUSTOMER));
+            Long currentUses;
+            if (checkUsingCustomer) {
+                currentUses = offerAuditService.countUsesByCustomer(order, order.getCustomer().getId(), offer.getId(), offer.getMinimumDaysPerUsage());
+            } else {
+                currentUses = offerAuditService.countUsesByAccount(order, order.getBroadleafAccountId(), offer.getId(), offer.getMinimumDaysPerUsage());
+            }
             
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
@@ -629,9 +638,7 @@ public class OfferServiceImpl implements OfferService {
     @Transactional("blTransactionManager")
     @Override
     public Offer duplicate(Long originalOfferId) {
-        Map<String, String> copyHints = new HashMap<String, String>();
-        copyHints.put(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, "true");
-        return duplicator.copy(OfferImpl.class, originalOfferId, copyHints, offerDuplicateModifier);
+        return duplicator.copy(OfferImpl.class, originalOfferId);
     }
 
     @Override

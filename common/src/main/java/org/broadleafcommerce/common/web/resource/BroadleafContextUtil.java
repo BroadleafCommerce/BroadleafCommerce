@@ -99,28 +99,33 @@ public class BroadleafContextUtil {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
 
         if (brc.getRequest() == null) {
-            HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            HttpSession session = req.getSession(false);
-            SecurityContext ctx = readSecurityContextFromSession(session);
-            if (ctx != null) {
-                SecurityContextHolder.setContext(ctx);
+            ServletRequestAttributes requestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
+            if (requestAttributes != null) {
+                HttpServletRequest req = requestAttributes.getRequest();
+                HttpSession session = req.getSession(false);
+                SecurityContext ctx = readSecurityContextFromSession(session);
+                if (ctx != null) {
+                    SecurityContextHolder.setContext(ctx);
+                }
+                brc.setRequest(req);
             }
-            brc.setRequest(req);
         }
 
         WebRequest wr = brc.getWebRequest();
 
-        if (brc.getNonPersistentSite() == null) {
-            brc.setNonPersistentSite(siteResolver.resolveSite(wr, true));
-            if (includeSandBox) {
-                brc.setSandBox(sbResolver.resolveSandBox(wr, brc.getNonPersistentSite()));
+        if (wr != null) {
+            if (brc.getNonPersistentSite() == null) {
+                brc.setNonPersistentSite(siteResolver.resolveSite(wr, true));
+                if (includeSandBox) {
+                    brc.setSandBox(sbResolver.resolveSandBox(wr, brc.getNonPersistentSite()));
+                }
+                brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
             }
-            brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
-        }
 
-        if (includeTheme) {
-            if (brc.getTheme() == null) {
-                brc.setTheme(themeResolver.resolveTheme(wr));
+            if (includeTheme) {
+                if (brc.getTheme() == null) {
+                    brc.setTheme(themeResolver.resolveTheme(wr));
+                }
             }
         }
     }

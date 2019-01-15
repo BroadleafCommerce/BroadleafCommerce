@@ -48,6 +48,7 @@ import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -275,9 +276,9 @@ public class OfferDataItemProvider {
         };
     }
     
-    public PromotableOrder createBasicPromotableOrder() {
+    public PromotableOrder createBasicPromotableOrder(PromotableOfferUtility promotableOfferUtility) {
         Order order = createBasicOrder();
-        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
+        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(promotableOfferUtility), false);
         return promotableOrder;
     }
 

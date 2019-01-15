@@ -432,21 +432,46 @@
             var $listGridContainer = $tr.closest('.listgrid-container');
             var $tbody = $tr.closest("tbody");
             var $listgridHeader = $tbody.closest(".listgrid-body-wrapper").prev();
+            var $table = $tbody.closest('.list-grid-table');
 
             if (!multi) {
                 $tbody.find('tr').removeClass('selected');
                 $tbody.find('tr').find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
             }
 
-            if (!currentlySelected) {
-                $tr.addClass("selected");
-                $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', true);
-            } else {
-                $tr.removeClass("selected");
-                $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
+            if (!$table.data('multi-select-checkbox-only')) {
+                if (!currentlySelected) {
+                    $tr.addClass("selected");
+                    $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', true);
+                } else {
+                    $tr.removeClass("selected");
+                    $tr.find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
+                }
             }
 
             updateMultiSelectCheckbox($tbody, $listgridHeader);
+
+            BLCAdmin.listGrid.updateActionButtons($listGridContainer);
+            BLCAdmin.adornedEntityForm.updateActionButtons($listGridContainer);
+
+            for (var i = 0; i < postRowSelectionHandlers.length; i++) {
+                postRowSelectionHandlers[i]($tr);
+            }
+        },
+
+        multiSelectCheckBoxAreaSelected: function (event, $target) {
+            var $tr = $target.closest('tr');
+            var $checkBox = $tr.find('input[type=checkbox].listgrid-checkbox');
+            var $listGridHeader = $target.closest('.listgrid-body-wrapper').prev();
+            var $tbody = $target.closest('tbody');
+            var $listGridContainer = $target.closest('.listgrid-container');
+
+            if ($checkBox.length) {
+                $checkBox.prop('checked', !$checkBox.prop('checked'));
+                $tr.toggleClass('selected', $checkBox.prop('checked'));
+            }
+
+            updateMultiSelectCheckbox($tbody, $listGridHeader);
 
             BLCAdmin.listGrid.updateActionButtons($listGridContainer);
             BLCAdmin.adornedEntityForm.updateActionButtons($listGridContainer);
@@ -543,6 +568,15 @@ $(document).ready(function () {
             if (listGridType === 'asset_grid') {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
+        }
+    });
+
+    $('body').on('click',
+        '.list-grid-table tbody tr td.listgrid-checkbox,' +
+        ' .list-grid-table tbody tr td.listgrid-checkbox input.listgrid-checkbox', function (event) {
+        if ($(this).closest('table').data('multi-select-checkbox-only')) {
+            BLCAdmin.listGrid.multiSelectCheckBoxAreaSelected(event, $(this));
+            $('body').trigger('listGrid-multi-select-checkbox-selected', [$(this)]);
         }
     });
 

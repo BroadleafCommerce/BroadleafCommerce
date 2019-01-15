@@ -18,10 +18,11 @@
 package org.broadleafcommerce.common.email.service.info;
 
 import org.broadleafcommerce.common.email.service.message.Attachment;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -38,6 +39,7 @@ public class EmailInfo implements Serializable {
     private String messageBody;
     private String encoding = "UTF8";
     private List<Attachment> attachments = new ArrayList<Attachment>();
+    private Map<String, String> headers = new HashMap<>();
 
     private String sendEmailReliableAsync;
     private String sendAsyncPriority;
@@ -142,6 +144,18 @@ public class EmailInfo implements Serializable {
         this.attachments = attachments;
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public void addHeader(String key, String value) {
+        this.headers.put(key, value);
+    }
+
     public String getEncoding() {
         return encoding;
     }
@@ -161,6 +175,7 @@ public class EmailInfo implements Serializable {
         info.setSendEmailReliableAsync(sendEmailReliableAsync);
         info.setSubject(subject);
         info.setEncoding(encoding);
+        info.setHeaders(headers);
 
         return info;
     }

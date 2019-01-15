@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
  * Copyright (C) 2009 - 2018 Broadleaf Commerce
  * %%
@@ -15,29 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.persistence;
+package org.broadleafcommerce.openadmin.server.security.extension;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 
 /**
- * Provide a helper component for assigning custom hints during query execution. These hints may be inspected by one or more
- * components during query execution in order to influence behavior.
- *
- * @author Jeff Fischer
+ * @author Jacob Mitash
  */
-public interface QueryHelper {
+public interface AdminSecurityCheckExtensionHandler extends ExtensionHandler {
 
-    <X> List<X> getResultListWithHint(TypedQuery<X> query, String hintKey, Object hintValue);
-
-    <X> X getSingleResultWithHint(TypedQuery<X> query, String hintKey, Object hintValue);
-
-    List getResultListWithHint(Query query, String hintKey, Object hintValue);
-
-    Object getSingleResultWithHint(Query query, String hintKey, Object hintValue);
-
-    Object getQueryHint(String hintKey);
-
+    ExtensionResultStatusType handleAdminSecurityCheck(AdminUser adminUser,
+                                                       PermissionType permissionType,
+                                                       List<String> ceilingEntities);
 }

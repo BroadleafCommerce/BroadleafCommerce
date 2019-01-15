@@ -30,12 +30,16 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -80,7 +84,11 @@ public class MvelHelper {
             if (type.equals(SupportedFieldType.BOOLEAN.toString())) {
                 return Boolean.parseBoolean(fieldValue);
             } else if (type.equals(SupportedFieldType.DATE.toString())) {
-                return FormatUtil.getTimeZoneFormat().parse(fieldValue);
+                if (fieldValue.length() == 19) {
+                    return FormatUtil.getDateFormat().parse(fieldValue);
+                } else {
+                    return FormatUtil.getTimeZoneFormat().parse(fieldValue);
+                }
             } else if (type.equals(SupportedFieldType.INTEGER.toString())) {
                 return Integer.parseInt(fieldValue);
             } else if (type.equals(SupportedFieldType.MONEY.toString()) || type.equals(SupportedFieldType.DECIMAL.toString())) {
@@ -98,7 +106,20 @@ public class MvelHelper {
         }
         return value.toUpperCase();
     }
-    
+
+    public static String currentTime() {
+        Calendar calendar = SystemTime.asCalendar();
+
+        return FormatUtil.getTimeZoneFormat().format(calendar.getTime());
+    }
+
+    public static String subtractFromCurrentTime(int days) {
+        Calendar calendar = SystemTime.asCalendar();
+        calendar.add(Calendar.DAY_OF_YEAR, -days);
+
+        return FormatUtil.getTimeZoneFormat().format(calendar.getTime());
+    }
+
     /**
      * Returns true if the passed in rule passes based on the passed in ruleParameters.   
      * 
@@ -256,7 +277,7 @@ public class MvelHelper {
      */
     public static Map<String, Object> buildMvelParameters() {
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
-       BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null && brc.getRequest() != null) {
            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
             HttpServletRequest request = brc.getRequest();
@@ -269,8 +290,8 @@ public class MvelHelper {
                 for (String mapKey : blcRuleMap.keySet()) {
                     mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
                 }
-           }
-       }
+            }
+        }
 
        return mvelParameters;
    }    

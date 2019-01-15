@@ -41,6 +41,8 @@ public class CriteriaTransferObject {
     private Integer upperCount;
     private Integer lowerCount;
     private Boolean presentationFetch;
+    private Boolean folderLookup;
+    private Long folderId;
 
     private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
 
@@ -203,5 +205,30 @@ public class CriteriaTransferObject {
 
     public void setNonCountAdditionalFilterMappings(List<FilterMapping> nonCountAdditionalFilterMappings) {
         this.nonCountAdditionalFilterMappings = nonCountAdditionalFilterMappings;
+    }
+
+    /**
+     * Tells if this is a foldered fetch
+     * @return true if this is a folder lookup, false otherwise
+     */
+    public boolean isFolderLookup() {
+        return folderLookup == null ? false : folderLookup;
+    }
+
+    public void setFolderLookup(Boolean folderLookup) {
+        this.folderLookup = folderLookup;
+    }
+
+    /**
+     * Gets the folder ID to filter a fetch on so that only entities in a folder will be shown. If this is null while
+     * {@link #folderLookup} is true, this means find entities not assigned to a folder.
+     * @return the folder ID
+     */
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
     }
 }

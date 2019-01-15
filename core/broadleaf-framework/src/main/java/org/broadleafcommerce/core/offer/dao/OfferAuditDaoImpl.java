@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
@@ -27,6 +28,9 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -43,11 +47,27 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     
     protected static final Log LOG = LogFactory.getLog(OfferAuditDaoImpl.class);
 
+    private static final Long NULL_ACCOUNT_ID = null;
+    private static final Long NULL_CUSTOMER_ID = null;
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    protected Long currentDateResolution = 3600000L;
+    protected Date cachedDate = SystemTime.asDate();
+
+    protected Date getCurrentDateAfterFactoringInDateResolution() {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, getCurrentDateResolution());
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
+            }
+        }
+        return returnDate;
+    }
 
     @Override
     public OfferAudit create() {
@@ -77,22 +97,62 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public Long countUsesByCustomer(Order order, Long customerId, Long offerId) {
+        return countUsesByCustomer(order, customerId, offerId, null);
+    }
+
+    @Override
+    public Long countUsesByAccount(Order order, Long accountId, Long offerId) {
+        return countUsesByAccount(order, accountId, offerId, null);
+    }
+
+    @Override
+    public Long countUsesByAccount(Order order, Long accountId, Long offerId, Long minimumDaysPerUsage) {
+        return countUsesByAccountOrCustomer(order, NULL_CUSTOMER_ID, accountId, offerId, minimumDaysPerUsage);
+    }
+
+    @Override
+    public Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage) {
+        return countUsesByAccountOrCustomer(order, customerId, NULL_ACCOUNT_ID, offerId, minimumDaysPerUsage);
+    }
+
+    protected Long countUsesByAccountOrCustomer(Order order, Long customerId, Long accountId, Long offerId, Long minimumDaysPerUsage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
         criteria.select(builder.count(root));
 
+        Predicate customerOrAccountPredicate = null;
+
+        if (customerId != null) {
+            customerOrAccountPredicate = builder.equal(root.get("customerId"), customerId);
+        } else if (accountId != null) {
+            customerOrAccountPredicate = builder.equal(root.get("accountId"), accountId);
+        } else {
+            LOG.debug("Count uses by account or customer called without an account or a customer.");
+            return 0L;
+        }
+
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(
             builder.and(
+                        customerOrAccountPredicate, builder.equal(root.get("offerId"), offerId),
                 builder.or(
                     builder.notEqual(root.get("orderId"),  getOrderId(order)),
                     builder.isNull(root.get("orderId"))
-                ),
-                builder.equal(root.get("customerId"), customerId),
-                builder.equal(root.get("offerId"), offerId)
+                        )
             )
         );
+
+        if (minimumDaysPerUsage != null && minimumDaysPerUsage != 0L) {
+            Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+
+            Calendar previousCalendar = new GregorianCalendar();
+
+            previousCalendar.setTime(currentDate);
+            previousCalendar.add(Calendar.DAY_OF_YEAR, -minimumDaysPerUsage.intValue());
+
+            restrictions.add(builder.between(root.<Date>get("redeemedDate"), previousCalendar.getTime(), currentDate));
+        }
 
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
@@ -164,6 +224,17 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                 .toQuery(em);
         
         return query.getResultList();
+    }
+
+
+    @Override
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    @Override
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
     }
 
 }

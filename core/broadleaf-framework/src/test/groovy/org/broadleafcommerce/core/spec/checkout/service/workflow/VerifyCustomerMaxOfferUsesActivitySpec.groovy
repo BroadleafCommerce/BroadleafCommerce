@@ -50,7 +50,7 @@ class VerifyCustomerMaxOfferUsesActivitySpec extends BaseCheckoutActivitySpec {
 
     def "Test that exception is thrown when one customer has used an offer more times than is allowed"() {
         setup:
-        mockOfferAuditService.countUsesByCustomer(_,_,_) >> 3
+        mockOfferAuditService.countUsesByCustomer(_,_,_,_) >> 3
         mockOfferAuditService.countOfferCodeUses(_,_) >> 1
         activity = new VerifyCustomerMaxOfferUsesActivity().with {
             offerService = mockOfferService
@@ -67,7 +67,7 @@ class VerifyCustomerMaxOfferUsesActivitySpec extends BaseCheckoutActivitySpec {
 
     def "Test that exception is thrown when an offer code has been used the maximum number of times"() {
         setup:
-        mockOfferAuditService.countUsesByCustomer(_,_,_) >> 1
+        mockOfferAuditService.countUsesByCustomer(_,_,_,_) >> 1
         mockOfferAuditService.countOfferCodeUses(_,_) >> 3
         activity = new VerifyCustomerMaxOfferUsesActivity().with {
             offerService = mockOfferService
@@ -84,7 +84,7 @@ class VerifyCustomerMaxOfferUsesActivitySpec extends BaseCheckoutActivitySpec {
 
     def "Test that no exception is thrown on valid state"() {
         setup:
-        mockOfferAuditService.countUsesByCustomer(_,_,_) >> 1
+        mockOfferAuditService.countUsesByCustomer(_,_,_,_) >> 1
         mockOfferAuditService.countOfferCodeUses(_,_) >> 1
         activity = new VerifyCustomerMaxOfferUsesActivity().with {
             offerService = mockOfferService

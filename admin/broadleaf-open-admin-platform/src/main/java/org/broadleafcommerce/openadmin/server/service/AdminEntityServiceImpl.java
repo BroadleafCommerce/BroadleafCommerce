@@ -53,6 +53,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.FetchPageRequest;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
+import org.broadleafcommerce.openadmin.server.service.extension.CriteriaTransferObjectExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
@@ -94,6 +95,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource
+    protected CriteriaTransferObjectExtensionManager extensionManager;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -665,11 +669,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         Property parentNameProp = parentEntity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
         if (parentNameProp != null) {
             ppr.setRequestingEntityName(parentNameProp.getValue());
-        } else {
-            Property name = parentEntity.getPMap().get("name");
-            if(name !=null) {
-                ppr.setRequestingEntityName(name.getValue());
-            }
         }
 
         Property p = new Property();
@@ -985,6 +984,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
         cto.setPresentationFetch(request.getPresentationFetch());
 
+        if (request.isFolderedLookup()) {
+            cto.setFolderLookup(true);
+            cto.setFolderId(request.getFolderId());
+        }
+
+        if (extensionManager != null) {
+            extensionManager.getProxy().modifyFetchCriteriaTransferObject(request, cto);
+        }
+        
         return service.fetch(pkg, cto);
     }
 

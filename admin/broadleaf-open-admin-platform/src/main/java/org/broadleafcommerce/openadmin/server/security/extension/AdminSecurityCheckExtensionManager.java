@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
  * Copyright (C) 2009 - 2018 Broadleaf Commerce
  * %%
@@ -15,16 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.persistence;
+package org.broadleafcommerce.openadmin.server.security.extension;
+
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Component;
 
 /**
- * Hints available to be leveraged by Broadleaf components for different query result behavior. Some or all of these hints
- * may only be effective with enterprise components in place. Intended for use with {@link QueryHelper}.
- *
- * @author Jeff Fischer
+ * @author Jacob Mitash
  */
-public class QueryHelperHints {
+@Component("blAdminSecurityCheckExtensionManager")
+public class AdminSecurityCheckExtensionManager extends ExtensionManager<AdminSecurityCheckExtensionHandler> {
 
-    public static final String FORCE_ENTITY_CACHE_EVICT_ON_LOAD = "force.entity.cache.evict.on.load";
-
+    public AdminSecurityCheckExtensionManager() {
+        super(AdminSecurityCheckExtensionHandler.class);
+    }
 }

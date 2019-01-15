@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -134,8 +133,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address",
-            group = GroupName.User, order = FieldOrder.EMAIL, requiredOverride = RequiredOverride.REQUIRED,
-            fieldType = SupportedFieldType.STRING)
+            group = GroupName.User, order = FieldOrder.EMAIL)
     protected String email;
 
     @Column(name = "PHONE_NUMBER")

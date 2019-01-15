@@ -17,11 +17,7 @@
  */
 package org.broadleafcommerce.common.email.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.email.dao.EmailReportingDao;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.service.exception.EmailException;
@@ -32,10 +28,17 @@ import org.broadleafcommerce.common.email.service.message.EmailPropertyType;
 import org.broadleafcommerce.common.email.service.message.EmailServiceProducer;
 import org.broadleafcommerce.common.email.service.message.MessageCreator;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
+ * @deprecated
+ * @see org.broadleafcommerce.common.notification.service.NotificationService
+ * @see org.broadleafcommerce.common.notification.service.NotificationDispatcher
  */
+@Deprecated
 @Service("blEmailService")
 public class EmailServiceImpl implements EmailService {
 
@@ -54,13 +57,11 @@ public class EmailServiceImpl implements EmailService {
     protected EmailReportingDao emailReportingDao;
 
     public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, Map<String, Object> props) {
-        if (props == null) {
-            props = new HashMap<String, Object>();
-        }
         if (emailInfo == null) {
             emailInfo = new EmailInfo();
         }
 
+        props = new HashMap<>(MapUtils.emptyIfNull(props));
         props.put(EmailPropertyType.INFO.getType(), emailInfo);
         props.put(EmailPropertyType.USER.getType(), emailTarget);
         Long emailId = emailTrackingManager.createTrackedEmail(emailTarget.getEmailAddress(), emailInfo.getEmailType(), null);
@@ -80,13 +81,11 @@ public class EmailServiceImpl implements EmailService {
     }
 
     public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, Map<String, Object> props) {
-        if (props == null) {
-            props = new HashMap<String, Object>();
-        }
         if (emailInfo == null) {
             emailInfo = new EmailInfo();
         }
 
+        props = new HashMap<>(MapUtils.emptyIfNull(props));
         props.put(EmailPropertyType.INFO.getType(), emailInfo);
         props.put(EmailPropertyType.USER.getType(), emailTarget);
 

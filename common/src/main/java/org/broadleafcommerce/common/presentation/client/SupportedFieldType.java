@@ -58,5 +58,6 @@ public enum SupportedFieldType {
     CODE,
     GENERATED_URL,
     GENERATED_FIELD_VALUE,
-    DESCRIPTION
+    DESCRIPTION,
+    WITHIN_DAYS
 }

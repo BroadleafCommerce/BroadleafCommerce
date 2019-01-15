@@ -17,17 +17,22 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.MinimumTargetsRequired;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding implements PromotableCandidateItemOffer, OfferHolder {
     
@@ -39,12 +44,15 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected BigDecimal weightedPercentSaved;
     protected Money originalPrice;
     protected int uses = 0;
-    
+    protected boolean useQtyOnlyTierCalculation = false;
+
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap =
             new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
 
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateTargetsMap =
             new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+
+    protected HashMap<OfferPriceData, List<PromotableOrderItem>> candidateFixedTargetsMap = new HashMap<>();
     
     protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<PromotableOrderItem>();
 
@@ -60,19 +68,14 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
         }
     }
 
-    @Override
-    public BroadleafCurrency getCurrency() {
-        return promotableOrder.getOrderCurrency();
+    public PromotableCandidateItemOfferImpl(PromotableOrder promotableOrder, Offer offer, boolean useQtyOnlyTierCalculation) {
+        this(promotableOrder, offer);
+        this.useQtyOnlyTierCalculation = useQtyOnlyTierCalculation;
     }
 
     @Override
-    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
-        Money savings = new Money(promotableOrder.getOrderCurrency());
-        originalPrice = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
-
-        BigDecimal offerUnitValue = PromotableOfferUtility.determineOfferUnitValue(offer, this);
-        savings = PromotableOfferUtility.computeAdjustmentValue(originalPrice, offerUnitValue, this, this);
-        return savings.multiply(qtyToReceiveSavings);
+    public BroadleafCurrency getCurrency() {
+        return promotableOrder.getOrderCurrency();
     }
 
     /**
@@ -81,16 +84,49 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
      */
     @Override
     public int calculateTargetQuantityForTieredOffer() {
-        int returnQty = 0;
+        if (isUseQtyOnlyTierCalculation()) {
+            int returnQty = 0;
 
-        for (OfferItemCriteria itemCriteria : getCandidateTargetsMap().keySet()) {
-            List<PromotableOrderItem> candidateTargets = getCandidateTargetsMap().get(itemCriteria);
-            for (PromotableOrderItem promotableOrderItem : candidateTargets) {
-                returnQty += promotableOrderItem.getQuantity();
+            for (OfferItemCriteria itemCriteria : getCandidateTargetsMap().keySet()) {
+                List<PromotableOrderItem> candidateTargets = getCandidateTargetsMap().get(itemCriteria);
+                for (PromotableOrderItem promotableOrderItem : candidateTargets) {
+                    returnQty += promotableOrderItem.getQuantity();
+                }
             }
-        }
 
-        return returnQty;
+            return returnQty;
+        } else {
+            Integer returnQty = null;
+
+            for (OfferItemCriteria itemCriteria : getCandidateTargetsMap().keySet()) {
+                int iterationQty = 0;
+
+                List<PromotableOrderItem> candidateTargets = getCandidateTargetsMap().get(itemCriteria);
+                for (PromotableOrderItem promotableOrderItem : candidateTargets) {
+                    iterationQty += promotableOrderItem.getQuantity();
+                }
+
+                int tmpReturnQty;
+
+                if (itemCriteria.getQuantity() <= 0) {
+                    tmpReturnQty = 0;
+                } else {
+                    tmpReturnQty = (int)Math.floor(iterationQty / itemCriteria.getQuantity());
+                }
+
+                if (returnQty == null) {
+                    returnQty = tmpReturnQty;
+                } else {
+                    returnQty = Math.min(tmpReturnQty, returnQty);
+                }
+            }
+
+            if (returnQty == null) {
+                returnQty = 0;
+            }
+
+            return returnQty;
+        }
     }
 
     @Override
@@ -183,6 +219,16 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     }
 
     @Override
+    public HashMap<OfferPriceData, List<PromotableOrderItem>> getCandidateFixedTargetsMap() {
+        return candidateFixedTargetsMap;
+    }
+
+    @Override
+    public void setCandidateFixedTargetsMap(HashMap<OfferPriceData, List<PromotableOrderItem>> candidateFixedTargetsMap) {
+        this.candidateFixedTargetsMap = candidateFixedTargetsMap;
+    }
+
+    @Override
     public int getPriority() {
         return offer.getPriority();
     }
@@ -264,5 +310,15 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
         } else {
             return minimumTargetsRequired;
         }
+    }
+
+    @Override
+    public boolean isUseQtyOnlyTierCalculation() {
+        return useQtyOnlyTierCalculation;
+    }
+
+    @Override
+    public void setUseQtyOnlyTierCalculation(boolean useQtyOnlyTierCalculation) {
+        this.useQtyOnlyTierCalculation = useQtyOnlyTierCalculation;
     }
 }

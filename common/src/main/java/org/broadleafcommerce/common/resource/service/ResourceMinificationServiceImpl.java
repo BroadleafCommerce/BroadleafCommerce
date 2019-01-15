@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
@@ -47,8 +46,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     protected static final String COULD_NOT_MINIFY_RESOURCES_RETURNED_UNMINIFIED_BYTES = "Could not minify resources, returned unminified bytes";
     public static String CSS_TYPE = "css";
     public static String JS_TYPE = "js";
-    public static String JS_MIN = ".min.js";
-    public static String CSS_MIN = ".min.css";
 
     @Autowired
     protected Environment environment;
@@ -91,7 +88,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             LOG.warn("Attempted to modify resource without a filename, returning non-minified resource");
             return originalResource;
         }
-
         return minify(originalResource, originalResource.getFilename());
     }
 
@@ -105,11 +101,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         String type = getFileType(originalResource, filename);
         if (type == null) {
             LOG.info("Unsupported minification resource: " + filename);
-            return originalResource;
-        }
-
-        if (isPreviouslyMinifiedFile(originalResource)) {
-            LOG.info("Minification has already be done for this resource: " + filename);
             return originalResource;
         }
 
@@ -156,14 +147,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             return CSS_TYPE;
         }
         return null;
-    }
-
-    protected boolean isPreviouslyMinifiedFile(Resource originalResource) {
-        String filename = originalResource.getFilename();
-        if (StringUtils.endsWith(filename, JS_MIN) || StringUtils.endsWith(filename, CSS_MIN)) {
-            return true;
-        }
-        return false;
     }
 
 }

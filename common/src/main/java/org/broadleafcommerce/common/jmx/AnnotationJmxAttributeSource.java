@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.jmx;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.jmx.export.metadata.InvalidMetadataException;
 import org.springframework.jmx.export.metadata.ManagedResource;
 
@@ -40,9 +39,7 @@ public class AnnotationJmxAttributeSource extends org.springframework.jmx.export
         ManagedResource resource = super.getManagedResource(beanClass);
         if (resource != null && appName != null) {
             String objectName = resource.getObjectName();
-            if(StringUtils.isNotBlank(objectName)) {
-                objectName += "." + appName;
-            }
+            objectName += "." + appName;
             resource.setObjectName(objectName);
         }
         return resource;

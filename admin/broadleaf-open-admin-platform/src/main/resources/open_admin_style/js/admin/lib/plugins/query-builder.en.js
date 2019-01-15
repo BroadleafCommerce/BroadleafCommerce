@@ -73,7 +73,8 @@ QueryBuilder.regional['en'] = {
     "COUNT_EQUALS": "is count equal to",
     "COLLECTION_IN": "is in",
     "COLLECTION_NOT_IN": "is not in",
-    "IS_NULL": "is blank"
+    "IS_NULL": "is blank", 
+    "WITHIN_DAYS": "is within x days" 
   },
   "errors": {
     "no_filter": "No filter selected",

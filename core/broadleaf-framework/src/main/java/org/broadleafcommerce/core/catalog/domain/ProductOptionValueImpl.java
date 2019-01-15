@@ -34,7 +34,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -188,12 +187,6 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
             return false;
         }
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, getAttributeValue());
     }
 
     @Override

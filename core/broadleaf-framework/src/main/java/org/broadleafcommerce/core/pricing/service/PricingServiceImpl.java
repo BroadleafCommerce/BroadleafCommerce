@@ -17,15 +17,14 @@
  */
 package org.broadleafcommerce.core.pricing.service;
 
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 
 @Service("blPricingService")
 public class PricingServiceImpl implements PricingService {
@@ -33,7 +32,6 @@ public class PricingServiceImpl implements PricingService {
     @Resource(name="blPricingWorkflow")
     protected Processor pricingWorkflow;
 
-    @Transactional
     public Order executePricing(Order order) throws PricingException {
         try {
             ProcessContext<Order> context = (ProcessContext<Order>) pricingWorkflow.doActivities(order);
