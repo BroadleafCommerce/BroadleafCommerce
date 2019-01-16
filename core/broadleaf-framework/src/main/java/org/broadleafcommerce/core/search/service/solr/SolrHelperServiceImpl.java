@@ -769,7 +769,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     }
 
                 }
-                if (!foundNotTokenizedField) {
+
+                // In the case of programmatically generated sorts, there will be no fieldtypes.
+                if (!foundNotTokenizedField && fieldTypes.size() > 0) {
                     LOG.warn(String.format("Sorting on a tokenized field, this could have adverse effects on the ordering of results. " +
                                     "Add a field type for this field from the following list to ensure proper result ordering: [%s]",
                             StringUtils.join(sortableFieldTypes, ", ")));
