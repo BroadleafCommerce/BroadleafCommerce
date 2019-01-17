@@ -575,6 +575,9 @@
                         queryData["name"] = query;
                         queryData["criteria"] = "RULE";
 
+                        const loadUrlEvent = $.Event('ruleBuilder-modify-load-params');
+                        $('body').trigger(loadUrlEvent, [$selectize, query, queryData]);
+
                         if ("blcOperators_Selectize_Enumeration" === $selectize.opRef) {
                             var data = {options: []};
                             $.each($selectize.enumValues, function(index, value) {
