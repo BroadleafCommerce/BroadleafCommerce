@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -89,9 +88,11 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
                 adminInstance.setUsername(adminInstance.getEmailAddress());
             }
 
-            Entity errorEntity = validateUniqueUsername(entity, adminInstance, true);
-            if (errorEntity != null) {
-                return errorEntity;
+            if (!entity.isPreAdd()) {
+                Entity errorEntity = validateUniqueUsername(entity, adminInstance);
+                if (errorEntity != null) {
+                    return errorEntity;
+                }
             }
             
             adminInstance = dynamicEntityDao.merge(adminInstance);
@@ -114,11 +115,6 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Customer adminInstance = (Customer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-
-            Entity errorEntity = validateUniqueUsername(entity, adminInstance, false);
-            if (errorEntity != null) {
-                return errorEntity;
-            }
 
             String passwordBefore = adminInstance.getPassword();
             adminInstance.setPassword(null);
@@ -146,11 +142,8 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
      * @param adminInstance
      * @return the original entity with a validation error on it or null if no validation failure
      */
-    protected Entity validateUniqueUsername(Entity entity, Customer adminInstance, boolean isAdd) {
-        String email = entity.findProperty("emailAddress").getValue();
-        boolean skipUsernameCheck = !isAdd && StringUtils.equals(email, adminInstance.getEmailAddress());
-
-        if (!skipUsernameCheck && customerService.readCustomerByUsername(email) != null) {
+    protected Entity validateUniqueUsername(Entity entity, Customer adminInstance) {
+        if (customerService.readCustomerByUsername(adminInstance.getUsername()) != null) {
             entity.addValidationError("emailAddress", "nonUniqueUsernameError");
             return entity;
         }

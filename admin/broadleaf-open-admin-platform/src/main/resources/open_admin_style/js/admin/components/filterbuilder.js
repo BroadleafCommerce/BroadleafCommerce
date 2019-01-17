@@ -722,13 +722,7 @@
                     BLCAdmin.assetGrid.initialize($(assetGrid).find('.asset-grid-container'));
                     BLCAdmin.listGrid.initialize($(assetListgrid));
                 } else {
-                    $(data).find('div.listgrid-header-wrapper').each(function(i, el) {
-                        var $oldTable = BLCAdmin.listGrid.findRelatedTable($(el));
-
-                        if ($oldTable.closest('.mCSB_container').length) {
-                            BLCAdmin.listGrid.replaceRelatedCollection($(el), null, {isRefresh: false});
-                        }
-                    })
+                    BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
                 }
 
                 BLCAdmin.filterBuilders.runPostApplyFilterHandlers(data);

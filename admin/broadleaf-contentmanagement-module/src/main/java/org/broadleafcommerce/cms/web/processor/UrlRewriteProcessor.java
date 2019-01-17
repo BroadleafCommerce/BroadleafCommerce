@@ -128,7 +128,7 @@ public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProce
             extension = assetPath.substring(extensionStartIndex);
         }
 
-        return extension.toLowerCase();
+        return extension;
     }
 
     protected String getDefaultFileTypeImagePath(String extension) {

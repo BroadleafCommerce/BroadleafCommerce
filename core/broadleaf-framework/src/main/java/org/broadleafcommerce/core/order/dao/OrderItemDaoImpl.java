@@ -107,12 +107,12 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     @Override
     public OrderItemPriceDetail createOrderItemPriceDetail() {
-        return (OrderItemPriceDetail) entityConfiguration.createEntityInstance(OrderItemPriceDetail.class.getName());
+        return new OrderItemPriceDetailImpl();
     }
 
     @Override
     public OrderItemQualifier createOrderItemQualifier() {
-        return (OrderItemQualifier) entityConfiguration.createEntityInstance(OrderItemQualifier.class.getName());
+        return new OrderItemQualifierImpl();
     }
 
     @Override

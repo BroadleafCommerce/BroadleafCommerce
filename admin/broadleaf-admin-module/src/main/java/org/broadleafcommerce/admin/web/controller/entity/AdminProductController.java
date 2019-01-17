@@ -152,10 +152,6 @@ public class AdminProductController extends AdminBasicEntityController {
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
         entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
 
-        if(StringUtils.isBlank(entityForm.getParentId())) {
-            entityForm.setParentId(id);
-        }
-
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleAddEntity");
 

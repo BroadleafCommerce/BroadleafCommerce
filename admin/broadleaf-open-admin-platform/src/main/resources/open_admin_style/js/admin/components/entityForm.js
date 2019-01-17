@@ -26,11 +26,8 @@
     BLCAdmin.entityForm = {
 
         initializeStickyHeader : function () {
-            var $stickyContainer = $('.sticky-container');
-            if ($stickyContainer.length) {
-                originalStickyBarOffset = $stickyContainer.offset().top;
-                originalStickyBarHeight = $stickyContainer.height();
-            }
+            originalStickyBarOffset = $('.sticky-container').offset().top;
+            originalStickyBarHeight = $('.sticky-container').height();
 
             if ($('form.entity-form').length && !$('.oms').length) {
                 var $sc = $('.sticky-container');
@@ -406,22 +403,18 @@ $(document).ready(function() {
      			type: "POST",
      			data: $form.serializeArray()
      		}, function(data) {
-
-     		    // using tabKey instead of href. Href is not dependable because of hidden tabs
-                var tabKey = $tab.find('span').data('tabkey');
-
-                $('#' + tabKey + 'Contents .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
+     			$('div.' + href + 'Tab .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
                     BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
-     			$('#' + tabKey + 'Contents .selectize-wrapper', $(data)).each(function() {
+     			$('div.' + href + 'Tab .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('#' + tabKey + 'Contents .media-container', $(data)).each(function() {
+                $('div.' + href + 'Tab .media-container', $(data)).each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);

@@ -85,20 +85,17 @@ public abstract class AbstractAuditableListener {
     protected void setAuditData(Object entity, Object auditableObject, String dateField, String userField) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
             Field field = BLCFieldUtils.getSingleField(entity.getClass(), getAuditableFieldName());
-            if (field != null) {
-                field.setAccessible(true);
-                if (field.isAnnotationPresent(Embedded.class)) {
-                    Object auditable = field.get(entity);
-                    if (auditable == null) {
-                        field.set(entity, auditableObject);
-                        auditable = field.get(entity);
-                    }
-
-                    Field temporalField = auditable.getClass().getDeclaredField(dateField);
-                    Field agentField = auditable.getClass().getDeclaredField(userField);
-                    setAuditValueTemporal(temporalField, auditable);
-                    setAuditValueAgent(agentField, auditable);
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(Embedded.class)) {
+                Object auditable = field.get(entity);
+                if (auditable == null) {
+                    field.set(entity, auditableObject);
+                    auditable = field.get(entity);
                 }
+                Field temporalField = auditable.getClass().getDeclaredField(dateField);
+                Field agentField = auditable.getClass().getDeclaredField(userField);
+                setAuditValueTemporal(temporalField, auditable);
+                setAuditValueAgent(agentField, auditable);
             }
         }
     }

@@ -19,7 +19,6 @@ package org.broadleafcommerce.admin.server.service.handler;
 
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -206,10 +205,6 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             customCriteria = persistencePackage.getCustomCriteria()[0];
         }
 
-        Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-        BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
-        NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
-
         for (Entity entity : resultSet.getRecords()) {
             Property discountType = entity.findProperty("discountType");
             Property discountValue = entity.findProperty("value");
@@ -221,6 +216,9 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 value = !value.contains(".") ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
                 discountValue.setValue(value + "%");
             } else if (discountType.getValue().equals("AMOUNT_OFF")) {
+                Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+                BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
+                NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
                 discountValue.setValue(nf.format(new BigDecimal(value)));
             }
 
@@ -235,9 +233,8 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             entity.addProperty(buildStackableProperty(offerItemTargetRuleType));
 
             if (!"listGridView".equals(customCriteria)) {
-                String moneyPrefix = ((DecimalFormat) nf).getPositivePrefix();
                 String setValue = discountValue.getValue();
-                setValue = setValue.replaceAll("\\%", "").replaceAll(moneyPrefix, "");
+                setValue = setValue.replaceAll("\\%", "").replaceAll("\\$", "");
                 discountValue.setValue(setValue);
             }
 

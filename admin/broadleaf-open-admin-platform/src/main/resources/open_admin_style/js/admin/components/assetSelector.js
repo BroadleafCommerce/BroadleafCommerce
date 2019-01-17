@@ -146,7 +146,6 @@ $(document).ready(function() {
                 } else {
                     var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
                     mediaJson.url = fields['assetUrl'];
-                    mediaJson.altText = fields['altText'];
                     mediaItem.val(JSON.stringify(mediaJson)).trigger('input');
                 }
             }
