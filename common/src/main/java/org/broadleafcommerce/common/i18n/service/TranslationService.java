@@ -106,6 +106,15 @@ public interface TranslationService {
      * @return the translated value of the property for the given entity
      */
     public String getTranslatedValue(Object entity, String property, Locale locale);
+
+    /**
+     * Gets the TranslatedEntity based on the passed className.  The TranslatedEntity may be an assignable.
+     * 
+     * @param className
+     * @return
+     */
+    public TranslatedEntity getAssignableEntityType(String className);
+
     
     /**
      * Remove a translation instance from the translation specific cache (different than level-2 hibernate cache)

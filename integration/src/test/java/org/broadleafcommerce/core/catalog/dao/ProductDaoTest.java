@@ -163,6 +163,18 @@ public class ProductDaoTest extends TestNGSiteIntegrationSetup {
         assert result.contains(product);
     }
 
+    @Test(dataProvider = "basicProduct", dataProviderClass = ProductDataProvider.class)
+    @Transactional
+    public void testReadArchivedProductsByName(Product product) {
+        String name = product.getName();
+        product = catalogService.saveProduct(product);
+
+        catalogService.removeProduct(product);
+
+        List<Product> result = productDao.readProductsByName(name);
+        assert result.isEmpty();
+    }
+
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
     @Transactional
     public void testFeaturedProduct(Product product) {
