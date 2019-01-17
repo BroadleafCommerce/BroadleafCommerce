@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
@@ -43,11 +44,14 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotPasswordEvent;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserDetails;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.core.Authentication;
@@ -59,7 +63,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -77,6 +80,10 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static int TEMP_PASSWORD_LENGTH = 12;
     private static final int FULL_PASSWORD_LENGTH = 16;
+
+    @Autowired
+    @Qualifier("blApplicationEventPublisher")
+    protected BroadleafApplicationEventPublisher eventPublisher;
 
     @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;
@@ -131,15 +138,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Autowired(required=false)
     @Qualifier("blAdminSaltSource")
     protected SaltSource saltSource;
-    
-    @Resource(name="blEmailService")
-    protected EmailService emailService;
-
-    @Resource(name="blSendAdminResetPasswordEmail")
-    protected EmailInfo resetPasswordEmailInfo;
-
-    @Resource(name="blSendAdminUsernameEmailInfo")
-    protected EmailInfo sendUsernameEmailInfo;
 
     /**
      * <p>Sets either {@link #passwordEncoder} or {@link #passwordEncoderNew} based on the type of {@link #passwordEncoderBean}
@@ -364,9 +362,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             }
 
             if (activeUsernames.size() > 0) {
-                HashMap<String, Object> vars = new HashMap<String, Object>();
-                vars.put("accountNames", activeUsernames);
-                emailService.sendTemplateEmail(emailAddress, getSendUsernameEmailInfo(), vars);
+                eventPublisher.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, null, activeUsernames));
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -396,9 +392,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             fpst.setToken(encodePassword(token, null));
             fpst.setCreateDate(SystemTime.asDate());
             forgotPasswordSecurityTokenDao.saveToken(fpst);
-            
-            HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("token", token);
+
             String resetPasswordUrl = getResetPasswordURL();
             if (!StringUtils.isEmpty(resetPasswordUrl)) {
                 if (resetPasswordUrl.contains("?")) {
@@ -407,9 +401,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                     resetPasswordUrl=resetPasswordUrl+"?token="+token;
                 }
             }
-            vars.put("resetPasswordUrl", resetPasswordUrl);
-            emailService.sendTemplateEmail(user.getEmail(), getResetPasswordEmailInfo(), vars);
-            
+
+            eventPublisher.publishEvent(new AdminForgotPasswordEvent(this, user.getId(), token, resetPasswordUrl));
         }
         return response;
     }
@@ -511,22 +504,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
         AdminSecurityServiceImpl.TEMP_PASSWORD_LENGTH = PASSWORD_TOKEN_LENGTH;
-    }
-
-    public EmailInfo getSendUsernameEmailInfo() {
-        return sendUsernameEmailInfo;
-    }
-
-    public void setSendUsernameEmailInfo(EmailInfo sendUsernameEmailInfo) {
-        this.sendUsernameEmailInfo = sendUsernameEmailInfo;
-    }
-
-    public EmailInfo getResetPasswordEmailInfo() {
-        return resetPasswordEmailInfo;
-    }
-
-    public void setResetPasswordEmailInfo(EmailInfo resetPasswordEmailInfo) {
-        this.resetPasswordEmailInfo = resetPasswordEmailInfo;
     }
 
     @Deprecated

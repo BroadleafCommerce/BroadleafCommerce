@@ -100,7 +100,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
         // We need these attributes to be set appropriately here
         model.addAttribute("entityId", id);
         model.addAttribute("sectionKey", sectionKey);
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
     
     @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

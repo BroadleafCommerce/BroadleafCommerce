@@ -115,13 +115,18 @@
                 data : data.data,
                 builders : [],
 
-                getFieldLabelById : function(fieldId) {
-                    for (var i=0; i<this.fields.length; i++) {
+                getFieldById: function(fieldId) {
+                    for (var i = 0; i < this.fields.length; i++) {
                         if (this.fields[i].id === fieldId) {
-                            return this.fields[i].label;
+                            return this.fields[i];
                         }
                     }
                     return null;
+                },
+
+                getFieldLabelById : function(fieldId) {
+                    var field = this.getFieldById(fieldId);
+                    return field ? field.label : null;
                 },
 
                 getOperatorLabelByOperatorType : function(operatorType)  {
@@ -661,8 +666,14 @@
                 }
             }
 
+            var url = $($filterFields[0]).data('action');
+
+            const urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
+            $('body').trigger(urlEvent, [url, $tbody]);
+            url = urlEvent.resultUrl || url;
+
             BLC.ajax({
-                url: $($filterFields[0]).data('action'),
+                url: url,
                 type: "GET",
                 data: inputs
             }, function(data) {
@@ -911,6 +922,72 @@
             }
         },
 
+        updateAppliedFiltersView(filterBuilder) {
+            var $container = $("#filter-pillow-container-" + filterBuilder.hiddenId);
+            var $wrapper = $container.closest('.filter-pillow-wrapper');
+
+            if (!$container.length || !$wrapper.length) {
+                return;
+            }
+
+            var json = JSON.parse($("#" + filterBuilder.hiddenId).val());
+            var rules = json && json.data && json.data[0] && json.data[0].rules ? json.data[0].rules : [];
+
+            $container.html('');
+
+            if (!rules.length) {
+                $wrapper.hide();
+                return;
+            }
+
+            for (var i = 0; i < rules.length; i++) {
+                $container.append(asFilterItemHtml(filterBuilder, rules[i]));
+            }
+
+            $wrapper.show();
+
+            function asFilterItemHtml(filterBuilder, rule) {
+                var field = filterBuilder.getFieldById(rule.id);
+                var label = "<b>" + field.label + "</b>";
+                var operator = filterBuilder.builders.length ? filterBuilder.getOperatorLabelByOperatorType(rule.operator) : rule.operator;
+                var value = "";
+
+                switch(rule.operator) {
+                    case "IS_NULL":
+                        break;
+                    case "BETWEEN":
+                        var arr = JSON.parse(rule.value);
+                        value = "<b>" + arr[0] + " AND " + arr[1] + "</b>";
+                        break;
+                    case "COLLECTION_IN":
+                    case "COLLECTION_NOT_IN":
+                        var ruleVal = JSON.parse(rule.value);
+                        var arr = Array.isArray(ruleVal) ? ruleVal : [ruleVal];
+                        var sectionKey = field.selectizeSectionKey;
+                        var url = BLC.servletContext + "/" + sectionKey + "/selectize?id=" + arr.join("|");
+                        var data = $.ajax({
+                            url: encodeURI(url),
+                            async: false,
+                        });
+                        if (data && data.responseJSON && data.responseJSON.options) {
+                            arr = $.map(data.responseJSON.options, function(o) {
+                                return "<b>" + o.name + "</b>";
+                            });
+                        } else {
+                            arr = $.map(arr, function (v) {
+                                return "<b>" + v + "</b>";
+                            });
+                        }
+                        value = arr.join(", ");
+                        break;
+                    default:
+                        value = "<b>" + rule.value + "</b>";
+                }
+
+                return "<div class='item filter-pillow'>" + label + " " + operator + " " + value + "</div>";
+            }
+        },
+
         getListGridFiltersAsURLParams: function($listGridContainer) {
             var $filterButton = $listGridContainer.find('.filter-button');
             var hiddenId = $filterButton.data('hiddenid');
@@ -963,6 +1040,8 @@
             BLCAdmin.filterBuilders.initializeFilterBuilder($this.parent(), filterBuilder);
 
             BLCAdmin.filterBuilders.addExistingFilters(filterBuilder);
+
+            BLCAdmin.filterBuilders.updateAppliedFiltersView(filterBuilder);
         });
 
         ////Once all the query builders have been initialized - show or render the component based on its display type
@@ -1073,6 +1152,9 @@ $(document).ready(function() {
      * Invoked from the "Close" button on a modal filter builder
      */
     $('body').on('click', 'button.set-modal-filter-builder', function () {
+        var hiddenId = $('#hidden-id').data('hiddenid');
+        var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+        BLCAdmin.filterBuilders.updateAppliedFiltersView(filterBuilder);
         BLCAdmin.hideCurrentModal();
     });
 
@@ -1150,6 +1232,9 @@ $(document).ready(function() {
         $filterButton.siblings('.button-group').remove();
 
         $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
+
+        var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+        BLCAdmin.filterBuilders.updateAppliedFiltersView(filterBuilder);
     });
 
     /**
@@ -1200,6 +1285,7 @@ $(document).ready(function() {
         var $modal = BLCAdmin.getModalSkeleton();
         //$modal.addClass('sm');
         $modal.find('.modal-header').find('h3').html('Filters Applied');
+        $modal.find('.modal-header').find('.close').attr("onclick", "$('button.set-modal-filter-builder').click()");
         //$modal.find('.modal-header').append(addFilterBtn);
         $modal.find('.modal-body').append(hiddenInput);
         $modal.find('.modal-body').append($modalContainer);

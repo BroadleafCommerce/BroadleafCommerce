@@ -25,7 +25,9 @@ import java.util.Map;
 /**
  * @author jfischer
  *
+ * @deprecated in favor of {@link org.broadleafcommerce.common.notification.service.NotificationDispatcher}
  */
+@Deprecated
 public interface EmailService {
 
     public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo,  Map<String,Object> props);

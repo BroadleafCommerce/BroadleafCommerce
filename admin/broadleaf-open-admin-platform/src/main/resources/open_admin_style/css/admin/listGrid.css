@@ -33,6 +33,18 @@
     height: 45px;
     white-space: nowrap;
 }
+.filter-pillow-wrapper {
+    display: none;
+    text-align: right;
+}
+.filter-pillow-wrapper .filter-pillow-container {
+    width: auto;
+    padding: 5px;
+}
+div.filter-pillow-wrapper div.filter-pillow-container div.filter-pillow {
+    border-radius: 5px;
+    margin-right: 5px;
+}
 .listgrid-search-actions {
     display: inline-block;
 }
@@ -234,6 +246,9 @@ div.alert-box.list-grid-alert.save-alert a.close {
 .listgrid-toolbar .filter-info .clear-filters i {
     padding-top: 0;
 }
+.listgrid-toolbar .filter-info .button-group {
+    vertical-align: top;
+}
 /****************************************
  ADMIN LISTGRID/TABLES STYLES
 ****************************************/
@@ -391,9 +406,6 @@ td .listgrid-row-actions {
     position: relative;
     background-color: white;
     border: 1px solid #D8D5D0;
-}
-.fieldgroup-listgrid-wrapper-header {
-    height: 43px;
 }
 .fieldgroup-listgrid .row {
     margin-left: 0 !important;

@@ -43,6 +43,8 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -91,9 +93,10 @@ import javax.persistence.Transient;
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {
 
-    public static final String EXCLUDE_OFFERCODE_COPY_HINT = "exclude-offerCodes";
     public static final long serialVersionUID = 1L;
 
+    public static final String EXCLUDE_OFFERCODE_COPY_HINT = "exclude-offer-offerCodes";
+    
     @Id
     @GeneratedValue(generator= "OfferId")
     @GenericGenerator(
@@ -159,7 +162,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Value",
         group = GroupName.Description, order = FieldOrder.Amount,
         prominent = true, gridOrder = 4,
-        defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
@@ -234,7 +237,18 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
         defaultValue = "0")
     protected Long maxUsesPerCustomer;
-    
+
+    @Column(name = "MAX_USES_STRATEGY")
+    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Strategy", allowNoValueEnumOption = false, defaultValue = "CUSTOMER", group = GroupName.Restrictions, order = FieldOrder.MaxUsesStrategy, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType")
+    protected String maxUsesStrategy;
+
+    @Column(name = "MINIMUM_DAYS_PER_USAGE")
+    @AdminPresentation(friendlyName = "OfferImpl_Minimum_Days_Per_Usage",
+            group = GroupName.Restrictions, order = FieldOrder.MinimumDaysPerUsage,
+            tooltip = "OfferImplMinimumDaysPerUsage_tooltip",
+            defaultValue = "0")
+    protected Long minimumDaysPerUsage;
+
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
         group = GroupName.QualifierRuleRestriction,
@@ -248,21 +262,21 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
         group = GroupName.QualifierRuleRestriction, order = FieldOrder.QualifyingItemSubTotal,
-        defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal qualifyingItemSubTotal;
 
     @Column(name = "ORDER_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Order_Subtotal",
         tooltip = "OfferImplMinOrderSubtotal_tooltip",
         group = GroupName.Restrictions, order = FieldOrder.OrderMinSubTotal,
-        defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal orderMinSubTotal;
 
     @Column(name = "TARGET_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Target_Subtotal",
             tooltip = "OfferImplMinTargetSubtotal_tooltip",
             group = GroupName.Restrictions, order = FieldOrder.TargetMinSubTotal,
-            defaultValue = "0.00000")
+            defaultValue = "0.00")
     protected BigDecimal targetMinSubTotal;
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
@@ -345,6 +359,28 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         }
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
+
+    @Column(name = "OFFER_ADJUSTMENT_TYPE")
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Adjustment_Type",
+            group = GroupName.Description, order = FieldOrder.DiscountType + 1,
+            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType",
+            tooltip = "OfferImpl_Offer_Adjustment_Type_tooltip",
+            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+    protected String adjustmentType;
+    
+    @Column(name = "USE_LIST_FOR_DISCOUNTS")
+    @AdminPresentation(friendlyName = "OfferImpl_Use_List_For_Discounts",
+            group = GroupName.Description, fieldComponentRendererTemplate = "HIDDEN_BOOLEAN",
+            defaultValue = "false")
+    protected Boolean useListForDiscounts = false;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferPriceDataImpl.class, cascade = CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+    @AdminPresentationCollection(
+            friendlyName = "OfferImpl_Offer_Price_Data",
+            group = GroupName.Description, order = FieldOrder.OfferType + 10)
+    protected List<OfferPriceData> offerPriceData = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -552,7 +588,27 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
         this.maxUsesPerCustomer = maxUsesPerCustomer;
     }
-    
+
+    @Override
+    public CustomerMaxUsesStrategyType getMaxUsesStrategyType() {
+        return CustomerMaxUsesStrategyType.getInstance(maxUsesStrategy);
+    }
+
+    @Override
+    public void setMaxUsesStrategyType(CustomerMaxUsesStrategyType strategyType) {
+        this.maxUsesStrategy = strategyType.getType();
+    }
+
+    @Override
+    public Long getMinimumDaysPerUsage() {
+        return minimumDaysPerUsage;
+    }
+
+    @Override
+    public void setMinimumDaysPerUsage(Long minimumDaysPerUsage) {
+        this.minimumDaysPerUsage = minimumDaysPerUsage;
+    }
+
     @Override
     public boolean isUnlimitedUsePerCustomer() {
         return getMaxUsesPerCustomer() == 0;
@@ -592,27 +648,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setMarketingMessage(String marketingMessage) {
         this.marketingMessage = marketingMessage;
     }
-
-    //    @Override
-    //    @Deprecated
-    //    public Set<OfferItemCriteria> getQualifyingItemCriteria() {
-    //        if (legacyQualifyingItemCriteria.size() == 0) {
-    //            for (OfferQualifyingCriteriaXref xref : getQualifyingItemCriteriaXref()) {
-    //                legacyQualifyingItemCriteria.add(xref.getOfferItemCriteria());
-    //            }
-    //        }
-    //        return Collections.unmodifiableSet(legacyQualifyingItemCriteria);
-    //    }
-    //
-    //    @Override
-    //    @Deprecated
-    //    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
-    //        this.legacyQualifyingItemCriteria.clear();
-    //        this.qualifyingItemCriteria.clear();
-    //        for(OfferItemCriteria crit : qualifyingItemCriteria){
-    //            this.qualifyingItemCriteria.add(new OfferQualifyingCriteriaXrefImpl(this, crit));
-    //        }
-    //    }
 
     @Override
     public Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref() {
@@ -666,7 +701,30 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Override
     public void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref) {
        this.offerMatchRules = offerMatchRulesXref;
-   }
+    }
+
+    @Override
+    public Boolean getUseListForDiscounts() {
+        if (useListForDiscounts == null) {
+            return false;
+        }
+        return useListForDiscounts;
+    }
+
+    @Override
+    public void setUseListForDiscounts(Boolean useListForDiscounts) {
+        this.useListForDiscounts = useListForDiscounts;
+    }
+
+    @Override
+    public List<OfferPriceData> getOfferPriceData() {
+        return offerPriceData;
+    }
+
+    @Override
+    public void setOfferPriceData(List<OfferPriceData> offerPriceData) {
+        this.offerPriceData = offerPriceData;
+    }
 
     @Override
     public Character getArchived() {
@@ -748,6 +806,27 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     }
 
     @Override
+    public OfferAdjustmentType getAdjustmentType() {
+        if (adjustmentType == null) {
+            return OfferAdjustmentType.ORDER_DISCOUNT;
+        }
+        return OfferAdjustmentType.getInstance(adjustmentType);
+    }
+
+    @Override
+    public void setAdjustmentType(OfferAdjustmentType adjustmentType) {
+        this.adjustmentType = adjustmentType.getType();
+    }
+
+    @Override
+    public boolean isFutureCredit() {
+        if (adjustmentType == null) {
+            return false;
+        }
+        return OfferAdjustmentType.FUTURE_CREDIT.equals(OfferAdjustmentType.getInstance(adjustmentType));
+    }
+
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
             .append(name)
@@ -825,7 +904,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             cloned.getOfferMatchRulesXref().put(entry.getKey(),clonedEntry);
         }
 
+        for (OfferPriceData offerPriceDataEntry : offerPriceData) {
+            OfferPriceData clonedEntry = offerPriceDataEntry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getOfferPriceData().add(clonedEntry);
+        }
+
         return  createResponse;
     }
+
 
 }

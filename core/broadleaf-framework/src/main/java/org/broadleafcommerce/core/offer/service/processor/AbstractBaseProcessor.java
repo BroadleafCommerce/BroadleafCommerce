@@ -17,8 +17,10 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.map.LRUMap;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -26,15 +28,16 @@ import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
@@ -44,7 +47,6 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -57,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-
 import javax.annotation.Resource;
 
 /**
@@ -76,6 +77,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager extensionManager;
 
+    protected final PromotableOfferUtility promotableOfferUtility;
+
+    protected AbstractBaseProcessor(PromotableOfferUtility promotableOfferUtility) {
+        this.promotableOfferUtility = promotableOfferUtility;
+    }
+
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteriaXref() == null || offer.getQualifyingItemCriteriaXref().size() == 0) {
@@ -90,8 +97,16 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 }
             }           
         }
-        
-        if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteriaXref() != null) {
+
+        if (offer.getType().equals(OfferType.ORDER_ITEM) && BooleanUtils.isTrue(offer.getUseListForDiscounts())) {
+            for (OfferPriceData offerPriceData : offer.getOfferPriceData()) {
+                PromotableOrderItem qualifyingOrderItem = findQualifyingItemForPriceData(offerPriceData, promotableOrderItems);
+                if (qualifyingOrderItem != null) {
+                    candidates.addFixedTarget(offerPriceData, qualifyingOrderItem);
+                    candidates.setMatchedTarget(true);
+                }
+            }
+        } else if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteriaXref() != null) {
             for (OfferTargetCriteriaXref xref : offer.getTargetItemCriteriaXref()) {
                 checkForItemRequirements(offer, candidates, xref.getOfferItemCriteria(), promotableOrderItems, false);
                 if (!candidates.isMatchedTarget()) {
@@ -99,7 +114,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 }
             }
         }
-        
+
         if (candidates.isMatchedQualifier()) {
             if (! meetsItemQualifierSubtotal(offer, candidates)) {
                 candidates.setMatchedQualifier(false);
@@ -108,7 +123,16 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         
         return candidates;
     }
-    
+
+    protected PromotableOrderItem findQualifyingItemForPriceData(OfferPriceData offerPriceData, List<PromotableOrderItem> promotableOrderItems) {
+        for (PromotableOrderItem promotableOrderItem : promotableOrderItems) {
+            if (promotableOfferUtility.itemMatchesOfferPriceData(offerPriceData, promotableOrderItem)) {
+                return promotableOrderItem;
+            }
+        }
+        return null;
+    }
+
     private boolean isEmpty(Collection<? extends Object> collection) {
         return (collection == null || collection.size() == 0);
     }
@@ -221,9 +245,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
             List<PromotableOrderItem> filteredItems = new ArrayList<>();
             filteredItems.addAll(promotableOrderItems);
-            CollectionUtils.filter(filteredItems, new TypedPredicate<PromotableOrderItem>() {
+            CollectionUtils.filter(filteredItems, new Predicate<PromotableOrderItem>() {
                 @Override
-                public boolean eval(PromotableOrderItem promotableOrderItem) {
+                public boolean evaluate(PromotableOrderItem promotableOrderItem) {
                     return childItems.contains(promotableOrderItem.getOrderItem());
                 }
             });

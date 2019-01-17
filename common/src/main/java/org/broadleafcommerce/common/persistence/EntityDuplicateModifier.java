@@ -18,9 +18,7 @@
 package org.broadleafcommerce.common.persistence;
 
 /**
- * Perform final modifications on a duplicated entity before persistence.
- *
- * @author Jeff Fischer
+ * @deprecated Implement {@link EntityDuplicationHelper} instead
  */
 public interface EntityDuplicateModifier<T> {
 

@@ -134,6 +134,17 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     }
 
     @Override
+    public List<OrderItemPriceDetailAdjustment> getFutureCreditOrderItemPriceDetailAdjustments() {
+        List<OrderItemPriceDetailAdjustment> orderDiscountAdjustments = new ArrayList<>();
+        for (OrderItemPriceDetailAdjustment adjustment : orderItemPriceDetailAdjustments) {
+            if (adjustment.isFutureCredit()) {
+                orderDiscountAdjustments.add(adjustment);
+            }
+        }
+        return orderDiscountAdjustments;
+    }
+
+    @Override
     public void setOrderItemAdjustments(List<OrderItemPriceDetailAdjustment> orderItemPriceDetailAdjustments) {
         this.orderItemPriceDetailAdjustments = orderItemPriceDetailAdjustments;
         
@@ -157,7 +168,20 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     public Money getAdjustmentValue() {
         Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderItemPriceDetailAdjustment adjustment : orderItemPriceDetailAdjustments) {
-            adjustmentValue = adjustmentValue.add(adjustment.getValue());
+            if (!adjustment.isFutureCredit()) {
+                adjustmentValue = adjustmentValue.add(adjustment.getValue());
+            }
+        }
+        return adjustmentValue;
+    }
+
+    @Override
+    public Money getFutureCreditAdjustmentValue() {
+        Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (OrderItemPriceDetailAdjustment adjustment : orderItemPriceDetailAdjustments) {
+            if (adjustment.isFutureCredit()) {
+                adjustmentValue = adjustmentValue.add(adjustment.getValue());
+            }
         }
         return adjustmentValue;
     }
@@ -165,6 +189,11 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     @Override
     public Money getTotalAdjustmentValue() {
         return getAdjustmentValue().multiply(quantity);
+    }
+
+    @Override
+    public Money getFutureCreditTotalAdjustmentValue() {
+        return getFutureCreditAdjustmentValue().multiply(quantity);
     }
 
     @Override

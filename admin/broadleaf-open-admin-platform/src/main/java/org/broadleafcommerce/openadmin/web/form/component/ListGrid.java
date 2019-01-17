@@ -81,6 +81,9 @@ public class ListGrid {
     protected boolean totalCountLessThanPageSize;
     protected boolean promptSearch;
 
+    // If true, only clicking the check box area will toggle the row selection when using multi select
+    protected boolean multiSelectCheckBoxOnly;
+
     protected AddMethodType addMethodType;
     protected String listGridType;
     protected String selectType;
@@ -762,5 +765,13 @@ public class ListGrid {
 
     public void setPromptSearch(boolean promptSearch) {
         this.promptSearch = promptSearch;
+    }
+
+    public boolean isMultiSelectCheckBoxOnly() {
+        return multiSelectCheckBoxOnly;
+    }
+
+    public void setMultiSelectCheckBoxOnly(boolean multiSelectCheckBoxOnly) {
+	    this.multiSelectCheckBoxOnly = multiSelectCheckBoxOnly;
     }
 }

@@ -324,6 +324,24 @@ public class DataDTOToMVELTranslator {
                 }
                 break;
             }
+            case WITHIN_DAYS: {
+
+                try {
+                    Integer.parseInt(value[0] + "");
+                } catch (Exception e) {
+                    throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
+                            field + ") based on field type. The type of field is Integer, " +
+                            "and you entered: (" + value[0] +")");
+                }
+                sb.append("(");
+                buildExpression(sb, entityKey, field, new Object[]{"MvelHelper.subtractFromCurrentTime(" + value[0] + ")"}, type, SupportedFieldType.WITHIN_DAYS, GREATER_THAN_OPERATOR,
+                        false, false, false, false, true);
+                sb.append("&&");
+                buildExpression(sb, entityKey, field, new Object[]{"MvelHelper.currentTime()"}, type, SupportedFieldType.WITHIN_DAYS, LESS_THAN_OPERATOR,
+                        false, false, false, false, true);
+                sb.append(")");
+                break;
+            }
         }
     }
 
@@ -610,19 +628,25 @@ public class DataDTOToMVELTranslator {
                         response.append(parsableVal);
                         break;
                     case DATE:
-                        //convert the date to our standard date/time format
-                        Date temp = null;
-                        try {
-                            temp = RuleBuilderFormatUtil.parseDate(parsableVal);
-                        } catch (ParseException e) {
-                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Cannot format value for the field (" +
-                                    fieldName + ") based on field type. The type of field is Date, " +
-                                    "and you entered: (" + parsableVal +"). Dates must be in the format MM/dd/yyyy HH:mm.");
+                        if (SupportedFieldType.WITHIN_DAYS.equals(secondaryType)) {
+                            response.append("MvelHelper.convertField(\"DATE\",");
+                            response.append(parsableVal);
+                            response.append(")");
+                        } else {
+                            //convert the date to our standard date/time format
+                            Date temp = null;
+                            try {
+                                temp = RuleBuilderFormatUtil.parseDate(parsableVal);
+                            } catch (ParseException e) {
+                                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Cannot format value for the field (" +
+                                        fieldName + ") based on field type. The type of field is Date, " +
+                                        "and you entered: (" + parsableVal + "). Dates must be in the format MM/dd/yyyy HH:mm.");
+                            }
+                            String convertedDate = FormatUtil.getTimeZoneFormat().format(temp);
+                            response.append("MvelHelper.convertField(\"DATE\",\"");
+                            response.append(convertedDate);
+                            response.append("\")");
                         }
-                        String convertedDate = FormatUtil.getTimeZoneFormat().format(temp);
-                        response.append("MvelHelper.convertField(\"DATE\",\"");
-                        response.append(convertedDate);
-                        response.append("\")");
                         break;
                     default:
                         String stringVersionState = String.valueOf(value[j]);
