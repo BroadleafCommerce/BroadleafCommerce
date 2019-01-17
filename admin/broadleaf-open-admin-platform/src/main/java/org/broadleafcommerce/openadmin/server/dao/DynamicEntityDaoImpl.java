@@ -300,26 +300,42 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Override
     public List<Long> readOtherEntitiesWithPropertyValue(Serializable instance, String propertyName, String value) {
         Class clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(instance.getClass());
-
-        CriteriaBuilder builder = standardEntityManager.getCriteriaBuilder();
+        CriteriaBuilder builder = this.standardEntityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root root = criteria.from(clazz);
-        Path idField = root.get(getIdField(clazz).getName());
+        Path idField = root.get(this.getIdField(clazz).getName());
         criteria.select(idField.as(Long.class));
+        List<Predicate> restrictions = new ArrayList();
 
-        List<Predicate> restrictions = new ArrayList<>();
-        restrictions.add(builder.equal(root.get(propertyName), value));
-        restrictions.add(builder.notEqual(idField, getIdentifier(instance)));
+        Path path = null;
 
-        if (instance instanceof Status) {
-            restrictions.add(builder.or(
-                    builder.isNull(root.get("archiveStatus").get("archived")),
-                    builder.equal(root.get("archiveStatus").get("archived"), 'N')));
+        // Support property name such as "defaultSku.name"
+        if (propertyName.contains(".")) {
+            String[] split = propertyName.split("\\.");
+            for (String splitResult : split) {
+                if (path == null) {
+                    path = root.get(splitResult);
+                } else {
+                    path = path.get(splitResult);
+                }
+            }
+        } else {
+            path = root.get(propertyName);
         }
 
-        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        restrictions.add(builder.equal(path, value));
+        Serializable identifier = this.getIdentifier(instance);
+        //when we creating the new item identifier is not exists
+        if(identifier != null) {
+            restrictions.add(builder.notEqual(idField, identifier));
+        }
 
-        return standardEntityManager.createQuery(criteria).getResultList();
+        if (instance instanceof Status) {
+            restrictions.add(builder.or(builder.isNull(root.get("archiveStatus").get("archived")), builder.equal(root.get("archiveStatus").get("archived"), 'N')));
+        }
+
+        criteria.where((Predicate[]) restrictions.toArray(new Predicate[restrictions.size()]));
+        return this.standardEntityManager.createQuery(criteria).getResultList();
     }
 
     @Override

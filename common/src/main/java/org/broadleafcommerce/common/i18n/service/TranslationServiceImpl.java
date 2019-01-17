@@ -104,7 +104,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     @Transactional("blTransactionManager")
     public Translation save(String entityType, String entityId, String fieldName, String localeCode, 
             String translatedValue) {
-        TranslatedEntity te = getEntityType(entityType);
+        TranslatedEntity te = getAssignableEntityType(entityType);
         
         Translation translation = getTranslation(te, entityId, fieldName, localeCode);
         
@@ -155,7 +155,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     
     @Override
     public List<Translation> getTranslations(String ceilingEntityClassname, String entityId, String property) {
-        TranslatedEntity entityType = getEntityType(ceilingEntityClassname);
+        TranslatedEntity entityType = getAssignableEntityType(ceilingEntityClassname);
         return dao.readTranslations(entityType, entityId, property);
     }
 
@@ -381,7 +381,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         return getEntityType(entity.getClass());
     }
     
-    protected TranslatedEntity getEntityType(String className) {
+    public TranslatedEntity getAssignableEntityType(String className) {
         try {
             Class<?> clazz = Class.forName(className);
             return getEntityType(clazz);
