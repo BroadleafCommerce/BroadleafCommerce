@@ -63,6 +63,7 @@
                          th:if="${tab.hasFieldOrListGrid()}"
                          th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}"
                          th:classappend="${#ef.isTabActive(entityForm, tab)}? 'active'"
+                         th:id="${tab.key} + Contents"
                          th:inline="text">
 
                         <th:block th:if="${tab.customTemplate != null}">
