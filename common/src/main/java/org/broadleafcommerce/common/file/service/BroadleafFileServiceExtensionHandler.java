@@ -31,6 +31,6 @@ public interface BroadleafFileServiceExtensionHandler extends ExtensionHandler {
 
     public ExtensionResultStatusType processPathForSite(String prefix, String resourceName, ExtensionResultHolder<String> holder);
 
-    public ExtensionResultStatusType retrieveAllSiteIds(Site site, ExtensionResultHolder<List<String>> holder);
+    public ExtensionResultStatusType retrieveAllParentSitesIds(Site site, ExtensionResultHolder<List<String>> holder);
 
 }
