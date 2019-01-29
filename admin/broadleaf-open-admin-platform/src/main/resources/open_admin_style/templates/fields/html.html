@@ -5,6 +5,7 @@
 <div th:replace="components/fieldTranslation" ></div>
 
 <div class="redactor-field"
+     th:classappend="${field.readOnly ? 'disabled' : ''}"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
 
     <textarea th:class="${'redactor' + (field.readOnly? '-disable' : '') + ' ' + (field.readOnly and field.isLargeEntry? 'large-disabled' : '')}"

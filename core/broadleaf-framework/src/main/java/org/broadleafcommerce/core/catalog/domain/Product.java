@@ -51,6 +51,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      *
      * @return the id of the Product
      */
+    @Override
     public Long getId();
 
     /**
@@ -66,7 +67,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return the name of the product
      */
     public String getName();
@@ -77,7 +78,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param name - the name of the Product
      */
     public void setName(String name);
@@ -88,7 +89,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return a brief description of the product
      */
     public String getDescription();
@@ -99,7 +100,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param description - a brief description of the product
      */
     public void setDescription(String description);
@@ -110,7 +111,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return a long description of the product
      */
     public String getLongDescription();
@@ -121,7 +122,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param longDescription the long description
      */
     public void setLongDescription(String longDescription);
@@ -133,7 +134,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return the first date the product will be available
      */
     public Date getActiveStartDate();
@@ -145,7 +146,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param activeStartDate - the first day the product is available
      */
     public void setActiveStartDate(Date activeStartDate);
@@ -157,7 +158,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return the last day the product is available
      */
     public Date getActiveEndDate();
@@ -169,7 +170,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param activeEndDate - the last day the product is available
      */
     public void setActiveEndDate(Date activeEndDate);
@@ -180,7 +181,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return a boolean indicates if the product is active.
      */
     public boolean isActive();
@@ -195,7 +196,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * Products can also have multiple Skus associated with it that are represented by
      * {@link ProductOption}s. For instance, a large, blue shirt. For more information on
      * that relationship see {@link #getAdditionalSkus()}.
-     * 
+     *
      * @return the default Sku for this Product
      */
     public Sku getDefaultSku();
@@ -249,13 +250,13 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * Note: this operation is cascaded with CascadeType.ALL which saves from having to persist the Product
      * in 2 operations: first persist the Sku and then take the merged Sku, set it as this Product's default
      * Sku, and then persist this Product.
-     * 
+     *
      * @param defaultSku - the Sku that should be the default for this Product
      */
     public void setDefaultSku(Sku defaultSku);
 
     /**
-     * @return whether or not the default sku can be used for a multi-sku product in the case that no 
+     * @return whether or not the default sku can be used for a multi-sku product in the case that no
      * product options are set. Defaults to false if not specified. Note that this only affects multi-sku
      * products.
      */
@@ -264,7 +265,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     /**
      * Sets whether or not the default sku can be sold in the case that no product options are specified. Note
      * that this only affects multi-sku products.
-     * 
+     *
      * @param canSellWithoutOptions
      */
     public void setCanSellWithoutOptions(Boolean canSellWithoutOptions);
@@ -289,7 +290,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * This list does not take into account whether any of these additional Skus are active or not, nor
      * does it contain the {@link #getDefaultSku()} for this Product.  For this functionality, see
      * {@link #getSkus()} and {@link #getAllSkus()}, respectively.
-     * 
+     *
      * @return the additional Skus for this Product
      * @see {@link ProductOption}, {@link ProductOptionValue}
      */
@@ -312,7 +313,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * Note: in the event that the default Sku was added to the list of {@link #getAdditionalSkus()}, it is filtered out
      * so that only a single instance of {@link #getDefaultSku()} is contained in the resulting list
-     * 
+     *
      * @return all the Skus associated to this Product
      */
     public List<Sku> getAllSkus();
@@ -328,7 +329,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     /**
      * Gets the media for this product. This serves as a pass-through to
      * the {@link getDefaultSku()} media
-     * 
+     *
      * @return the Media for the default Sku associated with this Product
      * @see Sku
      */
@@ -337,7 +338,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     /**
      * Gets the media for this product. This serves as a pass-through to
      * the {@link getDefaultSku()} media
-     * 
+     *
      * @param media Media map to set on the default Sku associated with this Product
      * @see Sku
      */
@@ -347,7 +348,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * Convenience method for returning all of the media associated with this Product by adding
      * all the media in {@link #getDefaultSku()} as well as all the media in the Skus represented by
      * {@link #getAdditionalSkus()}
-     * 
+     *
      * @return all of the Media for all of the Skus for this Product
      */
     public Map<String, Media> getAllSkuMedia();
@@ -419,9 +420,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return a ProductDimensions object
-     * 
+     *
      */
     public Dimension getDimension();
 
@@ -431,9 +432,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param dimension
-     * 
+     *
      */
     public void setDimension(Dimension dimension);
 
@@ -443,9 +444,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return width dimension of the product
-     * 
+     *
      */
     public BigDecimal getWidth();
 
@@ -455,9 +456,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param width
-     * 
+     *
      */
     public void setWidth(BigDecimal width);
 
@@ -467,9 +468,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return height dimension of the product
-     * 
+     *
      */
     public BigDecimal getHeight();
 
@@ -479,9 +480,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param height
-     * 
+     *
      */
     public void setHeight(BigDecimal height);
 
@@ -491,9 +492,9 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return width depth of the product
-     * 
+     *
      */
     public BigDecimal getDepth();
 
@@ -503,7 +504,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param depth
      */
     public void setDepth(BigDecimal depth);
@@ -514,7 +515,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return the dimension girth
      */
     public BigDecimal getGirth();
@@ -525,19 +526,19 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param girth
      */
     public void setGirth(BigDecimal girth);
 
     /**
      * Returns the dimension container size
-     * 
+     *
      * <br />
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return dimension container size
      */
     public ContainerSizeType getSize();
@@ -548,7 +549,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param size
      */
     public void setSize(ContainerSizeType size);
@@ -559,7 +560,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return dimension container shape
      */
     public ContainerShapeType getContainer();
@@ -570,7 +571,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param container
      */
     public void setContainer(ContainerShapeType container);
@@ -581,7 +582,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return a dimension String
      */
     public String getDimensionString();
@@ -592,7 +593,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @return weight of product
      */
     public Weight getWeight();
@@ -603,7 +604,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
      * a pass-through to the same method via {@link getDefaultSku()}
-     * 
+     *
      * @param weight
      */
     public void setWeight(Weight weight);
@@ -665,14 +666,14 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     /**
      * Gets the promotional message for this Product. For instance, this could be a limited-time
      * Product
-     * 
+     *
      * @return the Product's promotional message
      */
     public String getPromoMessage();
 
     /**
      * Sets the promotional message for this Product
-     * 
+     *
      * @param promoMessage
      */
     public void setPromoMessage(String promoMessage);
@@ -680,7 +681,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     /**
      * The available {@link ProductOption}s for this Product.  For instance, if this
      * Product is a T-Shirt, you might be able to specify a size and color. This would
-     * be modeled by 2 {@link ProductOption}s, each that could have multiple {@link ProductOptionValue}s 
+     * be modeled by 2 {@link ProductOption}s, each that could have multiple {@link ProductOptionValue}s
      * (which could be "small" "medium" "large", "blue", "yellow", "green").  For specific pricing or
      * inventory needs on a per-value basis, multiple Skus can be associated to this Product based
      * off of the {@link ProductOptionValue}s
@@ -706,19 +707,19 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public void setProductOptionXrefs(List<ProductOptionXref> productOptions);
 
     /**
-     * Returns a Map of product option values, keyed by the product option name. 
-     * E.g. "color":["red","green","black"] 
+     * Returns a Map of product option values, keyed by the product option name.
+     * E.g. "color":["red","green","black"]
      * @return
      */
     public Map<String, Set<String>> getProductOptionValuesMap();
 
     /**
      * A product can have a designated URL.   When set, the ProductHandlerMapping will check for this
-     * URL and forward this user to the {@link #getDisplayTemplate()}. 
-     * 
+     * URL and forward this user to the {@link #getDisplayTemplate()}.
+     *
      * Alternatively, most sites will rely on the {@link Product#getGeneratedUrl()} to define the
-     * url for a product page. 
-     * 
+     * url for a product page.
+     *
      * @see org.broadleafcommerce.core.web.catalog.ProductHandlerMapping
      * @return
      */
@@ -726,7 +727,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
 
     /**
      * Sets the URL that a customer could type in to reach this product.
-     * 
+     *
      * @param url
      */
     public void setUrl(String url);
@@ -738,20 +739,20 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
 
     /**
      * Sets the flag for whether or not the URL should not be generated in the admin
-     * 
+     *
      * @param overrideGeneratedUrl
      */
     public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl);
 
     /**
-     * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 
+     * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for
      * this product by taking the {@link Product.getName()} and removing special characters and replacing
      * dashes with spaces.
      */
     public String getUrlKey();
 
     /**
-     * Sets a url-fragment to be used with this product.  By default, the system will attempt to create a 
+     * Sets a url-fragment to be used with this product.  By default, the system will attempt to create a
      * unique url-fragment for this product by taking the {@link Product.getName()} and removing special characters and replacing
      * dashes with spaces.
      */
@@ -760,7 +761,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     /**
      * Returns the name of a display template that is used to render this product.   Most implementations have a default
      * template for all products.    This allows for the user to define a specific template to be used by this product.
-     * 
+     *
      * @return
      */
     public String getDisplayTemplate();
@@ -773,23 +774,23 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public void setDisplayTemplate(String displayTemplate);
 
     /**
-     * Generates a URL that can be used to access the product.  
+     * Generates a URL that can be used to access the product.
      * Builds the url by combining the url of the default category with the getUrlKey() of this product.
      */
     public String getGeneratedUrl();
 
-    /** 
+    /**
      * Returns a list of the cross sale products for this product as well
      * all cross sale products in all parent categories of this product.
-     * 
+     *
      * @return the cumulative cross sale products
      */
     public List<RelatedProduct> getCumulativeCrossSaleProducts();
 
-    /** 
+    /**
      * Returns a list of the upsale products for this product as well as
      * all upsale products in all parent categories of this product.
-     * 
+     *
      * @return the cumulative upsale products
      */
     public List<RelatedProduct> getCumulativeUpSaleProducts();
@@ -847,7 +848,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public void setTaxCode(String taxCode);
 
     /**
-     * In most implementations, including the default Broadleaf demo store, if a product doesn't have a retail price, 
+     * In most implementations, including the default Broadleaf demo store, if a product doesn't have a retail price,
      * it can't be sold.     This method returns true if in the current context, the product has a price.    The current
      * context may be different when accessed in an entperise context like one using PriceLists or MultiTentant.
      * @return
@@ -865,6 +866,12 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * @return
      */
     public Money getSalePrice();
+
+    /**
+     * Convenience method, references defaultSku.price
+     * @return
+     */
+    public Money getPrice();
 
     /**
      * Convenience method, references defaultSku.onSale

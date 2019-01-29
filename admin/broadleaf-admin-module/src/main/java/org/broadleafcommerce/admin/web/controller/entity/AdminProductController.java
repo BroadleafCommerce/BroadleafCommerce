@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -30,6 +31,7 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -52,34 +54,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
  * invoke the {@link ProductCustomPersistenceHandler}
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @see {@link ProductCustomPersistenceHandler}
  */
 @Controller("blAdminProductController")
 @RequestMapping("/" + AdminProductController.SECTION_KEY)
 public class AdminProductController extends AdminBasicEntityController {
-    
+
     public static final String SECTION_KEY = "product";
     public static final String DEFAULT_SKU_NAME = "defaultSku.name";
     public static final String SELECTIZE_NAME_PROPERTY = "name";
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
         //allow external links to work for ToOne items
@@ -97,7 +98,7 @@ public class AdminProductController extends AdminBasicEntityController {
             Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
             defaultCategoryUrlPrefix = cat.getUrl();
         }
-                
+
         Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
         if (overrideGeneratedUrl != null) {
             overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
@@ -113,7 +114,7 @@ public class AdminProductController extends AdminBasicEntityController {
             }
         }
     }
-    
+
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
             String id, Map<String, String> pathVars) throws Exception {
         String collectionField = "additionalSkus";
@@ -122,7 +123,7 @@ public class AdminProductController extends AdminBasicEntityController {
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
-        
+
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withCustomCriteria(new String[] { id });
         BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
@@ -167,17 +168,21 @@ public class AdminProductController extends AdminBasicEntityController {
         formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
 
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
-        
+
+        if(StringUtils.isBlank(entityForm.getParentId())) {
+            entityForm.setParentId(id);
+        }
+
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleAddEntity");
-                
+
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.ADD_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
         return "modules/modalContainer";
     }
-    
+
     @Override
     protected String buildAddCollectionItemModel(HttpServletRequest request, HttpServletResponse response,
             Model model,
@@ -191,11 +196,11 @@ public class AdminProductController extends AdminBasicEntityController {
         }
         return super.buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, entityForm, entity);
     }
-    
+
     protected String showUpdateAdditionalSku(HttpServletRequest request, Model model,
                                              String id, String collectionItemId, Map<String, String> pathVars, EntityForm entityForm) throws Exception {
         String collectionField = "additionalSkus";
-        
+
         // Find out metadata for the additionalSkus property
         String mainClassName = getClassNameForSection(SECTION_KEY);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
@@ -223,15 +228,15 @@ public class AdminProductController extends AdminBasicEntityController {
             //remove all the actions since we're not trying to redisplay them on the form
             entityForm.removeAllActions();
         }
-        
+
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
-        
+
         // Ensure that operations on the Sku subcollections go to the proper URL
         for (ListGrid lg : entityForm.getAllListGrids()) {
             lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
             lg.setSectionCrumbs(sectionCrumbs);
         }
-        
+
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleEditEntity");
 
@@ -321,7 +326,7 @@ public class AdminProductController extends AdminBasicEntityController {
             throw new ServiceException(e);
         }
     }
-    
+
     @Override
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -331,7 +336,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
             return showAddAdditionalSku(request, response, model, id, pathVars);
-        } 
+        }
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
     }
 
@@ -341,7 +346,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value = "id") String id) throws Exception {
         String view = super.viewEntityForm(request, response, model, pathVars, id);
-        
+
         //Skus have a specific toolbar action to generate Skus based on permutations
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
         ListGridAction generateSkusAction = new ListGridAction(ListGridAction.GEN_SKUS).withDisplayText("Generate_Skus")
@@ -359,7 +364,7 @@ public class AdminProductController extends AdminBasicEntityController {
         if (productOptionsGrid != null) {
             productOptionsGrid.addToolbarAction(generateSkusAction);
         }
-        
+
         // When we're dealing with product bundles, we don't want to render the product options and additional skus
         // list grids. Remove them from the form.
         if (ProductBundle.class.isAssignableFrom(Class.forName(form.getEntityType()))) {
@@ -367,9 +372,23 @@ public class AdminProductController extends AdminBasicEntityController {
             form.removeListGrid("productOptions");
             form.removeField("canSellWithoutOptions");
         }
-        
+
         form.removeListGrid("defaultSku.skuAttributes");
-        
+
         return view;
+    }
+
+    @Override
+    protected void modifyCriteria(Map<String, FilterAndSortCriteria> fasMap) {
+        super.modifyCriteria(fasMap);
+        if(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getRequestURL().toString().contains("product:")) {
+            CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
+            criteriaTransferObject.setCriteriaMap(fasMap);
+            try {
+                filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

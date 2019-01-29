@@ -29,11 +29,14 @@ import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.AbstractController;
 
+import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,7 +51,7 @@ import javax.servlet.http.HttpServletResponse;
 public class StaticAssetViewController extends AbstractController {
 
     private static final Log LOG = LogFactory.getLog(StaticAssetViewController.class);
-    
+
     protected String assetServerUrlPrefix;
     protected String viewResolverName;
 
@@ -60,9 +63,12 @@ public class StaticAssetViewController extends AbstractController {
 
     @Resource
     protected NamedOperationManager namedOperationManager;
-    
+
     @Autowired
     protected Environment env;
+
+    @Autowired
+    protected ApplicationContext appCtx;
 
     @PostConstruct
     protected void init() {
@@ -74,7 +80,7 @@ public class StaticAssetViewController extends AbstractController {
                     + " see the docs at http://www.broadleafcommerce.com/docs/core/current/broadleaf-concepts/additional-configuration/asset-server-configuration");
         }
     }
-    
+
     /**
      * Converts the given request parameter map into a single key-value map. This will also strip parameters that do not
      * conform to existing application-configured named operations according to {@link #allowUnnamedImageManipulation} that
@@ -100,7 +106,7 @@ public class StaticAssetViewController extends AbstractController {
 
         return convertedMap;
     }
-    
+
     protected boolean isAllowedUrlParameter(String parameter) {
         boolean parameterWithinNamedOperations = false;
         for (NamedOperationComponent component : namedOperationManager.getNamedOperationComponents()) {
@@ -130,15 +136,20 @@ public class StaticAssetViewController extends AbstractController {
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String fullUrl = removeAssetPrefix(request.getRequestURI());
 
-        // Static Assets don't typically go through the Spring Security pipeline but they may need access 
-        // to the site 
+        // Static Assets don't typically go through the Spring Security pipeline but they may need access
+        // to the site
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         context.setNonPersistentSite(siteResolver.resolveSite(new ServletWebRequest(request, response)));
         try {
             Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, convertParameterMap(request.getParameterMap()));
-            return new ModelAndView(viewResolverName, model);
+            View assetView = appCtx.getBean(viewResolverName, View.class);
+            return new ModelAndView(assetView, model);
         } catch (AssetNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        } catch (FileNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            LOG.error("Could not retrieve asset request " + fullUrl + " from the StaticAssetStorage. The underlying file path checked was " + e.getMessage());
             return null;
         } catch (Exception e) {
             LOG.error("Unable to retrieve static asset", e);
@@ -147,7 +158,7 @@ public class StaticAssetViewController extends AbstractController {
             ThreadLocalManager.remove();
         }
     }
-    
+
     protected String removeAssetPrefix(String requestURI) {
         String fileName = requestURI;
         if (assetServerUrlPrefix != null) {
@@ -160,9 +171,9 @@ public class StaticAssetViewController extends AbstractController {
         }
 
         return fileName;
-        
+
     }
-    
+
     public boolean getAllowUnnamedImageManipulation() {
         return env.getProperty("asset.server.allow.unnamed.image.manipulation", Boolean.class);
     }
@@ -171,7 +182,7 @@ public class StaticAssetViewController extends AbstractController {
         return assetServerUrlPrefix;
     }
 
-    public void setAssetServerUrlPrefix(String assetServerUrlPrefix) {        
+    public void setAssetServerUrlPrefix(String assetServerUrlPrefix) {
         this.assetServerUrlPrefix = assetServerUrlPrefix;
     }
 

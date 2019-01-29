@@ -19,9 +19,11 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
+import org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
@@ -32,6 +34,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -41,6 +44,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.handler.DynamicEntityRetriever;
@@ -70,12 +74,15 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
     @Resource(name="blStructuredContentService")
     protected StructuredContentService structuredContentService;
-    
+
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
+
+    @Resource(name = "blAdminEntityService")
+    protected AdminEntityService service;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -180,6 +187,12 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                 if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
                     property.setIsDirty(true);
                 }
+
+                if (SupportedFieldType.ADDITIONAL_FOREIGN_KEY.equals(def.getFieldType()) && StringUtils.isNotEmpty(value)) {
+                    // we need to look up the display value
+                    String display = service.getForeignEntityName(def.getAdditionalForeignKeyClass(), value);
+                    property.setDisplayValue(display);
+                }
                 propertiesList.add(property);
             }
         }
@@ -216,18 +229,18 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         try {
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
             StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
-            
+
             Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentType.class);
             Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
             }
-            
-            boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
+
+            boolean validated = helper.validate(persistencePackage.getEntity(), new StructuredContentTypeImpl(), md);
             if (!validated) {
                 throw new ValidationException(persistencePackage.getEntity(), "Structured Content dynamic fields failed validation");
             }
-            
+
             List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
                 for (FieldDefinition def : group.getFieldDefinitions()) {

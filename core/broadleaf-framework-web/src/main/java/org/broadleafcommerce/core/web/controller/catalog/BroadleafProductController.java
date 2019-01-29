@@ -35,6 +35,9 @@ import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.config.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -68,6 +71,11 @@ public class BroadleafProductController extends BroadleafAbstractController impl
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public class ResourceNotFoundException extends RuntimeException {
+
+    }
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -119,7 +127,13 @@ public class BroadleafProductController extends BroadleafAbstractController impl
             }
         }
 
-        return model;
+        if (product.isActive()) {
+            return model;            // whatever
+        }
+        else {
+            throw new ResourceNotFoundException();
+        }
+
     }
 
     protected boolean orderItemBelongsToCurrentCustomer(OrderItem orderItem) {

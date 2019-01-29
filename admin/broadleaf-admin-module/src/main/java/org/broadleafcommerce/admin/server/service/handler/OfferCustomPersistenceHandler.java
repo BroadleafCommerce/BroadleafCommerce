@@ -17,6 +17,22 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,18 +73,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 /**
  * Created by Jon on 11/23/15.
@@ -85,6 +89,8 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     protected static final String STACKABLE = "stackableWithOtherOffers";
     protected static final String OFFER_ITEM_TARGET_RULE_TYPE = "offerItemTargetRuleType";
     protected static final String IS_ACTIVE = "isActive";
+    protected static final String IS_TIERED_OFFER = "embeddableAdvancedOffer.isTieredOffer";
+    protected static final String OFFER_VALUE = "value";
 
     @Value("${admin.offer.isactive.filter:false}")
     protected boolean isActiveFilter = false;
@@ -200,6 +206,10 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             customCriteria = persistencePackage.getCustomCriteria()[0];
         }
 
+        Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+        BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
+        NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
+
         for (Entity entity : resultSet.getRecords()) {
             Property discountType = entity.findProperty("discountType");
             Property discountValue = entity.findProperty("value");
@@ -211,9 +221,6 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 value = !value.contains(".") ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
                 discountValue.setValue(value + "%");
             } else if (discountType.getValue().equals("AMOUNT_OFF")) {
-                Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-                BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
-                NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
                 discountValue.setValue(nf.format(new BigDecimal(value)));
             }
 
@@ -228,8 +235,9 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             entity.addProperty(buildStackableProperty(offerItemTargetRuleType));
 
             if (!"listGridView".equals(customCriteria)) {
+                String moneyPrefix = ((DecimalFormat) nf).getPositivePrefix();
                 String setValue = discountValue.getValue();
-                setValue = setValue.replaceAll("\\%", "").replaceAll("\\$", "");
+                setValue = setValue.replaceAll("\\%", "").replaceAll(moneyPrefix, "");
                 discountValue.setValue(setValue);
             }
 
@@ -356,6 +364,21 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
+
+        //This can't be on a validator since the field is dynamically added with JavaScript
+        Property isMultiTierOffer = entity.findProperty(IS_TIERED_OFFER);
+        if(isMultiTierOffer != null) {
+            String multiTierValue = isMultiTierOffer.getValue();
+            if("false".equalsIgnoreCase(multiTierValue)) {
+               Property offerValue = entity.findProperty(OFFER_VALUE);
+               if(offerValue != null) {
+                   String value = offerValue.getValue();
+                   if(value == null || "null".equalsIgnoreCase(value)) {
+                       entity.addValidationError(OFFER_VALUE, "requiredFieldMessage");
+                   }
+               }
+            }
+        }
 
         Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
         if (qualifiersCanBeQualifiers != null) {

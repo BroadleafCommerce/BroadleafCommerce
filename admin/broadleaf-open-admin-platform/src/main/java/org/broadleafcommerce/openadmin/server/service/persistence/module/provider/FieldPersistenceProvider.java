@@ -113,4 +113,10 @@ public interface FieldPersistenceProvider extends Ordered {
      * @return if this provider should always run
      */
     boolean alwaysRun();
+
+    /**
+     * If the provider should handle populating null values or if it should delegate to the default persistence provider
+     * @return
+     */
+    boolean canHandlePopulateNull();
 }

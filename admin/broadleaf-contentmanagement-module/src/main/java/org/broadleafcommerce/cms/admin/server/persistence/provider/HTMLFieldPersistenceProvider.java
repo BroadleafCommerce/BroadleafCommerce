@@ -107,7 +107,7 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
      * @return
      */
     public String fixAssetPathsForStorage(String val) {
-        if (staticAssetUrlPrefix != null) {
+        if (staticAssetUrlPrefix != null && val != null) {
             String tmpPrefix = staticAssetUrlPrefix;
             if (tmpPrefix.startsWith("/")) {
                 tmpPrefix = tmpPrefix.substring(1);

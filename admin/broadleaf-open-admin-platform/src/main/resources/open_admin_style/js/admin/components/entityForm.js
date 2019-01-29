@@ -26,8 +26,11 @@
     BLCAdmin.entityForm = {
 
         initializeStickyHeader : function () {
-            originalStickyBarOffset = $('.sticky-container').offset().top;
-            originalStickyBarHeight = $('.sticky-container').height();
+            var $stickyContainer = $('.sticky-container');
+            if ($stickyContainer.length) {
+                originalStickyBarOffset = $stickyContainer.offset().top;
+                originalStickyBarHeight = $stickyContainer.height();
+            }
 
             if ($('form.entity-form').length && !$('.oms').length) {
                 var $sc = $('.sticky-container');
@@ -76,7 +79,9 @@
         showErrors : function (data, alertMessage) {
             $.each( data.errors , function( idx, error ){
                 if (error.errorType == "field") {
-                    var fieldGroup = $("#field-" + error.field);
+                    // escape the | character from dynamic form fields for jquery to be able to process
+                    // replace all '|' and ' ' characters with '-'
+                    var fieldGroup = $("#field-" + (error.field).replace(/\|/g, "-").replace(/ /g, "-"));
                     if (BLCAdmin.currentModal() !== undefined) {
                         fieldGroup = BLCAdmin.currentModal().find("#field-" + error.field);
                     }
@@ -208,7 +213,7 @@
                             clearOtherAlerts: true
                         });
 
-                        if (!$('.modal:not(#expire-message)').length && $('.entity-form').length) {
+                        if (!$form.closest('.modal').length) {
                             if (BLCAdmin.entityForm.status) {
                                 BLCAdmin.entityForm.status.clearEntityFormChanges();
                             }
@@ -234,11 +239,10 @@
             $tabsContent.find('input').prop('disabled', true).addClass('disabled');
 
             // Redactor fields
-            $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled').show();
+
+            $tabsContent.find('.redactor-field').addClass("disabled");
+            $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled');
             $tabsContent.find('textarea').css({color: 'rgb(84, 84, 84)', padding: 'padding: 12px', border: 'none'});
-            $tabsContent.find('.redactor-box').css('border', 'none');
-            $tabsContent.find('.redactor-toolbar').hide();
-            $tabsContent.find('.redactor-editor').hide();
 
             // Radio buttons
             $tabsContent.find('label.radio-label').prop('disabled', true).addClass('disabled');
@@ -297,6 +301,40 @@
             }
 
             hideGroupIfFieldsAreHidden($field);
+        },
+
+
+        visitedTabs: {
+            _tabs: [],
+
+            contains: function ($tab) {
+                var tabKey = this._getTabKey($tab);
+                return this._tabs.indexOf(tabKey) !== -1;
+            },
+
+            add: function ($tab) {
+                var tabKey = this._getTabKey($tab);
+                this._tabs.push(tabKey);
+            },
+
+            removeModalTabs: function () {
+                var tmp = [];
+                for (var i = 0; i < this._tabs.length; i++) {
+                    var tabName = this._tabs[i];
+                    if (tabName.indexOf('modal|') === -1) {
+                        tmp.push(tabName);
+                    }
+                }
+                this._tabs = tmp;
+            },
+
+            _getTabKey: function ($tab) {
+                var tabKey = $tab.find('span[data-tabkey]').data('tabkey');
+                if ($tab.parents(".modal").length) {
+                    tabKey = 'modal|' + tabKey;
+                }
+                return tabKey;
+            },
         }
     };
 })(jQuery, BLCAdmin);
@@ -337,14 +375,13 @@ $(document).ready(function() {
             $sc.find('.content-area-title-bar .dropdown-menu').css('margin-top', '-7px');
         }
     });
-    
-    var tabs_action=null;
+
     var sectionTabsSelector = 'div.section-tabs li a:not(' + BLCAdmin.entityForm.getExcludedEFSectionTabSelectorString() + ')';
 
     $(document).on('click', sectionTabsSelector, function (event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
-        var tabKey = $tab.find('span').data('tabkey');
+        var tabKey = $tab.find('span[data-tabkey]').data('tabkey');
         var $form = BLCAdmin.getForm($tab);
         var href = $(this).attr('href').replace('#', '');
         var currentAction = $form.attr('action');
@@ -357,15 +394,10 @@ $(document).ready(function() {
         }
         var tabUrl = encodeURI(currentAction);
 
-     	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
-     		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
-     	} else if (tabs_action && tabs_action.indexOf(tabUrl) == -1) {
-     		tabs_action += ' / ' + tabUrl;
-     	} else if (tabs_action == null) {
-     		tabs_action = tabUrl;
-     	}
+        var isVisitedBefore = BLCAdmin.entityForm.visitedTabs.contains($tab);
+        if (!isVisitedBefore) BLCAdmin.entityForm.visitedTabs.add($tab);
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf('/add/') === -1 && !$tab.hasClass('first-tab')) {
+        if (!isVisitedBefore && !$tab.hasClass('first-tab') && currentAction.search(/\/add($|\W)/) === -1) {
             showTabSpinner($tab, $tabBody);
 
      		BLC.ajax({
@@ -373,18 +405,22 @@ $(document).ready(function() {
      			type: "POST",
      			data: $form.serializeArray()
      		}, function(data) {
-     			$('div.' + href + 'Tab .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
+
+     		    // using tabKey instead of href. Href is not dependable because of hidden tabs
+                var tabKey = $tab.find('span').data('tabkey');
+
+                $('#' + tabKey + 'Contents .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
                     BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
      			});
-     			$('div.' + href + 'Tab .selectize-wrapper', $(data)).each(function() {
+     			$('#' + tabKey + 'Contents .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('div.' + href + 'Tab .media-container', $(data)).each(function() {
+                $('#' + tabKey + 'Contents .media-container', $(data)).each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);

@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.2.4-SNAPSHOT</version>
+        <version>5.2.8-SNAPSHOT</version>
     </parent>
     <artifactId>broadleaf-open-admin-platform</artifactId>
     <packaging>jar</packaging>
@@ -94,7 +94,7 @@
         </resources>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
+                <!--This plugin's configuration is used to store Eclipse
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -185,6 +185,10 @@
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-jpeg</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.depsypher</groupId>
+            <artifactId>pngtastic</artifactId>
         </dependency>
         <!-- Tests -->
         <dependency>

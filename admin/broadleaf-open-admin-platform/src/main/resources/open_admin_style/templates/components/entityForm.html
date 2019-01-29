@@ -63,6 +63,7 @@
                          th:if="${tab.hasFieldOrListGrid()}"
                          th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}"
                          th:classappend="${#ef.isTabActive(entityForm, tab)}? 'active'"
+                         th:id="${tab.key} + Contents"
                          th:inline="text">
 
                         <th:block th:if="${tab.customTemplate != null}">
@@ -99,11 +100,11 @@
                                                 <div class="titlebar-title">
                                                     <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" class="listgrid-friendly-name" th:utext="#{${listGrid.friendlyName}}"></span>
                                                     <th:block th:unless="${listGrid.manualFetch}">
-                                                        <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Record)'"></span>
-                                                        <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + ' Records)'"></span>
+                                                        <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.record} + ')'"></span>
+                                                        <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.records} + ')'"></span>
                                                     </th:block>
                                                     <th:block th:if="${listGrid.manualFetch}">
-                                                        <span class="listgrid-total-records" th:text="'(Click Fetch to check for records)'"></span>
+                                                        <span class="listgrid-total-records" th:text="#{listgrid.manualFetch}"></span>
                                                     </th:block>
                                                 </div>
                                                 <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
@@ -124,8 +125,8 @@
                                                     <span th:unless="${#strings.isEmpty(listGrid.friendlyName)}" th:utext="#{${listGrid.friendlyName}}"></span>
                                                 </div>
                                                 <div class="collapser">
-                                                    <span th:unless="${#lists.isEmpty(listGrid.records)}" class="expanded" href="#">(hide)</span>
-                                                    <span th:if="${#lists.isEmpty(listGrid.records)}" class="collapsed" href="#">(show)</span>
+                                                    <span th:unless="${#lists.isEmpty(listGrid.records)}" class="expanded" href="#" th:inline="text">([[#{form.hide}]])</span>
+                                                    <span th:if="${#lists.isEmpty(listGrid.records)}" class="collapsed" href="#" th:inline="text">([[#{form.show}]])</span>
                                                 </div>
                                             </a>
                                             <div class="fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records) ? 'content-collapsed' : ''}">

@@ -288,7 +288,24 @@
          * It is called once when the page first loads, and then on every subsequent change.
          */
         updateEntityFormActions : function() {
+            var numModals = BLCAdmin.getModals().length;
+            var modals = BLCAdmin.getModals();
+            var $prevModal = numModals > 1 ? modals[numModals - 2] : null;
+            var $currModal = BLCAdmin.currentModal();
 
+            var $addEntityFormModal;
+            if ($currModal && $currModal.has('.modal-add-entity-form').length) {
+                $addEntityFormModal = $currModal;
+            } else if ($prevModal && $prevModal.has('.modal-add-entity-form').length) {
+                //on actions like to-one lookups, the modal that needs the save button updated is the previous one
+                $addEntityFormModal = $prevModal;
+            }
+
+            if ($addEntityFormModal) {
+                // in community, modal submit gets disabled when there is a validation error
+                $('.submit-button', $addEntityFormModal).prop('disabled', !this.getEntityFormChangesCount());
+            }
+            
             // Grab all buttons we might want to enable/disable
             var $saveBtn = $('.sticky-container').find('.entity-form-actions').find('button.submit-button');
             var $promoteBtn = $('.sandbox-actions').find('.button a:contains("Promote")').parent();
@@ -631,9 +648,10 @@ $(document).ready(function() {
                 return;
             }
             // This is a special case for rule builders, we need to capture the match quantity value
-            else if ($(this).hasClass('rules-group-header-item-qty')) {
+            else if ($(this).hasClass('rules-group-header-item-qty')
+                    && $(this).closest('.rules-group-container').attr('data-orig-val') === undefined) {
                 var $ruleGroupContainer = $(this).closest('.rules-group-container');
-                $ruleGroupContainer.attr('orig-val', $(this).val());
+                $ruleGroupContainer.attr('data-orig-val', $(this).val());
                 return;
             }
             // If this is a redactor field, we have to set its text attribute, not its value
@@ -648,7 +666,7 @@ $(document).ready(function() {
      * This event handler is fired for `input` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('input', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
+    $body.on('input paste', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 

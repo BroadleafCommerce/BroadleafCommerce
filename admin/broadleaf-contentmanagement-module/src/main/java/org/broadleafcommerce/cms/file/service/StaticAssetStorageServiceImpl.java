@@ -17,10 +17,13 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AssetNotFoundException;
@@ -35,11 +38,15 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.file.service.GloballySharedInputStream;
+import org.broadleafcommerce.common.io.ConcurrentFileOutputStream;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.MultipartProperties;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,7 +64,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -68,15 +77,19 @@ import javax.annotation.Resource;
 @Service("blStaticAssetStorageService")
 public class StaticAssetStorageServiceImpl implements StaticAssetStorageService {
 
-    @Value("${asset.server.max.uploadable.file.size}")
-    protected long maxUploadableFileSize;
-
-    @Value("${asset.server.file.buffer.size}")
-    protected int fileBufferSize = 8096;
-
     private static final Log LOG = LogFactory.getLog(StaticAssetStorageServiceImpl.class);
 
+    protected static final String DEFAULT_ADMIN_IMAGE_EXTENSIONS = "bmp,jpg,jpeg,png,img,tiff,gif";
+
+    public static final long DEFAULT_ASSET_UPLOAD_SIZE = 1024 * 1024 * 10;
+
+    // 8kb default for the buffer for moving files around
+    protected static final int DEFAULT_BUFFER_SIZE = 8096;
+
     protected String cacheDirectory;
+
+    @Autowired
+    protected Environment env;
 
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
@@ -99,6 +112,16 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
+    @Value("${image.artifact.recompress.formats:png}")
+    protected String recompressFormats = "png";
+
+    @Autowired(required = false)
+    protected MultipartProperties defaultMultipartSettings;
+
+    @Resource(name = "blConcurrentFileOutputStream")
+    protected ConcurrentFileOutputStream concurrentFileOutputStream;
+
+
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
 
@@ -108,7 +131,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     protected boolean shouldUseSharedFile(InputStream is) {
         return (is != null && is instanceof GloballySharedInputStream);
     }
-        
+
     protected File getFileFromLocalRepository(String cachedFileName) {
         // Look for a shared file (this represents a file that was based on a file originally in the classpath.
         File cacheFile = null;
@@ -128,7 +151,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             return broadleafFileService.getLocalResource(cachedFileName);
         }
     }
-    
+
     protected File lookupAssetAndCreateLocalFile(StaticAsset staticAsset, File baseLocalFile)
             throws IOException, SQLException {
         if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
@@ -136,32 +159,30 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             if (!returnFile.getAbsolutePath().equals(baseLocalFile.getAbsolutePath())) {
                 createLocalFileFromInputStream(new FileInputStream(returnFile), baseLocalFile);
             }
-            return broadleafFileService.getResource(staticAsset.getFullUrl());            
+            return broadleafFileService.getResource(staticAsset.getFullUrl());
         } else {
             StaticAssetStorage storage = readStaticAssetStorageByStaticAssetId(staticAsset.getId());
             if (storage != null) {
                 InputStream is = storage.getFileData().getBinaryStream();
                 createLocalFileFromInputStream(is, baseLocalFile);
-            } 
+            }
         }
         return baseLocalFile;
-    }   
+    }
 
     protected void createLocalFileFromClassPathResource(StaticAsset staticAsset, File baseLocalFile) throws IOException {
         InputStream is = broadleafFileService.getClasspathResource(staticAsset.getFullUrl());
         createLocalFileFromInputStream(is, baseLocalFile);
     }
-    
+
     protected void createLocalFileFromInputStream(InputStream is, File baseLocalFile) throws IOException {
-        FileOutputStream tos = null;
-        FileWorkArea workArea = null;
         try {
             if (!baseLocalFile.getParentFile().exists()) {
                 boolean directoriesCreated = false;
                 if (!baseLocalFile.getParentFile().exists()) {
                     directoriesCreated = baseLocalFile.getParentFile().mkdirs();
                     if (!directoriesCreated) {
-                        // There is a chance that another VM created the directories.   If not, we may not have 
+                        // There is a chance that another VM created the directories.   If not, we may not have
                         // proper permissions and this is an error we need to report.
                         if (!baseLocalFile.getParentFile().exists()) {
                             throw new RuntimeException("Unable to create middle directories for file: " +
@@ -170,39 +191,13 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     }
                 }
             }
-            
-            workArea = broadleafFileService.initializeWorkArea();
-            File tmpFile = new File(FilenameUtils.concat(workArea.getFilePathLocation(), baseLocalFile.getName()));
-            
-            tos = new FileOutputStream(tmpFile);
 
-            IOUtils.copy(is, tos);
-            
-            // close the input/output streams before trying to move files around
-            is.close();
-            tos.close();
+            concurrentFileOutputStream.write(is, baseLocalFile);
 
-            // Adding protection against this file already existing / being written by another thread.
-            // Adding locks would be useless here since another VM could be executing the code. 
-            if (!baseLocalFile.exists()) {
-                try {
-                    FileUtils.moveFile(tmpFile, baseLocalFile);
-                } catch (FileExistsException e) {
-                    // No problem
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("File exists error moving file " + tmpFile.getAbsolutePath(), e);
-                    }
-                }
-            }
         } finally {
             IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(tos);
-            
-            if (workArea != null) {
-                broadleafFileService.closeWorkArea(workArea);
-            }
         }
-    }    
+    }
 
     @Override
     public Map<String, String> getCacheFileModel(String fullUrl, Map<String, String> parameterMap) throws Exception {
@@ -213,19 +208,27 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         String mimeType = staticAsset.getMimeType();
 
         //extract the values for any named parameters
+        boolean shouldRecompress = shouldRecompress(mimeType);
         Map<String, String> convertedParameters = namedOperationManager.manageNamedParameters(parameterMap);
+        if (shouldRecompress && MapUtils.isEmpty(convertedParameters)) {
+            convertedParameters.put("recompress","true");
+        }
         String cachedFileName = constructCacheFileName(staticAsset, convertedParameters);
-        
+      
+        if (shouldRecompress) {
+            convertedParameters.remove("recompress");
+        }
+
         // Look for a shared file (this represents a file that was based on a file originally in the classpath.
         File cacheFile = getFileFromLocalRepository(cachedFileName);
         if (cacheFile.exists()) {
             return buildModel(cacheFile.getAbsolutePath(), mimeType);
         }
-        
+
         // Obtain the base file (that we may need to convert based on the parameters
         String baseCachedFileName = constructCacheFileName(staticAsset, null);
         File baseLocalFile = getFileFromLocalRepository(baseCachedFileName);
-        
+
         if (! baseLocalFile.exists()) {
             if (broadleafFileService.checkForResourceOnClassPath(staticAsset.getFullUrl())) {
                 cacheFile = broadleafFileService.getSharedLocalResource(cachedFileName);
@@ -235,23 +238,42 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                 baseLocalFile = lookupAssetAndCreateLocalFile(staticAsset, baseLocalFile);
             }
         }
-        
-        if (convertedParameters.isEmpty()) {
+
+
+        if (!shouldRecompress && convertedParameters.isEmpty()) {
             return buildModel(baseLocalFile.getAbsolutePath(), mimeType);
-        } else {
+        } 
+        else {
             FileInputStream assetStream = new FileInputStream(baseLocalFile);
             BufferedInputStream original = new BufferedInputStream(assetStream);
-            original.mark(0);                                    
-            
+            original.mark(0);
+
             Operation[] operations = artifactService.buildOperations(convertedParameters, original, staticAsset.getMimeType());
             InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
-            
+
             createLocalFileFromInputStream(converted, cacheFile);
             if ("image/gif".equals(mimeType)) {
                 mimeType = "image/png";
             }
             return buildModel(cacheFile.getAbsolutePath(), mimeType);
         }
+    }
+
+    protected boolean shouldRecompress(String mimeType) {
+        String[] formats = null;
+        if (!StringUtils.isEmpty(recompressFormats)) {
+            formats = recompressFormats.split(",");
+        }
+        boolean response = false;
+        if (!ArrayUtils.isEmpty(formats)) {
+            for (String format : formats) {
+                if (mimeType.toLowerCase().contains(format.toLowerCase())) {
+                    response = true;
+                    break;
+                }
+            }
+        }
+        return response;
     }
 
     protected Map<String, String> buildModel(String returnFilePath, String mimeType) {
@@ -347,7 +369,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     /**
      * Builds a file system path for the passed in static asset and paramaterMap.
-     * 
+     *
      * @param staticAsset
      * @param parameterMap
      * @param useSharedFile
@@ -366,7 +388,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             Auditable auditableStaticAsset = (Auditable) staticAsset;
             sb2.append(format.format(auditableStaticAsset.getDateUpdated() == null ? auditableStaticAsset.getDateCreated() : auditableStaticAsset.getDateUpdated()));
         }
-        
+
         if (parameterMap != null) {
             for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
                 sb2.append('-');
@@ -405,7 +427,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     public void createStaticAssetStorageFromFile(MultipartFile file, StaticAsset staticAsset) throws IOException {
         createStaticAssetStorage(file.getInputStream(), staticAsset);
     }
-    
+
     @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public void createStaticAssetStorage(InputStream fileInputStream, StaticAsset staticAsset) throws IOException {
@@ -421,7 +443,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             String destFileName = FilenameUtils.normalize(tempWorkArea.getFilePathLocation() + File.separator + FilenameUtils.separatorsToSystem(staticAsset.getFullUrl()));
 
             InputStream input = fileInputStream;
-            byte[] buffer = new byte[fileBufferSize];
+            byte[] buffer = new byte[getFileBufferSize()];
 
             File destFile = new File(destFileName);
             if (!destFile.getParentFile().exists()) {
@@ -433,23 +455,21 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
 
             OutputStream output = new FileOutputStream(destFile);
-            boolean deleteFile = false;
+            long maxFileSize = getMaxUploadSizeForFile(destFileName);
             try {
                 int bytesRead;
                 int totalBytesRead = 0;
                 while ((bytesRead = input.read(buffer)) != -1) {
                     totalBytesRead += bytesRead;
-                    if (totalBytesRead > maxUploadableFileSize) {
-                        deleteFile = true;
+                    if (totalBytesRead > maxFileSize) {
                         throw new IOException("Maximum Upload File Size Exceeded");
                     }
                     output.write(buffer, 0, bytesRead);
                 }
-                
+
                 // close the output file stream prior to moving files around
-                
                 output.close();
-                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, deleteFile);
+                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, false);
             } finally {
                 IOUtils.closeQuietly(output);
                 broadleafFileService.closeWorkArea(tempWorkArea);
@@ -457,4 +477,60 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         }
     }
 
+    protected long getMaxUploadSizeForFile(String fileName) {
+        if (isImageFile(fileName)) {
+            return getMaxUploadableImageSize();
+        }
+
+        return getMaxUploadableFileSize();
+    }
+
+    protected boolean isImageFile(String fileName) {
+        String extension = getFileExtension(fileName);
+
+        for (String imageFileExtension : getAdminImageFileExtensions()) {
+            if (imageFileExtension.equalsIgnoreCase(extension)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected String getFileExtension(String assetPath) {
+        int extensionStartIndex = assetPath.lastIndexOf(".") + 1;
+        return assetPath.substring(extensionStartIndex);
+    }
+
+    protected long getMaxUploadableFileSize() {
+        Long blcUploadSize = env.getProperty("asset.server.max.uploadable.file.size", Long.class);
+        if (blcUploadSize != null) {
+            return blcUploadSize;
+        }
+
+        if (defaultMultipartSettings != null) {
+            return defaultMultipartSettings.createMultipartConfig().getMaxFileSize();
+        }
+        return DEFAULT_ASSET_UPLOAD_SIZE;
+    }
+
+    protected long getMaxUploadableImageSize() {
+        // backwards-compatibility checks, only use the image-size specific property if it is
+        // not the default value. Otherwise, delegate to the old property
+        Long maxImgSize = env.getProperty("asset.server.max.uploadable.image.size", Long.class);
+        if (maxImgSize == null) {
+            return getMaxUploadableFileSize();
+        } else {
+            return maxImgSize;
+        }
+    }
+
+    protected int getFileBufferSize() {
+        return env.getProperty("asset.server.file.buffer.size", int.class, DEFAULT_BUFFER_SIZE);
+    }
+
+    protected List<String> getAdminImageFileExtensions() {
+        String extensions = env.getProperty("admin.image.file.extensions", String.class, DEFAULT_ADMIN_IMAGE_EXTENSIONS);
+        return Arrays.asList(extensions.split(","));
+    }
 }

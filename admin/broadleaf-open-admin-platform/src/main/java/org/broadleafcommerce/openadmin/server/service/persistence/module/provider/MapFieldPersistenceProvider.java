@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.value.ValueAssignable;
@@ -32,9 +33,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
+
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -88,9 +91,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
-                dirty = persistValue
-                        || (assignableValue != null && assignableValue.getValue() == null && populateValueRequest.getProperty().getValue() != null)
-                        || (assignableValue != null && !assignableValue.getValue().equals(populateValueRequest.getProperty().getValue()));
+                dirty = persistValue || (assignableValue != null && ObjectUtils.notEqual(assignableValue.getValue(), populateValueRequest.getProperty().getValue()));
                 if (dirty) {
                     updateAssignableValue(populateValueRequest, instance, parent, valueType, persistValue, assignableValue);
                 }
@@ -152,6 +153,11 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         return FieldPersistenceProvider.MAP_FIELD;
     }
 
+    @Override
+    public boolean canHandlePopulateNull() {
+        return true;
+    }
+
     protected void updateAssignableValue(PopulateValueRequest populateValueRequest, Serializable instance, Object parent, Class<?>
             valueType, boolean persistValue, ValueAssignable assignableValue)
             throws IllegalAccessException, FieldNotAvailableException, InstantiationException {
@@ -160,13 +166,18 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
             parent = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(parent);
             assignableValue = establishAssignableValue(populateValueRequest, parent);
         }
+        if (populateValueRequest.getRequestedValue() == null) {
+            populateValueRequest.getPersistenceManager().getDynamicEntityDao()
+                .getStandardEntityManager().remove(assignableValue);
+            return;
+        }
         String key = populateValueRequest.getProperty().getName().substring(populateValueRequest
                 .getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager
                 .MAPFIELDSEPARATOR.length(), populateValueRequest.getProperty().getName().length());
         populateValueRequest.getProperty().setOriginalValue(String.valueOf(assignableValue));
         populateValueRequest.getProperty().setOriginalDisplayValue(String.valueOf(assignableValue));
         assignableValue.setName(key);
-        assignableValue.setValue(populateValueRequest.getProperty().getValue());
+        assignableValue.setValue(populateValueRequest.getRequestedValue());
         String fieldName = populateValueRequest.getProperty().getName().substring(0,
                 populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR));
         Field field = populateValueRequest.getFieldManager().getField(instance.getClass(), fieldName);

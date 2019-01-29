@@ -18,7 +18,11 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.collections4.map.LRUMap;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -27,23 +31,26 @@ import org.broadleafcommerce.common.util.BLCMoneyFormatUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -51,7 +58,7 @@ import javax.annotation.Resource;
  * This processor will add the following information to the model, available for consumption by a template:
  * -pricing for a sku based on the product option values selected
  * -the complete set of product options and values for a given product
- *  
+ *
  * @author jfridye
  *
  */
@@ -61,10 +68,10 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
-    
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Resource(name = "blProductOptionsProcessorExtensionManager")
     protected ProductOptionsProcessorExtensionManager extensionManager;
 
@@ -72,12 +79,12 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
     public String getName() {
         return "product_options";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
     }
-    
+
     @Override
     public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         Long productId = (Long) context.parseExpression(tagAttributes.get("productId"));
@@ -94,51 +101,70 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<>();
         for (Sku sku : skus) {
-
-            List<Long> productOptionValueIds = new ArrayList<>();
-
-            List<ProductOptionValue> productOptionValues = sku.getProductOptionValues();
-            for (ProductOptionValue productOptionValue : productOptionValues) {
+            
+            List<Long> productOptionValueIds = new ArrayList<Long>();
+            
+            Set<SkuProductOptionValueXref> productOptionValueXrefs = SetUtils.emptyIfNull(sku.getProductOptionValueXrefs());
+            for (SkuProductOptionValueXref skuProductOptionValueXref : productOptionValueXrefs) {
+                ProductOptionValue productOptionValue = skuProductOptionValueXref.getProductOptionValue();
                 productOptionValueIds.add(productOptionValue.getId());
             }
-
-            Long[] values = new Long[productOptionValueIds.size()];
-            productOptionValueIds.toArray(values);
-
-            ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
-            Money currentPrice;
-            if (sku.isOnSale()) {
-                currentPrice = sku.getSalePrice();
-            } else {
-                currentPrice = sku.getRetailPrice();
-            }
-            
-            // Check for Price Overrides
-            ExtensionResultHolder<Money> priceHolder = new ExtensionResultHolder<>();
-            priceHolder.setResult(currentPrice);
-            if (extensionManager != null) {
-                extensionManager.getProxy().modifyPriceForOverrides(sku, priceHolder, context, tagAttributes);
-            }
-            
-            dto.setPrice(BLCMoneyFormatUtils.formatPrice(priceHolder.getResult()));
-            dto.setSelectedOptions(values);
-            skuPricing.add(dto);
+            ProductOptionPricingDTO pricingDto = createPricingDto(sku, productOptionValueIds, tagAttributes, context);
+            skuPricing.add(pricingDto);
         }
         writeJSONToModel(newModelVars, "skuPricing", skuPricing);
     }
 
+    protected ProductOptionPricingDTO createPricingDto(Sku sku, List<Long> productOptionValueIds, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+        Long[] values = new Long[productOptionValueIds.size()];
+        productOptionValueIds.toArray(values);
+
+        ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
+        Money currentPrice = sku.getPrice();
+
+        // Check for Price Overrides
+        ExtensionResultHolder<Money> priceHolder = new ExtensionResultHolder<>();
+        priceHolder.setResult(currentPrice);
+        if (extensionManager != null) {
+            extensionManager.getProxy().modifyPriceForOverrides(sku, priceHolder, context, tagAttributes);
+        }
+
+        dto.setPrice(BLCMoneyFormatUtils.formatPrice(priceHolder.getResult()));
+        if (sku.getRetailPrice() != null) {
+            dto.setRetailPrice(BLCMoneyFormatUtils.formatPrice(sku.getRetailPrice()));
+        }
+        if (sku.getSalePrice() != null) {
+            dto.setSalePrice(BLCMoneyFormatUtils.formatPrice(sku.getSalePrice()));
+        }
+        dto.setOnSale(sku.isOnSale());
+        dto.setSelectedOptions(values);
+        return dto;
+    }
+    
     protected void addAllProductOptionsToModel(Map<String, Object> newModelVars, Product product) {
-        List<ProductOption> productOptions = product.getProductOptions();
+        List<ProductOptionXref> productOptionXrefs = ListUtils.emptyIfNull(product.getProductOptionXrefs());
         List<ProductOptionDTO> dtos = new ArrayList<>();
-        for (ProductOption option : productOptions) {
+
+        for (ProductOptionXref optionXref : productOptionXrefs) {
             ProductOptionDTO dto = new ProductOptionDTO();
-            dto.setId(option.getId());
-            dto.setType(option.getType().getType());
+            ProductOption productOption = optionXref.getProductOption();
+
+            dto.setId(productOption.getId());
+            dto.setType(productOption.getType().getType());
+
             Map<Long, String> values = new HashMap<>();
-            for (ProductOptionValue value : option.getAllowedValues()) {
+            Map<Long, Double> priceAdjustments = new HashMap<>();
+
+            for (ProductOptionValue value : productOption.getAllowedValues()) {
                 values.put(value.getId(), value.getAttributeValue());
+
+                Money priceAdjustment = value.getPriceAdjustment();
+                Double priceAdjustmentValue = (priceAdjustment != null) ? priceAdjustment.doubleValue() : null;
+                priceAdjustments.put(value.getId(), priceAdjustmentValue);
             }
+
             dto.setValues(values);
+            dto.setPriceAdjustments(priceAdjustments);
             dtos.add(dto);
         }
         writeJSONToModel(newModelVars, "allProductOptions", dtos);
@@ -160,14 +186,15 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     protected class ProductOptionDTO {
 
         private Long id;
         private String type;
         private Map<Long, String> values;
+        private Map<Long, Double> priceAdjustments;
         private String selectedValue;
 
-        @SuppressWarnings("unused")
         public Long getId() {
             return id;
         }
@@ -176,7 +203,6 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.id = id;
         }
 
-        @SuppressWarnings("unused")
         public String getType() {
             return type;
         }
@@ -185,7 +211,6 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.type = type;
         }
 
-        @SuppressWarnings("unused")
         public Map<Long, String> getValues() {
             return values;
         }
@@ -194,14 +219,20 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.values = values;
         }
 
-        @SuppressWarnings("unused")
         public String getSelectedValue() {
             return selectedValue;
         }
 
-        @SuppressWarnings("unused")
         public void setSelectedValue(String selectedValue) {
             this.selectedValue = selectedValue;
+        }
+
+        public Map<Long, Double> getPriceAdjustments() {
+            return priceAdjustments;
+        }
+
+        public void setPriceAdjustments(Map<Long, Double> priceAdjustments) {
+            this.priceAdjustments = priceAdjustments;
         }
 
         @Override
@@ -218,16 +249,19 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
 
             ProductOptionDTO that = (ProductOptionDTO) o;
 
-            if (id != null ? !id.equals(that.id) : that.id != null) {
+            if ((id != null) ? !id.equals(that.id) : (that.id != null)) {
                 return false;
             }
-            if (selectedValue != null ? !selectedValue.equals(that.selectedValue) : that.selectedValue != null) {
+            if ((selectedValue != null) ? !selectedValue.equals(that.selectedValue) : (that.selectedValue != null)) {
                 return false;
             }
-            if (type != null ? !type.equals(that.type) : that.type != null) {
+            if ((type != null) ? !type.equals(that.type) : (that.type != null)) {
                 return false;
             }
-            if (values != null ? !values.equals(that.values) : that.values != null) {
+            if ((values != null) ? !values.equals(that.values) : (that.values != null)) {
+                return false;
+            }
+            if ((priceAdjustments != null) ? !priceAdjustments.equals(that.priceAdjustments) : (that.priceAdjustments != null)) {
                 return false;
             }
 
@@ -236,20 +270,24 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
 
         @Override
         public int hashCode() {
-            int result = id != null ? id.hashCode() : 0;
+            int result = (id != null) ? id.hashCode() : 0;
             result = 31 * result + (type != null ? type.hashCode() : 0);
             result = 31 * result + (values != null ? values.hashCode() : 0);
             result = 31 * result + (selectedValue != null ? selectedValue.hashCode() : 0);
+            result = 31 * result + (priceAdjustments != null ? priceAdjustments.hashCode() : 0);
             return result;
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     protected class ProductOptionPricingDTO {
 
         private Long[] skuOptions;
         private String price;
+        private String retailPrice;
+        private String salePrice;
+        private boolean onSale;
 
-        @SuppressWarnings("unused")
         public Long[] getSelectedOptions() {
             return skuOptions;
         }
@@ -258,7 +296,6 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.skuOptions = skuOptions;
         }
 
-        @SuppressWarnings("unused")
         public String getPrice() {
             return price;
         }
@@ -267,35 +304,56 @@ public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierPr
             this.price = price;
         }
 
+        public String getRetailPrice() {
+            return retailPrice;
+        }
+
+        public void setRetailPrice(String retailPrice) {
+            this.retailPrice = retailPrice;
+        }
+
+        public String getSalePrice() {
+            return salePrice;
+        }
+
+        public void setSalePrice(String salePrice) {
+            this.salePrice = salePrice;
+        }
+
+        public boolean isOnSale() {
+            return onSale;
+        }
+
+        public void setOnSale(boolean onSale) {
+            this.onSale = onSale;
+        }
+
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null) {
-                return false;
-            }
-            if (!getClass().isAssignableFrom(o.getClass())) {
-                return false;
+            if (o != null && getClass().isAssignableFrom(o.getClass())) {
+                ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
+
+                return new EqualsBuilder()
+                    .append(this.price, that.price)
+                    .append(this.skuOptions, that.skuOptions)
+                    .append(this.retailPrice, that.retailPrice)
+                    .append(this.salePrice, that.salePrice)
+                    .append(this.onSale, that.onSale)
+                    .build();
             }
 
-            ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
-
-            if (price != null ? !price.equals(that.price) : that.price != null) {
-                return false;
-            }
-            if (!Arrays.equals(skuOptions, that.skuOptions)) {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
         @Override
         public int hashCode() {
-            int result = skuOptions != null ? Arrays.hashCode(skuOptions) : 0;
-            result = 31 * result + (price != null ? price.hashCode() : 0);
-            return result;
+            return new HashCodeBuilder()
+                .append(skuOptions)
+                .append(price)
+                .append(retailPrice)
+                .append(salePrice)
+                .append(onSale)
+                .build();
         }
     }
 }

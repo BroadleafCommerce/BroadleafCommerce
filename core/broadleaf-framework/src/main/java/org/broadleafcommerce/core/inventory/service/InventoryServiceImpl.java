@@ -18,8 +18,13 @@
 
 package org.broadleafcommerce.core.inventory.service;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.event.BroadleafSystemEvent;
+import org.broadleafcommerce.common.event.BroadleafSystemEvent.BroadleafEventScopeType;
+import org.broadleafcommerce.common.event.BroadleafSystemEvent.BroadleafEventWorkerType;
+import org.broadleafcommerce.common.event.BroadleafSystemEventDetail;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -30,8 +35,13 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.hibernate.annotations.Cache;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,6 +62,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     
     @Resource(name = "blInventoryServiceExtensionManager")
     protected InventoryServiceExtensionManager extensionManager;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
@@ -200,6 +213,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                     int newInventory = inventoryAvailable - quantity;
                     sku.setQuantityAvailable(newInventory);
                     catalogService.saveSku(sku);
+                    invalidateSkuInventory(sku);
                 } else {
                     LOG.info("Not decrementing inventory as the Sku has been marked as always available");
                 }
@@ -241,6 +255,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 int newInventory = currentInventoryAvailable + quantity;
                 sku.setQuantityAvailable(newInventory);
                 catalogService.saveSku(sku);
+                invalidateSkuInventory(sku);
             } else {
                 LOG.info("Not incrementing inventory as the Sku has been marked as always available");
             }
@@ -302,6 +317,63 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         }
 
         return skuInventoryMap;
+    }
+
+    /**
+     * Invalidates the cache for a given sku
+     * 
+     * @param sku The Sku to be invalidated from cache
+     */
+    protected void invalidateSkuInventory(Sku sku) {
+        final Class<?> clazz = sku.getClass();
+        final String id = sku.getId().toString();
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+                @Override
+                public void afterCommit() {
+                    invalidateEntity(clazz, id);
+                }
+            });
+        } else {
+            invalidateEntity(clazz, id);
+        }
+    }
+
+    /**
+     * Given the class and identifier of an entity, invalidates the cache for that entity 
+     * 
+     * @param clazz The class of the entity to invalidate the cache for
+     * @param id The id of the entity to invalidate the cache for
+     */
+    protected void invalidateEntity(Class<?> clazz, String id) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Invalidating entity of type " + clazz.getName() + " with id " + id);
+        }
+        for (Class<?> superclazz : ClassUtils.hierarchy(clazz)) {
+            Cache cacheAnnotation = superclazz.getAnnotation(Cache.class);
+            if (cacheAnnotation != null) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Cache invalidation event to be sent");
+                    LOG.info("superclazz : " + superclazz.getName());
+                    LOG.info("region : " + cacheAnnotation.region());
+                    LOG.info("id : " + id);
+                }
+                Map<String, BroadleafSystemEventDetail> detailMap = new HashMap<>();
+                detailMap.put("CACHE_REGION", new BroadleafSystemEventDetail("Cache Region", cacheAnnotation.region()));
+                detailMap.put("ENTITY_TYPE", new BroadleafSystemEventDetail("Entity Type", superclazz.getName()));
+                detailMap.put("IDENTIFIER", new BroadleafSystemEventDetail("Identifier", id));
+                BroadleafSystemEvent event = new BroadleafSystemEvent("CACHE", detailMap, BroadleafEventScopeType.GLOBAL, BroadleafEventWorkerType.ANY, true);
+                applicationContext.publishEvent(event);
+            } else {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("No region found so no cache invalidation event to be created");
+                    LOG.info("superclazz : " + superclazz.getName());
+                    LOG.info("region : N/A");
+                    LOG.info("id : " + id);
+                }
+            }
+        }
     }
 
 }
