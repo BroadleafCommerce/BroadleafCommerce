@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
@@ -30,7 +29,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Component("blAuthenticationSuccessHandler")
+/**
+ * Designed to be manually instantiated in client-specific security settings
+ * 
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ */
 public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     protected static final String SESSION_ATTR = "SFP-ActiveID";

@@ -17,14 +17,11 @@
  */
 package org.broadleafcommerce.common.cache;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.util.ClassUtils;
 
@@ -34,6 +31,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Support for any class that wishes to utilize a query miss cache. This cache is capable of caching a query miss
@@ -54,7 +55,7 @@ public abstract class AbstractCacheMissAware {
     private Object nullObject = null;
 
     /**
-     * Build the key representing this missed cache item. Will include sandbox information
+     * Build the key representing this missed cache item. Will include sandbox and/or site information
      * if appropriate.
      *
      * @param params the appropriate params comprising a unique key for this cache item
@@ -62,10 +63,17 @@ public abstract class AbstractCacheMissAware {
      */
     protected String buildKey(String... params) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        SandBox sandBox = context.getSandBox();
+        SandBox sandBox = null;
+        if (context != null) {
+            sandBox = context.getSandBox();
+        }
         String key = StringUtils.join(params, '_');
         if (sandBox != null) {
             key = sandBox.getId() + "_" + key;
+        }
+        Site site = context.getNonPersistentSite();
+        if (site != null) {
+            key = key + "_" +  site.getId();
         }
         return key;
     }
@@ -172,7 +180,13 @@ public abstract class AbstractCacheMissAware {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         String key = buildKey(params);
         T response = null;
-        if (context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) {
+        boolean allowL2Cache = false;
+        if (context != null) {
+            allowL2Cache = context.isProductionSandBox()
+                || (context.getAdditionalProperties().containsKey("allowLevel2Cache")
+                    && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"));
+        }
+        if (allowL2Cache) {
             response = getObjectFromCache(key, cacheName);
         }
         if (response == null) {
@@ -181,7 +195,7 @@ public abstract class AbstractCacheMissAware {
                 response = nullResponse;
             }
             //only handle null, non-hits. Otherwise, let level 2 cache handle it
-            if ((context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) && response.equals(nullResponse)) {
+            if (allowL2Cache && response.equals(nullResponse)) {
                 statisticsService.addCacheStat(statisticsName, false);
                 getCache(cacheName).put(new Element(key, response));
                 if (getLogger().isTraceEnabled()) {

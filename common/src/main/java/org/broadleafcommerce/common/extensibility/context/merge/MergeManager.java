@@ -20,7 +20,6 @@ package org.broadleafcommerce.common.extensibility.context.merge;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.broadleafcommerce.common.extensibility.context.merge.handlers.MergeHandler;
@@ -239,7 +238,7 @@ public class MergeManager {
             Document doc1 = builder.parse(stream1);
             Document doc2 = builder.parse(stream2);
 
-            List<Node> exhaustedNodes = new ArrayList<Node>();
+            List<Node> exhaustedNodes = new ArrayList<>();
 
             //process any defined handlers
             for (MergeHandler handler : this.handlers) {
@@ -282,7 +281,7 @@ public class MergeManager {
     }
 
     private void setHandlers(Properties props) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        ArrayList<MergeHandler> handlers = new ArrayList<MergeHandler>();
+        ArrayList<MergeHandler> handlers = new ArrayList<>();
         for (String key : props.stringPropertyNames()) {
             if (key.startsWith("handler.")) {
                 MergeHandler temp = (MergeHandler) Class.forName(props.getProperty(key)).newInstance();
@@ -308,7 +307,7 @@ public class MergeManager {
             }
         };
         Arrays.sort(explodedView, nameCompare);
-        ArrayList<MergeHandler> finalHandlers = new ArrayList<MergeHandler>();
+        ArrayList<MergeHandler> finalHandlers = new ArrayList<>();
         for (MergeHandler temp : explodedView) {
             if (temp.getName().contains(".")) {
                 final String parentName = temp.getName().substring(0, temp.getName().lastIndexOf("."));

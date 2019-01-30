@@ -23,15 +23,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.TypedEntity;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -40,7 +44,6 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,23 +60,24 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminTypedEntityRequestFilter.class);
 
-    @Resource(name = "blAdminRequestProcessor")
+    @Autowired
+    @Qualifier("blAdminRequestProcessor")
     protected BroadleafWebRequestProcessor requestProcessor;
 
-    @Resource(name="blAdminNavigationService")
+    @Autowired
+    @Qualifier("blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
 
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericEntityDao;
-
-    @Resource(name = "blAdminSecurityRemoteService")
+    @Autowired
+    @Qualifier("blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
-    
-    @Resource(name = "blGenericEntityService")
+
+    @Autowired
+    @Qualifier("blGenericEntityService")
     GenericEntityService genericEntityService;
 
     @Override
-    public void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
         if (isRequestForTypedEntity(request, response)) {
             return;
         }
@@ -95,7 +99,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         if (typedEntitySection == null) {
             return false;
         }
-        
+
         // Check if the item requested matches the item section
         TypedEntity typedEntity = getTypedEntityFromServletPathId(servletPath, typedEntitySection.getCeilingEntity());
         if(typedEntity != null && !typeMatchesAdminSection(typedEntity, sectionKey)) {
@@ -103,7 +107,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
             response.sendRedirect(redirectUrl);
             return true;
         }
-        
+
 
         // Check if admin user has access to this section.
         if (!adminUserHasAccess(typedEntitySection)) {
@@ -116,7 +120,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
         // Find the type and build the new path.
         String type = getEntityTypeFromRequest(request);
-        final String forwardPath = servletPath.replace(type, "");
+        final String forwardPath = servletPath;
 
         // Get the type field name on the Entity for the given section.
         String typedFieldName = getTypeFieldName(typedEntitySection);
@@ -131,15 +135,11 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         final HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(request) {
             @Override
             public String getParameter(String name) {
-                Object temp = parameters.get(name);
-                Object[] response = new Object[0];
-                if (temp != null) {
-                    ArrayUtils.addAll(response, temp);
-                }
+                String[] response = (String[]) parameters.get(name);
                 if (ArrayUtils.isEmpty(response)) {
                     return null;
                 } else {
-                    return (String) response[0];
+                    return response[0];
                 }
             }
 
@@ -173,7 +173,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     private TypedEntity getTypedEntityFromServletPathId(String servletPath, String ceilingEntity) {
         int idBegIndex = servletPath.indexOf("/", 1);
         if (idBegIndex > 0) {
-            String id = servletPath.substring(idBegIndex + 1, servletPath.length()); 
+            String id = servletPath.substring(idBegIndex + 1, servletPath.length());
             if(StringUtils.isNumeric(id)) {
                 Object objectEntity = genericEntityService.readGenericEntity(ceilingEntity, Long.valueOf(id));
                 if (TypedEntity.class.isAssignableFrom(objectEntity.getClass())) {
@@ -246,10 +246,20 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     protected String getTypeFieldName(AdminSection adminSection) {
         try {
-            Class<?> implClass = genericEntityDao.getCeilingImplClass(adminSection.getCeilingEntity());
+            DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(adminSection.getCeilingEntity());
+            Class<?> implClass = dynamicEntityDao.getCeilingImplClass(adminSection.getCeilingEntity());
             return ((TypedEntity) implClass.newInstance()).getTypeFieldName();
         } catch (Exception e) {
             return null;
         }
+    }
+
+    protected DynamicEntityDao getDynamicEntityDao(String className) {
+        return PersistenceManagerFactory.getPersistenceManager(className).getDynamicEntityDao();
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW + 1000;
     }
 }

@@ -21,7 +21,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -235,11 +234,11 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
         group = GroupName.ActiveDateRange,
-        validationConfigurations = { 
+        validationConfigurations = {
             @ValidationConfiguration(validationImplementation = "blAfterStartDateValidator",
-                configurationItems = { 
+                configurationItems = {
                     @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
-            }) 
+            })
         })
     protected Date activeEndDate;
 
@@ -261,6 +260,30 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Column(name = "ROOT_DISPLAY_ORDER", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal rootDisplayOrder;
+
+    @Column(name = "META_TITLE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_MetaTitle",
+            group = GroupName.Miscellaneous, order = 3000,
+            tooltip = "CategoryImpl_Category_MetaTitle_Tooltip")
+    protected String metaTitle;
+
+    @Column(name = "META_DESC")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_MetaDescription",
+            group = GroupName.Miscellaneous, order = 4000,
+            tooltip = "CategoryImpl_Category_MetaDescription_Tooltip")
+    protected String metaDescription;
+
+    @Column(name = "PRODUCT_TITLE_PATTERN_OVERRIDE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ProductTitlePatternOverride",
+            group = GroupName.Miscellaneous, order = 5000,
+            tooltip = "CategoryImpl_Category_ProductTitlePatternOverride_Tooltip")
+    protected String productTitlePatternOverride;
+
+    @Column(name = "PRODUCT_DESC_PATTERN_OVERRIDE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ProductDescriptionPatternOverride",
+            group = GroupName.Miscellaneous, order = 6000,
+            tooltip = "CategoryImpl_Category_ProductDescriptionPatternOverride_Tooltip")
+    protected String productDescriptionPatternOverride;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
@@ -312,33 +335,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             gridVisibleFields = { "defaultSku.name", "displayOrder" },
             maintainedAdornedTargetFields = { "displayOrder" })
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
-
-    /*
-    @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKeyColumn(name = "MAP_KEY")
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
-    @BatchSize(size = 50)
-    @AdminPresentationMap(
-            friendlyName = "SkuImpl_Sku_Media",
-            tab = TabName.Media,
-            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
-            deleteEntityUponRemove = true,
-            mediaField = "url",
-            keys = {
-                    @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
-                    @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
-                    @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
-                    @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
-                    @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
-                    @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
-                    @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
-            }
-    )
-    @IgnoreEnterpriseConfigValidation
-    protected Map<String, Media> categoryMedia = new HashMap<String , Media>(10);
-    */
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "key")
@@ -610,6 +606,46 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
+    }
+
+    @Override
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+
+    @Override
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
+    }
+
+    @Override
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    @Override
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+
+    @Override
+    public String getProductTitlePatternOverride() {
+        return productTitlePatternOverride;
+    }
+
+    @Override
+    public void setProductTitlePatternOverride(String productTitlePatternOverride) {
+        this.productTitlePatternOverride = productTitlePatternOverride;
+    }
+
+    @Override
+    public String getProductDescriptionPatternOverride() {
+        return productDescriptionPatternOverride;
+    }
+
+    @Override
+    public void setProductDescriptionPatternOverride(String productDescriptionPatternOverride) {
+        this.productDescriptionPatternOverride = productDescriptionPatternOverride;
     }
 
     @Override

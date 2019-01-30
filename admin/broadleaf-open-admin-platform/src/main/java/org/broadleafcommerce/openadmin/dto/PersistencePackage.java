@@ -53,6 +53,8 @@ public class PersistencePackage implements Serializable, StateDescriptor {
 
     protected boolean isTreeCollection = false;
 
+    protected boolean isAddOperationInspect = false;
+
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
     }
@@ -292,6 +294,14 @@ public class PersistencePackage implements Serializable, StateDescriptor {
 
     public void setIsTreeCollection(boolean isTreeCollection) {
         this.isTreeCollection = isTreeCollection;
+    }
+
+    public boolean isAddOperationInspect() {
+        return isAddOperationInspect;
+    }
+
+    public void setAddOperationInspect(boolean addOperationInspect) {
+        isAddOperationInspect = addOperationInspect;
     }
 
     @Override

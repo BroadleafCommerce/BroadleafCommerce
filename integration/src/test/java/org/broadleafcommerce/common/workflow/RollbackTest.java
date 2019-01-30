@@ -20,23 +20,15 @@
  */
 package org.broadleafcommerce.common.workflow;
 
-import org.broadleafcommerce.core.workflow.Activity;
-import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl;
-import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
-import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
-import org.broadleafcommerce.core.workflow.state.RollbackHandler;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -45,14 +37,14 @@ import javax.annotation.Resource;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class RollbackTest extends BaseTest {
+public class RollbackTest extends TestNGSiteIntegrationSetup {
     
     @Resource(name = "testRollbackWorkflow")
     protected SequenceProcessor testRollbackWorkflow;
 
     @Test
     public void testRollbackOrder() {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         boolean exceptionThrown = false;
         try {
             testRollbackWorkflow.doActivities(results);
@@ -69,80 +61,5 @@ public class RollbackTest extends BaseTest {
             "RollbackActivity1");
         Assert.assertTrue(exceptionThrown);
         Assert.assertEquals(results, expected, "Rollback occurred out of order");
-    }
-    
-    public static class SimpleActivity extends BaseActivity<ProcessContext<List<String>>> {
-
-        protected String name;
-
-        public SimpleActivity(String name) {
-            this.name = name;
-        }
-        
-        public String getName() {
-            return name;
-        }
-        
-        @Override
-        public ProcessContext<List<String>> execute(ProcessContext<List<String>> context) throws Exception {
-            context.getSeedData().add(name);
-            return context;
-        }
-        
-        @Override
-        public boolean getAutomaticallyRegisterRollbackHandler() {
-            return true;
-        }
-        
-    }
-    
-    public static class SimpleRollbackHandler implements RollbackHandler<List<String>> {
-
-        @Override
-        public void rollbackState(Activity<? extends ProcessContext<List<String>>> activity, ProcessContext<List<String>> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
-            processContext.getSeedData().add("Rollback" + ((SimpleActivity) activity).getName());
-        }
-        
-    }
-    
-    public static class NestedActivity extends BaseActivity<ProcessContext<List<String>>> {
-
-        protected SequenceProcessor workflow;
-        
-        public NestedActivity(SequenceProcessor workflow) {
-            this.workflow = workflow;
-        }
-
-        @Override
-        public ProcessContext<List<String>> execute(ProcessContext<List<String>> context) throws Exception {
-            try {
-                workflow.doActivities(context.getSeedData());
-            } catch (WorkflowException e) {
-                context.getSeedData().add("NestedActivityException");
-                throw e;
-            }
-            return context;
-        }
-        
-    }
-    
-    public static class ExceptionActivity extends BaseActivity<ProcessContext<List<String>>> {
-
-        @Override
-        public ProcessContext<List<String>> execute(ProcessContext<List<String>> context) throws Exception {
-            throw new RuntimeException();
-        }
-        
-    }
-
-    public static class DummyProcessContextFactory implements ProcessContextFactory<Object, Object> {
-
-        @Override
-        public ProcessContext<Object> createContext(Object preSeedData) throws WorkflowException {
-            ProcessContext<Object> context = new DefaultProcessContextImpl<>();
-            context.setSeedData(preSeedData);
-            return context;
-        }
-        
     }
 }

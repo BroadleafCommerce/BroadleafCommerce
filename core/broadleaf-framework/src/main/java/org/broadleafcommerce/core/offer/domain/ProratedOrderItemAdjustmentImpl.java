@@ -51,7 +51,7 @@ import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUSTMENT")
+@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUST")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -75,7 +75,7 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl")
             }
     )
-    @Column(name = "PRORATED_ORDER_ITEM_ADJUSTMENT_ID")
+    @Column(name = "PRORATED_ORDER_ITEM_ADJUST_ID")
     protected Long id;
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
@@ -86,7 +86,6 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="OIADJUST_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Offer", order = 1000,
             group = "OrderItemAdjustmentImpl_Description", prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()
@@ -200,7 +199,7 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
         if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
-        OrderItemAdjustmentImpl other = (OrderItemAdjustmentImpl) obj;
+        ProratedOrderItemAdjustmentImpl other = (ProratedOrderItemAdjustmentImpl) obj;
 
         if (id != null && other.id != null) {
             return id.equals(other.id);

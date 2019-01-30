@@ -22,9 +22,9 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mo="http://schema.broadleafcommerce.org/mo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-               http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+               http://www.springframework.org/schema/beans/spring-beans.xsd
                http://www.springframework.org/schema/context
-               http://www.springframework.org/schema/context/spring-context-4.1.xsd
+               http://www.springframework.org/schema/context/spring-context.xsd
                http://schema.broadleafcommerce.org/mo
                http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
@@ -32,7 +32,7 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.admin.web.controller.*"/>
     </context:component-scan>
 
-    <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+    <bean id="blFieldMetadataProviders-core-admin" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blCustomerUsernameFieldMetadataProvider"/>
@@ -40,7 +40,12 @@
         </property>
     </bean>
 
-    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blFieldMetadataProviders-core-admin"/>
+        <property name="targetRef" value="blFieldMetadataProviders"/>
+    </bean>
+
+    <bean id="blCustomPersistenceHandlers-core-admin" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blCategoryCustomPersistenceHandler" />
@@ -57,9 +62,15 @@
                 <ref bean="blProductOptionsCustomPersistenceHandler" />
                 <ref bean="blFieldOnlyPropertiesCustomPersistenceHandler" />
                 <ref bean="blSearchFacetCustomPersistenceHandler" />
+                <ref bean="blOfferCustomPersistenceHandler" />
                 <ref bean="blProductOptionValuesCustomPersistenceHandler" />
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomPersistenceHandlers-core-admin"/>
+        <property name="targetRef" value="blCustomPersistenceHandlers"/>
     </bean>
 
     <mo:override id="blMetadataOverrides">
@@ -174,9 +185,9 @@
             </mo:field>
         </mo:overrideItem>
     </mo:override>
-    
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="basenames">
+
+    <bean id="blMessageSourceBaseNames-core-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <value>classpath:/messages/CustomerCareMessages</value>
                 <value>classpath:/messages/MerchandisingMessages</value>
@@ -186,6 +197,11 @@
                 <value>classpath:/messages/UtilityMessages</value>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMessageSourceBaseNames-core-admin" />
+        <property name="targetRef" value="blMessageSourceBaseNames" />
     </bean>
 
     <bean id="blAdminExtendedRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -215,7 +231,8 @@
                 <ref bean="blTimeOptionsExtensionListener" />
                 <ref bean="blInventoryTypeOptionsExtensionListener" />
                 <ref bean="blFulfillmentTypeOptionsExtensionListener" />
-                <ref bean="blTemplateTypeOptionsExtensionListener" />                
+                <ref bean="blTemplateTypeOptionsExtensionListener" />       
+                <ref bean="blWebRequestDeviceTypeEnumOptionsExtensionListener" />
             </list>
         </property>
     </bean>
@@ -233,6 +250,7 @@
                 <ref bean="blProductParentCategoryFieldPersistenceProvider"/>
                 <ref bean="blCategoryParentCategoryFieldPersistenceProvider"/>
                 <ref bean="blTypedEntityFieldPersistenceProvider"/>
+                <ref bean="blProductUrlFieldPersistenceProvider"/>
             </list>
         </property>
     </bean>
@@ -261,6 +279,7 @@
                 <value>admin/catalog/productOptions.js</value>
                 <value>admin/catalog/offer.js</value>
                 <value>admin/catalog/category.js</value>
+                <value>admin/catalog/skuMinOrderQuantity.js</value>
                 <value>admin/customers/customer.js</value>
                 <value>admin/users/adminUser.js</value>
             </list>

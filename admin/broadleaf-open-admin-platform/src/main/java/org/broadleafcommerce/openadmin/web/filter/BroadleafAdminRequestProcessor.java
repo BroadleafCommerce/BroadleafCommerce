@@ -180,7 +180,6 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             //clear any profile
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(PROFILE_REQ_PARAM, WebRequest.SCOPE_GLOBAL_SESSION);
-                staleStateProtectionService.invalidateState();
             }
         } else {
             Site profile = null;
@@ -192,7 +191,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 }
                 String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                 staleStateProtectionService.compareToken(token);
-                staleStateProtectionService.invalidateState();
+                staleStateProtectionService.invalidateState(true);
             }
 
             if (profile == null) {
@@ -212,7 +211,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                     Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
                     if (extensionManager != null) {
                         ExtensionResultHolder<Set<Site>> profilesResult = new ExtensionResultHolder<Set<Site>>();
-                        extensionManager.getProxy().retrieveProfiles(currentSite, profilesResult);
+                        extensionManager.retrieveProfiles(currentSite, profilesResult);
                         if (!CollectionUtils.isEmpty(profilesResult.getResult())) {
                             profiles.addAll(profilesResult.getResult());
                         }
@@ -238,7 +237,6 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             //clear any catalog
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(CATALOG_REQ_PARAM, WebRequest.SCOPE_GLOBAL_SESSION);
-                staleStateProtectionService.invalidateState();
             }
         } else {
             Catalog catalog = null;
@@ -250,7 +248,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 }
                 String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                 staleStateProtectionService.compareToken(token);
-                staleStateProtectionService.invalidateState();
+                staleStateProtectionService.invalidateState(true);
             }
 
             if (catalog == null) {
@@ -270,7 +268,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                     Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
                     if (extensionManager != null) {
                         ExtensionResultHolder<Set<Catalog>> catalogResult = new ExtensionResultHolder<Set<Catalog>>();
-                        extensionManager.getProxy().retrieveCatalogs(currentSite, catalogResult);
+                        extensionManager.retrieveCatalogs(currentSite, catalogResult);
                         if (!CollectionUtils.isEmpty(catalogResult.getResult())) {
                             catalogs.addAll(catalogResult.getResult());
                         }
@@ -287,6 +285,22 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 }
                 brc.setCurrentCatalog(catalog);
             }
+            if (extensionManager != null) {
+                if (brc.getNonPersistentSite() != null) {
+                    Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
+                    ExtensionResultHolder<Catalog> catalogResult = new ExtensionResultHolder<Catalog>();
+                    extensionManager.overrideCurrentCatalog(request, currentSite, catalogResult);
+                    if (catalogResult.getResult() != null) {
+                        brc.setCurrentCatalog(catalogResult.getResult());
+                    }
+
+                    ExtensionResultHolder<Site> profileResult = new ExtensionResultHolder<Site>();
+                    extensionManager.overrideCurrentProfile(request, currentSite, profileResult);
+                    if (profileResult.getResult() != null) {
+                        brc.setCurrentProfile(profileResult.getResult());
+                    }
+                }
+            }
         }
     }
 
@@ -296,7 +310,6 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             //clear any sandbox
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
-                staleStateProtectionService.invalidateState();
             }
         } else {
             SandBox sandBox = null;
@@ -316,7 +329,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 if (BLCRequestUtils.isOKtoUseSession(request)) {
                     String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                     staleStateProtectionService.compareToken(token);
-                    staleStateProtectionService.invalidateState();
+                    staleStateProtectionService.invalidateState(true);
                 }
             }
 

@@ -19,7 +19,7 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="org.broadleafcommerce.common.email.domain.EmailTracking" class="org.broadleafcommerce.common.email.domain.EmailTrackingImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
@@ -41,5 +41,6 @@
     <bean id="org.broadleafcommerce.common.site.domain.Site" class="org.broadleafcommerce.common.site.domain.SiteImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.site.domain.Catalog" class="org.broadleafcommerce.common.site.domain.CatalogImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.site.domain.SiteCatalogXref" class="org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.profile.core.domain.IdGeneration" class="org.broadleafcommerce.common.id.domain.IdGenerationImpl" scope="prototype"/>
 
 </beans>

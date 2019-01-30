@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.domain.PersonalMessageImpl;
@@ -36,13 +37,14 @@ public class ShippingInfoForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-	protected Address address = new AddressImpl();
+    protected Address address = new AddressImpl();
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;
     protected PersonalMessage personalMessage = new PersonalMessageImpl();
     protected String deliveryMessage;
-    protected boolean useBillingAddress;
+    protected boolean useBillingAddress = false;
+    protected boolean saveAsDefault = false;
 
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -98,11 +100,33 @@ public class ShippingInfoForm implements Serializable {
         return personalMessage;
     }
 
+    @Deprecated
     public boolean isUseBillingAddress() {
+        return useBillingAddress;
+    }
+
+    public boolean shouldUseBillingAddress() {
         return useBillingAddress;
     }
 
     public void setUseBillingAddress(boolean useBillingAddress) {
         this.useBillingAddress = useBillingAddress;
+    }
+
+    public boolean isSaveAsDefault() {
+        return saveAsDefault;
+    }
+
+    public void setSaveAsDefault(boolean saveAsDefault) {
+        this.saveAsDefault = saveAsDefault;
+    }
+
+    /**
+     * NOTE: this looks for all of {@link Address}'s database required fields
+     */
+    public boolean hasValidAddress() {
+        return getAddress() != null
+                && StringUtils.isNotBlank(getAddress().getAddressLine1())
+                && StringUtils.isNotBlank(getAddress().getCity());
     }
 }

@@ -25,11 +25,6 @@ import org.springframework.core.io.ClassPathResource;
 
 /**
  * <p>
- * This is a non-functional 5.0 and 5.1-compatible version of this interface that <i>only has functionality in Broadleaf 5.2</i>. This was added into
- * the 5.0 and 5.1 streams in order to allow 3rd-party integration modules to be compatible with Broadleaf 5.0, 5.1 and 5.2 all at the same
- * time.
- * 
- * <p>
  * A holder for a folder containing a {@code common.properties} file to be added to the Spring {@link Environment} in a programmatic way without Spring Boot and with very specific
  * ordering semantics. This is generally only used within the Broadleaf Framework and supporting modules. This assumes that the location is on the
  * classpath as this drives the creation of a {@link ClassPathResource}. To write your custom one of these, implementations should add an entry to
@@ -45,7 +40,7 @@ import org.springframework.core.io.ClassPathResource;
  * properties resolved by these classes come immediately before the {@literal @}PropertySource annotations.
  * 
  * @author Phillip Verheyden (phillipuniverse)
- * @since 5.0.12-GA, 5.1.5-GA, 5.2.0-GA
+ * @since 5.2
  * @see {@link DefaultOrderFrameworkCommonClasspathPropertySource}
  * @see {@link BroadleafSharedOverrideProfileAwarePropertySource}
  * @see {@link BroadleafEnvironmentConfiguringApplicationListener}

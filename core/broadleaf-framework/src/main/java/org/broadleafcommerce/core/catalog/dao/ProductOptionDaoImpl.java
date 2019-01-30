@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
@@ -150,10 +151,6 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // restrict archived values
-        predicates.add(cb.or(cb.notEqual(root.get("sku").get("archiveStatus").get("archived"), 'Y'),
-                             cb.isNull(root.get("sku").get("archiveStatus").get("archived"))));
-
         // restrict to skus that match the product
         predicates.add(root.get("sku").get("product").get("id").in(sandBoxHelper.mergeCloneIds(ProductImpl.class, productId)));
 
@@ -164,9 +161,12 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         predicates.add(cb.equal(root.get("productOptionValue").get("attributeValue"), attributeValue));
 
         // restrict to skus that have ids within the given list of skus ids
-        Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
-        if (skuDomainPredicate != null) {
-            predicates.add(skuDomainPredicate);
+        if (CollectionUtils.isNotEmpty(possibleSkuIds)) {
+            possibleSkuIds = sandBoxHelper.mergeCloneIds(SkuImpl.class, possibleSkuIds.toArray(new Long[possibleSkuIds.size()]));
+            Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
+            if (skuDomainPredicate != null) {
+                predicates.add(skuDomainPredicate);
+            }
         }
 
         // restrict archived values

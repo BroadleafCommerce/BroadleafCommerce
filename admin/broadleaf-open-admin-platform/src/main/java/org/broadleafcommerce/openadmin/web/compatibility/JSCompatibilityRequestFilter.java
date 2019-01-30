@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.openadmin.web.compatibility;
 
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,12 +33,16 @@ import java.io.IOException;
  * @author Jeff Fischer
  */
 @Component("blJSCompatibilityRequestFilter")
-public class JSCompatibilityRequestFilter extends OncePerRequestFilter {
+public class JSCompatibilityRequestFilter extends AbstractIgnorableOncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain
+    protected void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain
             filterChain) throws ServletException, IOException {
         filterChain.doFilter(new JSCompatibilityRequestWrapper(request), response);
     }
 
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW;
+    }
 }

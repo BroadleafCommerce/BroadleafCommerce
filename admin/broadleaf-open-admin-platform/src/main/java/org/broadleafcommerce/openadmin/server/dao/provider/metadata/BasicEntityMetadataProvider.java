@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminGroupPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminTabPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -41,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.Over
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
 
     @Override
     public MetadataProviderResponse addTabAndGroupMetadata(AddMetadataRequest addMetadataRequest, Map<String, TabMetadata> metadata) {
-        AdminPresentationClass annot = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, addMetadataRequest.getTargetClass());
+        AdminPresentationClass annot = AnnotationUtils.findAnnotation(addMetadataRequest.getTargetClass(), AdminPresentationClass.class);
 
         if (annot == null) {
             return MetadataProviderResponse.NOT_HANDLED;
@@ -72,7 +72,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
 
     @Override
     public MetadataProviderResponse overrideMetadataViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, TabMetadata> metadata) {
-        AdminPresentationClass annot = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, overrideViaAnnotationRequest.getRequestedEntity());
+        AdminPresentationClass annot = AnnotationUtils.findAnnotation(overrideViaAnnotationRequest.getRequestedEntity(), AdminPresentationClass.class);
 
         if (annot == null) {
             return MetadataProviderResponse.NOT_HANDLED;

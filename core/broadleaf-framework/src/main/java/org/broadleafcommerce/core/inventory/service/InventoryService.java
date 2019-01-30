@@ -21,7 +21,7 @@ package org.broadleafcommerce.core.inventory.service;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
+import org.broadleafcommerce.core.order.service.workflow.CheckAddAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
@@ -37,7 +37,7 @@ import java.util.Map;
  * 
  * <p>For most implementations outside of the very basic inventory case, you will actually want to use the {@link ContextualInventoryService}.
  * This is the version of the service that is invoked from the checkout workflow in {@link DecrementInventoryActivity} and
- * where the main checks for inventory are in the {@link CheckAvailabilityActivity}</p>
+ * where the main checks for inventory are in the {@link CheckAddAvailabilityActivity}</p>
  * 
  * @author Kelly Tisdell
  * @author Phillip Verheyden (phillipuniverse)

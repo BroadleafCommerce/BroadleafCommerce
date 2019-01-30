@@ -29,10 +29,11 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
+import org.broadleafcommerce.core.order.service.workflow.CheckAddAvailabilityActivity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +135,22 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      * @see SkuPricingConsiderationContext, DynamicSkuPricingService, Sku.hasRetailPrice()
      */
     public Money getRetailPrice();
+
+    /**
+     * Returns the basic retail price of the Sku. This price does not include any dynamic pricing, including PriceList
+     * modification.
+     *
+     * @return
+     */
+    Money getBaseRetailPrice();
+
+    /**
+     * Returns the basic sale price of the Sku. This price does not include any dynamic pricing, including PriceList
+     * modification.
+     *
+     * @return
+     */
+    Money getBaseSalePrice();
 
     /**
      * Sets the retail price for the Sku. This price will automatically be overridden if your system is utilizing
@@ -404,7 +421,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      *
      * @return the multivalued attributes for this Sku
      */
-    public Map<String, SkuAttribute> getMultiValueSkuAttributes();
+    public Map<String, Collection<SkuAttribute>> getMultiValueSkuAttributes();
 
     /**
      * Sets the denormalized set of key-value pairs on a Sku
@@ -622,7 +639,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     
     /**
      * <p>Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
-     * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
+     * This field is checked within the {@link CheckAddAvailabilityActivity} to determine if inventory is actually available
      * for this Sku.
      */
     public Integer getQuantityAvailable();

@@ -77,6 +77,14 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      */
     public void setName(@Nonnull String name);
 
+    String getProductTitlePatternOverride();
+
+    void setProductTitlePatternOverride(String productTitlePatternOverride);
+
+    String getProductDescriptionPatternOverride();
+
+    void setProductDescriptionPatternOverride(String productDescriptionPatternOverride);
+
     /**
      * Gets the default parent category. This method will delegate to
      * {@link #getParentCategory()} by default, unless the "use.legacy.default.category.mode" property is set to
@@ -346,6 +354,34 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @param longDescription the new long description
      */
     public void setLongDescription(@Nullable String longDescription);
+
+    /**
+     * Gets the meta data title of the category
+     *
+     * @return
+     */
+    String getMetaTitle();
+
+    /**
+     * Sets the meta data title of the category
+     *
+     * @param metaTitle
+     */
+    void setMetaTitle(String metaTitle);
+
+    /**
+     * Gets the meta data description of the category
+     *
+     * @return
+     */
+    String getMetaDescription();
+
+    /**
+     * Sets the meta data description of the category
+     *
+     * @param metaDescription
+     */
+    void setMetaDescription(String metaDescription);
 
     /**
      * Gets the featured products. Featured products are a special list

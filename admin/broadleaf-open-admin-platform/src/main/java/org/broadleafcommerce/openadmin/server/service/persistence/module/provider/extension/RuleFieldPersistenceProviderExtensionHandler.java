@@ -29,7 +29,7 @@ import org.broadleafcommerce.common.rule.QuantityBasedRule;
  */
 public interface RuleFieldPersistenceProviderExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType transformId(QuantityBasedRule rule, ExtensionResultHolder<Long> resultHolder);
+    ExtensionResultStatusType transformId(Object rule, ExtensionResultHolder<Long> resultHolder);
 
     ExtensionResultStatusType postAdd(Object rule, ExtensionResultHolder resultHolder);
 

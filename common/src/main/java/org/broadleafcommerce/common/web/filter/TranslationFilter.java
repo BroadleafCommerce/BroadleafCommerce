@@ -17,19 +17,21 @@
  */
 package org.broadleafcommerce.common.web.filter;
 
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.GenericFilterBean;
 
-import javax.annotation.Resource;
+import java.io.IOException;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Responsible for setting the necessary attributes on the {@link TranslationConsiderationContext}.
@@ -37,18 +39,25 @@ import java.io.IOException;
  * @author Andre Azzolini (apazzolini), bpolster
  */
 @Component("blTranslationFilter")
-public class TranslationFilter extends GenericFilterBean {
+@ConditionalOnNotAdmin
+public class TranslationFilter extends AbstractIgnorableFilter {
     
-    @Resource(name = "blTranslationRequestProcessor")
+    @Autowired
+    @Qualifier("blTranslationRequestProcessor")
     protected TranslationRequestProcessor translationRequestProcessor;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
             translationRequestProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
             filterChain.doFilter(request, response);
         } finally {
             translationRequestProcessor.postProcess(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 }

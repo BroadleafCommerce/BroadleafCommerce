@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 public class BLCRequestUtils {
     
     private static String OK_TO_USE_SESSION = "blOkToUseSession";
+    private static String URI_IS_FILTER_IGNORED = "blUriIsFilterIgnored";
     
     /**
      * Broadleaf "Resolver" and "Filter" classes may need to know if they are allowed to utilize the session.
@@ -46,6 +47,16 @@ public class BLCRequestUtils {
             return true;
         } else {
             return useSessionForRequestProcessing.booleanValue();
+        }
+    }
+
+    public static boolean isFilteringIgnoredForUri(WebRequest request) {
+        Boolean ignoreUri = (Boolean) request.getAttribute(URI_IS_FILTER_IGNORED, WebRequest.SCOPE_REQUEST);
+        if (ignoreUri == null) {
+            // by default we will use the session
+            return false;
+        } else {
+            return ignoreUri.booleanValue();
         }
     }
     
@@ -82,6 +93,10 @@ public class BLCRequestUtils {
         request.setAttribute(OK_TO_USE_SESSION, value, WebRequest.SCOPE_REQUEST);
     }
 
+    public static void setIsFilteringIgnoredForUri(WebRequest request, Boolean value) {
+        request.setAttribute(URI_IS_FILTER_IGNORED, value, WebRequest.SCOPE_REQUEST);
+    }
+
     /**
      * Get header or url parameter.    Will obtain the parameter from a header variable or a URL parameter, preferring
      * header values if they are set.
@@ -111,5 +126,25 @@ public class BLCRequestUtils {
             serverPrefix.append(request.getServerPort());
         }
         return serverPrefix.toString();
+    }
+
+    public static String getRequestURIWithoutContext(HttpServletRequest request) {
+        String requestURIWithoutContext = null;
+
+        if (request != null && request.getRequestURI() != null) {
+            if (request.getContextPath() != null) {
+                requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
+            } else {
+                requestURIWithoutContext = request.getRequestURI();
+            }
+
+            // Remove JSESSION-ID or other modifiers
+            int pos = requestURIWithoutContext.indexOf(";");
+            if (pos >= 0) {
+                requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
+            }
+        }
+
+        return requestURIWithoutContext;
     }
 }

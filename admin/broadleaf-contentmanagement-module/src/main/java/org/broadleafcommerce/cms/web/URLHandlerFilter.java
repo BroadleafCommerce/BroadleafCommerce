@@ -23,11 +23,15 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.service.URLHandlerService;
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -37,7 +41,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,18 +52,24 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 @Component("blURLHandlerFilter")
-public class URLHandlerFilter extends OncePerRequestFilter {
+@ConditionalOnNotAdmin
+public class URLHandlerFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private static final Log LOG = LogFactory.getLog(URLHandlerFilter.class);
 
-    @Resource(name = "blURLHandlerService")
+    @Autowired
+    @Qualifier("blURLHandlerService")
     private URLHandlerService urlHandlerService;
+
+    @Autowired
+    @Qualifier("blURLHandlerFilterExtensionManager")
+    private URLHandlerFilterExtensionManager extensionManager;
 
     @Value("${request.uri.encoding}")
     public String charEncoding;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternalUnlessIgnored(HttpServletRequest request,
             HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
@@ -76,19 +85,18 @@ public class URLHandlerFilter extends OncePerRequestFilter {
         URLHandler handler = urlHandlerService.findURLHandlerByURI(requestURIWithoutContext);
         
         if (handler != null) {
-            if (URLRedirectType.FORWARD == handler.getUrlRedirectType()) {              
+            String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
+            url = fixQueryString(request, url);
+            extensionManager.getProxy().processPreRedirect(request, response, url);
+            if (URLRedirectType.FORWARD == handler.getUrlRedirectType()) {
                 request.getRequestDispatcher(handler.getNewURL()).forward(request, response);               
             } else if (URLRedirectType.REDIRECT_PERM == handler.getUrlRedirectType()) {
-                String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
-                url = fixQueryString(request, url);
                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                 response.setHeader( "Location", url);
                 response.setHeader( "Connection", "close" );
             } else if (URLRedirectType.REDIRECT_TEMP == handler.getUrlRedirectType()) {
-                String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
-                url = fixQueryString(request, url);
                 response.sendRedirect(url);             
-            }           
+            }
         } else {
             filterChain.doFilter(request, response);
         }
@@ -100,7 +108,7 @@ public class URLHandlerFilter extends OncePerRequestFilter {
      * 
      * @param url
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     protected String fixQueryString(HttpServletRequest request, String url) {
         if (getPreserveQueryStringOnRedirect()) {
@@ -157,5 +165,10 @@ public class URLHandlerFilter extends OncePerRequestFilter {
 
     protected boolean getPreserveQueryStringOnRedirect() {
         return BLCSystemProperty.resolveBooleanSystemProperty("preserveQueryStringOnRedirect");
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 }

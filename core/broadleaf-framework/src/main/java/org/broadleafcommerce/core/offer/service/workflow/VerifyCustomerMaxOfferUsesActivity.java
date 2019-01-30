@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
@@ -39,13 +40,20 @@ import javax.annotation.Resource;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
+@Component("blVerifyCustomerMaxOfferUsesActivity")
 public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
+
+    public static final int ORDER = 1000;
 
     @Resource(name="blOfferAuditService")
     protected OfferAuditService offerAuditService;
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
+
+    public VerifyCustomerMaxOfferUsesActivity() {
+        setOrder(ORDER);
+    }
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {

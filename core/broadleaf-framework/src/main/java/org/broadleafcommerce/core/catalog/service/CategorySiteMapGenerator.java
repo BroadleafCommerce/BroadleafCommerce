@@ -25,11 +25,16 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapImageWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
+import org.broadleafcommerce.common.web.util.BroadleafUrlParamUtils;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfiguration;
+import org.broadleafcommerce.core.util.service.BroadleafSitemapUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -47,11 +52,17 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     protected static final Log LOG = LogFactory.getLog(CategorySiteMapGenerator.class);
 
+    protected Environment env;
+
     @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
 
     @Value("${category.site.map.generator.row.limit}")
     protected int rowLimit;
+
+    public CategorySiteMapGenerator(Environment env) {
+        this.env = env;
+    }
 
     @Override
     public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
@@ -61,13 +72,14 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
-        CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
+        if (CategorySiteMapGeneratorConfiguration.class.isAssignableFrom(smgc.getClass())) {
+            CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
 
-        // Recursively construct the category SiteMap URLs
-        Long rootCategoryId = categorySMGC.getRootCategory().getId();
-        Category rootCategory = categoryDao.readCategoryById(rootCategoryId);
-        addCategorySiteMapEntries(rootCategory, 0, categorySMGC, siteMapBuilder);
-        
+            // Recursively construct the category SiteMap URLs
+            Long rootCategoryId = categorySMGC.getRootCategory().getId();
+            Category rootCategory = categoryDao.readCategoryById(rootCategoryId);
+            addCategorySiteMapEntries(rootCategory, 0, categorySMGC, siteMapBuilder);
+        }
     }
 
     protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder) {
@@ -78,7 +90,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
         // If we're at or past the starting depth, add this category to the site map
         if (currentDepth >= categorySMGC.getStartingDepth()) {
-            constructSiteMapURL(categorySMGC, siteMapBuilder, parentCategory);
+            constructSiteMapURLs(categorySMGC, siteMapBuilder, parentCategory);
         }
 
         // Recurse on child categories in batches of size rowLimit
@@ -97,26 +109,53 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
         } while (categories.size() == rowLimit);
     }
 
-    protected void constructSiteMapURL(CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder, Category category) {
-        SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
+    protected void constructSiteMapURLs(CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder, Category category) {
+        Integer categoryPageCount = getPageCountForCategory(category);
 
-        // location
-        siteMapUrl.setLoc(generateUri(siteMapBuilder, category));
+        for (int pageNumber = 1; pageNumber <= categoryPageCount; pageNumber++) {
+            SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
-        // change frequency
-        siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
+            // location
+            siteMapUrl.setLoc(generateUrl(siteMapBuilder, category, pageNumber));
 
-        // priority
-        siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
+            // change frequency
+            siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
 
-        // lastModDate
-        siteMapUrl.setLastModDate(generateDate(category));
+            // priority
+            siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
 
-        siteMapBuilder.addUrl(siteMapUrl);
+            // lastModDate
+            siteMapUrl.setLastModDate(generateDate(category));
+
+            constructImageURLs(siteMapBuilder, siteMapUrl, category);
+
+            siteMapBuilder.addUrl(siteMapUrl);
+        }
     }
 
-    protected String generateUri(SiteMapBuilder siteMapBuilder, Category category) {
-        return BroadleafFileUtils.appendUnixPaths(siteMapBuilder.getBaseUrl(), category.getUrl());
+    protected void constructImageURLs(SiteMapBuilder siteMapBuilder, SiteMapURLWrapper siteMapUrl, Category category) {
+        for (CategoryMediaXref categoryMediaXref : category.getCategoryMediaXref().values()) {
+            SiteMapImageWrapper siteMapImage = new SiteMapImageWrapper();
+
+            siteMapImage.setLoc(BroadleafSitemapUtils.generateImageUrl(siteMapBuilder, categoryMediaXref.getMedia()));
+
+            siteMapUrl.addImage(siteMapImage);
+        }
+    }
+
+    protected Integer getPageCountForCategory(Category category) {
+        int activeProductCount = category.getActiveProductXrefs().size();
+
+        return (activeProductCount == 0)? 1 : (int) Math.ceil(activeProductCount * 1.0 / getDefaultPageSize());
+    }
+
+    protected String generateUrl(SiteMapBuilder siteMapBuilder, Category category, int pageNumber) {
+        String categoryUrl = BroadleafFileUtils.appendUnixPaths(siteMapBuilder.getBaseUrl(), category.getUrl());
+
+        String categoryPaginationParam = getCategoryPaginationParam();
+        categoryUrl = BroadleafUrlParamUtils.addPaginationParam(categoryUrl, categoryPaginationParam, pageNumber);
+
+        return categoryUrl;
     }
 
     protected Date generateDate(Category category) {
@@ -137,6 +176,14 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     public void setRowLimit(int rowLimit) {
         this.rowLimit = rowLimit;
+    }
+
+    protected int getDefaultPageSize() {
+        return env.getProperty("web.defaultPageSize", int.class, 40);
+    }
+
+    protected String getCategoryPaginationParam() {
+        return env.getProperty("seo.category.pagination.param", "page");
     }
 
 }

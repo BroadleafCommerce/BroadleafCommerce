@@ -1,0 +1,6 @@
+org.broadleafcommerce.common.module.BroadleafModuleRegistration=org.broadleafcommerce.test.common.condition.CommonTestRegistration
+org.broadleafcommerce.common.config.BroadleafSharedOverrideProfileAwarePropertySource=org.broadleafcommerce.test.common.properties.sources.ProfileAwareProperties,\
+org.broadleafcommerce.test.common.properties.sources.ProfileAwareSharedProperties
+org.broadleafcommerce.common.config.FrameworkCommonClasspathPropertySource=org.broadleafcommerce.test.common.properties.sources.CommonFrameworkTestProperties
+
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.broadleafcommerce.test.common.context.autoconfig.BaseAutoConfiguration

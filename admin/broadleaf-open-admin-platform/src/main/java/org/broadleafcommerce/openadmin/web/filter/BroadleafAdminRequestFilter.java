@@ -23,24 +23,27 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
+import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionServiceImpl;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.openadmin.security.ClassNameRequestParamValidationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.Persistable;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,17 +60,24 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
 
     private final Log LOG = LogFactory.getLog(BroadleafAdminRequestFilter.class);
 
-    @Resource(name = "blAdminRequestProcessor")
+    @Autowired
+    @Qualifier("blAdminRequestProcessor")
     protected BroadleafWebRequestProcessor requestProcessor;
 
-    @Resource(name="blPersistenceThreadManager")
+    @Autowired
+    @Qualifier("blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
 
-    @Resource(name="blClassNameRequestParamValidationService")
+    @Autowired
+    @Qualifier("blClassNameRequestParamValidationService")
     protected ClassNameRequestParamValidationService validationService;
 
+    @Autowired
+    @Qualifier("blStaleStateProtectionService")
+    protected StaleStateProtectionService staleStateProtectionService;
+
     @Override
-    public void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
 
         if (!validateClassNameParams(request)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -88,7 +98,14 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
                 public Void execute() {
                     try {
                         requestProcessor.process(new ServletWebRequest(request, response));
-                        filterChain.doFilter(request, response);
+                        if (!staleStateProtectionService.sendRedirectOnStateChange(
+                                response,
+                                BroadleafAdminRequestProcessor.SANDBOX_REQ_PARAM,
+                                BroadleafAdminRequestProcessor.CATALOG_REQ_PARAM,
+                                BroadleafAdminRequestProcessor.PROFILE_REQ_PARAM
+                        )) {
+                            filterChain.doFilter(request, response);
+                        }
                         return null;
                     } catch (Exception e) {
                         throw ExceptionHelper.refineException(e);
@@ -96,6 +113,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
                 }
             });
         } catch (SiteNotFoundException e) {
+            LOG.warn("Could not resolve a site for the given request, returning not found");
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (StaleStateServiceException e) {
             //catch state change attempts from a stale page
@@ -111,7 +129,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         String ceilingEntityFullyQualifiedClassname = request.getParameter("fields['ceilingEntityFullyQualifiedClassname'].value");
         String originalType = request.getParameter("fields['__originalType'].value");
         String entityType = request.getParameter("entityType");
-        Map<String, String> params = new HashMap<String, String>(2);
+        Map<String, String> params = new HashMap<>(2);
         params.put("ceilingEntityClassname", ceilingEntityClassname);
         params.put("entityType", entityType);
         params.put("ceilingEntity", ceilingEntity);
@@ -169,5 +187,10 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         };
         requestProcessor.process(new ServletWebRequest(wrapper, response));
         wrapper.getRequestDispatcher("/sc_conflict").forward(wrapper, response);
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrdered.POST_SECURITY_HIGH;
     }
 }

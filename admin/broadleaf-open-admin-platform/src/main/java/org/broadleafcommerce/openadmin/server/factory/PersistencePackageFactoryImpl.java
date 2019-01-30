@@ -31,14 +31,16 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -48,9 +50,6 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
 
     @Resource(name = "blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
-
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -123,6 +122,8 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
                 index++;
             }
             pp.setSectionCrumbs(converted);
+        } else {
+            pp.setSectionCrumbs(new SectionCrumb[0]);
         }
         pp.setSectionEntityField(request.getSectionEntityField());
         pp.setFetchTypeFullyQualifiedClassname(null);
@@ -132,7 +133,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         pp.setRequestingEntityName(request.getRequestingEntityName());
         pp.setValidateUnsubmittedProperties(request.isValidateUnsubmittedProperties());
         pp.setIsTreeCollection(request.isTreeCollection());
-
+        pp.setAddOperationInspect(request.isAddOperationInspect());
 
         if (request.getEntity() != null) {
             pp.setEntity(request.getEntity());
@@ -169,10 +170,22 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         try {
             AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
             String className = (section == null) ? sectionKey : section.getCeilingEntity();
-            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), em.unwrap(Session.class).getSessionFactory(), true, true);
+
+            if (className == null) {
+                throw new RuntimeException("Could not determine the class related to the following Section: " + section.getName());
+            }
+
+            SessionFactory sessionFactory = getEntityManager(className).unwrap(Session.class).getSessionFactory();
+            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), sessionFactory, true, true);
+
             return entities[entities.length - 1].getName();
         } catch (ClassNotFoundException e) {
             throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class, e);
         }
+    }
+
+    protected EntityManager getEntityManager(String className) {
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(className);
+        return persistenceManager.getDynamicEntityDao().getStandardEntityManager();
     }
 }

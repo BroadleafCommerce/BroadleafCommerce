@@ -21,14 +21,22 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.strategy.FulfillmentGroupItemStrategy;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Component("blUpdateFulfillmentGroupItemActivity")
 public class UpdateFulfillmentGroupItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+    
+    public static final int ORDER = 5000;
     
     @Resource(name = "blFulfillmentGroupItemStrategy")
     protected FulfillmentGroupItemStrategy fgItemStrategy;
 
+    public UpdateFulfillmentGroupItemActivity() {
+        setOrder(ORDER);
+    }
+    
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();

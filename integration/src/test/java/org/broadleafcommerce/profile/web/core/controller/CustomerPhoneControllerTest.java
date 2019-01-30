@@ -25,19 +25,22 @@ import org.broadleafcommerce.profile.web.controller.CustomerPhoneController;
 import org.broadleafcommerce.profile.web.core.controller.dataprovider.CustomerPhoneControllerTestDataProvider;
 import org.broadleafcommerce.profile.web.core.model.PhoneNameForm;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerPhoneControllerTest extends BaseTest {
+import javax.annotation.Resource;
+
+public class CustomerPhoneControllerTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CustomerPhoneController customerPhoneController;
@@ -45,25 +48,30 @@ public class CustomerPhoneControllerTest extends BaseTest {
     private CustomerPhoneService customerPhoneService;
     @Resource
     private CustomerService customerService;
-    private final List<Long> createdCustomerPhoneIds = new ArrayList<Long>();
-    private final Long userId = 1L;
+    private final List<Long> createdCustomerPhoneIds = new ArrayList<>();
+    private Long userId = null;
     private MockHttpServletRequest request;
     private static final String SUCCESS = "customerPhones";
 
+    @BeforeMethod(alwaysRun = true, dependsOnMethods = "springTestContextBeforeTestMethod")
+    protected void setupCustomerId(Method testMethod) throws Exception {
+        userId = customerService.readCustomerByUsername("customer1").getId();
+    }
+    
     @Test(groups = "createCustomerPhoneFromController", dataProvider = "setupCustomerPhoneControllerData", dataProviderClass = CustomerPhoneControllerTestDataProvider.class, dependsOnGroups = "readCustomer")
     @Transactional
-    @Rollback(false)
+    @Commit
     public void createCustomerPhoneFromController(PhoneNameForm phoneNameForm) {
         BindingResult errors = new BeanPropertyBindingResult(phoneNameForm, "phoneNameForm");
 
-        Customer customer = customerService.readCustomerById(userId);
+        Customer customer = customerService.readCustomerByUsername("customer1");
         request = this.getNewServletInstance();
         request.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
 
         String view = customerPhoneController.savePhone(phoneNameForm, errors, request, null, null);
         assert (view.indexOf(SUCCESS) >= 0);
 
-        List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
+        List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(userId);
 
         boolean inPhoneList = false;
 
@@ -84,7 +92,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
     @Transactional
     public void makePhoneDefaultOnCustomerPhoneController() {
         Long nonDefaultPhoneId = null;
-        List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
+        List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(userId);
 
         for (CustomerPhone p : phones_1) {
             if (!p.getPhone().isDefault()) {
@@ -98,7 +106,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         String view = customerPhoneController.makePhoneDefault(nonDefaultPhoneId, request);
         assert (view.indexOf("viewPhone") >= 0);
 
-        List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
+        List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(userId);
 
         for (CustomerPhone p : phones) {
             if (p.getId() == nonDefaultPhoneId) {
@@ -112,7 +120,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
     @Test(groups = "readCustomerPhoneFromController", dependsOnGroups = "createCustomerPhoneFromController")
     @Transactional
     public void readCustomerPhoneFromController() {
-        List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
+        List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(userId);
         int phones_1_size = phones_1.size();
 
         request = this.getNewServletInstance();
@@ -120,7 +128,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         String view = customerPhoneController.deletePhone(createdCustomerPhoneIds.get(0), request);
         assert (view.indexOf("viewPhone") >= 0);
 
-        List<CustomerPhone> phones_2 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
+        List<CustomerPhone> phones_2 = customerPhoneService.readAllCustomerPhonesByCustomerId(userId);
         assert ((phones_1_size - phones_2.size()) == 1);
     }
 
@@ -140,12 +148,12 @@ public class CustomerPhoneControllerTest extends BaseTest {
     @Test(groups = "viewExistingCustomerPhoneFromController", dependsOnGroups = "createCustomerPhoneFromController")
     @Transactional
     public void viewExistingCustomerPhoneFromController() {
-        List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
+        List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(userId);
         PhoneNameForm pnf = new PhoneNameForm();
 
         BindingResult errors = new BeanPropertyBindingResult(pnf, "phoneNameForm");
 
-        Customer customer = customerService.readCustomerById(userId);
+        Customer customer = customerService.readCustomerByUsername("customer1");
         request = this.getNewServletInstance();
         request.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
 

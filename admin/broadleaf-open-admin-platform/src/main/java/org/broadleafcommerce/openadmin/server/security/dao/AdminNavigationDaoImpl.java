@@ -114,13 +114,15 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
                 sectionId = getSectionKey(true);
             }
 
-            if (!sectionId.startsWith("/")) {
-                sectionId = "/" + sectionId;
-            }
-            for (AdminSection section : sections) {
-                if (sectionId.equals(section.getUrl())) {
-                    returnSection = section;
-                    break;
+            if (sectionId != null) {
+                if (!sectionId.startsWith("/")) {
+                    sectionId = "/" + sectionId;
+                }
+                for (AdminSection section : sections) {
+                    if (sectionId.equals(section.getUrl())) {
+                        returnSection = section;
+                        break;
+                    }
                 }
             }
 
@@ -130,7 +132,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         return null;
     }
     
-    protected List<AdminSection> readAdminSectionForClassName(String className) {
+    public List<AdminSection> readAdminSectionForClassName(String className) {
         TypedQuery<AdminSection> q = em.createQuery(
             "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
         q.setParameter("className", className);

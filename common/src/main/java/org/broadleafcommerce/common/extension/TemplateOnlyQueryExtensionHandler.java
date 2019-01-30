@@ -109,11 +109,13 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
      * site. As a result, we filter here and check the translations based on catalog visibility (Translations are dual
      * discriminated). This is primarily to handle edge cases and will generally have no impact on the results.
      *
+     * @deprecated It's difficult to determine this efficiently at runtime. The current implementation will no longer check the use case described above.
      * @param type
      * @param testObject
      * @param results
      * @return
      */
+    @Deprecated
     ExtensionResultStatusType filterResults(Class<?> type, Object testObject, List results);
 
 }

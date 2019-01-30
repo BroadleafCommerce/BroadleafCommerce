@@ -17,44 +17,29 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.util.NamedList;
-import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.xml.sax.SAXException;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
-
-import javax.jms.IllegalStateException;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * <p>
@@ -300,170 +285,6 @@ public class SolrConfiguration implements InitializingBean {
     
     public boolean isSolrCloudMode() {
         return CloudSolrClient.class.isAssignableFrom(primaryServer.getClass());
-    }
-
-    /**
-     * This constructor should be used to set up embedded solr given a String to a SolrHome directory to use, or if 
-     * 'solrhome' is passed in as a parameter we will use the java temp directory to setup solr
-     *
-     * @param solrServer
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(String solrServer) throws IOException, ParserConfigurationException, SAXException, IllegalStateException {
-        // using embedded solr so we will default the core names
-        this.setPrimaryName("primary");
-        this.setReindexName("reindex");
-
-        if (Objects.equals("solrhome", solrServer)) {
-
-            final String baseTempPath = System.getProperty("java.io.tmpdir");
-
-            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-5.3.1");
-            if (System.getProperty("tmpdir.solrhome") != null) {
-                //allow for an override of tmpdir
-                tempDir = new File(System.getProperty("tmpdir.solrhome"));
-            }
-            if (!tempDir.exists()) {
-                tempDir.mkdirs();
-            }
-
-            solrServer = tempDir.getAbsolutePath();
-        }
-        setSolrHomePath(solrServer);
-
-        File solrXml = new File(new File(solrServer), "solr.xml");
-        if (!solrXml.exists()) {
-            copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
-        }
-
-        buildSolrCoreDirectories(solrServer);
-
-        LOG.debug(String.format("Using [%s] as solrhome", solrServer));
-        LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
-        
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Contents of solr.xml:");
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new FileReader(solrXml));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    LOG.trace(line);
-                }
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (Throwable e) {
-                        //do nothing
-                    }
-                }
-            }
-            LOG.trace("Done printing solr.xml");
-        }
-
-        CoreContainer coreContainer = CoreContainer.createAndLoad(solrServer, solrXml);
-        EmbeddedSolrServer primaryServer = new EmbeddedSolrServer(coreContainer, getPrimaryName());
-        EmbeddedSolrServer reindexServer = new EmbeddedSolrServer(coreContainer, getReindexName());
-
-        this.setServer(primaryServer);
-        this.setReindexServer(reindexServer);
-        //NOTE: There is no reason to set the admin server here as the we will return the primary server
-        //if the admin server is not set...
-    }
-
-    public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-        try {
-            bis = new BufferedInputStream(configIs);
-            bos = new BufferedOutputStream(new FileOutputStream(destFile, false));
-            boolean eof = false;
-            while (!eof) {
-                int temp = bis.read();
-                if (temp == -1) {
-                    eof = true;
-                } else {
-                    bos.write(temp);
-                }
-            }
-            bos.flush();
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (Throwable e) {
-                    //do nothing
-                }
-            }
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (Throwable e) {
-                    //do nothing
-                }
-            }
-        }
-    }
-
-    /**
-     * This creates the proper directories and writes the correct properties files for Solr to run in embedded mode.
-     * @param solrServer
-     * @throws IOException
-     */
-    protected void buildSolrCoreDirectories(String solrServer) throws IOException {
-        //Create a "cores" directory if it does not exist
-        File cores = new File(new File(solrServer), "cores");
-        if (!cores.exists() || !cores.isDirectory()) {
-            cores.mkdirs();
-        }
-
-        //Create a "cores/primary" if it does not exist
-        File primaryCoreDir = new File(cores, "primary");
-        if (!primaryCoreDir.exists() || !primaryCoreDir.isDirectory()) {
-            primaryCoreDir.mkdirs();
-        }
-
-        //Create a cores/primary/core.properties file, populated with "name=primary"
-        File primaryCoreFile = new File(primaryCoreDir, "core.properties");
-        if (!primaryCoreFile.exists()) {
-            FileOutputStream os = new FileOutputStream(primaryCoreFile);
-            Properties prop = new Properties();
-            prop.put("name", getPrimaryName());
-            prop.store(os, "Generated Solr core properties file");
-            IOUtils.closeQuietly(os);
-        }
-
-        //Create a "cores/primary/conf" directory if it does not exist
-        File primaryConfDir = new File(primaryCoreDir, "conf");
-        if (!primaryConfDir.exists() || !primaryConfDir.isDirectory()) {
-            primaryConfDir.mkdirs();
-        }
-
-        //Create a "cores/reindex" if it does not exist
-        File reindexCoreDir = new File(cores, "reindex");
-        if (!reindexCoreDir.exists() || !reindexCoreDir.isDirectory()) {
-            reindexCoreDir.mkdirs();
-        }
-
-        //Create a cores/reindex/core.properties file, populated with "name=reindex"
-        File reindexCoreFile = new File(reindexCoreDir, "core.properties");
-        if (!reindexCoreFile.exists()) {
-            FileOutputStream os = new FileOutputStream(reindexCoreFile);
-            Properties prop = new Properties();
-            prop.put("name", getReindexName());
-            prop.store(os, "Generated Solr core properties file");
-            IOUtils.closeQuietly(os);
-        }
-
-        //Create a "cores/reindex/conf" directory if it does not exist
-        File reindexConfDir = new File(reindexCoreDir, "conf");
-        if (!reindexConfDir.exists() || !reindexConfDir.isDirectory()) {
-            reindexConfDir.mkdirs();
-        }
     }
 
     /**

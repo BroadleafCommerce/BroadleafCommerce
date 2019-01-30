@@ -26,9 +26,9 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCFieldUtils;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.value.ValueAssignable;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
-import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 
@@ -39,19 +39,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.EntityType;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
 public class FieldManager {
-    
+
     private static final Log LOG = LogFactory.getLog(FieldManager.class);
 
     public static final String MAPFIELDSEPARATOR = "---";
@@ -59,10 +62,18 @@ public class FieldManager {
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
+    protected Set<Class> managedEntityClasses = new HashSet<>();
+    protected BLCFieldUtils fieldUtils;
 
     public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
         this.entityConfiguration = entityConfiguration;
         this.entityManager = entityManager;
+        if (entityManager != null) {
+            Set<EntityType<?>> managedEntities = entityManager.getMetamodel().getEntities();
+            for (EntityType managedEntity : managedEntities) {
+                managedEntityClasses.add(managedEntity.getJavaType());
+            }
+        }
     }
 
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
@@ -70,13 +81,16 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        PersistenceManager persistenceManager = getPersistenceManager();
-        SessionFactory sessionFactory = persistenceManager.getDynamicEntityDao().getDynamicDaoHelper().
-                getSessionFactory((HibernateEntityManager) persistenceManager.getDynamicEntityDao().getStandardEntityManager());
-        BLCFieldUtils fieldUtils = new BLCFieldUtils(sessionFactory, true, persistenceManager.getDynamicEntityDao().useCache(),
-                persistenceManager.getDynamicEntityDao().getEjb3ConfigurationDao(), entityConfiguration,
-                persistenceManager.getDynamicEntityDao().getDynamicDaoHelper());
-        return fieldUtils.getField(clazz, fieldName);
+        DynamicEntityDao dynamicEntityDao = getPersistenceManager(clazz).getDynamicEntityDao();
+        SessionFactory sessionFactory = dynamicEntityDao.getDynamicDaoHelper().
+                getSessionFactory((HibernateEntityManager) dynamicEntityDao.getStandardEntityManager());
+        if(fieldUtils==null) {
+            fieldUtils = new BLCFieldUtils(sessionFactory, true, dynamicEntityDao.useCache(),
+                    dynamicEntityDao.getEjb3ConfigurationDao(), entityConfiguration,
+                    dynamicEntityDao.getDynamicDaoHelper());
+        }
+        Field fld = fieldUtils.getField(clazz, fieldName);
+        return fld;
     }
 
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
@@ -126,7 +140,7 @@ public class FieldManager {
         Field field;
         bean = HibernateUtils.deproxy(bean);
         Object value = bean;
-        
+
         int count = tokens.countTokens();
         int j=0;
         StringBuilder sb = new StringBuilder();
@@ -168,7 +182,7 @@ public class FieldManager {
                         value = newEntity;
                     } catch (Exception e) {
                         //Use the most extended type based on the field type
-                        PersistenceManager persistenceManager = getPersistenceManager();
+                        PersistenceManager persistenceManager = getPersistenceManager(field.getType());
                         Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
                             Object newEntity = entities[entities.length-1].newInstance();
@@ -194,7 +208,7 @@ public class FieldManager {
             sb.append(".");
             j++;
         }
-        
+
         return value;
 
     }
@@ -207,7 +221,7 @@ public class FieldManager {
             response = entityConfiguration.lookupEntityClass(field.getType().getName());
         } catch (Exception e) {
             //Use the most extended type based on the field type
-            PersistenceManager persistenceManager = getPersistenceManager();
+            PersistenceManager persistenceManager = getPersistenceManager(field.getType());
             Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
             if (!ArrayUtils.isEmpty(entities)) {
                 response = entities[entities.length-1];
@@ -222,17 +236,18 @@ public class FieldManager {
         }
         return response;
     }
-    
+
     public Map<String, Serializable> persistMiddleEntities() throws InstantiationException, IllegalAccessException {
-        Map<String, Serializable> persistedEntities = new HashMap<String, Serializable>();
-        
+        Map<String, Serializable> persistedEntities = new HashMap<>();
+
         Collections.sort(middleFields);
-        for (SortableValue val : middleFields) {
+        
+        for (SortableValue val : middleFields.toArray(new SortableValue[0])) {
             Serializable s = entityManager.merge(val.entity);
             persistedEntities.put(val.getContainingPropertyName(), s);
             setFieldValue(val.getBean(), val.getContainingPropertyName(), s);
         }
-        
+
         return persistedEntities;
     }
 
@@ -240,14 +255,23 @@ public class FieldManager {
         return entityConfiguration;
     }
 
-    protected PersistenceManager getPersistenceManager() {
-        PersistenceManager persistenceManager;
-        try {
-            persistenceManager = PersistenceManagerFactory.getPersistenceManager();
-        } catch (IllegalStateException e) {
-            persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
+    protected PersistenceManager getPersistenceManager(Class entityClass) {
+        if (!isPersistentClass(entityClass)) {
+            return PersistenceManagerFactory.getDefaultPersistenceManager();
         }
-        return persistenceManager;
+
+        try {
+            return PersistenceManagerFactory.getPersistenceManager();
+        } catch (RuntimeException e) {
+            return PersistenceManagerFactory.getDefaultPersistenceManager();
+        }
+    }
+
+    protected boolean isPersistentClass(Class entityClass) {
+        if (entityManager != null) {
+            return managedEntityClasses.contains(entityClass);
+        }
+        return false;
     }
 
     protected Object handleMapFieldExtraction(Object bean, String fieldName, Class<?> componentClass, Object value,
@@ -346,15 +370,19 @@ public class FieldManager {
             map.put(mapKey, newValue);
         }
     }
-    
+
+    public void clearMiddleFields() {
+        middleFields.clear();
+    }
+
     private class SortableValue implements Comparable<SortableValue> {
-        
+
         private Integer pos;
         private Serializable entity;
         private Class<?> entityClass;
         private String containingPropertyName;
         private Object bean;
-        
+
         public SortableValue(Object bean, Serializable entity, Integer pos, String containingPropertyName) {
             this.bean = bean;
             this.entity = entity;
@@ -367,7 +395,7 @@ public class FieldManager {
         public int compareTo(SortableValue o) {
             return pos.compareTo(o.pos) * -1;
         }
-        
+
         public String getContainingPropertyName() {
             return containingPropertyName;
         }
@@ -415,5 +443,5 @@ public class FieldManager {
         }
 
     }
-    
+
 }

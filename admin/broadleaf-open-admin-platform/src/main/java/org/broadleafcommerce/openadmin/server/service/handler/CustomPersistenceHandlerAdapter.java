@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service.handler;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -181,5 +182,17 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
             }
         }
         return false;
+    }
+
+    protected boolean isBasicOperation(PersistencePackage pkg) {
+        return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.BASIC);
+    }
+
+    protected boolean isMapOperation(PersistencePackage pkg) {
+        return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.MAP);
+    }
+
+    protected boolean isAdornedListOperation(PersistencePackage pkg) {
+        return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.ADORNEDTARGETLIST);
     }
 }

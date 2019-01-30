@@ -86,4 +86,10 @@ public abstract class AbstractFieldPersistenceProvider implements FieldPersisten
     public boolean alwaysRun() {
         return false;
     }
+
+    @Override
+    public boolean canHandlePopulateNull() {
+        return false;
+    }
+
 }

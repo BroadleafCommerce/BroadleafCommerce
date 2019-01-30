@@ -23,9 +23,14 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -33,14 +38,19 @@ import javax.annotation.Resource;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
+@Component("blDecrementInventoryActivity")
 public class DecrementInventoryActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
+    public static final int ORDER = 6000;
+    
     @Resource(name = "blInventoryService")
     protected ContextualInventoryService inventoryService;
     
-    public DecrementInventoryActivity() {
+    @Autowired
+    public DecrementInventoryActivity(@Qualifier("blDecrementInventoryRollbackHandler") DecrementInventoryRollbackHandler rollbackHandler) {
         super();
         super.setAutomaticallyRegisterRollbackHandler(false);
+        setOrder(ORDER);
     }
 
     @Override
@@ -51,7 +61,7 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
         //map to hold skus and quantity purchased
         Map<Sku, Integer> skuInventoryMap = inventoryService.buildSkuInventoryMap(seed.getOrder());
 
-        Map<String, Object> rollbackState = new HashMap<String, Object>();
+        Map<String, Object> rollbackState = new HashMap<>();
         if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {
             if (getStateConfiguration() != null && !getStateConfiguration().isEmpty()) {
                 rollbackState.putAll(getStateConfiguration());
@@ -62,7 +72,7 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
         }
             
         if (!skuInventoryMap.isEmpty()) {
-            Map<String, Object> contextualInfo = new HashMap<String, Object>();
+            Map<String, Object> contextualInfo = new HashMap<>();
             contextualInfo.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
             contextualInfo.put(ContextualInventoryService.ROLLBACK_STATE_KEY, new HashMap<String, Object>());
             inventoryService.decrementInventory(skuInventoryMap, contextualInfo);

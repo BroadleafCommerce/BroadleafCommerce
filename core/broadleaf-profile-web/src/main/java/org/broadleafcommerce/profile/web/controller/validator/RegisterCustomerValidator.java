@@ -35,7 +35,7 @@ import javax.annotation.Resource;
 @Component("blRegisterCustomerValidator")
 public class RegisterCustomerValidator implements Validator {
 
-    private String validatePasswordExpression = "[0-9A-Za-z]{4,15}";
+    private String validatePasswordExpression = "[^\\s]{6,}";
 
     @Resource(name="blCustomerService")
     private CustomerService customerService;
@@ -50,39 +50,6 @@ public class RegisterCustomerValidator implements Validator {
     public void validate(Object obj, Errors errors) {
         validate(obj, errors, false);
     }
-    
-    /*
-     *         errors.pushNestedPath("customer");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "firstName.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "lastName.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
-        errors.popNestedPath();
-
-        if (errors.hasErrors()){
-            if (!passwordConfirm.equals(password)) {
-                errors.rejectValue("passwordConfirm", "invalid"); 
-            }
-            if (!customer.getFirstName().matches(validNameRegex)) {
-                errors.rejectValue("firstName", "firstName.invalid", null, null);
-            }
-
-            if (!customer.getLastName().matches(validNameRegex)) {
-                errors.rejectValue("lastName", "lastName.invalid", null, null);
-            }
-
-            if (!customer.getPassword().matches(validPasswordRegex)) {
-                errors.rejectValue("password", "password.invalid", null, null);
-            }
-
-            if (!password.equals(passwordConfirm)) {
-                errors.rejectValue("password", "passwordConfirm.invalid", null, null);
-            }
-
-            if (!GenericValidator.isEmail(customer.getEmailAddress())) {
-                errors.rejectValue("emailAddress", "emailAddress.invalid", null, null);
-            }
-        }
-     */
 
     public void validate(Object obj, Errors errors, boolean useEmailForUsername) {
         RegisterCustomerForm form = (RegisterCustomerForm) obj;

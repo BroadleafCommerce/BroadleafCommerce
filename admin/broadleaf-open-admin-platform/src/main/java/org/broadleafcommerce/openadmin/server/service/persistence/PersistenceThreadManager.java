@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import org.broadleafcommerce.common.persistence.TargetModeType;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,6 +30,16 @@ public class PersistenceThreadManager {
     public <T, G extends Throwable> T operation(TargetModeType targetModeType, Persistable<T, G> persistable) throws G {
         try {
             PersistenceManagerFactory.startPersistenceManager(targetModeType);
+            return persistable.execute();
+        } finally {
+            PersistenceManagerFactory.endPersistenceManager();
+        }
+    }
+
+    public <T, G extends Throwable> T operation(TargetModeType targetModeType, PersistencePackage pkg, Persistable<T, G> persistable) throws G {
+        try {
+            String pkgEntityClassName = pkg.getCeilingEntityFullyQualifiedClassname();
+            PersistenceManagerFactory.startPersistenceManager(pkgEntityClassName, targetModeType);
             return persistable.execute();
         } finally {
             PersistenceManagerFactory.endPersistenceManager();

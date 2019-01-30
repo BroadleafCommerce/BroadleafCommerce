@@ -51,11 +51,15 @@ public interface StreamingTransactionCapable {
      * @param <G>
      * @throws G
      */
-    <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
+    <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation
                                                                           streamOperation, Class<G> exceptionType) throws G;
 
-    <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
-                                                                          streamOperation, Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G;
+    <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
+                Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G;
+
+    <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation streamOperation,
+                                                                  Class<G> exceptionType, int transactionBehavior,
+                                                                  int isolationLevel) throws G;
 
     /**
      * Run an operation inside of a single transaction. This is not a streaming use case and represents a basic operation
@@ -67,11 +71,11 @@ public interface StreamingTransactionCapable {
      * @throws G
      */
     <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                         Class<G> exceptionType) throws G;
+                                                                    Class<G> exceptionType) throws G;
 
     <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                         Class<G> exceptionType, int transactionBehavior, int
-            isolationLevel) throws G;
+                                                                    Class<G> exceptionType, int transactionBehavior,
+                                                                    int isolationLevel) throws G;
 
     /**
      * Run an operation inside of a single transaction. This is not a streaming use case and represents a basic operation
@@ -86,12 +90,16 @@ public interface StreamingTransactionCapable {
      * @throws G
      */
     <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                                 Class<G> exceptionType, boolean useTransaction)
-            throws G;
+                                                                 Class<G> exceptionType, boolean useTransaction) throws G;
 
     <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
                                                                  Class<G> exceptionType, boolean useTransaction,
                                                                  int transactionBehavior, int isolationLevel) throws G;
+
+    <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
+                                                                Class<G> exceptionType, boolean useTransaction,
+                                                                int transactionBehavior, int isolationLevel,
+                                                                boolean readOnly, PlatformTransactionManager transactionManager) throws G;
 
     PlatformTransactionManager getTransactionManager();
 

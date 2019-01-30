@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -63,6 +64,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -204,6 +206,25 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                            "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
                                            "filter query limitation.", joined));
                 }
+                cto.getNonCountAdditionalFilterMappings().add(
+                        new FilterMapping().withFieldPath(new FieldPath().
+                                withAssociationPath(Arrays.asList("allParentCategoryXrefs","category")).
+                                withTargetPropertyPieces(Arrays.asList("name")))
+                                .withDirectFilterValues(new EmptyFilterValues())
+                                .withRestriction(new Restriction()
+                                        .withPredicateProvider(new PredicateProvider() {
+                                            @Override
+                                            public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                            FieldPathBuilder fieldPathBuilder, From root,
+                                                                            String ceilingEntity,
+                                                                            String fullPropertyName, Path explicitPath,
+                                                                            List directValues) {
+                                                //expect it to be allParentCategoryXrefs.category.name, so we need to restrict on allParentCategoryXrefs - 2 levels up
+                                                Predicate equal = builder.equal(explicitPath.getParentPath().getParentPath().get("defaultReference"), Boolean.TRUE);
+                                                return equal;
+                                            }
+                                        })
+                                ).withSortDirection(fsc.getSortDirection()));
             }
         }
 
@@ -300,6 +321,12 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
 
             CategoryProductXref oldDefault = getCurrentDefaultXref(adminInstance);
+            //Fix for QA#2963 - during deployment sanboxed (not deployed) version of category will not be fetched from db
+            //and it will cause validation error, we should allow deployemnt of product with category in sandbox state
+            //so override required flag for that field during deployment
+            if(BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()){
+                ((BasicFieldMetadata)adminProperties.get("defaultCategory")).setRequiredOverride(false);
+            }
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
             boolean handled = false;

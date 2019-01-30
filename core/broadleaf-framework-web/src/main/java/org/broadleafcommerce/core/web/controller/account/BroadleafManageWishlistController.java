@@ -20,8 +20,10 @@ package org.broadleafcommerce.core.web.controller.account;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.AddToCartItem;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
@@ -62,6 +64,17 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     public String viewWishlist(HttpServletRequest request, HttpServletResponse response, Model model,
             String wishlistName) {
         Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        model.addAttribute("wishlist", wishlist);
+        return getAccountWishlistView();
+    }
+
+    public String updateQuantityInWishlist(HttpServletRequest request, HttpServletResponse response, Model model, String wishlistName,
+                                 OrderItemRequestDTO itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
+        Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+
+        wishlist = orderService.updateItemQuantity(wishlist.getId(), itemRequest, true);
+        wishlist = orderService.save(wishlist, false);
+
         model.addAttribute("wishlist", wishlist);
         return getAccountWishlistView();
     }

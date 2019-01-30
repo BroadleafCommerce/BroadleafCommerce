@@ -36,8 +36,6 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -53,8 +51,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
-import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -71,13 +67,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -294,9 +290,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Embedded
     protected Weight weight = new Weight();
 
-    @Transient
-    protected DynamicSkuPrices dynamicPrices = null;
-
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable",
         group = GroupName.ShippingOther, order = FieldOrder.IS_MACHINE_SORTABLE,
@@ -469,7 +462,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     protected boolean hasDefaultSku() {
-        return (product != null && product.getDefaultSku() != null && !getId().equals(product.getDefaultSku().getId()));
+        return (product != null && product.getDefaultSku() != null && getId() != null && !getId().equals(product.getDefaultSku().getId()));
     }
 
     protected Sku lookupDefaultSku() {
@@ -504,16 +497,12 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the sale price from there
-            if (dynamicPrices == null) {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
-
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-            }
-            
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getSalePrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
+            if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
+                return returnPrice;
+            }
         } else if (salePrice != null) {
             // We have an explicitly set sale price directly on this entity. We will not apply any adjustments
             returnPrice = new Money(salePrice, getCurrency());
@@ -560,16 +549,12 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the retail price from there
-            if (dynamicPrices == null) {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
-
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-            }
-            
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
+            if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
+                return returnPrice;
+            }
         } else if (retailPrice != null) {
             returnPrice = new Money(retailPrice, getCurrency());
         }
@@ -588,15 +573,35 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
+    public Money getBaseRetailPrice() {
+        Money returnPrice = null;
+        if (retailPrice != null) {
+            returnPrice = new Money(retailPrice, getCurrency());
+        }
+        if (returnPrice == null && hasDefaultSku()) {
+            Sku defaultSku = lookupDefaultSku();
+            returnPrice = defaultSku.getBaseRetailPrice();
+        }
+        return returnPrice;
+    }
+
+    @Override
+    public Money getBaseSalePrice() {
+        Money returnPrice = null;
+        if (salePrice != null) {
+            returnPrice = new Money(salePrice, getCurrency());
+        }
+        if (returnPrice == null && hasDefaultSku()) {
+            Sku defaultSku = lookupDefaultSku();
+            returnPrice = defaultSku.getBaseSalePrice();
+        }
+        return returnPrice;
+    }
+
+    @Override
     public DynamicSkuPrices getPriceData() {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            if (dynamicPrices == null) {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
-
-                SkuPriceWrapper wrapper = new SkuPriceWrapper(proxy);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-            }
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             return dynamicPrices;
         } else {
             DynamicSkuPrices dsp = new DynamicSkuPrices();
@@ -893,6 +898,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
                 LOG.debug("sku, " + id + ", inactive due to date");
             }
         }
+
+        if (!(getProduct() == null) && !getProduct().isActive()) {
+            return false;
+        }
+
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
@@ -1139,8 +1149,9 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
-    public Map<String, SkuAttribute> getMultiValueSkuAttributes() {
-        Map<String, SkuAttribute> multiValueMap = new MultiValueMap();
+    @SuppressWarnings("unchecked")
+    public Map<String, Collection<SkuAttribute>> getMultiValueSkuAttributes() {
+        MultiValueMap multiValueMap = new MultiValueMap();
 
         for (SkuAttribute skuAttribute : skuAttributes) {
             multiValueMap.put(skuAttribute.getName(), skuAttribute);
@@ -1176,7 +1187,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Override
     public void clearDynamicPrices() {
-        this.dynamicPrices = null;
+        SkuPricingConsiderationContext.removeFromThreadCache(getId());
     }
 
     @Override

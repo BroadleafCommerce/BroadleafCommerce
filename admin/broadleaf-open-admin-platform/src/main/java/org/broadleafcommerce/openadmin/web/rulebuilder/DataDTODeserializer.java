@@ -79,6 +79,30 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
                     dataDTO.setPk(element.getValue().asLong());
                 }
             }
+            if ("previousPk".equals(name)) {
+                if (getNullAwareText(element.getValue()) == null ||
+                        StringUtils.isBlank(element.getValue().asText())) {
+                    dataDTO.setPreviousPk(null);
+                } else {
+                    dataDTO.setPreviousPk(element.getValue().asLong());
+                }
+            }
+            if ("containedPk".equals(name)) {
+                if (getNullAwareText(element.getValue()) == null ||
+                        StringUtils.isBlank(element.getValue().asText())) {
+                    dataDTO.setContainedPk(null);
+                } else {
+                    dataDTO.setContainedPk(element.getValue().asLong());
+                }
+            }
+            if ("previousContainedPk".equals(name)) {
+                if (getNullAwareText(element.getValue()) == null ||
+                        StringUtils.isBlank(element.getValue().asText())) {
+                    dataDTO.setPreviousContainedPk(null);
+                } else {
+                    dataDTO.setPreviousContainedPk(element.getValue().asLong());
+                }
+            }
             if ("quantity".equals(name)) {
                 if (getNullAwareText(element.getValue()) == null) {
                     dataDTO.setQuantity(null);

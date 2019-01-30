@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,8 +29,11 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.ValidationUtil;
+import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -81,14 +85,14 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     @Resource(name="blDynamicEntityDao")
     protected DynamicEntityDao dynamicEntityDao;
 
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
+
     @Resource(name="blCustomPersistenceHandlers")
-    protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
+    protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<>();
 
     @Resource(name="blCustomPersistenceHandlerFilters")
-    protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
-
-    @Resource(name="blTargetEntityManagers")
-    protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
+    protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<>();
 
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
@@ -116,6 +120,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 return Integer.valueOf(o1.getOrder()).compareTo(Integer.valueOf(o2.getOrder()));
             }
         });
+        honorExplicitPersistenceHandlerSorting();
+
     }
 
     @Override
@@ -150,7 +156,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     public Property[] processMergedProperties(Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
-        List<Property> propertiesList = new ArrayList<Property>();
+        List<Property> propertiesList = new ArrayList<>();
         for (PersistenceModule module : modules) {
             module.extractProperties(entities, mergedProperties, propertiesList);
         }
@@ -234,7 +240,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
         adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.INSPECT);
         Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
-        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
         for (PersistenceModule module : modules) {
             module.updateMergedProperties(persistencePackage, allMergedProperties);
         }
@@ -460,7 +466,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             String idProperty = (String) idMetadata.get("name");
             String idVal = response.findProperty(idProperty).getValue();
 
-            Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+            Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
             for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
                 Entity subResponse;
                 try {
@@ -575,6 +581,23 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
+        for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+            for (Map.Entry<ChangeType, List<PersistencePackage>> entry : subPackage.getValue().getDeferredOperations().entrySet()) {
+                for (PersistencePackage change : entry.getValue()) {
+                    switch (entry.getKey()) {
+                        case UPDATE:
+                            update(change);
+                            break;
+                        case ADD:
+                            add(change);
+                            break;
+                        case DELETE:
+                            remove(change);
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -620,15 +643,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         } catch (ValidationException e) {
             response = e.getEntity();
+            LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
         } catch (ServiceException e) {
             if (e.getCause() instanceof ValidationException) {
                 response = ((ValidationException) e.getCause()).getEntity();
+                LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
             } else {
                 throw e;
             }
         }
 
-        Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+        Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
         for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
             try {
                 //Run through any subPackages -- add up any validation errors
@@ -780,6 +805,40 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
+    public void configureDynamicEntityDao(Class entityClass, TargetModeType targetModeType) {
+        EntityManager entityManager = getEntityManager(entityClass, targetModeType);
+        dynamicEntityDao.setStandardEntityManager(entityManager);
+
+        EJB3ConfigurationDao ejb3ConfigurationDao = getEJB3ConfigurationDao(entityClass);
+        dynamicEntityDao.setEjb3ConfigurationDao(ejb3ConfigurationDao);
+    }
+
+    protected EntityManager getEntityManager(Class entityClass, TargetModeType targetModeType) {
+        return persistenceService.identifyEntityManager(entityClass, targetModeType);
+    }
+
+    protected EJB3ConfigurationDao getEJB3ConfigurationDao(Class entityClass) {
+        return persistenceService.identifyEJB3ConfigurationDao(entityClass);
+    }
+
+    @Override
+    public void configureDefaultDynamicEntityDao(TargetModeType targetModeType) {
+        EntityManager entityManager = getDefaultEntityManager(targetModeType);
+        dynamicEntityDao.setStandardEntityManager(entityManager);
+
+        EJB3ConfigurationDao ejb3ConfigurationDao = getDefaultEJB3ConfigurationDao(targetModeType);
+        dynamicEntityDao.setEjb3ConfigurationDao(ejb3ConfigurationDao);
+    }
+
+    protected EntityManager getDefaultEntityManager(TargetModeType targetModeType) {
+        return persistenceService.identifyDefaultEntityManager(targetModeType);
+    }
+
+    protected EJB3ConfigurationDao getDefaultEJB3ConfigurationDao(TargetModeType targetModeType) {
+        return persistenceService.identifyDefaultEJB3ConfigurationDao(targetModeType);
+    }
+
+    @Override
     public DynamicEntityDao getDynamicEntityDao() {
         return dynamicEntityDao;
     }
@@ -790,34 +849,18 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
-    public Map<String, String> getTargetEntityManagers() {
-        return targetEntityManagers;
-    }
-
-    @Override
-    public void setTargetEntityManagers(Map<String, String> targetEntityManagers) {
-        this.targetEntityManagers = targetEntityManagers;
-    }
-
-    @Override
     public TargetModeType getTargetMode() {
         return targetMode;
     }
 
     @Override
     public void setTargetMode(TargetModeType targetMode) {
-        String targetManagerRef = targetEntityManagers.get(targetMode.getType());
-        EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
-        if (targetManager == null) {
-            throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
-        }
-        dynamicEntityDao.setStandardEntityManager(targetManager);
         this.targetMode = targetMode;
     }
 
     @Override
     public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
-        List<CustomPersistenceHandler> cloned = new ArrayList<CustomPersistenceHandler>();
+        List<CustomPersistenceHandler> cloned = new ArrayList<>();
         cloned.addAll(customPersistenceHandlers);
         if (getCustomPersistenceHandlerFilters() != null) {
             for (CustomPersistenceHandlerFilter filter : getCustomPersistenceHandlerFilters()) {
@@ -875,5 +918,51 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     public void setModules(PersistenceModule[] modules) {
         this.modules = modules;
+    }
+
+    /**
+     * Honor ordering for those CPH instances that have explicitly declared a order other than the default order
+     * This achieves several goals:
+     * 1. We leave the general CPH population in its established order, which is the best for backwards compatibility
+     * 2. Those items that are intended to get explicit ordering still achieve their goal
+     */
+    protected void honorExplicitPersistenceHandlerSorting() {
+        List<CustomPersistenceHandler> exceptions = new ArrayList<>(customPersistenceHandlers.size());
+        List<CustomPersistenceHandler> sorted = new ArrayList<>(customPersistenceHandlers.size());
+        for (CustomPersistenceHandler handler : customPersistenceHandlers) {
+            if (CustomPersistenceHandler.DEFAULT_ORDER == handler.getOrder()) {
+                sorted.add(handler);
+            } else {
+                exceptions.add(handler);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptions)) {
+            Integer position = 0;
+            Map<Integer, List<CustomPersistenceHandler>> positions = new HashMap<>();
+            for (CustomPersistenceHandler handler : sorted) {
+                if (CollectionUtils.isEmpty(exceptions)) {
+                    break;
+                }
+                Iterator<CustomPersistenceHandler> itr = exceptions.iterator();
+                while (itr.hasNext()) {
+                    CustomPersistenceHandler exception = itr.next();
+                    if (exception.getOrder() <= handler.getOrder()) {
+                        List<CustomPersistenceHandler> items = positions.get(position);
+                        if (items == null) {
+                            items = new ArrayList<>();
+                            positions.put(position, items);
+                        }
+                        items.add(exception);
+                        itr.remove();
+                    }
+                }
+            }
+            for (Map.Entry<Integer, List<CustomPersistenceHandler>> entry : positions.entrySet()) {
+                for (CustomPersistenceHandler handler : entry.getValue()) {
+                    sorted.add(entry.getKey(), handler);
+                }
+            }
+            customPersistenceHandlers = sorted;
+        }
     }
 }

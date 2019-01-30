@@ -18,7 +18,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -46,8 +46,6 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
-import org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessageType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -93,6 +91,7 @@ import javax.persistence.Transient;
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {
 
+    public static final String EXCLUDE_OFFERCODE_COPY_HINT = "exclude-offerCodes";
     public static final long serialVersionUID = 1L;
 
     @Id
@@ -121,7 +120,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Name",
         group = GroupName.Description, order = FieldOrder.Name,
-        prominent = true, gridOrder = 1,
+        prominent = true, gridOrder = 1, translatable = true,
         defaultValue = "New Offer")
     protected String name;
 
@@ -805,9 +804,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         cloned.setRequiresRelatedTargetAndQualifiers(requiresRelatedTargetAndQualifiers);
         cloned.setTotalitarianOffer(totalitarianOffer);
         cloned.setType(getType());
-        for(OfferCode entry : offerCodes){
-            OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getOfferCodes().add(clonedEntry);
+        if (!BooleanUtils.toBoolean(context.getCopyHints().get(EXCLUDE_OFFERCODE_COPY_HINT))) {
+            for (OfferCode entry : offerCodes) {
+                OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+                cloned.getOfferCodes().add(clonedEntry);
+            }
         }
         for(OfferQualifyingCriteriaXref entry : qualifyingItemCriteria){
             OfferQualifyingCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();

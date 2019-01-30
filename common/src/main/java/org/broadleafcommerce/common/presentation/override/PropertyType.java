@@ -51,6 +51,9 @@ public class PropertyType {
         public static final String BROADLEAFENUMERATION = "broadleafEnumeration";
         public static final String HIDEENUMERATIONIFEMPTY = "hideEnumerationIfEmpty";
         public static final String FIELDCOMPONENTRENDERER = "fieldComponentRenderer";
+        public static final String FIELDCOMPONENTRENDERERTEMPLATE = "fieldComponentRendererTemplate";
+        public static final String GRIDFIELDCOMPONENTRENDERER = "gridFieldComponentRenderer";
+        public static final String GRIDFIELDCOMPONENTRENDERERTEMPLATE = "gridFieldComponentRendererTemplate";
         public static final String REQUIREDOVERRIDE = "requiredOverride";
         public static final String EXCLUDED = "excluded";
         public static final String TOOLTIP = "tooltip";
@@ -66,6 +69,7 @@ public class PropertyType {
         public static final String GROUP = "group";
         public static final String TAB = "tab";
         public static final String CANLINKTOEXTERNALENTITY = "canLinkToExternalEntity";
+        public static final String TRANSLATABLE = "translatable";
         public static final String ASSOCIATEDFIELDNAME = "associatedFieldName";
 
         @Deprecated

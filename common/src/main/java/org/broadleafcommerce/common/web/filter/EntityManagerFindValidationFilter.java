@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.web.filter;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafRequestFilter;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.2
  * @see BroadleafRequestContext#setInternalIgnoreFilters(Boolean)
  */
+@Order(FilterOrdered.POST_SECURITY_MEDIUM)
 public class EntityManagerFindValidationFilter extends OncePerRequestFilter {
 
     @Override

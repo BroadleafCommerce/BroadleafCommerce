@@ -61,7 +61,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
@@ -72,7 +72,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-public class CheckoutTest extends BaseTest {
+public class CheckoutTest extends TestNGSiteIntegrationSetup {
     
     @Resource(name="blCheckoutService")
     private CheckoutService checkoutService;
@@ -251,7 +251,7 @@ public class CheckoutTest extends BaseTest {
 
         item = (DiscreteOrderItem) orderItemService.saveOrderItem(item);
 
-        List<OrderItem> items = new ArrayList<OrderItem>();
+        List<OrderItem> items = new ArrayList<>();
         items.add(item);
         order.setOrderItems(items);
 
@@ -268,7 +268,7 @@ public class CheckoutTest extends BaseTest {
         group.setIsShippingPriceTaxable(true);
         group.setOrder(order);
         group.setAddress(address);
-        List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        List<FulfillmentGroup> groups = new ArrayList<>();
         groups.add(group);
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);

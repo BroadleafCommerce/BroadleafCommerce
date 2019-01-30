@@ -1,0 +1,95 @@
+<!--
+  #%L
+  BroadleafCommerce Common Libraries
+  %%
+  Copyright (C) 2009 - 2016 Broadleaf Commerce
+  %%
+  Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+  (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+  unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+  the Broadleaf End User License Agreement (EULA), Version 1.1
+  (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+  shall apply.
+  
+  Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+  between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+  #L%
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd"
+    profile="!mbeansdisabled">
+
+
+    <!-- NOTE -->
+    <!-- All of the below mbeans and JMX support can be disabled by activating the spring profile "mbeansdisabled" -->
+    <!-- This is especially useful for tests -->
+    <!-- NOTE -->
+
+    <bean id="exporter" primary="true" class="org.springframework.jmx.export.MBeanExporter" depends-on="entityManagerFactory">
+        <property name="autodetect" value="true"/>
+        <property name="assembler" ref="blAssembler"/>
+        <property name="namingStrategy" ref="blNamingStrategy"/>
+        <property name="registrationPolicy" value="IGNORE_EXISTING" />
+        <property name="beans">
+            <map>
+                <entry>
+                    <key>
+                        <bean class="org.broadleafcommerce.common.jmx.ExplicitNameFactoryBean">
+                            <constructor-arg value="org.broadleafcommerce:name=hibernate.statistics"/>
+                            <constructor-arg ref="blJmxNamingBean"/>
+                        </bean>
+                    </key>
+                    <bean class="org.hibernate.jmx.StatisticsService">
+                        <property name="statisticsEnabled" value="false" />
+                        <property name="sessionFactory">
+                            <util:property-path path="entityManagerFactory.sessionFactory" />
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="blJmxNamingBean" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/appName</value>
+        </property>
+        <property name="defaultObject" value="broadleaf"/>
+    </bean>
+    
+    <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
+        <constructor-arg ref="blJmxNamingBean"/>
+    </bean>
+    
+    <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
+        <property name="attributeSource" ref="blAttributeSource"/>
+    </bean>
+    
+    <bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">
+        <property name="attributeSource" ref="blAttributeSource"/>
+    </bean>
+    <bean id="blAutoDDLStatusTestBean" class="org.broadleafcommerce.common.extensibility.jpa.AutoDDLCreateStatusTestBeanImpl"/>
+    
+    <bean id="blAutoDDLStatusExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+        <property name="beans">
+            <map>
+                <entry key="bean:name=autoDDLCreateStatusTestBean" value-ref="blAutoDDLStatusTestBean"/>
+            </map>
+        </property>
+        <property name="registrationPolicy" value="IGNORE_EXISTING"/>
+    </bean>
+    
+    <bean id="blStatisticsService" class="org.broadleafcommerce.common.cache.StatisticsServiceImpl">
+        <property name="appName" ref="blJmxNamingBean"/>
+        <property name="adapter" ref="blStatisticsServiceLogAdapter"/>
+    </bean>
+
+</beans>

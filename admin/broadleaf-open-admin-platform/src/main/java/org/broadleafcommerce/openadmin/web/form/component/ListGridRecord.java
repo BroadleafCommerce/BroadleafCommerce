@@ -129,13 +129,7 @@ public class ListGridRecord {
      */
     public Field getField(String fieldName) {
         if (fieldMap == null) {
-            fieldMap = new LinkedHashMap<String, Field>();
-            for (Field field : fields) {
-                fieldMap.put(field.getName(), field);
-            }
-            for (Field hiddenField : hiddenFields) {
-                fieldMap.put(hiddenField.getName(), hiddenField);
-            }
+            populateFieldMap();
         }
         Field field = fieldMap.get(fieldName);
         
@@ -147,7 +141,24 @@ public class ListGridRecord {
         
         return field;
     }
-    
+
+    public boolean hasField(String fieldName) {
+        if (fieldMap == null) {
+            populateFieldMap();
+        }
+        return fieldMap.containsKey(fieldName);
+    }
+
+    protected void populateFieldMap() {
+        fieldMap = new LinkedHashMap<String, Field>();
+        for (Field field : fields) {
+            fieldMap.put(field.getName(), field);
+        }
+        for (Field hiddenField : hiddenFields) {
+            fieldMap.put(hiddenField.getName(), hiddenField);
+        }
+    }
+
     public void clearFieldMap() {
         fieldMap = null;
     }

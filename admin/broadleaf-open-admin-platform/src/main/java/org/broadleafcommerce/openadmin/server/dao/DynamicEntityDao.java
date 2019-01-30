@@ -55,6 +55,10 @@ public interface DynamicEntityDao {
 
     Class<?>[] getUpDownInheritance(Class<?> testClass);
 
+    Class<?> getImplClass(String className);
+
+    Class<?> getCeilingImplClass(String className);
+
     ClassTree getClassTreeFromCeiling(Class<?> ceilingClass);
 
     ClassTree getClassTree(Class<?>[] polymorphicClasses);
@@ -132,7 +136,27 @@ public interface DynamicEntityDao {
 
     EJB3ConfigurationDao getEjb3ConfigurationDao();
 
+    void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao);
+
     DynamicDaoHelper getDynamicDaoHelper();
 
     Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] clazz, ClassMetadata cmd);
+
+    /**
+     * Returns a list of ids for entities that share the property value of the entity passed in
+     *
+     * @param instance
+     * @param propertyName
+     * @param value
+     * @return
+     */
+    List<Long> readOtherEntitiesWithPropertyValue(Serializable instance, String propertyName, String value);
+
+    /**
+     * Retrieve the identifier from the Hibernate entity (the entity must reside in the current session)
+     *
+     * @param entity
+     * @return
+     */
+    Serializable getIdentifier(Object entity);
 }

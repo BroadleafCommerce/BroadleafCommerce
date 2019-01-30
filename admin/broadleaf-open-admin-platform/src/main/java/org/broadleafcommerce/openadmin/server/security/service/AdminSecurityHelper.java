@@ -18,8 +18,10 @@
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Philip Baggett (pbaggett)
@@ -28,9 +30,8 @@ public interface AdminSecurityHelper {
 
     /**
      * Adds the hierarchy of each admin permission to the collection of granted authorities.
-     *
-     * @param grantedAuthorities the collection that authorities will be added to
+     *  @param grantedAuthorities the collection that authorities will be added to
      * @param adminPermissions the collection of permissions who's hierarchies will be put into grantedAuthorities
      */
-    void addAllPermissionsToAuthorities(Collection<GrantedAuthority> grantedAuthorities, Collection<AdminPermission> adminPermissions);
+    void addAllPermissionsToAuthorities(List<SimpleGrantedAuthority> grantedAuthorities, Collection<AdminPermission> adminPermissions);
 }

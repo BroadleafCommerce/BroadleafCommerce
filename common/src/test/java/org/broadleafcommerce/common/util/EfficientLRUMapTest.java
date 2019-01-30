@@ -19,6 +19,7 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections4.map.LRUMap;
+import org.broadleafcommerce.common.util.EfficientLRUMap;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,7 +28,7 @@ import junit.framework.TestCase;
 public class EfficientLRUMapTest extends TestCase {
 
     public void testMapSwitch() {
-        EfficientLRUMap<String, String> testMap = new EfficientLRUMap<String, String>(5);
+        EfficientLRUMap<String, String> testMap = new EfficientLRUMap<>(5);
 
         // Test basics for a single name value pair
         testMap.put("key1", "value1");

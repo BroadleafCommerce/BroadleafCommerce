@@ -19,6 +19,7 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.domain.AdditionalFields;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 

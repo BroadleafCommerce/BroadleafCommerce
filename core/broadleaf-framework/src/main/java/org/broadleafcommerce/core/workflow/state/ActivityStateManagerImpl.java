@@ -32,7 +32,7 @@ import javax.annotation.PostConstruct;
  * @author Jeff Fischer
  */
 @Service("blActivityStateManager")
-public class ActivityStateManagerImpl implements ActivityStateManager {
+public class ActivityStateManagerImpl<T extends ProcessContext<?>> implements ActivityStateManager<T> {
 
     private static ActivityStateManager ACTIVITY_STATE_MANAGER;
 
@@ -69,21 +69,21 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
     }
 
     @Override
-    public void registerState(RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
+    public void registerState(RollbackHandler<T> rollbackHandler, Map<String, Object> stateItems) {
         registerState(null, null, null, rollbackHandler, stateItems);
     }
 
     @Override
-    public void registerState(Activity<? extends ProcessContext> activity, ProcessContext processContext, RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
+    public void registerState(Activity<T> activity, T processContext, RollbackHandler<T> rollbackHandler, Map<String, Object> stateItems) {
         registerState(activity, processContext, null, rollbackHandler, stateItems);
     }
 
     @Override
-    public void registerState(Activity<? extends ProcessContext> activity, ProcessContext processContext, String region, RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
+    public void registerState(Activity<T> activity, T processContext, String region, RollbackHandler<T> rollbackHandler, Map<String, Object> stateItems) {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
         Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
         if (containers == null) {
-            containers = new Stack<StateContainer>();
+            containers = new Stack<>();
             stateMap.put(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId(), containers);
         }
 
@@ -134,10 +134,10 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
     private class StateContainer {
 
         private String region;
-        private RollbackHandler rollbackHandler;
+        private RollbackHandler<T> rollbackHandler;
         private Map<String, Object> stateItems;
-        private Activity<? extends ProcessContext> activity;
-        private ProcessContext processContext;
+        private Activity<T> activity;
+        private T processContext;
 
         public String getRegion() {
             return region;
@@ -147,11 +147,11 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
             this.region = region;
         }
 
-        public RollbackHandler getRollbackHandler() {
+        public RollbackHandler<T> getRollbackHandler() {
             return rollbackHandler;
         }
 
-        public void setRollbackHandler(RollbackHandler rollbackHandler) {
+        public void setRollbackHandler(RollbackHandler<T> rollbackHandler) {
             this.rollbackHandler = rollbackHandler;
         }
 
@@ -163,19 +163,19 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
             this.stateItems = stateItems;
         }
 
-        public Activity<? extends ProcessContext> getActivity() {
+        public Activity<T> getActivity() {
             return activity;
         }
 
-        public void setActivity(Activity<? extends ProcessContext> activity) {
+        public void setActivity(Activity<T> activity) {
             this.activity = activity;
         }
 
-        public ProcessContext getProcessContext() {
+        public T getProcessContext() {
             return processContext;
         }
 
-        public void setProcessContext(ProcessContext processContext) {
+        public void setProcessContext(T processContext) {
             this.processContext = processContext;
         }
     }

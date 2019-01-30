@@ -21,18 +21,14 @@
 package org.broadleafcommerce.common.module;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule;
+import org.broadleafcommerce.common.condition.OnBroadleafModuleCondition;
 import org.broadleafcommerce.common.logging.ModuleLifecycleLoggingBean;
-import org.broadleafcommerce.common.util.ModulePresentUtil;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
  * <p>
- * This is a non-functional 5.0 and 5.1-compatible version of this interface that <i>only has functionality in Broadleaf 5.2</i>. This was added into
- * the 5.0 and 5.1 streams in order to allow 3rd-party integration modules to be compatible with Broadleaf 5.0, 5.1 and 5.2 all at the same
- * time.
- * 
- * <p>
- * Provides the ability for modules to register themselves with Broadleaf to be used with {@link org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule} and {@link ModulePresentUtil}
+ * Provides the ability for modules to register themselves with Broadleaf to be used with {@link ConditionalOnBroadleafModule} and {@link ModulePresentUtil}
  * in order to provide different behavior in inter-module dependencies.
  * 
  * <p>
@@ -47,11 +43,11 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * this can always be checked at runtime instead by just looking for the String-based module name.
  * 
  * @author Phillip Verheyden (phillipuniverse)
- * @see {@link org.broadleafcommerce.common.condition.OnBroadleafModuleCondition}
- * @see {@link org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule}
+ * @see {@link OnBroadleafModuleCondition}
+ * @see {@link ConditionalOnBroadleafModule}
  * @see {@link ModuleLifecycleLoggingBean}
  * @see {@link SpringFactoriesLoader}
- * @since 5.0.12-GA, 5.1.5-GA, 5.2.0-GA
+ * @since 5.2
  */
 public interface BroadleafModuleRegistration {
 

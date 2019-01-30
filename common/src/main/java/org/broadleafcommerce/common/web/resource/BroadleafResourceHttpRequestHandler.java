@@ -17,7 +17,9 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceTransformer;
@@ -45,6 +47,9 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     @Resource(name = "blBroadleafContextUtil")
     protected BroadleafContextUtil blcContextUtil;
 
+    @Value("${staticResourceBrowserCacheSeconds}")
+    protected long cacheSeconds = 0;
+
     @PostConstruct
     protected void sortCollections() {
         OrderedComparator oc = new OrderedComparator();
@@ -71,6 +76,20 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             super.handleRequest(request, response);
         } finally {
             blcContextUtil.clearThinRequestContext();
+        }
+    }
+
+    @Override
+    protected void setHeaders(HttpServletResponse response, org.springframework.core.io.Resource resource, MediaType
+            mediaType) throws IOException {
+        super.setHeaders(response, resource, mediaType);
+        //Add public to cache control for universal CDN recognition
+        if (isUseCacheControlHeader() && cacheSeconds > 0) {
+            String header = response.getHeader(HEADER_CACHE_CONTROL);
+            if (!header.contains("public")) {
+                header += ",public";
+                response.setHeader(HEADER_CACHE_CONTROL, header);
+            }
         }
     }
 

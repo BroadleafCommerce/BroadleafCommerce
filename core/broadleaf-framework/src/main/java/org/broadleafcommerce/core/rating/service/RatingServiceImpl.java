@@ -31,13 +31,11 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 @Service("blRatingService")
@@ -161,21 +159,20 @@ public class RatingServiceImpl implements RatingService {
 
         if (ratingDetail == null) {
             ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customer);
+            ratingSummary.getRatings().add(ratingDetail);
         } else {
             ratingDetail.setRating(rating);         
         }
-
-        ratingSummary.getRatings().add(ratingDetail);
 
         ReviewDetail reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
 
         if (reviewDetail == null) {
             reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
+            ratingSummary.getReviews().add(reviewDetail);
         } else {
             reviewDetail.setReviewText(reviewText);         
         }
 
-        ratingSummary.getReviews().add(reviewDetail);
         // load reviews
         ratingSummary.getReviews().size();
         ratingSummaryDao.saveRatingSummary(ratingSummary);

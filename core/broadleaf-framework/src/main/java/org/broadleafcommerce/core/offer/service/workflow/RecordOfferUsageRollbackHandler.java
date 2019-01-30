@@ -17,11 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.service.workflow;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.service.OfferAuditService;
@@ -31,6 +26,11 @@ import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 
 /**
  * Rolls back audits that were saved in the database from {@link RecordOfferUsageActivity}.
@@ -39,13 +39,13 @@ import org.springframework.stereotype.Component;
  * @see {@link RecordOfferUsageActivity}
  */
 @Component("blRecordOfferUsageRollbackHandler")
-public class RecordOfferUsageRollbackHandler implements RollbackHandler<CheckoutSeed> {
+public class RecordOfferUsageRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     @Resource(name = "blOfferAuditService")
     protected OfferAuditService offerAuditService;
     
     @Override
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         List<OfferAudit> audits = (List<OfferAudit>) stateConfiguration.get(RecordOfferUsageActivity.SAVED_AUDITS);
         
         for (OfferAudit audit : audits) {

@@ -22,15 +22,15 @@
     <defaultCache
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="60"
         timeToIdleSeconds="30"/>
-    
+
     <cache
         name="blStandardElements"
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="86400">
         <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
@@ -39,7 +39,7 @@
         name="blProducts"
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="86400">
         <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
@@ -54,7 +54,7 @@
         name="blCategories"
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="86400">
         <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
@@ -69,7 +69,7 @@
         name="blOffers"
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="86400">
         <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
@@ -78,7 +78,7 @@
         name="blInventoryElements"
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="60"/>
         
     <cache
@@ -120,14 +120,14 @@
         name="blOrderElements"
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="600"/>
         
      <cache
         name="blCustomerElements"
         maxElementsInMemory="100000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="600"/>
 
     <cache
@@ -148,7 +148,7 @@
         name="generatedResourceCache"
         maxElementsInMemory="100"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="600"/>
         
      <!-- This is required by Hibernate to ensure that query caches return 
@@ -157,12 +157,12 @@
      <cache name="org.hibernate.cache.spi.UpdateTimestampsCache" 
         maxElementsInMemory="5000" 
         eternal="true" 
-        overflowToDisk="true"/>
+        overflowToDisk="false"/>
 
     <cache name="blTemplateElements"
         maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
 
     <!-- 1 hour cache -->
@@ -170,7 +170,7 @@
         name="blTranslationElements"
         maxElementsInMemory="10000000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
     
     <!-- The translation cache is evicted manually by the indexing process, never expire it -->
@@ -178,7 +178,7 @@
         name="blBatchTranslationCache"
         maxElementsInMemory="10000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="0"/>  
         
     <!-- 10 minute cache -->

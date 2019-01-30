@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
@@ -37,11 +38,18 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden
  * @see {@link FulfillmentGroup}, {@link Order}
  */
+@Component("blFulfillmentGroupPricingActivity")
 public class FulfillmentGroupPricingActivity extends BaseActivity<ProcessContext<Order>> {
 
+    public static final int ORDER = 5000;
+    
     @Resource(name = "blFulfillmentPricingService")
     private FulfillmentPricingService fulfillmentPricingService;
 
+    public FulfillmentGroupPricingActivity() {
+        setOrder(ORDER);
+    }
+    
     public void setFulfillmentPricingService(FulfillmentPricingService fulfillmentPricingService) {
         this.fulfillmentPricingService = fulfillmentPricingService;
     }

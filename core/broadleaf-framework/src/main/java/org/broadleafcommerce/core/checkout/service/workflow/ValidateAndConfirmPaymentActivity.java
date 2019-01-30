@@ -40,11 +40,14 @@ import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 
 
@@ -68,7 +71,10 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  * @author Elbert Bautista (elbertbautista)
  */
+@Component("blValidateAndConfirmPaymentActivity")
 public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
+    
+    public static final int ORDER = 3000;
     
     protected static final Log LOG = LogFactory.getLog(ValidateAndConfirmPaymentActivity.class);
     
@@ -103,12 +109,18 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
 
     @Resource(name = "blOrderPaymentStatusService")
     protected OrderPaymentStatusService orderPaymentStatusService;
+    
+    @Autowired
+    public ValidateAndConfirmPaymentActivity(@Qualifier("blConfirmPaymentsRollbackHandler") ConfirmPaymentsRollbackHandler rollbackHandler) {
+        setOrder(ORDER);
+        setRollbackHandler(rollbackHandler);
+    }
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
         
-        Map<String, Object> rollbackState = new HashMap<String, Object>(); 
+        Map<String, Object> rollbackState = new HashMap<>(); 
         
         // There are definitely enough payments on the order. We now need to confirm each unconfirmed payment on the order.
         // Unconfirmed payments could be added for things like gift cards and account credits; they are not actually
@@ -124,15 +136,15 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          * which can occur if you send credit card data directly to Broadleaf and rely on this activity to confirm
          * that transaction
          */
-        Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
-        List<ResponseTransactionPair> failedTransactions = new ArrayList<ResponseTransactionPair>();
+        Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<>();
+        List<ResponseTransactionPair> failedTransactions = new ArrayList<>();
         // Used for the rollback handler; we want to make sure that we roll back transactions that have already been confirmed
         // as well as transactions that we are about to confirm here
-        List<PaymentTransaction> confirmedTransactions = new ArrayList<PaymentTransaction>();
+        List<PaymentTransaction> confirmedTransactions = new ArrayList<>();
         /**
          * This is a subset of the additionalTransactions that contains the transactions that were confirmed in this activity
          */
-        Map<OrderPayment, PaymentTransactionType> additionalConfirmedTransactions = new HashMap<OrderPayment, PaymentTransactionType>();
+        Map<OrderPayment, PaymentTransactionType> additionalConfirmedTransactions = new HashMap<>();
 
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
@@ -276,9 +288,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         /**
          * For each of the failed transactions we might need to register state with the rollback handler
          */
-        List<OrderPayment> invalidatedPayments = new ArrayList<OrderPayment>();
-        List<PaymentTransaction> failedTransactionsToRollBack = new ArrayList<PaymentTransaction>();
-        List<PaymentResponseDTO> failedResponses = new ArrayList<PaymentResponseDTO>();
+        List<OrderPayment> invalidatedPayments = new ArrayList<>();
+        List<PaymentTransaction> failedTransactionsToRollBack = new ArrayList<>();
+        List<PaymentResponseDTO> failedResponses = new ArrayList<>();
         for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
             PaymentTransaction tx = orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId());
             if (shouldRollbackFailedTransaction(responseTransactionPair)) {
@@ -297,7 +309,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          * executing the fraud check. Thus, the AUTHORIZE technically fails because of fraud but the user's card was still
          * charged. This handles the case of rolling back the AUTHORIZE transaction in that case
          */
-        Map<String, Object> rollbackState = new HashMap<String, Object>(); 
+        Map<String, Object> rollbackState = new HashMap<>(); 
         rollbackState.put(ROLLBACK_TRANSACTIONS, failedTransactionsToRollBack);
         context.getSeedData().getUserDefinedFields().put(FAILED_RESPONSES, failedResponses);
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);

@@ -1,4 +1,4 @@
-<div class="content-area-title-bar entity-form-actions">
+<div class="content-area-title-bar entity-form-actions" th:classappend="${entityCatalog != null} ? 'entityWithCatalog' : ''" >
     <th:block th:if="${entityFriendlyName}" blc_admin:admin_section_href="${currentAdminSection}" >
         <h3>
             <span class="filter-text" style="display: none;">Filtered </span>
@@ -16,12 +16,6 @@
 
         <!-- Form for add new entity -->
         <blc:form method="POST" id="add-entity-form" style="display:none;"></blc:form>
-
-        <!-- Preview for a specific sandbox -->
-        <button th:if="${sandboxPreview}" th:unless="${previewModeDisabled}" class="button preview-button">
-            <a href="#" th:text="#{Workflow_button_preview}">Preview Sandbox</a>
-        </button>
-        <span style="display: none;" id="previewurl" th:attr="data-href=@{/sandbox/preview(directPreview=true)}"></span>
 
         <!-- Dropdown button if more than one action -->
         <div th:if="${not #lists.isEmpty(mainActions) and (#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1)}" class="button-group">
@@ -109,16 +103,7 @@
         </a>
         <h3 class="breadcrumb-divider">&nbsp;&nbsp;/&nbsp;&nbsp;</h3>
         <h3 class="mainEntityName" th:text="${entityForm.mainEntityName}"></h3>
-
-        <!-- Preview for a specific sandboxable entity -->
-        <button th:if="${sandboxable}" th:unless="${previewModeDisabled}" class="button preview-button">
-            <a href="#" th:text="#{Workflow_button_preview}">Preview Sandbox</a>
-        </button>
-
-        <!-- Preview for a specific sandbox -->
-        <button th:if="${sandboxDetail}" th:unless="${previewModeDisabled}" class="button sandbox-preview-button">
-            <a href="#" th:text="#{Workflow_button_preview}">Preview Sandbox</a>
-        </button>
+        <span class="entityCatalogName" th:if="${entityCatalog != null}" th:text="${'(' + entityCatalog.name + ')'}"></span>
 
         <!-- Dropdown button if more than one action -->
         <div th:if="${#lists.size(entityForm.actions) > 1}" class="button-group">

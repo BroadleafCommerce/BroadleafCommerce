@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.1.6-SNAPSHOT</version>
+        <version>5.2.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>integration</artifactId>
@@ -70,7 +70,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Only delete the contents of the target folder so that 
+                <!-- Only delete the contents of the target folder so that
                     it doesn't lose its "derived" status in Eclipse -->
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
@@ -85,10 +85,6 @@
                     </filesets>
                 </configuration>
                 <version>2.4.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -196,17 +192,31 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
+            <!-- ABANDON ALL HOPE, YE WHO ENTER HERE -->
+            <!-- DO NOT COPY THIS DEPENDENCY SOMEWHERE ELSE -->
+
+            <!-- A large amount of test failures occur within the integration project
+                 if you change the version to anything but exactly this. Proceed with
+                 caution as tests will likely fail with deadlocks, etc -->
+            <!-- If you want to use TestNG elsewhere, you should be using the latest version
+                and not use this version -->
+            <version>6.0</version>
             <type>jar</type>
-            <classifier>jdk15</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <version>${spring.boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -229,6 +239,16 @@
             <artifactId>easymockclassextension</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
         <!-- Spock/Groovy Test Dependencies -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -246,6 +266,18 @@
                 </exclusion>
             </exclusions>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring.boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.broadleafcommerce</groupId>
+            <artifactId>broadleaf-boot-starter-hsql-database</artifactId>
+            <version>${database.starter.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

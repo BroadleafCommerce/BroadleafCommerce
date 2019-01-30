@@ -267,22 +267,6 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             clone.setSiteResolutionType(getSiteResolutionType());
             clone.setSiteIdentifierValue(getSiteIdentifierValue());
             ((Status) clone).setArchived(getArchived());
-
-            if (getCatalogs() != null) {
-                for (Catalog catalog : getCatalogs()) {
-                    if (catalog != null) {
-                        Catalog cloneCatalog = catalog.clone();
-                        if (clone.getCatalogs() != null) {
-                            clone.getCatalogs().add(cloneCatalog);
-                        } else {
-                            List<Catalog> cloneCatalogs = new ArrayList<Catalog>();
-                            cloneCatalogs.add(cloneCatalog);
-                            clone.setCatalogs(cloneCatalogs);
-                        }
-                    }
-                }
-            }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

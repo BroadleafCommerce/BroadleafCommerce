@@ -72,12 +72,28 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
                 response.setContentType("text/plain");
             }
         }
-        
+
         String templatePath = page.getTemplatePath();
         
         // Allow extension managers to override the path.
         ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-        ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
+        Boolean internalValidateFindPreviouslySet = false;
+        ExtensionResultStatusType extResult;
+        
+        try {
+            if (!BroadleafRequestContext.getBroadleafRequestContext().getInternalValidateFind()) {
+                BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(true);
+                internalValidateFindPreviouslySet = true;
+            }
+
+            extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
+        } finally {
+
+            if (internalValidateFindPreviouslySet) {
+                BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(false);
+            }
+        }
+    
         if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
             templatePath = erh.getResult();
         }

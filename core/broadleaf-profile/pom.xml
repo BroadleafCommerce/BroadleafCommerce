@@ -3,7 +3,7 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.1.6-SNAPSHOT</version>
+        <version>5.2.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-profile</artifactId>
@@ -53,7 +53,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                
+
                     </plugin>
                 </plugins>
             </build>
@@ -67,12 +67,6 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>xml-apis</artifactId>
-                    <groupId>xml-apis</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

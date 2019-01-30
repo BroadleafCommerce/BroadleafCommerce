@@ -18,6 +18,8 @@
 package org.broadleafcommerce.common.file.service;
 
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
+import org.broadleafcommerce.common.file.service.BroadleafFileServiceImpl;
+import org.broadleafcommerce.common.file.service.FileSystemFileServiceProvider;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -102,7 +104,7 @@ public class BroadleafFileServiceImplTest extends TestCase {
         fw2.append("Test File 3");
         fw2.close();
 
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         files.add(f1);
         files.add(f2);
 

@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.Set;
 
@@ -30,8 +31,12 @@ import java.util.Set;
  */
 public interface AdminRequestProcessorExtensionHandler extends ExtensionHandler {
 
-    public ExtensionResultStatusType retrieveProfiles(Site currentSite, ExtensionResultHolder<Set<Site>> result);
+    ExtensionResultStatusType retrieveProfiles(Site currentSite, ExtensionResultHolder<Set<Site>> result);
 
-    public ExtensionResultStatusType retrieveCatalogs(Site currentSite, ExtensionResultHolder<Set<Catalog>> result);
+    ExtensionResultStatusType retrieveCatalogs(Site currentSite, ExtensionResultHolder<Set<Catalog>> result);
+
+    ExtensionResultStatusType overrideCurrentCatalog(WebRequest request, Site currentSite, ExtensionResultHolder<Catalog> result);
+
+    ExtensionResultStatusType overrideCurrentProfile(WebRequest request, Site currentSite, ExtensionResultHolder<Site> result);
 
 }

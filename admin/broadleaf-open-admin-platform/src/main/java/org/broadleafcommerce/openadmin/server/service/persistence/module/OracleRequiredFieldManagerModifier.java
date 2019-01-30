@@ -54,7 +54,7 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
 
     @Override
     public boolean canHandle(Field field, Object value, EntityManager em) {
-        if (!dialectHelper.isOracle()) {
+        if (!dialectHelper.isOracle(em)) {
             return false;
         }
 

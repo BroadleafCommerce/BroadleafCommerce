@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -28,6 +29,7 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -43,9 +45,15 @@ import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
+import org.broadleafcommerce.openadmin.server.service.extension.FilterProductTypePersistenceHandlerExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.*;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -53,14 +61,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin.
@@ -103,18 +112,14 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     @Resource(name = "blAdminSectionCustomCriteriaService")
     protected AdminSectionCustomCriteriaService customCriteriaService;
 
-    /**
-     * Deprecated in favor of {@link org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager}
-     */
-    @Deprecated
-    @Resource(name = "blMainEntityActionsExtensionManager")
-    protected MainEntityActionsExtensionManager mainEntityActionsExtensionManager;
-
     @Resource(name = "blAdminAbstractControllerExtensionManager")
     protected AdminAbstractControllerExtensionManager extensionManager;
 
     @Resource(name="blClassNameRequestParamValidationService")
     protected ClassNameRequestParamValidationService validationService;
+
+    @Resource(name = "blFilterProductTypePersistenceHandlerExtensionManager")
+    protected FilterProductTypePersistenceHandlerExtensionManager filterProductTypeExtensionManager;
 
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -133,7 +138,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         SectionCrumb sc = new SectionCrumb();
         sc.setSectionId(id);
         sc.setSectionIdentifier("structured-content/all");
-        List<SectionCrumb> crumbs = new ArrayList<SectionCrumb>(1);
+        List<SectionCrumb> crumbs = new ArrayList<>(1);
         crumbs.add(sc);
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, null);
@@ -302,7 +307,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
         Entity entity = service.getRecord(ppr, info.getPropertyValue(), cmd, true).getDynamicResultSet().getRecords()[0];
         
-        List<Field> fieldsToMove = new ArrayList<Field>();
+        List<Field> fieldsToMove = new ArrayList<>();
         // override the results of the entity with the dynamic form passed in
         if (dynamicFormOverride != null) {
             dynamicFormOverride.clearFieldsMap();
@@ -356,7 +361,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @param entityForm
      */
     protected void extractDynamicFormFields(ClassMetadata cmd, EntityForm entityForm) {
-        Map<String, Field> dynamicFields = new HashMap<String, Field>();
+        Map<String, Field> dynamicFields = new HashMap<>();
         
         // Find all of the dynamic form fields
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
@@ -403,9 +408,12 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      */
     protected String getSectionKey(Map<String, String> pathVars) {
         String sectionKey = pathVars.get("sectionKey");
-
+        
+        AdminSection typedEntitySection = null;
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-        AdminSection typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
+        if (request != null) {
+            typedEntitySection = (AdminSection) request.getAttribute("typedEntitySection");
+        }
         if (typedEntitySection != null) {
             sectionKey = typedEntitySection.getUrl().substring(1);
         }
@@ -435,59 +443,65 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @see {@link #getSortDirections(Map)}
      */
     protected FilterAndSortCriteria[] getCriteria(Map<String, List<String>> requestParams) {
-        if (requestParams == null || requestParams.isEmpty()) {
-            return null;
-        }
-        Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
+        Map<String, FilterAndSortCriteria> fasMap = new HashMap<>();
+        List<FilterAndSortCriteria> result = new ArrayList<>();
 
-        List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
-        for (Entry<String, List<String>> entry : requestParams.entrySet()) {
-            if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
-                    && !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)
-                    && !entry.getKey().equals(FilterAndSortCriteria.MAX_INDEX_PARAMETER)
-                    && !entry.getKey().equals(FilterAndSortCriteria.START_INDEX_PARAMETER)) {
-                List<String> values = entry.getValue();
-                List<String> collapsedValues = new ArrayList<String>();
-                for (String value : values) {
-                    if (value.contains(FILTER_VALUE_SEPARATOR)) {
-                        String[] vs = value.split(FILTER_VALUE_SEPARATOR_REGEX);
-                        for (String v : vs) {
-                            collapsedValues.add(v);
+        if (MapUtils.isNotEmpty(requestParams)) {
+
+            for (Entry<String, List<String>> entry : requestParams.entrySet()) {
+                if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
+                        && !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)
+                        && !entry.getKey().equals(FilterAndSortCriteria.MAX_INDEX_PARAMETER)
+                        && !entry.getKey().equals(FilterAndSortCriteria.START_INDEX_PARAMETER)) {
+                    List<String> values = entry.getValue();
+                    List<String> collapsedValues = new ArrayList<>();
+                    for (String value : values) {
+                        if (value.contains(FILTER_VALUE_SEPARATOR)) {
+                            String[] vs = value.split(FILTER_VALUE_SEPARATOR_REGEX);
+                            for (String v : vs) {
+                                collapsedValues.add(v);
+                            }
+                        } else {
+                            collapsedValues.add(value);
                         }
+                    }
+
+                    FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues, Integer.MIN_VALUE);
+                    fasMap.put(entry.getKey(), fasCriteria);
+                }
+            }
+
+            List<String> sortProperties = getSortPropertyNames(requestParams);
+            List<String> sortDirections = getSortDirections(requestParams);
+            if (CollectionUtils.isNotEmpty(sortProperties)) {
+                //set up a map to determine if there is already some criteria set for the sort property
+                for (int i = 0; i < sortProperties.size(); i++) {
+                    boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
+                    FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
+                    //If there is already criteria for this property, attach the sort to that. Otherwise, create some new
+                    //FilterAndSortCriteria for the sort
+                    if (propertyCriteria != null) {
+                        propertyCriteria.setSortAscending(sortAscending);
                     } else {
-                        collapsedValues.add(value);
+                        propertyCriteria = new FilterAndSortCriteria(sortProperties.get(i));
+                        propertyCriteria.setOrder(Integer.MIN_VALUE);
+                        propertyCriteria.setSortAscending(sortAscending);
+                        fasMap.put(sortProperties.get(i), propertyCriteria);
                     }
                 }
-
-                FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues, Integer.MIN_VALUE);
-                fasMap.put(entry.getKey(),fasCriteria);
             }
+            modifyCriteria(fasMap);
+            result.addAll(fasMap.values());
         }
 
-        List<String> sortProperties = getSortPropertyNames(requestParams);
-        List<String> sortDirections = getSortDirections(requestParams);
-        if (CollectionUtils.isNotEmpty(sortProperties)) {
-            //set up a map to determine if there is already some criteria set for the sort property
-            for (int i = 0; i < sortProperties.size(); i++) {
-                boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
-                FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
-                //If there is already criteria for this property, attach the sort to that. Otherwise, create some new
-                //FilterAndSortCriteria for the sort
-                if (propertyCriteria != null) {
-                    propertyCriteria.setSortAscending(sortAscending);
-                } else {
-                    propertyCriteria = new FilterAndSortCriteria(sortProperties.get(i));
-                    propertyCriteria.setOrder(Integer.MIN_VALUE);
-                    propertyCriteria.setSortAscending(sortAscending);
-                    fasMap.put(sortProperties.get(i),propertyCriteria);
-                }
-            }
-        }
 
-        result.addAll(fasMap.values());
         return result.toArray(new FilterAndSortCriteria[result.size()]);
     }
-    
+
+
+    protected void modifyCriteria( Map<String, FilterAndSortCriteria> fasMap){
+
+    }
     /**
      * Obtains the list of sort directions from the bound request parameters. Note that these should appear in the same
      * relative order as {@link #getSortPropertyNames(Map)}
@@ -521,7 +535,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the className for this sectionKey if found in the database or the sectionKey if not
      */
     protected String getClassNameForSection(String sectionKey) {
-        return validationService.getClassNameForSection(sectionKey, "blPU");
+        return validationService.getClassNameForSection(sectionKey);
     }
 
     /**
@@ -751,6 +765,30 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     }
 
     /**
+     * Returns a PersistencePackageRequest for the given sectionClassName. Will also invoke the
+     * {@link #getSectionCustomCriteria()} and {@link #attachSectionSpecificInfo(PersistencePackageRequest)} to allow
+     * specialized controllers to manipulate the request for every action in this controller.
+     *
+     * @param requestParams
+     * @param ceilingEntityClass
+     * @return
+     */
+    protected PersistencePackageRequest getPersistencePackageRequest(MultiValueMap<String, String> requestParams,
+            Class<?> ceilingEntityClass) {
+        FilterAndSortCriteria[] fascs = getCriteria(requestParams);
+        Integer startIndex = getStartIndex(requestParams);
+        Integer maxIndex = getMaxIndex(requestParams);
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(ceilingEntityClass.getName(), getSectionCustomCriteria());
+
+        return PersistencePackageRequest.standard()
+                .withCeilingEntityClassname(ceilingEntityClass.getName())
+                .withCustomCriteria(sectionCriteria)
+                .withFilterAndSortCriteria(fascs)
+                .withStartIndex(startIndex)
+                .withMaxIndex(maxIndex);
+    }
+
+    /**
      * Returns the result of a call to getSectionPersistencePackageRequest(..) with the additional filter
      * and sort criteria attached.
      * 
@@ -785,7 +823,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     protected List<SectionCrumb> getSectionCrumbs(HttpServletRequest request, String currentSection, String currentSectionId) {
         String crumbs = request.getParameter("sectionCrumbs");
-        List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs, "blPU");
+        List<SectionCrumb> myCrumbs = validationService.getSectionCrumbs(crumbs);
         if (currentSection != null && currentSectionId != null) {
             SectionCrumb crumb = createSectionCrumb(currentSection, currentSectionId);
             if (!myCrumbs.contains(crumb)) {
@@ -810,9 +848,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the same <b>result</b> that was passed in
      */
     protected JsonResponse populateJsonValidationErrors(EntityForm form, BindingResult result, JsonResponse json) {
-        List<Map<String, Object>> errors = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> errors = new ArrayList<>();
         for (FieldError e : result.getFieldErrors()){
-            Map<String, Object> errorMap = new HashMap<String, Object>();
+            Map<String, Object> errorMap = new HashMap<>();
             errorMap.put("errorType", "field");
             String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
             errorMap.put("field", fieldName);
@@ -827,7 +865,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             errors.add(errorMap);
         }
         for (ObjectError e : result.getGlobalErrors()) {
-            Map<String, Object> errorMap = new HashMap<String, Object>();
+            Map<String, Object> errorMap = new HashMap<>();
             errorMap.put("errorType", "global");
             errorMap.put("code", e.getCode());
             errorMap.put("message", translateErrorMessage(e));

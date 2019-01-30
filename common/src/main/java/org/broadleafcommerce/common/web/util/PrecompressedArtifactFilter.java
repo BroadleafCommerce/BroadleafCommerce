@@ -17,7 +17,11 @@
  */
 package org.broadleafcommerce.common.web.util;
 
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer;
+import org.apache.commons.lang.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.BufferedInputStream;
@@ -44,18 +48,18 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
     private boolean useWhileInDefaultEnvironment = true;
 
-    @Resource(name = "blPrecompressedArtifactFileExtensionWhitelist")
+    @Value("#{blPrecompressedArtifactFileExtensionWhitelist}")
     List<String> fileExtensionWhitelist;
-
-    @Resource(name="blConfiguration")
-    RuntimeEnvironmentPropertiesConfigurer configurer;
+    
+    @Resource
+    Environment environment;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         checkOutput: {
-            if (!configurer.determineEnvironment().equals(configurer.getDefaultEnvironment()) || useWhileInDefaultEnvironment) {
+            if (ArrayUtils.isNotEmpty(environment.getActiveProfiles()) || useWhileInDefaultEnvironment) {
                 String path = getResourcePath(request);
                 String gzipPath = path + ".gz";
                 if (useGzipCompression(request, response, path, gzipPath)) {
@@ -205,11 +209,4 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
         this.useWhileInDefaultEnvironment = useWhileInDefaultEnvironment;
     }
 
-    public RuntimeEnvironmentPropertiesConfigurer getConfigurer() {
-        return configurer;
-    }
-
-    public void setConfigurer(RuntimeEnvironmentPropertiesConfigurer configurer) {
-        this.configurer = configurer;
-    }
 }

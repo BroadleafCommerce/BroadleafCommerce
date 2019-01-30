@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     <url>
         <loc>http://www.heatclinic.com/</loc>
         <lastmod>2013-11-04T15:02:08-06:00</lastmod>
@@ -11,5 +11,15 @@
         <lastmod>2013-11-04T15:02:08-06:00</lastmod>
         <changefreq>hourly</changefreq>
         <priority>0.5</priority>
+        <image:image>
+            <image:loc>
+                http://www.heatclinic.com/img/hot-sauce-img1.png
+            </image:loc>
+        </image:image>
+        <image:image>
+            <image:loc>
+                http://www.heatclinic.com/img/hot-sauce-img2.png
+            </image:loc>
+        </image:image>
     </url>
 </urlset>

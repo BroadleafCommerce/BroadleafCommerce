@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.openadmin.audit.AdminAudit;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

@@ -88,7 +88,37 @@ public class SiteServiceImpl implements SiteService {
 
         return response[0];
     }
+    
+    @Override
+    public Site retrieveNonPersistentSiteByIdentifer(String identifier) {
+        return retrieveSiteByIdentifier(identifier, false);
+    }
+    
+    @Override
+    public Site retrievePersistentSiteByIdentifier(String identifier) {
+        return retrieveSiteByIdentifier(identifier, true);
+    }
+    
+    protected Site retrieveSiteByIdentifier(final String identifier, final boolean persistentResult) {
+          //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
+          //only run the operation under a transaction if there is not already an entity manager in the view
+          if (identifier == null) { return null; }
+          final Site[] response = new Site[1];
+          transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+              @Override
+              public void execute() throws Throwable {
+                  Site site = siteDao.retrieveSiteByIdentifier(identifier);
+                  if (persistentResult) {
+                      response[0] = site;
+                  } else {
+                      response[0] = getNonPersistentSite(site);
+                  }
+              }
+          }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
 
+          return response[0];
+      }
+    
     @Override
     @Deprecated
     public Site retrieveSiteByDomainName(final String domainName) {
@@ -183,6 +213,11 @@ public class SiteServiceImpl implements SiteService {
     public Catalog findCatalogById(Long id) {
         return siteDao.retrieveCatalog(id);
     }
+    
+    @Override
+    public Catalog findCatalogByName(String name) {
+        return siteDao.retrieveCatalogByName(name);
+    }
 
     @Override
     @Deprecated
@@ -254,7 +289,6 @@ public class SiteServiceImpl implements SiteService {
               }
           }
         });
-
         return response;
       }
     

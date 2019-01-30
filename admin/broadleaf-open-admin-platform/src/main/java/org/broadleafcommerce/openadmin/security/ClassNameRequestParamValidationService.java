@@ -49,22 +49,20 @@ public interface ClassNameRequestParamValidationService {
      * back to the requester.
      *
      * @param sectionKey the sectionKey used to retrieve the fully qualified classname
-     * @param persistenceUnitName the persistence unit the white list is generated from
      * @return the fully qualified classname associated with the sectionKey, or the sectionKey itself if no match is found
      */
-    String getClassNameForSection(String sectionKey, String persistenceUnitName);
+    String getClassNameForSection(String sectionKey);
 
     /**
      * Retrieve a list of section crumbs given a delimited string (usually harvested from the "sectionCrumbs" param on a
      * Http request). The SectionCrumb instances contains sectionKey information, and are therefore susceptible to the
-     * same validation requirements as {@link #getClassNameForSection(String, String)}. If a sectionKey is found
+     * same validation requirements as {@link #getClassNameForSection(String)}. If a sectionKey is found
      * to be not valid, a {@link org.broadleafcommerce.openadmin.exception.SectionKeyValidationException} instance is
      * thrown. If thrown from within a Spring MVC controller, this exception will result in an Http 404 status code
      * back to the requester.
      *
      * @param crumbList the delimited string (related to the "sectionCrumbs" param in an Http request)
-     * @param persistenceUnitName the persistence unit the white list is generated from
      * @return the list of section crumbs representing the currently active admin sections for a given request
      */
-    List<SectionCrumb> getSectionCrumbs(String crumbList, String persistenceUnitName);
+    List<SectionCrumb> getSectionCrumbs(String crumbList);
 }

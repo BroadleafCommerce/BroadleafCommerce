@@ -18,9 +18,11 @@
 package org.broadleafcommerce.openadmin.server.service.artifact;
 
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +35,8 @@ import java.util.Map;
 @Service("blArtifactService")
 public class ArtifactServiceImpl implements ArtifactService {
 
-    protected ArtifactProcessor[] artifactProcessors;
+    @Autowired
+    protected List<ArtifactProcessor> artifactProcessors;
 
     @Override
     public InputStream convert(InputStream artifactStream, Operation[] operations, String mimeType) throws Exception {
@@ -46,6 +49,7 @@ public class ArtifactServiceImpl implements ArtifactService {
         return artifactStream;
     }
 
+    @Override
     public Operation[] buildOperations(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         for (ArtifactProcessor artifactProcessor : artifactProcessors) {
             if (artifactProcessor.isSupported(artifactStream, mimeType)) {
@@ -54,15 +58,5 @@ public class ArtifactServiceImpl implements ArtifactService {
         }
 
         return null;
-    }
-
-    @Override
-    public ArtifactProcessor[] getArtifactProcessors() {
-        return artifactProcessors;
-    }
-
-    @Override
-    public void setArtifactProcessors(ArtifactProcessor[] artifactProcessors) {
-        this.artifactProcessors = artifactProcessors;
     }
 }

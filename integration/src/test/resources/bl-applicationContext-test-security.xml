@@ -21,11 +21,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:sec="http://www.springframework.org/schema/security"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 
-    <sec:http auto-config="true" >
+    <sec:http authentication-manager-ref="blAuthenticationManager" >
         <sec:intercept-url pattern="/account/**" access="ROLE_USER" />      
         <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
                         default-target-url='/welcome.htm'
@@ -33,12 +33,10 @@
                         login-processing-url="/login_post.htm"
                          />
         <sec:logout logout-url="/logout.htm"/>
-        <sec:remember-me />
+        <sec:remember-me user-service-ref="blUserDetailsService" />
         <sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
     </sec:http>
     
-    <!--  bean id="passwordEncoder" class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/ -->    
-
     <!--=============================================================================================== -->
     <!--  Override the authentication provider to use the JDBC authentication defined below.                                                -->
     <!--=============================================================================================== -->
@@ -48,6 +46,6 @@
         </sec:authentication-provider>
     </sec:authentication-manager>
 
-    <bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.core.security.CustomerStateFilter"/>
-                                                                          
+    <bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.site.security.CustomerStateFilter"/>
+    
 </beans>

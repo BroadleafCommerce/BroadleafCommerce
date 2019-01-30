@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
-import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
+import org.broadleafcommerce.core.order.service.workflow.CheckAddAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
@@ -43,7 +43,7 @@ import java.util.Set;
 public interface InventoryServiceExtensionHandler extends ExtensionHandler {
 
     /**
-     * Usually invoked within the {@link CheckAvailabilityActivity} to retrieve the quantity that is available for the given
+     * Usually invoked within the {@link CheckAddAvailabilityActivity} to retrieve the quantity that is available for the given
      * <b>skus</b>.
      * 
      * @param context can be null. If not null, this should at least contain the {@link ContextualInventoryService#ORDER_KEY}

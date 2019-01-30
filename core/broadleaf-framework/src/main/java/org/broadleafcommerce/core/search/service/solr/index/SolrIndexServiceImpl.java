@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -170,12 +171,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         LOG.info("Rebuilding the entire Solr index...");
         StopWatch s = new StopWatch();
 
-        try{
-            preBuildIndex();
-            buildIndex();
-        } finally {
-            postBuildIndex();
-        }
+        preBuildIndex();
+        buildIndex();
+        postBuildIndex();
 
         LOG.info(String.format("Finished building entire Solr index in %s", s.toLapString()));
     }
@@ -247,11 +245,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                     @Override
                     public void execute() throws ServiceException {
-                        int page = 0;
+                        int page = 1;
                         Long lastId = null;
-                        while ((page * pageSize) < numItemsToIndex) {
-                            LOG.info(String.format("Building page number %s", page));
+                        Long remainingNumItemsToIndex = numItemsToIndex;
+                        Long totalPages = getTotalPageCount(numItemsToIndex);
+
+                        while (remainingNumItemsToIndex > 0) {
+                            String pageNumberMessage = buildPageNumberMessage(page, totalPages);
+                            LOG.info(pageNumberMessage);
+
                             lastId = buildIncrementalIndex(pageSize, lastId, operation);
+                            remainingNumItemsToIndex -= pageSize;
                             page++;
                         }
                     }
@@ -265,6 +269,24 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         } finally {
             operation.releaseLock();
         }
+    }
+
+    protected long getTotalPageCount(Long numItemsToIndex) {
+        long numPagesToIndex = numItemsToIndex / pageSize;
+        boolean hasRemainingItemsToIndex = numItemsToIndex % pageSize != 0;
+
+        return hasRemainingItemsToIndex ? (numPagesToIndex + 1) : numPagesToIndex;
+    }
+
+    protected String buildPageNumberMessage(int page, Long totalPages) {
+        String pageNumberMessage = String.format("Building page number %s of %s", page, totalPages);
+
+        Catalog currentCatalog = BroadleafRequestContext.getBroadleafRequestContext().getCurrentCatalog();
+        if (currentCatalog != null) {
+            pageNumberMessage += String.format(" for catalog: %s", currentCatalog.getName());
+        }
+
+        return pageNumberMessage;
     }
 
     /**
@@ -804,7 +826,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void deleteByQuery(String deleteQuery) throws SolrServerException, IOException {
-        String childDeleteQuery = "{!child of=" + shs.getTypeFieldName() + ":" + shs.getPrimaryDocumentType() + "} " + deleteQuery;
+        String productFilter = shs.getTypeFieldName() + ":" + shs.getPrimaryDocumentType();
+
+        // transform the deleteQuery to include the productFilter, this is necessary to ensure that we don't delete non-product documents accidentally
+        deleteQuery = productFilter + " AND (" + deleteQuery + ")";
+
+        String childDeleteQuery = "{!child of=" + productFilter + "} " + deleteQuery;
         solrConfiguration.getServer().deleteByQuery(childDeleteQuery);
         solrConfiguration.getServer().deleteByQuery(deleteQuery);
 

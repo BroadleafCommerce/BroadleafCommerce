@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
@@ -42,7 +42,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
-public class CatalogTest extends BaseTest {
+public class CatalogTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CatalogService catalogService;
@@ -158,7 +158,7 @@ public class CatalogTest extends BaseTest {
         newSku.setRetailPrice(new Money(14.99));
         newSku.setActiveStartDate(activeStartCal.getTime());
         newSku = catalogService.saveSku(newSku);
-        List<Sku> allSkus = new ArrayList<Sku>();
+        List<Sku> allSkus = new ArrayList<>();
         allSkus.add(newSku);
         newProduct.setAdditionalSkus(allSkus);
         newProduct = catalogService.saveProduct(newProduct);
@@ -178,7 +178,7 @@ public class CatalogTest extends BaseTest {
 
         assert foundSku == true;
 
-        List<Long> skuIds = new ArrayList<Long>();
+        List<Long> skuIds = new ArrayList<>();
         skuIds.add(skuId);
         testSkus = catalogService.findSkusByIds(skuIds);
         foundSku = false;

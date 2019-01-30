@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.hibernate.annotations.Cache;
@@ -40,9 +39,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
-import org.springframework.util.ClassUtils;
 
-import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
@@ -58,6 +55,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+/**
+ * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
+ */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
@@ -154,10 +155,12 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
             if (dynamicPrices != null) {
                 returnPrice = dynamicPrices.getSalePrice();
             } else {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
-                Sku proxy = (Sku) Proxy.newProxyInstance(sku.getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(sku.getClass()), handler);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-                returnPrice = dynamicPrices.getSalePrice();
+                dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(sku);
+                if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
+                    returnPrice = new Money(salePrice);
+                } else {
+                    returnPrice = dynamicPrices.getSalePrice();
+                }
             }
         } else {
             if (salePrice != null) {

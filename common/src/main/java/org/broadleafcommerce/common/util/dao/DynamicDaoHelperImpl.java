@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.util.dao;
 
-import javassist.util.proxy.ProxyFactory;
-
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
@@ -32,6 +30,7 @@ import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -44,19 +43,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+
+import javassist.util.proxy.ProxyFactory;
 
 
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
     private static final Log LOG = LogFactory.getLog(DynamicDaoHelperImpl.class);
     public static final Object LOCK_OBJECT = new Object();
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<Class<?>, Class<?>[]>(1000);
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<Class<?>, Class<?>[]>(1000);
+    public static final Map<SessionFactory, Map<Class<?>, Class<?>[]>> POLYMORPHIC_ENTITY_CACHE = new LRUMap<>(1000);
+    public static final Map<SessionFactory, Map<Class<?>, Class<?>[]>> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<>(1000);
     public static final String JAVASSIST_PROXY_KEY_PHRASE = "_$$_";
 
     public static Class<?> getNonProxyImplementationClassIfNecessary(Class<?> candidate) {
@@ -81,9 +80,6 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
         return response;
     }
-
-    private final Object WHITELIST_LOCK = new Object();
-    private final Set<String> ENTITY_WHITELIST = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     
     @Override
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory,
@@ -93,13 +89,13 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         synchronized(LOCK_OBJECT) {
             if (useCache) {
                 if (includeUnqualifiedPolymorphicEntities) {
-                    cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE, sessionFactory, ceilingClass);
                 } else {
-                    cache = POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(ceilingClass);
+                    cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS, sessionFactory, ceilingClass);
                 }
             }
             if (cache == null) {
-                List<Class<?>> entities = new ArrayList<Class<?>>();
+                List<Class<?>> entities = new ArrayList<>();
                 for (Object item : sessionFactory.getAllClassMetadata().values()) {
                     ClassMetadata metadata = (ClassMetadata) item;
                     Class<?> mappedClass = metadata.getMappedClass();
@@ -109,7 +105,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 }
                 Class<?>[] sortedEntities = sortEntities(ceilingClass, entities);
 
-                List<Class<?>> filteredSortedEntities = new ArrayList<Class<?>>();
+                List<Class<?>> filteredSortedEntities = new ArrayList<>();
 
                 for (int i = 0; i < sortedEntities.length; i++) {
                     Class<?> item = sortedEntities[i];
@@ -128,14 +124,33 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 filteredEntities = filteredSortedEntities.toArray(filteredEntities);
                 cache = filteredEntities;
                 if (includeUnqualifiedPolymorphicEntities) {
-                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
+                    Map<Class<?>, Class<?>[]> polymorphicEntityMap = buildPolymorphicEntityMap(POLYMORPHIC_ENTITY_CACHE.get(sessionFactory), ceilingClass, filteredEntities);
+                    POLYMORPHIC_ENTITY_CACHE.put(sessionFactory, polymorphicEntityMap);
                 } else {
-                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(ceilingClass, filteredEntities);
+                    Map<Class<?>, Class<?>[]> polymorphicEntityMap = buildPolymorphicEntityMap(POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(sessionFactory), ceilingClass, filteredEntities);
+                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(sessionFactory, polymorphicEntityMap);
                 }
             }
         }
 
         return cache;
+    }
+
+    protected Class<?>[] getCachedPolymorphicEntityList(Map<SessionFactory, Map<Class<?>, Class<?>[]>> polymorphicEntityCache,
+            SessionFactory sessionFactory, Class<?> ceilingClass) {
+        Map<Class<?>, Class<?>[]> polymorphicEntityMap = polymorphicEntityCache.get(sessionFactory);
+
+        return polymorphicEntityMap == null ? null : polymorphicEntityMap.get(ceilingClass);
+    }
+
+    protected Map<Class<?>, Class<?>[]> buildPolymorphicEntityMap(Map<Class<?>, Class<?>[]> polymorphicEntityMap,
+            Class<?> ceilingClass, Class<?>[] filteredEntities) {
+        if (polymorphicEntityMap == null) {
+            polymorphicEntityMap = new LRUMap<>(1000);
+        }
+
+        polymorphicEntityMap.put(ceilingClass, filteredEntities);
+        return polymorphicEntityMap;
     }
 
     @Override
@@ -146,7 +161,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
             return pEntities;
         }
         Class<?> topConcreteClass = pEntities[pEntities.length - 1];
-        List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
+        List<Class<?>> temp = new ArrayList<>(pEntities.length);
         temp.addAll(Arrays.asList(pEntities));
         Collections.reverse(temp);
         boolean eof = false;
@@ -170,11 +185,11 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
          * Sort entities with the most derived appearing first
          */
         Class<?>[] sortedEntities = new Class<?>[entities.size()];
-        List<Class<?>> stageItems = new ArrayList<Class<?>>();
+        List<Class<?>> stageItems = new ArrayList<>();
         stageItems.add(ceilingClass);
         int j = 0;
         while (j < sortedEntities.length) {
-            List<Class<?>> newStageItems = new ArrayList<Class<?>>();
+            List<Class<?>> newStageItems = new ArrayList<>();
             boolean topLevelClassFound = false;
             for (Class<?> stageItem : stageItems) {
                 Iterator<Class<?>> itr = entities.iterator();
@@ -219,7 +234,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
 
         //We filter out classes that are marked to exclude from polymorphism
-        AdminPresentationClass adminPresentationClass = clazz.getAnnotation(AdminPresentationClass.class);
+        AdminPresentationClass adminPresentationClass = AnnotationUtils.findAnnotation(clazz, AdminPresentationClass.class);
         if (adminPresentationClass == null) {
             return false;
         } else if (adminPresentationClass.excludeFromPolymorphism()) {
@@ -231,7 +246,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     @Override
     public Map<String, Object> getIdMetadata(Class<?> entityClass, HibernateEntityManager entityManager) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
-        Map<String, Object> response = new HashMap<String, Object>();
+        Map<String, Object> response = new HashMap<>();
         SessionFactory sessionFactory = entityManager.getSession().getSessionFactory();
         
         ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
@@ -251,7 +266,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     public List<String> getPropertyNames(Class<?> entityClass, HibernateEntityManager entityManager) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         ClassMetadata metadata = getSessionFactory(entityManager).getClassMetadata(entityClass);
-        List<String> propertyNames = new ArrayList<String>();
+        List<String> propertyNames = new ArrayList<>();
         Collections.addAll(propertyNames, metadata.getPropertyNames());
         return propertyNames;
     }
@@ -260,7 +275,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     public List<Type> getPropertyTypes(Class<?> entityClass, HibernateEntityManager entityManager) {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         ClassMetadata metadata = getSessionFactory(entityManager).getClassMetadata(entityClass);
-        List<Type> propertyTypes = new ArrayList<Type>();
+        List<Type> propertyTypes = new ArrayList<>();
         Collections.addAll(propertyTypes, metadata.getPropertyTypes());
         return propertyTypes;
     }
@@ -314,33 +329,5 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
         idField.setAccessible(true);
         return idField;
-    }
-
-    @Override
-    public void initializeEntityWhiteList(SessionFactory sessionFactory, String persistenceUnitName) {
-        synchronized(WHITELIST_LOCK) {
-            if (ENTITY_WHITELIST.isEmpty()) {
-                for (Object item : sessionFactory.getAllClassMetadata().values()) {
-                    ClassMetadata metadata = (ClassMetadata) item;
-                    Class<?> mappedClass = metadata.getMappedClass();
-                    ENTITY_WHITELIST.add(persistenceUnitName + "_" + mappedClass.getName());
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean validateEntityClassName(String entityClassName, String persistenceUnitName) {
-        String key = persistenceUnitName + "_" + entityClassName;
-        boolean isValid = ENTITY_WHITELIST.contains(key);
-        if (!isValid) {
-            isValid = ENTITY_WHITELIST.contains(key + "Impl");
-        }
-
-        if (!isValid) {
-            LOG.warn("The system detected an entity class name submitted that is not present in the registered entities known to the system.");
-        }
-
-        return isValid;
     }
 }

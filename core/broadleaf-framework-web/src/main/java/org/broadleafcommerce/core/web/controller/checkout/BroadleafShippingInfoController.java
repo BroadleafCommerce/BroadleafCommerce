@@ -18,8 +18,6 @@
 
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -39,6 +37,9 @@ import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various checkout operations
@@ -108,7 +109,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                                  ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
 
-        if (shippingForm.isUseBillingAddress()){
+        if (shippingForm.shouldUseBillingAddress()){
             copyBillingAddressToShippingAddress(cart, shippingForm);
         }
 
@@ -129,6 +130,17 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
         if ((shippingForm.getAddress().getPhoneFax() != null) &&
                 (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
             shippingForm.getAddress().setPhoneFax(null);
+        }
+
+        Customer customer = CustomerState.getCustomer();
+        if (!customer.isAnonymous() && shippingForm.isSaveAsDefault()) {
+            Address address = addressService.saveAddress(shippingForm.getAddress());
+            CustomerAddress customerAddress = customerAddressService.create();
+            customerAddress.setAddress(address);
+            customerAddress.setAddressName(shippingForm.getAddressName());
+            customerAddress.setCustomer(customer);
+            customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
+            customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customer.getId());
         }
 
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
@@ -169,7 +181,6 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                     }
                 }
             }
-
         }
     }
 

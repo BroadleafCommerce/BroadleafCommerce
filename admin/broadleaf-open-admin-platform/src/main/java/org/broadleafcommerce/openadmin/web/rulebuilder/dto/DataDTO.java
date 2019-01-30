@@ -30,11 +30,11 @@ public class DataDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     protected Long pk;
-
+    protected Long containedPk;
+    protected Long previousPk;
+    protected Long previousContainedPk;
     protected Integer quantity;
-
     protected String condition;
-
     protected ArrayList<DataDTO> rules = new ArrayList<DataDTO>();
 
     public Long getPk() {
@@ -43,6 +43,14 @@ public class DataDTO implements Serializable {
 
     public void setPk(Long pk) {
         this.pk = pk;
+    }
+
+    public Long getPreviousPk() {
+        return previousPk;
+    }
+
+    public void setPreviousPk(Long previousPk) {
+        this.previousPk = previousPk;
     }
 
     public Integer getQuantity() {
@@ -68,7 +76,23 @@ public class DataDTO implements Serializable {
     public void setRules(ArrayList<DataDTO> rules) {
         this.rules = rules;
     }
-    
+
+    public Long getContainedPk() {
+        return containedPk;
+    }
+
+    public void setContainedPk(Long containedPk) {
+        this.containedPk = containedPk;
+    }
+
+    public Long getPreviousContainedPk() {
+        return previousContainedPk;
+    }
+
+    public void setPreviousContainedPk(Long previousContainedPk) {
+        this.previousContainedPk = previousContainedPk;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {

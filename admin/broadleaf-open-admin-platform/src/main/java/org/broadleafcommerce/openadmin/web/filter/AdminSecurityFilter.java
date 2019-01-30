@@ -24,23 +24,22 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.SecurityFilter;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class attempts the work flow of the CsrfFilter, but in the event of a Csrf token mismatch 
+ * This class attempts the work flow of the CsrfFilter, but in the event of a Csrf token mismatch
  * (Session reset for example) the User will be redirected to login, if not session reset User is sent to previous location.
  * This class also handles stale state detection for the admin. This can occur when an admin page form is submitted
  * and the system detects that key state has changed since the time the page was originally rendered.
@@ -59,32 +58,33 @@ import javax.servlet.http.HttpServletResponse;
  *   ...
  * }
  *
- *     
+ *
  * @author trevorleffert, Jeff Fischer
  */
+@Component("blAdminCsrfFilter")
 public class AdminSecurityFilter extends SecurityFilter {
 
     private static final Log LOG = LogFactory.getLog(AdminSecurityFilter.class);
-    
-    @Resource(name = "blAdminAuthenticationFailureHandler")
+
+    @Autowired(required = false)
+    @Qualifier("blAdminAuthenticationFailureHandler")
     protected AuthenticationFailureHandler failureHandler;
-    
-    public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+
+    @Override
+    public void doFilterInternal(HttpServletRequest baseRequest, HttpServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
         try {
-            super.doFilter(baseRequest, baseResponse, chain);
+            super.doFilterInternal(baseRequest, baseResponse, chain);
         } catch (ServletException e) {
             if (e.getCause() instanceof StaleStateServiceException) {
                 LOG.debug("Stale state detected", e);
-                ((HttpServletResponse) baseResponse).setStatus(HttpServletResponse.SC_CONFLICT);
+                baseResponse.setStatus(HttpServletResponse.SC_CONFLICT);
                 baseResponse.getWriter().write("Stale State Detected\n");
                 baseResponse.getWriter().write(e.getMessage() + "\n");
             } else if (e.getCause() instanceof ServiceException) {
-                HttpServletRequest baseHttpRequest = (HttpServletRequest) baseRequest;
                 //if authentication is null and CSRF token is invalid, must be session time out
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    baseHttpRequest.setAttribute("sessionTimeout", true);
-                    failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse)
-                            baseResponse, new SessionAuthenticationException("Session Time Out"));
+                if (SecurityContextHolder.getContext().getAuthentication() == null && failureHandler != null) {
+                    baseRequest.setAttribute("sessionTimeout", true);
+                    failureHandler.onAuthenticationFailure(baseRequest, baseResponse, new SessionAuthenticationException("Session Time Out"));
                 } else {
                     throw e;
                 }

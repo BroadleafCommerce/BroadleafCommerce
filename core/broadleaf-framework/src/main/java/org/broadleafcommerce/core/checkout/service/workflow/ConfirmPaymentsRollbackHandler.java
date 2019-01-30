@@ -56,7 +56,7 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blConfirmPaymentsRollbackHandler")
-public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutSeed> {
+public class ConfirmPaymentsRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     protected static final Log LOG = LogFactory.getLog(ConfirmPaymentsRollbackHandler.class);
     
@@ -77,7 +77,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
     protected OrderService orderService;
     
     @Override
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         CheckoutSeed seed = processContext.getSeedData();
 
         if (paymentConfigurationServiceProvider == null) {

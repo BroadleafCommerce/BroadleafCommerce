@@ -17,10 +17,8 @@
  */
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -32,14 +30,13 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
 import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.CheckoutPaymentInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.GiftCardInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
-import org.broadleafcommerce.profile.core.domain.Country;
-import org.broadleafcommerce.profile.core.domain.Phone;
-import org.broadleafcommerce.profile.core.domain.PhoneImpl;
-import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.core.web.order.service.CartStateService;
+import org.broadleafcommerce.core.web.service.InitBinderService;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
@@ -52,8 +49,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
-
-import java.beans.PropertyEditorSupport;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -70,8 +65,11 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     private static final Log LOG = LogFactory.getLog(AbstractCheckoutController.class);
 
+    protected static String ACTIVE_STAGE = "activeStage";
+
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String checkoutView = "checkout/checkout";
+    protected static String checkoutStagesPartial = "checkout/partials/checkoutStages";
     protected static String checkoutPageRedirect = "redirect:/checkout";
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
 
@@ -136,6 +134,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     @Resource(name = "blBillingInfoFormValidator")
     protected BillingInfoFormValidator billingInfoFormValidator;
 
+    @Resource(name = "blCheckoutPaymentInfoFormValidator")
+    protected CheckoutPaymentInfoFormValidator paymentInfoFormValidator;
+
     @Resource(name = "blGiftCardInfoFormValidator")
     protected GiftCardInfoFormValidator giftCardInfoFormValidator;
 
@@ -144,6 +145,12 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blOrderInfoFormValidator")
     protected OrderInfoFormValidator orderInfoFormValidator;
+
+    @Resource(name = "blCartStateService")
+    protected CartStateService cartStateService;
+
+    @Resource(name = "blInitBinderService")
+    protected InitBinderService initBinderService;
 
     /* Extension Managers */
     @Resource(name = "blCheckoutControllerExtensionManager")
@@ -156,6 +163,10 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     public String getCheckoutView() {
         return checkoutView;
+    }
+
+    public String getCheckoutStagesPartial() {
+        return checkoutStagesPartial;
     }
 
     public String getCheckoutPageRedirect() {
@@ -186,82 +197,7 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
      * @throws Exception
      */
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
-        /**
-         * @deprecated - address.setState() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    State state = stateService.findStateByAbbreviation(text);
-                    setValue(state);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        /**
-         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    Country country = countryService.findCountryByAbbreviation(text);
-                    setValue(country);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
-                    setValue(isoCountry);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phoneSecondary", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phoneFax", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
+        initBinderService.configAddressInitBinder(binder);
     }
 
 }

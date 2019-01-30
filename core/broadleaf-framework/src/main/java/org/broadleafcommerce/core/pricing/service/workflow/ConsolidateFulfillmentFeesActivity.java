@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,13 +43,20 @@ import javax.annotation.Resource;
  * 
  * @author Phillip Verheyden
  */
+@Component("blConsolidateFulfillmentFeesActivity")
 public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessContext<Order>> {
+    
+    public static final int ORDER = 2000;
     
     @SuppressWarnings("unchecked")
     protected static final Map EXPRESSION_CACHE = new EfficientLRUMap(1000);
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+    
+    public ConsolidateFulfillmentFeesActivity() {
+        setOrder(ORDER);
+    }
 
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
@@ -103,7 +111,7 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
         
         if (StringUtils.isNotEmpty(feeExpression)) {
             synchronized (EXPRESSION_CACHE) {
-                HashMap<String, Object> vars = new HashMap<String, Object>();
+                HashMap<String, Object> vars = new HashMap<>();
                 vars.put("fulfillmentGroup", fulfillmentGroup);
                 MvelHelper.evaluateRule(feeExpression, vars, EXPRESSION_CACHE);
             }

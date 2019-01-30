@@ -17,12 +17,13 @@
  */
 package org.broadleafcommerce.profile.web.core.service;
 
+import org.broadleafcommerce.common.id.domain.IdGeneration;
+import org.broadleafcommerce.common.id.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.IdGeneration;
-import org.broadleafcommerce.profile.core.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.dataprovider.CustomerDataProvider;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -31,18 +32,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-public class CustomerTest extends BaseTest {
+public class CustomerTest extends TestNGSiteIntegrationSetup {
     
     @Resource
     private CustomerService customerService;
+    
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
-    List<Long> userIds = new ArrayList<Long>();
+    List<Long> userIds = new ArrayList<>();
 
-    List<String> userNames = new ArrayList<String>();
+    List<String> userNames = new ArrayList<>();
 
     @Test(groups = { "createCustomerIdGeneration" })
-    @Rollback(false)
+    @Commit
     @Transactional
     public void createCustomerIdGeneration() {
         IdGenerationImpl gen = em.find(IdGenerationImpl.class, "org.broadleafcommerce.profile.core.domain.Customer");
@@ -69,7 +75,7 @@ public class CustomerTest extends BaseTest {
         userNames.add(customer.getUsername());
     }
 
-    @Test(groups = { "readCustomer" }, dependsOnGroups = { "createCustomers" })
+    @Test(groups = { "readCustomer" }, dependsOnGroups = { "createCustomers", "createCustomerIdGeneration" })
     public void readCustomersById() {
         for (Long userId : userIds) {
             Customer customer = customerService.readCustomerById(userId);
@@ -87,7 +93,7 @@ public class CustomerTest extends BaseTest {
 
     @Test(groups = { "changeCustomerPassword" }, dependsOnGroups = { "readCustomer" })
     @Transactional
-    @Rollback(false)
+    @Commit
     public void changeCustomerPasswords() {
         for (String userName : userNames) {
             Customer customer = customerService.readCustomerByUsername(userName);

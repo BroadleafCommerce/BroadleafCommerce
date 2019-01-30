@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentCon
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -62,28 +63,40 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param request
      * @param response
      * @param model
-     * @return the return path
+     * @param model
+     * @return the checkout view path
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model,
-                           RedirectAttributes redirectAttributes) {
-        Order cart = CartState.getCart();
-        
+            RedirectAttributes redirectAttributes) {
+        preValidateCartOperation(model);
+        populateModelWithReferenceData(request, model);
+
+        return getCheckoutView();
+    }
+
+    protected void preValidateCartOperation(Model model) {
         try {
+            Order cart = CartState.getCart();
             orderService.preValidateCartOperation(cart);
         } catch (IllegalCartOperationException ex) {
             model.addAttribute("cartRequiresLock", true);
         }
-
-        if (!(cart instanceof NullOrderImpl)) {
-            model.addAttribute("orderMultishipOptions",
-                    orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
-            model.addAttribute("paymentRequestDTO",
-                    dtoTranslationService.translateOrder(cart));
-        }
-        populateModelWithReferenceData(request, model);
-        return getCheckoutView();
     }
 
+    /**
+     * Renders checkout stages partial at the requested stage
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param stage
+     * @return the checkout stages partial path
+     */
+    public String getCheckoutStagePartial(HttpServletRequest request, HttpServletResponse response, Model model,
+            String stage, RedirectAttributes redirectAttributes) {
+        model.addAttribute(ACTIVE_STAGE, stage);
+        return getCheckoutStagesPartial();
+    }
 
     /**
      * Attempts to attach the user's email to the order so that they may proceed anonymously
@@ -228,12 +241,17 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     public void handleProcessingException(Exception e, RedirectAttributes redirectAttributes) throws PaymentException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("A Processing Exception Occurred finalizing the order. Adding Error to Redirect Attributes.");
-        }
+        LOG.error("A Processing Exception Occurred finalizing the order. Adding Error to Redirect Attributes.", e);
 
-        redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
-                PaymentGatewayAbstractController.getProcessingErrorMessage());
+        Throwable cause = e.getCause();
+
+        if (cause!= null && cause.getCause() instanceof RequiredAttributeNotProvidedException) {
+            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    PaymentGatewayAbstractController.getCartReqAttributeNotProvidedMessage());
+        } else {
+            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    PaymentGatewayAbstractController.getProcessingErrorMessage());
+        }
     }
 
     public String getBaseConfirmationRedirect() {

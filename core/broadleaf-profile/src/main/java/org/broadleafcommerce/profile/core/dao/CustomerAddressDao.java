@@ -37,4 +37,8 @@ public interface CustomerAddressDao {
 
     public CustomerAddress create();
 
+    public List<CustomerAddress> readBatchCustomerAddresses(int start, int pageSize);
+
+    Long readNumberOfAddresses();
+
 }

@@ -38,6 +38,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
@@ -70,8 +71,9 @@ import org.broadleafcommerce.openadmin.server.security.service.ExceptionAwareRow
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -96,11 +98,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -117,7 +117,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -160,9 +159,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Resource(name = "blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
-
-    @Resource
-    protected DataFormatProvider dataFormatProvider;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN
@@ -278,7 +274,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             AdminSection section = adminNavigationService.findAdminSectionByClassAndSectionId(fmd.getForeignKeyClass(), null);
             if (section != null) {
-                fieldDTO.setSelectizeSectionKey(section.getSectionKey());
+                String sectionKey = section.getUrl().substring(1);
+                fieldDTO.setSelectizeSectionKey(sectionKey);
             } else {
                 fieldDTO.setSelectizeSectionKey(fmd.getForeignKeyClass());
             }
@@ -485,7 +482,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             Property p2 = cmd.getPMap().get("key");
             BasicFieldMetadata keyMd = (BasicFieldMetadata) p2.getMetadata();
-            keyMd.setFriendlyName(p2.getMetadata().getFriendlyName());
+            keyMd.setFriendlyName(getMapKeyFriendlyName(p2));
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
             wrapper.getFields().add(constructFieldDTOFromFieldData(hf, keyMd));
@@ -661,6 +658,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return listGrid;
     }
 
+    protected String getMapKeyFriendlyName(Property property) {
+        String friendlyNameFromMetadata = property.getMetadata().getFriendlyName();
+
+        return (friendlyNameFromMetadata == null) ? "Key" : friendlyNameFromMetadata;
+    }
+
     @Override
     public Map<String, Object> buildSelectizeCollectionInfo(String containingEntityId, DynamicResultSet drs, Property field,
         String sectionKey, List<SectionCrumb> sectionCrumbs)
@@ -767,7 +770,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @param sortPropery
      * @return
      */
-    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, String sectionKey, Integer order, String idProperty, List<SectionCrumb> sectionCrumbs, String sortPropery) {
+    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs,
+            String sectionKey, Integer order, String idProperty, List<SectionCrumb> sectionCrumbs, String sortPropery) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
@@ -993,7 +997,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     f.withName(property.getName())
                      .withFieldType(fieldType)
-                     .withFieldComponentRenderer(fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString())
+                     .withFieldComponentRenderer(getFieldComponentRenderer(fmd))
+                     .withGridFieldComponentRenderer(getGridFieldComponentRenderer(fmd))
                      .withOrder(fmd.getOrder())
                      .withFriendlyName(fmd.getFriendlyName())
                      .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
@@ -1027,6 +1032,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         f.setIsVisible(false);
                     }
 
+                    if (VisibilityEnum.VISIBLE_ALL.equals(fmd.getVisibility())) {
+                        f.setIsVisible(true);
+                    }
+
                     // Add the field to the appropriate FieldGroup
                     if (fmd.getGroup() == null) {
                         homelessFields.add(f);
@@ -1054,6 +1063,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 f.setAssociatedFieldName(null);
             }
         }
+    }
+
+    protected String getFieldComponentRenderer(BasicFieldMetadata fmd) {
+        if (StringUtils.isNotBlank(fmd.getFieldComponentRendererTemplate())) {
+            return fmd.getFieldComponentRendererTemplate();
+        }
+        return fmd.getFieldComponentRenderer()==null?null:fmd.getFieldComponentRenderer().toString();
+    }
+
+    protected String getGridFieldComponentRenderer(BasicFieldMetadata fmd) {
+        if (StringUtils.isNotBlank(fmd.getGridFieldComponentRendererTemplate())) {
+            return fmd.getGridFieldComponentRendererTemplate();
+        }
+        return fmd.getGridFieldComponentRenderer()==null?null:fmd.getGridFieldComponentRenderer().toString();
     }
 
     private Field findAssociatedField(EntityForm ef, Field f) {
@@ -1205,7 +1228,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.DATE.toString())) {
-            DateFormat format = dataFormatProvider.getSimpleDateFormatter();
+            DateFormat format = FormatUtil.getDateFormat();
             if (defaultValue.toLowerCase().contains("today")) {
                 defaultValue = format.format(new Date());
             } else {
@@ -1509,7 +1532,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 continue;
             }
 
-            if (collectionRecords != null) {
+            if (collectionRecords != null && !collectionRecords.isEmpty()) {
                 DynamicResultSet subCollectionEntities = collectionRecords.get(p.getName());
                 String containingEntityId = entity.getPMap().get(ef.getIdProperty()).getValue();
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
@@ -1752,22 +1775,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, boolean isViewCollectionItem)
+            String parentId, boolean isViewCollectionItem, List<SectionCrumb> sectionCrumbs, boolean isAdd)
             throws ServiceException {
         EntityForm ef = createStandardAdornedEntityForm();
-        return buildAdornedListForm(adornedMd, adornedList, parentId, isViewCollectionItem, ef);
+        return buildAdornedListForm(adornedMd, adornedList, parentId, isViewCollectionItem, ef, sectionCrumbs, isAdd);
     }
     
     @Override
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
-            String parentId, boolean isViewCollectionItem, EntityForm ef)
+            String parentId, boolean isViewCollectionItem, EntityForm ef, List<SectionCrumb> sectionCrumbs, boolean isAdd)
             throws ServiceException {
         ef.setEntityType(adornedList.getAdornedTargetEntityClassname());
 
         // Get the metadata for this adorned field
         PersistencePackageRequest request = PersistencePackageRequest.adorned()
                 .withCeilingEntityClassname(adornedMd.getCollectionCeilingEntity())
-                .withAdornedList(adornedList);
+                .withAdornedList(adornedList)
+                .withSectionCrumbs(sectionCrumbs);
+        request.setAddOperationInspect(isAdd);
         ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request).getDynamicResultSet().getClassMetaData();
 
         List<Property> entityFormProperties = new ArrayList<>();
@@ -1777,7 +1802,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             // We want our entity form to only render the maintained adorned target fields
             for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
                 Property p = collectionMetadata.getPMap().get(targetFieldName);
-                if (p.getMetadata() instanceof BasicFieldMetadata) {
+                if (p.getMetadata() instanceof BasicFieldMetadata && BooleanUtils.isNotTrue( p.getMetadata().getExcluded())) {
                     ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
                     entityFormProperties.add(p);
                 }
@@ -1869,14 +1894,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Property valueProp = cmd.getPMap().get("value");
             mapFormProperties.add(valueProp);
         } else {
+            String valueClassName = mapStructure.getValueClassName();
+            List<String> classNames = getValueClassNames(valueClassName);
+
             mapFormProperties = new ArrayList<>(Arrays.asList(cmd.getProperties()));
-            CollectionUtils.filter(mapFormProperties, new Predicate() {
-                @Override
-                public boolean evaluate(Object object) {
-                    Property p = (Property) object;
-                    return ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), mapStructure.getValueClassName());
-                }
-            });
+            filterMapFormProperties(mapFormProperties, classNames);
         }
 
         setEntityFormFields(cmd, ef, mapFormProperties);
@@ -1890,7 +1912,36 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         return ef;
     }
-    
+
+    protected List<String> getValueClassNames(String valueClassName) {
+        PersistenceManager pm = PersistenceManagerFactory.getPersistenceManager(valueClassName);
+        List<String> classNames = new ArrayList<>();
+        try {
+            Class<?>[] mapEntities = pm.getPolymorphicEntities(valueClassName);
+            for (Class clazz : mapEntities) {
+                classNames.add(clazz.getName());
+            }
+        } catch (ClassNotFoundException e) {
+            classNames.add(valueClassName);
+        }
+        return classNames;
+    }
+
+    protected void filterMapFormProperties(List<Property> mapFormProperties, final List<String> classNames) {
+        CollectionUtils.filter(mapFormProperties, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                Property p = (Property) object;
+                for (String availType : p.getMetadata().getAvailableToTypes()) {
+                    if (classNames.contains(availType)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
     protected EntityForm createStandardEntityForm() {
         EntityForm ef = new EntityForm();
         ef.addAction(DefaultEntityFormActions.SAVE);

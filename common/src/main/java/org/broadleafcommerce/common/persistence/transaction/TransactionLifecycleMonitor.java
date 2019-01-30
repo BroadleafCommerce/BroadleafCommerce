@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.security.crypto.codec.Base64;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -132,6 +133,7 @@ import javax.persistence.EntityManager;
  *
  * @author Jeff Fischer
  */
+@Component("blTransactionLifecycleMonitor")
 public class TransactionLifecycleMonitor implements BroadleafApplicationListener<TransactionLifecycleEvent>, ApplicationContextAware, SmartLifecycle, SqlStatementLoggable {
 
     private static SupportLogger logger = SupportLogManager.getLogger("TransactionLogging", TransactionLifecycleMonitor.class);
@@ -182,7 +184,7 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
     @Value("${log.transaction.lifecycle.query.list.max.size:100}")
     protected int maxQueryListSize = 100;
 
-    protected Map<Integer, TransactionInfo> infos = new ConcurrentHashMap<Integer, TransactionInfo>();
+    protected Map<Integer, TransactionInfo> infos = new ConcurrentHashMap<>();
     protected boolean isStarted = false;
     protected boolean enabled = false;
     protected Timer timer = new Timer("TransactionLifecycleMonitorThread", true);
@@ -369,9 +371,9 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
     }
 
     protected void groomInProgressTransactionInfos() {
-        List<Integer> infosToRemove = new ArrayList<Integer>();
+        List<Integer> infosToRemove = new ArrayList<>();
         try {
-            Map<Integer, TransactionInfo> shallow = new HashMap<Integer, TransactionInfo>();
+            Map<Integer, TransactionInfo> shallow = new HashMap<>();
             shallow.putAll(infos);
             for (Map.Entry<Integer, TransactionInfo> entry : shallow.entrySet()) {
                 long currentTime = System.currentTimeMillis();

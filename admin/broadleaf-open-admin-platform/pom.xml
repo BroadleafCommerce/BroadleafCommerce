@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.1.6-SNAPSHOT</version>
+        <version>5.2.8-SNAPSHOT</version>
     </parent>
     <artifactId>broadleaf-open-admin-platform</artifactId>
     <packaging>jar</packaging>
@@ -71,20 +71,6 @@
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
             </plugin>
-            <!-- Include Spock specifications, exclude the browser tests 
-                by default -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*Spec*</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/browsertest/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -108,7 +94,7 @@
         </resources>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
+                <!--This plugin's configuration is used to store Eclipse
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -171,12 +157,6 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -196,11 +176,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -209,6 +185,10 @@
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-jpeg</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.depsypher</groupId>
+            <artifactId>pngtastic</artifactId>
         </dependency>
         <!-- Tests -->
         <dependency>

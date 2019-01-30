@@ -29,6 +29,12 @@
     var SCROLLBAR_WIDTH = 15;
     var TREE_COLUMN_WIDTH = 320;
 
+    var topRowVisiblePart = 0.55; // part of top row visibility to consider full row as visible
+    var bottomRowVisiblePart = 0.6; // part of bottom row visibility to consider full row as visible
+
+    var MIN_WIDTH = 60;
+    var CONTROL_WIDTH = 45;
+
     var tableResizing = {
         active : false,
         headerTable : undefined,
@@ -247,9 +253,6 @@
         },
         
         initializeTableResizing : function($headerTable, $bodyTable) {
-            var MIN_WIDTH = 60;
-            var CONTROL_WIDTH = 45;
-
             $headerTable.find('th div.resizer').mousedown(function(e) {
                 var $this = $(this).closest('th');
                 
@@ -308,7 +311,10 @@
                 }
             });
 
-            // Initialize the headers for the initial load
+            BLCAdmin.listGrid.paginate.initializeHeaderWidths($headerTable);
+        },
+
+        initializeHeaderWidths : function($headerTable) {
             var $columnHeaders = $headerTable.find('thead tr th');
             $columnHeaders.each(function(index, header) {
                 var currentHeader = $($columnHeaders[index])[0];
@@ -531,20 +537,24 @@
                 return 0;
             }
             
-            var scrollOffset = $tbody.closest('.mCSB_container').position().top;
+            var scrollOffset = $tbody.closest('.mCSB_container').position().top * -1;
             var trHeight = this.getRowHeight($tbody);
-            var topVisibleIndex = Math.floor(scrollOffset * -1 / trHeight);
+            var topVisibleIndex = scrollOffset / trHeight;
+            var hiddenRowRemainder = topVisibleIndex % 1;
+            topVisibleIndex = hiddenRowRemainder > (1 - topRowVisiblePart) ? Math.ceil(topVisibleIndex) : Math.floor(topVisibleIndex);
             return Math.max(topVisibleIndex, 0);
         },
         
         getBottomVisibleIndex : function($tbody) {
-            var scrollOffset = $tbody.closest('.mCSB_container').position().top;
+            var scrollOffset = $tbody.closest('.mCSB_container').position().top * -1;
             var trHeight = this.getRowHeight($tbody);
             // Updated the code here to use the exact value (possibly float value) of
             // the listgrid body wrapper. Previously it would round this value which
             // led to inaccurate math.
-            var bottomVisibleIndex = Math.floor((scrollOffset * -1 + $tbody.closest('.listgrid-body-wrapper')[0].getBoundingClientRect().height - trHeight) / trHeight);
-            return bottomVisibleIndex;
+            var boundingRectHeight = $tbody.closest('.listgrid-body-wrapper')[0].getBoundingClientRect().height;
+            var bottomVisibleIndex = (scrollOffset + boundingRectHeight - trHeight) / trHeight;
+            var visibleRowRemainder = bottomVisibleIndex % 1;
+            return visibleRowRemainder > bottomRowVisiblePart ? Math.ceil(bottomVisibleIndex) : Math.floor(bottomVisibleIndex);
         },
         
         scrollToIndex : function($tbody, index) {
@@ -1025,7 +1035,11 @@ $(document).ready(function() {
                     }
 
                     if ($(element).is(':visible')) {
-                        BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                        if ($(element).parents('#listGrid-main.org\\.broadleafcommerce\\.core\\.order\\.domain\\.Order').length > 0) {
+                            fillUnusedPageBottomSpace($(element));
+                        } else {
+                            BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                        }
                     } else {
                         $(element).addClass('needsupdate');
                     }
@@ -1036,6 +1050,36 @@ $(document).ready(function() {
             }
         });
     });
+
+    function fillUnusedPageBottomSpace($tbody) {
+        var gridRowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody)
+        var minGridRowCount = 9;
+        var smallestGridMaxHeight = gridRowHeight * minGridRowCount;
+
+        var $wrapper = $tbody.closest('.listgrid-body-wrapper');
+        if ($wrapper) {
+            var maxHeight = calcMaxHeight($wrapper.height());
+            $wrapper.css('max-height', maxHeight);
+            $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
+            $wrapper.mCustomScrollbar('update');
+            BLCAdmin.listGrid.paginate.updateTableFooter($tbody);
+        }
+
+        function calcMaxHeight(wrapperHeight) {
+            var maxHeight = wrapperHeight + calcUnusedHeight();
+            maxHeight = Math.floor(maxHeight / gridRowHeight) * gridRowHeight;
+            return Math.max(smallestGridMaxHeight, maxHeight);
+        }
+
+        function calcUnusedHeight() {
+            var hClient = document.body.clientHeight;
+            var hSiteBar = $('.site-bar').height();
+            var hSendboxRibbon = $('#sandbox-ribbon').height();
+            var hStickyContainer = $('.sticky-container').height();
+            var hContentYield = $('.content-yield').outerHeight();
+            return hClient - hSiteBar - hSendboxRibbon - hStickyContainer - hContentYield;
+        }
+    }
 
     $('body').on('click', 'a.previous-page', function(event) {
         var $pageLink = $(this);

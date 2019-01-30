@@ -30,6 +30,9 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +48,10 @@ import javax.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link RecordOfferUsageRollbackHandler}
  */
+@Component("blRecordOfferUsageActivity")
 public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
+    
+    public static final int ORDER = 4000;
     
     /**
      * Key to retrieve the audits that were persisted
@@ -59,6 +65,12 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
+    
+    @Autowired
+    public RecordOfferUsageActivity(@Qualifier("blRecordOfferUsageRollbackHandler") RecordOfferUsageRollbackHandler rollbackHandler) {
+        setOrder(ORDER);
+        setRollbackHandler(rollbackHandler);
+    }
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
@@ -68,7 +80,7 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
         
         List<OfferAudit> audits = saveOfferIds(appliedOffers, offerToCodeMapping, order);
         
-        Map<String, Object> state = new HashMap<String, Object>();
+        Map<String, Object> state = new HashMap<>();
         state.put(SAVED_AUDITS, audits);
         
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), state);
@@ -82,7 +94,7 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
      * @return the {@link OfferAudit}s that were persisted
      */
     protected List<OfferAudit> saveOfferIds(Set<Offer> offers, Map<Offer, OfferCode> offerToCodeMapping, Order order) {
-        List<OfferAudit> audits = new ArrayList<OfferAudit>(offers.size());
+        List<OfferAudit> audits = new ArrayList<>(offers.size());
         for (Offer offer : offers) {
             OfferAudit audit = offerAuditService.create();
             audit.setCustomerId(order.getCustomer().getId());

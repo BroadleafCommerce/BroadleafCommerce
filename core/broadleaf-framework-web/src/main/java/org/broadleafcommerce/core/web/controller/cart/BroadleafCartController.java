@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -34,7 +35,6 @@ import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemReques
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -61,6 +61,7 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafCartController extends AbstractCartController {
 
     protected static String cartView = "cart/cart";
+    protected static String checkoutView = "checkout/checkout";
     protected static String cartPageRedirect = "redirect:/cart";
     protected static String configureView = "configure/partials/configure";
     protected static String configurePageRedirect = "redirect:/cart/configure";
@@ -120,10 +121,11 @@ public class BroadleafCartController extends AbstractCartController {
             cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
         }
 
+        // Validate the add to cart
+        updateCartService.validateAddToCartRequest(itemRequest, cart);
+
         // if this is an update to an existing order item, remove the old before proceeding
         if (isUpdateRequest(request)) {
-            updateCartService.validateAddToCartRequest(itemRequest, cart);
-
             String originalOrderItem = request.getParameter("originalOrderItem");
             if (StringUtils.isNotEmpty(originalOrderItem)) {
                 Long originalOrderItemId = Long.parseLong(originalOrderItem);
@@ -143,6 +145,12 @@ public class BroadleafCartController extends AbstractCartController {
     protected void updateAddRequestQuantities(OrderItemRequestDTO itemRequest, Long originalOrderItemId) {
         // Update the request to match the quantity of the order item it's replacing
         OrderItem orderItem = orderItemService.readOrderItemById(originalOrderItemId);
+
+        // Make sure there is actually an order item to process
+        if (orderItem == null) {
+            return;
+        }
+
         itemRequest.setQuantity(orderItem.getQuantity());
         for (OrderItemRequestDTO childDTO : itemRequest.getChildOrderItems()) {
             childDTO.setQuantity(childDTO.getQuantity() * orderItem.getQuantity());
@@ -379,7 +387,6 @@ public class BroadleafCartController extends AbstractCartController {
      * @return the return view
      * @throws IOException
      * @throws PricingException
-     * @throws ItemNotFoundException
      * @throws OfferMaxUseExceededException 
      */
     public String addPromo(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -391,27 +398,31 @@ public class BroadleafCartController extends AbstractCartController {
         
         if (cart != null && !(cart instanceof NullOrderImpl)) {
             List<OfferCode> offerCodes = offerService.lookupAllOfferCodesByCode(customerOffer);
-            for (OfferCode offerCode : offerCodes) {
-                if (offerCode != null) {
-                    try {
-                        orderService.addOfferCode(cart, offerCode, false);
-                        promoAdded = true;
-                    } catch (OfferException e) {
-                        if (e instanceof OfferMaxUseExceededException) {
-                            exception = "Use Limit Exceeded";
-                        } else if (e instanceof OfferExpiredException) {
-                            exception = "Offer Has Expired";
-                        } else if (e instanceof OfferAlreadyAddedException) {
-                            exception = "Offer Has Already Been Added";
-                        } else {
-                            exception = "An Unknown Offer Error Has Occured";
+            if (CollectionUtils.isNotEmpty(offerCodes)) {
+                for (OfferCode offerCode : offerCodes) {
+                    if (offerCode != null) {
+                        try {
+                            orderService.addOfferCode(cart, offerCode, false);
+                            promoAdded = true;
+                        } catch (OfferException e) {
+                            if (e instanceof OfferMaxUseExceededException) {
+                                exception = "Use Limit Exceeded";
+                            } else if (e instanceof OfferExpiredException) {
+                                exception = "Offer Has Expired";
+                            } else if (e instanceof OfferAlreadyAddedException) {
+                                exception = "Offer Has Already Been Added";
+                            } else {
+                                exception = "An Unknown Offer Error Has Occurred";
+                            }
                         }
+                    } else {
+                        exception = "Invalid Code";
                     }
-                } else {
-                    exception = "Invalid Code";
                 }
+                cart = orderService.save(cart, true);
+            } else {
+                exception = "Unknown Code";
             }
-            cart = orderService.save(cart, true);
         } else {
             exception = "Invalid Cart";
         }
@@ -421,14 +432,19 @@ public class BroadleafCartController extends AbstractCartController {
             extraData.put("promoAdded", promoAdded);
             extraData.put("exception" , exception);
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-            return getCartView();
         } else {
             model.addAttribute("exception", exception);
-            return getCartView();
         }
-        
+
+        return isCheckoutContext(request) ? getCheckoutView() : getCartView();
     }
-    
+
+    protected boolean isCheckoutContext(HttpServletRequest request) {
+        String isCheckoutContext = request.getParameter("isCheckoutContext");
+
+        return Boolean.parseBoolean(isCheckoutContext);
+    }
+
     /** Removes offer from cart
      * 
      * @param request
@@ -437,7 +453,6 @@ public class BroadleafCartController extends AbstractCartController {
      * @return the return view
      * @throws IOException
      * @throws PricingException
-     * @throws ItemNotFoundException
      * @throws OfferMaxUseExceededException 
      */
     public String removePromo(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -449,7 +464,12 @@ public class BroadleafCartController extends AbstractCartController {
         orderService.removeOfferCode(cart, offerCode, false);
         cart = orderService.save(cart, true);
 
-        return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+
+        if (isCheckoutContext(request)) {
+            return getCheckoutView();
+        } else {
+            return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+        }
     }
 
     public String getCartView() {
@@ -466,6 +486,10 @@ public class BroadleafCartController extends AbstractCartController {
 
     public String getConfigurePageRedirect() {
         return configurePageRedirect;
+    }
+
+    public String getCheckoutView() {
+        return checkoutView;
     }
 
     public Map<String, String> handleIllegalCartOpException(IllegalCartOperationException ex) {

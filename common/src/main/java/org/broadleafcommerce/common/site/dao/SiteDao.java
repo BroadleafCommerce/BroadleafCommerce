@@ -47,6 +47,13 @@ public interface SiteDao {
      * @return
      */
     public Site retrieveSiteByDomainOrDomainPrefix(String domain, String prefix);
+    
+    /**
+     * Finds a site by its {@link Site#getSiteIdentifierValue()}.
+     * @param identifier
+     * @return
+     */
+    public Site retrieveSiteByIdentifier(String identifier);
 
     /**
      * Persists the site changes.
@@ -75,6 +82,8 @@ public interface SiteDao {
      * @return the catalog
      */
     public Catalog retrieveCatalog(Long id);
+    
+    Catalog retrieveCatalogByName(String name);
 
     /**
      * Creates a catalog using {@link org.broadleafcommerce.common.persistence.EntityConfiguration}.

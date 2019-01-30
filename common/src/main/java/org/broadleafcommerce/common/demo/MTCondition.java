@@ -23,12 +23,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.ClassUtils;
 
 /**
- * <p>
  * Condition to use if the Multi-Tenant module is available at runtime
- * 
- * <p>
- * In Broadleaf 5.0 and 5.1, this class is non-functional and instead only serves to provide consistent runtime compatibility
- * across Broadleaf 5.0, 5.1 and 5.2 in external modules. This class only provides any meaning in Broadleaf 5.2+.
  * 
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)

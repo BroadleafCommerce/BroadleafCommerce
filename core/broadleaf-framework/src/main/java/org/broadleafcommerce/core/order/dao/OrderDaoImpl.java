@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -25,36 +26,28 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.hibernate.ejb.AvailableSettings;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.UUID;
+import java.util.*;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -85,6 +78,29 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public Order readOrderByIdIgnoreCache(final Long orderId) {
+        Map<String, Object> m = new HashMap<>();
+        m.put(AvailableSettings.SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
+        return em.find(OrderImpl.class, orderId, m);
+    }
+
+    @Override
+    public Order readOrderByExternalId(String orderExternalId) {
+        TypedQuery<Order> query = new TypedQueryBuilder<Order>(Order.class, "ord")
+                .addRestriction("ord.embeddedOmsOrder.externalId", "=", orderExternalId)
+                .toQuery(em);
+
+        try {
+            return query.getSingleResult();
+            //potentially we can get exception because externalId field is added in oms module that is not mandatory to have
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
     public Order readOrderById(final Long orderId, boolean refresh) {
         Order order = readOrderById(orderId);
         if (refresh) {
@@ -431,5 +447,25 @@ public class OrderDaoImpl implements OrderDao {
 
     protected Long getDatabaseOrderLockTimeToLive() {
         return BLCSystemProperty.resolveLongSystemProperty("order.lock.database.time.to.live", -1L);
+    }
+
+    @Override
+    public List<Order> readOrdersByEmail(String email) {
+        if (StringUtils.isEmpty(email)) {
+            return Collections.emptyList();
+        }
+        TypedQuery<Order> query = em.createNamedQuery("BC_READ_ORDERS_BY_EMAIL", Order.class);
+        query.setParameter("email", email);
+        List<Order> orders = query.getResultList();
+        return orders != null ? orders : new ArrayList<Order>();
+    }
+
+    @Override
+    public Long readNumberOfOrders() {
+    	 CriteriaBuilder builder = em.getCriteriaBuilder();
+         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+         criteria.select(builder.count(criteria.from(OrderImpl.class)));
+         TypedQuery<Long> query = em.createQuery(criteria);
+         return query.getSingleResult();
     }
 }

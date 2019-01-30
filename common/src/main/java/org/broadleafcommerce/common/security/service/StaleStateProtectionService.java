@@ -17,6 +17,10 @@
  */
 package org.broadleafcommerce.common.security.service;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * This service is responsible for monitoring key changes in state for a given session. If it is detected that a key state
  * change has taken place after the current page was rendered, but before the form on the page is submitted, the service
@@ -92,6 +96,14 @@ public interface StaleStateProtectionService {
     void invalidateState();
 
     /**
+     * Remove the current state version token in the user's session, if exists. This usually occurs in response to a key
+     * state change.
+     *
+     * @param notify Whether or not the request should be notified that state was invalidated. See {@link #sendRedirectOnStateChange(HttpServletResponse, String...)}.
+     */
+    void invalidateState(boolean notify);
+
+    /**
      * Whether or not the protection provided by this service is active.
      *
      * @return
@@ -104,5 +116,19 @@ public interface StaleStateProtectionService {
      * @return
      */
     String getStateVersionTokenParameter();
+
+    /**
+     * Utility method to send a redirect for the current url with state change params cleared. State change params are request
+     * url parameters that drive primary context change. For example, url parameters for sandbox, catalog and profile changes
+     * are considered state change params. When such a param is utilized, the state token is reset to represent the fundamental
+     * context change and is stored in session. However, it is now desirable to redirect the user to the target url without
+     * the state change params to avoid a subsequent check.
+     *
+     * @param response the current http response
+     * @param stateChangeParams any request parameter names being used by the system to drive state change
+     * @return whether or not a redirect was sent based on detection of an earlier call to {@link #invalidateState()}
+     * @throws IOException
+     */
+    boolean sendRedirectOnStateChange(HttpServletResponse response, String... stateChangeParams) throws IOException;
 
 }

@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -35,8 +36,10 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.RuleFieldPersistenceProviderCascadeExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.RuleFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -48,6 +51,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
+import org.hibernate.Session;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -105,6 +109,9 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     
     @Resource(name = "blRuleFieldPersistenceProviderExtensionManager")
     protected RuleFieldPersistenceProviderExtensionManager extensionManager;
+
+    @Resource(name = "blRuleFieldPersistenceProviderCascadeExtensionManager")
+    protected RuleFieldPersistenceProviderCascadeExtensionManager cascadeExtensionManager;
 
     @Override
     public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
@@ -192,28 +199,35 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     }
 
     protected void extractSimpleRule(ExtractValueRequest extractValueRequest, Property property, ObjectMapper mapper, MVELToDataWrapperTranslator translator) {
-        String val = null;
+        Property jsonProperty;
         if (extractValueRequest.getRequestedValue() != null) {
             if (extractValueRequest.getRequestedValue() instanceof String) {
-                val = (String) extractValueRequest.getRequestedValue();
+                String val = (String) extractValueRequest.getRequestedValue();
                 property.setValue(val);
                 property.setDisplayValue(extractValueRequest.getDisplayVal());
+                jsonProperty = ruleFieldExtractionUtility.convertSimpleRuleToJson(translator, mapper, val,
+                                property.getName() + "Json", extractValueRequest.getMetadata().getRuleIdentifier());
             } else {
                 Object simpleRule = extractValueRequest.getRequestedValue();
                 if (simpleRule != null) {
                     if (simpleRule instanceof SimpleRule) {
-                        val = ((SimpleRule) simpleRule).getMatchRule();
+                        String val = ((SimpleRule) simpleRule).getMatchRule();
                         property.setValue(val);
                         property.setDisplayValue(extractValueRequest.getDisplayVal());
+                        jsonProperty = convertSimpleRuleToJson(translator, mapper, (SimpleRule) simpleRule, property.getName() + "Json", extractValueRequest.getMetadata().getRuleIdentifier());
                     } else {
                         throw new UnsupportedOperationException("RULE_SIMPLE type is currently only supported on " +
                                 "fields of type SimpleRule");
                     }
+                } else {
+                    jsonProperty = ruleFieldExtractionUtility.convertSimpleRuleToJson(translator, mapper, null,
+                                property.getName() + "Json", extractValueRequest.getMetadata().getRuleIdentifier());
                 }
             }
+        } else {
+            jsonProperty = ruleFieldExtractionUtility.convertSimpleRuleToJson(translator, mapper, null,
+                                property.getName() + "Json", extractValueRequest.getMetadata().getRuleIdentifier());
         }
-        Property jsonProperty = ruleFieldExtractionUtility.convertSimpleRuleToJson(translator, mapper, val,
-                property.getName() + "Json", extractValueRequest.getMetadata().getRuleIdentifier());
         extractValueRequest.getProps().add(jsonProperty);
     }
 
@@ -312,11 +326,69 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     }
                     if (dirty) {
                         updateSimpleRule(populateValueRequest, mvel, persist, rule);
+
+                        EntityManager em = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
+                        Long id = getRuleId(rule, em);
+                        Long containedId = getContainedRuleId(rule, em);
+
+                        DataDTO dto = dw.getData().get(0);
+                        if (persist && cascadeExtensionManager != null) {
+                            ExtensionResultHolder resultHolder = new ExtensionResultHolder();
+                            cascadeExtensionManager.getProxy().postCascadeAdd(rule, dto, resultHolder);
+                        }
+                        dto.setPk(id);
+                        dto.setContainedPk(containedId);
+                        ObjectMapper mapper = new ObjectMapper();
+                        String json;
+                        try {
+                            json = mapper.writeValueAsString(dw);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        populateValueRequest.getProperty().setValue(json);
                     }
                 }
             }
         }
         return dirty;
+    }
+
+    protected Long getRuleId(SimpleRule rule, EntityManager em) {
+        if (!em.contains(rule)) {
+            rule = em.merge(rule);
+        }
+
+        Long id = (Long) em.unwrap(Session.class).getIdentifier(rule);
+        id = transformId(id, rule);
+        return id;
+    }
+
+    protected Long getContainedRuleId(SimpleRule simpleRule, EntityManager em) {
+        Long containedId = null;
+
+        Object containedRule = findContainedRuleIfApplicable(simpleRule);
+        if (containedRule != null) {
+            if (!em.contains(containedRule)) {
+                containedRule = em.merge(containedRule);
+            }
+
+            containedId = (Long) em.unwrap(Session.class).getIdentifier(containedRule);
+            containedId = transformId(containedId, containedRule);
+
+        }
+
+        return containedId;
+    }
+
+    protected Long transformId(Long id, Object rule) {
+        if (extensionManager != null) {
+            ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
+            ExtensionResultStatusType result = extensionManager.getProxy().transformId(rule, resultHolder);
+            if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                id = resultHolder.getResult();
+            }
+        }
+        return id;
     }
 
     /**
@@ -420,33 +492,83 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         return dirty;
     }
 
+    protected Property convertSimpleRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper, SimpleRule simpleRule, String jsonProp, String fieldService) {
+        String matchRule = simpleRule.getMatchRule();
+        Entity[] matchCriteria = new Entity[1];
+        Property[] properties = new Property[3];
+
+        Property mvelProperty = new Property();
+        mvelProperty.setName("matchRule");
+        mvelProperty.setValue(matchRule == null ? "" : matchRule);
+        properties[0] = mvelProperty;
+
+        Entity criteria = new Entity();
+        criteria.setProperties(properties);
+        matchCriteria[0] = criteria;
+
+        EntityManager em = PersistenceManagerFactory.getDefaultPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
+        Long id = getRuleId(simpleRule, em);
+        Property idProperty = new Property();
+        idProperty.setName("id");
+        idProperty.setValue(String.valueOf(id));
+        properties[1] = idProperty;
+
+        Long containedId = getContainedRuleId(simpleRule, em);
+        Property containedIdProperty = new Property();
+        containedIdProperty.setName("containedId");
+        containedIdProperty.setValue(String.valueOf(containedId));
+        properties[2] = containedIdProperty;
+
+        String json;
+        try {
+            DataWrapper orderWrapper = translator.createRuleData(matchCriteria, "matchRule", null, "id", "containedId", ruleBuilderFieldServiceFactory.createInstance(fieldService));
+            json = mapper.writeValueAsString(orderWrapper);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Property p = new Property();
+        p.setName(jsonProp);
+        p.setValue(json);
+
+        return p;
+    }
+
     protected Property convertQuantityBasedRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
                         Collection<QuantityBasedRule> quantityBasedRules, String jsonProp, String fieldService) {
 
         int k=0;
         Entity[] targetItemCriterias = new Entity[quantityBasedRules.size()];
         for (QuantityBasedRule quantityBasedRule : quantityBasedRules) {
-            Property[] properties = new Property[3];
+            Property[] properties = new Property[4];
+
             Property mvelProperty = new Property();
             mvelProperty.setName("matchRule");
             mvelProperty.setValue(quantityBasedRule.getMatchRule());
+
             Property quantityProperty = new Property();
             quantityProperty.setName("quantity");
             quantityProperty.setValue(quantityBasedRule.getQuantity().toString());
+
             Property idProperty = new Property();
             idProperty.setName("id");
             Long id = quantityBasedRule.getId();
-            if (extensionManager != null) {
-                ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
-                ExtensionResultStatusType result = extensionManager.getProxy().transformId(quantityBasedRule, resultHolder);
-                if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
-                    id = resultHolder.getResult();
-                }
-            }
+            id = transformId(id, quantityBasedRule);
             idProperty.setValue(String.valueOf(id));
+
+            Object containedRule = findContainedRuleIfApplicable(quantityBasedRule);
+            Property containedIdProperty = new Property();
+            if (containedRule != null) {
+                containedIdProperty.setName("containedId");
+                EntityManager em = PersistenceManagerFactory.getDefaultPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
+                Long containedId = (Long) em.unwrap(Session.class).getIdentifier(containedRule);
+                containedId = transformId(containedId, containedRule);
+                containedIdProperty.setValue(String.valueOf(containedId));
+            }
+
             properties[0] = mvelProperty;
             properties[1] = quantityProperty;
             properties[2] = idProperty;
+            properties[3] = containedIdProperty;
             Entity criteria = new Entity();
             criteria.setProperties(properties);
             targetItemCriterias[k] = criteria;
@@ -455,8 +577,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
         String json;
         try {
-            DataWrapper oiWrapper = translator.createRuleData(targetItemCriterias, "matchRule", "quantity", "id",
-                    ruleBuilderFieldServiceFactory.createInstance(fieldService));
+            DataWrapper oiWrapper = translator.createRuleData(targetItemCriterias, "matchRule", "quantity", "id", "containedId", ruleBuilderFieldServiceFactory.createInstance(fieldService));
             json = mapper.writeValueAsString(oiWrapper);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -543,9 +664,20 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         }
                         em.persist(quantityBasedRule);
                         dto.setPk(quantityBasedRule.getId());
+                        Object contained = findContainedRuleIfApplicable(quantityBasedRule);
+                        if (contained != null) {
+                            dto.setContainedPk((Long) em.unwrap(Session.class).getIdentifier(contained));
+                        }
                         if (extensionManager != null) {
                             ExtensionResultHolder resultHolder = new ExtensionResultHolder();
                             extensionManager.getProxy().postAdd(quantityBasedRule, resultHolder);
+                            if (resultHolder.getResult() != null) {
+                                quantityBasedRule = (QuantityBasedRule) resultHolder.getResult();
+                            }
+                        }
+                        if (cascadeExtensionManager != null) {
+                            ExtensionResultHolder resultHolder = new ExtensionResultHolder();
+                            cascadeExtensionManager.getProxy().postCascadeAdd(quantityBasedRule, dto, resultHolder);
                             if (resultHolder.getResult() != null) {
                                 quantityBasedRule = (QuantityBasedRule) resultHolder.getResult();
                             }
@@ -630,5 +762,40 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     @Override
     public int getOrder() {
         return FieldPersistenceProvider.RULE;
+    }
+
+    public static Object findContainedRuleIfApplicable(Object rule) {
+        Object response = null;
+        for (Field field : getAllFields(rule.getClass())) {
+            field.setAccessible(true);
+            Object test = null;
+            try {
+                test = field.get(rule);
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+            if (test != null && (test instanceof SimpleRule || test instanceof QuantityBasedRule)) {
+                response = test;
+                break;
+            }
+        }
+        return response;
+    }
+
+    private static Field[] getAllFields(Class<?> targetClass) {
+        Field[] allFields = new Field[]{};
+        boolean eof = false;
+        Class<?> currentClass = targetClass;
+        while (!eof) {
+            Field[] fields = currentClass.getDeclaredFields();
+            allFields = (Field[]) ArrayUtils.addAll(allFields, fields);
+            if (currentClass.getSuperclass() != null) {
+                currentClass = currentClass.getSuperclass();
+            } else {
+                eof = true;
+            }
+        }
+
+        return allFields;
     }
 }

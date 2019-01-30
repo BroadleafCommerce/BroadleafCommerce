@@ -17,40 +17,23 @@
  */
 package org.broadleafcommerce.test;
 
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
+import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
- * Base Integration Test Setup java file for Admin based integration tests. This base class has all the
- * applicationContext's shared by Integration tests for Admin based testing. Extend from this class on a
- * per project basis with another setup file that contains only an @ContextHierarchy(@ContextConfiguration)
- * that references this "adminContexts" ContextConfiguration and add only the contexts, in the locations
- * parameter, that you need to run your tests at that level. Then extend off of that setup file with your
- * actual integration tests. IntegrationSetup files should not have any code in their body's.
- *
- * @author Jeff Fischer
- *
+ * Base TestNG support class used for Broadleaf Admin tests. This is slightly different than the normal {@link AbstractTestNGSpringContextTests}
+ * in that this also includes the other default {@link TestExecutionListeners} in order to use {@literal @}Transactional in test methods,
+ * while not marking the entire test as {@literal @}Transactional (like in {@link TestNGTransactionalAdminIntegrationSetup}.
+ * 
+ * @see BroadleafAdminIntegrationTest
+ * @see TestNGTransactionalAdminIntegrationSetup
+ * @author Phillip Verheyden (phillipuniverse)
  */
-@TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
-@ContextHierarchy({
-@ContextConfiguration(name = "adminRoot",
-    locations = {"classpath:/bl-open-admin-contentClient-applicationContext.xml",
-            "classpath:/bl-open-admin-contentCreator-applicationContext.xml",
-            "classpath:/bl-admin-applicationContext.xml",
-            "classpath:/bl-cms-contentClient-applicationContext.xml",
-            "classpath:/bl-cms-contentCreator-applicationContext.xml"},
-    loader = BroadleafGenericGroovyXmlWebContextLoader.class)
-})
-@WebAppConfiguration
-@TestExecutionListeners(TransactionalTestExecutionListener.class)
-public class TestNGAdminIntegrationSetup extends AbstractTestNGSpringContextTests {
-    /*
-     * Intentionally left blank. Subclasses should be inheriting from
-     * the configuration annotations defined at the class level
-     */
+@BroadleafAdminIntegrationTest
+@TestExecutionListeners({TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class})
+public abstract class TestNGAdminIntegrationSetup extends AbstractTestNGSpringContextTests {
+    
 }

@@ -20,6 +20,9 @@ package org.broadleafcommerce.common.file.service;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.site.domain.Site;
+
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -27,5 +30,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 public interface BroadleafFileServiceExtensionHandler extends ExtensionHandler {
 
     public ExtensionResultStatusType processPathForSite(String prefix, String resourceName, ExtensionResultHolder<String> holder);
+
+    public ExtensionResultStatusType retrieveAllParentSitesIds(Site site, ExtensionResultHolder<List<String>> holder);
 
 }

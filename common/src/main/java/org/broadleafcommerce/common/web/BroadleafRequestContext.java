@@ -35,6 +35,7 @@ import org.broadleafcommerce.common.site.domain.CatalogImpl;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -323,23 +324,7 @@ public class BroadleafRequestContext {
     }
 
     public String getRequestURIWithoutContext() {
-        String requestURIWithoutContext = null;
-
-        if (request != null && request.getRequestURI() != null) {
-            if (request.getContextPath() != null) {
-                requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
-            } else {
-                requestURIWithoutContext = request.getRequestURI();
-            }
-
-            // Remove JSESSION-ID or other modifiers
-            int pos = requestURIWithoutContext.indexOf(";");
-            if (pos >= 0) {
-                requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
-            }
-        }
-        
-        return requestURIWithoutContext;
+        return BLCRequestUtils.getRequestURIWithoutContext(request);
     }
     
     protected java.util.Locale convertLocaleToJavaLocale() {      
@@ -419,7 +404,7 @@ public class BroadleafRequestContext {
     }
 
     public Boolean getIgnoreSite() {
-        return ignoreSite;
+        return ignoreSite==null?false:ignoreSite;
     }
 
     public void setIgnoreSite(Boolean ignoreSite) {

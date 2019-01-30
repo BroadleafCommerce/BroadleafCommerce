@@ -38,6 +38,11 @@
     white-space: nowrap;
     vertical-align: top;
 }
+.entityCatalogName {
+    font-size: 12px;
+    font-weight: 100;
+    padding-left: 5px;
+}
 .sticky-fixed {
     position: fixed;
     top: 80px;
@@ -431,11 +436,10 @@ input[type="radio"].radio {
     top: 0;
     visibility: hidden;
 }
-input[type="radio"].radio+label.radio-label,
-input[type="radio"].radio+label.radio-label.clr, .radio > input[type="radio"]+label {
-    padding-left: 25px;
+input[type="radio"].radio+::before,
+input[type="radio"].radio+label.radio-label.clr::before, .radio > input[type="radio"]+label::before {
+    padding-left: 10px;
     padding-right: 15px;
-    margin-bottom: 8px;
 }
 /****************************************
  ADMIN COMMON FIELD STYLES
@@ -575,6 +579,13 @@ input.color-picker-value {
     padding-right: 10px;
     font-size: 12px;
     color: #8EAA2B !important;
+}
+.content-area-title-bar .alert-box.alert {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #DE3A2E !important;
 }
 .fieldset-card .titlebar-title i.help-tip {
     margin-left: 5px;

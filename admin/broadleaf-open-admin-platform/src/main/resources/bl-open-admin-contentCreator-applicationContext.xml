@@ -22,17 +22,18 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mo="http://schema.broadleafcommerce.org/mo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-4.1.xsd
+           http://www.springframework.org/schema/context/spring-context.xsd
            http://schema.broadleafcommerce.org/mo
            http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.web.controller.*"/>
     </context:component-scan>
-
-    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
+    
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.config"/>
+    
 
     <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -52,59 +53,30 @@
         </property>
     </bean>
 
-    <bean id="blAppConfigurationMap" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
-        <property name="sourceMap">
-            <map>
-                <entry key="admin.showIfProperty.priceList" value="true"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
-        <property name="sourceMap">
-            <map>
-                <entry key="sandbox" value="prodEntityManager"/>
-                <entry key="stage" value="prodEntityManager"/>
-                <entry key="production" value="prodEntityManager"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <ref bean="blAdminUserCustomPersistenceHandler" />
                 <ref bean="blAdminPermissionCustomPersistenceHandler" />
                 <ref bean="blSystemPropertyCustomPersistenceHandler" />
                 <ref bean="blTranslationCustomPersistenceHandler" />
-                <ref bean="blOfferCustomPersistenceHandler" />
             </list>
         </property>
     </bean>
-
-    <bean id="blCustomPersistenceHandlerFilters" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    
+    <bean id="blCustomPersistenceHandlerFilterClassnames" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
             </list>
         </property>
     </bean>
 
-    <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
-    </bean>
-
-    <mo:override id="blMetadataOverrides"/>
-    
-    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
-        <property name="basenames">
+    <bean id="blCustomPersistenceHandlerFilters" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
-                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
-                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
-                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
-                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
-                <value>classpath:/messages/OpenAdminMessages</value>
-                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
+                <bean class="org.broadleafcommerce.openadmin.server.service.handler.DefaultCustomPersistenceHandlerFilter">
+                    <property name="filterCustomPersistenceHandlerClassnames" ref="blCustomPersistenceHandlerFilterClassnames" />
+                </bean>
             </list>
         </property>
     </bean>
@@ -186,12 +158,8 @@
             </map>
         </property>
     </bean>
-    
-    <bean id="blFormBuilderExtensionManager" class="org.broadleafcommerce.openadmin.web.service.FormBuilderExtensionManager">
-        <property name="handlers" ref="blFormBuilderExtensionHandlers" />
-    </bean>
 
-    <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <ref bean="blPolymorphicEntityCheckSectionAuthorization"/>
@@ -232,17 +200,6 @@
             <list>
             </list>
         </property>
-    </bean>
-
-    <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="blCacheManager"/>
     </bean>
 
     <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -294,23 +251,111 @@
         </property>
     </bean>
     
-   <!--  Spring 4.1 Admin Resource Handling Base Classes -->
-   <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
+    <bean id="blAdminAdditionalBundleFiles" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map value-type="java.util.List">
+                <entry key="adminlib.js" value-ref="blAdminJsLibFileList"/>
+                <entry key="admin.js" value-ref="blJsFileList"/>
+                <entry key="admin/admin.css" value-ref="blCssFileList"/>
+            </map>
+        </property>  
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminAdditionalBundleFiles" />
+        <property name="targetRef" value="blAdditionalBundleFiles" />
+    </bean>
+
+    <!--  Spring 4.1 Admin Resource Handling Base Classes -->
+    <bean id="adminResourceHttpRequestHandlerBase" abstract="true"
         class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   
         <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
         <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
         <property name="resourceResolvers" ref="blAdminResourceResolvers" />
-        
     </bean>
     
-   <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+    <bean id="blJsResources" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blJsLocations"/>
         <property name="resourceTransformers" ref="blJsResourceTransformers" />     
-   </bean>    
+    </bean>
     
-   <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+    <bean id="blCssResources" parent="adminResourceHttpRequestHandlerBase">
         <property name="locations" ref="blCssLocations"/>
         <property name="resourceTransformers" ref="blCssResourceTransformers" />             
-   </bean>
+    </bean>
+
+    <bean id="blMessageSourceBaseNames-openadmin" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
+                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
+                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
+                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
+                <value>classpath:/messages/OpenAdminMessages</value>
+                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMessageSourceBaseNames-openadmin" />
+        <property name="targetRef" value="blMessageSourceBaseNames" />
+    </bean>
+
+    <bean id="blSendAdminUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${adminUserNameEmail.fromAddress}"/>
+        <property name="emailTemplate" value="${adminUserNameEmail.emailTemplate}"/>
+        <property name="subject" value="${adminUserNameEmail.subject}"/>
+    </bean>
+
+    <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${adminResetPassword.fromAddress}"/>
+        <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
+        <property name="subject" value="${adminResetPassword.subject}"/>
+    </bean>
+
+    <mo:override id="blMetadataOverrides"/>
+
+    <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicFieldMetadataProvider"/>
+                <ref bean="blCollectionFieldMetadataProvider"/>
+                <ref bean="blAdornedTargetCollectionFieldMetadataProvider"/>
+                <ref bean="blMapFieldMetadataProvider"/>
+                <ref bean="blMapFieldsFieldMetadataProvider"/>
+                <ref bean="blPasswordFieldMetadataProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicFieldPersistenceProvider"/>
+                <ref bean="blRuleFieldPersistenceProvider"/>
+                <ref bean="blMapFieldPersistenceProvider"/>
+                <ref bean="blMoneyFieldPersistenceProvider"/>
+                <ref bean="blMediaFieldPersistenceProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blAppConfigurationMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="admin.showIfProperty.priceList" value="true"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="blRowLevelSecurityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blAdminPasswordEncoder" class="org.broadleafcommerce.common.util.PropertyDrivenBeanFactory" factory-method="createInstance">
+        <constructor-arg value="${password.admin.encoder}"/>
+    </bean>
 
 </beans>

@@ -25,11 +25,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.EJB3ConfigurationDao;
@@ -45,7 +45,6 @@ import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
-import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
@@ -58,10 +57,12 @@ import org.hibernate.mapping.Property;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -87,39 +88,43 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
 @Component("blDynamicEntityDao")
 @Scope("prototype")
 public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContextAware {
-    
+
     private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
-    
+
     protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<>(1000);
-    
+
     /**
      * Lifetime cache for the existence of DynamicEntityDaoImpl that just stores how many properties we have cached in METADATA_CACHE over the lifetime
      * of the application. This should survive evictions from METADATA_CACHE because it is for the purpose of diagnosing when we store different property
      * counts in METADATA_CACHE as a result of cache eviction
      */
     protected static final Map<String, Integer> METADATA_CACHE_SIZES = new HashMap<>();
-    
+
     /*
-     * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion 
+     * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion
      * from polymorphism
      */
-    
+
     protected EntityManager standardEntityManager;
+
+    protected EJB3ConfigurationDao ejb3ConfigurationDao;
 
     @Resource(name="blMetadata")
     protected Metadata metadata;
-
-    @Resource(name="blEJB3ConfigurationDao")
-    protected EJB3ConfigurationDao ejb3ConfigurationDao;
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -130,23 +135,26 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Resource(name= "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
 
-    @Resource(name="blAppConfigurationRemoteService")
-    protected AppConfigurationService appConfigurationRemoteService;
+    @Resource(name = "blAppConfigurationMap")
+    protected Map<String, String> propertyConfigurations = new HashMap<>();
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
-    
+
     /**
      * Whether or not we should use {@link #METADATA_CACHE_SIZES} in the normal runtime of the application
      */
     @Value("${validate.metadata.cache.sizes:false}")
     protected boolean validateMetadataCacheSizes;
-    
+
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
     protected ApplicationContext applicationContext;
+
+
+    protected FieldManager fieldManager;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -157,7 +165,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public Criteria createCriteria(Class<?> entityClass) {
         return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
     }
-    
+
     @Override
     public <T> T persist(T entity) {
         standardEntityManager.persist(entity);
@@ -176,27 +184,27 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         standardEntityManager.flush();
         return response;
     }
-    
+
     @Override
     public void flush() {
         standardEntityManager.flush();
     }
-    
+
     @Override
     public void detach(Serializable entity) {
         standardEntityManager.detach(entity);
     }
-    
+
     @Override
     public void refresh(Serializable entity) {
         standardEntityManager.refresh(entity);
     }
-    
+
     @Override
     public Serializable retrieve(Class<?> entityClass, Object primaryKey) {
         return (Serializable) standardEntityManager.find(entityClass, primaryKey);
     }
-    
+
     @Override
     public void remove(Serializable entity) {
         standardEntityManager.remove(entity);
@@ -250,6 +258,95 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return dynamicDaoHelper.getUpDownInheritance(testClass, getSessionFactory(), true, useCache(), ejb3ConfigurationDao);
     }
 
+    @Override
+    public Class<?> getImplClass(String className) {
+        Class<?> clazz = null;
+        try {
+            clazz = entityConfiguration.lookupEntityClass(className);
+        } catch (NoSuchBeanDefinitionException e) {
+            //do nothing
+        }
+        if (clazz == null) {
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
+        }
+        return clazz;
+    }
+
+    @Override
+    public Class<?> getCeilingImplClass(String className) {
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Class<?>[] entitiesFromCeiling = getAllPolymorphicEntitiesFromCeiling(clazz, true);
+        if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
+            clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
+            entitiesFromCeiling = getAllPolymorphicEntitiesFromCeiling(clazz, true);
+        }
+        if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
+            throw new IllegalArgumentException(String.format("Unable to find ceiling implementation for the requested class name (%s)", className));
+        }
+        clazz = entitiesFromCeiling[entitiesFromCeiling.length - 1];
+        return clazz;
+    }
+
+    @Override
+    public List<Long> readOtherEntitiesWithPropertyValue(Serializable instance, String propertyName, String value) {
+        Class clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(instance.getClass());
+        CriteriaBuilder builder = this.standardEntityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root root = criteria.from(clazz);
+        Path idField = root.get(this.getIdField(clazz).getName());
+        criteria.select(idField.as(Long.class));
+        List<Predicate> restrictions = new ArrayList();
+
+        Path path = null;
+
+        // Support property name such as "defaultSku.name"
+        if (propertyName.contains(".")) {
+            String[] split = propertyName.split("\\.");
+            for (String splitResult : split) {
+                if (path == null) {
+                    path = root.get(splitResult);
+                } else {
+                    path = path.get(splitResult);
+                }
+            }
+        } else {
+            path = root.get(propertyName);
+        }
+
+        restrictions.add(builder.equal(path, value));
+        Serializable identifier = this.getIdentifier(instance);
+        //when we creating the new item identifier is not exists
+        if(identifier != null) {
+            restrictions.add(builder.notEqual(idField, identifier));
+        }
+
+        if (instance instanceof Status) {
+            restrictions.add(builder.or(builder.isNull(root.get("archiveStatus").get("archived")), builder.equal(root.get("archiveStatus").get("archived"), 'N')));
+        }
+
+        criteria.where((Predicate[]) restrictions.toArray(new Predicate[restrictions.size()]));
+        return this.standardEntityManager.createQuery(criteria).getResultList();
+    }
+
+    @Override
+    public Serializable getIdentifier(Object entity) {
+        return dynamicDaoHelper.getIdentifier(entity, standardEntityManager);
+    }
+
+    protected Field getIdField(Class<?> clazz) {
+        return dynamicDaoHelper.getIdField(clazz, standardEntityManager);
+    }
+
     public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities) {
         return dynamicDaoHelper.sortEntities(ceilingClass, entities);
     }
@@ -276,7 +373,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected void createClassTreeFromAnnotation(Class<?> clazz, ClassTree myTree) {
-        AdminPresentationClass classPresentation = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, clazz);
+        AdminPresentationClass classPresentation = AnnotationUtils.findAnnotation(clazz, AdminPresentationClass.class);
         if (classPresentation != null) {
             String friendlyName = classPresentation.friendlyName();
             if (!StringUtils.isEmpty(friendlyName)) {
@@ -289,7 +386,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public ClassTree getClassTree(Class<?>[] polymorphicClasses) {
         String ceilingClass = null;
         for (Class<?> clazz : polymorphicClasses) {
-            AdminPresentationClass classPresentation = clazz.getAnnotation(AdminPresentationClass.class);
+            AdminPresentationClass classPresentation = AnnotationUtils.findAnnotation(clazz, AdminPresentationClass.class);
             if (classPresentation != null) {
                String ceilingEntity = classPresentation.ceilingDisplayEntity();
                 if (!StringUtils.isEmpty(ceilingEntity)) {
@@ -314,7 +411,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 polymorphicClasses = temp;
             }
         }
-        
+
         ClassTree classTree = null;
         if (!ArrayUtils.isEmpty(polymorphicClasses)) {
             Class<?> topClass = polymorphicClasses[polymorphicClasses.length-1];
@@ -333,7 +430,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         Class<?>[] sortedEntities = getAllPolymorphicEntitiesFromCeiling(ceilingClass);
         return getClassTree(sortedEntities);
     }
-    
+
     @Override
     public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) {
         Class<?>[] entityClasses;
@@ -401,7 +498,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             return mergedProperties;
         }
     }
-    
+
     @Override
     public Map<String, FieldMetadata> getMergedProperties(@Nonnull Class<?> cls) {
         Class<?>[] polymorphicTypes = getAllPolymorphicEntitiesFromCeiling(cls);
@@ -449,8 +546,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 false,
                 "");
 
-        final List<String> removeKeys = new ArrayList<String>();
- 
+        final List<String> removeKeys = new ArrayList<>();
+
         for (final String key : mergedProperties.keySet()) {
             if (mergedProperties.get(key).getExcluded() != null && mergedProperties.get(key).getExcluded()) {
                 removeKeys.add(key);
@@ -630,7 +727,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
         sb.append(mergedPropertyType);
         sb.append(populateManyToOneFields);
-        
+
         String digest;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -642,7 +739,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
 
         String key = pad(digest, 32, '0');
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created cache key: " + key + " from the following string: " + sb.toString());
         }
@@ -707,11 +804,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         }
                     }
                     METADATA_CACHE.put(cacheKey, props);
-                    
+
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Added " + props.size() + " to the metadata cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
                     }
-                    
+
                     if (validateMetadataCacheSizes) {
                         Integer previousSize = METADATA_CACHE_SIZES.get(cacheKey);
                         Integer currentSize = props.size();
@@ -723,7 +820,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                             throw new RuntimeException(msg);
                         }
                     }
-                    
+
                     cacheData = props;
                 } else {
                     if (LOG.isTraceEnabled()) {
@@ -754,7 +851,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 eof = true;
             }
         }
-        
+
         return allFields;
     }
 
@@ -1055,16 +1152,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     }
 
-    protected boolean setExcludedBasedOnShowIfProperty(FieldMetadata fieldMetadata) {
-        if(fieldMetadata != null && fieldMetadata.getShowIfProperty()!=null && !fieldMetadata.getShowIfProperty().equals("")
-                && appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())!=null
-                && !appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())
-                ) {
+    protected void setExcludedBasedOnShowIfProperty(FieldMetadata fieldMetadata) {
+        if (fieldMetadata != null
+            && StringUtils.isNotEmpty(fieldMetadata.getShowIfProperty())
+            && propertyConfigurations.get(fieldMetadata.getShowIfProperty()) != null
+            && !Boolean.valueOf(propertyConfigurations.get(fieldMetadata.getShowIfProperty()))) {
+
             //do not include this in the display if it returns false.
             fieldMetadata.setExcluded(true);
-            return false;
         }
-        return true;
     }
 
     protected Boolean testPropertyRecursion(String prefix, List<Class<?>> parentClasses, String propertyName, Class<?> targetClass,
@@ -1292,7 +1388,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             foreignField,
             additionalNonPersistentProperties,
             additionalForeignFields,
-            MergedPropertyType.PRIMARY, 
+            MergedPropertyType.PRIMARY,
             populateManyToOneFields,
             includeFields,
             excludeFields,
@@ -1466,7 +1562,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 setOriginatingFieldForForeignKey(propertyName, key, fieldMetadata);
             }
         }
-
         fields.putAll(convertedFields);
     }
 
@@ -1478,6 +1573,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Override
     public void setStandardEntityManager(EntityManager entityManager) {
         this.standardEntityManager = entityManager;
+        fieldManager = new FieldManager(entityConfiguration, entityManager);
     }
 
     @Override
@@ -1485,13 +1581,21 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return ejb3ConfigurationDao;
     }
 
+    @Override
     public void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao) {
         this.ejb3ConfigurationDao = ejb3ConfigurationDao;
     }
 
     @Override
     public FieldManager getFieldManager() {
-        return new FieldManager(entityConfiguration, getStandardEntityManager());
+        if (fieldManager == null) {
+            //keep in mind that getStandardEntityManager() can return null, this is in general OK,
+            // we re-init fieldManager in setStandardEntityManager method
+            fieldManager = new FieldManager(entityConfiguration, getStandardEntityManager());
+        } else {
+            fieldManager.clearMiddleFields();
+        }
+        return fieldManager;
     }
 
     @Override
@@ -1543,5 +1647,5 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public void setDynamicDaoHelper(DynamicDaoHelper dynamicDaoHelper) {
         this.dynamicDaoHelper = dynamicDaoHelper;
     }
-    
+
 }

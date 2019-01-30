@@ -17,21 +17,30 @@
  */
 package org.broadleafcommerce.common.persistence;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * @author Nathan Moore (nathanmoore).
  */
 @Component("blPostLoaderDao")
 public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAware {
+
+    protected static final Log LOG = LogFactory.getLog(DefaultPostLoaderDao.class);
+
     private static ApplicationContext applicationContext;
     private static PostLoaderDao postLoaderDao;
+
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
 
     public static PostLoaderDao getPostLoaderDao() {
         if (applicationContext == null) {
@@ -43,8 +52,6 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
         return postLoaderDao;
     }
 
-    @PersistenceContext(unitName="blPU")
-    protected EntityManager em;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -62,12 +69,18 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
      */
     @Override
     public <T> T find(Class<T> clazz, Object id) {
-        return em.find(clazz, id);
+        EntityManager em = getEntityManager(clazz);
+
+        return (em == null) ? null : em.find(clazz, id);
     }
 
     @Override
     public <T> T findSandboxEntity(Class<T> clazz, Object id) {
-        return em.find(clazz, id);
+        return find(clazz, id);
+    }
+
+    protected EntityManager getEntityManager(Class clazz) {
+        return persistenceService.identifyEntityManager(clazz);
     }
 
 }

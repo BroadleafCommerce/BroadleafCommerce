@@ -21,47 +21,22 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+    <import resource="classpath:bl-framework-applicationContext-persistence.xml"/>
+    <import resource="classpath:bl-framework-applicationContext-workflow.xml"/>
     
     <context:component-scan base-package="org.broadleafcommerce.core">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> 
     </context:component-scan>
-    
-    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
-    
+
     <!-- Bean for encrypting PCI data -->
     <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
     
-    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
-        <property name="autodetect" value="true"/>
-        <property name="assembler" ref="blAssembler"/>
-        <property name="namingStrategy" ref="blNamingStrategy"/>
-        <property name="registrationPolicy" value="IGNORE_EXISTING" />
-    </bean>
-    
-    <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
-        <constructor-arg>
-            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
-                <property name="jndiName">
-                    <value>java:comp/env/appName</value>
-                </property>
-                <property name="defaultObject" value="broadleaf"/>
-            </bean>
-        </constructor-arg>
-    </bean>
-    
-    <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
-        <property name="attributeSource" ref="blAttributeSource"/>
-    </bean>
-    
-    <bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">
-        <property name="attributeSource" ref="blAttributeSource"/>
-    </bean>
-
     <bean id="blAccountNumberMask" class="org.broadleafcommerce.common.payment.AccountNumberMask">
-        <constructor-arg>
+        <constructor-arg index="0">
             <list>
                 <bean class="org.broadleafcommerce.common.payment.UnmaskRange">
                     <constructor-arg value="0"/>
@@ -73,7 +48,7 @@
                 </bean>
             </list>
         </constructor-arg>
-        <constructor-arg value="X"/>
+        <constructor-arg index="1" value="X"/>
     </bean>
 
     <bean id="blContentCartRuleProcessor" class="org.broadleafcommerce.core.order.service.StructuredContentCartRuleProcessor">
@@ -112,12 +87,16 @@
         </property>
     </bean>    
 
-    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
-        <property name="converters">
+    <bean id="blConverters" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
             <set>
                 <bean class="org.broadleafcommerce.common.locale.util.LocaleConverter" />
             </set>
         </property>
+    </bean>
+    
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters" ref="blConverters" />
     </bean>
     
     <bean id="blFrameworkSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -211,6 +190,7 @@
         <property name="sourceMap">
             <map>
                 <entry key="optionalOfferUsesFields" value="org.broadleafcommerce.core.offer.weave.WeaveLegacyOfferUses"/>
+                <entry key="optionalSkuMinOrderQuantityField" value="org.broadleafcommerce.core.catalog.domain.WeaveSkuMinOrderQuantity"/>
             </map>
         </property>
     </bean>
@@ -227,10 +207,16 @@
         <property name="conditionalProperty" value="enable.optional.offer.uses.fields"/>
     </bean>
 
+    <bean id="blSkuMinOrderQuantityConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+        <property name="templateTokens" value="optionalSkuMinOrderQuantityField"/>
+        <property name="conditionalProperty" value="enable.sku.minOrderQuantity.field"/>
+    </bean>
+
     <bean id="blFrameworkConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry key="org.broadleafcommerce.core.offer.domain.OfferImpl" value-ref="blOfferUsesConditionalDirectCopyTransformerMember" />
+                <entry key="org.broadleafcommerce.core.catalog.domain.SkuImpl" value-ref="blSkuMinOrderQuantityConditionalDirectCopyTransformerMember" />
             </map>
         </property>
     </bean>

@@ -39,6 +39,20 @@ public interface Customer extends Serializable, MultiTenantCloneable<Customer> {
 
     public void setPassword(String password);
 
+    /**
+     * <p>
+     *     If true, this customer must go through a reset password flow.
+     * </p>
+     * <p>
+     *     During a site conversion or security breach or a matter of routine security policy, 
+     *     it may be necessary to require users to change their password. This property will 
+     *     not allow a user whose credentials are managed within Broadleaf to login until 
+     *     they have reset their password. 
+     * </p>
+     * <p>
+     *     Used by blUserDetailsService.
+     * </p>
+     */
     public boolean isPasswordChangeRequired();
 
     public void setPasswordChangeRequired(boolean passwordChangeRequired);

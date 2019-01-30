@@ -35,7 +35,7 @@ public class BillingInfoForm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     protected Address address = new AddressImpl();
-    protected boolean useShippingAddress;
+    protected boolean useShippingAddress = false;
     protected Long customerPaymentId;
     protected CustomerPayment customerPayment;
     protected Boolean saveNewPayment = true;

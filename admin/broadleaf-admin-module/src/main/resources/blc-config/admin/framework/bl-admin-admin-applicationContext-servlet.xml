@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Admin Module
+  %%
+  Copyright (C) 2009 - 2016 Broadleaf Commerce
+  %%
+  Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+  (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+  unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+  the Broadleaf End User License Agreement (EULA), Version 1.1
+  (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+  shall apply.
+  
+  Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+  between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+  #L%
+  -->
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+        <!-- This file is named weirdly because of the glob auto-import in the web.xml. At time of writing it is set to
+            classpath*:/blc-config/admin/bl-*-admin-applicationContext-servlet.xml  -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+    <!-- IMPORTANT -->
+
+
+    
+    <import resource="classpath:bl-admin-applicationContext-servlet.xml"/>
+
+</beans>

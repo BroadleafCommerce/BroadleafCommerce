@@ -41,7 +41,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
@@ -52,9 +51,6 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
-import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessage;
-import org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -63,7 +59,18 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -80,17 +87,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -243,6 +239,24 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             tooltip = "ProductImpl_Can_Sell_Without_Options_Tooltip",
             defaultValue = "false")
     protected Boolean canSellWithoutOptions = false;
+
+    @Column(name = "META_TITLE")
+    @AdminPresentation(friendlyName = "ProductImpl_MetaTitle",
+            group = GroupName.Miscellaneous, order = 4000,
+            tooltip = "ProductImpl_MetaTitle_Tooltip")
+    protected String metaTitle;
+
+    @Column(name = "META_DESC")
+    @AdminPresentation(friendlyName = "ProductImpl_MetaDescription",
+            group = GroupName.Miscellaneous, order = 5000,
+            tooltip = "ProductImpl_MetaDescription_Tooltip")
+    protected String metaDescription;
+
+    @Column(name = "CANONICAL_URL")
+    @AdminPresentation(friendlyName = "ProductImpl_Canonical_Url",
+            group = GroupName.Miscellaneous, order = 6000,
+            tooltip = "ProductImpl_Canonical_Url_Tooltip")
+    protected String canonicalUrl;
 
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
@@ -469,6 +483,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
+    public Money getPrice() {
+        return defaultSku == null ? null : defaultSku.getPrice();
+    }
+
+    @Override
     public boolean isOnSale() {
         return defaultSku.isOnSale();
     }
@@ -491,6 +510,36 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public void setCanSellWithoutOptions(Boolean canSellWithoutOptions) {
         this.canSellWithoutOptions = canSellWithoutOptions;
+    }
+
+    @Override
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+
+    @Override
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
+    }
+
+    @Override
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    @Override
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+
+    @Override
+    public String getCanonicalUrl() {
+        return canonicalUrl;
+    }
+
+    @Override
+    public void setCanonicalUrl(String canonicalUrl) {
+        this.canonicalUrl = canonicalUrl;
     }
 
     @Override
@@ -1140,5 +1189,4 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     public FieldEntity getFieldEntityType() {
         return FieldEntity.PRODUCT;
     }
-
 }

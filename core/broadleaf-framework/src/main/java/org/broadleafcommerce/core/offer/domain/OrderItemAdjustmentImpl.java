@@ -91,7 +91,6 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="OIADJUST_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Offer", order=1000,
             group = "OrderItemAdjustmentImpl_Description", prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()

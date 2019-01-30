@@ -17,14 +17,14 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import java.util.Map;
-
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 
 /**
@@ -37,10 +37,10 @@ import org.springframework.stereotype.Component;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blCompleteOrderRollbackHandler")
-public class CompleteOrderRollbackHandler implements RollbackHandler<CheckoutSeed> {
+public class CompleteOrderRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     @Override
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         CheckoutSeed seed = processContext.getSeedData();
         seed.getOrder().setStatus(OrderStatus.IN_PROCESS);
         seed.getOrder().setOrderNumber(null);

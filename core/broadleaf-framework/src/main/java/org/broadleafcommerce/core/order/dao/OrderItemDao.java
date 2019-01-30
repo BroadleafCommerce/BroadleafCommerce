@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 
 import java.util.Date;
 import java.util.List;
@@ -50,4 +51,8 @@ public interface OrderItemDao {
     OrderItemPriceDetail initializeOrderItemPriceDetails(OrderItem item);
 
     List<OrderItem> readOrderItemsForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
+
+    Long readNumberOfOrderItems();
+
+    List<OrderItem> readBatchOrderItems(int start, int count, List<OrderStatus> statuses);
 }

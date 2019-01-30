@@ -19,15 +19,20 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
+import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.security.exception.OrderLockAcquisitionFailureException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
-import org.springframework.security.web.util.AntPathRequestMatcher;
-import org.springframework.security.web.util.RequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,7 +40,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -59,23 +63,27 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blCartStateFilter")
-public class CartStateFilter extends OncePerRequestFilter implements Ordered {
+@ConditionalOnNotAdmin
+public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
 
     protected static final Log LOG = LogFactory.getLog(CartStateFilter.class);
 
-    @Resource(name = "blCartStateRequestProcessor")
+    @Autowired
+    @Qualifier("blCartStateRequestProcessor")
     protected CartStateRequestProcessor cartStateProcessor;
 
-    @Resource(name = "blOrderLockManager")
+    @Autowired
+    @Qualifier("blOrderLockManager")
     protected OrderLockManager orderLockManager;
     
-    @Resource(name = "blOrderService")
+    @Autowired
+    @Qualifier("blOrderService")
     protected OrderService orderService;
 
     protected List<String> excludedOrderLockRequestPatterns;
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    public void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {        
         cartStateProcessor.process(new ServletWebRequest(request, response));
         
@@ -164,9 +172,7 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
 
     @Override
     public int getOrder() {
-        //FilterChainOrder has been dropped from Spring Security 3
-        //return FilterChainOrder.REMEMBER_ME_FILTER+1;
-        return 1502;
+        return FilterOrdered.POST_SECURITY_LOW;
     }
 
     public List<String> getExcludedOrderLockRequestPatterns() {

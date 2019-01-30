@@ -2,7 +2,7 @@
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
 
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-        <span th:text="#{${field.friendlyName}}"></span>
+        <span th:utext="#{${field.friendlyName}}"></span>
 <span th:replace="components/fieldTooltip" ></span>
     </label>
     <input type="hidden" class="mediaItem" th:field="*{fields['__${field.name}__'].value}" />
@@ -33,6 +33,14 @@
                     th:unless="${overrideAssetSectionKey}"
                     th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
                 <i class="fa fa-search"></i>
+            </button>
+
+            <!-- edit button -->
+            <button class="edit-asset-selector tiny radius secondary button hover-cursor"
+                    type="button" th:inline="text"
+                    th:unless="${field.required}"
+                    th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+                <i class="fa fa-pencil"></i>
             </button>
 
             <!-- clear image button -->

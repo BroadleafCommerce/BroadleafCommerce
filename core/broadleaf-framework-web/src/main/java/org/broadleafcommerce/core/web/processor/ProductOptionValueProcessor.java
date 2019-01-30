@@ -59,6 +59,7 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
         dto.setOptionId(productOptionValue.getProductOption().getId());
         dto.setValueId(productOptionValue.getId());
         dto.setValueName(productOptionValue.getAttributeValue());
+        dto.setRawValue(productOptionValue.getRawAttributeValue());
         if (productOptionValue.getPriceAdjustment() != null) {
             dto.setPriceAdjustment(productOptionValue.getPriceAdjustment().getAmount());
         }
@@ -83,6 +84,7 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
         private Long optionId;
         private Long valueId;
         private String valueName;
+        private String rawValue;
         private BigDecimal priceAdjustment;
 
         @SuppressWarnings("unused")
@@ -112,6 +114,13 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
             this.valueName = valueName;
         }
 
+        @SuppressWarnings("unused")
+        public String getRawValue() {
+            return rawValue;
+        }
+        public void setRawValue(String rawValue) {
+            this.rawValue = rawValue;
+        }
         @SuppressWarnings("unused")
         public BigDecimal getPriceAdjustment() {
             return priceAdjustment;

@@ -91,17 +91,7 @@
         },
         
         getUrlParameters : function() {
-            var baseUrl = window.location.href;
-            var indexOfQ = baseUrl.indexOf('?'); 
-            var urlParams = null;
-            if (indexOfQ >= 0) {
-                urlParams = baseUrl.substring(indexOfQ + 1);
-                if (urlParams != null && urlParams != '') {
-                    return JSON.parse('{"'
-                        + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
-                }
-            }
-            return null;
+            return BLC.getUrlParameters();
         },
         
         replaceUrlParameter : function(param, value, state) {

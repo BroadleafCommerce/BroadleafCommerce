@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**
@@ -28,13 +30,17 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
  * @author bpolster
  */
 public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping {
+
     protected String controllerName;
 
-    @Override
+    @Autowired
+    protected Environment env;
+
     /**
      * This handler mapping does not provide a default handler.   This method
      * has been coded to always return null.
      */
+    @Override
     public Object getDefaultHandler() {
         return null;        
     }
@@ -55,5 +61,13 @@ public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping {
      */
     public void setControllerName(String controllerName) {
         this.controllerName = controllerName;
+    }
+
+    public boolean allowProductResolutionUsingIdParam() {
+        return env.getProperty("allowProductResolutionUsingIdParam", boolean.class, false);
+    }
+
+    public boolean allowCategoryResolutionUsingIdParam() {
+        return env.getProperty("allowCategoryResolutionUsingIdParam", boolean.class, false);
     }
 }

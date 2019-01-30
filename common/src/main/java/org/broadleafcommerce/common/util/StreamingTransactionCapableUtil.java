@@ -50,7 +50,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     private static final Log LOG = LogFactory.getLog(StreamingTransactionCapableUtil.class);
 
     @Resource(name = "blTransactionManager")
-    protected PlatformTransactionManager transactionManager;
+    protected PlatformTransactionManager platformTransactionManager;
 
     protected EntityManager em;
 
@@ -62,8 +62,8 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
 
     @PostConstruct
     public void init() {
-        if (transactionManager instanceof JpaTransactionManager) {
-            em = ((JpaTransactionManager) transactionManager).getEntityManagerFactory().createEntityManager();
+        if (getTransactionManager() instanceof JpaTransactionManager) {
+            em = ((JpaTransactionManager) getTransactionManager()).getEntityManagerFactory().createEntityManager();
         }
     }
 
@@ -85,15 +85,37 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
             public void execute() throws Throwable {
                 pagedItems = streamOperation.retrievePage(holder.getVal(), pageSize);
                 streamOperation.pagedExecute(pagedItems);
-                if (((Collection) pagedItems[0]).size() == 0) {
+
+                int pagedItemCount = ((Collection) pagedItems[0]).size();
+                if (pagedItemCount == 0) {
                     holder.setVal(totalCount.intValue());
                 } else {
-                    holder.setVal(holder.getVal() + ((Collection) pagedItems[0]).size());
+                    if (!isFinalPage(holder, pagedItemCount, totalCount) && (pagedItemCount != pageSize)) {
+                        LOG.warn(String.format("In the previous iteration of this streaming transactional operation, " +
+                                "(%s) pagedItems were processed when we were expecting a full page of (%s) items. " +
+                                "Please ensure that your StreamCapableTransactionalOperation#retrieveTotalCount() " +
+                                "and StreamCapableTransactionalOperation#retrievePage(int startPos, int pageSize) " +
+                                "queries contain the same conditions as to ultimately provide the number of entities " +
+                                "equal to the declared total count. Stream operation: %s",
+                                pagedItemCount, pageSize, streamOperation.getClass()));
+                    }
+
+                    if (pagedItemCount < pageSize) {
+                        holder.setVal(holder.getVal() + pageSize);
+                    } else {
+                        holder.setVal(holder.getVal() + pagedItemCount);
+                    }
                 }
+            }
+
+            private boolean isFinalPage(Holder holder, int pagedItemCount, Long totalCount) {
+                int processedItemCount = holder.getVal() + pagedItemCount;
+
+                return processedItemCount >= totalCount;
             }
         };
         while (holder.getVal() < totalCount) {
-            runTransactionalOperation(operation, exceptionType, transactionBehavior, isolationLevel);
+            runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel, false, getTransactionManager());
             if (em != null) {
                 //The idea behind using this class is that it will likely process a lot of records. As such, it is necessary
                 //to clear the level 1 cache after each iteration so that we don't run out of heap
@@ -106,19 +128,31 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     @Override
     public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
                                         Class<G> exceptionType) throws G {
-        runTransactionalOperation(operation, exceptionType, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT);
+        runOptionalTransactionalOperation(operation, exceptionType, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, false, getTransactionManager());
+    }
+
+    @Override
+    public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G {
+        runOptionalTransactionalOperation(operation, exceptionType, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, false, transactionManager);
     }
 
     @Override
     public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
                                         Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G {
-        runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel);
+        runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel, false, getTransactionManager());
     }
 
     @Override
     public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
                                         Class<G> exceptionType, boolean useTransaction) throws G {
-        runOptionalTransactionalOperation(operation, exceptionType, useTransaction, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT);
+        runOptionalTransactionalOperation(operation, exceptionType, useTransaction, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, false, getTransactionManager());
+    }
+
+    @Override
+    public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
+                                            Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel) throws G {
+        runOptionalTransactionalOperation(operation, exceptionType, useTransaction, transactionBehavior, isolationLevel, false, getTransactionManager());
     }
 
     @Override
@@ -142,7 +176,8 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
 
     @Override
     public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                        Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel) throws G {
+                                        Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel,
+                                        boolean readOnly, PlatformTransactionManager transactionManager) throws G {
         int maxCount = operation.retryMaxCountOverrideForLockAcquisitionFailure();
         if (maxCount == -1) {
             maxCount = retryMax;
@@ -154,7 +189,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
             try {
                 TransactionStatus status = null;
                 if (useTransaction) {
-                    status = startTransaction(transactionBehavior, isolationLevel);
+                    status = startTransaction(transactionBehavior, isolationLevel, readOnly, transactionManager);
                 }
                 boolean isError = false;
                 try {
@@ -165,7 +200,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
                     ExceptionHelper.processException(exceptionType, RuntimeException.class, e);
                 } finally {
                     if (useTransaction) {
-                        endTransaction(status, isError, exceptionType);
+                        endTransaction(status, isError, exceptionType, transactionManager);
                     }
                 }
             } catch (RuntimeException e) {
@@ -206,12 +241,12 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
 
     @Override
     public PlatformTransactionManager getTransactionManager() {
-        return transactionManager;
+        return platformTransactionManager;
     }
 
     @Override
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+        this.platformTransactionManager = transactionManager;
         init();
     }
 
@@ -225,7 +260,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         this.retryMax = retryMax;
     }
 
-    protected <G extends Throwable> void endTransaction(TransactionStatus status, boolean error, Class<G> exceptionType) throws G {
+    protected <G extends Throwable> void endTransaction(TransactionStatus status, boolean error, Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G {
         try {
             TransactionUtils.finalizeTransaction(status, transactionManager, error);
         } catch (Throwable e) {
@@ -233,11 +268,11 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         }
     }
 
-    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel) {
+    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel, boolean isReadOnly, PlatformTransactionManager transactionManager) {
         TransactionStatus status;
         try {
             status = TransactionUtils.createTransaction(propagationBehavior, isolationLevel,
-                    transactionManager, false);
+                    transactionManager, isReadOnly);
         } catch (RuntimeException e) {
             LOG.error("Could not start transaction", e);
             throw e;

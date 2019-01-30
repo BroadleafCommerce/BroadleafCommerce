@@ -213,7 +213,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
         cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
-        cloned.setRegexHandler(isRegex);
+        cloned.setRegexHandler(isRegex==null?false:isRegex);
         return createResponse;
     }
 }

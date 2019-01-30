@@ -22,18 +22,26 @@ import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.pricing.service.module.TaxModule;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 /**
  * Utilized within the blPricingWorkflow to calculate tax for an {@link Order}
  */
+@Component("blTaxActivity")
 public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
 
+    public static final int ORDER = 7000;
+    
     protected TaxModule taxModule;
 
     @Resource(name = "blTaxService")
     protected TaxService taxService;
+    
+    public TaxActivity() {
+        setOrder(ORDER);
+    }
 
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {

@@ -17,14 +17,15 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
-import org.broadleafcommerce.profile.core.domain.*;
+import org.broadleafcommerce.core.web.service.InitBinderService;
+import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -32,10 +33,10 @@ import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.beans.PropertyEditorSupport;
-import java.util.List;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its children.
@@ -69,6 +70,9 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
     @Resource(name = "blISOService")
     protected ISOService isoService;
 
+    @Resource(name = "blInitBinderService")
+    protected InitBinderService initBinderService;
+
     /**
      * Initializes some custom binding operations for the managing an address.
      * More specifically, this method will attempt to bind state and country
@@ -80,83 +84,7 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
      * @throws Exception
      */
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
-
-        /**
-         * @deprecated - address.setState() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    State state = stateService.findStateByAbbreviation(text);
-                    setValue(state);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        /**
-         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    Country country = countryService.findCountryByAbbreviation(text);
-                    setValue(country);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
-                    setValue(isoCountry);
-                }else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phoneSecondary", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phoneFax", new PropertyEditorSupport() {
-
-            @Override
-            public void setAsText(String text) {
-                Phone phone = new PhoneImpl();
-                phone.setPhoneNumber(text);
-                setValue(phone);
-            }
-
-        });
+        initBinderService.configAddressInitBinder(binder);
     }
 
     protected List<State> populateStates() {

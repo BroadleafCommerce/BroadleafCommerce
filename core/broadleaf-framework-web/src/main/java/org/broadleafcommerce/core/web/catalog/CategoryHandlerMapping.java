@@ -20,9 +20,8 @@ package org.broadleafcommerce.core.web.catalog;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,46 +44,66 @@ import javax.servlet.http.HttpServletRequest;
  * @author bpolster
  * @since 2.0
  * @see org.broadleafcommerce.core.catalog.domain.Category
- * @see CataService
+ * @see CatalogService
  */
 public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
 
     private static final Log LOG = LogFactory.getLog(CategoryHandlerMapping.class);
 
-    private String controllerName = "blCategoryController";
+    public static final String CURRENT_CATEGORY_ATTRIBUTE_NAME = "category";
 
     protected String defaultTemplateName = "catalog/category";
 
+    private String controllerName = "blCategoryController";
+
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
-
-    public static final String CURRENT_CATEGORY_ATTRIBUTE_NAME = "category";
 
     @Value("${request.uri.encoding}")
     public String charEncoding;
 
     @Override
-    protected Object getHandlerInternal(HttpServletRequest request)
-            throws Exception {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-
-        if (context != null) {
-            Category category = null;
-            if (allowCategoryResolutionUsingIdParam()) {
-                category = findCategoryUsingIdParam(context);
-            }
-
-            if (category == null) {
-                category = findCategoryUsingUrl(context);
-            }
-
-            if (category != null) {
-                context.getRequest().setAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME, category);
-                return controllerName;
-            }
-
+    protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
+        Category category = null;
+        if (allowCategoryResolutionUsingIdParam()) {
+            category = findCategoryUsingIdParam(request);
         }
+
+        if (category == null) {
+            category = findCategoryUsingUrl(request);
+        }
+
+        if (category != null) {
+            request.setAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME, category);
+            return controllerName;
+        }
+            
         return null;
+    }
+
+    protected Category findCategoryUsingIdParam(HttpServletRequest request) throws ServletRequestBindingException {
+        Long categoryId = ServletRequestUtils.getLongParameter(request, "categoryId");
+
+        if (categoryId != null) {
+            Category category = catalogService.findCategoryById(categoryId);
+            if (category != null && LOG.isDebugEnabled()) {
+                LOG.debug("Obtained the category using ID=" + categoryId);
+            }
+            return category;
+        }
+
+        return null;
+    }
+
+    protected Category findCategoryUsingUrl(HttpServletRequest request) throws UnsupportedEncodingException {
+        String requestUri = URLDecoder.decode(BLCRequestUtils.getRequestURIWithoutContext(request), charEncoding);
+
+        Category category = catalogService.findCategoryByURI(requestUri);
+        if (category != null && LOG.isDebugEnabled()) {
+            LOG.debug("Obtained the category using URI=" + requestUri);
+        }
+
+        return category;
     }
 
     public String getDefaultTemplateName() {
@@ -93,31 +112,5 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
 
     public void setDefaultTemplateName(String defaultTemplateName) {
         this.defaultTemplateName = defaultTemplateName;
-    }
-
-    protected Category findCategoryUsingIdParam(BroadleafRequestContext context) throws ServletRequestBindingException {
-        Long categoryId = ServletRequestUtils.getLongParameter(context.getRequest(), "categoryId");
-        if (categoryId != null) {
-            Category category = catalogService.findCategoryById(categoryId);
-            if (category != null && LOG.isDebugEnabled()) {
-                LOG.debug("Obtained the category using ID=" + categoryId);
-            }
-            return category;
-        }
-        return null;
-    }
-
-    protected Category findCategoryUsingUrl(BroadleafRequestContext context)
-            throws ServletRequestBindingException, UnsupportedEncodingException {
-        String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
-        Category category = catalogService.findCategoryByURI(requestUri);
-        if (category != null && LOG.isDebugEnabled()) {
-            LOG.debug("Obtained the category using URI=" + requestUri);
-        }
-        return category;
-    }
-
-    public boolean allowCategoryResolutionUsingIdParam() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("allowCategoryResolutionUsingIdParam");
     }
 }

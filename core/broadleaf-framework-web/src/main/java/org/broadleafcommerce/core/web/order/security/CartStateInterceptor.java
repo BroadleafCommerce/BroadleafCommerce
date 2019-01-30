@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.broadleafcommerce.profile.web.core.security.CustomerStateInterceptor;
+import org.broadleafcommerce.profile.web.site.security.CustomerStateInterceptor;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;

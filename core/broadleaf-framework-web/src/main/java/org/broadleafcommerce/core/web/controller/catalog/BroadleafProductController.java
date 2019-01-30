@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
-import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -29,15 +28,18 @@ import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.config.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -50,9 +52,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 public class BroadleafProductController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
-    
+
+    public static final String PAGE_TYPE_ATTRIBUTE_NAME = "BLC_PAGE_TYPE";
     protected String defaultProductView = "catalog/product";
     protected static String MODEL_ATTRIBUTE_NAME = "product";
+    protected static String CONFIGURATION_ATTRIBUTE_NAME = "configRequest";
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
     
     @Autowired(required = false)
@@ -62,9 +66,16 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Resource(name="blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
 
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public class ResourceNotFoundException extends RuntimeException {
+
+    }
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -72,15 +83,17 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
         assert(product != null);
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
-        Set<Product> allProductsSet = new HashSet<Product>();
-        allProductsSet.add(product);
-        model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(allProductsSet));
-        model.addObject("BLC_PAGE_TYPE", "product");
+        model.addObject(PAGE_TYPE_ATTRIBUTE_NAME, "product");
+
+        // Build the add to cart request and add it to the page
+        ConfigurableOrderItemRequest itemRequest = orderItemService.createConfigurableOrderItemRequestFromProduct(product);
+        orderItemService.modifyOrderItemRequest(itemRequest);
+        model.addObject(CONFIGURATION_ATTRIBUTE_NAME, itemRequest);
+        model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
         addDeepLink(model, deepLinkService, product);
         
-        String templatePath = null;
-
+        String templatePath;
         // Use the products custom template if available
         if (StringUtils.isNotBlank(product.getDisplayTemplate())) {
             templatePath = product.getDisplayTemplate();
@@ -97,7 +110,34 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         }
         
         model.setViewName(templatePath);
-        return model;
+
+        // Check if this is request to edit an existing order item
+        String isEditRequest = request.getParameter("edit");
+        String oidParam = request.getParameter("oid");
+        if (StringUtils.isNotEmpty(isEditRequest) && StringUtils.isNotEmpty(oidParam)) {
+            Long oid = Long.parseLong(oidParam);
+            OrderItem orderItem = orderItemService.readOrderItemById(oid);
+            if (orderItemBelongsToCurrentCustomer(orderItem)) {
+                // Update the itemRequest to contain user's previous input
+                orderItemService.mergeOrderItemRequest(itemRequest, orderItem);
+
+                // Add the order item to the model
+                model.addObject("isUpdateRequest", true);
+                model.addObject("orderItem", orderItem);
+            }
+        }
+
+        if (product.isActive()) {
+            return model;            // whatever
+        }
+        else {
+            throw new ResourceNotFoundException();
+        }
+
+    }
+
+    protected boolean orderItemBelongsToCurrentCustomer(OrderItem orderItem) {
+        return orderItem != null && CustomerState.getCustomer() == orderItem.getOrder().getCustomer();
     }
 
     public String getDefaultProductView() {

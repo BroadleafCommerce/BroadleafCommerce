@@ -26,32 +26,32 @@ import org.broadleafcommerce.core.workflow.state.RollbackStateLocal;
 
 import java.util.List;
 
-public class SequenceProcessor extends BaseProcessor {
+public class SequenceProcessor<U, T> extends BaseProcessor<U, T> {
 
     private static final Log LOG = LogFactory.getLog(SequenceProcessor.class);
 
-    private ProcessContextFactory<Object, Object> processContextFactory;
+    private ProcessContextFactory<U, T> processContextFactory;
 
     @Override
-    public boolean supports(Activity<? extends ProcessContext<?>> activity) {
+    public boolean supports(Activity<? extends ProcessContext<U>> activity) {
         return true;
     }
 
     @Override
-    public ProcessContext<?> doActivities() throws WorkflowException {
+    public <P extends ProcessContext<U>> P doActivities() throws WorkflowException {
         return doActivities(null);
     }
 
     @Override
-    public ProcessContext<?> doActivities(Object seedData) throws WorkflowException {
+    public <P extends ProcessContext<U>> P doActivities(T seedData) throws WorkflowException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(getBeanName() + " processor is running..");
         }
-        ActivityStateManager activityStateManager = ((ActivityStateManager) getBeanFactory().getBean("blActivityStateManager"));
+        ActivityStateManager activityStateManager = getBeanFactory().getBean(ActivityStateManager.class, "blActivityStateManager");
         if (activityStateManager == null) {
             throw new IllegalStateException("Unable to find an instance of ActivityStateManager registered under bean id blActivityStateManager");
         }
-        ProcessContext<?> context = null;
+        ProcessContext<U> context = null;
         
         RollbackStateLocal rollbackStateLocal = new RollbackStateLocal();
         rollbackStateLocal.setThreadId(String.valueOf(Thread.currentThread().getId()));
@@ -60,12 +60,12 @@ public class SequenceProcessor extends BaseProcessor {
         
         try {
             //retrieve injected by Spring
-            List<Activity<ProcessContext<?>>> activities = getActivities();
+            List<Activity<ProcessContext<U>>> activities = getActivities();
 
             //retrieve a new instance of the Workflow ProcessContext
             context = createContext(seedData);
 
-            for (Activity<ProcessContext<?>> activity : activities) {
+            for (Activity<ProcessContext<U>> activity : activities) {
                 if (activity.shouldExecute(context)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
@@ -125,7 +125,7 @@ public class SequenceProcessor extends BaseProcessor {
         }
         LOG.debug(getBeanName() + " processor is done.");
 
-        return context;
+        return (P) context;
     }
 
     /**
@@ -136,7 +136,7 @@ public class SequenceProcessor extends BaseProcessor {
      * @param activity
      *            the current activity in the iteration
      */
-    protected boolean processShouldStop(ProcessContext<?> context, Activity<? extends ProcessContext<?>> activity) {
+    protected boolean processShouldStop(ProcessContext<U> context, Activity<ProcessContext<U>> activity) {
         if (context == null || context.isStopped()) {
             LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
@@ -144,12 +144,12 @@ public class SequenceProcessor extends BaseProcessor {
         return false;
     }
 
-    protected ProcessContext<Object> createContext(Object seedData) throws WorkflowException {
+    protected ProcessContext<U> createContext(T seedData) throws WorkflowException {
         return processContextFactory.createContext(seedData);
     }
 
     @Override
-    public void setProcessContextFactory(ProcessContextFactory<Object, Object> processContextFactory) {
+    public void setProcessContextFactory(ProcessContextFactory<U, T> processContextFactory) {
         this.processContextFactory = processContextFactory;
     }
 

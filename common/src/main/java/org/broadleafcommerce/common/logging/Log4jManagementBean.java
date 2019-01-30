@@ -25,11 +25,13 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- * This is not hooked up by default so that log4j is not required. If you are using Log4j, you can add this class to your
+ * This is not hooked up by default so that Log4j is not required. If you are using Log4j, you can add this class to your
  * Spring applicationContext to enable it.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
+ * @deprecated in favor of {@link Log4j2ManagementBean} (following Apache's EOL declaration for log4j 1.x)
  */
+@Deprecated
 @ManagedResource(objectName="org.broadleafcommerce:name=Log4JManangement", description="Logging Management", currencyTimeLimit=15)
 public class Log4jManagementBean {
 

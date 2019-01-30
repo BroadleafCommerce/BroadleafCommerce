@@ -30,7 +30,10 @@ import java.math.BigDecimal;
  *
  * @author Phillip Verheyden
  * @see ProductBundle, Product
+ *
+ * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
  */
+@Deprecated
 public interface SkuBundleItem extends Serializable, MultiTenantCloneable<SkuBundleItem> {
 
     public Long getId();

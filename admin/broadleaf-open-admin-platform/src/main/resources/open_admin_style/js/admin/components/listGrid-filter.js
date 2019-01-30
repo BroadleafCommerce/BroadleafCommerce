@@ -302,7 +302,7 @@ $(document).ready(function() {
             oldParams = {};
         }
         oldParams['isLookup'] = $(this).closest('.modal').length > 0;
-        var url = BLCAdmin.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
+        var url = BLC.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
 
         url = getFilteredParams($(this), url);
 
@@ -393,7 +393,7 @@ $(document).ready(function() {
         }
 
         BLC.ajax({
-            url: BLCAdmin.buildUrlWithParams($(this).closest('form').attr('action'), oldParams),
+            url: BLC.buildUrlWithParams($(this).closest('form').attr('action'), oldParams),
             type: "GET"
         }, function(data) {
             if ($(data).find('table').length === 1 && (BLCAdmin.currentModal() === undefined || BLCAdmin.currentModal().length === 0)) {
@@ -435,10 +435,12 @@ $(document).ready(function() {
         if (hiddenId) {
             var filteredValues = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
             filteredValues = $.param(filteredValues);
-            if (url.indexOf('?') >= 0) {
-                url += '&' + filteredValues;
-            } else {
-                url += '?' + filteredValues;
+            if (filteredValues.length > 0) {
+                if (url.indexOf('?') >= 0) {
+                    url += '&' + filteredValues;
+                } else {
+                    url += '?' + filteredValues;
+                }
             }
         }
         return url;

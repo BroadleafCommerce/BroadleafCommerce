@@ -59,6 +59,7 @@ public class PersistencePackageRequest {
     protected boolean validateUnsubmittedProperties = true;
     protected boolean isUpdateLookupType = false;
     protected boolean isTreeCollection = false;
+    protected boolean isAddOperationInspect = false;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -392,9 +393,16 @@ public class PersistencePackageRequest {
     /* STATUS METHODS */
     /* ************** */
 
-    public boolean hasFilterAndSortCriteria() {
+    public boolean hasSortCriteria() {
         FilterAndSortCriteria[] fascs = getFilterAndSortCriteria();
-        return ArrayUtils.isNotEmpty(fascs);
+
+        for (FilterAndSortCriteria criteria : fascs) {
+            if (criteria.getSortDirection() != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /* ************************ */
@@ -608,6 +616,14 @@ public class PersistencePackageRequest {
         this.isTreeCollection = isTreeCollection;
     }
 
+    public boolean isAddOperationInspect() {
+        return isAddOperationInspect;
+    }
+
+    public void setAddOperationInspect(boolean addOperationInspect) {
+        isAddOperationInspect = addOperationInspect;
+    }
+
     /**
      * Intended for usage with other than {@link FetchType#DEFAULT}. Denotes the last primary key value of the previous
      * page of records.
@@ -688,3 +704,4 @@ public class PersistencePackageRequest {
         this.presentationFetch = presentationFetch;
     }
 }
+

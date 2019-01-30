@@ -21,9 +21,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
-             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Scan Broadleaf defined web utility classes -->
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
@@ -34,6 +37,22 @@
     <bean id="orderStateAOP"
           class="org.broadleafcommerce.core.web.order.OrderStateAOP"/>
 
+    <bean id="blFrameworkLinkedDataGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blDefaultLinkedDataGenerator"/>
+                <ref bean="blHomepageLinkedDataGenerator"/>
+                <ref bean="blCategoryLinkedDataGenerator"/>
+                <ref bean="blProductLinkedDataGenerator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="sourceRef" value="blFrameworkLinkedDataGenerators"/>
+        <property name="targetRef" value="blLinkedDataGenerators"/>
+    </bean>
+
     <aop:config>
         <aop:aspect id="orderStateAspect" ref="orderStateAOP">
             <aop:pointcut id="orderRetrievalMethod"
@@ -43,5 +62,5 @@
     </aop:config>
 
     <bean id="blOrderLockManager" class="org.broadleafcommerce.core.web.order.DatabaseOrderLockManager"/>
-    
+
 </beans>

@@ -68,6 +68,9 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String broadleafEnumeration;
     protected Boolean hideEnumerationIfEmpty;
     protected SupportedFieldType fieldComponentRenderer;
+    protected String fieldComponentRendererTemplate;
+    protected SupportedFieldType gridFieldComponentRenderer;
+    private String gridFieldComponentRendererTemplate;
     protected Boolean readOnly;
     protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<>(5);
     protected Boolean requiredOverride;
@@ -301,9 +304,32 @@ public class BasicFieldMetadata extends FieldMetadata {
         return fieldComponentRenderer;
     }
 
-    
     public void setFieldComponentRenderer(SupportedFieldType fieldComponentRenderer) {
         this.fieldComponentRenderer = fieldComponentRenderer;
+    }
+
+    public SupportedFieldType getGridFieldComponentRenderer() {
+        return gridFieldComponentRenderer;
+    }
+
+    public void setGridFieldComponentRenderer(SupportedFieldType gridFieldComponentRenderer) {
+        this.gridFieldComponentRenderer = gridFieldComponentRenderer;
+    }
+
+    public String getFieldComponentRendererTemplate() {
+        return fieldComponentRendererTemplate;
+    }
+
+    public void setFieldComponentRendererTemplate(String fieldComponentRendererTemplate) {
+        this.fieldComponentRendererTemplate = fieldComponentRendererTemplate;
+    }
+
+    public String getGridFieldComponentRendererTemplate() {
+        return gridFieldComponentRendererTemplate;
+    }
+
+    public void setGridFieldComponentRendererTemplate(String gridFieldComponentRendererTemplate) {
+        this.gridFieldComponentRendererTemplate = gridFieldComponentRendererTemplate;
     }
 
     public Boolean getReadOnly() {
@@ -577,7 +603,7 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public Boolean getAllowNoValueEnumOption() {
         return StringUtils.isEmpty(getDefaultValue())
-            || (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
+            && (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
     }
 
     public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
@@ -625,6 +651,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.broadleafEnumeration = broadleafEnumeration;
         metadata.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
         metadata.fieldComponentRenderer = fieldComponentRenderer;
+        metadata.fieldComponentRendererTemplate = fieldComponentRendererTemplate;
+        metadata.gridFieldComponentRenderer = gridFieldComponentRenderer;
+        metadata.gridFieldComponentRendererTemplate = gridFieldComponentRendererTemplate;
         metadata.readOnly = readOnly;
         metadata.requiredOverride = requiredOverride;
         metadata.tooltip = tooltip;
@@ -708,6 +737,15 @@ public class BasicFieldMetadata extends FieldMetadata {
             return false;
         }
         if (fieldComponentRenderer != null ? !fieldComponentRenderer.equals(metadata.fieldComponentRenderer) : metadata.fieldComponentRenderer != null) {
+            return false;
+        }
+        if (fieldComponentRendererTemplate != null ? !fieldComponentRendererTemplate.equals(metadata.fieldComponentRendererTemplate) : metadata.fieldComponentRendererTemplate != null) {
+            return false;
+        }
+        if (gridFieldComponentRenderer != null ? !gridFieldComponentRenderer.equals(metadata.gridFieldComponentRenderer) : metadata.gridFieldComponentRenderer != null) {
+            return false;
+        }
+        if (gridFieldComponentRendererTemplate != null ? !gridFieldComponentRendererTemplate.equals(metadata.gridFieldComponentRendererTemplate) : metadata.gridFieldComponentRendererTemplate != null) {
             return false;
         }
         if (columnWidth != null ? !columnWidth.equals(metadata.columnWidth) : metadata.columnWidth != null) {
@@ -884,6 +922,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (broadleafEnumeration != null ? broadleafEnumeration.hashCode() : 0);
         result = 31 * result + (hideEnumerationIfEmpty != null ? hideEnumerationIfEmpty.hashCode() : 0);
         result = 31 * result + (fieldComponentRenderer != null ? fieldComponentRenderer.hashCode() : 0);
+        result = 31 * result + (fieldComponentRendererTemplate != null ? fieldComponentRendererTemplate.hashCode() : 0);
+        result = 31 * result + (gridFieldComponentRenderer != null ? gridFieldComponentRenderer.hashCode() : 0);
+        result = 31 * result + (gridFieldComponentRendererTemplate != null ? gridFieldComponentRendererTemplate.hashCode() : 0);
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
         result = 31 * result + (validationConfigurations != null ? validationConfigurations.hashCode() : 0);
         result = 31 * result + (requiredOverride != null ? requiredOverride.hashCode() : 0);

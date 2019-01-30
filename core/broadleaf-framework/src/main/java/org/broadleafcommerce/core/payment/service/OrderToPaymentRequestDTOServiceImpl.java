@@ -18,34 +18,28 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
-import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPhone;
-import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * Service that translates various pieces of information such as:
@@ -69,9 +63,12 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     @Resource(name = "blPostLoaderDao")
     protected PostLoaderDao postLoaderDao;
 
+    @Resource(name = "blPaymentRequestDTOService")
+    protected PaymentRequestDTOService paymentRequestDTOService;
+
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
-        if (order != null) {
+        if (order != null && !(order instanceof NullOrderImpl)) {
             final Long id = order.getId();
             final BroadleafCurrency currency = order.getCurrency();
             PaymentRequestDTO requestDTO = new PaymentRequestDTO().orderId(id.toString());
@@ -179,22 +176,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     @Override
     public void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
         Customer customer = order.getCustomer();
-        String phoneNumber = null;
-        
-        for (CustomerPhone phone : ListUtils.emptyIfNull(customer.getCustomerPhones())) {
-            if (phone.getPhone().isDefault()) {
-                phoneNumber =  phone.getPhone().getPhoneNumber();
-            }
-        }
 
-        String orderEmail = (customer.getEmailAddress() == null)? order.getEmailAddress() : customer.getEmailAddress();
-
-        requestDTO.customer()
-                .customerId(customer.getId().toString())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .email(orderEmail)
-                .phone(phoneNumber);
+        paymentRequestDTOService.populateCustomerInfo(requestDTO, customer, order.getEmailAddress());
     }
 
     /**

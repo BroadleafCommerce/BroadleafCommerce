@@ -34,13 +34,13 @@ import java.util.Map;
  *
  * @author Jeff Fischer
  */
-public class TestRollbackHandler implements RollbackHandler<CheckoutSeed> {
+public class TestRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     private static final Log LOG = LogFactory.getLog(TestRollbackHandler.class);
 
     @Override
     @Transactional("blTransactionManager")
-    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity,
+    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity,
             ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         LOG.warn("******************* TestRollbackHandler Engaged *********************");
         LOG.warn("******************* Activity: " + activity.getBeanName() + " *********************");

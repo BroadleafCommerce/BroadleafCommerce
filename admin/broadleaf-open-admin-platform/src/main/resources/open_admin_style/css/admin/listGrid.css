@@ -190,6 +190,10 @@ div.alert-box.list-grid-alert.save-alert a.close {
 .listgrid-toolbar .listgrid-row-actions {
     display: inline-block;
 }
+.listgrid-toolbar .toolbar-action i.fa-spinner,
+.listgrid-toolbar .row-action i.fa-spinner {
+    margin-right: 2px;
+}
 .listgrid-toolbar .listgrid-row-actions {
     border-left: 1px solid #D8D5D0;
     margin-left: 7px;

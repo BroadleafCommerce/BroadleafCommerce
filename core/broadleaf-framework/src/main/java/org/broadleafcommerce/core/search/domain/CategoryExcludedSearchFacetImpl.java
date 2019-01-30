@@ -147,7 +147,7 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
         }
         CategoryExcludedSearchFacet cloned = createResponse.getClone();
         if (searchFacet != null) {
-            cloned.setSearchFacet(searchFacet);
+            cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setSequence(sequence);
         if (category != null) {

@@ -20,16 +20,10 @@ package org.broadleafcommerce.common.demo;
 import org.springframework.core.Ordered;
 
 /**
- * <p>
  * Allows a module to specify a sql file and some ordering information to use during Hibernate auto import. This information
  * is traditionally set via the 'hibernate.hbm2ddl.auto' property. However, that method is flat and does not allow
  * easy individual module contribution and special ordering. By using this bean, a module can identify a sql file to
  * import and specify the order it should appear in the cumulative list of all module contributions.
- *
- * <p>
- * In Broadleaf 5.0 and 5.1, this class is non-functional and instead only serves to provide consistent runtime compatibility
- * across Broadleaf 5.0, 5.1 and 5.2 in external modules. This class only provides any meaning in Broadleaf 5.2+.
-
  *
  * @author Jeff Fischer
  */
@@ -61,7 +55,6 @@ public class AutoImportSql implements Ordered {
         this.sqlFilePath = sqlFilePath;
     }
 
-    @Override
     public int getOrder() {
         return order;
     }

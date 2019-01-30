@@ -78,4 +78,16 @@ public class BLCDateUtils {
         }
         return parsedDate;
     }
+
+    public static String formatDate(Date date) {
+        return formatDate(date, DEFAULT_DATE_FORMAT);
+    }
+
+    public static String formatDate(Date date, String format) {
+        if (date == null) {
+            return null;
+        }
+
+        return new SimpleDateFormat(format).format(date);
+    }
 }

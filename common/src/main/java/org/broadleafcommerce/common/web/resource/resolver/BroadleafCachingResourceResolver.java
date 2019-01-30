@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.web.resource.resolver;
 
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +64,9 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
 
     @javax.annotation.Resource(name = "blSpringCacheManager")
     private CacheManager cacheManager;
+
+    @javax.annotation.Resource(name = "blBroadleafContextUtil")
+    protected BroadleafContextUtil blcContextUtil;
     
     private static final String DEFAULT_CACHE_NAME = "blResourceCacheElements";
 
@@ -90,6 +94,8 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
+        blcContextUtil.establishThinRequestContext();
+
         if (resourceCachingEnabled) {
             String key = computeKey(request, requestPath) + getThemePathFromBRC();
             Resource resource = this.cache.get(key, Resource.class);

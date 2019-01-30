@@ -18,18 +18,18 @@
 
 package org.broadleafcommerce.common.web;
 
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 
 public class BaseUrlResolverImpl implements BaseUrlResolver {
 
     @Autowired
-    protected RuntimeEnvironmentPropertiesManager propMgr;
+    protected Environment env;
     
     @Override
     public String getSiteBaseUrl() {
-        String baseUrl = propMgr.getProperty("site.baseurl");
+        String baseUrl = env.getProperty("site.baseurl");
         if (baseUrl.charAt(baseUrl.length() - 1) == '/') {
             return baseUrl.substring(0, baseUrl.length() - 1);
         }
@@ -38,7 +38,7 @@ public class BaseUrlResolverImpl implements BaseUrlResolver {
 
     @Override
     public String getAdminBaseUrl() {
-        String baseUrl = propMgr.getProperty("admin.baseurl");
+        String baseUrl = env.getProperty("admin.baseurl");
         if (baseUrl.charAt(baseUrl.length() - 1) == '/') {
             return baseUrl.substring(0, baseUrl.length() - 1);
         }

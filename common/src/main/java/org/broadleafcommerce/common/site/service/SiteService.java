@@ -89,6 +89,19 @@ public interface SiteService {
     public Site retrievePersistentSiteByDomainName(String domain);
     
     /**
+     * Finds a site by its {@link Site#getSiteIdentifierValue()} and return an entity that is not attached to the
+     * Hibernate session
+     * @param identifier the {@link Site#getSiteIdentifierValue()} to look for
+     */
+    public Site retrieveNonPersistentSiteByIdentifer(String identifier);
+    
+    /**
+     * Finds a site by its {@link Site#getSiteIdentifierValue()}
+     * @param identifier the {@link Site#getSiteIdentifierValue()} to look for
+     */
+    public Site retrievePersistentSiteByIdentifier(String identifier);
+    
+    /**
      * Save updates to a site and returns a cloned instance
      * @param id
      * @return
@@ -157,6 +170,8 @@ public interface SiteService {
      * @return the catalog
      */
     public Catalog findCatalogById(Long id);
+    
+    Catalog findCatalogByName(String name);
 
     /**
      * Creates an instance of {@code Catalog}.   Default implementation delegates to {@link SiteDao#createCatalog()}.

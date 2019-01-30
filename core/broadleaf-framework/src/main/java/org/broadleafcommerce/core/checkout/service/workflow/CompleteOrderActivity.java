@@ -24,20 +24,29 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+@Component("blCompleteOrderActivity")
 public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutSeed>> implements ApplicationContextAware {
 
+    public static final int ORDER = 7000;
+    
     protected ApplicationContext applicationContext;
 
-    public CompleteOrderActivity() {
+    @Autowired
+    public CompleteOrderActivity(@Qualifier("blCompleteOrderRollbackHandler") CompleteOrderRollbackHandler rollbackHandler) {
         //no specific state to set here for the rollback handler; it's always safe for it to run
         setAutomaticallyRegisterRollbackHandler(true);
+        setRollbackHandler(rollbackHandler);
+        setOrder(ORDER);
     }
 
     @Override

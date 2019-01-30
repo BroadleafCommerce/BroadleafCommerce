@@ -155,12 +155,12 @@ public interface OrderPayment extends Serializable, Status, MultiTenantCloneable
      * to this payment.
      */
     public void addTransaction(PaymentTransaction transaction);
-    
+
     /**
      * Returns a transaction for given <b>type</b>. This is useful when validating whether or not a {@link PaymentTransaction}
      * can actually be added to this payment. For instance, there can only be a single {@link PaymentTransactionType#AUTHORIZE}
      * for a payment.
-     * 
+     *
      * @param type the type of transaction to look for within {@link #getTransactions()}
      * @return a list of transactions or an empty list if there are no transaction of that type
      */
@@ -173,7 +173,16 @@ public interface OrderPayment extends Serializable, Status, MultiTenantCloneable
      * @return the initial transaction for this order payment or null if there isn't any
      */
     public PaymentTransaction getInitialTransaction();
-    
+
+    /**
+     * Returns a successful transaction with type {@link PaymentTransactionType#AUTHORIZE} or
+     * {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE} if one exists. Note there can only be a single authorize
+     * transaction for a given payment.
+     *
+     * @return
+     */
+    public PaymentTransaction getAuthorizeTransaction();
+
     /**
      * Looks through all of the transactions for this payment and adds up the amount for the given transaction type. This
      * ignores whether the transaction was successful or not
