@@ -930,8 +930,11 @@ $(document).ready(function () {
                             parentId: parentId
                         }
                     }, function (data) {
-                        var $container = $('div.listgrid-container#' + data.field);
+                        // escape dots in the id selector
+                        var idSelector = data.field.replace(/\./g, '\\\.');
+                        var $container = $('div.listgrid-container#' + idSelector);
 
+                        BLCAdmin.workflow.updateSandboxRibbon();
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
                             clearOtherAlerts: true,
