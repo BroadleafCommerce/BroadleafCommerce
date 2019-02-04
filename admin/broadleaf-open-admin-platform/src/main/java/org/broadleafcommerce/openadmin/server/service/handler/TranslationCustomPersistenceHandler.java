@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -53,6 +54,9 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
 
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
     protected Boolean classMatches(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         return Translation.class.getName().equals(ceilingEntityFullyQualifiedClassname);
@@ -78,16 +82,17 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Translation.class.getName(), persistencePerspective);
             adminInstance = (Translation) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            Translation res = translationService.getTranslation(adminInstance.getEntityType(), adminInstance.getEntityId(), adminInstance.getFieldName(), adminInstance.getLocaleCode());
-            if (res == null) {
-                adminInstance = dynamicEntityDao.merge(adminInstance);
-                Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
-                return adminEntity;
-            } else {
-                Entity errorEntity = new Entity();
-                errorEntity.addValidationError("localeCode", "translation.record.exists.for.locale");
-                return errorEntity;
+            // We only want to check for duplicates during a save
+            if (!sandBoxHelper.isReplayOperation()) {
+                Translation res = translationService.getTranslation(adminInstance.getEntityType(), adminInstance.getEntityId(), adminInstance.getFieldName(), adminInstance.getLocaleCode());
+                if (res != null) {
+                    Entity errorEntity = new Entity();
+                    errorEntity.addValidationError("localeCode", "translation.record.exists.for.locale");
+                    return errorEntity;
+                }
             }
+            adminInstance = dynamicEntityDao.merge(adminInstance);
+            return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to perform add for entity: " + Translation.class.getName(), e);
         }
