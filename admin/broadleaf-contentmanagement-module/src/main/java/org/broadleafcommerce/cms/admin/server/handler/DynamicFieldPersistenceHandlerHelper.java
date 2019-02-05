@@ -121,38 +121,16 @@ public class DynamicFieldPersistenceHandlerHelper {
     public Property[] buildDynamicPropertyList(List<FieldGroup> fieldGroups, Class<?> inheritedType) {
         List<Property> propertiesList = new ArrayList<Property>();
         for (FieldGroup group : fieldGroups) {
-            List<FieldDefinition> definitions = group.getFieldDefinitions();
-            for (FieldDefinition def : definitions) {
-                Property property = buildDynamicProperty(def, inheritedType);
-                BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) property.getMetadata();
-                fieldMetadata.setGroup(group.getName());
-                fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
-                propertiesList.add(property);
-            }
+            constructPropertiesFromFieldGroup(inheritedType, propertiesList, group, 0l);
         }
-        Property property = new Property();
-        property.setName("id");
-        BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
-        property.setMetadata(fieldMetadata);
-        fieldMetadata.setFieldType(SupportedFieldType.ID);
-        fieldMetadata.setSecondaryType(SupportedFieldType.INTEGER);
-        fieldMetadata.setMutable(true);
-        fieldMetadata.setInheritedFromType(inheritedType.getName());
-        fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
-        fieldMetadata.setForeignKeyCollection(false);
-        fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-        fieldMetadata.setName("id");
-        fieldMetadata.setFriendlyName("ID");
-        fieldMetadata.setSecurityLevel("");
-        fieldMetadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
-        fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        fieldMetadata.setLargeEntry(false);
-        fieldMetadata.setProminent(false);
-        fieldMetadata.setColumnWidth("*");
-        fieldMetadata.setBroadleafEnumeration("");
-        fieldMetadata.setReadOnly(true);
+        Property property = constructIdProperty(inheritedType);
         propertiesList.add(property);
 
+        Property[] properties = sortProperties(propertiesList);
+        return properties;
+    }
+
+    private Property[] sortProperties(List<Property> propertiesList) {
         Property[] properties = new Property[propertiesList.size()];
         properties = propertiesList.toArray(properties);
         Arrays.sort(properties, new Comparator<Property>() {
@@ -181,6 +159,56 @@ public class DynamicFieldPersistenceHandlerHelper {
             }
         });
         return properties;
+    }
+
+    private Property constructIdProperty(Class<?> inheritedType) {
+        Property property = new Property();
+        property.setName("id");
+        BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
+        property.setMetadata(fieldMetadata);
+        fieldMetadata.setFieldType(SupportedFieldType.ID);
+        fieldMetadata.setSecondaryType(SupportedFieldType.INTEGER);
+        fieldMetadata.setMutable(true);
+        fieldMetadata.setInheritedFromType(inheritedType.getName());
+        fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
+        fieldMetadata.setForeignKeyCollection(false);
+        fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+        fieldMetadata.setName("id");
+        fieldMetadata.setFriendlyName("ID");
+        fieldMetadata.setSecurityLevel("");
+        fieldMetadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
+        fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        fieldMetadata.setLargeEntry(false);
+        fieldMetadata.setProminent(false);
+        fieldMetadata.setColumnWidth("*");
+        fieldMetadata.setBroadleafEnumeration("");
+        fieldMetadata.setReadOnly(true);
+        return property;
+    }
+
+    private void constructPropertiesFromFieldGroup(Class<?> inheritedType, List<Property> propertiesList, FieldGroup group, Long groupOrder) {
+        List<FieldDefinition> definitions = group.getFieldDefinitions();
+        for (FieldDefinition def : definitions) {
+            Property property = buildDynamicProperty(def, inheritedType);
+            BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) property.getMetadata();
+            fieldMetadata.setGroup(group.getName());
+            fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
+            fieldMetadata.setGroupOrder(groupOrder.intValue());
+            propertiesList.add(property);
+        }
+    }
+
+    public Property[] buildDynamicPropertyList(Map<FieldGroup, Long> fieldGroups, Class<?> inheritedType) {
+        List<Property> propertiesList = new ArrayList<Property>();
+        for (Map.Entry<FieldGroup, Long> group : fieldGroups.entrySet()) {
+            constructPropertiesFromFieldGroup(inheritedType, propertiesList, group.getKey(), group.getValue());
+        }
+        Property property = constructIdProperty(inheritedType);
+        propertiesList.add(property);
+
+        Property[] properties = sortProperties(propertiesList);
+        return properties;
+
     }
 
 }
