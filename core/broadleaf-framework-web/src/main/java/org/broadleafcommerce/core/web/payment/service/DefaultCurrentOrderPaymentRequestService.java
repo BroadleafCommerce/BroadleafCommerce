@@ -69,7 +69,11 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
             currentCart = orderService.findOrderById(orderId);
         }
 
-        OrderAttribute orderAttribute = new OrderAttributeImpl();
+        OrderAttribute orderAttribute = currentCart.getOrderAttributes().get(orderAttributeKey);
+
+        if (orderAttribute == null) {
+            orderAttribute = new OrderAttributeImpl();
+        }
         orderAttribute.setName(orderAttributeKey);
         orderAttribute.setValue(orderAttributeValue);
         orderAttribute.setOrder(currentCart);
