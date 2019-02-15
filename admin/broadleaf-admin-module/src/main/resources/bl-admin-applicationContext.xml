@@ -63,6 +63,7 @@
                 <ref bean="blFieldOnlyPropertiesCustomPersistenceHandler" />
                 <ref bean="blSearchFacetCustomPersistenceHandler" />
                 <ref bean="blOfferCustomPersistenceHandler" />
+                <ref bean="blOfferCodeCustomPersistenceHandler" />
                 <ref bean="blProductOptionValuesCustomPersistenceHandler" />
             </list>
         </property>
