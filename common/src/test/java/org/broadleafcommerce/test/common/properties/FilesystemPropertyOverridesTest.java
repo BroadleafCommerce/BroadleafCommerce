@@ -21,6 +21,7 @@
 package org.broadleafcommerce.test.common.properties;
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -55,13 +56,13 @@ public class FilesystemPropertyOverridesTest {
         String overridePropertiesPath = FilesystemPropertyOverridesTest.class.getClassLoader().getResource("overridestest.properties").getFile();
         overridePropertiesPath = overridePropertiesPath.replace("%20", " ");
         overridePropertiesPath = overridePropertiesPath.replace("%40", "@");
-        System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_OVERRIDES_PROPERTY, overridePropertiesPath);
+        System.setProperty(BroadleafEnvironmentConfigurer.PROPERTY_OVERRIDES_PROPERTY, overridePropertiesPath);
     }
     
     // don't impact other tests with my property override
     @AfterClass
     public static void clearOverrideProperty() {
-        System.clearProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_OVERRIDES_PROPERTY);
+        System.clearProperty(BroadleafEnvironmentConfigurer.PROPERTY_OVERRIDES_PROPERTY);
     }
     
     @Test
@@ -70,6 +71,6 @@ public class FilesystemPropertyOverridesTest {
     @DirtiesContext
     public void testPropertiesWereOverridden() {
         Assert.assertEquals("overridevalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.OVERRIDE_SOURCES_NAME));
+        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfigurer.OVERRIDE_SOURCES_NAME));
     }
 }

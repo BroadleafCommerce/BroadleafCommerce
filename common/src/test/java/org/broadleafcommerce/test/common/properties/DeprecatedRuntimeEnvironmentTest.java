@@ -21,6 +21,7 @@
 package org.broadleafcommerce.test.common.properties;
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -44,12 +45,12 @@ public class DeprecatedRuntimeEnvironmentTest {
 
     @BeforeClass
     public static void setRuntimeEnvironment() {
-        System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.DEPRECATED_RUNTIME_ENVIRONMENT_KEY, "production");
+        System.setProperty(BroadleafEnvironmentConfigurer.DEPRECATED_RUNTIME_ENVIRONMENT_KEY, "production");
     }
     
     @AfterClass
     public static void clearRuntimeEnvironment() {
-        System.clearProperty(BroadleafEnvironmentConfiguringApplicationListener.DEPRECATED_RUNTIME_ENVIRONMENT_KEY);
+        System.clearProperty(BroadleafEnvironmentConfigurer.DEPRECATED_RUNTIME_ENVIRONMENT_KEY);
     }
     
     @Autowired
