@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -75,6 +76,7 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
     @AdminPresentation(friendlyName = "productOptionValue_attributeValue", 
             prominent = true, order = FieldOrder.value,
             translatable = true, gridOrder = FieldOrder.value,
+            requiredOverride = RequiredOverride.REQUIRED,
             group = GroupName.General)
     protected String attributeValue;
 
