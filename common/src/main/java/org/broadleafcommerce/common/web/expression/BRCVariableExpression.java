@@ -23,13 +23,23 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+import sun.util.calendar.ZoneInfo;
 
+import javax.servlet.http.HttpSession;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import static org.broadleafcommerce.common.web.BroadleafSandBoxResolverImpl.CLIENT_TIMEZONE;
 
 
 /**
@@ -84,6 +94,27 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
     
     public Date getCurrentTime() {
         return SystemTime.asDate(true);
+    }
+
+    public Calendar getCurrentTimeCalendar() {
+
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+
+        WebRequest webRequest = brc.getWebRequest();
+
+        if(BLCRequestUtils.isOKtoUseSession(webRequest)) {
+            HttpSession session = brc.getRequest().getSession();
+            TimeZone timeZone = (TimeZone) session.getAttribute(CLIENT_TIMEZONE);
+
+
+            if(timeZone != null) {
+
+                return SystemTime.asCalendar(Locale.getDefault(), timeZone, true);
+            }
+        }
+
+        return SystemTime.asCalendar(true);
+
     }
     
     public Object get(String propertyName) {

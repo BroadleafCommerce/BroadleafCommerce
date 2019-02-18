@@ -566,35 +566,46 @@
          * @returns {boolean}
          */
         checkIfShouldTrackChanges : function(el) {
-            // if changes are explcitly tracked on this input, track it
-            if ($(el).data('track-changes')) {
-                return true;
-            }
-            
-            // if this element is in an OMS tab, we don't want to track
-            if (el !== undefined && $(el).closest('.oms-tab').length) {
-                return false;
+            if(el) {
+                var $element = $(el);
+
+                // if this element is in an OMS tab, we don't want to track
+                if ($element.closest('.oms-tab').length) {
+                    return false;
+                }
+
+                // Don't track if we are on an OMS page, in a modal, or not on a page with an entity form
+                if ($('.oms').length ||
+                    this.isParentModal(el) ||
+                    !$('.entity-form').length) {
+                    return false;
+                }
+
+                // If this is a Selectize Adder or Collection input, we don't want to track as changes are auto-saved
+                if ($element.closest('.selectize-adder').length ||
+                    $element.closest('.selectize-collection').length) {
+                    return false;
+                }
+
+                // If this is a boolean-link, it is purely frontend related and not actually changing any values of import
+                if ($element.closest('.field-group').find('.boolean-link').length) {
+                    return false;
+                }
             }
 
-            // Don't track if we are on an OMS page, in a modal (except add entity modal) or not on a page with an entity form
-            if ((el !== undefined && $('.oms').length) ||
-                $(el).closest('.modal:not(:has(.modal-add-entity-form))').length ||
-                !$('.entity-form').length) {
-                return false;
-            }
-
-            // If this is a Selectize Adder or Collection input, we don't want to track as changes are auto-saved
-            if (el !== undefined && ($(el).closest('.selectize-adder').length || $(el).closest('.selectize-collection').length)) {
-                return false;
-            }
-
-            // If this is a boolean-link, it is purely frontend related and not actually changing any values of import
-            if (el !== undefined && $(el).closest('.field-group').find('.boolean-link').length) {
-                return false;
-            }
 
             return true;
+        },
+
+        /**
+         * Checks if an element is a child of a modal
+         * @param el
+         * @returns {boolean}
+         */
+        isParentModal : function(el){
+          return el && $(el).parents('.modal').length >= 1;
         }
+
     };
 })(jQuery, BLCAdmin);
 

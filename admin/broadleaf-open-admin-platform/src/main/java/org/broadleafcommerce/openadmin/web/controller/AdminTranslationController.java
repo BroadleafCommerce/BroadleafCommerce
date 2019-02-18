@@ -170,7 +170,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
         String ceilingEntity = form.getCeilingEntity();
 
-        TranslatedEntity translatedEntity = TranslatedEntity.getInstance(ceilingEntity);
+        TranslatedEntity translatedEntity = translationService.getAssignableEntityType(ceilingEntity);
         if (translatedEntity == null && ceilingEntity.endsWith("Impl")) {
             int pos = ceilingEntity.lastIndexOf("Impl");
             ceilingEntity = ceilingEntity.substring(0, pos);
