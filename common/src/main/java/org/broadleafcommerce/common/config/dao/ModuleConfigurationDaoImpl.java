@@ -83,7 +83,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
         Query query = em.createNamedQuery("BC_READ_MODULE_CONFIG_BY_TYPE");
         query.setParameter("configType", type.getType());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "blConfigurationModuleElements");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.ConfigurationModuleElements");
         return query.getResultList();
     }
 
@@ -97,7 +97,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
 
         query.setParameter("currentDate", myDate);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "blConfigurationModuleElements");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.ConfigurationModuleElements");
         return query.getResultList();
     }
 
@@ -107,7 +107,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
         //TODO change this to a JPA criteria expression
         Query query = em.createQuery("SELECT config FROM " + type.getName() + " config");
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "blConfigurationModuleElements");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.ConfigurationModuleElements");
         return query.getResultList();
     }
 
