@@ -10,7 +10,7 @@
     If the "displayType" is not present, it will just render the RULE_SIMPLE or RULE_WITH_QUANTITY as "NORMAL".
     */-->
 
-    <input id="rule-disabled" type="hidden" th:value="${field.readOnly}">
+    <input th:id="${field.jsonFieldName + '-rule-disabled'}" type="hidden" th:value="${field.readOnly}">
 
     <div class="field-label inline" th:if="${field.displayType != null
     AND (field.displayType == 'RADIO' OR field.displayType == 'MODAL')}">

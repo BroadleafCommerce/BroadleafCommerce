@@ -814,7 +814,7 @@
                 if (data == null || data.length == 0) {
                     var noRules = $("<span>", {'class': 'readable-no-rule', 'html': 'No rules applied yet'});
 
-                    if ($('#' + "rule-disabled").val() == "false") {
+                    if ($("#"+ hiddenId + "-rule-disabled").val() == "false") {
                         var addRules = $('<span>', {
                             'data-hiddenId': hiddenId,
                             'data-ruleType': ruleBuilder.ruleType,
