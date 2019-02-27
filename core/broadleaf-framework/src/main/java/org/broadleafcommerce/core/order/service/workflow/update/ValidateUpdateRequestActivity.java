@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service.workflow.update;
 
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.MinQuantityNotFulfilledException;
@@ -29,6 +30,8 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component("blValidateUpdateRequestActivity")
 public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
@@ -50,7 +53,7 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         
-        Map <String, String> attributes = new HashMap<>();
+        Map<String, String> attributes = new HashMap<>();
         OrderItem requestedOrderItem = new OrderItemImpl();
         for (OrderItem oi : request.getOrder().getOrderItems()) {
             if (oi.getId() == orderItemRequestDTO.getOrderItemId()){
