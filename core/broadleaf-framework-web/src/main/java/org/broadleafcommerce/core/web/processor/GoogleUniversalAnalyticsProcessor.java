@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -256,17 +257,21 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem orderItem = fulfillmentGroupItem.getOrderItem();
-    
-                Sku sku = ((SkuAccessor) orderItem).getSku();
-                
-                sb.append("ga('" + trackerPrefix + "ecommerce:addItem', {");
-                sb.append("'id': '" + order.getOrderNumber() + "'");
-                sb.append(",'name': '" + sku.getName() + "'");
-                sb.append(",'sku': '" + sku.getId() + "'");
-                sb.append(",'category': '" + getVariation(orderItem) + "'");
-                sb.append(",'price': '" + orderItem.getAveragePrice() + "'");
-                sb.append(",'quantity': '" + orderItem.getQuantity() + "'");
-                sb.append("});");
+
+
+                if (orderItem instanceof DiscreteOrderItem) {
+                  if (SkuAccessor.class.isAssignableFrom(orderItem.getClass())) {               
+                      Sku sku = ((SkuAccessor) orderItem).getSku();
+                      sb.append("ga('" + trackerPrefix + "ecommerce:addItem', {");
+                      sb.append("'id': '" + order.getOrderNumber() + "'");
+                      sb.append(",'name': '" + sku.getName() + "'");
+                      sb.append(",'sku': '" + sku.getId() + "'");
+                      sb.append(",'category': '" + getVariation(orderItem) + "'");
+                      sb.append(",'price': '" + orderItem.getAveragePrice() + "'");
+                      sb.append(",'quantity': '" + orderItem.getQuantity() + "'");
+                      sb.append("});");
+                  }               
+               }
             }
         }
         return sb.toString();

@@ -28,6 +28,8 @@ import java.util.List;
 public interface OrderDao {
 
     Order readOrderById(Long orderId);
+
+    Order readOrderByIdIgnoreCache(Long orderId);
     
     List<Order> readOrdersByIds(List<Long> orderIds);
 

@@ -547,43 +547,11 @@ http://www.w3.org/TR/html401/struct/global.html
 
 
 
-        <!-- Frame & related tags -->
+		<!-- Frame & related tags -->
 
-        <tag name="iframe" action="validate">
-            <attribute name="width">
-                <regexp-list>
-                    <regexp name="anything"/>
-                </regexp-list>
-            </attribute>
-                
-            <attribute name="height">
-                <regexp-list>
-                    <regexp name="anything"/>
-                </regexp-list>
-            </attribute>
-                
-            <attribute name="src">
-                <regexp-list>
-                    <regexp name="anything"/>
-                </regexp-list>
-            </attribute>
-                
-            <attribute name="frameborder">
-                <regexp-list>
-                    <regexp name="anything"/>
-                </regexp-list>
-            </attribute>
-                
-            <attribute name="allowfullscreen">
-                <regexp-list>
-                    <regexp name="anything"/>
-                </regexp-list>
-            </attribute>
-        </tag>
-        
-        <tag name="frameset" action="remove"/>
-        <tag name="frame" action="remove"/>
-
+		<tag name="iframe" action="remove"/>
+		<tag name="frameset" action="remove"/>
+		<tag name="frame" action="remove"/>
 
 
         <!-- Form related tags -->

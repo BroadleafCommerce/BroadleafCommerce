@@ -64,6 +64,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
     //Externalized Generic Payment Error Message
     protected static String processingErrorMessage = "cart.paymentProcessingError";
+    protected static String cartReqAttributeNotProvidedMessage = "cart.requiredAttributeNotProvided";
 
     @Autowired(required=false)
     @Qualifier("blPaymentGatewayCheckoutService")
@@ -278,5 +279,9 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
     public static String getProcessingErrorMessage() {
         return processingErrorMessage;
+    }
+
+    public static String getCartReqAttributeNotProvidedMessage() {
+        return cartReqAttributeNotProvidedMessage;
     }
 }

@@ -64,6 +64,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -205,6 +206,25 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                            "more than " + queryLimit + " products found to belong to the selected default categories(%s). This is a " +
                                            "filter query limitation.", joined));
                 }
+                cto.getNonCountAdditionalFilterMappings().add(
+                        new FilterMapping().withFieldPath(new FieldPath().
+                                withAssociationPath(Arrays.asList("allParentCategoryXrefs","category")).
+                                withTargetPropertyPieces(Arrays.asList("name")))
+                                .withDirectFilterValues(new EmptyFilterValues())
+                                .withRestriction(new Restriction()
+                                        .withPredicateProvider(new PredicateProvider() {
+                                            @Override
+                                            public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                            FieldPathBuilder fieldPathBuilder, From root,
+                                                                            String ceilingEntity,
+                                                                            String fullPropertyName, Path explicitPath,
+                                                                            List directValues) {
+                                                //expect it to be allParentCategoryXrefs.category.name, so we need to restrict on allParentCategoryXrefs - 2 levels up
+                                                Predicate equal = builder.equal(explicitPath.getParentPath().getParentPath().get("defaultReference"), Boolean.TRUE);
+                                                return equal;
+                                            }
+                                        })
+                                ).withSortDirection(fsc.getSortDirection()));
             }
         }
 

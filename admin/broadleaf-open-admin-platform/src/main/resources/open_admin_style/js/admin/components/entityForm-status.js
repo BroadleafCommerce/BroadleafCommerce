@@ -288,10 +288,22 @@
          * It is called once when the page first loads, and then on every subsequent change.
          */
         updateEntityFormActions : function() {
+            var numModals = BLCAdmin.getModals().length;
+            var modals = BLCAdmin.getModals();
+            var $prevModal = numModals > 1 ? modals[numModals - 2] : null;
             var $currModal = BLCAdmin.currentModal();
+
+            var $addEntityFormModal;
             if ($currModal && $currModal.has('.modal-add-entity-form').length) {
+                $addEntityFormModal = $currModal;
+            } else if ($prevModal && $prevModal.has('.modal-add-entity-form').length) {
+                //on actions like to-one lookups, the modal that needs the save button updated is the previous one
+                $addEntityFormModal = $prevModal;
+            }
+
+            if ($addEntityFormModal) {
                 // in community, modal submit gets disabled when there is a validation error
-                $('.submit-button', $currModal).prop('disabled', !this.getEntityFormChangesCount());
+                $('.submit-button', $addEntityFormModal).prop('disabled', !this.getEntityFormChangesCount());
             }
             
             // Grab all buttons we might want to enable/disable
@@ -554,31 +566,46 @@
          * @returns {boolean}
          */
         checkIfShouldTrackChanges : function(el) {
+            if(el) {
+                var $element = $(el);
 
-            // if this element is in an OMS tab, we don't want to track
-            if (el !== undefined && $(el).closest('.oms-tab').length) {
-                return false;
+                // if this element is in an OMS tab, we don't want to track
+                if ($element.closest('.oms-tab').length) {
+                    return false;
+                }
+
+                // Don't track if we are on an OMS page, in a modal, or not on a page with an entity form
+                if ($('.oms').length ||
+                    this.isParentModal(el) ||
+                    !$('.entity-form').length) {
+                    return false;
+                }
+
+                // If this is a Selectize Adder or Collection input, we don't want to track as changes are auto-saved
+                if ($element.closest('.selectize-adder').length ||
+                    $element.closest('.selectize-collection').length) {
+                    return false;
+                }
+
+                // If this is a boolean-link, it is purely frontend related and not actually changing any values of import
+                if ($element.closest('.field-group').find('.boolean-link').length) {
+                    return false;
+                }
             }
 
-            // Don't track if we are on an OMS page, in a modal (except add entity modal) or not on a page with an entity form
-            if ((el !== undefined && $('.oms').length) ||
-                $(el).closest('.modal:not(:has(.modal-add-entity-form))').length ||
-                !$('.entity-form').length) {
-                return false;
-            }
-
-            // If this is a Selectize Adder or Collection input, we don't want to track as changes are auto-saved
-            if (el !== undefined && ($(el).closest('.selectize-adder').length || $(el).closest('.selectize-collection').length)) {
-                return false;
-            }
-
-            // If this is a boolean-link, it is purely frontend related and not actually changing any values of import
-            if (el !== undefined && $(el).closest('.field-group').find('.boolean-link').length) {
-                return false;
-            }
 
             return true;
+        },
+
+        /**
+         * Checks if an element is a child of a modal
+         * @param el
+         * @returns {boolean}
+         */
+        isParentModal : function(el){
+          return el && $(el).parents('.modal').length >= 1;
         }
+
     };
 })(jQuery, BLCAdmin);
 
@@ -621,9 +648,10 @@ $(document).ready(function() {
                 return;
             }
             // This is a special case for rule builders, we need to capture the match quantity value
-            else if ($(this).hasClass('rules-group-header-item-qty')) {
+            else if ($(this).hasClass('rules-group-header-item-qty')
+                    && $(this).closest('.rules-group-container').attr('data-orig-val') === undefined) {
                 var $ruleGroupContainer = $(this).closest('.rules-group-container');
-                $ruleGroupContainer.attr('orig-val', $(this).val());
+                $ruleGroupContainer.attr('data-orig-val', $(this).val());
                 return;
             }
             // If this is a redactor field, we have to set its text attribute, not its value
@@ -638,7 +666,7 @@ $(document).ready(function() {
      * This event handler is fired for `input` type events.
      * It gets the field's id, original value, and new value to be used in the entity form's change map.
      */
-    $body.on('input', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
+    $body.on('input paste', 'input[id!="listgrid-search"], textarea, .redactor-editor', function() {
         BLCAdmin.entityForm.status.handleEntityFormChanges(this);
     });
 

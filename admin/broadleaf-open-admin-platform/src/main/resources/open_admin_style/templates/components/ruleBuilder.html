@@ -10,6 +10,8 @@
     If the "displayType" is not present, it will just render the RULE_SIMPLE or RULE_WITH_QUANTITY as "NORMAL".
     */-->
 
+    <input th:id="${field.jsonFieldName + '-rule-disabled'}" type="hidden" th:value="${field.readOnly}">
+
     <div class="field-label inline" th:if="${field.displayType != null
     AND (field.displayType == 'RADIO' OR field.displayType == 'MODAL')}">
         <label>
@@ -65,7 +67,7 @@
             </div>
 
             <div class="launch-modal-rule-builder"
-                 th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
+                 th:if="${field.displayType != null AND field.displayType == 'MODAL' AND field.readOnly == false}"
                  th:attr="data-hiddenId=${field.jsonFieldName},
                          data-ruleType=${field.ruleType},
                          data-ruleTitleId=${field.name + '-header'}">
@@ -74,7 +76,7 @@
             </div>
 
             <div class="clear-rule-builder"
-                 th:if="${field.displayType != null AND field.displayType == 'MODAL'}"
+                 th:if="${field.displayType != null AND field.displayType == 'MODAL' AND field.readOnly == false}"
                  th:attr="data-hiddenId=${field.jsonFieldName},
                          data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
                          data-ruleTitleId=${field.name + '-header'}">

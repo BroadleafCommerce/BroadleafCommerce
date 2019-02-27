@@ -31,8 +31,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Resource;
 
@@ -66,34 +68,60 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
         return buildDetails(username, adminUser);
     }
+    
+    protected UserDetails buildDetails(final String username, final AdminUser adminUser) {
+        final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-    protected UserDetails buildDetails(String username, AdminUser adminUser) {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        for (AdminRole role : adminUser.getAllRoles()) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-            adminSecurityHelper.addAllPermissionsToAuthorities(authorities, role.getAllPermissions());
-        }
-        adminSecurityHelper.addAllPermissionsToAuthorities(authorities, adminUser.getAllPermissions());
-        for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
-            authorities.add(new SimpleGrantedAuthority(perm));
-        }
+        addRoles(adminUser, authorities);
+        addPermissions(adminUser, authorities);
+        convertPermissionPrefixToRole(authorities);
 
-        // Spring security expects everything to begin with ROLE_ for things like hasRole() expressions so this adds additional
-        // authorities with those mappings, as well as new ones with ROLE_ instead of PERMISSION_.
-        // At the end of this, given a permission set like:
-        // PERMISSION_ALL_PRODUCT
-        // The following authorities will appear in the final list to Spring security:
-        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
-        ListIterator<SimpleGrantedAuthority> it = authorities.listIterator();
-        while (it.hasNext()) {
-            SimpleGrantedAuthority auth = it.next();
-            if (auth.getAuthority().startsWith(LEGACY_ROLE_PREFIX)) {
-                it.add(new SimpleGrantedAuthority(DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()));
-                it.add(new SimpleGrantedAuthority(auth.getAuthority().replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
-            }
-        }
-
-        return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
+        return createDetails(username, adminUser, authorities);
     }
 
+    protected void addRoles(final AdminUser adminUser,
+            final List<SimpleGrantedAuthority> authorities) {
+        for (final AdminRole role : adminUser.getAllRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            adminSecurityHelper
+                    .addAllPermissionsToAuthorities(authorities, role.getAllPermissions());
+        }
+    }
+
+    protected void addPermissions(final AdminUser adminUser,
+            final List<SimpleGrantedAuthority> authorities) {
+        adminSecurityHelper
+                .addAllPermissionsToAuthorities(authorities, adminUser.getAllPermissions());
+
+        for (final String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
+            authorities.add(new SimpleGrantedAuthority(perm));
+        }
+    }
+
+    protected void convertPermissionPrefixToRole(final List<SimpleGrantedAuthority> authorities) {
+        // Spring security expects everything to begin with ROLE_ for things like hasRole() 
+        // expressions so this adds additional authorities with those mappings, as well as new ones 
+        // with ROLE_ instead of PERMISSION_.
+        // At the end of this, given a permission set like: PERMISSION_ALL_PRODUCT
+        // The following authorities will appear in the final list to Spring security:
+        // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
+        final ListIterator<SimpleGrantedAuthority> it = authorities.listIterator();
+
+        while (it.hasNext()) {
+            final SimpleGrantedAuthority auth = it.next();
+
+            if (auth.getAuthority().startsWith(LEGACY_ROLE_PREFIX)) {
+                it.add(new SimpleGrantedAuthority(DEFAULT_SPRING_SECURITY_ROLE_PREFIX
+                        + auth.getAuthority()));
+                it.add(new SimpleGrantedAuthority(auth.getAuthority()
+                        .replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
+            }
+        }
+    }
+    
+    protected UserDetails createDetails(final String username, final AdminUser adminUser, 
+            final List<SimpleGrantedAuthority> authorities) {
+        return new AdminUserDetails(adminUser.getId(), username, 
+                adminUser.getPassword(), true, true, true, true, authorities);
+    }
 }

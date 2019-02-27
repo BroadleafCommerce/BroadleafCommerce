@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -29,6 +31,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -36,7 +40,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 
 /**
  * 
@@ -49,9 +52,10 @@ import java.math.BigDecimal;
 @AdminPresentationClass(friendlyName = "Fixed Price Fulfillment")
 public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl implements FixedPriceFulfillmentOption {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     @Column(name = "PRICE", precision=19, scale=5, nullable=false)
+    @AdminPresentation(friendlyName = "FixedPriceFulfillmentOptionImpl_price", order = Presentation.FieldOrder.DESCRIPTION + 1000)
     protected BigDecimal price;
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
@@ -77,6 +81,34 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
     @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || !getClass().isAssignableFrom(o.getClass())) {
+            return false;
+        }
+
+        final FixedPriceFulfillmentOptionImpl that = (FixedPriceFulfillmentOptionImpl) o;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(getPrice(), that.getPrice())
+                .append(getCurrency(), that.getCurrency())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(getPrice())
+                .append(getCurrency())
+                .toHashCode();
     }
 
     @Override

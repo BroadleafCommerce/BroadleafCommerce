@@ -66,6 +66,11 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
+    public Long getTopmostProductionOriginalId(Class<?> type, Long id) {
+        return id;
+    }
+
+    @Override
     public OriginalIdResponse getOriginalId(Class<?> type, Long id) {
         OriginalIdResponse response = new OriginalIdResponse();
         response.setOriginalId(id);
@@ -121,4 +126,5 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     public void ignoreCloneCache(boolean ignoreCache) {
         //do nothing
     }
+
 }

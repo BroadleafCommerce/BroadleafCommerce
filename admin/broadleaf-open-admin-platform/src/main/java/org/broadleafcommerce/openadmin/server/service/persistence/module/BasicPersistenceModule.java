@@ -341,6 +341,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         if (value == null) {
                             value = "false";
                         }
+                    } else if (metadata.getFieldType().equals(SupportedFieldType.DATE)) {
+                        if (StringUtils.isEmpty(value)) {
+                            value = null;
+                        }
                     }
 
                     if (attemptToPopulateValue(property, fieldManager, instance, setId, metadata, entity, value)) {
@@ -360,7 +364,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             try {
                                 boolean isBreakDetected = false;
                                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                    if (!isBreakDetected || fieldPersistenceProvider.alwaysRun() && (value != null || fieldPersistenceProvider.canHandlePopulateNull())) {
+                                    if ((!isBreakDetected || fieldPersistenceProvider.alwaysRun()) && (value != null || fieldPersistenceProvider.canHandlePopulateNull())) {
                                         MetadataProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
                                         if (MetadataProviderResponse.NOT_HANDLED != response) {
                                             handled = true;
@@ -405,6 +409,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 entityList.add(instance);
                 Entity invalid = getRecords(mergedProperties, entityList, null, null, null)[0];
                 invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
+                invalid.setGlobalValidationErrors(entity.getGlobalValidationErrors());
                 invalid.overridePropertyValues(entity);
 
                 String message = ValidationUtil.buildErrorMessage(invalid.getPropertyValidationErrors(), invalid.getGlobalValidationErrors());

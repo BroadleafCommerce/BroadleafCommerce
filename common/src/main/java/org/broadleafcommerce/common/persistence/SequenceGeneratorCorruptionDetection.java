@@ -201,16 +201,14 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 if (CollectionUtils.isNotEmpty(results) && results.get(0) != null) {
                     LOG.debug(String.format("Checking for sequence corruption on entity %s", segmentValue));
                     Long maxEntityId = BLCNumberUtils.toLong(results.get(0));
-                    if (maxEntityId > maxSequenceId) {
-                        LOG.error(String.format("The sequence value for %s in %s was found as %d (or an entry did not exist) but the actual max sequence in"
-                                + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId));
+                    if (maxEntityId >= maxSequenceId) {
+                        String invalidSequenceDetectedMsg = String.format("The sequence value for %s in %s was found as %d (or an entry did not exist) but the actual max sequence in"
+                            + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId);
                         if (automaticallyCorrectInconsistencies) {
                             long newMaxId = maxEntityId + 10;
                             if (sequenceEntryExists) {
-                                String log = String.format("Correcting sequences for entity %s.  Updating the sequence value"
-                                                + " to %d",
-                                        mappedClass.getName(), newMaxId);
-                                LOG.warn(log);
+                                invalidSequenceDetectedMsg += String.format(". Updating the sequence value" + " to %d", newMaxId);
+                                LOG.info(invalidSequenceDetectedMsg);
 
                                 StringBuilder updateQuery = new StringBuilder();
                                 updateQuery.append("update ");
@@ -234,10 +232,8 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                                     throw new RuntimeException("Unable to update " + tableName + " with the sequence generator id for " + segmentValue);
                                 }
                             } else {
-                                String log = String.format("Correcting sequences for entity %s. Did not find an entry in"
-                                                + " %s, inserting the new sequence value as %d",
-                                        mappedClass.getName(), tableName, newMaxId);
-                                LOG.warn(log);
+                                invalidSequenceDetectedMsg += String.format(". Did not find an entry in %s, inserting the new sequence value as %d", tableName, newMaxId);
+                                LOG.info(invalidSequenceDetectedMsg);
 
                                 StringBuilder insertQuery = new StringBuilder();
                                 insertQuery.append("insert into ");
@@ -255,6 +251,7 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                                 }
                             }
                         } else {
+                            LOG.error(invalidSequenceDetectedMsg);
                             String reason = "A data inconsistency has been detected between the " + tableName + " table and one or more entity tables for which it manages current max primary key values.\n" +
                                     "The inconsistency was detected between the managed class (" + mappedClass.getName() + ") and the identifier (" + segmentValue + ") in " + tableName + ". Broadleaf\n" +
                                     "has stopped startup of the application in order to allow you to resolve the issue and avoid possible data corruption. If you wish to disable this detection, you may\n" +

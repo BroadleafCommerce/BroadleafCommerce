@@ -49,6 +49,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedClosure;
@@ -74,6 +75,7 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -88,6 +90,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+
 import javax.annotation.Resource;
 import javax.jms.IllegalStateException;
 
@@ -766,7 +769,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     }
 
                 }
-                if (!foundNotTokenizedField) {
+
+                // In the case of programmatically generated sorts, there will be no fieldtypes.
+                if (!foundNotTokenizedField && fieldTypes.size() > 0) {
                     LOG.warn(String.format("Sorting on a tokenized field, this could have adverse effects on the ordering of results. " +
                                     "Add a field type for this field from the following list to ensure proper result ordering: [%s]",
                             StringUtils.join(sortableFieldTypes, ", ")));
@@ -935,6 +940,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     propertyObject = newCollection;
                 } else {
                     propertyObject = getPropertyValueInternal(propertyObject, components, currentPosition + 1);
+                }
+            } else {
+                if (Money.class.isAssignableFrom(propertyObject.getClass())) {
+                    propertyObject = ((Money) propertyObject).getAmount().toPlainString();
+                } else if (BigDecimal.class.isAssignableFrom(propertyObject.getClass())) {
+                    propertyObject = ((BigDecimal) propertyObject).toPlainString();
                 }
             }
         }

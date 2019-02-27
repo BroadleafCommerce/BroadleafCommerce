@@ -35,11 +35,13 @@ public class SearchCriteria {
     public static String PAGE_NUMBER = "page";
     public static String SORT_STRING = "sort";
     public static String QUERY_STRING = "q";
+    public static String REQUEST_HANDLER = "qt";
     
     protected Integer page = 1;
     protected Integer pageSize;
     protected Integer startIndex;
     protected String sortQuery;
+    protected String requestHandler;
     protected Map<String, String[]> filterCriteria = new HashMap<>();
     /**
      * The category that the user searched on
@@ -119,5 +121,13 @@ public class SearchCriteria {
 
     public void setSearchExplicitCategory(boolean searchExplicitCategory) {
         this.searchExplicitCategory = searchExplicitCategory;
+    }
+
+    public String getRequestHandler() {
+        return requestHandler;
+    }
+
+    public void setRequestHandler(String requestHandler) {
+        this.requestHandler = requestHandler;
     }
 }

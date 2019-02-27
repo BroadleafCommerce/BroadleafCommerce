@@ -63,6 +63,7 @@
                 <ref bean="blFieldOnlyPropertiesCustomPersistenceHandler" />
                 <ref bean="blSearchFacetCustomPersistenceHandler" />
                 <ref bean="blOfferCustomPersistenceHandler" />
+                <ref bean="blOfferCodeCustomPersistenceHandler" />
                 <ref bean="blProductOptionValuesCustomPersistenceHandler" />
             </list>
         </property>
@@ -279,6 +280,7 @@
                 <value>admin/catalog/productOptions.js</value>
                 <value>admin/catalog/offer.js</value>
                 <value>admin/catalog/category.js</value>
+                <value>admin/catalog/skuMinOrderQuantity.js</value>
                 <value>admin/customers/customer.js</value>
                 <value>admin/users/adminUser.js</value>
             </list>

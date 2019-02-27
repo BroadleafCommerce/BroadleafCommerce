@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -223,6 +224,16 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     ExtensionResultStatusType batchFetchCatalogData(List<Product> products);
+
+    /**
+     * Batch fetch important collections for the entire list of skus in single batch fetch queries. In general, this is intended
+     * to be used for search results and category landing page results. For batch fetching during solr indexing, see
+     * {@link #startBatchEvent(List)}.
+     *
+     * @param skus
+     * @return
+     */
+    ExtensionResultStatusType batchFetchCatalogDataForSkus(List<Sku> skus);
 
     /**
      * Attaches the sort field, if able, to the given {@code SolrQuery}.
