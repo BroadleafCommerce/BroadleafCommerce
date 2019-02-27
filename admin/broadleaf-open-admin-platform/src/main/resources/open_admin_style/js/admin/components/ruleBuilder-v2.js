@@ -812,17 +812,19 @@
 
                 // If no data, set "No rules applied"
                 if (data == null || data.length == 0) {
-                    var noRules = $("<span>", {'class': 'readable-no-rule', 'html' : 'No rules applied yet,'});
+                    var noRules = $("<span>", {'class': 'readable-no-rule', 'html': 'No rules applied yet'});
 
-                    var addRules = $('<span>', {
-                        'data-hiddenId':  hiddenId,
-                        'data-ruleType': ruleBuilder.ruleType,
-                        'data-ruleTitleId': ruleBuilder.containerId + '-header',
-                        'html': '&nbsp;add some',
-                        'class': 'launch-modal-rule-builder launch-link'
-                    });
+                    if ($("#"+ hiddenId + "-rule-disabled").val() == "false") {
+                        var addRules = $('<span>', {
+                            'data-hiddenId': hiddenId,
+                            'data-ruleType': ruleBuilder.ruleType,
+                            'data-ruleTitleId': ruleBuilder.containerId + '-header',
+                            'html': ',&nbsp;add some',
+                            'class': 'launch-modal-rule-builder launch-link'
+                        });
 
-                    noRules.append(addRules);
+                        noRules.append(addRules);
+                    }
                     $(readableElement).append(noRules);
                     $(readableElement).parent().removeClass('can-edit');
                 // else fill in data
