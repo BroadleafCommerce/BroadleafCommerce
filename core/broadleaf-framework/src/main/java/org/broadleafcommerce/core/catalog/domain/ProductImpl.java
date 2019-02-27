@@ -48,7 +48,6 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
@@ -294,7 +293,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus",
             tab = TabName.ProductOptions, order = 1000)
-    private List<Sku> additionalSkus = new ArrayList<>();
+    protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -343,9 +342,6 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Transient
     protected List<String> allParentCategoryIds;
-
-    @Transient
-    private List<Sku> allAdditionalSkus;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -605,14 +601,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public List<Sku> getAdditionalSkus() {
-        if (allAdditionalSkus == null && additionalSkus != null) {
-            allAdditionalSkus = new ArrayList<>();
-            for (Sku sku : additionalSkus) {
-                allAdditionalSkus.add(HibernateUtils.deproxy(sku));
-
-            }
-        }
-        return allAdditionalSkus;
+        return additionalSkus;
     }
 
     @Override
