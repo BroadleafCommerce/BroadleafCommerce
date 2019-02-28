@@ -247,7 +247,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // Add authorize and authorize_and_capture transactions;
         // there should only be one or the other in the payment
         // Also add any pending transactions (as these are marked as being AUTH or CAPTURED later)
-        Money paymentSum = new Money(BigDecimal.ZERO);
+        Money paymentSum = new Money(BigDecimal.ZERO, order.getCurrency());
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
                 paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
