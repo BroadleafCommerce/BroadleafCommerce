@@ -792,7 +792,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         // format date list grid cells
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, Y @ hh:mma");
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, y @ hh:mma");
         DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
         symbols.setAmPmStrings(new String[] { "am", "pm" });
         formatter.setDateFormatSymbols(symbols);
