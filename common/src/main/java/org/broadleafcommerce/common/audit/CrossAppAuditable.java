@@ -18,7 +18,7 @@
 package org.broadleafcommerce.common.audit;
 
 /**
- * Marker class that allows the auditable fields to be udpated from either the site or the admin.  Classes should implement the AdminAuditListener.
+ * Marker class that allows the auditable fields to be udpated from either the site or the admin.  Classes should implement the AdminAuditableListener.
  * 
  * @author dcolgrove
  *
