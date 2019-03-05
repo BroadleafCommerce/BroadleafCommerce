@@ -448,6 +448,8 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <failOnError>false</failOnError>
                             <minmemory>128m</minmemory>
                             <maxmemory>1g</maxmemory>
                         </configuration>
