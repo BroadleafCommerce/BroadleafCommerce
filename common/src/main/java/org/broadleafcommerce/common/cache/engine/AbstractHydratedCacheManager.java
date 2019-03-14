@@ -17,19 +17,24 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import net.sf.ehcache.event.CacheEventListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.cache.event.CacheEntryExpiredListener;
+import javax.cache.event.CacheEntryRemovedListener;
+import javax.cache.event.CacheEntryUpdatedListener;
+
 /**
  * @author jfischer
  */
-public abstract class AbstractHydratedCacheManager implements CacheEventListener, HydratedCacheManager, HydratedAnnotationManager {
+public abstract class AbstractHydratedCacheManager<K, V> implements CacheEntryExpiredListener<K, V>, CacheEntryRemovedListener<K, V>, CacheEntryUpdatedListener<K, V>, 
+                                                                    HydratedCacheManager, HydratedAnnotationManager {
 
     private static final Log LOG = LogFactory.getLog(AbstractHydratedCacheManager.class);
 
@@ -68,14 +73,6 @@ public abstract class AbstractHydratedCacheManager implements CacheEventListener
             superClass = superClass.getSuperclass();
         }
         return myClass;
-    }
-
-    @Override
-    public void dispose() {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Disposing of all hydrated cache members");
-        }
-        hydrationDescriptors.clear();
     }
 
     @Override

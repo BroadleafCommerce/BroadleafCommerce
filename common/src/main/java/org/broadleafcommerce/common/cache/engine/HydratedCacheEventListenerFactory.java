@@ -17,36 +17,42 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import net.sf.ehcache.event.CacheEventListener;
-import net.sf.ehcache.event.CacheEventListenerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
-import java.util.Properties;
+import java.util.List;
+
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.configuration.FactoryBuilder;
+import javax.cache.configuration.MutableCacheEntryListenerConfiguration;
+import javax.cache.spi.CachingProvider;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory {
+@Component("blHydratedCacheEventListenerFactory")
+public class HydratedCacheEventListenerFactory {
 
     private static HydratedCacheManager manager = null;
 
-    @Override
-    public CacheEventListener createCacheEventListener(Properties props) {
-        try {
-            if (props == null || props.isEmpty()) {
-                manager = EhcacheHydratedCacheManagerImpl.getInstance();
-            } else {
-                String managerClass = props.getProperty("managerClass");
-                Class<?> clazz = Class.forName(managerClass);
-                Method method = clazz.getDeclaredMethod("getInstance");
-                manager = (HydratedCacheManager) method.invoke(null);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to create a CacheEventListener instance", e);
+    @Autowired
+    public HydratedCacheEventListenerFactory(@Qualifier("blHydratedCacheMangager") HydratedCacheManager hydratedCacheManager, 
+                                             @Value("${cache.hydratedCache.names}") List<String> cacheNames,
+                                             @Value("${cache.hydratedCache.require.old.value:false}") Boolean oldValue,
+                                             @Value("${cache.hydratedCache.require.synchronous:true}") Boolean synchronous) {
+        for (String cacheName : cacheNames) {
+            CachingProvider provider = Caching.getCachingProvider();
+            CacheManager cacheManager = provider.getCacheManager();
+            Cache cache = cacheManager.getCache(cacheName);
+            cache.registerCacheEntryListener(new MutableCacheEntryListenerConfiguration(FactoryBuilder.factoryOf(hydratedCacheManager), null, oldValue, synchronous));
         }
-        return (CacheEventListener) manager;
+        manager = hydratedCacheManager;
     }
 
     public static HydratedCacheManager getConfiguredManager() {

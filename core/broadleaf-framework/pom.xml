@@ -126,10 +126,7 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-        </dependency>
+
         <!-- Tests -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>

@@ -20,9 +20,6 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
@@ -33,6 +30,11 @@ import org.broadleafcommerce.common.util.TypedClosure;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.spi.CachingProvider;
 
 /**
  * Thread-local cache structure that contains all of the {@link Translation}s for a batch of processing. This is mainly
@@ -46,14 +48,15 @@ public class TranslationBatchReadCache {
     
     public static final String CACHE_NAME = "blBatchTranslationCache";
 
-    protected static Cache getCache() {
-        return CacheManager.getInstance().getCache(CACHE_NAME);
+    protected static Cache<Long, Map<String, Translation>> getCache() {
+        CachingProvider provider = Caching.getCachingProvider();
+        CacheManager cacheManager = provider.getCacheManager();
+        return cacheManager.getCache(CACHE_NAME);
     }
     
     protected static Map<String, Translation> getThreadlocalCache() {
         long threadId = Thread.currentThread().getId();
-        Element cacheElement = getCache().get(threadId);
-        return cacheElement == null ? null : (Map<String, Translation>) cacheElement.getObjectValue();
+        return getCache().get(threadId);
     }
     
     public static void clearCache() {
@@ -82,7 +85,7 @@ public class TranslationBatchReadCache {
         
         threadlocalCache.putAll(additionalTranslations);
         
-        getCache().put(new Element(threadId, threadlocalCache));
+        getCache().put(threadId, threadlocalCache);
     }
     
     public static Translation getFromCache(TranslatedEntity entityType, String id, String propertyName, String localeCode) {
