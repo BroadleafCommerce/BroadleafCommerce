@@ -1679,9 +1679,14 @@
 						.find('.xdsoft_month,.xdsoft_year')
 							.find('.xdsoft_select')
 								.hide();
-					if (options.onClose && $.isFunction(options.onClose)) {
-						onClose = options.onClose.call(datetimepicker, _xdsoft_datetime.currentTime, datetimepicker.data('input'), event);
-					}
+                    if (options.onClose && $.isFunction(options.onClose)) {
+                        var inputDate = moment(datetimepicker.data('input').context.value, 'dddd, MMMM DD, YYYY \@ h:mma');
+                        if (inputDate.isValid()) {
+                            _xdsoft_datetime.currentTime = _xdsoft_datetime.currentTime === inputDate.toDate()
+                                ? _xdsoft_datetime.currentTime : inputDate.toDate();
+                        }
+                        onClose = options.onClose.call(datetimepicker, _xdsoft_datetime.currentTime, datetimepicker.data('input'), event);
+                    }
 					if (onClose !== false && !options.opened && !options.inline) {
 						datetimepicker.hide();
 					}

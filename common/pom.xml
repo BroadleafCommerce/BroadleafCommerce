@@ -106,7 +106,7 @@
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
         </dependency>
-        
+
         <!-- JAXB Libraries -->
         <dependency>
             <groupId>javax.annotation</groupId>
@@ -128,7 +128,7 @@
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
         </dependency>
-            
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -340,15 +340,15 @@
 		<dependency>
 		    <groupId>com.googlecode.htmlcompressor</groupId>
 		    <artifactId>htmlcompressor</artifactId>
-		</dependency>        
+		</dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jkeylockmanager</groupId>
-            <artifactId>jkeylockmanager</artifactId>            
-        </dependency>          
+            <artifactId>jkeylockmanager</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>

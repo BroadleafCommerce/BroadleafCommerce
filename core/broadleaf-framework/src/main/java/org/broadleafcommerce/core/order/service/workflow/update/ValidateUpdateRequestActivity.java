@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service.workflow.update;
 
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.MinQuantityNotFulfilledException;
@@ -29,6 +30,8 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component("blValidateUpdateRequestActivity")
 public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
@@ -49,6 +52,20 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
+        
+        Map<String, String> attributes = new HashMap<>();
+        OrderItem requestedOrderItem = new OrderItemImpl();
+        for (OrderItem oi : request.getOrder().getOrderItems()) {
+            if (oi.getId() == orderItemRequestDTO.getOrderItemId()){
+                requestedOrderItem = oi;
+            }
+        }
+
+        for (String key : requestedOrderItem.getOrderItemAttributes().keySet()) {
+            attributes.put(key, requestedOrderItem.getOrderItemAttributes().get(key).getValue());
+        }
+
+        orderItemRequestDTO.setItemAttributes(attributes);
         
         // Throw an exception if the user did not specify an orderItemId
         if (orderItemRequestDTO.getOrderItemId() == null) {
