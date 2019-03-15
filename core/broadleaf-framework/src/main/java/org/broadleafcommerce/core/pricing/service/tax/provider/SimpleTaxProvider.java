@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.pricing.service.tax.provider;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
@@ -33,6 +34,7 @@ import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.State;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -85,72 +87,59 @@ public class SimpleTaxProvider implements TaxProvider {
     public Order calculateTaxForOrder(Order order, ModuleConfiguration config) throws TaxException {
         if (!order.getCustomer().isTaxExempt()) {
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-                // Set taxes on the fulfillment group items
-                for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                    if (isItemTaxable(fgItem)) {
-                        BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
-                        if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
-                            TaxDetail tax;
-                            checkDetail: {
-                                for (TaxDetail detail : fgItem.getTaxes()) {
-                                    if (detail.getType().equals(TaxType.COMBINED)) {
-                                        tax = detail;
-                                        break checkDetail;
-                                    }
-                                }
-                                tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
-                                tax.setType(TaxType.COMBINED);
-                                fgItem.getTaxes().add(tax);
-                            }
-                            tax.setRate(factor);
-                            tax.setAmount(fgItem.getTotalItemTaxableAmount().multiply(factor));
-                        }
-                    }
-                }
-    
-                for (FulfillmentGroupFee fgFee : fulfillmentGroup.getFulfillmentGroupFees()) {
-                    if (isFeeTaxable(fgFee)) {
-                        BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
-                        if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
-                            TaxDetail tax;
-                            checkDetail: {
-                                for (TaxDetail detail : fgFee.getTaxes()) {
-                                    if (detail.getType().equals(TaxType.COMBINED)) {
-                                        tax = detail;
-                                        break checkDetail;
-                                    }
-                                }
-                                tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
-                                tax.setType(TaxType.COMBINED);
-                                fgFee.getTaxes().add(tax);
-                            }
-                            tax.setRate(factor);
-                            tax.setAmount(fgFee.getAmount().multiply(factor));
-                        }
-                    }
-                }
-    
-                BigDecimal factor = determineTaxRateForFulfillmentGroup(fulfillmentGroup);
-                if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
-                    TaxDetail tax;
-                    checkDetail: {
-                        for (TaxDetail detail : fulfillmentGroup.getTaxes()) {
-                            if (detail.getType().equals(TaxType.COMBINED)) {
-                                tax = detail;
-                                break checkDetail;
-                            }
-                        }
-                        tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
-                        tax.setType(TaxType.COMBINED);
-                        fulfillmentGroup.getTaxes().add(tax);
-                    }
-                    tax.setRate(factor);
-                    tax.setAmount(fulfillmentGroup.getFulfillmentPrice().multiply(factor));
-                }
+                handleFulfillmentGroupItemTaxes(fulfillmentGroup);
+                handleFulfillmentGroupFeeTaxes(fulfillmentGroup);
+                handleFulfillmentGroupTaxes(fulfillmentGroup);
             }
         }
 
         return order;
+    }
+
+    protected void handleFulfillmentGroupItemTaxes(FulfillmentGroup fulfillmentGroup) {
+        for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+            if (isItemTaxable(fgItem)) {
+                applyTaxFactor(fgItem.getTaxes(), determineItemTaxRate(fulfillmentGroup.getAddress()), fgItem.getTotalItemTaxableAmount());
+            }
+        }
+    }
+
+    protected void handleFulfillmentGroupFeeTaxes(FulfillmentGroup fulfillmentGroup) {
+        for (FulfillmentGroupFee fgFee : fulfillmentGroup.getFulfillmentGroupFees()) {
+            if (isFeeTaxable(fgFee)) {
+                applyTaxFactor(fgFee.getTaxes(), determineItemTaxRate(fulfillmentGroup.getAddress()), fgFee.getAmount());
+            }
+        }
+    }
+
+    protected void handleFulfillmentGroupTaxes(FulfillmentGroup fulfillmentGroup) {
+        applyTaxFactor(fulfillmentGroup.getTaxes(), determineTaxRateForFulfillmentGroup(fulfillmentGroup), fulfillmentGroup.getFulfillmentPrice());
+    }
+
+    protected void applyTaxFactor(List<TaxDetail> taxes, BigDecimal taxFactor, Money taxMultiplier) {
+        TaxDetail tax = findExistingTaxDetail(taxes);
+        boolean shouldUpdateOrCreateTaxRecord = taxFactor != null && taxFactor.compareTo(BigDecimal.ZERO) != 0;
+        boolean shouldRemoveTaxRecord = (taxFactor == null || taxFactor.compareTo(BigDecimal.ZERO) == 0) && tax != null;
+        if (shouldUpdateOrCreateTaxRecord) {
+            if (tax == null) {
+                tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
+                tax.setType(TaxType.COMBINED);
+                taxes.add(tax);
+            }
+            tax.setRate(taxFactor);
+            tax.setAmount(taxMultiplier.multiply(taxFactor));
+        } else if (shouldRemoveTaxRecord) {
+            taxes.remove(tax);
+        }
+    }
+
+    protected TaxDetail findExistingTaxDetail(List<TaxDetail> taxes) {
+        for (TaxDetail detail : taxes) {
+            if (detail.getType().equals(TaxType.COMBINED)) {
+                return detail;
+            }
+        }
+        return null;
     }
 
     @Override
