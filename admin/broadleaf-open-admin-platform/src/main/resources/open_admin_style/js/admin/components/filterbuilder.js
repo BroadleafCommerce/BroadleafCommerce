@@ -641,6 +641,7 @@
             // if the listgrid found is of type 'asset_grid' we want to find the one thats 'asset_grid_folder'
             if (!$tbody.length || $tbody.data('listgridtype') == 'asset_grid') {
                 $tbody = $('.list-grid-table[data-listgridtype=asset_grid_folder]:not([id$=-header])');
+                $filterFields = $tbody.closest('.listgrid-body-wrapper').prev().find('.filter-fields');
             }
 
             // couldn't find filter builder so exit
