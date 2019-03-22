@@ -199,7 +199,7 @@ public class FieldManager {
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
                             value = newEntity;
-                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                            LOG.debug("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
                                     "Using the type of this class.");
                         }
                     }
@@ -230,7 +230,7 @@ public class FieldManager {
             } else {
                 //Just use the field type
                 response = field.getType();
-                LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                LOG.debug("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
                         "Using the type of this class.");
             }
         }
