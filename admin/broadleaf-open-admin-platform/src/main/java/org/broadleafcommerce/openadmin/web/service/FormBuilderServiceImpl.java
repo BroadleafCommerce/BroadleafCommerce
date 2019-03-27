@@ -268,9 +268,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             fieldDTO.setValues(new JSONObject(enumMap).toString());
-        //  "Local" entity is special occasion. Because it have not "ID" column with "Long" type
-        } else if (field.getFieldType().equals("ADDITIONAL_FOREIGN_KEY") && field.getName().equals("locale")) {
-            fieldDTO.setOperators("blcFilterOperators_Text");
         } else if (field.getFieldType().equals("ADDITIONAL_FOREIGN_KEY")) {
             fieldDTO.setOperators("blcFilterOperators_Selectize");
             fieldDTO.setType("string");
@@ -721,6 +718,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
             if (e.findProperty("id") != null) {
                 selectizeOption.put("id", e.findProperty("id").getValue());
+            //  "Locale" entity is a special occasion. Because it have not "ID" column with "Long" type
+            } else if (e.findProperty("localeCode") != null) {
+                selectizeOption.put("id", e.findProperty("localeCode").getValue());
             }
             if (e.findProperty(ALTERNATE_ID_PROPERTY) != null) {
                 selectizeOption.put("alternateId", e.findProperty(ALTERNATE_ID_PROPERTY).getValue());
