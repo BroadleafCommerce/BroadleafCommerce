@@ -767,7 +767,12 @@
                     break;
                 case "COLLECTION_IN":
                 case "COLLECTION_NOT_IN":
-                    var array = JSON.parse(input);
+                    var array;
+                    try {
+                       array = JSON.parse(input);
+                    } catch (e) {
+                       array = input.slice(1, -1).split(',');
+                    }
                     input = '';
                     for (var i = 0; i < array.length; i++) {
                         input += array[i] + '|'
