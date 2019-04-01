@@ -116,8 +116,12 @@ public class StructuredContentFieldGroupXrefImpl implements StructuredContentFie
         
         StructuredContentFieldGroupXref cloned = createResponse.getClone();
         cloned.setGroupOrder(groupOrder);
-        cloned.setTemplate(template);
-        cloned.setFieldGroup(fieldGroup);
+
+        CreateResponse<StructuredContentFieldTemplate> clonedTemplate = template.createOrRetrieveCopyInstance(context);
+        cloned.setTemplate(clonedTemplate.getClone());
+
+        CreateResponse<FieldGroup> clonedFieldGroup = fieldGroup.createOrRetrieveCopyInstance(context);
+        cloned.setFieldGroup(clonedFieldGroup.getClone());
         
         return createResponse;
     }
