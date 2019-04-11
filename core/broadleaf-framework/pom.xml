@@ -160,9 +160,5 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-open-admin-platform</artifactId>
-        </dependency>
     </dependencies>
 </project>
