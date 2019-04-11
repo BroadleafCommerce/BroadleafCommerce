@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -75,6 +76,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -91,7 +93,7 @@ import javax.persistence.Transient;
 
 
 @Entity
-@EntityListeners({AuditableListener.class})
+@EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
@@ -104,8 +106,7 @@ import javax.persistence.Transient;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
@@ -125,6 +126,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Column(name = "ORDER_ITEM_ID")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
+
+    @Embedded
+    protected Auditable auditable = new Auditable();
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
@@ -215,7 +219,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @AdminPresentationCollection(friendlyName="OrderItemImpl_Price_Details", order = Presentation.FieldOrder.PRICEDETAILS,
                     tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<OrderItemPriceDetail>();
-    
+
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
     protected String orderItemType;
@@ -249,7 +253,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Column(name = "TOTAL_TAX")
     @Deprecated
     protected BigDecimal totalTax;
-    
+
     @OneToMany(mappedBy = "parentOrderItem", targetEntity = OrderItemImpl.class, cascade = CascadeType.REFRESH)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderItem> childOrderItems = new ArrayList<OrderItem>();
@@ -357,7 +361,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 deproxiedCategory = category;
             }
         }
-        
+
         return deproxiedCategory;
     }
 
@@ -449,7 +453,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {       
+    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {
         this.orderItemAdjustments = orderItemAdjustments;
     }
 
@@ -516,7 +520,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         }
         return false;
     }
-    
+
     @Override
     public void finalizePrice() {
         price = getAveragePrice().getAmount();
@@ -563,7 +567,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
         getCandidateItemOffers().add(candidateItemOffer);
     }
-    
+
     @Override
     public void removeAllCandidateItemOffers() {
         if (getCandidateItemOffers() != null) {
@@ -573,7 +577,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             getCandidateItemOffers().clear();
         }
     }
-    
+
     @Override
     public int removeAllAdjustments() {
         int removedAdjustmentCount = 0;
@@ -587,7 +591,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         assignFinalPrice();
         return removedAdjustmentCount;
     }
-    
+
     /**
      * A list of arbitrary attributes added to this item.
      */
@@ -768,22 +772,22 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
         return orderItemPriceDetails;
     }
-    
+
     @Override
     public List<OrderItem> getChildOrderItems() {
         return childOrderItems;
     }
-    
+
     @Override
     public void setChildOrderItems(List<OrderItem> childOrderItems) {
         this.childOrderItems = childOrderItems;
     }
-    
+
     @Override
     public OrderItem getParentOrderItem() {
         return parentOrderItem;
     }
-    
+
     @Override
     public void setParentOrderItem(OrderItem parentOrderItem) {
         this.parentOrderItem = parentOrderItem;
@@ -870,7 +874,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected OrderItemType convertOrderItemType(String type) {
         return OrderItemType.getInstance(type);
     }
-    
+
     @Override
     public OrderItem clone() {
         //this is likely an extended class - instantiate from the fully qualified name via reflection
@@ -890,7 +894,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                     clonedOrderItem.getCandidateItemOffers().add(clone);
                 }
             }
-            
+
             if (orderItemAttributeMap != null && !orderItemAttributeMap.isEmpty()) {
                 for (OrderItemAttribute attribute : orderItemAttributeMap.values()) {
                     OrderItemAttribute clone = attribute.clone();
@@ -898,7 +902,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                     clonedOrderItem.getOrderItemAttributes().put(clone.getName(), clone);
                 }
             }
-            
+
             if (CollectionUtils.isNotEmpty(childOrderItems)) {
                 for (OrderItem childOrderItem : childOrderItems) {
                     OrderItem clone = childOrderItem.clone();
@@ -906,7 +910,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                     clonedOrderItem.getChildOrderItems().add(clone);
                 }
             }
-            
+
             clonedOrderItem.setCategory(category);
             clonedOrderItem.setGiftWrapOrderItem(giftWrapOrderItem);
             clonedOrderItem.setName(name);
@@ -923,7 +927,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        
+
         return clonedOrderItem;
     }
 
