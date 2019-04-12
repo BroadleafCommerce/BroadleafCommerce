@@ -216,9 +216,11 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
         } catch (Exception e) {
 
-            if (LOG.isErrorEnabled()) {
-                LOG.error("HTTPRequest - " + webResponsePrintService.printRequest(request));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("HTTPRequest - " + webResponsePrintService.printRequest(request));
+            }
 
+            if (LOG.isErrorEnabled()) {
                 LOG.error("An exception was caught either from processing the response and applying the payment to " +
                         "the order, or an activity in the checkout workflow threw an exception. Attempting to " +
                         "mark the payment as invalid and delegating to the payment module to handle any other " +
