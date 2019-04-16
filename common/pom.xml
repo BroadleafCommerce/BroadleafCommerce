@@ -337,7 +337,6 @@
         <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler-unshaded</artifactId>
-            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.protobuf</groupId>
