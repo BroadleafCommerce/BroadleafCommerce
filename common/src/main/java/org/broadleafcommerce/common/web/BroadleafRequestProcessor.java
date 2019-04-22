@@ -198,6 +198,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
         brc.setSandBox(currentSandbox);
         brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
+        brc.setRequestDTO(requestDTO);
 
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
         Theme theme = themeResolver.resolveTheme(request);
@@ -205,7 +206,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
         brc.setMessageSource(messageSource);
         brc.setTimeZone(timeZone);
-        brc.setRequestDTO(requestDTO);
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {
             LOG.trace("Creating ruleMap and adding in Locale.");
