@@ -835,7 +835,7 @@ $(document).ready(function () {
             url: link,
             type: "POST"
         }, function (data) {
-            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + link.substring(link.indexOf("/addEmpty") + 9, link.length);
+            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + "/add" + link.substring(link.indexOf("/addEmpty") + 9, link.length);
             if (link.indexOf("?") < 0) {
                 link += "?isPostAdd=true";
             } else {
@@ -930,9 +930,11 @@ $(document).ready(function () {
                             parentId: parentId
                         }
                     }, function (data) {
-                        // escape dots in the id selector
-                        var idSelector = data.field.replace(/\./g, '\\\.');
-                        var $container = $('div.listgrid-container#' + idSelector);
+                        if (data.field) {
+                            // escape dots in the id selector
+                            var idSelector = data.field.replace(/\./g, '\\\.');
+                            $container = $('div.listgrid-container#' + idSelector);
+                        }
 
                         BLCAdmin.workflow.updateSandboxRibbon();
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
@@ -941,7 +943,7 @@ $(document).ready(function () {
                             autoClose: 3000
                         });
                         $container = $this.closest('.listgrid-container');
-                        if ($container.prev().length) {
+                        if ($container.prev().length || !data.field) {
                             var $parent = ui.item;
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
