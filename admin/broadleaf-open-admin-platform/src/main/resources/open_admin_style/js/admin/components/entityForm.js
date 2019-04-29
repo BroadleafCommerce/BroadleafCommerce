@@ -742,7 +742,7 @@ $(document).ready(function() {
         BLCAdmin.ruleBuilders.removeModalRuleBuilders($(this));
     });
 
-    $('body').on('click', 'a.media-link', function(event) {
+    $('body').on('click', 'a.js-media-link', function(event) {
         event.preventDefault();
 
         var link = $(this).attr('data-link');
