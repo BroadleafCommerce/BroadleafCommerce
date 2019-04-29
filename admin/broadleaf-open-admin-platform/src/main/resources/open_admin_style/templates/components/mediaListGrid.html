@@ -130,7 +130,7 @@
 
                         <th:block th:if="${action}">
                             <a href="#" th:if="${headerField.name == 'media.title'}"
-                               class="media-link"
+                               class="js-media-link"
                                th:attr="data-urlpostfix=${action.urlPostfix},
                                      data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                                      data-queryparams=${listGrid.sectionCrumbRepresentation},
