@@ -352,15 +352,23 @@
             $spinner.css('display', 'block');
 
             var backdrop = $('<div>', {
-                'class': 'spinner-backdrop'
+                'class': 'spinner-backdrop',
+                'css': {
+                    'width': $tbody.innerWidth(),
+                    'height': $tbody.closest('.mCustomScrollBox').height(),
+                    'top': 0,
+                    'left': 0,
+                    'border-radius': 0
+                }
             });
-            $spinner.prepend(backdrop);
+
+            $tbody.closest('.mCustomScrollBox').prepend(backdrop);
         },
 
         hideLoadingSpinner: function ($tbody) {
             var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
             $spinner.parent().css('display', 'none');
-            $spinner.parent().find('.spinner-backdrop').remove();
+            $tbody.closest('.mCustomScrollBox').find('.spinner-backdrop').remove();
         },
 
         isLoading: function ($tbody) {
@@ -916,17 +924,41 @@ $(document).ready(function () {
                     }
                 },
                 update: function (event, ui) {
+                    var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3;
+                    BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
+
                     var url = ui.item.data('link') + '/sequence';
 
                     if (BLCAdmin.treeListGrid !== undefined) {
                         url = BLCAdmin.treeListGrid.updateSequenceUrl(ui, url);
                     }
 
+                    var newSequence = BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item);
+
+                    //allow for floating point inprecision
+                    if (Math.abs(Math.round(newSequence) - newSequence) < 0.05) {
+                        newSequence = Math.round(newSequence);
+                    }
+
+                    //Show an error if something went wrong
+                    if (!Number.isInteger(newSequence)) {
+                        var escapedPage = $('<span>').text($('html').html()).html();
+                        BLCAdmin.showMessageAsModal('Reordering Error - invalid sequence',
+                            'An error has occurred while reordering the item. Please forward this information to the ' +
+                            'development team: <br/>' +
+                            '<textarea rows="30" style="min-height: 1000px" disabled>' +
+                            'URL: ' + window.location.href + '\r\n' +
+                            'Browser: ' + navigator.userAgent + '\r\n' +
+                            'HTML: \r\n\r\n' + escapedPage + '</textarea>');
+                        BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+                        return;
+                    }
+
                     BLC.ajax({
                         url: url,
                         type: "POST",
                         data: {
-                            newSequence: BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item),
+                            newSequence: newSequence,
                             parentId: parentId
                         }
                     }, function (data) {
@@ -960,6 +992,10 @@ $(document).ready(function () {
                         }
 
                         ui.item.data('displayorder', data.newDisplayOrder);
+
+                        var actionUrl = $container.find('table').data('path');
+                        BLCAdmin.listGrid.refreshCollection($container, actionUrl);
+                        BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                     });
                 }
             }).disableSelection();
@@ -977,7 +1013,10 @@ $(document).ready(function () {
             $table.removeClass('reordering');
 
             $trs.removeClass('draggable').addClass('clickable');
-            $tbody.sortable("destroy");
+
+            if ($tbody.hasClass('ui-sortable')) {
+                $tbody.sortable("destroy");
+            }
         }
     }, 'a.sub-list-grid-reorder');
 
