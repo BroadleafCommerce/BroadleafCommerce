@@ -681,10 +681,14 @@ $(document).ready(function() {
 
                     // For each error field, make sure that its tab signifies that it contains an error
                     $newForm.find('.has-error').each(function(index, el) {
-                        var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
-                        var $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
-                        if ($tabWithError.find('.tab-error-indicator').length == 0) {
-                            $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                        if ($(el).is('.hidden')){
+                            BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.validationError);
+                        } else {
+                            var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
+                            var $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                            if ($tabWithError.find('.tab-error-indicator').length == 0) {
+                                $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                            }
                         }
                     });
 
@@ -738,7 +742,7 @@ $(document).ready(function() {
         BLCAdmin.ruleBuilders.removeModalRuleBuilders($(this));
     });
 
-    $('body').on('click', 'a.media-link', function(event) {
+    $('body').on('click', 'a.js-media-link', function(event) {
         event.preventDefault();
 
         var link = $(this).attr('data-link');
