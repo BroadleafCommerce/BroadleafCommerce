@@ -33,7 +33,7 @@ public class PricingServiceImpl implements PricingService {
     @Resource(name="blPricingWorkflow")
     protected Processor pricingWorkflow;
 
-    @Transactional
+    @Transactional(rollbackFor = PricingException.class)
     public Order executePricing(Order order) throws PricingException {
         try {
             ProcessContext<Order> context = (ProcessContext<Order>) pricingWorkflow.doActivities(order);
