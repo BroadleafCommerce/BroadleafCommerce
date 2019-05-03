@@ -299,7 +299,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         if (response == null) {
             if (extensionManager != null) {
                 ExtensionResultHolder<Boolean> result = new ExtensionResultHolder<Boolean>();
-                ExtensionResultStatusType resultStatusType = extensionManager.getProxy().hasPrivilegesForOperation(adminUser, result);
+                ExtensionResultStatusType resultStatusType = extensionManager.getProxy().hasPrivilegesForOperation(adminUser, permissionType, result);
                 if (ExtensionResultStatusType.HANDLED == resultStatusType) {
                     response = result.getResult();
                 }
