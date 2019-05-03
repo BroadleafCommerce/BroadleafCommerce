@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 
 /**
  * Extension handler for {@link org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService}
@@ -31,8 +32,10 @@ public interface AdminSecurityServiceExtensionHandler extends ExtensionHandler {
      * Checks if the user can perform APPROVE/REJECT operation without edit privileges
      *
      * @param adminUser
+     * @param permissionType
+     * @param erh
      * @return
      */
-    ExtensionResultStatusType hasPrivilegesForOperation(AdminUser adminUser, ExtensionResultHolder<Boolean> erh);
+    ExtensionResultStatusType hasPrivilegesForOperation(AdminUser adminUser, PermissionType permissionType, ExtensionResultHolder<Boolean> erh);
 
 }

@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -45,7 +46,7 @@ public class DefaultAdminSecurityServiceExtensionHandler extends AbstractExtensi
     }
 
     @Override
-    public ExtensionResultStatusType hasPrivilegesForOperation(AdminUser adminUser, ExtensionResultHolder<Boolean> erh) {
+    public ExtensionResultStatusType hasPrivilegesForOperation(AdminUser adminUser, PermissionType permissionType, ExtensionResultHolder<Boolean> erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }
