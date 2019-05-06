@@ -17,12 +17,14 @@
  */
 package org.broadleafcommerce.core.demo;
 
+import org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule;
 import org.broadleafcommerce.common.demo.AutoImportPersistenceUnit;
 import org.broadleafcommerce.common.demo.AutoImportSql;
 import org.broadleafcommerce.common.demo.AutoImportStage;
 import org.broadleafcommerce.common.demo.DemoCondition;
 import org.broadleafcommerce.common.demo.ImportCondition;
 import org.broadleafcommerce.common.demo.MTCondition;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -41,6 +43,12 @@ public class ImportSQLConfig {
     @Bean
     public AutoImportSql blFrameworkSecurityData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/load_admin_permissions.sql,config/bc/sql/load_admin_roles.sql,config/bc/sql/load_admin_menu.sql", AutoImportStage.PRIMARY_FRAMEWORK_SECURITY);
+    }
+
+    @Bean
+    @ConditionalOnBroadleafModule(BroadleafModuleRegistration.BroadleafModuleEnum.ENTERPRISE)
+    public AutoImportSql blApproverOnlySecurityData() {
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU, "config/bc/sql/load_admin_approver_only_role.sql", AutoImportStage.PRIMARY_POST_MODULE_SECURITY);
     }
 
     @Bean
