@@ -112,6 +112,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
 
+    @Value("${solr.boost.category.results:false}")
+    protected boolean boostSearchResultsCategory;
+
     /**
      * @return whether or not to enable debug query info for the SolrQuery
      */
@@ -219,7 +222,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // If there is a sort, remove all boosting that has been applied before we apply the sort clause.
         // We do this in order to support cases where we use boosting for enforcing a sort, specifically when sorting
         // on child documents.
-        if (StringUtils.isNotBlank(defaultSort) || StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
+        if ((StringUtils.isNotBlank(defaultSort) || StringUtils.isNotBlank(searchCriteria.getSortQuery())) && !boostSearchResultsCategory) {
             solrQuery.remove("bq");
             solrQuery.remove("bf");
             solrQuery.remove("boost");
@@ -294,7 +297,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     protected String getDefaultSort(SearchCriteria criteria) {
-        if (criteria.getCategory() != null) {
+        if (criteria.getCategory() != null && !boostSearchResultsCategory) {
             return shs.getCategorySortFieldName(criteria.getCategory()) + " asc";
         }
 
