@@ -99,7 +99,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                     }
 
                     // Cache the display order bigdecimals
-                    BigDecimal displayOrder = (item.getDisplayOrder() == null) ? new BigDecimal("1.00000") : item.getDisplayOrder();
+                    BigDecimal displayOrder = (item.getDisplayOrder() == null) ? new BigDecimal("100.00000") : item.getDisplayOrder();
                     catalogStructure.getDisplayOrdersByCategoryProduct().put(item.getCategory() + "-" + item.getProduct(), displayOrder);
                 }
                 for (Map.Entry<Long, Set<Long>> entry : parentCategoriesByProduct.entrySet()) {
