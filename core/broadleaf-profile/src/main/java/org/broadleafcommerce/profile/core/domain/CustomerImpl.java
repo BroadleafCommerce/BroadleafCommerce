@@ -60,6 +60,7 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -137,7 +138,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             prominent = true, gridOrder = 3000)
     protected String lastName;
 
-    @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
+    @ManyToOne(targetEntity = ChallengeQuestionImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",

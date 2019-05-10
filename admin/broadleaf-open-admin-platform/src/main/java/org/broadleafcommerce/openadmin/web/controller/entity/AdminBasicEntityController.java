@@ -1134,7 +1134,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
-
+        service.clearEntityManager();
         // First, we must save the collection entity
         PersistenceResponse persistenceResponse = service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, sectionCrumbs);
         Entity savedEntity = persistenceResponse.getEntity();
@@ -1668,7 +1668,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
-
+        service.clearEntityManager();
         // First, we must save the collection entity
         PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId, alternateId, sectionCrumbs);
         Entity savedEntity = persistenceResponse.getEntity();
@@ -1854,7 +1854,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
-
+        service.clearEntityManager();
         // First, we must remove the collection entity
         PersistenceResponse persistenceResponse = service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, alternateId, priorKey, sectionCrumbs);
         if (persistenceResponse.getEntity() != null && persistenceResponse.getEntity().isValidationFailure()) {

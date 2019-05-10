@@ -619,8 +619,11 @@ $(document).ready(function() {
                     BLCAdmin.entityForm.swapModalEntityForm($modal, data);
 
                     BLCAdmin.initializeFields($modal.find('.modal-body .tabs-content'));
-                    $modal.find('.submit-button').show();
                     $modal.find('img.ajax-loader').hide();
+                    var $submitButton = $modal.find('.submit-button');
+                    $submitButton.show();
+                    $submitButton.prop('disabled',false);
+                    BLCAdmin.entityForm.showErrorHeaderAlert(BLCAdmin.messages.problemSavingModal);
                 }
             });
         }

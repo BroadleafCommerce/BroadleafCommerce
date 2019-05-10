@@ -128,9 +128,12 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
+
         FieldGroup cloned = createResponse.getClone();
-        cloned.setInitCollapsedFlag(initCollapsedFlag);
         cloned.setName(name);
+        cloned.setIsMasterFieldGroup(isMasterFieldGroup);
+        cloned.setInitCollapsedFlag(initCollapsedFlag);
+
         for (FieldDefinition fieldDefinition : fieldDefinitions) {
             FieldDefinition clonedDef = fieldDefinition.createOrRetrieveCopyInstance(context).getClone();
             cloned.getFieldDefinitions().add(clonedDef);

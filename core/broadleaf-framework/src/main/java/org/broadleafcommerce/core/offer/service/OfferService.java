@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -288,6 +289,8 @@ public interface OfferService {
     public Boolean deleteOfferCode(OfferCode code);
 
     public Offer findOfferById(Long offerId);
+
+    public List<OfferCode> findOfferCodesByIds(Collection<Long> ids);
 
     /**
      * Make a production copy of an offer.

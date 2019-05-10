@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.audit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.audit.AbstractAuditableListener;
+import org.broadleafcommerce.common.audit.CrossAppAuditable;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.lang.reflect.Field;
@@ -35,32 +36,30 @@ public class AdminAuditableListener extends AbstractAuditableListener {
     @Override
     public void setAuditCreationAndUpdateData(Object entity) throws Exception {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (!brc.getAdmin()) {
-            return;
+        if (brc.getAdmin() || (entity instanceof CrossAppAuditable)) {
+            setAuditCreationData(entity, new AdminAuditable());
+            setAuditUpdateData(entity, new AdminAuditable());
         }
-
-        setAuditCreationData(entity, new AdminAuditable());
-        setAuditUpdateData(entity, new AdminAuditable());
     }
 
     @PreUpdate
     @Override
     public void setAuditUpdateData(Object entity) throws Exception {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (!brc.getAdmin()) {
-            return;
+        if (brc.getAdmin() || (entity instanceof CrossAppAuditable)) {
+            setAuditUpdateData(entity, new AdminAuditable());
         }
-
-        setAuditUpdateData(entity, new AdminAuditable());
     }
 
     @Override
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         try {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-            if (context != null && context.getAdmin() && context.getAdminUserId() != null) {
-                field.setAccessible(true);
-                field.set(entity, context.getAdminUserId());
+            if (context != null && context.getAdminUserId() != null) {
+                if (context.getAdmin() || (entity instanceof CrossAppAuditable)) {
+                    field.setAccessible(true);
+                    field.set(entity, context.getAdminUserId());
+                }
             }
         } catch (IllegalStateException e) {
             //do nothing

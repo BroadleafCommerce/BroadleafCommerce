@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2019 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,29 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.offer.dao;
+package org.broadleafcommerce.openadmin.server.security.extension;
 
-import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
+/**
+ * Extension manager for {@link org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServiceImpl}
+ */
+@Service("blAdminSecurityServiceExtensionManager")
+public class AdminSecurityServiceExtensionManager extends ExtensionManager<AdminSecurityServiceExtensionHandler> {
 
-public interface OfferCodeDao {
-
-    public OfferCode readOfferCodeById(Long offerCode);
-
-    public List<OfferCode> readOfferCodesByIds(Collection<Long> offerCodeIds);
-
-    public OfferCode readOfferCodeByCode(String code);
-
-    public OfferCode save(OfferCode offerCode);
-
-    public void delete(OfferCode offerCodeId);
-
-    public OfferCode create();
-
-    public Boolean offerCodeIsUsed(OfferCode code);
-
-    public List<OfferCode> readAllOfferCodesByCode(String code);
+    public AdminSecurityServiceExtensionManager() {
+        super(AdminSecurityServiceExtensionHandler.class);
+    }
 
 }

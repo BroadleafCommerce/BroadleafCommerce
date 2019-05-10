@@ -835,7 +835,7 @@ $(document).ready(function () {
             url: link,
             type: "POST"
         }, function (data) {
-            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + link.substring(link.indexOf("/addEmpty") + 9, link.length);
+            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + "/add" + link.substring(link.indexOf("/addEmpty") + 9, link.length);
             if (link.indexOf("?") < 0) {
                 link += "?isPostAdd=true";
             } else {
@@ -930,8 +930,11 @@ $(document).ready(function () {
                             parentId: parentId
                         }
                     }, function (data) {
-                        var $container = $('div.listgrid-container#' + data.field);
+                        // escape dots in the id selector
+                        var idSelector = data.field.replace(/\./g, '\\\.');
+                        var $container = $('div.listgrid-container#' + idSelector);
 
+                        BLCAdmin.workflow.updateSandboxRibbon();
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
                             clearOtherAlerts: true,

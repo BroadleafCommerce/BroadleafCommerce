@@ -1027,4 +1027,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
         return id;
     }
+
+    @Override
+    public void clearEntityManager(){
+        em.clear();
+    }
 }

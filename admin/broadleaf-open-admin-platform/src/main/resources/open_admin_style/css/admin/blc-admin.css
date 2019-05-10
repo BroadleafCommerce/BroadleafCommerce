@@ -5482,3 +5482,13 @@ input.result-page-size-input {
 .large-disabled {
     height: 200px;
 }
+
+.blc-error-toast{
+    text-align: center;
+    display:inline-block;
+    z-index:9999;
+    opacity: 0;
+}
+
+
+

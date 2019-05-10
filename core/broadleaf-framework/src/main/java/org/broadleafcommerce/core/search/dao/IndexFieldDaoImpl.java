@@ -81,7 +81,26 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
             return null;
         }
     }
-    
+
+    @Override
+    public List<IndexField> readAllIndexFieldsByFieldId(Long fieldId) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
+
+        Root<IndexFieldImpl> search = criteria.from(IndexFieldImpl.class);
+
+        criteria.select(search);
+        criteria.where(
+                builder.equal(search.join("field").get("id").as(Long.class), fieldId)
+        );
+
+        TypedQuery<IndexField> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
+
+        return query.getResultList();
+    }
+
     @Override
     public List<IndexField> readFieldsByEntityType(FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();

@@ -409,6 +409,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 entityList.add(instance);
                 Entity invalid = getRecords(mergedProperties, entityList, null, null, null)[0];
                 invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
+                invalid.setGlobalValidationErrors(entity.getGlobalValidationErrors());
                 invalid.overridePropertyValues(entity);
 
                 String message = ValidationUtil.buildErrorMessage(invalid.getPropertyValidationErrors(), invalid.getGlobalValidationErrors());

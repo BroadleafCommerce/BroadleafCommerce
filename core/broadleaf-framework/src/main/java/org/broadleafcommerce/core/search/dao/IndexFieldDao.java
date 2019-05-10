@@ -47,6 +47,14 @@ public interface IndexFieldDao {
      * @return a SearchField instance for the given field
      */
     public IndexField readIndexFieldByFieldId(Long fieldId);
+
+    /**
+     * Finds all of the {@link IndexField}s associated with the given field parameter, or null if non exists.
+     *
+     * @param fieldId the Field we are looking for the SearchField for
+     * @return
+     */
+    public List<IndexField> readAllIndexFieldsByFieldId(Long fieldId);
     
     /**
      * Finds all of the {@link IndexField}s based on the entity type.

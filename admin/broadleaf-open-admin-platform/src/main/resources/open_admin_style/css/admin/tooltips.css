@@ -19,7 +19,7 @@ a.tooltip { outline: none; }
 a.tooltip strong { line-height: 30px;}
 a.tooltip:hover { text-decoration: none; cursor: default;}
 a.tooltip span {
-    z-index: 11;
+    z-index: 1040;
     display: none;
     padding: 8px 10px;
     margin-top: -26px;
