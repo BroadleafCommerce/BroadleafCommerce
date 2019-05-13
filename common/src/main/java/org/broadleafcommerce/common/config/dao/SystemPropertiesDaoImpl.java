@@ -52,7 +52,7 @@ import javax.persistence.criteria.Root;
  * Date: 6/20/12
  */
 @Repository("blSystemPropertiesDao")
-public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements SystemPropertiesDao {
+public class SystemPropertiesDaoImpl extends AbstractCacheMissAware<SystemProperty> implements SystemPropertiesDao {
 
     protected static final Log LOG = LogFactory.getLog(SystemPropertiesDaoImpl.class);
 
