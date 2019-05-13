@@ -21,19 +21,16 @@ import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigRe
 import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cache.jcache.JCacheManagerFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.ehcache.CacheManager;
-
-public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean implements ApplicationContextAware {
+public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
@@ -46,28 +43,6 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
     protected Set<String> mergedCacheConfigLocations;
 
     protected List<Resource> configLocations;
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        try {
-            CacheManager cacheManager = getObject();
-            Field cacheManagerTimer = CacheManager.class.getDeclaredField("cacheManagerTimer");
-            cacheManagerTimer.setAccessible(true);
-            Object failSafeTimer = cacheManagerTimer.get(cacheManager);
-            Field timer = failSafeTimer.getClass().getDeclaredField("timer");
-            timer.setAccessible(true);
-            Object time = timer.get(failSafeTimer);
-            Field thread = time.getClass().getDeclaredField("thread");
-            thread.setAccessible(true);
-            Thread item = (Thread) thread.get(time);
-            item.setContextClassLoader(Thread.currentThread().getContextClassLoader().getParent());
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public void afterPropertiesSet() {
@@ -90,7 +65,8 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
                 sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                 j++;
             }
-            setConfigLocation(merge.getMergedConfigResource(sources));
+            // TODO 6.1 ehcache 3 must pass configuration override via Properties
+            // setConfigLocation(merge.getMergedConfigResource(sources));
         } catch (Exception e) {
             throw new FatalBeanException("Unable to merge cache locations", e);
         }
