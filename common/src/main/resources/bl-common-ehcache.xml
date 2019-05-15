@@ -15,257 +15,192 @@
   between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
   #L%
   -->
-<ehcache>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.3.xsd">
 
-    <diskStore path="java.io.tmpdir"/>
-    
-    <defaultCache
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="60"
-        timeToIdleSeconds="30"/>
+    <persistence directory="${java.io.tmpdir}"/>
 
-    <cache
-        name="blStandardElements"
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400">
-        <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
+    <cache-template name="hydratedCacheTemplate">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <listeners>
+            <listener>
+                <class>org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory</class>
+                <event-firing-mode>SYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>ORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+        <heap>100000</heap>
+    </cache-template>
+
+    <cache-template name="urlCacheTemplate">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache-template>
+
+    <cache-template name="tenMinuteCacheTemplate">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache-template>
+
+    <cache-template name="oneHourCacheTemplate">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache-template>
+
+    <cache-template name="oneDayCacheTemplate">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache-template>
+
+    <cache alias="blStandardElements"
+           uses-template="hydratedCacheTemplate"/>
+
+    <cache alias="blProducts"
+           uses-template="hydratedCacheTemplate"/>
+
+    <cache alias="blProductUrlCache"
+           uses-template="urlCacheTemplate"/>
+
+    <cache alias="blCategories"
+           uses-template="hydratedCacheTemplate"/>
+
+    <cache alias="blCategoryUrlCache"
+           uses-template="urlCacheTemplate"/>
+
+    <cache alias="blOffers"
+           uses-template="hydratedCacheTemplate"/>
+
+    <cache alias="blInventoryElements">
+        <expiry>
+            <ttl>60</ttl>
+        </expiry>
+        <heap>100000</heap>
     </cache>
 
-    <cache
-        name="blProducts"
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400">
-        <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
-    </cache>
+    <cache alias="org.hibernate.cache.internal.StandardQueryCache"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache name="blProductUrlCache"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
+    <cache alias="query.Catalog"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache
-        name="blCategories"
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400">
-        <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
-    </cache>
+    <cache alias="query.PriceList"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache name="blCategoryUrlCache"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
+    <cache alias="query.Cms"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache
-        name="blOffers"
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400">
-        <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
-    </cache>
+    <cache alias="query.Offer"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache
-        name="blInventoryElements"
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="60"/>
-        
-    <cache
-        name="org.hibernate.cache.internal.StandardQueryCache"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
+    <cache alias="blOrderElements"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache
-        name="query.Catalog"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-        
-    <cache
-        name="query.PriceList"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-        
-    <cache
-        name="query.Cms"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
+     <cache alias="blCustomerElements"
+            uses-template="tenMinuteCacheTemplate">
+         <heap>100000</heap>
+     </cache>
 
-    <cache
-        name="query.Offer"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
+    <cache alias="query.Order"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache
-        name="blOrderElements"
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-        
-     <cache
-        name="blCustomerElements"
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
+    <cache alias="query.Search"
+           uses-template="tenMinuteCacheTemplate"/>
 
-    <cache
-        name="query.Order"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="60"/>
+     <cache alias="generatedResourceCache"
+            uses-template="tenMinuteCacheTemplate">
+         <heap>100</heap>
+     </cache>
 
-    <cache
-            name="query.Search"
-            maxElementsInMemory="1000"
-            eternal="false"
-            overflowToDisk="false"
-            timeToLiveSeconds="600"/>
-
-     <cache
-        name="generatedResourceCache"
-        maxElementsInMemory="100"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-        
-     <!-- This is required by Hibernate to ensure that query caches return 
-          corrrect results. It must contain at least as many entries as there are 
+     <!-- This is required by Hibernate to ensure that query caches return
+          corrrect results. It must contain at least as many entries as there are
           DB tables. -->
-     <cache name="org.hibernate.cache.spi.UpdateTimestampsCache" 
-        maxElementsInMemory="5000" 
-        eternal="true" 
-        overflowToDisk="false"/>
+     <cache alias="org.hibernate.cache.spi.UpdateTimestampsCache">
+         <expiry>
+             <none/>
+         </expiry>
+         <heap>5000</heap>
+     </cache>
 
-    <cache name="blTemplateElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
+    <cache alias="blTemplateElements"
+           uses-template="oneHourCacheTemplate"/>
 
     <!-- 1 hour cache -->
-    <cache
-        name="blTranslationElements"
-        maxElementsInMemory="10000000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
-    
-    <!-- The translation cache is evicted manually by the indexing process, never expire it -->
-    <cache
-        name="blBatchTranslationCache"
-        maxElementsInMemory="10000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="0"/>  
-        
-    <!-- 10 minute cache -->
-    <cache
-        name="blConfigurationModuleElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-        
-    <cache
-        name="query.ConfigurationModuleElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>     
-    
-    <!-- 10 minute cache -->    
-    <cache
-        name="blSystemPropertyElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-
-    <cache name="blSystemPropertyNullCheckCache"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-        
-    <!-- 24 hour cache -->
-    <cache
-        name="blBundleElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400"/>
-        
-    <cache
-        name="blResourceCacheElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400"/>
-                        
-    <cache
-        name="blResourceTransformerCacheElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400"/>
-
-    <cache
-        name="blSandBoxElements"
-        maxElementsInMemory="2000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3"/>
-
-    <cache
-        name="query.blSandBoxElements"
-        maxElementsInMemory="500"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3"/>
-
-    <cache
-        name="blSecurityElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="86400">
+    <cache alias="blTranslationElements"
+           uses-template="oneHourCacheTemplate">
+        <heap>10000000</heap>
     </cache>
 
-    <cache
-        name="blSiteElements"
-        maxElementsInMemory="5000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
+    <!-- The translation cache is evicted manually by the indexing process, never expire it -->
+    <cache alias="blBatchTranslationCache">
+        <expiry>
+            <none/>
+        </expiry>
+        <heap>10000</heap>
+    </cache>
 
-    <cache
-        name="blSiteElementsQuery"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
+    <!-- 10 minute cache -->
+    <cache alias="blConfigurationModuleElements"
+           uses-template="tenMinuteCacheTemplate"/>
 
-</ehcache>
+    <cache alias="query.ConfigurationModuleElements"
+           uses-template="tenMinuteCacheTemplate"/>
+
+    <!-- 10 minute cache -->
+    <cache alias="blSystemPropertyElements"
+           uses-template="tenMinuteCacheTemplate"/>
+
+    <cache alias="blSystemPropertyNullCheckCache"
+           uses-template="tenMinuteCacheTemplate"/>
+
+    <!-- 24 hour cache -->
+    <cache alias="blBundleElements"
+           uses-template="oneDayCacheTemplate"/>
+
+    <cache alias="blResourceCacheElements"
+           uses-template="oneDayCacheTemplate"/>
+
+    <cache alias="blResourceTransformerCacheElements"
+           uses-template="oneDayCacheTemplate"/>
+
+    <cache alias="blSandBoxElements">
+        <expiry>
+            <ttl>3</ttl>
+        </expiry>
+        <heap>2000</heap>
+    </cache>
+
+    <cache alias="query.blSandBoxElements">
+        <expiry>
+            <ttl>3</ttl>
+        </expiry>
+        <heap>500</heap>
+    </cache>
+
+    <cache alias="blSecurityElements"
+           uses-template="oneDayCacheTemplate"/>
+
+    <cache alias="blSiteElements"
+           uses-template="oneDayCacheTemplate">
+        <heap>5000</heap>
+    </cache>
+
+    <cache alias="blSiteElementsQuery"
+           uses-template="oneDayCacheTemplate"/>
+
+</config>
