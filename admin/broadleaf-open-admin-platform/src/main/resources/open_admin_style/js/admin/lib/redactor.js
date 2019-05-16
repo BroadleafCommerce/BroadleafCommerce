@@ -6944,7 +6944,7 @@
                             inValues = typeof observe['in'] != 'undefined' ? observe['in'] : false,
                             outValues = typeof observe['out'] != 'undefined' ? observe['out'] : false;
 
-                        if ($current.closest(element).size() > 0)
+                        if ($current.closest(element).length > 0)
                         {
                             this.observe.setDropdownProperties($item, inValues, outValues);
                         }

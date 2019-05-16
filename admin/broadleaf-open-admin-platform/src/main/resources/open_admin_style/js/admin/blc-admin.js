@@ -1382,7 +1382,7 @@ var getCurrentHashVal = function() {
 
 $(document).ready(function() {
     // primary entity buttons should be disabled until page is loaded
-    $(window).load(function () {
+    $(window).on('load', function () {
         $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
     });
 
