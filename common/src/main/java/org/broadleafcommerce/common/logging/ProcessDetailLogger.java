@@ -83,10 +83,10 @@ public class ProcessDetailLogger {
     protected int stringTemplateVariableMaxLength = 200;
 
     @Value("${ignore.no.process.detail.logger.configuration:false}")
-    protected boolean ignoreNoProcessDetailLoggerConfiguration = false;
+    protected boolean ignoreNoProcessDetailLoggerConfiguration;
 
     @Value("${disable.all.process.detail.logging:false}")
-    protected boolean disableAllProcessDetailLogging = false;
+    protected boolean disableAllProcessDetailLogging;
 
     /**
      * Construct a logger
