@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXref;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
@@ -26,6 +27,10 @@ import java.util.List;
  * Created by bpolster.
  */
 public interface FieldGroup extends Serializable, MultiTenantCloneable<FieldGroup> {
+
+    public List<StructuredContentFieldGroupXref> getFieldGroupXrefs();
+
+    public void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs);
 
     public Long getId();
 

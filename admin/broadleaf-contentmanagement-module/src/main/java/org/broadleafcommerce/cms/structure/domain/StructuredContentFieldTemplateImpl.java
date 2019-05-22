@@ -140,6 +140,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
         cloned.setName(name);
         for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
             CreateResponse<StructuredContentFieldGroupXref> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
+            clonedGroupRsp.getClone().setTemplate(cloned);
             cloned.getFieldGroupXrefs().add(clonedGroupRsp.getClone());
         }
 
