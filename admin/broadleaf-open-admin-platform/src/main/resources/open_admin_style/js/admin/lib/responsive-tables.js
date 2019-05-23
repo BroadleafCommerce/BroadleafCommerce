@@ -15,8 +15,8 @@ $(document).ready(function() {
       });
     }
   };
-   
-  $(window).load(updateTables);
+
+  $(window).on('load', updateTables);
   $(window).bind("resize", updateTables);
    
 	
