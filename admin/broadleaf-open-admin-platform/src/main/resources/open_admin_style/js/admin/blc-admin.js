@@ -1382,22 +1382,26 @@ var getCurrentHashVal = function() {
     return hash.substr(1);
 };
 
-function enableEntityButtonsIfReady() {
-// primary entity buttons should be disabled until page is loaded
+function finalPageLoadIfReady() {
     if (BLC.readyEventTriggered && BLC.loadEventTriggered) {
-        $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
+        $(document).trigger("finalPageLoadEvent");
     }
 };
 
+// primary entity buttons should be disabled until page is loaded
+$(document).on('finalPageLoadEvent', function () {
+    $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
+});
+
 $(window).on('load', function () {
     BLC.loadEventTriggered = true;
-    enableEntityButtonsIfReady();
+    finalPageLoadIfReady();
 });
 
 $(document).ready(function() {
 
     BLC.readyEventTriggered = true;
-    enableEntityButtonsIfReady();
+    finalPageLoadIfReady();
 
     //moved show-translations to an initializationHandler so it gets fired for modals as well 
     BLCAdmin.addInitializationHandler(function($container) {
