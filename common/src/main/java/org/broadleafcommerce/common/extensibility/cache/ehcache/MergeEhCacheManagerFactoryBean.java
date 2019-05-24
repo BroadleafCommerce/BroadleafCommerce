@@ -19,17 +19,30 @@ package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
+import org.ehcache.config.Configuration;
+import org.ehcache.jsr107.EhcacheCachingProvider;
+import org.ehcache.xml.ConfigurationParser;
+import org.ehcache.xml.XmlConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.cache.jcache.JCacheManagerFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.spi.CachingProvider;
+
+import lombok.extern.apachecommons.CommonsLog;
+
+@CommonsLog
 public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -44,33 +57,74 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
 
     protected List<Resource> configLocations;
 
+    @Nullable
+    private CacheManager cacheManager;
+
     @Override
     public void afterPropertiesSet() {
-        List<Resource> temp = new ArrayList<>();
+        List<Resource> resources = new ArrayList<>();
         if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
             for (String location : mergedCacheConfigLocations) {
-                temp.add(applicationContext.getResource(location));
+                resources.add(applicationContext.getResource(location));
             }
         }
         if (configLocations != null && !configLocations.isEmpty()) {
-            for (Resource resource : configLocations) {
-                temp.add(resource);
-            }
+            resources.addAll(configLocations);
         }
         try {
             MergeXmlConfigResource merge = new MergeXmlConfigResource();
-            ResourceInputStream[] sources = new ResourceInputStream[temp.size()];
+            ResourceInputStream[] sources = new ResourceInputStream[resources.size()];
             int j=0;
-            for (Resource resource : temp) {
+            for (Resource resource : resources) {
                 sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                 j++;
             }
-            // TODO 6.1 ehcache 3 must pass configuration override via Properties
-            // setConfigLocation(merge.getMergedConfigResource(sources));
+
+            // TODO this does not work because it's a ByteArrayResource and has no URI
+            CachingProvider provider = Caching.getCachingProvider();
+            if (EhcacheCachingProvider.class.isAssignableFrom(provider.getClass())) {
+                Resource mergeResource = merge.getMergedConfigResource(sources);
+
+                EhcacheCachingProvider ehcacheProvider = (EhcacheCachingProvider) provider;
+
+                MergeConfigurationParser configurationParser = new MergeConfigurationParser();
+                Configuration config = configurationParser.parseConfiguration(mergeResource.getInputStream(),
+                                                            provider.getDefaultClassLoader(),
+                                                            Collections.emptyMap())
+                        .getConfiguration();
+
+                this.cacheManager = ehcacheProvider.getCacheManager(ehcacheProvider.getDefaultURI(), config);
+            } else {
+                log.warn("Caching Provider does not support merged cache locations. Falling back to default");
+            }
         } catch (Exception e) {
             throw new FatalBeanException("Unable to merge cache locations", e);
         }
         super.afterPropertiesSet();
+    }
+
+    @Override
+    @Nullable
+    public CacheManager getObject() {
+        return this.cacheManager;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return (this.cacheManager != null ? this.cacheManager.getClass() : CacheManager.class);
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+
+    @Override
+    public void destroy() {
+        if (this.cacheManager != null) {
+            this.cacheManager.close();
+        }
     }
 
     public void setConfigLocations(List<Resource> configLocations) throws BeansException {
