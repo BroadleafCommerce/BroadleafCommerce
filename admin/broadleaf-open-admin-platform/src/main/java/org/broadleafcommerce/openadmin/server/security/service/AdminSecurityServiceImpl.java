@@ -109,29 +109,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Resource(name = "blAdminSecurityServiceExtensionManager")
     protected AdminSecurityServiceExtensionManager extensionManager;
 
-    /**
-     * <p>Sets either {@link #passwordEncoder} or {@link #passwordEncoderNew} based on the type of {@link #passwordEncoderBean}
-     * in order to provide bean configuration backwards compatibility with the deprecated {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder} bean.
-     *
-     * <p>{@link #passwordEncoderBean} is set by the bean defined as "blPasswordEncoder".
-     *
-     * <p>This class will utilize either the new or deprecated PasswordEncoder type depending on which is not null.
-     *
-     * @throws NoSuchBeanDefinitionException if {@link #passwordEncoderBean} is null or not an instance of either PasswordEncoder
-     */
-    @PostConstruct
-    protected void setupPasswordEncoder() {
-        passwordEncoderNew = null;
-        passwordEncoder = null;
-        if (passwordEncoderBean instanceof PasswordEncoder) {
-            passwordEncoderNew = (PasswordEncoder) passwordEncoderBean;
-        } else if (passwordEncoderBean instanceof org.springframework.security.authentication.encoding.PasswordEncoder) {
-            passwordEncoder = (org.springframework.security.authentication.encoding.PasswordEncoder) passwordEncoderBean;
-        } else {
-            throw new NoSuchBeanDefinitionException("No PasswordEncoder bean is defined");
-        }
-    }
-
     protected int getTokenExpiredMinutes() {
         return BLCSystemProperty.resolveIntSystemProperty("tokenExpiredMinutes");
     }
@@ -509,8 +486,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Override
     @Transactional("blTransactionManager")
-    public GenericResponse changePassword(String username,
-            String oldPassword, String password, String confirmPassword) {
+    public GenericResponse changePassword(String username, String oldPassword, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
         if (username != null) {
