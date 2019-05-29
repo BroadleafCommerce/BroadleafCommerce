@@ -233,4 +233,6 @@
         </property>
     </bean>
 
+	<bean id="blEntityIdentifierUtil" class="org.broadleafcommerce.core.util.EntityIdentifierUtil" />
+
 </beans>

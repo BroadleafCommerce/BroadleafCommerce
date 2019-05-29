@@ -1,3 +1,4 @@
+
 /*
  * #%L
  * BroadleafCommerce Open Admin Platform
@@ -10,7 +11,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,15 +30,15 @@ import java.util.Map;
 /**
  * A Spring bean extending this class will automatically be called when validation is done on the entity specified by
  * the generic type.
- * 
+ *
  * The persistent entity class that Hibernate is aware of should be used as the generic type. For example,
  * SomeEntityImpl instead of SomeEntity interface.
- * 
+ *
  * In the implementation of valdate {@link Entity#addValidationError(String, String)} and
  * {@link Entity#addValidationError(String, String)} can be used to create an error that is displayed to the user before
  * an add or update cocurs. {@link Entity#isValidationFailure()} can be used to see if there core validation found any
  * issues like required fields being blank to decide if any additional validation should be executed.
- * 
+ *
  * @param <T>
  *            Persistence Entity implementation to validate
  */

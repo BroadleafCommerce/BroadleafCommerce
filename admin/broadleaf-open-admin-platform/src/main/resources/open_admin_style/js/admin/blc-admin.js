@@ -36,6 +36,8 @@ var BLCAdmin = (function($) {
         left: 20,
         top: 20
     };
+    var readyEventTriggered = false;
+    var loadEventTriggered = false;
 
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
                          '.asset-selector-container .media-image, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
@@ -1402,11 +1404,26 @@ var getCurrentHashVal = function() {
     return hash.substr(1);
 };
 
+function finalPageLoadIfReady() {
+    if (BLC.readyEventTriggered && BLC.loadEventTriggered) {
+        $(document).trigger("finalPageLoadEvent");
+    }
+};
+
+// primary entity buttons should be disabled until page is loaded
+$(document).on('finalPageLoadEvent', function () {
+    $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
+});
+
+$(window).on('load', function () {
+    BLC.loadEventTriggered = true;
+    finalPageLoadIfReady();
+});
+
 $(document).ready(function() {
-    // primary entity buttons should be disabled until page is loaded
-    $(window).load(function () {
-        $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
-    });
+
+    BLC.readyEventTriggered = true;
+    finalPageLoadIfReady();
 
     //moved show-translations to an initializationHandler so it gets fired for modals as well 
     BLCAdmin.addInitializationHandler(function($container) {

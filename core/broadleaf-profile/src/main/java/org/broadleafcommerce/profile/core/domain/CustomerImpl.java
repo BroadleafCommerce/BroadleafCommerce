@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -60,6 +60,7 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -143,7 +144,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected String externalId;
 
-    @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
+    @ManyToOne(targetEntity = ChallengeQuestionImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",
@@ -160,10 +161,10 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
      *     If true, this customer must go through a reset password flow.
      * </p>
      * <p>
-     *     During a site conversion or security breach or a matter of routine security policy, 
-     *     it may be necessary to require users to change their password. This property will 
-     *     not allow a user whose credentials are managed within Broadleaf to login until 
-     *     they have reset their password. 
+     *     During a site conversion or security breach or a matter of routine security policy,
+     *     it may be necessary to require users to change their password. This property will
+     *     not allow a user whose credentials are managed within Broadleaf to login until
+     *     they have reset their password.
      * </p>
      * <p>
      *     Used by blUserDetailsService.

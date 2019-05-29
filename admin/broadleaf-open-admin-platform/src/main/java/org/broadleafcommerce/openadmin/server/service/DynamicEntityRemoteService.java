@@ -169,24 +169,24 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     protected void cleanEntity(Entity entity) throws ServiceException {
         Property currentProperty = null;
-        try {
-            for (Property property : entity.getProperties()) {
+        for (Property property : entity.getProperties()) {
+            try {
                 currentProperty = property;
                 property.setRawValue(property.getValue());
                 property.setValue(exploitProtectionService.cleanStringWithResults(property.getValue()));
                 property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
+            } catch (CleanStringException e) {
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < e.getCleanResults().getNumberOfErrors(); j++) {
+                    sb.append("\n");
+                    sb.append(j + 1);
+                    sb.append(") ");
+                    sb.append((String) e.getCleanResults().getErrorMessages().get(j));
+                    sb.append("\n");
+                }
+                sb.append("\nNote - Antisamy policy in effect. Set a new policy file to modify validation behavior/strictness.");
+                entity.addValidationError(currentProperty.getName(), sb.toString());
             }
-        } catch (CleanStringException e) {
-            StringBuilder sb = new StringBuilder();
-            for (int j=0;j<e.getCleanResults().getNumberOfErrors();j++){
-                sb.append("\n");
-                sb.append(j+1);
-                sb.append(") ");
-                sb.append((String) e.getCleanResults().getErrorMessages().get(j));
-                sb.append("\n");
-            }
-            sb.append("\nNote - Antisamy policy in effect. Set a new policy file to modify validation behavior/strictness.");
-            entity.addValidationError(currentProperty.getName(), sb.toString());
         }
     }
 
@@ -271,9 +271,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 cleanEntity(persistencePackage.getEntity());
-                if (persistencePackage.getEntity().isValidationFailure()) {
-                    return new PersistenceResponse().withEntity(persistencePackage.getEntity());
-                }
                 try {
                     PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.add(persistencePackage);
@@ -297,9 +294,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 cleanEntity(persistencePackage.getEntity());
-                if (persistencePackage.getEntity().isValidationFailure()) {
-                    return new PersistenceResponse().withEntity(persistencePackage.getEntity());
-                }
                 try {
                     PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.update(persistencePackage);
