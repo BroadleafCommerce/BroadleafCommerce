@@ -35,9 +35,9 @@ public class ParentCategorySortExtensionHandler extends AbstractFormBuilderExten
             for (Field f : listGrid.getHeaderFields()) {
                 if (f.getName().equals("defaultCategory")) {
                     f.setFilterSortDisabled(true);
+                    return ExtensionResultStatusType.HANDLED;
                 }
             }
-            return ExtensionResultStatusType.HANDLED;
         }
         return ExtensionResultStatusType.NOT_HANDLED;
     }
