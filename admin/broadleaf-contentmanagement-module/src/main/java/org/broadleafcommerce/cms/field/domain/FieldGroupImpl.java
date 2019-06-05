@@ -159,9 +159,6 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
         for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
             CreateResponse<StructuredContentFieldGroupXref>  clonedDef = entry.createOrRetrieveCopyInstance(context);
             clonedDef.getClone().setFieldGroup(cloned);
-            //For the created StructuredContentFieldGroupXref StructuredContentFieldTemplate is not created yet,
-            // it will be populated during copy of StructuredContentFieldTemplate.
-            clonedDef.getClone().setTemplate(null);
             cloned.getFieldGroupXrefs().add(clonedDef.getClone());
         }
         return createResponse;
