@@ -185,4 +185,27 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
         this.reviews = reviews;
     }
 
+    @Override
+    public void setTotalRatings(Integer totalRatings) {
+        this.totalRatings = totalRatings; 
+        
+    }
+
+    @Override
+    public Integer getTotalRatings() {
+        return (totalRatings == null) ? 0 : totalRatings ;
+    }
+
+    @Override
+    public void setDate(Date timestamp) {
+        this.timestamp= timestamp; 
+        
+    }
+
+    @Override
+    public Date getDate() {
+        // TODO Auto-generated method stub
+        return (timestamp == null) ? null : timestamp;
+    }
+
 }

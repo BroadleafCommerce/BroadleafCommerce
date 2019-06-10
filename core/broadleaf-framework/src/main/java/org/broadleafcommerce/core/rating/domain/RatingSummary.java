@@ -54,7 +54,7 @@ public interface RatingSummary {
     
     public void setTotalRatings(Integer totalRatings);
     
-    public Integer getTotalRatings(Integer totalRatings);
+    public Integer getTotalRatings();
 
     public void setDate(Date date);
     
