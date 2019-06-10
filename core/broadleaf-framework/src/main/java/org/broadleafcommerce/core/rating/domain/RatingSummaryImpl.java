@@ -17,18 +17,11 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,6 +31,18 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.rating.service.type.RatingType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -88,6 +93,19 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     @Override
     public Long getId() {
         return id;
+    }
+
+    @Column(name = "TOTAL_RATINGS")
+    @AdminPresentation(friendlyName = "RatingSummary_totalRatings", prominent = true)
+    protected Integer totalRatings = new Integer(0);
+
+    @Column(name = "DATE_UPDATED")
+    @Temporal(TemporalType.TIMESTAMP)
+    @AdminPresentation(friendlyName = "Date",  prominent=true)    
+    protected Date timestamp;
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
     }
 
     /**
