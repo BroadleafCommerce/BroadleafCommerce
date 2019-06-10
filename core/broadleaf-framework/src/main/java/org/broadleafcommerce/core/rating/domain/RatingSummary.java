@@ -17,9 +17,10 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.core.rating.service.type.RatingType;
-
+import java.util.Date;
 import java.util.List;
+
+import org.broadleafcommerce.core.rating.service.type.RatingType;
 
 public interface RatingSummary {
     
@@ -50,5 +51,12 @@ public interface RatingSummary {
     public List<RatingDetail> getRatings();
     
     public void setRatings(List<RatingDetail> ratings);
+    
+    public void setTotalRatings(Integer totalRatings);
+    
+    public Integer getTotalRatings(Integer totalRatings);
 
+    public void setDate(Date date);
+    
+    public Date getDate();
 }
