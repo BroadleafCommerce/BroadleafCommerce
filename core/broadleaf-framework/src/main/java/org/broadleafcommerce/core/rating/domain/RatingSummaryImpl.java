@@ -204,7 +204,6 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
 
     @Override
     public Date getDate() {
-        // TODO Auto-generated method stub
         return (timestamp == null) ? null : timestamp;
     }
 
