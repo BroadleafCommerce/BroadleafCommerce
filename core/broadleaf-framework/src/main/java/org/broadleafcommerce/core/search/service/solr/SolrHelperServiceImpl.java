@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -98,7 +98,7 @@ import javax.jms.IllegalStateException;
 
 /**
  * Provides utility methods that are used by other Solr service classes
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blSolrHelperService")
@@ -144,11 +144,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     protected GenericEntityDao genericEntityDao;
 
     /**
-     * This should only ever be called when using the Solr reindex service to do a full reindex. 
-     * @throws SecurityException 
-     * @throws NoSuchFieldException 
-     * @throws IllegalAccessException 
-     * @throws IllegalArgumentException 
+     * This should only ever be called when using the Solr reindex service to do a full reindex.
+     * @throws SecurityException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
     @Override
     public synchronized void swapActiveCores(SolrConfiguration solrConfiguration) throws ServiceException {
@@ -555,16 +555,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getSolrFieldTag(String tagField, String tag, SearchFacetRange range) {
-        if (StringUtils.isBlank(tagField) || StringUtils.isBlank(tag)) {
+    public String getSolrFieldTag(String fieldName, String param, SearchFacetRange range) {
+        if (StringUtils.isBlank(fieldName) || StringUtils.isBlank(param)) {
             return "";
         }
 
         if (range != null) {
-            return buildSolrFacetQuery(tagField, range, true, tag);
+            return buildSolrFacetQuery(fieldName, range, true, param);
         }
 
-        return buildSolrFacetField(tagField, tag);
+        return buildSolrFacetField(fieldName, param);
     }
 
     /**
@@ -775,9 +775,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     // if an index field was not found, or the extension handler handled attaching the sort field, move to the next field
                     continue;
                 }
-                
+
                 List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(requestedSortFieldName);
-                
+
                 // Used to determine if, by looping through the index field types managed in the database, we actually
                 // attach the sort field that is being requested. If we do, then we shouldn't manually add the requested
                 // sort field ourselves but if not, we should
@@ -794,14 +794,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 // this sorts by them all
                 for (IndexFieldType fieldType : fieldTypes) {
                     String field = getPropertyNameForIndexField(fieldType.getIndexField(), fieldType.getFieldType());
-                    
+
                     // Verify that the field that is being added as a sort is a match for the field that is requesting
                     // to be sorted by. Since field abbreviations are what are added to the index, this is what should
                     // be checked
                     if (fieldType.getIndexField().getField().getAbbreviation().equals(requestedSortFieldName)) {
                         requestedSortFieldAdded = true;
                     }
-                    
+
                     SortClause sortClause = new SortClause(field, order);
 
                     if (sortableFieldTypes.contains(fieldType.getFieldType().getType())) {
@@ -827,7 +827,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                         query.addSort(sortClause);
                     }
                 }
-                
+
                 // At the end here, it's possible that the field that was passed in to sort by was not managed in the
                 // database in the list of index fields and their types. If that's the case, go ahead and add it as a sort
                 // field anyway since we're trusting that the field was actually added to the index by some programmatic means
@@ -837,11 +837,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             }
         }
     }
-    
+
     protected ORDER getSortOrder(String[] sortFieldsSegments, String sortQuery) {
         ORDER order = ORDER.asc;
         if (sortFieldsSegments.length < 2) {
-            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + StringUtil.sanitize(sortQuery) 
+            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + StringUtil.sanitize(sortQuery)
                     + ", but no sorting tokens could be extracted.");
             msg.append("\nDefaulting to ASCending");
             LOG.warn(msg.toString());
@@ -929,7 +929,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     /*
-     * This method iteratively and recursively attempts to return the value or values of the property specified by the currentPosition in the 
+     * This method iteratively and recursively attempts to return the value or values of the property specified by the currentPosition in the
      * array of components.  The components argument is an array of strings representing the object graph.
      */
     protected Object getPropertyValueInternal(Object object, String[] components, int currentPosition) throws NoSuchMethodException,
@@ -944,7 +944,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     StringUtil.sanitize(components[currentPosition]), object.getClass().getName()));
             return null;
         }
-        
+
         Object propertyObject = PropertyUtils.getProperty(object, components[currentPosition]);
 
         if (propertyObject != null) {
@@ -995,8 +995,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     /*
-     * This adds the value of the object to the collection.  If the object is a Map, this adds the values of the 
-     * map to the collection.  If the object is a Collection or an Array, it adds each of the values to the collection. 
+     * This adds the value of the object to the collection.  If the object is a Map, this adds the values of the
+     * map to the collection.  If the object is a Collection or an Array, it adds each of the values to the collection.
      */
     protected void copyPropertyToCollection(Collection<Object> collection, Object o) {
         if (o == null) {
