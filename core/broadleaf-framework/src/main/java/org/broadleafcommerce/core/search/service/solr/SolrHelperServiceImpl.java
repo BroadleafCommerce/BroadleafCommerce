@@ -21,7 +21,8 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
@@ -75,6 +76,7 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -554,25 +556,69 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getSolrFieldTag(String tagField, String tag, SearchFacetRange range) {
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isNotBlank(tag)) {
-            sb.append("{!").append(tag).append("=").append(tagField);
-
-            if (range != null) {
-                sb.append("[").append(range.getMinValue().toPlainString()).append(":");
-                if (range.getMaxValue() != null) {
-                    sb.append(range.getMaxValue().toPlainString());
-                } else {
-                    sb.append("*");
-                }
-                sb.append("]");
-
-                sb.append(" " + getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue()));
-            }
-
-            sb.append("}");
+        if (StringUtils.isBlank(tagField) || StringUtils.isBlank(tag)) {
+            return "";
         }
-        return sb.toString();
+
+        if (range != null) {
+            return buildSolrFacetQuery(tagField, range, true, tag);
+        }
+
+        return buildSolrFacetField(tagField, tag);
+    }
+
+    /**
+     * Builds a {@code facet.field} Solr param based on the {@code fieldName} provided.
+     *
+     * @param fieldName Name of the index field (e.g., mgf_s, heatRange_i, price_p)
+     * @param param Optional name of the param (e.g., tag, key, ex). Defaults to "ex".
+     *
+     * @return  a {@code facet.field} Solr param based on the {@code fieldName} provided.
+     */
+    protected String buildSolrFacetField(String fieldName, String param) {
+        Assert.notNull(fieldName, "FieldName cannot be null");
+
+        if (StringUtils.isBlank(param)) {
+            param = "ex";
+        }
+
+        return String.format("{!%s=%s}", param, fieldName);
+    }
+
+    /**
+     * Builds a {@code facet.query} Solr param based on the {@code range} and {@code fieldName} provided.
+     * <p>
+     * For example, if given the range of $0.00 - $5.00 on the price_p field, the default result would be
+     * {@code {!ex=price_p key=price_p[0.00:5.00] frange incl=false l=0.00 u=5.00}}.
+     * <p>
+     * If {@code addExParam == false}, then this will produce
+     * {@code {!key=price_p[0.00:5.00] frange incl=false l=0.00 u=5.00}}.
+     *
+     * @param fieldName Name of the index field on which to query
+     * @param range {@link SearchFacetRange} representing the range for which to create a {@code facet.query}.
+     * @param addExParam Whether to add an exclude filter by tag ("ex") parameter to the query. This assumes
+     *                  that the filter has a tag matching the {@code fieldName}. Defaults to true.
+     * @param param Optional name of the main param (e.g., tag, key, ex). Defaults to "key".
+     *
+     * @return a {@code facet.query} Solr param based on the {@code range} and {@code fieldName} provided.
+     */
+    protected String buildSolrFacetQuery(String fieldName, SearchFacetRange range, Boolean addExParam, String param) {
+        Assert.notNull(fieldName, "FieldName cannot be null");
+        Assert.notNull(range, "Range cannot be null");
+
+        if (StringUtils.isBlank(param)) {
+            param = "key";
+        }
+
+        String rangeStart = range.getMinValue().toPlainString();
+        String rangeEnd = range.getMaxValue() != null ? range.getMaxValue().toPlainString() : "*";
+        String functions = getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue());
+
+        if (BooleanUtils.isNotFalse(addExParam)) {
+            return String.format("{!ex=%s %s=%s[%s:%s] %s}", fieldName, param, fieldName, rangeStart, rangeEnd, functions);
+        }
+
+        return String.format("{%s=%s[%s:%s] %s}", param, fieldName, rangeStart, rangeEnd, functions);
     }
 
     @Override
@@ -833,56 +879,51 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
             SearchCriteria searchCriteria) {
         if (searchCriteria.getFilterCriteria() != null) {
-            for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
+            for (Entry<String, String[]> filterCriteria : searchCriteria.getFilterCriteria().entrySet()) {
                 String solrKey = null;
-                for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
-                    if (dtoEntry.getValue().getFacet().getField().getAbbreviation().equals(entry.getKey())) {
-                        solrKey = dtoEntry.getKey();
-                        dtoEntry.getValue().setActive(true);
+
+                for (Entry<String, SearchFacetDTO> namedFacet : namedFacetMap.entrySet()) {
+                    String facetFieldAbbreviation = namedFacet.getValue()
+                            .getFacet()
+                            .getField()
+                            .getAbbreviation();
+                    if (facetFieldAbbreviation.equals(filterCriteria.getKey())) {
+                        solrKey = namedFacet.getKey();
+                        namedFacet.getValue().setActive(true);
                     }
                 }
 
-                if (solrKey != null) {
-                    String[] selectedValues = entry.getValue().clone();
-                    boolean rangeQuery = false;
-                    for (int i = 0; i < selectedValues.length; i++) {
-                        if (selectedValues[i].contains("range[")) {
-                            rangeQuery = true;
-                            String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
-                                    selectedValues[i].indexOf(']'));
-                            String[] rangeValues = StringUtils.split(rangeValue, ':');
-                            BigDecimal minValue = new BigDecimal(rangeValues[0]);
-                            BigDecimal maxValue = null;
-                            if (!rangeValues[1].equals("null")) {
-                                maxValue = new BigDecimal(rangeValues[1]);
-                            }
-                            selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
-                        } else {
-                            selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
-                        }
-                    }
-
-                    List<String> valueStrings = new ArrayList<>();
-                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(namedFacetMap.get(solrKey).getFacet(), selectedValues, valueStrings);
-
-                    if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
-                        StringBuilder valueString = new StringBuilder();
-
-                        if (rangeQuery) {
-                            valueString.append(solrKey).append(":(");
-                            valueString.append(StringUtils.join(selectedValues, " OR "));
-                            valueString.append(")");
-                        } else {
-                            valueString.append("{!tag=").append(solrKey).append("}");
-                            valueString.append(solrKey).append(":(");
-                            valueString.append(StringUtils.join(selectedValues, " OR "));
-                            valueString.append(")");
-                        }
-                        valueStrings.add(valueString.toString());
-                    }
-
-                    query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
+                if (solrKey == null) {
+                    continue;
                 }
+
+                String[] selectedValues = filterCriteria.getValue().clone();
+
+                for (int i = 0; i < selectedValues.length; i++) {
+                    if (selectedValues[i].contains("range[")) {
+                        String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
+                                selectedValues[i].indexOf(']'));
+                        String[] rangeValues = StringUtils.split(rangeValue, ':');
+                        BigDecimal minValue = new BigDecimal(rangeValues[0]);
+                        BigDecimal maxValue = null;
+                        if (!rangeValues[1].equals("null")) {
+                            maxValue = new BigDecimal(rangeValues[1]);
+                        }
+                        selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
+                    } else {
+                        selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
+                    }
+                }
+
+                List<String> valueStrings = new ArrayList<>();
+                ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(namedFacetMap.get(solrKey).getFacet(), selectedValues, valueStrings);
+
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                    String range = StringUtils.join(selectedValues, " OR ");
+                    valueStrings.add(String.format("{!tag=%s}%s:(%s)", solrKey, solrKey, range));
+                }
+
+                query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
             }
         }
     }
