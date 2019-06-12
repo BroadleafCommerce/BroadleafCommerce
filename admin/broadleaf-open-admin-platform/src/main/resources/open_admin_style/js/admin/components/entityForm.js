@@ -90,9 +90,9 @@
                         // Add an error indicator to the fields tab
                         // this can happen more than once because the indicator is absolute positioning
                         var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0, 4);
-                        var $tabWithError = $('a[href=' + tabId + ']');
+                        var $tabWithError = $('a[href="' + tabId + '"]');
                         if (BLCAdmin.currentModal() !== undefined) {
-                            $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                            $tabWithError = BLCAdmin.currentModal().find('a[href="' + tabId + '"]');
                         }
                         $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
 
@@ -685,7 +685,7 @@ $(document).ready(function() {
                             BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.validationError);
                         } else {
                             var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
-                            var $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                            var $tabWithError = BLCAdmin.currentModal().find('a[href="' + tabId + '"]');
                             if ($tabWithError.find('.tab-error-indicator').length == 0) {
                                 $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
                             }
