@@ -22,7 +22,7 @@
 
     var originalStickyBarOffset;
     var originalStickyBarHeight;
-    
+
     BLCAdmin.entityForm = {
 
         initializeStickyHeader : function () {
@@ -90,9 +90,9 @@
                         // Add an error indicator to the fields tab
                         // this can happen more than once because the indicator is absolute positioning
                         var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0, 4);
-                        var $tabWithError = $('a[href=' + tabId + ']');
+                        var $tabWithError = $('a[href="' + tabId + '"]');
                         if (BLCAdmin.currentModal() !== undefined) {
-                            $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                            $tabWithError = BLCAdmin.currentModal().find('a[href="' + tabId + '"]');
                         }
                         $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
 
@@ -599,11 +599,11 @@ $(document).ready(function() {
         var submit = BLCAdmin.runSubmitHandlers($(this));
         return submit;
     });
-    
+
     $('body').on('submit', 'form.modal-add-entity-form', function(event) {
         var $form = $(this);
         var submit = BLCAdmin.runSubmitHandlers($form);
-        
+
         if (submit) {
             BLC.ajax({
                 url: this.action,
@@ -681,10 +681,14 @@ $(document).ready(function() {
 
                     // For each error field, make sure that its tab signifies that it contains an error
                     $newForm.find('.has-error').each(function(index, el) {
-                        var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
-                        var $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
-                        if ($tabWithError.find('.tab-error-indicator').length == 0) {
-                            $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                        if ($(el).is('.hidden')){
+                            BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.validationError);
+                        } else {
+                            var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
+                            var $tabWithError = BLCAdmin.currentModal().find('a[href="' + tabId + '"]');
+                            if ($tabWithError.find('.tab-error-indicator').length == 0) {
+                                $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                            }
                         }
                     });
 
