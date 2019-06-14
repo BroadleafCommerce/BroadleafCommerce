@@ -33,9 +33,13 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tika.Tika;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.StaticAssetMultiTenantExtensionManager;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
@@ -58,6 +62,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +77,7 @@ import javax.annotation.Resource;
 public class StaticAssetServiceImpl implements StaticAssetService {
 
     private static final Log LOG = LogFactory.getLog(StaticAssetServiceImpl.class);
+    private static final String UPLOAD_FILE_EXTENSION_EXCEPTION = "java.io.IOException: Invalid extension type of file.";
 
     @Resource(name = "blImageArtifactProcessor")
     protected ImageArtifactProcessor imageArtifactProcessor;
@@ -93,6 +99,9 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Value("${should.accept.non.image.asset:true}")
     protected boolean shouldAcceptNonImageAsset;
+
+    @Value("${disabled.file.extensions}")
+    protected String disabledFileExtensions;
 
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
@@ -178,16 +187,45 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
         return path.append(fileName).toString();
     }
-    
+
     private static String normalizeFileExtension(MultipartFile file) {
         int index = file.getOriginalFilename().lastIndexOf(".");
         return file.getOriginalFilename().substring(0, index + 1) + file.getOriginalFilename().substring(index + 1, file.getOriginalFilename().length()).toLowerCase();
+    }
+
+    private static String getFileExtension(MultipartFile file) {
+        String tikaExtension = null;
+        try {
+            final Tika tika = new Tika();
+            final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+            final String detectedType;
+            detectedType = tika.detect(file.getBytes());
+            if (detectedType != null && !detectedType.isEmpty()) {
+                final MimeType mimeType = allTypes.forName(detectedType);
+                tikaExtension = mimeType.getExtension().replace(".", "").toLowerCase();
+            }
+        } catch (IOException | MimeTypeException ignored) {
+        }
+        return (tikaExtension != null && !tikaExtension.isEmpty()) ? tikaExtension : FilenameUtils.getExtension(file.getOriginalFilename());
+    }
+
+    public void validateFileExtension(MultipartFile file) throws IOException {
+        final String extension = getFileExtension(file);
+        if (disabledFileExtensions != null && !disabledFileExtensions.isEmpty()) {
+            final List<String> extensions = Arrays.asList(disabledFileExtensions.toLowerCase().split("\\s*,\\s*"));
+            LOG.info("Disabled file extensions:" + disabledFileExtensions);
+            if (extensions.contains(extension)) {
+                LOG.error("Invalid extension type of file " + file.getName());
+                throw new IOException("Invalid extension type of file.");
+            }
+        }
     }
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties) {
         try {
+            validateFileExtension(file);
             return createStaticAsset(file.getInputStream(), normalizeFileExtension(file), file.getSize(), properties);
         } catch (IOException e) {
             throw new RuntimeException(e);

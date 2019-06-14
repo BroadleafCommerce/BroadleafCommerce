@@ -22,7 +22,7 @@
 
     var originalStickyBarOffset;
     var originalStickyBarHeight;
-    
+
     BLCAdmin.entityForm = {
 
         initializeStickyHeader : function () {
@@ -599,11 +599,11 @@ $(document).ready(function() {
         var submit = BLCAdmin.runSubmitHandlers($(this));
         return submit;
     });
-    
+
     $('body').on('submit', 'form.modal-add-entity-form', function(event) {
         var $form = $(this);
         var submit = BLCAdmin.runSubmitHandlers($form);
-        
+
         if (submit) {
             BLC.ajax({
                 url: this.action,
