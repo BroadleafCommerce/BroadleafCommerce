@@ -36,6 +36,11 @@ public class AbstractEntityInformationServiceExtensionHandler extends AbstractEx
     }
 
     @Override
+    public ExtensionResultStatusType updateBasicEntityInformationDto(EntityInformationDto dto, Object entityInstance) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
     public ExtensionResultStatusType getBaseProfileIdForSite(Site site, ExtensionResultHolder<Long> erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }

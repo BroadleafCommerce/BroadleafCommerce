@@ -43,6 +43,8 @@ public interface EntityInformationService {
      */
     EntityInformationDto buildEntityInformationForObject(Object o);
 
+    EntityInformationDto buildBasicEntityInformationForObject(Object o);
+
     /**
      * Given a Site object, returns the Base Profile Id if one exists.    This method provides a hook
      * for Broadleaf MultiTenant functionality

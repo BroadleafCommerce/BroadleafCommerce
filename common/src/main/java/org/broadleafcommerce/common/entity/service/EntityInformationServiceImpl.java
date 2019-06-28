@@ -43,6 +43,12 @@ public class EntityInformationServiceImpl implements EntityInformationService {
         return dto;
     }
 
+    public EntityInformationDto buildBasicEntityInformationForObject(Object o) {
+        EntityInformationDto dto = createEntityInformationDto(o);
+        extensionManager.updateBasicEntityInformationDto(dto, o);
+        return dto;
+    }
+
     @Override
     public Long getBaseProfileIdForSite(Site site) {
         ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
