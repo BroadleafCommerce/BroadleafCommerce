@@ -51,6 +51,13 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
         }
     };
 
+    public static final ExtensionManagerOperation updateBasicEntityInformationDto = new ExtensionManagerOperation() {
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((EntityInformationServiceExtensionHandler) handler).updateBasicEntityInformationDto((EntityInformationDto) params[0], params[1]);
+        }
+    };
+
     public static final ExtensionManagerOperation getBaseProfileIdForSite = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
@@ -93,6 +100,11 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     @Override
     public ExtensionResultStatusType updateEntityInformationDto(EntityInformationDto dto, Object entityInstance) {
         return execute(updateEntityInformationDto, dto, entityInstance);
+    }
+
+    @Override
+    public ExtensionResultStatusType updateBasicEntityInformationDto(EntityInformationDto dto, Object entityInstance) {
+        return execute(updateBasicEntityInformationDto, dto, entityInstance);
     }
 
     @Override
