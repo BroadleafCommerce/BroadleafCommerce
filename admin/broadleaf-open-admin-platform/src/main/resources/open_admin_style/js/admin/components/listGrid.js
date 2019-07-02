@@ -930,10 +930,14 @@ $(document).ready(function () {
                             parentId: parentId
                         }
                     }, function (data) {
-                        // escape dots in the id selector
-                        var idSelector = data.field.replace(/\./g, '\\\.');
-                        var $container = $('div.listgrid-container#' + idSelector);
-
+                        if (data.field !== undefined) {
+                            // escape dots in the id selector
+                            var idSelector = data.field.replace(/\./g, '\\\.');
+                            var $container = $('div.listgrid-container#' + idSelector);
+                        } else {
+                            //in other cases (for category) we use '.tree-listgrid-container' class
+                            var $container = $('div.tree-listgrid-container');
+                        }
                         BLCAdmin.workflow.updateSandboxRibbon();
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
