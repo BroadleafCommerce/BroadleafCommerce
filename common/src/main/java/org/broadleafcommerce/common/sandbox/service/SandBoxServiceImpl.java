@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
@@ -37,6 +38,8 @@ import javax.annotation.Resource;
 public class SandBoxServiceImpl implements SandBoxService {
     
     private static final Log LOG = LogFactory.getLog(SandBoxServiceImpl.class);
+
+    private Map<String, Long> approvalToUserSandboxes = new ConcurrentHashMap<>();
 
     @Resource(name = "blSandBoxDao")
     protected SandBoxDao sandBoxDao;
@@ -132,6 +135,22 @@ public class SandBoxServiceImpl implements SandBoxService {
         }
 
         return sandBoxDao.retrieveNamedSandBox(SandBoxType.USER, approvalSandBox.getName(), authorId);
+    }
+
+    @Override
+    public synchronized Long createUserSandBox(Long authorId, Long approvalSandbox) {
+        String key = authorId + "_" + approvalSandbox;
+        if (!approvalToUserSandboxes.containsKey(key)) {
+            SandBox approval = sandBoxDao.retrieve(approvalSandbox);
+            SandBox user;
+            if (checkForExistingSandbox(SandBoxType.USER, approval.getName(), authorId)) {
+                user = sandBoxDao.createUserSandBox(authorId, approval);
+            } else {
+                user = sandBoxDao.retrieveNamedSandBox(SandBoxType.USER, approval.getName(), authorId);
+            }
+            approvalToUserSandboxes.put(key, user.getId());
+        }
+        return approvalToUserSandboxes.get(key);
     }
 
     @Override
