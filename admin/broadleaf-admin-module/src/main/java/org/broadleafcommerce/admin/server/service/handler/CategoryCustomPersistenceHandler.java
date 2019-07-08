@@ -28,10 +28,9 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.core.catalog.domain.CategoryXref;
-import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
+import org.broadleafcommerce.core.catalog.dao.CategoryXrefDao;
+import org.broadleafcommerce.core.catalog.domain.*;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -66,6 +65,12 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     @Resource(name = "blCategoryCustomPersistenceHandlerExtensionManager")
     protected CategoryCustomPersistenceHandlerExtensionManager extensionManager;
 
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+
+    @Resource(name = "blCategoryXrefDao")
+    protected CategoryXrefDao categoryXrefDao;
+
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -80,6 +85,11 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+        return canHandleAdd(persistencePackage);
+    }
+
+    @Override
+    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
         return canHandleAdd(persistencePackage);
     }
 
@@ -174,6 +184,40 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         } catch (Exception e) {
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
+    }
+
+    @Override
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            Category adminInstance = getAdminInstance(persistencePackage, dynamicEntityDao, helper, entity);
+
+            removeCategory(persistencePackage, adminInstance, helper);
+
+            List<CategoryXref> categoryXrefList = categoryXrefDao.readXrefsBySubCategoryId(adminInstance.getId());
+
+            for (CategoryXref categoryXref : categoryXrefList) {
+                categoryXrefDao.delete(categoryXref);
+            }
+
+        } catch (ClassNotFoundException e) {
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+        }
+    }
+
+    protected Category getAdminInstance(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper,
+                                       Entity entity) throws ClassNotFoundException {
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+        Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+        String type = entity.getType()[0];
+        Category adminInstance = (Category) dynamicEntityDao.retrieve(Class.forName(type), primaryKey);
+
+        return adminInstance;
+    }
+
+    protected void removeCategory(PersistencePackage persistencePackage, Category adminInstance, RecordHelper helper) throws ServiceException {
+        catalogService.removeCategory(adminInstance);
     }
 
     protected Boolean isDefaultCategoryLegacyMode() {
