@@ -17,9 +17,11 @@
  */
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.OfferValueModifierExtensionManager;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -40,6 +42,9 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+
+    @Resource(name = "blOfferValueModifierExtensionManager")
+    protected OfferValueModifierExtensionManager offerModifierExtensionManager;
     
     public OfferActivity() {
         setOrder(ORDER);
@@ -55,6 +60,11 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
         }
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
+
+        if (CollectionUtils.isNotEmpty(offers) && offerModifierExtensionManager != null) {
+            offerModifierExtensionManager.getProxy().modifyOfferValues(offers, order);
+        }
+
         order = offerService.applyAndSaveOffersToOrder(offers, order);
         context.setSeedData(order);
 
