@@ -624,9 +624,20 @@ public class AdminBasicEntityController extends AdminAbstractController {
         extractDynamicFormFields(cmd, entityForm);
 
         String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(sectionClassName, getSectionCustomCriteria());
-        Entity entity = service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
 
-        entityFormValidator.validate(entityForm, entity, result);
+        // there might be a situation, for exmaple for content items, when you have dynamic SC forms with required fields
+        // so they are attempted to be saved first and if they produce validation errors we don't need to save main entity
+        Entity entity;
+        if(shouldCheckBindingResultForErrors() && !result.hasErrors()) {
+            entity = service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
+            entityFormValidator.validate(entityForm, entity, result);
+        }else if(!shouldCheckBindingResultForErrors()){
+            entity = service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
+            entityFormValidator.validate(entityForm, entity, result);
+        }else {
+            entity = service.getRequestForEntityForm(entityForm, null, sectionCrumbs).getEntity();
+            entityFormValidator.validate(entityForm, entity, result);
+        }
         if (result.hasErrors()) {
             model.addAttribute("headerFlash", "save.unsuccessful");
             model.addAttribute("headerFlashAlert", true);
@@ -661,6 +672,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ra.addFlashAttribute("headerFlash", "save.successful");
 
         return "redirect:/" + sectionKey + "/" + id;
+    }
+
+    protected boolean shouldCheckBindingResultForErrors() {
+        return false;
     }
 
     /**
