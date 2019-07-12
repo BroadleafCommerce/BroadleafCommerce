@@ -1680,7 +1680,7 @@
 							.find('.xdsoft_select')
 								.hide();
                     if (options.onClose && $.isFunction(options.onClose)) {
-                        var inputDate = moment(datetimepicker.data('input')[0].value, 'dddd, MMMM DD, YYYY \@ h:mma');
+                        var inputDate = moment(datetimepicker.data('input').context.value, 'dddd, MMMM DD, YYYY \@ h:mma');
                         if (inputDate.isValid()) {
                             _xdsoft_datetime.currentTime = _xdsoft_datetime.currentTime === inputDate.toDate()
                                 ? _xdsoft_datetime.currentTime : inputDate.toDate();

@@ -48,7 +48,7 @@ $(document).ready(function(){
         });
     };
 
-    $(window).on('load', function() {
+    $(window).load(function() {
         equalheight('.equals .equal');
     });
 
