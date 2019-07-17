@@ -822,9 +822,11 @@
                     maxHeight -= $wrapper.parent().find('label').outerHeight(true);
                     maxHeight -= 5;
                 }
-                
-                if ($wrapper.closest('.listgrid-container').find('.listgrid-toolbar').length > 0) {
-                    maxHeight -= $wrapper.parent().find('.listgrid-toolbar').outerHeight(true);
+
+                closestListgridContainer = $wrapper.closest('.listgrid-container').find('.listgrid-toolbar');
+
+                if (closestListgridContainer.length > 0 && closestListgridContainer.outerHeight(true) !== undefined) {
+                    maxHeight -= closestListgridContainer.outerHeight(true);
                 }
                 
                 var minHeight = Math.max($wrapper.find('table tr:not(.width-control-header)').outerHeight() + 1, maxSubCollectionListGridHeight);;
@@ -832,7 +834,6 @@
                     maxHeight = minHeight;
                 }
                 
-                //maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'auto');
