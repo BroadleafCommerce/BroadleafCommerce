@@ -352,15 +352,21 @@ public interface SolrHelperService {
     public String getSolrRangeFunctionString(BigDecimal minValue, BigDecimal maxValue);
 
     /**
-     * Returns a solr field tag. Given indexField = a, tag = tag, would produce the following String:
-     * {!tag=a}. if range is not null it will produce {!tag=a frange incl=false l=minVal u=maxVal} 
+     * Builds the value for a Solr param based on the given {@code fieldName} and {@code range} with the given local
+     * {@code param} name.
+     * <p>
+     * If {@code range == null}, then this will produce a value for a {@code facet.field} param: {@code {!param=fieldName}}.
+     * Else, then this will produce a value for a {@code facet.query} param:
+     * {@code {!ex=fieldName param=fieldName[range#minValue:range#maxValue] frange incl=false l=range#minValue u=range#maxValue}}.
      * 
-     * @param tagField
-     * @param tag
-     * @param range
-     * @return
+     * @param fieldName Name of the index field
+     * @param param Name of the local param (e.g., key, ex, tag)
+     * @param range {@link SearchFacetRange} representing the range for which to create a {@code facet.query}.
+     *
+     * @return the value for a Solr param based on the given {@code tagField} and {@code range} with the given local
+     * {@code param} name.
      */
-    public String getSolrFieldTag(String tagField, String tag, SearchFacetRange range);
+    public String getSolrFieldTag(String fieldName, String param, SearchFacetRange range);
 
     /**
      * Builds out the DTOs for facet results from the search. This will then be used by the view layer to

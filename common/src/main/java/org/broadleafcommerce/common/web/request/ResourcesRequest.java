@@ -51,14 +51,16 @@ public class ResourcesRequest {
             //names are same
             if (name.equals(resourcesRequestBundle.getBundleName())) {
 
-                if (!StringUtils.equalsIgnoreCase(mappingPrefix, resourcesRequestBundle.getMappingPrefix())) {
+                if (mappingPrefix != null && 
+                    !StringUtils.equalsIgnoreCase(mappingPrefix, resourcesRequestBundle.getMappingPrefix())) {
                     //the prefixes are different
                     continue;
                 }
 
                 final List<String> bundleFiles = resourcesRequestBundle.getFiles();
 
-                if (!CollectionUtils.isEqualCollection(files, bundleFiles)) {
+                if (!CollectionUtils.isEmpty(files) && 
+                    !CollectionUtils.isEqualCollection(files, bundleFiles)) {
                     //files are different
                     continue;
                 }
