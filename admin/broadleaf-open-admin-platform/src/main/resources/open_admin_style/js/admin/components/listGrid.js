@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -977,7 +977,7 @@ $(document).ready(function () {
                             autoClose: 3000
                         });
                         $container = $this.closest('.listgrid-container');
-                        if ($container.prev().length || !data.field) {
+                        if ($container.prev().length || (data.status && data.status == 'ok')) {
                             var $parent = ui.item;
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
@@ -995,8 +995,6 @@ $(document).ready(function () {
 
                         ui.item.data('displayorder', data.newDisplayOrder);
 
-                        var actionUrl = $container.find('table').data('path');
-                        BLCAdmin.listGrid.refreshCollection($container, actionUrl);
                         BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                     });
                 }
