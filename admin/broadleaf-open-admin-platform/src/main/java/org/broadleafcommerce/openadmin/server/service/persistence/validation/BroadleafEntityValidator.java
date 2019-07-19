@@ -1,4 +1,3 @@
-
 /*
  * #%L
  * BroadleafCommerce Open Admin Platform
@@ -11,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,9 +22,10 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 /**
  * A Spring bean extending this class will automatically be called when validation is done on the entity specified by
