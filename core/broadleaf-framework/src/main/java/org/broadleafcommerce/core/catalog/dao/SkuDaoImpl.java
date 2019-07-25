@@ -180,7 +180,7 @@ public class SkuDaoImpl implements SkuDao {
 
     @Override
     public Long readCountAllActiveSkus() {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readCountAllActiveSkusInternal(currentDate);
     }
 
@@ -216,13 +216,13 @@ public class SkuDaoImpl implements SkuDao {
 
     @Override
     public List<Sku> readAllActiveSkus(int page, int pageSize) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readAllActiveSkusInternal(page, pageSize, currentDate);
     }
 
     @Override
     public List<Sku> readAllActiveSkus(Integer pageSize, Long lastId) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readAllActiveSkusInternal(pageSize, currentDate, lastId);
     }
 
@@ -253,7 +253,7 @@ public class SkuDaoImpl implements SkuDao {
         query.setParameter("url", uri);
         query.setParameter("productUrl", productUrl);
         query.setParameter("skuUrlKey", skuUrlKey);
-        query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution));
+        query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 

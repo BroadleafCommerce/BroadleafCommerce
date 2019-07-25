@@ -55,7 +55,7 @@ public class CategoryDaoImpl implements CategoryDao {
     protected Date cachedDate = SystemTime.asDate();
 
     protected Date getCurrentDateAfterFactoringInDateResolution() {
-        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, getCurrentDateResolution());
         if (returnDate != cachedDate) {
             if (SystemTime.shouldCacheDate()) {
                 cachedDate = returnDate;
