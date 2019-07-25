@@ -52,7 +52,7 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
     protected Date cachedDate = SystemTime.asDate();
 
     protected Date getCurrentDateAfterFactoringInDateResolution() {
-        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, getCurrentDateResolution());
         if (returnDate != cachedDate) {
             if (SystemTime.shouldCacheDate()) {
                 cachedDate = returnDate;
@@ -101,10 +101,12 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
         return criteria.orderBy(builder.asc(redirect.get("searchPriority")));
     }
 
+    @Override
     public Long getCurrentDateResolution() {
         return currentDateResolution;
     }
 
+    @Override
     public void setCurrentDateResolution(Long currentDateResolution) {
         this.currentDateResolution = currentDateResolution;
     }

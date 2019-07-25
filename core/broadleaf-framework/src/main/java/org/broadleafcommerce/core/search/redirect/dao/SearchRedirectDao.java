@@ -28,4 +28,22 @@ public interface SearchRedirectDao {
 
     public SearchRedirect findSearchRedirectBySearchTerm(String uri);
 
+    /**
+     * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @return the milliseconds to cache the current date/time
+     */
+    Long getCurrentDateResolution();
+
+    /**
+     * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @param currentDateResolution the milliseconds to cache the current date/time
+     */
+    void setCurrentDateResolution(Long currentDateResolution);
+
 }
