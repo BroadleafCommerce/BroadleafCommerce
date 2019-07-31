@@ -19,12 +19,13 @@ package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -37,7 +38,8 @@ import javax.servlet.http.HttpServletResponseWrapper;
 @ConditionalOnNotAdmin
 public class ThemeUrlEncodingFilter extends ResourceUrlEncodingFilter {
 
-    @Resource(name = "blThemeResolver")
+    @Autowired
+    @Qualifier("blThemeResolver")
     protected BroadleafThemeResolver themeResolver;
 
     @Override
@@ -60,6 +62,7 @@ public class ThemeUrlEncodingFilter extends ResourceUrlEncodingFilter {
             this.themeResolver = themeResolver;
         }
 
+        @Override
         public String encodeURL(String url) {
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             Theme theme = this.themeResolver.resolveTheme(brc.getWebRequest());
