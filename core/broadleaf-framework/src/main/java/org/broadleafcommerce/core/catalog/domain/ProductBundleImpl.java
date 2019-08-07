@@ -84,7 +84,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group="productBundleGroup")
     protected Integer priority=99;
 
-    @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL },orphanRemoval = true)
+    @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @OrderBy(value = "sequence")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)

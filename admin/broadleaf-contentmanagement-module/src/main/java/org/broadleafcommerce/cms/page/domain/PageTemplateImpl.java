@@ -111,7 +111,7 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @Deprecated
     protected Locale locale;
 
-    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true, mappedBy = "pageTemplate")
+    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = { CascadeType.ALL }, mappedBy = "pageTemplate")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
