@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -555,4 +556,15 @@ public interface OrderItem extends Serializable, Cloneable, MultiTenantCloneable
      */
     void setCartMessages(List<String> cartMessages);
 
+    /**
+     * @return the Auditable date for this record
+     */
+    Auditable getAuditable();
+
+    /**
+     * Sets the Auditable date object - typially set by Hibernate through the AuditableListener
+     * @param auditable
+     */
+    void setAuditable(Auditable auditable);
+    
 }
