@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
+import org.ehcache.event.CacheEvent;
+import org.ehcache.event.CacheEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,7 @@ import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.configuration.FactoryBuilder;
 import javax.cache.configuration.MutableCacheEntryListenerConfiguration;
+import javax.cache.event.CacheEntryListener;
 import javax.cache.spi.CachingProvider;
 
 /**
@@ -37,9 +40,13 @@ import javax.cache.spi.CachingProvider;
  *
  */
 @Component("blHydratedCacheEventListenerFactory")
-public class HydratedCacheEventListenerFactory {
+public class HydratedCacheEventListenerFactory implements CacheEventListener, CacheEntryListener {
 
     private static HydratedCacheManager manager = null;
+
+    public HydratedCacheEventListenerFactory() {
+        //todo what should be actually here for new ehcache ??
+    }
 
     @Autowired
     public HydratedCacheEventListenerFactory(@Qualifier("blHydratedCacheMangager") HydratedCacheManager hydratedCacheManager, 
@@ -57,5 +64,10 @@ public class HydratedCacheEventListenerFactory {
 
     public static HydratedCacheManager getConfiguredManager() {
         return manager;
+    }
+
+    @Override
+    public void onEvent(CacheEvent cacheEvent) {
+
     }
 }

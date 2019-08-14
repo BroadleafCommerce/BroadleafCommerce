@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.cache.Cache;
@@ -101,7 +102,7 @@ public abstract class AbstractCacheMissAware<T> {
     protected Cache<String, T> getCache(String cacheName) {
         if (cache == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager();
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
             cache = cacheManager.getCache(cacheName);
         }
         return cache;

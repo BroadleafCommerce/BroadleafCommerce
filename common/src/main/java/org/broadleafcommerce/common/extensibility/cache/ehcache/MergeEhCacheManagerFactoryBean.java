@@ -19,6 +19,8 @@ package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
+import org.broadleafcommerce.url.handler.ehcache.EhCacheUrlStreamHandlerFactory;
+import org.broadleafcommerce.url.handler.ehcache.Handler;
 import org.ehcache.config.Configuration;
 import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.ehcache.xml.ConfigurationParser;
@@ -31,6 +33,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,19 +85,21 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
             }
 
             // TODO this does not work because it's a ByteArrayResource and has no URI
+            Caching.setDefaultClassLoader(getClass().getClassLoader());
             CachingProvider provider = Caching.getCachingProvider();
             if (EhcacheCachingProvider.class.isAssignableFrom(provider.getClass())) {
                 Resource mergeResource = merge.getMergedConfigResource(sources);
-
+                Handler.inputStream = mergeResource.getInputStream();
+//                URL.setURLStreamHandlerFactory(new EhCacheUrlStreamHandlerFactory(mergeResource.getInputStream()));
                 EhcacheCachingProvider ehcacheProvider = (EhcacheCachingProvider) provider;
 
-                MergeConfigurationParser configurationParser = new MergeConfigurationParser();
+/*                MergeConfigurationParser configurationParser = new MergeConfigurationParser();
                 Configuration config = configurationParser.parseConfiguration(mergeResource.getInputStream(),
                                                             provider.getDefaultClassLoader(),
                                                             Collections.emptyMap())
-                        .getConfiguration();
+                        .getConfiguration();*/
 
-                this.cacheManager = ehcacheProvider.getCacheManager(ehcacheProvider.getDefaultURI(), config);
+                this.cacheManager = ehcacheProvider.getCacheManager(new URI("ehcache:fakeuri"), getClass().getClassLoader());
             } else {
                 log.warn("Caching Provider does not support merged cache locations. Falling back to default");
             }

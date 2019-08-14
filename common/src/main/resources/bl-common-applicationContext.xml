@@ -157,7 +157,7 @@
         </property>
     </bean>
     
-    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+    <bean id="blSpringCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
         <property name="cacheManager" ref="blCacheManager"/>
     </bean>    
     

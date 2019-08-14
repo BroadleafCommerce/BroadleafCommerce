@@ -31,16 +31,15 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import javax.cache.Cache;
+import javax.cache.Caching;
 
 
 /**
@@ -111,7 +110,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
             }
 
             if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
-                getUrlHandlerCache().put(new Element(key, handler));
+                getUrlHandlerCache().put(key, handler);
             }
         }
 
@@ -184,9 +183,9 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     public Boolean removeURLHandlerFromCache(String mapKey) {
         Boolean success = Boolean.FALSE;
         if (mapKey != null) {
-            Element e = getUrlHandlerCache().get(mapKey);
+            Object e = getUrlHandlerCache().get(mapKey);
 
-            if (e != null && e.getObjectValue() != null) {
+            if (e != null) {
                 success = Boolean.valueOf(getUrlHandlerCache().remove(mapKey));
             }
         }
@@ -205,16 +204,16 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     }
 
     protected URLHandler getUrlHandlerFromCache(String key) {
-        Element cacheElement = getUrlHandlerCache().get(key);
+        Object cacheElement = getUrlHandlerCache().get(key);
         if (cacheElement != null) {
-            return (URLHandler) cacheElement.getObjectValue();
+            return (URLHandler) cacheElement;
         }
         return null;
     }
 
     protected Cache getUrlHandlerCache() {
         if (urlHandlerCache == null) {
-            urlHandlerCache = CacheManager.getInstance().getCache("cmsUrlHandlerCache");
+            urlHandlerCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsUrlHandlerCache");
         }
         return urlHandlerCache;
     }

@@ -44,17 +44,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Cache;
+/*import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
+*/
 /**
  * @deprecated Use {@link SolrSearchServiceImpl} 
  */
 @Deprecated
 @Service("blSearchService")
-public class DatabaseSearchServiceImpl implements SearchService {
-    
+public class DatabaseSearchServiceImpl/* implements SearchService */{
+/*
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
     
@@ -165,7 +165,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
      * Perform any necessary conversion of the key to be used by the search service
      * @param criteria
      */
-    protected void setQualifiedKeys(SearchCriteria criteria) {
+/*    protected void setQualifiedKeys(SearchCriteria criteria) {
         // Convert the filter criteria url keys
         Map<String, String[]> convertedFilterCriteria = new HashMap<String, String[]>();
         for (Entry<String, String[]> entry : criteria.getFilterCriteria().entrySet()) {
@@ -206,7 +206,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
      * @param qualifiedFieldName
      * @return the database qualified name
      */
-    protected String getDatabaseQualifiedFieldName(String qualifiedFieldName) {
+    /*protected String getDatabaseQualifiedFieldName(String qualifiedFieldName) {
         if (qualifiedFieldName.contains("productAttributes")) {
             return qualifiedFieldName.replace("product.", "");
         } else if (qualifiedFieldName.contains("defaultSku")) {
@@ -234,7 +234,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
      * @param categoryFacets
      * @return the wrapper DTO
      */
-    protected List<SearchFacetDTO> buildSearchFacetDtos(List<SearchFacet> categoryFacets) {
+    /*protected List<SearchFacetDTO> buildSearchFacetDtos(List<SearchFacet> categoryFacets) {
         List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
         
         for (SearchFacet facet : categoryFacets) {
@@ -301,5 +301,5 @@ public class DatabaseSearchServiceImpl implements SearchService {
     public boolean isActive() {
         return true;
     }
-
+*/
 }

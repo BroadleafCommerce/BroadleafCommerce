@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.SetUtils;
@@ -59,6 +55,7 @@ import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -68,6 +65,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.cache.Cache;
+import javax.cache.Caching;
 
 /**
  * @author bpolster
@@ -425,7 +424,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public Cache getStructuredContentCache() {
         if (structuredContentCache == null) {
-            structuredContentCache = CacheManager.getInstance().getCache("cmsStructuredContentCache");
+            structuredContentCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsStructuredContentCache");
         }
         return structuredContentCache;
     }
@@ -699,19 +698,19 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Override
     public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
-        getStructuredContentCache().put(new Element(key, scDTOList));
+        getStructuredContentCache().put(key, scDTOList);
     }
 
     protected void addSingleStructuredContentToCache(String key, StructuredContentDTO scDTO) {
-        getStructuredContentCache().put(new Element(key, scDTO));
+        getStructuredContentCache().put(key, scDTO);
     }
 
     protected StructuredContentDTO getSingleStructuredContentFromCache(String key) {
-        Element scElement = getStructuredContentCache().get(key);
+        Object scElement = getStructuredContentCache().get(key);
 
         if (scElement != null) {
             statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
-            return (StructuredContentDTO) scElement.getValue();
+            return (StructuredContentDTO) scElement;
         }
 
         statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
@@ -721,12 +720,12 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Override
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
-        Element scElement = getStructuredContentCache().get(key);
+        Object scElement = getStructuredContentCache().get(key);
 
         if (scElement != null) {
             statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
 
-            return (List<StructuredContentDTO>) scElement.getObjectValue();
+            return (List<StructuredContentDTO>) scElement;
         }
 
         statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);

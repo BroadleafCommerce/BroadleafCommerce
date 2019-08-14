@@ -42,6 +42,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -50,10 +51,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.cache.Cache;
+import javax.cache.Caching;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  * @author Brian Polster (bpolster)
@@ -169,7 +169,7 @@ public class PageServiceImpl implements PageService {
         boolean result = false;
         final String cacheKey = buildKey(uri, locale, secure);
         if (getPageCache().get(cacheKey) != null) {
-            Object pageDto = ((List) this.getPageCache().get(cacheKey).getObjectValue()).get(0);
+            Object pageDto = ((List) this.getPageCache().get(cacheKey)).get(0);
             if (pageDto instanceof NullPageDTO) {
                 result = true;
             }
@@ -188,7 +188,7 @@ public class PageServiceImpl implements PageService {
 
             // if page doesn't exist - cached NullPageDTO to reduce queries to DB
             if (pageList.isEmpty()) {
-                getPageCache().put(new Element(key, Collections.singletonList(NULL_PAGE)));
+                getPageCache().put(key, Collections.singletonList(NULL_PAGE));
                 addPageMapCacheEntry(uri, key);
             }
 
@@ -202,16 +202,16 @@ public class PageServiceImpl implements PageService {
 
     protected void addCachedDate(final String key) {
         if (getPageCache().get(key) == null) {
-            getUriCachedDateCache().put(new Element(key, new Date()));
+            getUriCachedDateCache().put(key, new Date());
         }
     }
 
     protected Date getCachedDate(final String key) {
-        final Element element = getUriCachedDateCache().get(key);
+        final Object element = getUriCachedDateCache().get(key);
         final Date cachedDate;
 
-        if (element != null && element.getObjectValue() != null) {
-            cachedDate = (Date) element.getObjectValue();
+        if (element != null ) {
+            cachedDate = (Date) element;
         } else {
             cachedDate = new Date();
         }
@@ -280,11 +280,11 @@ public class PageServiceImpl implements PageService {
     @SuppressWarnings("unchecked")
     protected List<PageDTO> getPageListFromCache(String key) {
         if (key != null) {
-            Element cacheElement = getPageCache().get(key);
+            Object cacheElement = getPageCache().get(key);
 
-            if (cacheElement != null && cacheElement.getObjectValue() != null) {
+            if (cacheElement != null ) {
                 statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
-                return (List<PageDTO>) cacheElement.getObjectValue();
+                return (List<PageDTO>) cacheElement;
             }
 
             statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
@@ -295,7 +295,7 @@ public class PageServiceImpl implements PageService {
 
     protected void addPageListToCache(List<PageDTO> pageList, String identifier, Locale locale, boolean secure) {
         String key = buildKey(identifier, locale, secure);
-        getPageCache().put(new Element(key, pageList));
+        getPageCache().put(key, pageList);
         addPageMapCacheEntry(identifier, key);
     }
 
@@ -308,14 +308,14 @@ public class PageServiceImpl implements PageService {
         String mapKey = getPageMapCacheKey(identifier, siteId);
 
         if (mapKey != null) {
-            Element e = getPageMapCache().get(mapKey);
+            Object e = getPageMapCache().get(mapKey);
 
-            if (e == null || e.getObjectValue() == null) {
+            if (e == null) {
                 List<String> keys = new ArrayList<>();
                 keys.add(key);
-                getPageMapCache().put(new Element(mapKey, keys));
+                getPageMapCache().put(mapKey, keys);
             } else {
-                ((List<String>) e.getObjectValue()).add(mapKey);
+                ((List<String>) e).add(mapKey);
             }
         }
     }
@@ -372,7 +372,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getPageCache() {
         if (pageCache == null) {
-            pageCache = CacheManager.getInstance().getCache("cmsPageCache");
+            pageCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsPageCache");
         }
         return pageCache;
     }
@@ -380,7 +380,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getPageMapCache() {
         if (pageMapCache == null) {
-            pageMapCache = CacheManager.getInstance().getCache("cmsPageMapCache");
+            pageMapCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsPageMapCache");
         }
         return pageMapCache;
     }
@@ -388,7 +388,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getUriCachedDateCache() {
         if (uriCachedDateCache == null) {
-            uriCachedDateCache = CacheManager.getInstance().getCache("uriCachedDateCache");
+            uriCachedDateCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("uriCachedDateCache");
         }
 
         return uriCachedDateCache;
@@ -463,10 +463,10 @@ public class PageServiceImpl implements PageService {
     public Boolean removePageFromCache(String mapKey) {
         Boolean success = null;
         if (mapKey != null) {
-            Element e = getPageMapCache().get(mapKey);
+            Object e = getPageMapCache().get(mapKey);
 
-            if (e != null && e.getObjectValue() != null) {
-                List<String> keys = (List<String>) e.getObjectValue();
+            if (e != null) {
+                List<String> keys = (List<String>) e;
 
                 for (String k : keys) {
                     if (success == null) {

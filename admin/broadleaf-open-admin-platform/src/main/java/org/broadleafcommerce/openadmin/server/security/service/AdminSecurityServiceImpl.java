@@ -55,15 +55,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.cache.Cache;
+import javax.cache.Caching;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  *
@@ -96,7 +96,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     protected static String CACHE_NAME = "blSecurityElements";
     protected static String CACHE_KEY_PREFIX = "security:";
-    protected Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
+
+    protected Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache(CACHE_NAME);
 
     /**
      * <p>This is simply a placeholder to be used by {@link #setupPasswordEncoder()} to determine if we're using the
@@ -125,6 +126,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     @Transactional("blTransactionManager")
     public void deleteAdminPermission(AdminPermission permission) {
+
         adminPermissionDao.deleteAdminPermission(permission);
         clearAdminSecurityCache();
     }
@@ -230,10 +232,10 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         Boolean response = null;
         String cacheKey = buildCacheKey(adminUser, permissionType, ceilingEntityFullyQualifiedName);
-        Element cacheElement = cache.get(cacheKey);
+        Object objectValue = cache.get(cacheKey);
 
-        if (cacheElement != null) {
-            response = (Boolean) cacheElement.getObjectValue();
+        if (objectValue != null) {
+            response = (Boolean) objectValue;
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Admin Security Cache GET For: \"" + cacheKey + "\" = " + response);
@@ -247,8 +249,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                 response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(ceilingEntityFullyQualifiedName);
             }
 
-            cacheElement = new Element(cacheKey, response);
-            cache.put(cacheElement);
+            cache.put(cacheKey, response);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Admin Security Cache PUT For: \"" + cacheKey + "\" = " + response);

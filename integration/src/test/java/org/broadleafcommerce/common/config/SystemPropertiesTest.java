@@ -38,7 +38,8 @@ import org.testng.annotations.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import net.sf.ehcache.Cache;
+import javax.cache.Cache;
+
 
 /**
  * Tests for the interactions between the system properties service as apart of the Spring Environment
