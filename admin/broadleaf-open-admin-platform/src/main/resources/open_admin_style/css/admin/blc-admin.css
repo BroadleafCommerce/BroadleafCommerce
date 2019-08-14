@@ -5483,6 +5483,13 @@ input.result-page-size-input {
     height: 200px;
 }
 
+.blc-error-toast{
+    text-align: center;
+    display:inline-block;
+    z-index:9999;
+    opacity: 0;
+}
+
 
 label.checkmark {
     display: block;
@@ -5541,3 +5548,5 @@ label.checkmark span.checkmark:after {
     position: relative;
 }
 /* end styled checkmarks */
+
+

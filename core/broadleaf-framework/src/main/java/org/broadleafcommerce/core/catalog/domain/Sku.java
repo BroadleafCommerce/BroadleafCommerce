@@ -389,6 +389,11 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     Map<String, SkuMediaXref> getSkuMediaXrefIgnoreDefaultSku();
 
     /**
+     * Returns the primary {@link Media} for this Sku
+     */
+    Media getPrimarySkuMedia();
+
+    /**
      * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
      * is a cross-reference object to type Media.
      */

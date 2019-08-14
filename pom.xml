@@ -447,7 +447,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
+                        <version>2.10.4</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -460,6 +460,16 @@
                         <configuration>
                             <minmemory>128m</minmemory>
                             <maxmemory>1g</maxmemory>
+                            <excludePackageNames>
+                                *.org.broadleafcommerce.profile.web.controller:
+                                *.org.broadleafcommerce.openadmin.web.controller:
+                                *.org.broadleafcommerce.admin.web.controller:
+                                *.org.broadleafcommerce.cms.web.controller:
+                                *.org.broadleafcommerce.cms.admin.web.controller
+                            </excludePackageNames>
+                            <sourceFileExcludes>
+                                <sourceFileExclude>org/broadleafcommerce/cms/web/PreviewTemplateController.java</sourceFileExclude>
+                            </sourceFileExcludes>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -692,7 +702,7 @@
                 <artifactId>mail</artifactId>
                 <version>1.4.1</version>
             </dependency>
-            
+
             <!-- Java EE APIs removed from JDK in Java 9 -->
             <dependency>
                 <groupId>javax.annotation</groupId>
@@ -999,7 +1009,9 @@
             <dependency>
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-web</artifactId>
-                <version>1.0.2.RELEASE</version>
+                <version>1.1.6.RELEASE</version>
+                <type>jar</type>
+                <scope>compile</scope>
             </dependency>
 
             <!-- Spring Security -->
@@ -1183,7 +1195,7 @@
             <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
-                <version>1.19.1</version>
+                <version>1.20</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
@@ -1247,7 +1259,7 @@
                 <groupId>de.jkeylockmanager</groupId>
                 <artifactId>jkeylockmanager</artifactId>
                 <version>1.1.0</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>

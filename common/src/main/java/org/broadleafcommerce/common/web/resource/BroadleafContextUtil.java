@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
+import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -122,10 +123,10 @@ public class BroadleafContextUtil {
                 brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
             }
 
-            if (includeTheme) {
-                if (brc.getTheme() == null) {
-                    brc.setTheme(themeResolver.resolveTheme(wr));
-                }
+        if (includeTheme) {
+            if (brc.getTheme() == null) {
+                brc.setRequestDTO(new RequestDTOImpl(brc.getRequest()));
+                brc.setTheme(themeResolver.resolveTheme(wr));
             }
         }
     }

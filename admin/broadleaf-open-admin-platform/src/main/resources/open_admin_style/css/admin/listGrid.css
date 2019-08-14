@@ -407,6 +407,9 @@ td .listgrid-row-actions {
     background-color: white;
     border: 1px solid #D8D5D0;
 }
+.fieldgroup-listgrid-wrapper-header {
+    height: auto;
+}
 .fieldgroup-listgrid .row {
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -452,4 +455,9 @@ td .listgrid-row-actions {
 }
 .fieldgroup-listgrid {
     margin-bottom: 20px;
+}
+.field-help-listgrid{
+    margin-top: -10px;
+    color: #B3B3B3;
+    font-size: 12px;
 }

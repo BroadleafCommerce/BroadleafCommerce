@@ -21,7 +21,8 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
@@ -75,6 +76,7 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -96,7 +98,7 @@ import javax.jms.IllegalStateException;
 
 /**
  * Provides utility methods that are used by other Solr service classes
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blSolrHelperService")
@@ -139,11 +141,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     protected GenericEntityDao genericEntityDao;
 
     /**
-     * This should only ever be called when using the Solr reindex service to do a full reindex. 
-     * @throws SecurityException 
-     * @throws NoSuchFieldException 
-     * @throws IllegalAccessException 
-     * @throws IllegalArgumentException 
+     * This should only ever be called when using the Solr reindex service to do a full reindex.
+     * @throws SecurityException
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
      */
     @Override
     public synchronized void swapActiveCores(SolrConfiguration solrConfiguration) throws ServiceException {
@@ -551,26 +553,70 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getSolrFieldTag(String tagField, String tag, SearchFacetRange range) {
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isNotBlank(tag)) {
-            sb.append("{!").append(tag).append("=").append(tagField);
-
-            if (range != null) {
-                sb.append("[").append(range.getMinValue().toPlainString()).append(":");
-                if (range.getMaxValue() != null) {
-                    sb.append(range.getMaxValue().toPlainString());
-                } else {
-                    sb.append("*");
-                }
-                sb.append("]");
-
-                sb.append(" " + getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue()));
-            }
-
-            sb.append("}");
+    public String getSolrFieldTag(String fieldName, String param, SearchFacetRange range) {
+        if (StringUtils.isBlank(fieldName) || StringUtils.isBlank(param)) {
+            return "";
         }
-        return sb.toString();
+
+        if (range != null) {
+            return buildSolrFacetQuery(fieldName, range, true, param);
+        }
+
+        return buildSolrFacetField(fieldName, param);
+    }
+
+    /**
+     * Builds a {@code facet.field} Solr param based on the {@code fieldName} provided.
+     *
+     * @param fieldName Name of the index field (e.g., mgf_s, heatRange_i, price_p)
+     * @param param Optional name of the param (e.g., tag, key, ex). Defaults to "ex".
+     *
+     * @return  a {@code facet.field} Solr param based on the {@code fieldName} provided.
+     */
+    protected String buildSolrFacetField(String fieldName, String param) {
+        Assert.notNull(fieldName, "FieldName cannot be null");
+
+        if (StringUtils.isBlank(param)) {
+            param = "ex";
+        }
+
+        return String.format("{!%s=%s}", param, fieldName);
+    }
+
+    /**
+     * Builds a {@code facet.query} Solr param based on the {@code range} and {@code fieldName} provided.
+     * <p>
+     * For example, if given the range of $0.00 - $5.00 on the price_p field, the default result would be
+     * {@code {!ex=price_p key=price_p[0.00:5.00] frange incl=false l=0.00 u=5.00}}.
+     * <p>
+     * If {@code addExParam == false}, then this will produce
+     * {@code {!key=price_p[0.00:5.00] frange incl=false l=0.00 u=5.00}}.
+     *
+     * @param fieldName Name of the index field on which to query
+     * @param range {@link SearchFacetRange} representing the range for which to create a {@code facet.query}.
+     * @param addExParam Whether to add an exclude filter by tag ("ex") parameter to the query. This assumes
+     *                  that the filter has a tag matching the {@code fieldName}. Defaults to true.
+     * @param param Optional name of the main param (e.g., tag, key, ex). Defaults to "key".
+     *
+     * @return a {@code facet.query} Solr param based on the {@code range} and {@code fieldName} provided.
+     */
+    protected String buildSolrFacetQuery(String fieldName, SearchFacetRange range, Boolean addExParam, String param) {
+        Assert.notNull(fieldName, "FieldName cannot be null");
+        Assert.notNull(range, "Range cannot be null");
+
+        if (StringUtils.isBlank(param)) {
+            param = "key";
+        }
+
+        String rangeStart = range.getMinValue().toPlainString();
+        String rangeEnd = range.getMaxValue() != null ? range.getMaxValue().toPlainString() : "*";
+        String functions = getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue());
+
+        if (BooleanUtils.isNotFalse(addExParam)) {
+            return String.format("{!ex=%s %s=%s[%s:%s] %s}", fieldName, param, fieldName, rangeStart, rangeEnd, functions);
+        }
+
+        return String.format("{%s=%s[%s:%s] %s}", param, fieldName, rangeStart, rangeEnd, functions);
     }
 
     @Override
@@ -727,9 +773,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     // if an index field was not found, or the extension handler handled attaching the sort field, move to the next field
                     continue;
                 }
-                
+
                 List<IndexFieldType> fieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviation(requestedSortFieldName);
-                
+
                 // Used to determine if, by looping through the index field types managed in the database, we actually
                 // attach the sort field that is being requested. If we do, then we shouldn't manually add the requested
                 // sort field ourselves but if not, we should
@@ -746,14 +792,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 // this sorts by them all
                 for (IndexFieldType fieldType : fieldTypes) {
                     String field = getPropertyNameForIndexField(fieldType.getIndexField(), fieldType.getFieldType());
-                    
+
                     // Verify that the field that is being added as a sort is a match for the field that is requesting
                     // to be sorted by. Since field abbreviations are what are added to the index, this is what should
                     // be checked
                     if (fieldType.getIndexField().getField().getAbbreviation().equals(requestedSortFieldName)) {
                         requestedSortFieldAdded = true;
                     }
-                    
+
                     SortClause sortClause = new SortClause(field, order);
 
                     if (sortableFieldTypes.contains(fieldType.getFieldType().getType())) {
@@ -767,7 +813,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     }
 
                 }
-                if (!foundNotTokenizedField) {
+
+                // In the case of programmatically generated sorts, there will be no fieldtypes.
+                if (!foundNotTokenizedField && fieldTypes.size() > 0) {
                     LOG.warn(String.format("Sorting on a tokenized field, this could have adverse effects on the ordering of results. " +
                                     "Add a field type for this field from the following list to ensure proper result ordering: [%s]",
                             StringUtils.join(sortableFieldTypes, ", ")));
@@ -777,7 +825,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                         query.addSort(sortClause);
                     }
                 }
-                
+
                 // At the end here, it's possible that the field that was passed in to sort by was not managed in the
                 // database in the list of index fields and their types. If that's the case, go ahead and add it as a sort
                 // field anyway since we're trusting that the field was actually added to the index by some programmatic means
@@ -787,11 +835,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             }
         }
     }
-    
+
     protected ORDER getSortOrder(String[] sortFieldsSegments, String sortQuery) {
         ORDER order = ORDER.asc;
         if (sortFieldsSegments.length < 2) {
-            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + StringUtil.sanitize(sortQuery) 
+            StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + StringUtil.sanitize(sortQuery)
                     + ", but no sorting tokens could be extracted.");
             msg.append("\nDefaulting to ASCending");
             LOG.warn(msg.toString());
@@ -829,62 +877,57 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
             SearchCriteria searchCriteria) {
         if (searchCriteria.getFilterCriteria() != null) {
-            for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
+            for (Entry<String, String[]> filterCriteria : searchCriteria.getFilterCriteria().entrySet()) {
                 String solrKey = null;
-                for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
-                    if (dtoEntry.getValue().getFacet().getField().getAbbreviation().equals(entry.getKey())) {
-                        solrKey = dtoEntry.getKey();
-                        dtoEntry.getValue().setActive(true);
+
+                for (Entry<String, SearchFacetDTO> namedFacet : namedFacetMap.entrySet()) {
+                    String facetFieldAbbreviation = namedFacet.getValue()
+                            .getFacet()
+                            .getField()
+                            .getAbbreviation();
+                    if (facetFieldAbbreviation.equals(filterCriteria.getKey())) {
+                        solrKey = namedFacet.getKey();
+                        namedFacet.getValue().setActive(true);
                     }
                 }
 
-                if (solrKey != null) {
-                    String[] selectedValues = entry.getValue().clone();
-                    boolean rangeQuery = false;
-                    for (int i = 0; i < selectedValues.length; i++) {
-                        if (selectedValues[i].contains("range[")) {
-                            rangeQuery = true;
-                            String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
-                                    selectedValues[i].indexOf(']'));
-                            String[] rangeValues = StringUtils.split(rangeValue, ':');
-                            BigDecimal minValue = new BigDecimal(rangeValues[0]);
-                            BigDecimal maxValue = null;
-                            if (!rangeValues[1].equals("null")) {
-                                maxValue = new BigDecimal(rangeValues[1]);
-                            }
-                            selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
-                        } else {
-                            selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
-                        }
-                    }
-
-                    List<String> valueStrings = new ArrayList<>();
-                    ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(namedFacetMap.get(solrKey).getFacet(), selectedValues, valueStrings);
-
-                    if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
-                        StringBuilder valueString = new StringBuilder();
-
-                        if (rangeQuery) {
-                            valueString.append(solrKey).append(":(");
-                            valueString.append(StringUtils.join(selectedValues, " OR "));
-                            valueString.append(")");
-                        } else {
-                            valueString.append("{!tag=").append(solrKey).append("}");
-                            valueString.append(solrKey).append(":(");
-                            valueString.append(StringUtils.join(selectedValues, " OR "));
-                            valueString.append(")");
-                        }
-                        valueStrings.add(valueString.toString());
-                    }
-
-                    query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
+                if (solrKey == null) {
+                    continue;
                 }
+
+                String[] selectedValues = filterCriteria.getValue().clone();
+
+                for (int i = 0; i < selectedValues.length; i++) {
+                    if (selectedValues[i].contains("range[")) {
+                        String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
+                                selectedValues[i].indexOf(']'));
+                        String[] rangeValues = StringUtils.split(rangeValue, ':');
+                        BigDecimal minValue = new BigDecimal(rangeValues[0]);
+                        BigDecimal maxValue = null;
+                        if (!rangeValues[1].equals("null")) {
+                            maxValue = new BigDecimal(rangeValues[1]);
+                        }
+                        selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
+                    } else {
+                        selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
+                    }
+                }
+
+                List<String> valueStrings = new ArrayList<>();
+                ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(namedFacetMap.get(solrKey).getFacet(), selectedValues, valueStrings);
+
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
+                    String range = StringUtils.join(selectedValues, " OR ");
+                    valueStrings.add(String.format("{!tag=%s}%s:(%s)", solrKey, solrKey, range));
+                }
+
+                query.addFilterQuery(valueStrings.toArray(new String[valueStrings.size()]));
             }
         }
     }
 
     /*
-     * This method iteratively and recursively attempts to return the value or values of the property specified by the currentPosition in the 
+     * This method iteratively and recursively attempts to return the value or values of the property specified by the currentPosition in the
      * array of components.  The components argument is an array of strings representing the object graph.
      */
     protected Object getPropertyValueInternal(Object object, String[] components, int currentPosition) throws NoSuchMethodException,
@@ -899,7 +942,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     StringUtil.sanitize(components[currentPosition]), object.getClass().getName()));
             return null;
         }
-        
+
         Object propertyObject = PropertyUtils.getProperty(object, components[currentPosition]);
 
         if (propertyObject != null) {
@@ -950,8 +993,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     /*
-     * This adds the value of the object to the collection.  If the object is a Map, this adds the values of the 
-     * map to the collection.  If the object is a Collection or an Array, it adds each of the values to the collection. 
+     * This adds the value of the object to the collection.  If the object is a Map, this adds the values of the
+     * map to the collection.  If the object is a Collection or an Array, it adds each of the values to the collection.
      */
     protected void copyPropertyToCollection(Collection<Object> collection, Object o) {
         if (o == null) {

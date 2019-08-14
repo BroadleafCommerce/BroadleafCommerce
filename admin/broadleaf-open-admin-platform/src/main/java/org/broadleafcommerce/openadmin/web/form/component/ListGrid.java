@@ -91,6 +91,7 @@ public class ListGrid {
     protected String selectizeUrl;
 
     protected Boolean manualFetch;
+    protected String helpText;
 
     // The section url that maps to this particular list grid
     protected String sectionKey;
@@ -767,11 +768,16 @@ public class ListGrid {
         this.promptSearch = promptSearch;
     }
 
+    public String getHelpText() { return helpText; }
+
+    public void setHelpText(String helpText) { this.helpText = helpText; }
+
     public boolean isMultiSelectCheckBoxOnly() {
         return multiSelectCheckBoxOnly;
     }
 
     public void setMultiSelectCheckBoxOnly(boolean multiSelectCheckBoxOnly) {
-	    this.multiSelectCheckBoxOnly = multiSelectCheckBoxOnly;
+        this.multiSelectCheckBoxOnly = multiSelectCheckBoxOnly;
     }
+
 }

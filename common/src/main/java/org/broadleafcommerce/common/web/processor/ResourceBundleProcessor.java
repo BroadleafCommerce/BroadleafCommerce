@@ -270,9 +270,9 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         String src = attributes.src();
         src = attributes.src().contains(";") ? src.substring(0, src.indexOf(';')) : src;
 
-        if (src.endsWith(".js")) {
+        if (src.contains(".js")) {
             addJavaScriptToModel(attributes, context, model);
-        } else if (src.endsWith(".css")) {
+        } else if (src.contains(".css")) {
             addCssToModel(attributes, context, model);
         } else {
             throw new IllegalArgumentException("Unknown extension for: " + src + " - only .js and .css are supported by default.");

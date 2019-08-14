@@ -47,6 +47,7 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
                 extensionManager.getProxy().processAdditionalConfirmationActions(order);
 
                 model.addAttribute("order", order);
+                model.addAttribute("analyticsOrder", order);
                 return getOrderConfirmationView();
             }
         }
@@ -63,6 +64,7 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
                 extensionManager.getProxy().processAdditionalConfirmationActions(order);
 
                 model.addAttribute("order", order);
+                model.addAttribute("analyticsOrder", order);
                 return getOrderConfirmationView();
             }
         }

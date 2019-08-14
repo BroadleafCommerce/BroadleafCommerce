@@ -24,7 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
-import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
@@ -40,8 +41,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
-import org.broadleafcommerce.openadmin.server.security.event.AdminForgotPasswordEvent;
-import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
+import org.broadleafcommerce.openadmin.server.security.extension.AdminSecurityServiceExtensionManager;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserDetails;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -54,6 +54,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotPasswordEvent;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
+
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -114,6 +118,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Resource(name="blSendAdminUsernameEmailInfo")
     protected EmailInfo sendUsernameEmailInfo;
+
+    @Resource(name = "blAdminSecurityServiceExtensionManager")
+    protected AdminSecurityServiceExtensionManager extensionManager;
 
     protected int getTokenExpiredMinutes() {
         return BLCSystemProperty.resolveIntSystemProperty("tokenExpiredMinutes");
@@ -243,10 +250,20 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         }
 
         if (response == null) {
-            response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+            if (extensionManager != null) {
+                ExtensionResultHolder<Boolean> result = new ExtensionResultHolder<Boolean>();
+                ExtensionResultStatusType resultStatusType = extensionManager.getProxy().hasPrivilegesForOperation(adminUser, permissionType, result);
+                if (ExtensionResultStatusType.HANDLED == resultStatusType) {
+                    response = result.getResult();
+                }
+            }
 
-            if (!response) {
-                response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(ceilingEntityFullyQualifiedName);
+            if (response == null || !response) {
+                response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+
+                if (!response) {
+                    response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(ceilingEntityFullyQualifiedName);
+                }
             }
 
             cache.put(cacheKey, response);
@@ -477,8 +494,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Override
     @Transactional("blTransactionManager")
-    public GenericResponse changePassword(String username,
-            String oldPassword, String password, String confirmPassword) {
+    public GenericResponse changePassword(String username, String oldPassword, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
         if (username != null) {

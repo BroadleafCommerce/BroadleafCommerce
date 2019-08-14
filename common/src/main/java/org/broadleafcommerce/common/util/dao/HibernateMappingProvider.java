@@ -66,11 +66,16 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         // This aggregates all of the metadata for all persistence untis. No need to discriminate by persistence unit since the map is
         // keyed by class name
         Collection<PersistentClass> classes = metadata.getEntityBindings();
-        classes.forEach(clazz -> metadataMap.put(clazz.getClassName(), clazz));
+        classes.forEach((clazz) -> {
+            if(clazz != null && clazz.getClassName()!= null){
+                 metadataMap.put(clazz.getClassName(), clazz);
+            }});
         return defaultBuilder;
-    }
+     }
+
 
     /**
+     *
      * Returns the underlying Hibernate metadata about a given entity class across all available persistence units
      *
      * @param entityClass FQN of a Hibernate entity

@@ -352,15 +352,23 @@
             $spinner.css('display', 'block');
 
             var backdrop = $('<div>', {
-                'class': 'spinner-backdrop'
+                'class': 'spinner-backdrop',
+                'css': {
+                    'width': $tbody.innerWidth(),
+                    'height': $tbody.closest('.mCustomScrollBox').height(),
+                    'top': 0,
+                    'left': 0,
+                    'border-radius': 0
+                }
             });
-            $spinner.prepend(backdrop);
+
+            $tbody.closest('.mCustomScrollBox').prepend(backdrop);
         },
 
         hideLoadingSpinner: function ($tbody) {
             var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
             $spinner.parent().css('display', 'none');
-            $spinner.parent().find('.spinner-backdrop').remove();
+            $tbody.closest('.mCustomScrollBox').find('.spinner-backdrop').remove();
         },
 
         isLoading: function ($tbody) {
@@ -869,7 +877,7 @@ $(document).ready(function () {
             url: link,
             type: "POST"
         }, function (data) {
-            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + link.substring(link.indexOf("/addEmpty") + 9, link.length);
+            link = link.substring(0, link.indexOf("/addEmpty")) + "/" + data.id + "/add" + link.substring(link.indexOf("/addEmpty") + 9, link.length);
             if (link.indexOf("?") < 0) {
                 link += "?isPostAdd=true";
             } else {
@@ -950,29 +958,60 @@ $(document).ready(function () {
                     }
                 },
                 update: function (event, ui) {
+                    var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3;
+                    BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
+
                     var url = ui.item.data('link') + '/sequence';
 
                     if (BLCAdmin.treeListGrid !== undefined) {
                         url = BLCAdmin.treeListGrid.updateSequenceUrl(ui, url);
                     }
 
+                    var newSequence = BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item);
+
+                    //allow for floating point inprecision
+                    if (Math.abs(Math.round(newSequence) - newSequence) < 0.05) {
+                        newSequence = Math.round(newSequence);
+                    }
+
+                    //Show an error if something went wrong
+                    if (!Number.isInteger(newSequence)) {
+                        var escapedPage = $('<span>').text($('html').html()).html();
+                        BLCAdmin.showMessageAsModal('Reordering Error - invalid sequence',
+                            'An error has occurred while reordering the item. Please forward this information to the ' +
+                            'development team: <br/>' +
+                            '<textarea rows="30" style="min-height: 1000px" disabled>' +
+                            'URL: ' + window.location.href + '\r\n' +
+                            'Browser: ' + navigator.userAgent + '\r\n' +
+                            'HTML: \r\n\r\n' + escapedPage + '</textarea>');
+                        BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+                        return;
+                    }
+
                     BLC.ajax({
                         url: url,
                         type: "POST",
                         data: {
-                            newSequence: BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item),
+                            newSequence: newSequence,
                             parentId: parentId
                         }
                     }, function (data) {
-                        var $container = $('div.listgrid-container#' + data.field);
-
+                        if (data.field !== undefined) {
+                            // escape dots in the id selector
+                            var idSelector = data.field.replace(/\./g, '\\\.');
+                            var $container = $('div.listgrid-container#' + idSelector);
+                        } else {
+                            //in other cases (for category) we use '.tree-listgrid-container' class
+                            var $container = $('div.tree-listgrid-container');
+                        }
+                        BLCAdmin.workflow.updateSandboxRibbon();
                         BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
                             alertType: 'save-alert',
                             clearOtherAlerts: true,
                             autoClose: 3000
                         });
                         $container = $this.closest('.listgrid-container');
-                        if ($container.prev().length) {
+                        if ($container.prev().length || (data.status && data.status == 'ok')) {
                             var $parent = ui.item;
                             if (!$parent.hasClass('dirty')) {
                                 $parent.addClass('dirty');
@@ -989,6 +1028,8 @@ $(document).ready(function () {
                         }
 
                         ui.item.data('displayorder', data.newDisplayOrder);
+
+                        BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                     });
                 }
             }).disableSelection();
@@ -1006,7 +1047,10 @@ $(document).ready(function () {
             $table.removeClass('reordering');
 
             $trs.removeClass('draggable').addClass('clickable');
-            $tbody.sortable("destroy");
+
+            if ($tbody.hasClass('ui-sortable')) {
+                $tbody.sortable("destroy");
+            }
         }
     }, 'a.sub-list-grid-reorder');
 
@@ -1116,7 +1160,14 @@ $(document).ready(function () {
         if (onChangeTrigger) {
             var trigger = onChangeTrigger.split("-");
             if (trigger[0] == 'dynamicForm') {
-                $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "'] fieldset").remove();
+
+                if (trigger[1] == 'themeDefinition') {
+                    var $dynamicContainer = $("div.dynamic-form-container[data-dynamicpropertyname='themeDefinition']");
+                    var $idContainer = $("#fields\\'themeDefinition\\'\\.value");
+                    updateDynamicForm($dynamicContainer.data('currenturl') + '?propertyTypeId=' + $idContainer.val());
+                } else {
+                    $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "'] fieldset").remove();
+                }
             }
         }
 
@@ -1124,7 +1175,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $('body').on('mouseover', 'td.row-action-selector', function (event) {
+    $('body').on('mouseover', 'td.row-act-selector', function (event) {
         $(this).find('ul.row-actions').show();
     });
 
@@ -1179,4 +1230,18 @@ function updateMultiSelectCheckbox($tbody, $listgridHeader) {
     } else {
         $listgridHeader.find("input[type=checkbox].multiselect-checkbox").prop('checked', false);
     }
+}
+
+function updateDynamicForm(url) {
+
+    BLC.ajax({
+        url: url,
+        type: "GET"
+    }, function (data) {
+        var dynamicPropertyName = data.find('div.dynamic-form-container').data('dynamicpropertyname');
+        var $oldDynamicContainer = $('div.dynamic-form-container[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
+        var $newDynamicContainer = data.find('div.dynamic-form-container');
+        $oldDynamicContainer.replaceWith($newDynamicContainer);
+        BLCAdmin.initializeFields($newDynamicContainer);
+    });
 }

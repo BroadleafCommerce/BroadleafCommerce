@@ -646,6 +646,7 @@
             // if the listgrid found is of type 'asset_grid' we want to find the one thats 'asset_grid_folder'
             if (!$tbody.length || $tbody.data('listgridtype') == 'asset_grid') {
                 $tbody = $('.list-grid-table[data-listgridtype=asset_grid_folder]:not([id$=-header])');
+                $filterFields = $tbody.closest('.listgrid-body-wrapper').prev().find('.filter-fields');
             }
 
             // couldn't find filter builder so exit
@@ -777,7 +778,12 @@
                     break;
                 case "COLLECTION_IN":
                 case "COLLECTION_NOT_IN":
-                    var array = JSON.parse(input);
+                    var array;
+                    try {
+                       array = JSON.parse(input);
+                    } catch (e) {
+                       array = input.slice(1, -1).split(',');
+                    }
                     input = '';
                     for (var i = 0; i < array.length; i++) {
                         input += array[i] + '|'
@@ -996,9 +1002,14 @@
 
         getListGridFiltersAsURLParams: function($listGridContainer) {
             var $filterButton = $listGridContainer.find('.filter-button');
-            var hiddenId = $filterButton.data('hiddenid');
 
-            return BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
+            if ($filterButton.length > 0) {
+                var hiddenId = $filterButton.data('hiddenid');
+
+                return BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
+            }
+
+            return [];
         },
 
         getFiltersAsURLParams: function(hiddenId) {

@@ -19,11 +19,14 @@ package org.broadleafcommerce.core.offer.dao;
 
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface OfferCodeDao {
 
     public OfferCode readOfferCodeById(Long offerCode);
+
+    public List<OfferCode> readOfferCodesByIds(Collection<Long> offerCodeIds);
 
     public OfferCode readOfferCodeByCode(String code);
 
@@ -36,4 +39,5 @@ public interface OfferCodeDao {
     public Boolean offerCodeIsUsed(OfferCode code);
 
     public List<OfferCode> readAllOfferCodesByCode(String code);
+
 }

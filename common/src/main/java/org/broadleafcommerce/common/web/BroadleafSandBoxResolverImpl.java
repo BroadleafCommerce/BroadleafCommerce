@@ -39,9 +39,11 @@ import org.springframework.web.context.request.WebRequest;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Responsible for determining the SandBox to use for the current request. 
@@ -76,11 +78,12 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     private static final String SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM = "blSandboxDisplayDateTimeMinutes";
     private static final String SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM = "blSandboxDisplayDateTimeAMPM";
 
-    
+
     /**
      * Request attribute to store the current sandbox
      */
     public static String SANDBOX_VAR = "blSandbox";
+    public static final String CLIENT_TIMEZONE = "clientTimezone";
 
     @Resource(name = "blSandBoxDao")
     private SandBoxDao sandBoxDao;
@@ -232,7 +235,19 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Setting date/time using " + StringUtil.sanitize(sandboxDateTimeParam));
                 }
-                overrideTime = CONTENT_DATE_FORMATTER.parse(sandboxDateTimeParam);
+                TimeZone clientTimeZone = TimeZone.getTimeZone(sandboxDateTimeParam.substring(12));
+
+                FastDateFormat parser = FastDateFormat.getInstance("yyyyMMddHHmm", clientTimeZone);
+
+                overrideTime = parser.parse(sandboxDateTimeParam);
+
+                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+
+                if(BLCRequestUtils.isOKtoUseSession(brc.getWebRequest())) {
+                    HttpSession session = brc.getRequest().getSession();
+
+                    session.setAttribute(CLIENT_TIMEZONE, clientTimeZone);
+                }
             }
         } catch (ParseException e) {
             LOG.debug(e);

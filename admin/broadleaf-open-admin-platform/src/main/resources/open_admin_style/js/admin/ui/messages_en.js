@@ -42,6 +42,7 @@
         staleContent : '409 The request could not be completed due to a conflict with the current state of the target resource, likely due to stale state. Please Refresh.',
         errorOccurred : 'An error occurred',
         loading : 'Loading',
+        validationError : 'Validation error occurred on the server',
         
         // Session timer messages
         sessionCountdown: 'Your session expires in <span>',

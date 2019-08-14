@@ -446,4 +446,5 @@ public interface AdminEntityService {
             List<SectionCrumb> sectionCrumb, String currentTabName)
             throws ServiceException;
 
+    void clearEntityManager();
 }

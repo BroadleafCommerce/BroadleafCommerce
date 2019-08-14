@@ -61,8 +61,12 @@
             <th:block th:if="${listGrid.manualFetch}">
                 <span class="listgrid-total-records" th:text="#{listgrid.manualFetch}"></span>
             </th:block>
-            <th:blockv th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:blockv>
+            <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
+            <th:block th:if="${listGrid.helpText}" != null>
+            <div class="field-help-listgrid" th:text="${listGrid.helpText}"></div>
+            </th:block>
         </div>
+
         <div class="fieldgroup-listgrid-wrapper" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
             <th:block th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
         </div>
