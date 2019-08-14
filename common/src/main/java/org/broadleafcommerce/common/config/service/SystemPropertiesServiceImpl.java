@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
@@ -204,7 +206,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     protected Cache<String, String> getSystemPropertyCache() {
         if (systemPropertyCache == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager();
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
             systemPropertyCache = cacheManager.getCache(getCacheName());
         }
         return systemPropertyCache;

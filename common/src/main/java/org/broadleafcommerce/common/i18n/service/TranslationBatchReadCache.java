@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class TranslationBatchReadCache {
 
     protected static Cache<Long, Map<String, Translation>> getCache() {
         CachingProvider provider = Caching.getCachingProvider();
-        CacheManager cacheManager = provider.getCacheManager();
+        CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), TranslationBatchReadCache.class.getClassLoader());
         return cacheManager.getCache(CACHE_NAME);
     }
     

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.cache.Cache;
@@ -54,8 +55,11 @@ public class HydratedCacheEventListenerFactory implements CacheEventListener, Ca
                                              @Value("${cache.hydratedCache.require.old.value:false}") Boolean oldValue,
                                              @Value("${cache.hydratedCache.require.synchronous:true}") Boolean synchronous) {
         for (String cacheName : cacheNames) {
+            if(cacheName.startsWith("$")){
+                continue;
+            }
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager();
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
             Cache cache = cacheManager.getCache(cacheName);
             cache.registerCacheEntryListener(new MutableCacheEntryListenerConfiguration(FactoryBuilder.factoryOf(hydratedCacheManager), null, oldValue, synchronous));
         }

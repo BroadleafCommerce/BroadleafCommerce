@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
     private synchronized Cache<String, Object> getHeap() {
         if (heap == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager();
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
             Cache<String, Object> cache = cacheManager.getCache(getHydratedCacheName());
             if (cache != null) {
                 heap = cache;

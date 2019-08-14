@@ -59,6 +59,8 @@
                             <value>javassist.*</value>
                             <value>javax.*</value>
                             <value>org.broadleafcommerce.openadmin.web.compatibility.JSCompatibilityRequestWrapper</value>
+                            <value>org\.hibernate.*</value>
+                            <value>org\.quartz.*</value>
                         </array>
                     </property>
                 </bean>

@@ -30,6 +30,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.List;
 
 import javax.cache.Cache;
@@ -162,7 +163,7 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
     protected Cache<String, Resource> getGeneratedResourceCache() {
         if (generatedResourceCache == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager();
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
             generatedResourceCache = cacheManager.getCache(getCacheName());
         }
         return generatedResourceCache;
