@@ -123,10 +123,11 @@ public class BroadleafContextUtil {
                 brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
             }
 
-        if (includeTheme) {
-            if (brc.getTheme() == null) {
-                brc.setRequestDTO(new RequestDTOImpl(brc.getRequest()));
-                brc.setTheme(themeResolver.resolveTheme(wr));
+            if (includeTheme) {
+                if (brc.getTheme() == null) {
+                    brc.setRequestDTO(new RequestDTOImpl(brc.getRequest()));
+                    brc.setTheme(themeResolver.resolveTheme(wr));
+                }
             }
         }
     }
