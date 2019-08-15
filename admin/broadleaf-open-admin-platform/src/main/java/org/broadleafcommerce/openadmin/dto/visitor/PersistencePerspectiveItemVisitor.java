@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.dto.visitor;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
+import org.broadleafcommerce.openadmin.dto.ParentRecordStructure;
 import org.broadleafcommerce.openadmin.dto.SimpleValueMapStructure;
 
 
@@ -32,5 +33,7 @@ public interface PersistencePerspectiveItemVisitor {
     public void visit(SimpleValueMapStructure simpleValueMapStructure);
     
     public void visit(ForeignKey foreignKey);
-    
+
+    public void visit(ParentRecordStructure parentRecordStructure);
+
 }

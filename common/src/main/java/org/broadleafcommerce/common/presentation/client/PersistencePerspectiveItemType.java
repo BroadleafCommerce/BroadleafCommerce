@@ -25,5 +25,6 @@ package org.broadleafcommerce.common.presentation.client;
 public enum PersistencePerspectiveItemType {
     FOREIGNKEY,
     ADORNEDTARGETLIST,
-    MAPSTRUCTURE
+    MAPSTRUCTURE,
+    PARENTRECORDSTRUCTURE
 }
