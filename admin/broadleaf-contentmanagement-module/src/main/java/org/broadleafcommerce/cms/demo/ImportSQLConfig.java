@@ -37,7 +37,6 @@ public class ImportSQLConfig {
     public static final int BASIC_DATA_SPECIAL = AutoImportStage.PRIMARY_PRE_BASIC_DATA + 200;
 
     @Bean
-    @Conditional(DemoCondition.class)
     public AutoImportSql blCMSBasicData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_content_structure.sql," +
                 "config/bc/sql/demo/load_content_data.sql,config/bc/sql/demo/load_content_structure_i18n.sql," +
