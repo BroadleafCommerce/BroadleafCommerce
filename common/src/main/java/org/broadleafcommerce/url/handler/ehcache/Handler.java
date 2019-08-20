@@ -17,30 +17,51 @@
  */
 package org.broadleafcommerce.url.handler.ehcache;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class Handler extends AbstractURLStreamHandler {
+/**
+ * Handler class to register a merged EhCache XML configuration file as a byte array so that 
+ * URIs
+ * 
+ * @author kellytisdell
+ *
+ */
+public class Handler extends AbstractRegisteringURLStreamHandler {
 
-    public static InputStream inputStream;
+    private static byte[] mergedEhCacheXmlBytes = null;
 
     static {
-        addMyPackage(Handler.class);
+        registerHandler(Handler.class);
     }
-
-    public Handler() {
+    
+    public synchronized static void setMergedEhCacheXml(InputStream inputStream) throws IOException {
+        if (mergedEhCacheXmlBytes != null) {
+            throw new IllegalStateException("The merged EhCache XML file was already set and cannot be set again.");
+        }
+        
+        if (inputStream == null) {
+            throw new IllegalArgumentException("The provided InputStream was null.");
+        }
+        
+        mergedEhCacheXmlBytes = IOUtils.toByteArray(inputStream);
     }
-
-    public Handler(InputStream inputStream) {
-        this.inputStream = inputStream;
+    
+    public synchronized static byte[] getMergedEhCacheXml() throws IOException {
+        if (mergedEhCacheXmlBytes == null) {
+            throw new IOException("The merged EhCache XML file was not set.  Please call "
+                    + Handler.class.getName() + "#setMergedEhCacheXml(InputStream) prior to opening a connection.");
+        }
+        return mergedEhCacheXmlBytes;
     }
 
     @Override
     protected URLConnection openConnection(URL u) throws IOException {
-        return new EhCacheUrlConnection(u, inputStream);
+        getMergedEhCacheXml();
+        return new EhCacheUrlConnection(u);
     }
-
-
 }

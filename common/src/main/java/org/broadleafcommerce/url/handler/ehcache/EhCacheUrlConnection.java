@@ -17,32 +17,44 @@
  */
 package org.broadleafcommerce.url.handler.ehcache;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * Simple URLConnection that makes use of an in-memory, 
+ * merged EhCache configuration file rather than file I/O or other I/O.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
 public class EhCacheUrlConnection extends URLConnection {
+    
     private InputStream inputStream;
-
+    
     /**
      * Constructs a URL connection to the specified URL. A connection to
      * the object referenced by the URL is not created.
      *
      * @param url the specified URL.
      */
-    protected EhCacheUrlConnection(URL url, InputStream inputStream) {
+    public EhCacheUrlConnection(URL url) {
         super(url);
-        this.inputStream = inputStream;
     }
 
     @Override
     public void connect() throws IOException {
-
+        //Do nothing.  We should already have the data in a byte array.
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
+        if (inputStream == null) {
+            inputStream = new ByteArrayInputStream(Handler.getMergedEhCacheXml());
+        }
+        
         return inputStream;
     }
 }
