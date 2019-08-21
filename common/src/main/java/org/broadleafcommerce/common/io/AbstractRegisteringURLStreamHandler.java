@@ -38,6 +38,9 @@ import java.util.HashMap;
  * 
  * The protocol, by convention, will be the last part (or folder) of the package in which the Handler class is located.
  * 
+ * For more information, see https://docs.oracle.com/javase/8/docs/api/java/net/URL.html#URL-java.lang.String-java.lang.String-int-java.lang.String- and 
+ * the 'java.protocol.handler.pkgs' system property.
+ * 
  * 
  * @author Kelly Tisdell
  *
