@@ -18,6 +18,7 @@
 package org.broadleafcommerce.url.handler.ehcache;
 
 import org.apache.commons.io.IOUtils;
+import org.broadleafcommerce.common.io.AbstractRegisteringURLStreamHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
