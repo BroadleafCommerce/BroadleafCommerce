@@ -61,7 +61,7 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
     private synchronized Cache<String, Object> getHeap() {
         if (heap == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             Cache<String, Object> cache = cacheManager.getCache(getHydratedCacheName());
             if (cache != null) {
                 heap = cache;

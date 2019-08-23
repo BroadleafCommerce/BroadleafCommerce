@@ -60,7 +60,7 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
     private synchronized Cache<String, Object> getHeap() {
         if (offHeap == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             Cache<String, Object> cache = cacheManager.getCache(getBigMemoryHydratedCacheName());
             if (cache != null) {
                 offHeap = cache;

@@ -372,7 +372,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getPageCache() {
         if (pageCache == null) {
-            pageCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsPageCache");
+            pageCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsPageCache");
         }
         return pageCache;
     }
@@ -380,7 +380,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getPageMapCache() {
         if (pageMapCache == null) {
-            pageMapCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsPageMapCache");
+            pageMapCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsPageMapCache");
         }
         return pageMapCache;
     }
@@ -388,7 +388,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getUriCachedDateCache() {
         if (uriCachedDateCache == null) {
-            uriCachedDateCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("uriCachedDateCache");
+            uriCachedDateCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("uriCachedDateCache");
         }
 
         return uriCachedDateCache;

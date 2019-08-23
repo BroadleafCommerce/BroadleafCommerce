@@ -206,7 +206,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     protected Cache<String, String> getSystemPropertyCache() {
         if (systemPropertyCache == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             systemPropertyCache = cacheManager.getCache(getCacheName());
         }
         return systemPropertyCache;

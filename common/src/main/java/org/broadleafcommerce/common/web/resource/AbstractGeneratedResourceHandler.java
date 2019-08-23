@@ -163,7 +163,7 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
     protected Cache<String, Resource> getGeneratedResourceCache() {
         if (generatedResourceCache == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             generatedResourceCache = cacheManager.getCache(getCacheName());
         }
         return generatedResourceCache;

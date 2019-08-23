@@ -101,7 +101,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     protected static String CACHE_NAME = "blSecurityElements";
     protected static String CACHE_KEY_PREFIX = "security:";
 
-    protected Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache(CACHE_NAME);
+    protected Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache(CACHE_NAME);
 
     /**
      * <p>This is simply a placeholder to be used by {@link #setupPasswordEncoder()} to determine if we're using the

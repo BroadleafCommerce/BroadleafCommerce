@@ -424,7 +424,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public Cache getStructuredContentCache() {
         if (structuredContentCache == null) {
-            structuredContentCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsStructuredContentCache");
+            structuredContentCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsStructuredContentCache");
         }
         return structuredContentCache;
     }

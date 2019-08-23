@@ -59,7 +59,7 @@ public class HydratedCacheEventListenerFactory implements CacheEventListener, Ca
                 continue;
             }
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             Cache cache = cacheManager.getCache(cacheName);
             cache.registerCacheEntryListener(new MutableCacheEntryListenerConfiguration(FactoryBuilder.factoryOf(hydratedCacheManager), null, oldValue, synchronous));
         }

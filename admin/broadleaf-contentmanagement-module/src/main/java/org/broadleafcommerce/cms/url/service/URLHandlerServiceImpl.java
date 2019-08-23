@@ -52,7 +52,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     //This is just a placeholder object to allow us to cache a URI that does not have a URL handler.
     protected static final NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
     private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
-    protected Cache urlHandlerCache;
+    protected Cache<String,URLHandler> urlHandlerCache;
 
     @Resource(name = "blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
@@ -204,16 +204,12 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     }
 
     protected URLHandler getUrlHandlerFromCache(String key) {
-        Object cacheElement = getUrlHandlerCache().get(key);
-        if (cacheElement != null) {
-            return (URLHandler) cacheElement;
-        }
-        return null;
+        return getUrlHandlerCache().get(key);
     }
 
-    protected Cache getUrlHandlerCache() {
+    protected Cache<String,URLHandler> getUrlHandlerCache() {
         if (urlHandlerCache == null) {
-            urlHandlerCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader()).getCache("cmsUrlHandlerCache");
+            urlHandlerCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsUrlHandlerCache");
         }
         return urlHandlerCache;
     }

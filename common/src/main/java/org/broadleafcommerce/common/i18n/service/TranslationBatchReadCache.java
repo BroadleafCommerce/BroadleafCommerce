@@ -51,7 +51,7 @@ public class TranslationBatchReadCache {
 
     protected static Cache<Long, Map<String, Translation>> getCache() {
         CachingProvider provider = Caching.getCachingProvider();
-        CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), TranslationBatchReadCache.class.getClassLoader());
+        CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), TranslationBatchReadCache.class.getClassLoader());
         return cacheManager.getCache(CACHE_NAME);
     }
     

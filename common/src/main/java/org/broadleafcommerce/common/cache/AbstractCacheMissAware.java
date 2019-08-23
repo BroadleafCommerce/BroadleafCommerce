@@ -102,7 +102,7 @@ public abstract class AbstractCacheMissAware<T> {
     protected Cache<String, T> getCache(String cacheName) {
         if (cache == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             cache = cacheManager.getCache(cacheName);
         }
         return cache;

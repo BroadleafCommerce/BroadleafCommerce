@@ -166,7 +166,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     public Cache<String, Object> getCache() {
         if (cache == null) {
             CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:fakeuri"), getClass().getClassLoader());
+            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             cache = cacheManager.getCache(getCacheName());
         }
         return cache;

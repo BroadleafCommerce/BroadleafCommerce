@@ -84,7 +84,7 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
                 Resource mergeResource = merge.getMergedConfigResource(sources);
                 Handler.setMergedEhCacheXml(mergeResource.getInputStream());
                 EhcacheCachingProvider ehcacheProvider = (EhcacheCachingProvider) provider;
-                this.cacheManager = ehcacheProvider.getCacheManager(new URI("ehcache:fakeuri"), getClass().getClassLoader());
+                this.cacheManager = ehcacheProvider.getCacheManager(new URI("ehcache:merged-xml-resource"), getClass().getClassLoader());
             } else {
                 log.warn("Caching Provider does not support merged cache locations. Falling back to default");
             }
