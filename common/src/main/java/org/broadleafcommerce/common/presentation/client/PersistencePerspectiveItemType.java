@@ -26,5 +26,11 @@ public enum PersistencePerspectiveItemType {
     FOREIGNKEY,
     ADORNEDTARGETLIST,
     MAPSTRUCTURE,
+    /**
+     * Used to forward parent data @see {@link ParentRecordStructure},
+     * such as parent entity and its metadata,
+     * through with {@link PersistencePackage},
+     * which can be used to cover missing data at the {@link PersistencePackage} level
+     */
     PARENTRECORDSTRUCTURE
 }

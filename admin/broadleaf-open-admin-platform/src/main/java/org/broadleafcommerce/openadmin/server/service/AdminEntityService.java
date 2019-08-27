@@ -450,12 +450,12 @@ public interface AdminEntityService {
     void clearEntityManager();
 
     /**
-     * Store parent record value, main metadata to the {@link PersistencePackage}
+     * Store parent record value, parent metadata to the {@link PersistencePackage}
      *
      * @param persistencePackage
      * @param entity
-     * @param mainMetadata
+     * @param parentMetadata
      * @return
      */
-    public void populateParentRecordStructure(PersistencePackage persistencePackage, Entity entity, ClassMetadata mainMetadata);
+    public void populateParentRecordStructure(PersistencePackage persistencePackage, Entity entity, ClassMetadata parentMetadata);
 }

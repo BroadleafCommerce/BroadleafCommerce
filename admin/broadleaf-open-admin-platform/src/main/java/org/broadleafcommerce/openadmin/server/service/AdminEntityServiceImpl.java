@@ -1036,8 +1036,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         em.clear();
     }
 
-    public void populateParentRecordStructure(PersistencePackage persistencePackage, Entity entity, ClassMetadata mainMetadata){
+    public void populateParentRecordStructure(PersistencePackage persistencePackage, Entity entity, ClassMetadata parentMetadata){
         persistencePackage.getPersistencePerspective().addPersistencePerspectiveItem(PersistencePerspectiveItemType.PARENTRECORDSTRUCTURE,
-                                                                                        new ParentRecordStructure(entity, mainMetadata));
+                                                                                        new ParentRecordStructure(entity, parentMetadata));
     }
 }

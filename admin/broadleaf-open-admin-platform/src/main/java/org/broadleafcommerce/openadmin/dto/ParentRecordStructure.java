@@ -27,15 +27,15 @@ public class ParentRecordStructure implements Serializable, PersistencePerspecti
     private static final long serialVersionUID = 1L;
 
     private Entity parentRecord;
-    private ClassMetadata mainMetadata;
+    private ClassMetadata parentMetadata;
 
     public ParentRecordStructure() {
         //do nothing
     }
 
-    public ParentRecordStructure(Entity parentRecord, ClassMetadata mainMetadata) {
+    public ParentRecordStructure(Entity parentRecord, ClassMetadata parentMetadata) {
         this.parentRecord = parentRecord;
-        this.mainMetadata = mainMetadata;
+        this.parentMetadata = parentMetadata;
     }
 
     public Entity getParentRecord() {
@@ -46,12 +46,12 @@ public class ParentRecordStructure implements Serializable, PersistencePerspecti
         this.parentRecord = parentRecord;
     }
 
-    public ClassMetadata getMainMetadata() {
-        return mainMetadata;
+    public ClassMetadata getParentMetadata() {
+        return parentMetadata;
     }
 
-    public void setMainMetadata(ClassMetadata mainMetadata) {
-        this.mainMetadata = mainMetadata;
+    public void setParentMetadata(ClassMetadata parentMetadata) {
+        this.parentMetadata = parentMetadata;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ParentRecordStructure implements Serializable, PersistencePerspecti
     public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
         ParentRecordStructure parentRecordStructure = new ParentRecordStructure();
         parentRecordStructure.parentRecord = parentRecord;
-        parentRecordStructure.mainMetadata = mainMetadata;
+        parentRecordStructure.parentMetadata = parentMetadata;
 
         return parentRecordStructure;
     }
@@ -74,8 +74,8 @@ public class ParentRecordStructure implements Serializable, PersistencePerspecti
         if (parentRecord != null) {
             sb.append(parentRecord.toString()).append('\'');
         }
-        if (mainMetadata != null && mainMetadata.getProperties() != null) {
-            sb.append(", mainMetadata=").append(Arrays.toString(mainMetadata.getProperties()));
+        if (parentMetadata != null && parentMetadata.getProperties() != null) {
+            sb.append(", parentMetadata=").append(Arrays.toString(parentMetadata.getProperties()));
         }
         sb.append('}');
         return sb.toString();
@@ -89,13 +89,13 @@ public class ParentRecordStructure implements Serializable, PersistencePerspecti
         ParentRecordStructure that = (ParentRecordStructure) o;
 
         if (parentRecord != null ? !parentRecord.equals(that.parentRecord) : that.parentRecord != null) return false;
-        return mainMetadata != null ? mainMetadata.equals(that.mainMetadata) : that.mainMetadata == null;
+        return parentMetadata != null ? parentMetadata.equals(that.parentMetadata) : that.parentMetadata == null;
     }
 
     @Override
     public int hashCode() {
         int result = parentRecord != null ? parentRecord.hashCode() : 0;
-        result = 31 * result + (mainMetadata != null ? mainMetadata.hashCode() : 0);
+        result = 31 * result + (parentMetadata != null ? parentMetadata.hashCode() : 0);
         return result;
     }
 }
