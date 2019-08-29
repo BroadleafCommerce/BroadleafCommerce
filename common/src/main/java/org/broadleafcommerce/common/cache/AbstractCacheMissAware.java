@@ -29,13 +29,10 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
 
 
 /**
@@ -51,8 +48,9 @@ public abstract class AbstractCacheMissAware<T> {
     
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
-
-    protected Cache<String, T> cache;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     private Object nullObject = null;
 
@@ -100,12 +98,7 @@ public abstract class AbstractCacheMissAware<T> {
      * @return the underlying cache
      */
     protected Cache<String, T> getCache(String cacheName) {
-        if (cache == null) {
-            CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
-            cache = cacheManager.getCache(cacheName);
-        }
-        return cache;
+        return cacheManager.getCache(cacheName);
     }
 
     /**

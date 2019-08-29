@@ -55,7 +55,6 @@ import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -66,7 +65,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.cache.Cache;
-import javax.cache.Caching;
+import javax.cache.CacheManager;
 
 /**
  * @author bpolster
@@ -102,6 +101,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     protected Cache structuredContentCache;
 
@@ -424,7 +426,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public Cache getStructuredContentCache() {
         if (structuredContentCache == null) {
-            structuredContentCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsStructuredContentCache");
+            structuredContentCache = cacheManager.getCache("cmsStructuredContentCache");
         }
         return structuredContentCache;
     }

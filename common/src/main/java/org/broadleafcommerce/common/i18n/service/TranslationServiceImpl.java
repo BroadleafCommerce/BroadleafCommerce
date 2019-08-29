@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -47,8 +46,6 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
 
 @Service("blTranslationService")
 public class TranslationServiceImpl implements TranslationService, TranslationSupport {
@@ -66,8 +63,6 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
     
-    protected Cache<String, Object> cache;
-
     @Resource(name="blTranslationServiceExtensionManager")
     protected TranslationServiceExtensionManager extensionManager;
 
@@ -96,6 +91,11 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
 
     @Resource
     protected List<TranslationOverrideStrategy> strategies;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
+    
+    protected Cache<String, Object> cache;
     
     @Override
     @Transactional("blTransactionManager")
@@ -165,9 +165,11 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     @Override
     public Cache<String, Object> getCache() {
         if (cache == null) {
-            CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
-            cache = cacheManager.getCache(getCacheName());
+            synchronized (this) {
+                if (cache == null) {
+                    cache = cacheManager.getCache(getCacheName());
+                }
+            }
         }
         return cache;
     }

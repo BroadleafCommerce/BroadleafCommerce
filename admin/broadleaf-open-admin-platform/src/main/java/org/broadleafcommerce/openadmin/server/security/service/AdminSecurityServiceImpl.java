@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -41,32 +42,26 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotPasswordEvent;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
 import org.broadleafcommerce.openadmin.server.security.extension.AdminSecurityServiceExtensionManager;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
-import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserDetails;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
-import org.broadleafcommerce.openadmin.server.security.event.AdminForgotPasswordEvent;
-import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
 
-
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.cache.Cache;
-import javax.cache.Caching;
+import javax.cache.CacheManager;
 
 
 /**
@@ -97,11 +92,14 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Resource(name = "blAdminPermissionDao")
     protected AdminPermissionDao adminPermissionDao;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     protected static String CACHE_NAME = "blSecurityElements";
     protected static String CACHE_KEY_PREFIX = "security:";
 
-    protected Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache(CACHE_NAME);
+    protected Cache<String, Boolean> cache;;
 
     /**
      * <p>This is simply a placeholder to be used by {@link #setupPasswordEncoder()} to determine if we're using the
@@ -215,7 +213,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Admin Security Cache DELETE");
         }
-        cache.removeAll();
+        getCache().removeAll();
     }
 
     protected String generateSecurePassword() {
@@ -239,7 +237,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         Boolean response = null;
         String cacheKey = buildCacheKey(adminUser, permissionType, ceilingEntityFullyQualifiedName);
-        Object objectValue = cache.get(cacheKey);
+        Object objectValue = getCache().get(cacheKey);
 
         if (objectValue != null) {
             response = (Boolean) objectValue;
@@ -266,7 +264,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                 }
             }
 
-            cache.put(cacheKey, response);
+            getCache().put(cacheKey, response);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Admin Security Cache PUT For: \"" + cacheKey + "\" = " + response);
@@ -544,5 +542,16 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
      */
     protected String encodePassword(String rawPassword) {
         return passwordEncoderBean.encode(rawPassword);
+    }
+    
+    protected Cache<String, Boolean> getCache() {
+        if (cache == null) {
+            synchronized (this) {
+                if (cache == null) {
+                    cache = cacheManager.getCache(CACHE_NAME);
+                }
+            }
+        }
+        return cache;
     }
 }

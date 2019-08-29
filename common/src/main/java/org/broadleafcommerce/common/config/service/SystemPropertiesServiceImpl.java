@@ -31,13 +31,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-
 import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
 
 /**
  * Service that retrieves property settings from the database.   If not set in
@@ -70,6 +66,9 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     @Value("${system.property.cache.timeout}")
     protected int systemPropertyCacheTimeout;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     @Autowired
     protected Environment env;
@@ -133,7 +132,6 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     }
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {
-        // TODO 6.1 ehcache 3 unable to set mapping specific expiry to systemPropertyCacheTimeout
         String key = buildKey(propertyName);
         getSystemPropertyCache().put(key, propertyValue);
     }
@@ -205,9 +203,11 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     protected Cache<String, String> getSystemPropertyCache() {
         if (systemPropertyCache == null) {
-            CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
-            systemPropertyCache = cacheManager.getCache(getCacheName());
+            synchronized (this) {
+                if (systemPropertyCache == null) {
+                    systemPropertyCache = cacheManager.getCache(getCacheName());
+                }
+            }
         }
         return systemPropertyCache;
     }

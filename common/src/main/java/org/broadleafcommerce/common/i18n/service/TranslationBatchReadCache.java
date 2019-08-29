@@ -24,18 +24,16 @@ package org.broadleafcommerce.common.i18n.service;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
 
 /**
  * Thread-local cache structure that contains all of the {@link Translation}s for a batch of processing. This is mainly
@@ -50,8 +48,7 @@ public class TranslationBatchReadCache {
     public static final String CACHE_NAME = "blBatchTranslationCache";
 
     protected static Cache<Long, Map<String, Translation>> getCache() {
-        CachingProvider provider = Caching.getCachingProvider();
-        CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), TranslationBatchReadCache.class.getClassLoader());
+        CacheManager cacheManager = ApplicationContextHolder.getApplicationContext().getBean("blCacheManager", CacheManager.class);
         return cacheManager.getCache(CACHE_NAME);
     }
     

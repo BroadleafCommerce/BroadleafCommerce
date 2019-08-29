@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -39,7 +38,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.cache.Cache;
-import javax.cache.Caching;
+import javax.cache.CacheManager;
 
 
 /**
@@ -59,6 +58,9 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
     @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<String, Pattern>(2000);
 
@@ -209,7 +211,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
     protected Cache<String,URLHandler> getUrlHandlerCache() {
         if (urlHandlerCache == null) {
-            urlHandlerCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsUrlHandlerCache");
+            urlHandlerCache = cacheManager.getCache("cmsUrlHandlerCache");
         }
         return urlHandlerCache;
     }

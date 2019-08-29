@@ -30,13 +30,10 @@ import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.List;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
 
 /**
  * An abstract GeneratedResourceHandler that is capable of responding to a single specified filename and generate
@@ -61,6 +58,9 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
 
     @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
     protected ResourceRequestExtensionManager extensionManager;
+    
+    @javax.annotation.Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     protected Cache<String, Resource> generatedResourceCache;
     
@@ -162,9 +162,11 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
     
     protected Cache<String, Resource> getGeneratedResourceCache() {
         if (generatedResourceCache == null) {
-            CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
-            generatedResourceCache = cacheManager.getCache(getCacheName());
+            synchronized (this) {
+                if (generatedResourceCache == null) {
+                    generatedResourceCache = cacheManager.getCache(getCacheName());
+                }
+            }
         }
         return generatedResourceCache;
     }
