@@ -17,6 +17,11 @@
  */
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
+import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
+import static org.ehcache.config.builders.ConfigurationBuilder.newConfigurationBuilder;
+import static org.ehcache.config.builders.ResourcePoolsBuilder.newResourcePoolsBuilder;
+import static org.ehcache.xml.XmlConfiguration.getClassForName;
+
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ConfigurationBuilder;
@@ -49,12 +54,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
-
-import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
-import static org.ehcache.config.builders.ConfigurationBuilder.newConfigurationBuilder;
-import static org.ehcache.config.builders.ResourcePoolsBuilder.newResourcePoolsBuilder;
-import static org.ehcache.xml.XmlConfiguration.getClassForName;
-
+// TODO: Determine if this is required...  First thought is that it is not.
 public class MergeConfigurationParser extends ConfigurationParser {
 
     protected static final String SCHEMA = "schema";

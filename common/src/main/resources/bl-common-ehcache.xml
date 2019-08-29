@@ -134,7 +134,7 @@
          <expiry>
              <none/>
          </expiry>
-         <heap>5000</heap>
+         <heap unit="entries">5000</heap>
      </cache>
 
     <cache alias="blTemplateElements"
@@ -187,9 +187,9 @@
 
     <cache alias="query.blSandBoxElements">
         <expiry>
-            <ttl>3</ttl>
+            <ttl unit="seconds">3</ttl>
         </expiry>
-        <heap>500</heap>
+        <heap unit="entries">500</heap>
     </cache>
 
     <cache alias="blSecurityElements"
@@ -202,5 +202,5 @@
 
     <cache alias="blSiteElementsQuery"
            uses-template="oneDayCacheTemplate"/>
-
+    
 </config>

@@ -18,7 +18,6 @@
 package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -42,7 +41,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -52,7 +50,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.cache.Cache;
-import javax.cache.Caching;
+import javax.cache.CacheManager;
 
 
 /**
@@ -91,11 +89,14 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name = "blPageQueryExtensionManager")
     protected PageQueryExtensionManager queryExtensionManager;
-
     
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
+
     protected Cache pageCache;
     protected Cache pageMapCache;
     protected Cache uriCachedDateCache;
+    
     protected final PageDTO NULL_PAGE = new NullPageDTO();
 
     /*
@@ -372,7 +373,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getPageCache() {
         if (pageCache == null) {
-            pageCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsPageCache");
+            pageCache = cacheManager.getCache("cmsPageCache");
         }
         return pageCache;
     }
@@ -380,7 +381,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getPageMapCache() {
         if (pageMapCache == null) {
-            pageMapCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("cmsPageMapCache");
+            pageMapCache = cacheManager.getCache("cmsPageMapCache");
         }
         return pageMapCache;
     }
@@ -388,7 +389,7 @@ public class PageServiceImpl implements PageService {
     @Override
     public Cache getUriCachedDateCache() {
         if (uriCachedDateCache == null) {
-            uriCachedDateCache = Caching.getCachingProvider().getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader()).getCache("uriCachedDateCache");
+            uriCachedDateCache = cacheManager.getCache("uriCachedDateCache");
         }
 
         return uriCachedDateCache;
