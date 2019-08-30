@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -44,6 +45,7 @@ import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
+import org.broadleafcommerce.openadmin.dto.ParentRecordStructure;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
@@ -815,7 +817,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                         //make sure there is only one '.' to ensure we are looking at properties on the current prefix level
                         //in the case of the prefix defaultSku, we want defaultSku.id not defaultSku.skuAttributes.id
                         if (StringUtils.countMatches(property.getName().replace(tempPrefix, ""), ".") == 1) {
-                            if (cmd.getPMap().containsKey(property.getName())) {
+                            if (cmd.getPMap().containsKey(property.getName()) &&
+                                    (cmd.getPMap().get(property.getName()).getMetadata() instanceof BasicFieldMetadata)) {
                                 BasicFieldMetadata md = (BasicFieldMetadata) cmd.getPMap().get(property.getName()).getMetadata();
                                 if (md.getFieldType().equals(SupportedFieldType.ID)) {
                                     return property.getValue();
@@ -1031,5 +1034,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     public void clearEntityManager(){
         em.clear();
+    }
+
+    public void populateParentRecordStructure(PersistencePackage persistencePackage, Entity entity, ClassMetadata parentMetadata){
+        persistencePackage.getPersistencePerspective().addPersistencePerspectiveItem(PersistencePerspectiveItemType.PARENTRECORDSTRUCTURE,
+                                                                                        new ParentRecordStructure(entity, parentMetadata));
     }
 }
