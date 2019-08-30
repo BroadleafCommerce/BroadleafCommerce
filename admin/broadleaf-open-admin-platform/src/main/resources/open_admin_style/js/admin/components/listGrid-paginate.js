@@ -526,10 +526,13 @@
         },
 
         getActualRowIndex : function($tr) {
-            var trPlacementTop = $tr.position().top;
-            var rowHeight = this.getRowHeight($tr.closest('tbody'));
-            // The division should produce an integer, assuming the row heights are consistent.
-            return trPlacementTop / rowHeight;
+            var targetRow = $tr[0];
+            var rows = $tr.closest('tbody').find('tr');
+            for(var i = 0; i < rows.length; i++){
+                if(rows[i].isSameNode(targetRow)){
+                    return i;
+                }
+            }
         },
         
         getTopVisibleIndex : function($tbody) {
