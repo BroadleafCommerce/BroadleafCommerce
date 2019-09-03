@@ -289,4 +289,11 @@
         <heap>100000</heap>
     </cache>
     
+    <cache alias="blProductOverrideCache" >
+        <expiry>
+             <none/>
+         </expiry>
+        <heap>100</heap>
+    </cache>
+    
 </config>
