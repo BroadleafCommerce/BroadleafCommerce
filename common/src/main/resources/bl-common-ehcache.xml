@@ -20,11 +20,8 @@
         xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.3.xsd">
 
     <persistence directory="${java.io.tmpdir}"/>
-
+    
     <cache-template name="hydratedCacheTemplate">
-        <expiry>
-            <ttl>86400</ttl>
-        </expiry>
         <listeners>
             <listener>
                 <class>org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory</class>
@@ -37,54 +34,70 @@
                 <events-to-fire-on>EVICTED</events-to-fire-on>
             </listener>
         </listeners>
+    </cache-template>
+    
+    <!-- This is required by Hibernate to ensure that query caches return
+          corrrect results. It must contain at least as many entries as there are
+          DB tables and must never expire. 
+          This cache name is deprecated in favor of org.hibernate.cache.spi.TimestampsCache. -->
+     <cache alias="org.hibernate.cache.spi.UpdateTimestampsCache">
+         <expiry>
+             <none/>
+         </expiry>
+         <heap unit="entries">5000</heap>
+     </cache>
+     
+     <!-- This is required by Hibernate to ensure that query caches return
+          corrrect results. It must contain at least as many entries as there are
+          DB tables and must never expire.-->
+     <cache alias="org.hibernate.cache.spi.TimestampsCache">
+         <expiry>
+             <none/>
+         </expiry>
+         <heap unit="entries">5000</heap>
+     </cache>
+    
+    <cache alias="blStandardElements" uses-template="hydratedCacheTemplate">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>10000</heap>
+    </cache>
+    
+    <cache alias="blProducts" uses-template="hydratedCacheTemplate">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
         <heap>100000</heap>
-    </cache-template>
-
-    <cache-template name="urlCacheTemplate">
+    </cache>
+           
+    <cache alias="blProductUrlCache">
         <expiry>
             <ttl>3600</ttl>
         </expiry>
-        <heap>1000</heap>
-    </cache-template>
-
-    <cache-template name="tenMinuteCacheTemplate">
-        <expiry>
-            <ttl>600</ttl>
-        </expiry>
-        <heap>1000</heap>
-    </cache-template>
-
-    <cache-template name="oneHourCacheTemplate">
-        <expiry>
-            <ttl>3600</ttl>
-        </expiry>
-        <heap>1000</heap>
-    </cache-template>
-
-    <cache-template name="oneDayCacheTemplate">
+        <heap>10000</heap>
+    </cache>
+    
+    <cache alias="blCategories" uses-template="hydratedCacheTemplate">
         <expiry>
             <ttl>86400</ttl>
         </expiry>
         <heap>1000</heap>
-    </cache-template>
+    </cache>
 
-    <cache alias="blStandardElements"
-           uses-template="hydratedCacheTemplate"/>
+    <cache alias="blCategoryUrlCache">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="blProducts"
-           uses-template="hydratedCacheTemplate"/>
-
-    <cache alias="blProductUrlCache"
-           uses-template="urlCacheTemplate"/>
-
-    <cache alias="blCategories"
-           uses-template="hydratedCacheTemplate"/>
-
-    <cache alias="blCategoryUrlCache"
-           uses-template="urlCacheTemplate"/>
-
-    <cache alias="blOffers"
-           uses-template="hydratedCacheTemplate"/>
+    <cache alias="blOffers" uses-template="hydratedCacheTemplate">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>100000</heap>
+    </cache>
 
     <cache alias="blInventoryElements">
         <expiry>
@@ -93,56 +106,87 @@
         <heap>100000</heap>
     </cache>
 
-    <cache alias="org.hibernate.cache.internal.StandardQueryCache"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="org.hibernate.cache.internal.StandardQueryCache">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="query.Catalog"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="query.Catalog">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="query.PriceList"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="query.PriceList">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="query.Cms"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="query.Cms">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="query.Offer"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="query.Offer">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="blOrderElements"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="blOrderElements">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>100000</heap>
+    </cache>
 
-     <cache alias="blCustomerElements"
-            uses-template="tenMinuteCacheTemplate">
-         <heap>100000</heap>
+     <cache alias="blCustomerElements">
+         <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>100000</heap>
      </cache>
 
-    <cache alias="query.Order"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="query.Order">
+        <expiry>
+            <ttl>60</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="query.Search"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="query.Search">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-     <cache alias="generatedResourceCache"
-            uses-template="tenMinuteCacheTemplate">
+     <cache alias="generatedResourceCache">
+         <expiry>
+            <ttl>600</ttl>
+         </expiry>
          <heap>100</heap>
      </cache>
 
-     <!-- This is required by Hibernate to ensure that query caches return
-          corrrect results. It must contain at least as many entries as there are
-          DB tables. -->
-     <cache alias="org.hibernate.cache.spi.UpdateTimestampsCache">
+     <cache alias="blTemplateElements">
          <expiry>
-             <none/>
+            <ttl>3600</ttl>
          </expiry>
-         <heap unit="entries">5000</heap>
+         <heap>1000</heap>
      </cache>
 
-    <cache alias="blTemplateElements"
-           uses-template="oneHourCacheTemplate"/>
-
-    <!-- 1 hour cache -->
-    <cache alias="blTranslationElements"
-           uses-template="oneHourCacheTemplate">
+    <cache alias="blTranslationElements">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
         <heap>10000000</heap>
     </cache>
 
@@ -154,29 +198,54 @@
         <heap>10000</heap>
     </cache>
 
-    <!-- 10 minute cache -->
-    <cache alias="blConfigurationModuleElements"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="blConfigurationModuleElements">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="query.ConfigurationModuleElements"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="query.ConfigurationModuleElements">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <!-- 10 minute cache -->
-    <cache alias="blSystemPropertyElements"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="blSystemPropertyElements">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="blSystemPropertyNullCheckCache"
-           uses-template="tenMinuteCacheTemplate"/>
+    <cache alias="blSystemPropertyNullCheckCache">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <!-- 24 hour cache -->
-    <cache alias="blBundleElements"
-           uses-template="oneDayCacheTemplate"/>
+    <cache alias="blBundleElements">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="blResourceCacheElements"
-           uses-template="oneDayCacheTemplate"/>
+    <cache alias="blResourceCacheElements">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="blResourceTransformerCacheElements"
-           uses-template="oneDayCacheTemplate"/>
+    <cache alias="blResourceTransformerCacheElements">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
     <cache alias="blSandBoxElements">
         <expiry>
@@ -187,20 +256,37 @@
 
     <cache alias="query.blSandBoxElements">
         <expiry>
-            <ttl unit="seconds">3</ttl>
+            <ttl>3</ttl>
         </expiry>
-        <heap unit="entries">500</heap>
+        <heap>500</heap>
     </cache>
 
-    <cache alias="blSecurityElements"
-           uses-template="oneDayCacheTemplate"/>
+    <cache alias="blSecurityElements">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache alias="blSiteElements"
-           uses-template="oneDayCacheTemplate">
+    <cache alias="blSiteElements">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
         <heap>5000</heap>
     </cache>
 
-    <cache alias="blSiteElementsQuery"
-           uses-template="oneDayCacheTemplate"/>
+    <cache alias="blSiteElementsQuery">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
+    
+    <cache alias="hydrated-cache" >
+        <expiry>
+             <none/>
+         </expiry>
+        <heap>100000</heap>
+    </cache>
     
 </config>
