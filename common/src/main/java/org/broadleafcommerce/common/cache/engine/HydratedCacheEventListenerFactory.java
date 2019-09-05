@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.ehcache.event.CacheEvent;
 import org.ehcache.event.CacheEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +25,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-import javax.cache.Caching;
 import javax.cache.configuration.FactoryBuilder;
 import javax.cache.configuration.MutableCacheEntryListenerConfiguration;
 import javax.cache.event.CacheEntryListener;
-import javax.cache.spi.CachingProvider;
 
 /**
  * 
@@ -54,12 +52,11 @@ public class HydratedCacheEventListenerFactory implements CacheEventListener, Ca
                                              @Value("${cache.hydratedCache.names}") List<String> cacheNames,
                                              @Value("${cache.hydratedCache.require.old.value:false}") Boolean oldValue,
                                              @Value("${cache.hydratedCache.require.synchronous:true}") Boolean synchronous) {
+        CacheManager cacheManager = ApplicationContextHolder.getApplicationContext().getBean("blCacheManager", CacheManager.class);
         for (String cacheName : cacheNames) {
             if(cacheName.startsWith("$")){
                 continue;
             }
-            CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
             Cache cache = cacheManager.getCache(cacheName);
             cache.registerCacheEntryListener(new MutableCacheEntryListenerConfiguration(FactoryBuilder.factoryOf(hydratedCacheManager), null, oldValue, synchronous));
         }

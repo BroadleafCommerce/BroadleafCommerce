@@ -282,13 +282,6 @@
         <heap>1000</heap>
     </cache>
     
-    <cache alias="hydrated-cache" >
-        <expiry>
-             <none/>
-         </expiry>
-        <heap>100000</heap>
-    </cache>
-    
     <cache alias="blProductOverrideCache" >
         <expiry>
              <none/>

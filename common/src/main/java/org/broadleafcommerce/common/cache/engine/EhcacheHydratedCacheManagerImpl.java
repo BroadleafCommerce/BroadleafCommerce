@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.cache.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.cache.JCacheUtil;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -30,12 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.configuration.Configuration;
-import javax.cache.configuration.MutableConfiguration;
 import javax.cache.event.CacheEntryEvent;
 import javax.cache.event.CacheEntryListenerException;
-import javax.cache.expiry.EternalExpiryPolicy;
 
 /**
  * 
@@ -61,13 +58,13 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
 
     private synchronized Cache<String, Object> getHeap() {
         if (heap == null) {
-            CacheManager cacheManager = ApplicationContextHolder.getApplicationContext().getBean("blCacheManager", CacheManager.class);
-            Cache<String, Object> cache = cacheManager.getCache(getHydratedCacheName());
+            JCacheUtil cacheUtil = ApplicationContextHolder.getApplicationContext().getBean("blJCacheUtil", JCacheUtil.class);
+            Cache<String, Object> cache = cacheUtil.getCache(getHydratedCacheName());
             if (cache != null) {
                 heap = cache;
             } else {
-                Configuration<String, Object> config = getHydratedCacheConfiguration();
-                heap = cacheManager.createCache(getHydratedCacheName(), config);
+                //We want this to never expire, so we use a TTL of -1. Max elements are 100000.
+                heap = cacheUtil.createCache(getHydratedCacheName(), -1, 100000, String.class, Object.class);
             }
         }
         return heap;
@@ -75,17 +72,6 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
 
     protected String getHydratedCacheName() {
         return HYDRATED_CACHE_NAME;
-    }
-
-    protected Configuration<String, Object> getHydratedCacheConfiguration() {
-        LOG.warn("The JCache configuration for cache name " 
-                + HYDRATED_CACHE_NAME 
-                + " was not found.  Configuring a new eternal cache, but due to JCache API "
-                + "limitations there is no limit on the cache size.  Consider configuring the cache via XML configuration.");
-        MutableConfiguration<String, Object> config = new MutableConfiguration<>();
-        config.setExpiryPolicyFactory(EternalExpiryPolicy.factoryOf());
-        config.setTypes(String.class, Object.class);
-        return config;
     }
 
     @Override
@@ -147,12 +133,14 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
     }
 
     protected void removeCache(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) {
-        // TODO 6.1 ehcache 3 Make sure that cache.getName() is in fact the region
-        for (CacheEntryEvent<? extends Serializable, ? extends Object> event : events) {
-            Cache<String, Object> cache = event.getSource();
-            String region = cache.getName();
-            Serializable key = event.getKey();
-            removeCache(region, key);
+        if (events != null) {
+            for (CacheEntryEvent<? extends Serializable, ? extends Object> event : events) {
+                @SuppressWarnings("unchecked")
+                Cache<String, Object> cache = event.getSource();
+                String region = cache.getName();
+                Serializable key = event.getKey();
+                removeCache(region, key);
+            }
         }
     }
 

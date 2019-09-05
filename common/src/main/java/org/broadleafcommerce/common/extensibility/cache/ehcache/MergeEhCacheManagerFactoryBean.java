@@ -43,7 +43,7 @@ import lombok.extern.apachecommons.CommonsLog;
 @CommonsLog
 public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean implements ApplicationContextAware {
     
-    public static final String MERGED_EH_CACHE_RESOURCE_URI = DefaultEhCacheUtil.EH_CACHE_MERGED_XML_RESOUCE_NAME;
+    public static final String EH_CACHE_MERGED_XML_RESOUCE_URI = DefaultEhCacheUtil.EH_CACHE_MERGED_XML_RESOUCE_URI;
 
     private ApplicationContext applicationContext;
 
@@ -86,7 +86,7 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
                 Resource mergeResource = merge.getMergedConfigResource(sources);
                 Handler.setMergedEhCacheXml(mergeResource.getInputStream());
                 EhcacheCachingProvider ehcacheProvider = (EhcacheCachingProvider) provider;
-                this.cacheManager = ehcacheProvider.getCacheManager(new URI(MERGED_EH_CACHE_RESOURCE_URI), getClass().getClassLoader());
+                this.cacheManager = ehcacheProvider.getCacheManager(new URI(EH_CACHE_MERGED_XML_RESOUCE_URI), getClass().getClassLoader());
             } else {
                 log.warn("Caching Provider does not support merged cache locations. Falling back to default");
             }
@@ -104,7 +104,7 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
 
     @Override
     public Class<?> getObjectType() {
-        return (this.cacheManager != null ? this.cacheManager.getClass() : CacheManager.class);
+        return CacheManager.class;
     }
 
     @Override
