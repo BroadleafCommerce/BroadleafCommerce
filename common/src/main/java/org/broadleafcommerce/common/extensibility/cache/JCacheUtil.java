@@ -15,9 +15,9 @@ public interface JCacheUtil {
     public CacheManager getCacheManager();
     
     /**
-     * Returns a new Cache with the appropriate cache name, TTL, and maxElements.  If the cache exists, the existing cache will be returned and will not be reconfigured.
+     * Returns a new Cache with the appropriate cache name, TTL, and maxElements.  If the cache exists, an exception will be thrown.
      * 
-     * The ttl and maxElementsInMemory settings may be implementation specific and so implementors may choose to ignore these elements.
+     * The ttl and maxElementsInMemory settings may be implementation specific and so implementors may choose to ignore these arguments.
      * 
      * If ttlSeconds is less than 1 then the cache will not expire.
      * 
@@ -26,12 +26,12 @@ public interface JCacheUtil {
      * @param maxElementsInMemory
      * @return
      */
-    public Cache<Object, Object> getOrCreateCache(String cacheName, int ttlSeconds, int maxElementsInMemory);
+    public Cache<Object, Object> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory);
     
     /**
-     * Returns a new Cache with the appropriate cache name, TTL, and maxElements.  If the cache exists, the existing cache will be returned and will not be reconfigured.
+     * Returns a new Cache with the appropriate cache name, TTL, and maxElements.  If the cache exists, an exception will be thrown.
      * 
-     * The ttl and maxElementsInMemory settings may be implementation specific and so implementors may choose to ignore these elements.
+     * The ttl and maxElementsInMemory settings may be implementation specific and so implementors may choose to ignore these arguments.
      * 
      * If ttlSeconds is less than 1 then the cache will not expire.
      * 
@@ -42,7 +42,7 @@ public interface JCacheUtil {
      * @param value
      * @return
      */
-    public <K,V> Cache<K, V> getOrCreateCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value);
+    public <K,V> Cache<K, V> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value);
     
     /**
      * Returns the cache associated with the name or null if no cache exists.

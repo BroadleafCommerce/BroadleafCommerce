@@ -36,6 +36,11 @@ public class DefaultJCacheUtil implements JCacheUtil {
         Assert.notNull(cacheManager, "The URI is for the cache configuration and cannot be null.");
         this.cacheManager = Caching.getCachingProvider().getCacheManager(URI.create(uri), getClass().getClassLoader());
     }
+    
+    public DefaultJCacheUtil(URI uri) {
+        Assert.notNull(cacheManager, "The URI is for the cache configuration and cannot be null.");
+        this.cacheManager = Caching.getCachingProvider().getCacheManager(uri, getClass().getClassLoader());
+    }
 
     @Override
     public CacheManager getCacheManager() {
@@ -43,35 +48,25 @@ public class DefaultJCacheUtil implements JCacheUtil {
     }
 
     @Override
-    public Cache<Object, Object> getOrCreateCache(String cacheName, int ttlSeconds, int maxElementsInMemory) {
-        return getOrCreateCache(cacheName, ttlSeconds, maxElementsInMemory, Object.class, Object.class);
+    public Cache<Object, Object> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory) {
+        return createCache(cacheName, ttlSeconds, maxElementsInMemory, Object.class, Object.class);
     }
 
     @Override
-    public <K, V> Cache<K, V> getOrCreateCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value) {
-        Cache<K,V> cache = getCacheManager().getCache(cacheName, key, value);
-        if (cache == null) {
-            synchronized (this) {
-                cache = getCacheManager().getCache(cacheName, key, value);
-                if (cache == null) {
-                    Factory<ExpiryPolicy> expiryPolicy;
-                    if (ttlSeconds < 1) {
-                        //Eternal
-                        expiryPolicy = EternalExpiryPolicy.factoryOf();
-                    } else {
-                        //Number of seconds since created or updated in cache
-                        expiryPolicy = ModifiedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, (long) ttlSeconds));
-                    }
-                    
-                    MutableConfiguration<K, V> config = new MutableConfiguration<>();
-                    config.setTypes(key, value);
-                    config.setExpiryPolicyFactory(expiryPolicy);
-                    cache = getCacheManager().createCache(cacheName, config);
-                }
-            }
+    public synchronized <K, V> Cache<K, V>  createCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value) {
+        Factory<ExpiryPolicy> expiryPolicy;
+        if (ttlSeconds < 1) {
+            //Eternal
+            expiryPolicy = EternalExpiryPolicy.factoryOf();
+        } else {
+            //Number of seconds since created or updated in cache
+            expiryPolicy = ModifiedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, (long) ttlSeconds));
         }
         
-        return cache;
+        MutableConfiguration<K, V> config = new MutableConfiguration<>();
+        config.setTypes(key, value);
+        config.setExpiryPolicyFactory(expiryPolicy);
+        return getCacheManager().createCache(cacheName, config);
     }
 
     @Override

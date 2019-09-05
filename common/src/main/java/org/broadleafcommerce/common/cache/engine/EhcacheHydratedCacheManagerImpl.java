@@ -19,10 +19,10 @@ package org.broadleafcommerce.common.cache.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,13 +31,11 @@ import java.util.Map;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-import javax.cache.Caching;
 import javax.cache.configuration.Configuration;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.event.CacheEntryEvent;
 import javax.cache.event.CacheEntryListenerException;
 import javax.cache.expiry.EternalExpiryPolicy;
-import javax.cache.spi.CachingProvider;
 
 /**
  * 
@@ -47,9 +45,12 @@ import javax.cache.spi.CachingProvider;
 @Component("blHydratedCacheMangager")
 public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManager<Serializable, Object> {
 
+    private static final long serialVersionUID = 1L;
+    
     private static final Log LOG = LogFactory.getLog(EhcacheHydratedCacheManagerImpl.class);
     private static final EhcacheHydratedCacheManagerImpl MANAGER = new EhcacheHydratedCacheManagerImpl();
-    private static final String HYDRATED_CACHE_NAME = "hydrated-cache";
+    
+    public static final String HYDRATED_CACHE_NAME = "hydrated-cache";
 
     public static EhcacheHydratedCacheManagerImpl getInstance() {
         return MANAGER;
@@ -60,8 +61,7 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
 
     private synchronized Cache<String, Object> getHeap() {
         if (heap == null) {
-            CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
+            CacheManager cacheManager = ApplicationContextHolder.getApplicationContext().getBean("blCacheManager", CacheManager.class);
             Cache<String, Object> cache = cacheManager.getCache(getHydratedCacheName());
             if (cache != null) {
                 heap = cache;
@@ -78,7 +78,10 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
     }
 
     protected Configuration<String, Object> getHydratedCacheConfiguration() {
-        // TODO 6.1 ehcache 3 Not able to configure this with enough complexity
+        LOG.warn("The JCache configuration for cache name " 
+                + HYDRATED_CACHE_NAME 
+                + " was not found.  Configuring a new eternal cache, but due to JCache API "
+                + "limitations there is no limit on the cache size.  Consider configuring the cache via XML configuration.");
         MutableConfiguration<String, Object> config = new MutableConfiguration<>();
         config.setExpiryPolicyFactory(EternalExpiryPolicy.factoryOf());
         config.setTypes(String.class, Object.class);

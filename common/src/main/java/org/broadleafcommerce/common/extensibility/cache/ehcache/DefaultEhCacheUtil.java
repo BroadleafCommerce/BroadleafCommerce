@@ -8,6 +8,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.expiry.ExpiryPolicy;
 import org.ehcache.jsr107.Eh107Configuration;
 
+import java.net.URI;
 import java.time.Duration;
 
 import javax.cache.Cache;
@@ -20,8 +21,10 @@ import javax.cache.CacheManager;
  */
 public class DefaultEhCacheUtil extends DefaultJCacheUtil {
     
+    public static final String EH_CACHE_MERGED_XML_RESOUCE_NAME = "ehcache:merged-xml-resource";
+    
     public DefaultEhCacheUtil() {
-        super("ehcache:merged-xml-resource");
+        super(EH_CACHE_MERGED_XML_RESOUCE_NAME);
     }
     
     public DefaultEhCacheUtil(String uri) {
@@ -32,41 +35,35 @@ public class DefaultEhCacheUtil extends DefaultJCacheUtil {
         super(cacheManager);
     }
     
+    public DefaultEhCacheUtil(URI uri) {
+        super(uri);
+    }
+
     @Override
     public <K,V> Cache<K,V> getCache(String cacheName) {
         return getCacheManager().getCache(cacheName);
     }
 
     @Override
-    public Cache<Object, Object> getOrCreateCache(String cacheName, int ttlSeconds, int maxElementsInMemory) {
-        return getOrCreateCache(cacheName, ttlSeconds, maxElementsInMemory, Object.class, Object.class);
+    public synchronized Cache<Object, Object> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory) {
+        return createCache(cacheName, ttlSeconds, maxElementsInMemory, Object.class, Object.class);
     }
 
     @Override
-    public <K, V> Cache<K, V> getOrCreateCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value) {
-        Cache<K, V> cache = getCache(cacheName);
-        if (cache == null) {
-            synchronized (this) {
-                cache = getCacheManager().getCache(cacheName, key, value);
-                if (cache == null) {
-                    ExpiryPolicy<Object, Object> policy;
-                    if (ttlSeconds < 1) {
-                        //Make it eternal
-                        policy = ExpiryPolicyBuilder.noExpiration();
-                    } else {
-                        policy = ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds((long)ttlSeconds));
-                    }
-                    
-                    CacheConfiguration<K, V> config = CacheConfigurationBuilder.
-                            newCacheConfigurationBuilder(key, value, ResourcePoolsBuilder.heap((long)maxElementsInMemory))
-                            .withExpiry(policy)
-                            .build();
-                    cache = getCacheManager().createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(config));
-                }
-            }
+    public synchronized <K, V> Cache<K, V> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value) {
+        ExpiryPolicy<Object, Object> policy;
+        if (ttlSeconds < 1) {
+            //Make it eternal
+            policy = ExpiryPolicyBuilder.noExpiration();
+        } else {
+            policy = ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds((long)ttlSeconds));
         }
         
-        return cache;
+        CacheConfiguration<K, V> config = CacheConfigurationBuilder.
+                newCacheConfigurationBuilder(key, value, ResourcePoolsBuilder.heap((long)maxElementsInMemory))
+                .withExpiry(policy)
+                .build();
+        return getCacheManager().createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(config));
     }
 
 }
