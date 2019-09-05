@@ -48,7 +48,7 @@ public class DefaultJCacheUtil implements JCacheUtil {
     }
 
     @Override
-    public Cache<Object, Object> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory) {
+    public synchronized Cache<Object, Object> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory) {
         return createCache(cacheName, ttlSeconds, maxElementsInMemory, Object.class, Object.class);
     }
 
@@ -66,7 +66,10 @@ public class DefaultJCacheUtil implements JCacheUtil {
         MutableConfiguration<K, V> config = new MutableConfiguration<>();
         config.setTypes(key, value);
         config.setExpiryPolicyFactory(expiryPolicy);
-        return getCacheManager().createCache(cacheName, config);
+        Cache<K,V> cache = getCacheManager().createCache(cacheName, config);
+        enableManagement(cache);
+        enableStatistics(cache);
+        return cache;
     }
 
     @Override
@@ -74,4 +77,19 @@ public class DefaultJCacheUtil implements JCacheUtil {
         return getCacheManager().getCache(cacheName);
     }
 
+    /**
+     * By default this disables management of each cache that is created here.
+     * @param cache
+     */
+    protected void enableManagement(Cache<?,?> cache) {
+        getCacheManager().enableManagement(cache.getName(), false);
+    }
+    
+    /**
+     * By default this enables statistics for each cache that is created here.
+     * @param cache
+     */
+    protected void enableStatistics(Cache<?,?> cache) {
+        getCacheManager().enableStatistics(cache.getName(), true);
+    }
 }

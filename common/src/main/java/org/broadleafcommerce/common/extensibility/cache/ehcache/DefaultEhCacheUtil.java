@@ -63,7 +63,11 @@ public class DefaultEhCacheUtil extends DefaultJCacheUtil {
                 newCacheConfigurationBuilder(key, value, ResourcePoolsBuilder.heap((long)maxElementsInMemory))
                 .withExpiry(policy)
                 .build();
-        return getCacheManager().createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(config));
+        
+        Cache<K,V> cache = getCacheManager().createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(config));
+        enableManagement(cache);
+        enableStatistics(cache);
+        return cache;
     }
-
+    
 }

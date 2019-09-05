@@ -16,9 +16,15 @@
   #L%
   -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="http://www.ehcache.org/v3"
-        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.3.xsd">
+        xmlns="http://www.ehcache.org/v3" 
+        xmlns:jsr107="http://www.ehcache.org/v3/jsr107"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.3.xsd 
+                           http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
 
+    <service>
+        <jsr107:defaults enable-management="false" enable-statistics="true"/> 
+    </service>
+    
     <persistence directory="${java.io.tmpdir}"/>
     
     <cache-template name="hydratedCacheTemplate">
@@ -37,7 +43,7 @@
     </cache-template>
     
     <!-- This is required by Hibernate to ensure that query caches return
-          corrrect results. It must contain at least as many entries as there are
+          correct results. It must contain at least as many entries as there are
           DB tables and must never expire. 
           This cache name is deprecated in favor of org.hibernate.cache.spi.TimestampsCache. -->
      <cache alias="org.hibernate.cache.spi.UpdateTimestampsCache">
