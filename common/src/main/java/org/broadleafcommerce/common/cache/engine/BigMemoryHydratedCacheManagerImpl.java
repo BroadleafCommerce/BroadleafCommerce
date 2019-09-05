@@ -19,9 +19,10 @@ package org.broadleafcommerce.common.cache.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.cache.JCacheUtil;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,14 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
 import javax.cache.configuration.Configuration;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.event.CacheEntryEvent;
 import javax.cache.event.CacheEntryListenerException;
 import javax.cache.expiry.EternalExpiryPolicy;
-import javax.cache.spi.CachingProvider;
 
 /**
  * 
@@ -45,6 +43,8 @@ import javax.cache.spi.CachingProvider;
  */
 public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheManager<Serializable, Object> {
 
+    private static final long serialVersionUID = 1L;
+    
     private static final Log LOG = LogFactory.getLog(BigMemoryHydratedCacheManagerImpl.class);
     private static final BigMemoryHydratedCacheManagerImpl MANAGER = new BigMemoryHydratedCacheManagerImpl();
     private static final String BIG_MEMORY_HYDRATED_CACHE_NAME = "hydrated-offheap-cache";
@@ -59,14 +59,13 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
 
     private synchronized Cache<String, Object> getHeap() {
         if (offHeap == null) {
-            CachingProvider provider = Caching.getCachingProvider();
-            CacheManager cacheManager = provider.getCacheManager(URI.create("ehcache:merged-xml-resource"), getClass().getClassLoader());
-            Cache<String, Object> cache = cacheManager.getCache(getBigMemoryHydratedCacheName());
+            JCacheUtil util = ApplicationContextHolder.getApplicationContext().getBean("blJCacheUtil", JCacheUtil.class);
+            Cache<String, Object> cache = util.getCache(getBigMemoryHydratedCacheName());
             if (cache != null) {
                 offHeap = cache;
             } else {
                 Configuration<String, Object> config = getBigMemoryHydratedCacheConfiguration();
-                offHeap = cacheManager.createCache(getBigMemoryHydratedCacheName(), config);
+                offHeap = util.getCacheManager().createCache(getBigMemoryHydratedCacheName(), config);
             }
         }
         return offHeap;
