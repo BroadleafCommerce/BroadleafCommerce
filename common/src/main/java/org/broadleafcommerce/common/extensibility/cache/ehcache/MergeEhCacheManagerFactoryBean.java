@@ -43,7 +43,7 @@ import lombok.extern.apachecommons.CommonsLog;
 @CommonsLog
 public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean implements ApplicationContextAware {
     
-    public static final String MERGED_EH_CACHE_RESOURCE_URI = "ehcache:merged-xml-resource";
+    public static final String MERGED_EH_CACHE_RESOURCE_URI = DefaultEhCacheUtil.EH_CACHE_MERGED_XML_RESOUCE_NAME;
 
     private ApplicationContext applicationContext;
 
