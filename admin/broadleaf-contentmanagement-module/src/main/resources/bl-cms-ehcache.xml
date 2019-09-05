@@ -15,59 +15,57 @@
   between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
   #L%
   -->
-<ehcache>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.3.xsd">
 
-    <diskStore path="java.io.tmpdir"/>
+    <persistence directory="${java.io.tmpdir}"/>
+    
+    <cache alias="blCMSElements">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>10000</heap>
+    </cache>
 
-    <defaultCache
-        maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="60"/>
-
-    <!-- 1 hour cache -->
-    <cache
-        name="blCMSElements"
-        maxElementsInMemory="10000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
-
-    <!-- Page Cache - 1 hour cache -->
-    <cache name="cmsPageCache"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
-
-    <!-- Page Map Cache - 1 hour cache -->
-    <cache name="cmsPageMapCache"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
+    <cache alias="cmsPageCache">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
+    
+    <cache alias="cmsPageMapCache">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
     
     <!-- Caches Page URIs by date added to Cache to reduce 
          number of queries to find Pages by URI.
          Cache for a day -->
-    <cache name="uriCachedDateCache"
-           maxElementsInMemory="1000"
-           eternal="false"
-           overflowToDisk="false"
-           timeToLiveSeconds="86400"/>
+    <cache alias="uriCachedDateCache">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
     <!-- Structured Content Cache - 1 hour cache -->
-    <cache name="cmsStructuredContentCache"
-        maxElementsInMemory="5000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>             
+    <cache alias="cmsStructuredContentCache">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>5000</heap>
+    </cache>
     
     <!--  URLHandlerCache -->
-    <cache name="cmsUrlHandlerCache"
-        maxElementsInMemory="5000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="3600"/>
+    <cache alias="cmsUrlHandlerCache">
+        <expiry>
+            <ttl>3600</ttl>
+        </expiry>
+        <heap>5000</heap>
+    </cache>
 
-</ehcache>
+</config>
