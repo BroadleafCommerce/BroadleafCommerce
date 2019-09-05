@@ -33,12 +33,12 @@ public class DefaultJCacheUtil implements JCacheUtil {
     }
     
     public DefaultJCacheUtil(String uri) {
-        Assert.notNull(cacheManager, "The URI is for the cache configuration and cannot be null.");
+        Assert.notNull(uri, "The URI is for the cache configuration and cannot be null.");
         this.cacheManager = Caching.getCachingProvider().getCacheManager(URI.create(uri), getClass().getClassLoader());
     }
     
     public DefaultJCacheUtil(URI uri) {
-        Assert.notNull(cacheManager, "The URI is for the cache configuration and cannot be null.");
+        Assert.notNull(uri, "The URI is for the cache configuration and cannot be null.");
         this.cacheManager = Caching.getCachingProvider().getCacheManager(uri, getClass().getClassLoader());
     }
 
