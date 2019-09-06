@@ -46,6 +46,8 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
     public static final String EH_CACHE_MERGED_XML_RESOUCE_URI = DefaultEhCacheUtil.EH_CACHE_MERGED_XML_RESOUCE_URI;
 
     private ApplicationContext applicationContext;
+    
+    private CacheManager cacheManager;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -57,11 +59,12 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
 
     protected List<Resource> configLocations;
 
-    @Nullable
-    private CacheManager cacheManager;
-
     @Override
     public void afterPropertiesSet() {
+        if (getObject() != null) {
+            return;
+        }
+        
         List<Resource> resources = new ArrayList<>();
         if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
             for (String location : mergedCacheConfigLocations) {
@@ -86,16 +89,24 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
                 Resource mergeResource = merge.getMergedConfigResource(sources);
                 Handler.setMergedEhCacheXml(mergeResource.getInputStream());
                 EhcacheCachingProvider ehcacheProvider = (EhcacheCachingProvider) provider;
-                this.cacheManager = ehcacheProvider.getCacheManager(new URI(EH_CACHE_MERGED_XML_RESOUCE_URI), getClass().getClassLoader());
+                super.setCacheManagerUri(URI.create(EH_CACHE_MERGED_XML_RESOUCE_URI));
+                //We have to use the EhcacheCachingProvider#getDefaultClassLoader() because that's what Hibernate uses to resolve the classloader.
+                //When we use the Bean classloader (the default from the superclass) then it appears a new CacheManager is created and the 
+                //result is that the persistent store is the same file location, which causes an IOException.
+                this.cacheManager = ehcacheProvider.getCacheManager(new URI(EH_CACHE_MERGED_XML_RESOUCE_URI), 
+                        ehcacheProvider.getDefaultClassLoader());
             } else {
                 log.warn("Caching Provider does not support merged cache locations. Falling back to default");
             }
         } catch (Exception e) {
             throw new FatalBeanException("Unable to merge cache locations", e);
         }
-        super.afterPropertiesSet();
     }
 
+    public void setConfigLocations(List<Resource> configLocations) throws BeansException {
+        this.configLocations = configLocations;
+    }
+    
     @Override
     @Nullable
     public CacheManager getObject() {
@@ -104,7 +115,7 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
 
     @Override
     public Class<?> getObjectType() {
-        return CacheManager.class;
+        return (this.cacheManager != null ? this.cacheManager.getClass() : CacheManager.class);
     }
 
     @Override
@@ -112,15 +123,10 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
         return true;
     }
 
-
     @Override
     public void destroy() {
         if (this.cacheManager != null) {
             this.cacheManager.close();
         }
-    }
-
-    public void setConfigLocations(List<Resource> configLocations) throws BeansException {
-        this.configLocations = configLocations;
     }
 }

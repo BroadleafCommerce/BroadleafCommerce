@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.ehcache.event.CacheEvent;
 import org.ehcache.event.CacheEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +48,15 @@ public class HydratedCacheEventListenerFactory implements CacheEventListener, Ca
 
     @Autowired
     public HydratedCacheEventListenerFactory(@Qualifier("blHydratedCacheMangager") HydratedCacheManager hydratedCacheManager, 
+                                             @Qualifier("blCacheManager") CacheManager cacheManager,
                                              @Value("${cache.hydratedCache.names}") List<String> cacheNames,
                                              @Value("${cache.hydratedCache.require.old.value:false}") Boolean oldValue,
                                              @Value("${cache.hydratedCache.require.synchronous:true}") Boolean synchronous) {
-        CacheManager cacheManager = ApplicationContextHolder.getApplicationContext().getBean("blCacheManager", CacheManager.class);
         for (String cacheName : cacheNames) {
             if(cacheName.startsWith("$")){
                 continue;
             }
-            Cache cache = cacheManager.getCache(cacheName);
+            Cache<?,?> cache = cacheManager.getCache(cacheName);
             cache.registerCacheEntryListener(new MutableCacheEntryListenerConfiguration(FactoryBuilder.factoryOf(hydratedCacheManager), null, oldValue, synchronous));
         }
         manager = hydratedCacheManager;

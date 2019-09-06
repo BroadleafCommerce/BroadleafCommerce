@@ -18,6 +18,9 @@
 package org.broadleafcommerce.url.handler.ehcache;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.cache.ehcache.DefaultEhCacheUtil;
 import org.broadleafcommerce.common.io.AbstractRegisteringURLStreamHandler;
 
 import java.io.IOException;
@@ -29,11 +32,12 @@ import java.net.URLConnection;
  * Handler class to register a merged EhCache XML configuration file as a byte array so that 
  * URIs
  * 
- * @author kellytisdell
+ * @author Kelly Tisdell
  *
  */
 public class Handler extends AbstractRegisteringURLStreamHandler {
 
+    private static final Log LOG = LogFactory.getLog(Handler.class);
     private static byte[] mergedEhCacheXmlBytes = null;
 
     static {
@@ -41,15 +45,21 @@ public class Handler extends AbstractRegisteringURLStreamHandler {
     }
     
     public synchronized static void setMergedEhCacheXml(InputStream inputStream) throws IOException {
-        if (mergedEhCacheXmlBytes != null) {
-            throw new IllegalStateException("The merged EhCache XML file was already set and cannot be set again.");
-        }
-        
         if (inputStream == null) {
             throw new IllegalArgumentException("The provided InputStream was null.");
         }
         
-        mergedEhCacheXmlBytes = IOUtils.toByteArray(inputStream);
+        if (mergedEhCacheXmlBytes != null) {
+            LOG.warn("A merged EhCache XML resource has been passed to the URLStreamHandler multiple times. "
+                    + "This is expected to be a static, immutable resource once merged."
+                    + "The URLStreamHandler is responsible for "
+                    + "providing that merged resource to the JCache Provider via the 'dummy' URI, '" 
+                    + DefaultEhCacheUtil.EH_CACHE_MERGED_XML_RESOUCE_URI 
+                    + "'. If the JCache provider has initialized the CacheManager for that "
+                    + "URI it will not be refreshed or updated, even if the XML byte stream has changed.");
+        } else {
+            mergedEhCacheXmlBytes = IOUtils.toByteArray(inputStream);
+        }
     }
     
     public synchronized static byte[] getMergedEhCacheXml() throws IOException {
@@ -62,7 +72,9 @@ public class Handler extends AbstractRegisteringURLStreamHandler {
 
     @Override
     protected URLConnection openConnection(URL u) throws IOException {
-        getMergedEhCacheXml();
-        return new EhCacheUrlConnection(u);
+        synchronized (Handler.class) {
+            getMergedEhCacheXml();
+            return new EhCacheUrlConnection(u);
+        }
     }
 }
