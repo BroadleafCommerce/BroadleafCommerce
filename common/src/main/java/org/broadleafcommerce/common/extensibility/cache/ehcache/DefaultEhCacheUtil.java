@@ -38,10 +38,8 @@ import javax.cache.CacheManager;
  */
 public class DefaultEhCacheUtil extends DefaultJCacheUtil {
     
-    public static final String EH_CACHE_MERGED_XML_RESOUCE_URI = "ehcache:merged-xml-resource";
-    
     public DefaultEhCacheUtil() {
-        super(EH_CACHE_MERGED_XML_RESOUCE_URI);
+        super();
     }
     
     public DefaultEhCacheUtil(String uri) {

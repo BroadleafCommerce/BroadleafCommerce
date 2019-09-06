@@ -62,7 +62,7 @@
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
             <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.JCacheRegionFactory"/>
             <property name="hibernate.javax.cache.provider" value="org.ehcache.jsr107.EhcacheCachingProvider"/>
-            <property name="hibernate.javax.cache.uri" value="ehcache:merged-xml-resource"/>
+            <property name="hibernate.javax.cache.uri" value="jcache:merged-xml-resource"/>
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
             <property name="hibernate.cache.use_query_cache" value="false"/>
             <property name="hibernate.generate_statistics" value="false" />

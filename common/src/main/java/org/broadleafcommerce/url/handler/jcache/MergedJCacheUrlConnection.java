@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.url.handler.ehcache;
+package org.broadleafcommerce.url.handler.jcache;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,12 +25,14 @@ import java.net.URLConnection;
 
 /**
  * Simple URLConnection that makes use of an in-memory, 
- * merged EhCache configuration file rather than file I/O or other I/O.
+ * merged JCache configuration file rather than file I/O or other I/O.
+ * 
+ * Typically this will be EhCache config, but could be something else.
  * 
  * @author Kelly Tisdell
  *
  */
-public class EhCacheUrlConnection extends URLConnection {
+public class MergedJCacheUrlConnection extends URLConnection {
     
     private InputStream inputStream;
     
@@ -40,7 +42,7 @@ public class EhCacheUrlConnection extends URLConnection {
      *
      * @param url the specified URL.
      */
-    public EhCacheUrlConnection(URL url) {
+    public MergedJCacheUrlConnection(URL url) {
         super(url);
     }
 
@@ -52,7 +54,7 @@ public class EhCacheUrlConnection extends URLConnection {
     @Override
     public InputStream getInputStream() throws IOException {
         if (inputStream == null) {
-            inputStream = new ByteArrayInputStream(Handler.getMergedEhCacheXml());
+            inputStream = new ByteArrayInputStream(Handler.getMergedJCacheXml());
         }
         
         return inputStream;

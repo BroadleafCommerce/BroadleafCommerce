@@ -87,7 +87,7 @@
         </property>
     </bean>
     
-    <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean"/>
+    <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.jcache.MergeJCacheManagerFactoryBean"/>
     
     <bean id="blJCacheUtil" class="org.broadleafcommerce.common.extensibility.cache.ehcache.DefaultEhCacheUtil">
         <constructor-arg ref="blCacheManager"/>

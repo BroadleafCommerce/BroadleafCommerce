@@ -15,55 +15,78 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.extensibility.cache.ehcache;
+package org.broadleafcommerce.common.extensibility.cache.jcache;
 
+import org.broadleafcommerce.common.extensibility.cache.ehcache.DefaultEhCacheUtil;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
-import org.broadleafcommerce.url.handler.ehcache.Handler;
-import org.ehcache.jsr107.EhcacheCachingProvider;
+import org.broadleafcommerce.url.handler.jcache.Handler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
-import org.springframework.cache.jcache.JCacheManagerFactoryBean;
+import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
 
-import lombok.extern.apachecommons.CommonsLog;
-
-@CommonsLog
-public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean implements ApplicationContextAware {
+/**
+ * Generic Spring Bean Factory to merge various XML files together and pass them to the JCache {@link CachingProvider} to create a {@link CacheManager}.
+ * 
+ * The defaults assume you are using EhCache, but this could be used for other JCache implementations.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
+public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>, BeanClassLoaderAware, InitializingBean, DisposableBean, ApplicationContextAware {
     
-    public static final String EH_CACHE_MERGED_XML_RESOUCE_URI = DefaultEhCacheUtil.EH_CACHE_MERGED_XML_RESOUCE_URI;
+    @Nullable
+    private Properties cacheManagerProperties;
+
+    @Nullable
+    private ClassLoader beanClassLoader;
+    
+    @Nullable
+    private CacheManager cacheManager;
 
     private ApplicationContext applicationContext;
     
-    private CacheManager cacheManager;
-
+    @javax.annotation.Resource(name="blMergedCacheConfigLocations")
+    protected Set<String> mergedCacheConfigLocations;
+    
+    protected List<Resource> configLocations;
+    
+    //We use EhCache as the default.  Provide the URI that referrs to a merged JCache (typically EhCache) XML file that will be created
+    protected URI cacheManagerUri = URI.create(DefaultEhCacheUtil.JCACHE_MERGED_XML_RESOUCE_URI);
+    
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
-    @javax.annotation.Resource(name="blMergedCacheConfigLocations")
-    protected Set<String> mergedCacheConfigLocations;
-
-    protected List<Resource> configLocations;
-
     @Override
     public void afterPropertiesSet() {
-        if (getObject() != null) {
+        if (getObject() != null && !getObject().isClosed() && getObject().getURI().equals(cacheManagerUri)) {
             return;
         }
+        
+        Caching.setDefaultClassLoader(getDefaultClassLoaderForProvider());
+        CachingProvider provider = Caching.getCachingProvider();
         
         List<Resource> resources = new ArrayList<>();
         if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
@@ -77,27 +100,21 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
         try {
             MergeXmlConfigResource merge = new MergeXmlConfigResource();
             ResourceInputStream[] sources = new ResourceInputStream[resources.size()];
-            int j=0;
+            int j = 0;
             for (Resource resource : resources) {
                 sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                 j++;
             }
-
-            Caching.setDefaultClassLoader(getClass().getClassLoader());
-            CachingProvider provider = Caching.getCachingProvider();
-            if (EhcacheCachingProvider.class.isAssignableFrom(provider.getClass())) {
-                Resource mergeResource = merge.getMergedConfigResource(sources);
-                Handler.setMergedEhCacheXml(mergeResource.getInputStream());
-                EhcacheCachingProvider ehcacheProvider = (EhcacheCachingProvider) provider;
-                super.setCacheManagerUri(URI.create(EH_CACHE_MERGED_XML_RESOUCE_URI));
-                //We have to use the EhcacheCachingProvider#getDefaultClassLoader() because that's what Hibernate uses to resolve the classloader.
-                //When we use the Bean classloader (the default from the superclass) then it appears a new CacheManager is created and the 
-                //result is that the persistent store is the same file location, which causes an IOException.
-                this.cacheManager = ehcacheProvider.getCacheManager(new URI(EH_CACHE_MERGED_XML_RESOUCE_URI), 
-                        ehcacheProvider.getDefaultClassLoader());
-            } else {
-                log.warn("Caching Provider does not support merged cache locations. Falling back to default");
+            
+            Resource mergeResource = merge.getMergedConfigResource(sources);
+            try (InputStream is = mergeResource.getInputStream()) {
+                Handler.setMergedJCacheXml(mergeResource.getInputStream());
             }
+            
+            //The ClassLoader needs to be the same as what Hibernate expects (see org.hibernate.cache.jcache.internal.JCacheRegionFactory).
+            this.cacheManager = provider.getCacheManager(cacheManagerUri,  
+                    provider.getDefaultClassLoader(), cacheManagerProperties);
+            
         } catch (Exception e) {
             throw new FatalBeanException("Unable to merge cache locations", e);
         }
@@ -129,4 +146,26 @@ public class MergeEhCacheManagerFactoryBean extends JCacheManagerFactoryBean imp
             this.cacheManager.close();
         }
     }
+    
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.beanClassLoader = classLoader;
+    }
+    
+    public void setCacheManagerProperties(@Nullable Properties cacheManagerProperties) {
+        this.cacheManagerProperties = cacheManagerProperties;
+    }
+    
+    public void setCacheManagerUri(@NonNull URI cacheManagerUri) {
+        Assert.notNull(cacheManagerUri, "The CacheManager URI cannot be null.");
+        this.cacheManagerUri = cacheManagerUri;
+    }
+    
+    protected ClassLoader getDefaultClassLoaderForProvider() {
+        if (beanClassLoader != null) {
+            return beanClassLoader;
+        }
+        return getClass().getClassLoader();
+    }
+    
 }

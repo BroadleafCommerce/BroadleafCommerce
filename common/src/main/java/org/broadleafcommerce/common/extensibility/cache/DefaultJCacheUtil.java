@@ -42,7 +42,13 @@ import javax.cache.expiry.ModifiedExpiryPolicy;
  */
 public class DefaultJCacheUtil implements JCacheUtil {
     
+    public static final String JCACHE_MERGED_XML_RESOUCE_URI = "jcache:merged-xml-resource";
+    
     protected CacheManager cacheManager;
+    
+    public DefaultJCacheUtil() {
+        this.cacheManager = Caching.getCachingProvider().getCacheManager(URI.create(JCACHE_MERGED_XML_RESOUCE_URI), Caching.getCachingProvider().getDefaultClassLoader());
+    }
     
     public DefaultJCacheUtil(CacheManager cacheManager) {
         Assert.notNull(cacheManager, "The CacheManager cannot be null.");
@@ -51,12 +57,12 @@ public class DefaultJCacheUtil implements JCacheUtil {
     
     public DefaultJCacheUtil(String uri) {
         Assert.notNull(uri, "The URI is for the cache configuration and cannot be null.");
-        this.cacheManager = Caching.getCachingProvider().getCacheManager(URI.create(uri), getClass().getClassLoader());
+        this.cacheManager = Caching.getCachingProvider().getCacheManager(URI.create(uri), Caching.getCachingProvider().getDefaultClassLoader());
     }
     
     public DefaultJCacheUtil(URI uri) {
         Assert.notNull(uri, "The URI is for the cache configuration and cannot be null.");
-        this.cacheManager = Caching.getCachingProvider().getCacheManager(uri, getClass().getClassLoader());
+        this.cacheManager = Caching.getCachingProvider().getCacheManager(uri, Caching.getCachingProvider().getDefaultClassLoader());
     }
 
     @Override
