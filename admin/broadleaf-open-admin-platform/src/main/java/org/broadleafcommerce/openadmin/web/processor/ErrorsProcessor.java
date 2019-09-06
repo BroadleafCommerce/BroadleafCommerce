@@ -27,7 +27,7 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
-import org.thymeleaf.spring3.util.FieldUtils;
+import org.thymeleaf.spring4.util.FieldUtils;
 
 import java.util.HashMap;
 import java.util.Map;

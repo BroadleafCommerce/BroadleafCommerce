@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +33,6 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
-import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

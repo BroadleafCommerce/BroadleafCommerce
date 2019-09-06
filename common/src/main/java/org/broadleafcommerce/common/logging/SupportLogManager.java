@@ -16,19 +16,16 @@
 
 package org.broadleafcommerce.common.logging;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
-
 
 /**
- * Log4J LogManager extension that adds support for retrieving a specialized
+ * <p>LogManager class that adds support for retrieving a specialized
  * Logger instance (SupportLogger). SupportLogger provides support for the
- * SUPPORT log level.
+ * SUPPORT log level.</p>
  *
  * @author Jeff Fischer
+ * @author elbertbautista
  */
-public class SupportLogManager extends LogManager {
+public class SupportLogManager {
 
     /**
      * Retrieve a SupportLogger instance
@@ -38,12 +35,7 @@ public class SupportLogManager extends LogManager {
      * @return the specialized Logger instance supporting the SUPPORT log level
      */
     public static SupportLogger getLogger(final String moduleName, String name) {
-        return (SupportLogger) getLoggerRepository().getLogger(name + "(" + moduleName + ")", new LoggerFactory() {
-            @Override
-            public Logger makeNewLoggerInstance(String s) {
-                return new SupportLogger(moduleName, s);
-            }
-        });
+        return new SupportLogger(moduleName, name);
     }
 
     /**
@@ -56,5 +48,7 @@ public class SupportLogManager extends LogManager {
     public static SupportLogger getLogger(final String moduleName, Class<?> clazz) {
         return getLogger(moduleName, clazz.getSimpleName());
     }
+
+
 
 }

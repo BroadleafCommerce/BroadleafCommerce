@@ -19,13 +19,14 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.StringWriter;
 import java.io.Writer;

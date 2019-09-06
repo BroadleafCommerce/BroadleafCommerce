@@ -1,30 +1,35 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.security;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.web.RedirectStrategy;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class insures that if using the successUrl or failureUrl request
@@ -33,8 +38,9 @@ import java.net.URL;
  */
 public class LocalRedirectStrategy implements RedirectStrategy {
 
+
     private boolean contextRelative = false;
-    private Logger logger = Logger.getLogger(this.getClass());
+    private static final Log LOG = LogFactory.getLog(LocalRedirectStrategy.class);
     private boolean enforcePortMatch = false;
 
     /*
@@ -45,6 +51,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      * servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
      * java.lang.String)
      */
+    @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
         if (!url.startsWith("/")) {
             if (StringUtils.equals(request.getParameter("successUrl"), url) || StringUtils.equals(request.getParameter("failureUrl"), url)) {
@@ -53,8 +60,8 @@ public class LocalRedirectStrategy implements RedirectStrategy {
         }
         String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
         redirectUrl = response.encodeRedirectURL(redirectUrl);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Redirecting to '" + url + "'");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Redirecting to '" + url + "'");
         }
 
         response.sendRedirect(redirectUrl);
@@ -62,7 +69,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
 
     /**
      * Create the redirect url
-     * 
+     *
      * @param contextPath
      * @param url
      * @return
@@ -92,7 +99,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
     /**
      * Insure the url is valid (must begin with http or https) and local to the
      * application
-     * 
+     *
      * @param contextPath
      *            the application context path
      * @param url
@@ -116,7 +123,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
             }
         }
         String errorMessage = "Invalid redirect url specified.  Must be of the form /<relative view> or http[s]://<server name>[:<server port>][/<context path>]/...";
-        logger.warn(errorMessage + ":  " + url);
+        LOG.warn(errorMessage + ":  " + url);
         throw new MalformedURLException(errorMessage + ":  " + url);
     }
 
@@ -124,7 +131,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      * This forces the redirect url port to match the request port. This could
      * be problematic when switching between secure and non-secure (e.g.
      * http://localhost:8080 to https://localhost:8443)
-     * 
+     *
      * @param enforcePortMatch
      */
     public void setEnforcePortMatch(boolean enforcePortMatch) {
@@ -134,7 +141,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
     /**
      * Set whether or not the context should be included in the redirect path. If true, the context
      * is excluded from the generated path, otherwise it is included.
-     * 
+     *
      * @param contextRelative
      */
     public void setContextRelative(boolean contextRelative) {

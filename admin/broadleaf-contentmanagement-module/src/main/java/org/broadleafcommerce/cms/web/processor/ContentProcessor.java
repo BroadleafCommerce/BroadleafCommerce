@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.spring3.context.SpringWebContext;
+import org.thymeleaf.spring4.context.SpringWebContext;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 import com.google.common.primitives.Ints;

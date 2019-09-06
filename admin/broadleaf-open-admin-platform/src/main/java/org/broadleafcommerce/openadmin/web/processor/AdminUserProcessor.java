@@ -28,7 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.spring3.context.SpringWebContext;
+import org.thymeleaf.spring4.context.SpringWebContext;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminUser to the model.

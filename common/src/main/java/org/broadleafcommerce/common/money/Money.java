@@ -236,7 +236,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money divide(BigDecimal divisor, RoundingMode roundingMode) {
-        return new Money(amount.divide(divisor, amount.precision(), roundingMode), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
+        return new Money(amount.divide(divisor, amount.scale(), roundingMode), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
 
     public Money abs() {

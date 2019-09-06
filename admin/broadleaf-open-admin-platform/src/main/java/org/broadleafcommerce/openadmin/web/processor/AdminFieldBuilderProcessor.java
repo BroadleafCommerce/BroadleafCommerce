@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.spring3.context.SpringWebContext;
+import org.thymeleaf.spring4.context.SpringWebContext;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 import java.util.HashMap;
