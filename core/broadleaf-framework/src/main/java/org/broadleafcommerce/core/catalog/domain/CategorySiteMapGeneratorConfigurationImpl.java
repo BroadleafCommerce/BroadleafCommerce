@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -84,4 +86,33 @@ public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorC
         this.endingDepth = endingDepth;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        CategorySiteMapGeneratorConfigurationImpl rhs = (CategorySiteMapGeneratorConfigurationImpl) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.rootCategory, rhs.rootCategory)
+                .append(this.startingDepth, rhs.startingDepth)
+                .append(this.endingDepth, rhs.endingDepth)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(rootCategory)
+                .append(startingDepth)
+                .append(endingDepth)
+                .toHashCode();
+    }
 }

@@ -17,12 +17,17 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
  */
 public class BatchDynamicResultSet implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected DynamicResultSet[] dynamicResultSets;
 
@@ -32,5 +37,29 @@ public class BatchDynamicResultSet implements Serializable {
 
     public void setDynamicResultSets(DynamicResultSet[] dynamicResultSets) {
         this.dynamicResultSets = dynamicResultSets;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        BatchDynamicResultSet rhs = (BatchDynamicResultSet) obj;
+        return new EqualsBuilder()
+                .append(this.dynamicResultSets, rhs.dynamicResultSets)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(dynamicResultSets)
+                .toHashCode();
     }
 }

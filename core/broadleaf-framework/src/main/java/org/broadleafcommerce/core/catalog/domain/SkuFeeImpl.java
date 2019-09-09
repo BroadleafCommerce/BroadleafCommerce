@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -33,9 +35,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,6 +48,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author Phillip Verheyden
@@ -200,5 +201,46 @@ public class SkuFeeImpl implements SkuFee {
     @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        SkuFeeImpl rhs = (SkuFeeImpl) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.name, rhs.name)
+                .append(this.description, rhs.description)
+                .append(this.amount, rhs.amount)
+                .append(this.taxable, rhs.taxable)
+                .append(this.expression, rhs.expression)
+                .append(this.feeType, rhs.feeType)
+                .append(this.skus, rhs.skus)
+                .append(this.currency, rhs.currency)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(name)
+                .append(description)
+                .append(amount)
+                .append(taxable)
+                .append(expression)
+                .append(feeType)
+                .append(skus)
+                .append(currency)
+                .toHashCode();
     }
 }

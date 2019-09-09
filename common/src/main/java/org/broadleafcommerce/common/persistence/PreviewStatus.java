@@ -19,10 +19,9 @@ package org.broadleafcommerce.common.persistence;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
@@ -30,6 +29,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PreviewStatus implements Serializable, Previewable {
 
+    private static final long serialVersionUID = 1L;
     @Column(name = "IS_PREVIEW")
     @AdminPresentation(excluded = true)
     protected Boolean isPreview;

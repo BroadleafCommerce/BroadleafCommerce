@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.money.BankersRounding;
@@ -32,10 +34,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,6 +42,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -270,5 +271,41 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
             cloned.getSkuBundleItems().add(item.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ProductBundleImpl rhs = (ProductBundleImpl) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.pricingModel, rhs.pricingModel)
+                .append(this.autoBundle, rhs.autoBundle)
+                .append(this.itemsPromotable, rhs.itemsPromotable)
+                .append(this.bundlePromotable, rhs.bundlePromotable)
+                .append(this.priority, rhs.priority)
+                .append(this.skuBundleItems, rhs.skuBundleItems)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(pricingModel)
+                .append(autoBundle)
+                .append(itemsPromotable)
+                .append(bundlePromotable)
+                .append(priority)
+                .append(skuBundleItems)
+                .toHashCode();
     }
 }

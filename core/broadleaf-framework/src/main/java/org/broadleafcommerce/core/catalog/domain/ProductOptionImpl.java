@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -41,10 +43,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,6 +53,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -378,5 +379,57 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
         }
 
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ProductOptionImpl rhs = (ProductOptionImpl) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.name, rhs.name)
+                .append(this.type, rhs.type)
+                .append(this.attributeName, rhs.attributeName)
+                .append(this.label, rhs.label)
+                .append(this.required, rhs.required)
+                .append(this.useInSkuGeneration, rhs.useInSkuGeneration)
+                .append(this.displayOrder, rhs.displayOrder)
+                .append(this.productOptionValidationStrategyType, rhs.productOptionValidationStrategyType)
+                .append(this.productOptionValidationType, rhs.productOptionValidationType)
+                .append(this.validationString, rhs.validationString)
+                .append(this.errorCode, rhs.errorCode)
+                .append(this.errorMessage, rhs.errorMessage)
+                .append(this.allowedValues, rhs.allowedValues)
+                .append(this.products, rhs.products)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(name)
+                .append(type)
+                .append(attributeName)
+                .append(label)
+                .append(required)
+                .append(useInSkuGeneration)
+                .append(displayOrder)
+                .append(productOptionValidationStrategyType)
+                .append(productOptionValidationType)
+                .append(validationString)
+                .append(errorCode)
+                .append(errorMessage)
+                .append(allowedValues)
+                .append(products)
+                .toHashCode();
     }
 }

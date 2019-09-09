@@ -21,16 +21,17 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
  */
 @Embeddable
 public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
+
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "ARCHIVED")
     @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStatus")
