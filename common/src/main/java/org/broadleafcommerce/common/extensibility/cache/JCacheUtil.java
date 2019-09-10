@@ -50,7 +50,7 @@ public interface JCacheUtil {
      * 
      * The ttl and maxElementsInMemory settings may be implementation specific and so implementors may choose to ignore these arguments.
      * 
-     * If ttlSeconds is less than 1 then the cache will not expire.
+     * If ttlSeconds is less than 0 then the cache will not expire.
      * 
      * @param cacheName
      * @param ttlSeconds

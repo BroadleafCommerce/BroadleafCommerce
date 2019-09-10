@@ -27,10 +27,10 @@ import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.configuration.Factory;
 import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.EternalExpiryPolicy;
 import javax.cache.expiry.ExpiryPolicy;
-import javax.cache.expiry.ModifiedExpiryPolicy;
 
 /**
  * Default utility to access and programmatically create JCache instances via the JCache {@link CacheManager}.
@@ -77,16 +77,16 @@ public class DefaultJCacheUtil implements JCacheUtil {
 
     @Override
     public synchronized <K, V> Cache<K, V>  createCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value) {
-        Factory<ExpiryPolicy> expiryPolicy;
-        if (ttlSeconds < 1) {
+        final Factory<ExpiryPolicy> expiryPolicy;
+        if (ttlSeconds < 0) {
             //Eternal
             expiryPolicy = EternalExpiryPolicy.factoryOf();
         } else {
-            //Number of seconds since created or updated in cache
-            expiryPolicy = ModifiedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, (long) ttlSeconds));
+            //Number of seconds since created in cache
+            expiryPolicy = CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, (long) ttlSeconds));
         }
         
-        MutableConfiguration<K, V> config = new MutableConfiguration<>();
+        final MutableConfiguration<K, V> config = new MutableConfiguration<>();
         config.setTypes(key, value);
         config.setExpiryPolicyFactory(expiryPolicy);
         Cache<K,V> cache = getCacheManager().createCache(cacheName, config);
