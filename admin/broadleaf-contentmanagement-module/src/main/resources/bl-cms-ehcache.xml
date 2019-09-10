@@ -18,8 +18,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://www.ehcache.org/v3"
         xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.3.xsd">
-
-    <persistence directory="${java.io.tmpdir}"/>
     
     <cache alias="blCMSElements">
         <expiry>

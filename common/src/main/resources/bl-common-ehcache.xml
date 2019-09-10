@@ -45,12 +45,13 @@
     <!-- This is required by Hibernate to ensure that query caches return
           correct results. It must contain at least as many entries as there are
           DB tables and must never expire. 
-          This cache name is deprecated in favor of org.hibernate.cache.spi.TimestampsCache. -->
+          This cache name is deprecated in favor of org.hibernate.cache.spi.TimestampsCache. 
+          We'll leave it here for now. -->
      <cache alias="org.hibernate.cache.spi.UpdateTimestampsCache">
          <expiry>
              <none/>
          </expiry>
-         <heap unit="entries">5000</heap>
+         <heap>5000</heap>
      </cache>
      
      <!-- This is required by Hibernate to ensure that query caches return
@@ -60,7 +61,7 @@
          <expiry>
              <none/>
          </expiry>
-         <heap unit="entries">5000</heap>
+         <heap>5000</heap>
      </cache>
     
     <cache alias="blStandardElements" uses-template="hydratedCacheTemplate">
