@@ -16,12 +16,19 @@ import java.util.function.Supplier;
  */
 public class DefaultExpiryPolicy implements ExpiryPolicy<Object, Object> {
     
-    protected final Duration defaultDuration;
+    private final Duration defaultDuration;
     
+    /**
+     * Creates a new {@link ExpiryPolicy} with an infinite default duration.
+     */
     public DefaultExpiryPolicy() {
         defaultDuration = ExpiryPolicy.INFINITE;
     }
     
+    /**
+     * creates a new {@link ExpiryPolicy} with a duration equal to the number of seconds passed in as a argument.
+     * @param defaultTTLSeconds
+     */
     public DefaultExpiryPolicy(int defaultTTLSeconds) {
         if (defaultTTLSeconds < 0) {
             defaultDuration = ExpiryPolicy.INFINITE;
@@ -49,7 +56,7 @@ public class DefaultExpiryPolicy implements ExpiryPolicy<Object, Object> {
                 }
             }
         }
-        return defaultDuration;
+        return getDefaultDuration();
     }
 
     @Override
@@ -64,4 +71,7 @@ public class DefaultExpiryPolicy implements ExpiryPolicy<Object, Object> {
         return null;
     }
 
+    protected Duration getDefaultDuration() {
+        return defaultDuration;
+    }
 }
