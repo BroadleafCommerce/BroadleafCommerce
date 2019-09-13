@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceImpl;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,19 +43,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.Resource;
 
-/*import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-*/
+import javax.annotation.Resource;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+
 /**
  * @deprecated Use {@link SolrSearchServiceImpl} 
  */
 @Deprecated
 @Service("blSearchService")
-public class DatabaseSearchServiceImpl/* implements SearchService */{
-/*
+public class DatabaseSearchServiceImpl implements SearchService {
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
     
@@ -64,9 +64,12 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
     
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
+    
     protected static String CACHE_NAME = "blStandardElements";
     protected static String CACHE_KEY_PREFIX = "facet:";
-    protected Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
+    protected Cache<String, List<SearchFacetDTO>> cache;
     
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
@@ -114,20 +117,13 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<SearchFacetDTO> getSearchFacets() {
-        List<SearchFacetDTO> facets = null;
-        
         String cacheKey = CACHE_KEY_PREFIX + "blc-search";
-        Element element = cache.get(cacheKey);
-        if (element != null) {
-            facets = (List<SearchFacetDTO>) element.getValue();
-        }
+        List<SearchFacetDTO> facets = getCache().get(cacheKey);
         
         if (facets == null) {
             facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
-            element = new Element(cacheKey, facets);
-            cache.put(element);
+            getCache().put(cacheKey, facets);
         }
         return facets;
     }
@@ -138,15 +134,9 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
-        List<SearchFacetDTO> facets = null;
-        
         String cacheKey = CACHE_KEY_PREFIX + "category:" + category.getId();
-        Element element = cache.get(cacheKey);
-        if (element != null) {
-            facets = (List<SearchFacetDTO>) element.getValue();
-        }
+        List<SearchFacetDTO> facets = getCache().get(cacheKey);
         
         if (facets == null) {
             List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
@@ -155,8 +145,7 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
                 searchFacets.add(categorySearchFacet.getSearchFacet());
             }
             facets = buildSearchFacetDtos(searchFacets);
-            element = new Element(cacheKey, facets);
-            cache.put(element);
+            getCache().put(cacheKey, facets);
         }
         return facets;
     }
@@ -165,7 +154,7 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
      * Perform any necessary conversion of the key to be used by the search service
      * @param criteria
      */
-/*    protected void setQualifiedKeys(SearchCriteria criteria) {
+    protected void setQualifiedKeys(SearchCriteria criteria) {
         // Convert the filter criteria url keys
         Map<String, String[]> convertedFilterCriteria = new HashMap<String, String[]>();
         for (Entry<String, String[]> entry : criteria.getFilterCriteria().entrySet()) {
@@ -206,7 +195,7 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
      * @param qualifiedFieldName
      * @return the database qualified name
      */
-    /*protected String getDatabaseQualifiedFieldName(String qualifiedFieldName) {
+    protected String getDatabaseQualifiedFieldName(String qualifiedFieldName) {
         if (qualifiedFieldName.contains("productAttributes")) {
             return qualifiedFieldName.replace("product.", "");
         } else if (qualifiedFieldName.contains("defaultSku")) {
@@ -234,7 +223,7 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
      * @param categoryFacets
      * @return the wrapper DTO
      */
-    /*protected List<SearchFacetDTO> buildSearchFacetDtos(List<SearchFacet> categoryFacets) {
+    protected List<SearchFacetDTO> buildSearchFacetDtos(List<SearchFacet> categoryFacets) {
         List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
         
         for (SearchFacet facet : categoryFacets) {
@@ -301,5 +290,15 @@ public class DatabaseSearchServiceImpl/* implements SearchService */{
     public boolean isActive() {
         return true;
     }
-*/
+
+    protected Cache<String, List<SearchFacetDTO>> getCache() {
+        if (cache == null) {
+            synchronized (this) {
+                if (cache == null) {
+                    cache = cacheManager.getCache(CACHE_NAME);
+                }
+            }
+        }
+        return cache;
+    }
 }
