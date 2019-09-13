@@ -792,7 +792,10 @@
                     wrapperHeight = $tbody.closest('.select-group').outerHeight();
                 }
 
-                wrapperHeight -= $wrapper.next('.listgrid-table-footer:visible').outerHeight();
+                var footerOuterHeight = $wrapper.next('.listgrid-table-footer:visible').outerHeight();
+                if (typeof footerOuterHeight !== "undefined") {
+                    wrapperHeight -= wrapperHeight1;
+                }
                 wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
 
                 $wrapper.css('max-height', wrapperHeight);
