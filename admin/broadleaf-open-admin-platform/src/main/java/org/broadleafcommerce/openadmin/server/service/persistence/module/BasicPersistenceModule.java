@@ -886,19 +886,20 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     protected void extractPropertiesFromMetadata(Class<?>[] inheritanceLine, Map<String, FieldMetadata> mergedProperties, List<Property> properties, Boolean isHiddenOverride, MergedPropertyType type) {
+        Comparator<Property> comparator = new Comparator<Property>() {
+
+            @Override
+            public int compare(Property o1, Property o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        };
+        properties.sort(comparator);
+
         for (Map.Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
             String property = entry.getKey();
             Property prop = new Property();
             FieldMetadata metadata = mergedProperties.get(property);
             prop.setName(property);
-            Comparator<Property> comparator = new Comparator<Property>() {
-
-                @Override
-                public int compare(Property o1, Property o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            };
-            Collections.sort(properties, comparator);
             int pos = Collections.binarySearch(properties, prop, comparator);
             if (pos >= 0 && MergedPropertyType.MAPSTRUCTUREKEY != type && MergedPropertyType.MAPSTRUCTUREVALUE != type) {
                 logWarn: {
@@ -909,8 +910,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     //LOG.warn("Detected a field name collision (" + metadata.getTargetClass() + "." + property + ") during inspection for the inheritance line starting with (" + inheritanceLine[0].getName() + "). Ignoring the additional field. This can occur most commonly when using the @AdminPresentationAdornedTargetCollection and the collection type and target class have field names in common. This situation should be avoided, as the system will strip the repeated fields, which can cause unpredictable behavior.");
                 }
                 continue;
+            } else if (pos < 0) {
+                pos = -pos - 1; // calculate position to insert
             }
-            properties.add(prop);
+            properties.add(pos, prop);
             prop.setMetadata(metadata);
             if (isHiddenOverride && prop.getMetadata() instanceof BasicFieldMetadata) {
                 //this only makes sense for non collection types
