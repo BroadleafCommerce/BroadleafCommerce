@@ -273,7 +273,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
-    private String getOwningProductId(SectionCrumb[] sectionCrumbs) {
+    protected String getOwningProductId(SectionCrumb[] sectionCrumbs) {
         if (ArrayUtils.isNotEmpty(sectionCrumbs) && ProductImpl.class.getCanonicalName()
                 .equals(sectionCrumbs[0].getSectionIdentifier())) {
             return sectionCrumbs[0].getSectionId();
