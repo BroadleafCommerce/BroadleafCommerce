@@ -18,7 +18,6 @@
   limitations under the License.
   #L%
   -->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -59,7 +58,6 @@
     <bean p:order="7000" id="blTaxActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity" />
     <bean p:order="8000" id="blTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity" />
     <bean p:order="9000" id="blAdjustOrderPaymentsActivity" class="org.broadleafcommerce.core.pricing.service.workflow.AdjustOrderPaymentsActivity" />
-
 
     <bean id="blPricingWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -156,8 +154,7 @@
             </bean>
         </property>
     </bean>
-    
-    
+        
     <!-- Update Item Workflow Configuration -->
     <bean p:order="1000" id="blValidateUpdateProductOptionsRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.ValidateUpdateProductOptionsRequestActivity"/>
     <bean p:order="2000" id="blUpdateProductOptionsOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.UpdateProductOptionsOrderItemActivity"/>
