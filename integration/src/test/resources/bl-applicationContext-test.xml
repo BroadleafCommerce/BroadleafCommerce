@@ -79,16 +79,17 @@
                     The final configuration of this workflow should be:
                     0  100 - PassThroughActivity
                     1  500 - framework activity
-                    2  1000 - framework activity
-                    3  2000 - framework activity
-                    4  3000 - framework activity
-                    5  3500 - PassThroughActivity
-                    6  4000 - framework activity
-                    7  5000 - framework activity
-                    8  5000 - TestRollbackActivity
-                    9  6000 - framework activity
-                    10 7000 - framework activity
-                    11 8000 - TestExampleModuleActivity
+                    2  750 - framework activity
+                    3  1000 - framework activity
+                    4  2000 - framework activity
+                    5  3000 - framework activity
+                    6  3500 - PassThroughActivity
+                    7  4000 - framework activity
+                    8  5000 - framework activity
+                    9  5000 - TestRollbackActivity
+                    10  6000 - framework activity
+                    11 7000 - framework activity
+                    12 8000 - TestExampleModuleActivity
                 -->
                 <bean p:order="100" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
                 <bean p:order="5000" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">

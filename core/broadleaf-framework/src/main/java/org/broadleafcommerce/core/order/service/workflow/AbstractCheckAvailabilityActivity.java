@@ -23,14 +23,11 @@ package org.broadleafcommerce.core.order.service.workflow;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
-import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Resource;
@@ -52,21 +49,6 @@ public abstract class AbstractCheckAvailabilityActivity extends BaseActivity<Pro
     }
     
     protected void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
-        // First check if this Sku is available
-        if (!sku.isAvailable()) {
-            throw new InventoryUnavailableException("The referenced Sku " + sku.getId() + " is marked as unavailable", sku.getId(), requestedQuantity, 0);
-        }
-
-        if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-            Map<String, Object> inventoryContext = new HashMap<>();
-            inventoryContext.put(ContextualInventoryService.ORDER_KEY, order);
-            boolean available = inventoryService.isAvailable(sku, requestedQuantity, inventoryContext);
-            if (!available) {
-                throw new InventoryUnavailableException(sku.getId(),
-                        requestedQuantity, inventoryService.retrieveQuantityAvailable(sku, inventoryContext));
-            }
-        }
-
-        // the other case here is ALWAYS_AVAILABLE and null, which we are treating as being available
+        inventoryService.checkSkuAvailability(order, sku, requestedQuantity);
     }
 }
