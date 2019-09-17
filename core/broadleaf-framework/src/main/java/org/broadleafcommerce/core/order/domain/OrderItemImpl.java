@@ -338,6 +338,16 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
+    public Auditable getAuditable() {
+        return auditable;
+    }
+    
+    @Override
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
+    
+    @Override
     public int getQuantity() {
         return quantity;
     }
