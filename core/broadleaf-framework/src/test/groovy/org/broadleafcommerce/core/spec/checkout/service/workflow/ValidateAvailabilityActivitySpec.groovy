@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.spec.checkout.service.workflow
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.checkout.service.workflow.ValidateAvailabilityActivity
 import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
+import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException
 import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.OrderItemImpl
@@ -34,14 +35,10 @@ import org.broadleafcommerce.core.order.domain.OrderItemImpl
  * 2) !sku.isAvailable()
  *      * throw InventoryUnavailableException EXIT
  *
- * 3) sku.inventoryType equals InventoryType.CHECK_QUANTITY
- *      a) inventoryService is used to find if it is available
- *          i) !available
- *              * throw InventoryUnavailableException EXIT
- *          ii) available
- *              * nothing happens CONTINUE
+ * 3) return context
  *
- * 4) return context
+ * 4) !sku.isActive()
+ *      * throw IllegalArgumentException EXIT
  */
 class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
 
@@ -67,7 +64,7 @@ class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
         DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
-
+        mockSku.isActive() >> true
         context.seedData.order.orderItems << mockOrderItem
         mockOrderItem.getQuantity() >> 0
 
@@ -85,7 +82,7 @@ class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
         BundleOrderItemImpl mockOrderItem = Spy(BundleOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
-
+        mockSku.isActive() >> true
         context.seedData.order.orderItems << mockOrderItem
         mockOrderItem.getQuantity() >> 0
 
@@ -99,11 +96,11 @@ class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
     }
 
     def "If the order item is non-null, and the order item is not a familiar item, then availability is not checked"(){
-        setup: "setup a discrete order item"
+        setup: "setup order item"
         OrderItemImpl mockOrderItem = Spy(OrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
-
+        mockSku.isActive() >> true
         context.seedData.order.orderItems << mockOrderItem
         mockOrderItem.getQuantity() >> 0
 
@@ -114,6 +111,44 @@ class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
         0 * mockOrderItem.getSku() >> mockSku
         0 * mockInventoryService.checkSkuAvailability(*_)
         0 * mockSku.isAvailable()
+    }
+
+    def "If a sku is found to not be available, an InventoryUnavailableException is thrown"(){
+        setup: "Sku is setup to be found and not available"
+        DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
+        SkuImpl mockSku = Spy(SkuImpl)
+        mockSku.getId() >> 1
+        mockSku.isActive() >> true
+        mockOrderItem.getQuantity() >> 0
+        mockOrderItem.getId() >> null
+        context.seedData.order.orderItems << mockOrderItem
+
+        when: "the activity is executed"
+        context = activity.execute(context)
+
+        then: "InventoryUnavailableException is thrown"
+        1 * mockOrderItem.getSku() >> mockSku
+        1 * mockInventoryService.checkSkuAvailability(*_)
+        1 * mockSku.isAvailable() >> false
+        Exception e = thrown()
+        e instanceof InventoryUnavailableException
+    }
+
+    def "If the order item is non-null, and the sku is not active, we throw an IllegalArgumentException"(){
+        setup: "Setup order item and inactive sku"
+        DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
+        SkuImpl mockSku = Spy(SkuImpl)
+        mockSku.getId() >> 1
+        mockSku.isActive() >> false
+        context.seedData.order.orderItems << mockOrderItem
+        mockOrderItem.getQuantity() >> 1
+
+        when: "The activity is executed"
+        context = activity.execute(context)
+
+        then: "IllegalArgumentException is thrown"
+        1 * mockOrderItem.getSku() >> mockSku
+        IllegalArgumentException e = thrown()
     }
 
 }

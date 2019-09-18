@@ -68,17 +68,12 @@ public class ValidateAvailabilityActivity extends BaseActivity<ProcessContext<Ch
                 return context;
             }
 
+            if (!sku.isActive()) {
+                throw new IllegalArgumentException("The requested skuId (" + sku.getId() + ") is no longer active");
+            }
+
             Integer requestedQuantity = orderItem.getQuantity();
             inventoryService.checkSkuAvailability(order, sku, requestedQuantity);
-
-            Integer previousQty = orderItem.getQuantity();
-            for (OrderItem child : orderItem.getChildOrderItems()) {
-                Sku childSku = ((DiscreteOrderItem) child).getSku();
-                Integer childQuantity = child.getQuantity();
-                childQuantity = childQuantity / previousQty;
-                inventoryService.checkSkuAvailability(order, childSku, childQuantity * requestedQuantity);
-
-            }
         }
 
         return context;
