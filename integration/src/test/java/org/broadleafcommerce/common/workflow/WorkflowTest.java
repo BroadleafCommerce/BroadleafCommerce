@@ -67,7 +67,7 @@ public class WorkflowTest extends TestNGSiteIntegrationSetup {
         Assert.assertEquals(activities.get(0).getClass(), PassThroughActivity.class);
         Assert.assertEquals(activities.get(0).getOrder(), 100);
         
-        Assert.assertEquals(activities.get(5).getClass(), PassThroughActivity.class);
+        Assert.assertEquals(activities.get(6).getClass(), PassThroughActivity.class);
         Assert.assertEquals(activities.get(5).getOrder(), 3000);
     }
     
@@ -94,12 +94,12 @@ public class WorkflowTest extends TestNGSiteIntegrationSetup {
      */
     @Test
     public void testSameOrderingConfiguredActivity() {
-        Assert.assertEquals(activities.get(8).getClass(), TestRollbackActivity.class);
+        Assert.assertEquals(activities.get(9).getClass(), TestRollbackActivity.class);
     }
     
     @Test
     public void testInBetweenActivity() {
-        Assert.assertEquals(activities.get(5).getClass(), PassThroughActivity.class);
+        Assert.assertEquals(activities.get(6).getClass(), PassThroughActivity.class);
     }
     
 }
