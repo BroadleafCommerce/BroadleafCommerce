@@ -63,8 +63,8 @@ $(document).ready(function() {
 						var value = item[name];
 						//"name" and "value" are the field name and the internationalized error message, respectively
 						//now, build the jQuery search string to pinpoint the field's box, and add the error message right after the label
-						var searchString = ".field-box[id=field-" + name + "]";
-						$form.find(searchString).find(".field-label").append("<span class='fieldError error'>" + value + "</span>");
+						var searchString = ".field-group[id=field-" + name + "]";
+						$form.find(searchString).append("<span class='fieldError error errors'>" + value + "</span>");
 					}
 				});
 			}
