@@ -25,6 +25,7 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.server.service.SkuMetadataCacheService;
@@ -36,6 +37,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -199,10 +201,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
 
-            String productIdStr = null;
-            if (persistencePackage.getCustomCriteria() != null && persistencePackage.getCustomCriteria().length > 0) {
-                productIdStr = persistencePackage.getCustomCriteria()[0];
-            }
+            String productIdStr = getOwningProductId(persistencePackage.getSectionCrumbs());
             String cacheKey = skuMetadataCacheService.buildCacheKey(productIdStr);
             
             Map<String, FieldMetadata> properties = null;
@@ -214,9 +213,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 //Grab the default properties for the Sku
                 properties = helper.getSimpleMergedProperties(SkuImpl.class.getName(), persistencePerspective);
 
-                boolean isFirstCriteriaNAN = persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0;
+                boolean isFirstCriteriaNAN = productIdStr == null;
                 if (!isFirstCriteriaNAN && useToOneLookupSkuProductOptionValue) {
-                    isFirstCriteriaNAN = !DIGIT.matchesAllOf(persistencePackage.getCustomCriteria()[0]);
+                    isFirstCriteriaNAN = !NumberUtils.isNumber(productIdStr);
                 }
                 if (isFirstCriteriaNAN) {
                     //look up all the ProductOptions and then create new fields for each of them
@@ -232,7 +231,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 } else {
                     // If we have a product to filter the list of available product options, then use it
                     try {
-                        Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
+                        Long productId = Long.parseLong(productIdStr);
                         Product product = catalogService.findProductById(productId);
                         for (ProductOption option : product.getProductOptions()) {
                             FieldMetadata md = createIndividualOptionField(option, 0);
@@ -241,7 +240,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                             }
                         }
                     } catch (NumberFormatException e) {
-                        // the criteria wasn't a product id, just don't do anything
+                        // there wasn't a valid product id, just don't do anything
                     }
                 }
 
@@ -277,6 +276,14 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
+    protected String getOwningProductId(SectionCrumb[] sectionCrumbs) {
+        if (ArrayUtils.isNotEmpty(sectionCrumbs) && ProductImpl.class.getCanonicalName()
+                .equals(sectionCrumbs[0].getSectionIdentifier())) {
+            return sectionCrumbs[0].getSectionId();
+        }
+        return null;
+    }
+    
     protected void filterOutProductMetadata(Map<String, FieldMetadata> map) {
         //TODO we shouldn't have to filter out these keys here -- we should be able to exclude using @AdminPresentation,
         //but there's a bug preventing this behavior from completely working correctly
