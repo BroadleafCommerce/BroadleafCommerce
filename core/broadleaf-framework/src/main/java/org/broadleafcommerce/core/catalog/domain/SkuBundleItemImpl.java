@@ -39,6 +39,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
+
 import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
