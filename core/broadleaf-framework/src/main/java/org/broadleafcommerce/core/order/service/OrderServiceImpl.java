@@ -442,6 +442,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
+    public void deleteOrderWithoutTransactions(Order order) {
+        orderMultishipOptionService.deleteAllOrderMultishipOptions(order);
+        orderDao.deleteOrderWithoutTransactions(order);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException {
         ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
         offerCodes.add(offerCode);

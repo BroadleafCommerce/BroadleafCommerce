@@ -184,6 +184,14 @@ public class OrderDaoImpl implements OrderDao {
 
         em.remove(salesOrder);
     }
+    @Override
+    public void deleteOrderWithoutTransactions(Order salesOrder) {
+        if (!em.contains(salesOrder)) {
+            salesOrder = readOrderById(salesOrder.getId());
+        }
+
+        em.remove(salesOrder);
+    }
 
     @Override
     @SuppressWarnings("unchecked")
