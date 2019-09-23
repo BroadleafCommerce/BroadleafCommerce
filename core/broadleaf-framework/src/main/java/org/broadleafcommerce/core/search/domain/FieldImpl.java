@@ -231,25 +231,19 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
-        FieldImpl rhs = (FieldImpl) obj;
-        return new EqualsBuilder()
-                .append(this.id, rhs.id)
-                .append(this.entityType, rhs.entityType)
-                .append(this.friendlyName, rhs.friendlyName)
-                .append(this.propertyName, rhs.propertyName)
-                .append(this.overrideGeneratedPropertyName, rhs.overrideGeneratedPropertyName)
-                .append(this.abbreviation, rhs.abbreviation)
-                .append(this.translatable, rhs.translatable)
-                .isEquals();
+        Field other = (Field) obj;
+
+        return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
+
     }
 
     @Override
