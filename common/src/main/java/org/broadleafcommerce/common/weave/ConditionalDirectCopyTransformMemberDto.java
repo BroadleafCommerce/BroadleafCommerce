@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.common.weave;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.io.Serializable;
 
 /**
  * Simple data object to hold direct copy transform config information. This object also
