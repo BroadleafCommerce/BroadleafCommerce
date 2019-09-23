@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import java.io.Serializable;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -68,5 +69,15 @@ public class ExpressionDTO extends DataDTO implements Serializable {
                 .build();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(id)
+                .append(operator)
+                .append(value)
+                .toHashCode();
     }
 }

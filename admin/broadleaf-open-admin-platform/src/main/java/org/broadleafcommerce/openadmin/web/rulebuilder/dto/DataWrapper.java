@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * @author Elbert Bautista (elbertbautista)
  *
@@ -109,5 +111,15 @@ public class DataWrapper implements Serializable {
                 .build();
         }
         return false;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(data)
+                .append(error)
+                .append(rawMvel)
+                .toHashCode();
     }
 }

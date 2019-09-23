@@ -44,6 +44,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FIELD")
@@ -206,23 +209,6 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        Field other = (Field) obj;
-        
-        return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
-                
-    }
-
-    @Override
     public String getMainEntityName() {
         return getFriendlyName();
     }
@@ -241,5 +227,41 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
         cloned.setTranslatable(translatable);
         cloned.setEntityType(getEntityType());
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        FieldImpl rhs = (FieldImpl) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.entityType, rhs.entityType)
+                .append(this.friendlyName, rhs.friendlyName)
+                .append(this.propertyName, rhs.propertyName)
+                .append(this.overrideGeneratedPropertyName, rhs.overrideGeneratedPropertyName)
+                .append(this.abbreviation, rhs.abbreviation)
+                .append(this.translatable, rhs.translatable)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(entityType)
+                .append(friendlyName)
+                .append(propertyName)
+                .append(overrideGeneratedPropertyName)
+                .append(abbreviation)
+                .append(translatable)
+                .toHashCode();
     }
 }

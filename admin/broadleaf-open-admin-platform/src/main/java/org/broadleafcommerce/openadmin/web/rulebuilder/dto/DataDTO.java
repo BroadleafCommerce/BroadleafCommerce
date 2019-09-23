@@ -21,6 +21,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -105,5 +106,20 @@ public class DataDTO implements Serializable {
                 .build();
         }
         return false;
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(pk)
+                .append(containedPk)
+                .append(previousPk)
+                .append(previousContainedPk)
+                .append(quantity)
+                .append(condition)
+                .append(rules)
+                .toHashCode();
     }
 }
