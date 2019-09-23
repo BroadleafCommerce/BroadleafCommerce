@@ -19,13 +19,11 @@ package org.broadleafcommerce.core.spec.order.service.workflow
 
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
-import org.broadleafcommerce.core.inventory.service.ContextualInventoryService
+import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException
 import org.broadleafcommerce.core.inventory.service.type.InventoryType
 import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.workflow.CheckAddAvailabilityActivity
-
-
 
 /*
  * 1a) sku set using catalogService.findSkuById(_) CONTINUE
@@ -46,8 +44,10 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
 
     CatalogService mockCatalogService = Mock()
     OrderItemService mockOrderItemService = Mock()
-    ContextualInventoryService mockInventoryService = Mock()
-    
+    InventoryServiceImpl mockInventoryService = Spy(InventoryServiceImpl) {
+        retrieveQuantityAvailable(*_) >> 0
+    }
+
     
     /*
      * 1) mock for Services, and Sku
@@ -79,6 +79,7 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         then: "that sku is checked for availability"
         1 * mockCatalogService.findSkuById(_) >> mockSku
+        1 * mockInventoryService.checkSkuAvailability(*_)
         1 * mockSku.isAvailable() >> true
     }
     
@@ -97,6 +98,7 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         then: "InventoryUnavailableException is thrown"
         1 * mockCatalogService.findSkuById(_) >> mockSku
+        1 * mockInventoryService.checkSkuAvailability(*_)
         1 * mockSku.isAvailable() >> false
         Exception e = thrown()
         e instanceof InventoryUnavailableException
@@ -118,6 +120,7 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         then: "that sku is checked for availability"
         1 * mockCatalogService.findSkuById(_) >> mockSku
+        1 * mockInventoryService.checkSkuAvailability(*_)
         1 * mockSku.isAvailable() >> true
         1 * mockInventoryService.isAvailable(*_) >> true
             
@@ -139,12 +142,12 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         then: "that sku is checked for availability"
         1 * mockCatalogService.findSkuById(_) >> mockSku
+        1 * mockInventoryService.checkSkuAvailability(*_)
         1 * mockSku.isAvailable() >> true
         1 * mockInventoryService.isAvailable(*_) >> false
         Exception e = thrown()
         e instanceof InventoryUnavailableException
             
     }
-    
-    
+
 }
