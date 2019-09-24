@@ -64,6 +64,8 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
      */
     ExtensionResultStatusType getBaseProfileIdForSite(Site site, ExtensionResultHolder<Long> erh);
 
+    ExtensionResultStatusType getTypeForSite(Site site, ExtensionResultHolder<String> erh);
+
     /**
      * Handler implementations will populate the {@link ExtensionResultHolder} with a valid
      * child site ids whose base profile is the given profile

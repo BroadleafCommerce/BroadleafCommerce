@@ -22,9 +22,10 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Resource;
 
 /**
  * 
@@ -53,6 +54,13 @@ public class EntityInformationServiceImpl implements EntityInformationService {
     public Long getBaseProfileIdForSite(Site site) {
         ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
         extensionManager.getBaseProfileIdForSite(site, erh);
+        return erh.getResult();
+    }
+
+    @Override
+    public String getTypeForSite(Site site) {
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        extensionManager.getTypeForSite(site, erh);
         return erh.getResult();
     }
 

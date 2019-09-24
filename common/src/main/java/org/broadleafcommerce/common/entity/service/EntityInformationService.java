@@ -54,6 +54,8 @@ public interface EntityInformationService {
      */
     Long getBaseProfileIdForSite(Site site);
 
+    String getTypeForSite(Site site);
+
     Set<Long> getChildSiteIdsForProfile(Site profile);
 
     /**
