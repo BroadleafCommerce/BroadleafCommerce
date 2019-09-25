@@ -137,4 +137,13 @@ public interface ContextualInventoryService extends InventoryService {
      * @return a SKU to Quantity map represented by the items and quantities on the fulfillment group and fulfillment group items in the order.
      */
     public Map<Sku, Integer> buildSkuInventoryMap(Order order);
+
+    /**
+     *
+     * @param order
+     * @param sku
+     * @param requestedQuantity
+     * @throws InventoryUnavailableException
+     */
+    public void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException;
 }
