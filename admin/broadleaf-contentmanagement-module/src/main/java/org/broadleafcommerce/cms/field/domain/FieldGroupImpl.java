@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXref;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXrefImpl;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
@@ -81,6 +83,22 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Column (name = "IS_MASTER_FIELD_GROUP")
     protected Boolean isMasterFieldGroup = false;
 
+    @OneToMany(targetEntity = StructuredContentFieldGroupXrefImpl.class, mappedBy = "fieldGroup", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @OrderBy("groupOrder")
+    @BatchSize(size = 20)
+    protected List<StructuredContentFieldGroupXref> fieldGroupXrefs = new ArrayList<StructuredContentFieldGroupXref>();
+
+    @Override
+    public List<StructuredContentFieldGroupXref> getFieldGroupXrefs() {
+        return fieldGroupXrefs;
+    }
+
+    @Override
+    public void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs) {
+        this.fieldGroupXrefs = fieldGroupXrefs;
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -128,12 +146,20 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
+
         FieldGroup cloned = createResponse.getClone();
-        cloned.setInitCollapsedFlag(initCollapsedFlag);
         cloned.setName(name);
+        cloned.setIsMasterFieldGroup(isMasterFieldGroup);
+        cloned.setInitCollapsedFlag(initCollapsedFlag);
+
         for (FieldDefinition fieldDefinition : fieldDefinitions) {
             FieldDefinition clonedDef = fieldDefinition.createOrRetrieveCopyInstance(context).getClone();
             cloned.getFieldDefinitions().add(clonedDef);
+        }
+        for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
+            CreateResponse<StructuredContentFieldGroupXref>  clonedDef = entry.createOrRetrieveCopyInstance(context);
+            clonedDef.getClone().setFieldGroup(cloned);
+            cloned.getFieldGroupXrefs().add(clonedDef.getClone());
         }
         return createResponse;
     }

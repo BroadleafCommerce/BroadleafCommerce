@@ -22,7 +22,7 @@
 
     var originalStickyBarOffset;
     var originalStickyBarHeight;
-    
+
     BLCAdmin.entityForm = {
 
         initializeStickyHeader : function () {
@@ -90,9 +90,9 @@
                         // Add an error indicator to the fields tab
                         // this can happen more than once because the indicator is absolute positioning
                         var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0, 4);
-                        var $tabWithError = $('a[href=' + tabId + ']');
+                        var $tabWithError = $('a[href="' + tabId + '"]');
                         if (BLCAdmin.currentModal() !== undefined) {
-                            $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
+                            $tabWithError = BLCAdmin.currentModal().find('a[href="' + tabId + '"]');
                         }
                         $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
 
@@ -599,11 +599,11 @@ $(document).ready(function() {
         var submit = BLCAdmin.runSubmitHandlers($(this));
         return submit;
     });
-    
+
     $('body').on('submit', 'form.modal-add-entity-form', function(event) {
         var $form = $(this);
         var submit = BLCAdmin.runSubmitHandlers($form);
-        
+
         if (submit) {
             BLC.ajax({
                 url: this.action,
@@ -619,8 +619,11 @@ $(document).ready(function() {
                     BLCAdmin.entityForm.swapModalEntityForm($modal, data);
 
                     BLCAdmin.initializeFields($modal.find('.modal-body .tabs-content'));
-                    $modal.find('.submit-button').show();
                     $modal.find('img.ajax-loader').hide();
+                    var $submitButton = $modal.find('.submit-button');
+                    $submitButton.show();
+                    $submitButton.prop('disabled',false);
+                    BLCAdmin.entityForm.showErrorHeaderAlert(BLCAdmin.messages.problemSavingModal);
                 }
             });
         }
@@ -678,10 +681,14 @@ $(document).ready(function() {
 
                     // For each error field, make sure that its tab signifies that it contains an error
                     $newForm.find('.has-error').each(function(index, el) {
-                        var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
-                        var $tabWithError = BLCAdmin.currentModal().find('a[href=' + tabId + ']');
-                        if ($tabWithError.find('.tab-error-indicator').length == 0) {
-                            $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                        if ($(el).is('.hidden')){
+                            BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.validationError);
+                        } else {
+                            var tabId = '#' + $(el).parents('.entityFormTab').attr("class").substring(0, 4);
+                            var $tabWithError = BLCAdmin.currentModal().find('a[href="' + tabId + '"]');
+                            if ($tabWithError.find('.tab-error-indicator').length == 0) {
+                                $tabWithError.prepend('<span class="tab-error-indicator danger"></span>');
+                            }
                         }
                     });
 
@@ -735,7 +742,7 @@ $(document).ready(function() {
         BLCAdmin.ruleBuilders.removeModalRuleBuilders($(this));
     });
 
-    $('body').on('click', 'a.media-link', function(event) {
+    $('body').on('click', 'a.js-media-link', function(event) {
         event.preventDefault();
 
         var link = $(this).attr('data-link');

@@ -21,6 +21,7 @@
 package org.broadleafcommerce.test.common.properties;
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -54,13 +55,13 @@ public class FilesystemSharedRuntimeEnvironmentTest {
         String sharedOverridePropertiesPath = FilesystemSharedRuntimeEnvironmentTest.class.getClassLoader().getResource("sharedoverridestest.properties").getFile();
         sharedOverridePropertiesPath = sharedOverridePropertiesPath.replace("%20", " ");
         sharedOverridePropertiesPath = sharedOverridePropertiesPath.replace("%40", "@");
-        System.setProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_SHARED_OVERRIDES_PROPERTY, sharedOverridePropertiesPath);
+        System.setProperty(BroadleafEnvironmentConfigurer.PROPERTY_SHARED_OVERRIDES_PROPERTY, sharedOverridePropertiesPath);
     }
     
     // don't impact other tests with my property override
     @AfterClass
     public static void clearOverrideProperty() {
-        System.clearProperty(BroadleafEnvironmentConfiguringApplicationListener.PROPERTY_SHARED_OVERRIDES_PROPERTY);
+        System.clearProperty(BroadleafEnvironmentConfigurer.PROPERTY_SHARED_OVERRIDES_PROPERTY);
     }
     
     @Test
@@ -69,6 +70,6 @@ public class FilesystemSharedRuntimeEnvironmentTest {
     @DirtiesContext
     public void testPropertiesWereOverridden() {
         Assert.assertEquals("sharedoverridevalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.SHARED_OVERRIDE_SOURCES_NAME));
+        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfigurer.SHARED_OVERRIDE_SOURCES_NAME));
     }
 }

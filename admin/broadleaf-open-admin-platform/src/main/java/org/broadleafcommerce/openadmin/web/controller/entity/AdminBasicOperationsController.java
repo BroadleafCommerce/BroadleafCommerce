@@ -18,6 +18,7 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -144,6 +145,11 @@ public class AdminBasicOperationsController extends AdminAbstractController {
                 listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
                 listGrid.removeAllRowActions();
             }
+
+            //To "escape" characters like single quote
+            listGrid.setFriendlyName(StringEscapeUtils.escapeEcmaScript(listGrid.getFriendlyName()));
+            listGrid.setJsonFieldName(StringEscapeUtils.escapeEcmaScript(listGrid.getJsonFieldName()));
+
             model.addAttribute("listGrid", listGrid);
         }
 

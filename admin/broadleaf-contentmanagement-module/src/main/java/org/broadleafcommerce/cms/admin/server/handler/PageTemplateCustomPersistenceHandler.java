@@ -207,7 +207,11 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 int i = 0;
                 Object foreignEntity = null;
                 while (foreignEntity == null && i < lookupClasses.length) {
-                    foreignEntity = dynamicEntityDao.find(lookupClasses[i++], Long.parseLong(prop.getValue()));
+                    try {
+                        foreignEntity = dynamicEntityDao.find(lookupClasses[i++], Long.parseLong(prop.getValue()));
+                    } catch (NumberFormatException e) {
+                        // Do nothing, we want to keep searching until we find the correct foreign entity
+                    }
                 }
 
                 if (foreignEntity instanceof AdminMainEntity) {

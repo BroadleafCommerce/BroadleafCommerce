@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author jfischer
  *
  */
-public interface HydratedCacheManager {
+public interface HydratedCacheManager extends Serializable {
 
     public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName);
 

@@ -56,6 +56,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -714,6 +715,11 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public OfferCode findOfferCodeById(Long id) {
         return offerCodeDao.readOfferCodeById(id);
+    }
+
+    @Override
+    public List<OfferCode> findOfferCodesByIds(Collection<Long> ids) {
+        return offerCodeDao.readOfferCodesByIds(ids);
     }
 
     @Override

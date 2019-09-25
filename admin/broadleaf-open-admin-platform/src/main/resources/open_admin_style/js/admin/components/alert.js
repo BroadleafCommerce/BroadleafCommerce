@@ -55,4 +55,26 @@
         BLCAdmin.history.replaceUrlParameter('headerFlash');
     }, 3000);
 
+    /**
+     * Shows an error message toast
+     * @param message The message to display
+     * @param timeout How long until the toast gets eaten (disappears)
+     */
+    BLCAdmin.showErrorToast = function(message, timeout){
+        var toastDiv = document.createElement('div');
+        toastDiv.className ='alert alert-danger blc-error-toast';
+        toastDiv.innerHTML = message;
+        toastDiv.style.top = '100px';
+        toastDiv.style.position = 'absolute';
+        document.body.appendChild(toastDiv);
+        var center = window.innerWidth / 2 - toastDiv.offsetWidth / 2;
+        toastDiv.style.left = center + "px";
+        $(toastDiv).animate({ opacity: 1 }, 1000);
+        setTimeout(function(){
+            $(toastDiv).animate({opacity: 0}, 1000);
+            setTimeout(function(){$(toastDiv).remove()},timeout);
+        },timeout);
+    }
+
 })(jQuery, BLCAdmin);
+

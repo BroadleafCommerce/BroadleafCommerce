@@ -27,9 +27,15 @@ import org.broadleafcommerce.common.email.service.info.ServerInfo;
 import org.broadleafcommerce.common.email.service.message.EmailPropertyType;
 import org.broadleafcommerce.common.email.service.message.EmailServiceProducer;
 import org.broadleafcommerce.common.email.service.message.MessageCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -48,6 +54,7 @@ public class EmailServiceImpl implements EmailService {
     @Resource(name = "blServerInfo")
     protected ServerInfo serverInfo;
 
+    @Autowired(required = false)
     protected EmailServiceProducer emailServiceProducer;
 
     @Resource(name = "blMessageCreator")
@@ -56,6 +63,7 @@ public class EmailServiceImpl implements EmailService {
     @Resource(name = "blEmailReportingDao")
     protected EmailReportingDao emailReportingDao;
 
+    @Override
     public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, Map<String, Object> props) {
         if (emailInfo == null) {
             emailInfo = new EmailInfo();
@@ -70,6 +78,7 @@ public class EmailServiceImpl implements EmailService {
         return sendBasicEmail(emailInfo, emailTarget, props);
     }
 
+    @Override
     public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, Map<String, Object> props) {
         if (!(emailInfo instanceof NullEmailInfo)) {
             EmailTarget emailTarget = emailReportingDao.createTarget();
@@ -80,6 +89,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Override
     public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, Map<String, Object> props) {
         if (emailInfo == null) {
             emailInfo = new EmailInfo();

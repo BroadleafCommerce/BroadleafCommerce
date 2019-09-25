@@ -54,6 +54,14 @@
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -106,7 +114,7 @@
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
         </dependency>
-        
+
         <!-- JAXB Libraries -->
         <dependency>
             <groupId>javax.annotation</groupId>
@@ -128,7 +136,7 @@
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
         </dependency>
-            
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -138,7 +146,11 @@
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jcache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
         </dependency>
         <dependency>
@@ -224,10 +236,6 @@
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.jsr107cache</groupId>
-            <artifactId>jsr107cache</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -316,10 +324,6 @@
             <artifactId>woodstox-core-asl</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.yahoo.platform.yui</groupId>
             <artifactId>yuicompressor</artifactId>
             <exclusions>
@@ -330,21 +334,36 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.7.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler-unshaded</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+		<dependency>
+		    <groupId>com.googlecode.htmlcompressor</groupId>
+		    <artifactId>htmlcompressor</artifactId>
+		</dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jkeylockmanager</groupId>
-            <artifactId>jkeylockmanager</artifactId>            
-        </dependency>          
+            <artifactId>jkeylockmanager</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>

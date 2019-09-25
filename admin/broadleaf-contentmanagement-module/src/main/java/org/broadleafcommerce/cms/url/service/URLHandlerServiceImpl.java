@@ -37,10 +37,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 
 
 /**
@@ -53,13 +51,16 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     //This is just a placeholder object to allow us to cache a URI that does not have a URL handler.
     protected static final NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
     private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
-    protected Cache urlHandlerCache;
+    protected Cache<String,URLHandler> urlHandlerCache;
 
     @Resource(name = "blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
 
     @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<String, Pattern>(2000);
 
@@ -111,7 +112,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
             }
 
             if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
-                getUrlHandlerCache().put(new Element(key, handler));
+                getUrlHandlerCache().put(key, handler);
             }
         }
 
@@ -184,9 +185,9 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     public Boolean removeURLHandlerFromCache(String mapKey) {
         Boolean success = Boolean.FALSE;
         if (mapKey != null) {
-            Element e = getUrlHandlerCache().get(mapKey);
+            Object e = getUrlHandlerCache().get(mapKey);
 
-            if (e != null && e.getObjectValue() != null) {
+            if (e != null) {
                 success = Boolean.valueOf(getUrlHandlerCache().remove(mapKey));
             }
         }
@@ -205,16 +206,12 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     }
 
     protected URLHandler getUrlHandlerFromCache(String key) {
-        Element cacheElement = getUrlHandlerCache().get(key);
-        if (cacheElement != null) {
-            return (URLHandler) cacheElement.getObjectValue();
-        }
-        return null;
+        return getUrlHandlerCache().get(key);
     }
 
-    protected Cache getUrlHandlerCache() {
+    protected Cache<String,URLHandler> getUrlHandlerCache() {
         if (urlHandlerCache == null) {
-            urlHandlerCache = CacheManager.getInstance().getCache("cmsUrlHandlerCache");
+            urlHandlerCache = cacheManager.getCache("cmsUrlHandlerCache");
         }
         return urlHandlerCache;
     }

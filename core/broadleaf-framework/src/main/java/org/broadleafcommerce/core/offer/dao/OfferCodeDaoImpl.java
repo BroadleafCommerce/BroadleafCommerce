@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -73,6 +74,13 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     @Override
     public OfferCode readOfferCodeById(Long offerCodeId) {
         return em.find(OfferCodeImpl.class, offerCodeId);
+    }
+
+    @Override
+    public List<OfferCode> readOfferCodesByIds(Collection<Long> offerCodeIds) {
+        TypedQuery<OfferCode> query = em.createQuery("SELECT code FROM " + OfferCode.class.getName() + " code WHERE code.id in :offerCodeIds", OfferCode.class);
+        query.setParameter("offerCodeIds", offerCodeIds);
+        return query.getResultList();
     }
 
     @Override

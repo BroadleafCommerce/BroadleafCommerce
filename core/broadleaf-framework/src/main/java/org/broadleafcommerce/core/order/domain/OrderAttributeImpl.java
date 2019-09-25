@@ -39,6 +39,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * The Class OrderAttributeImpl
@@ -46,7 +47,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_ORDER_ATTRIBUTE")
+@Table(name="BLC_ORDER_ATTRIBUTE",
+                uniqueConstraints = @UniqueConstraint(name = "ATTR_NAME_ORDER_ID", columnNames = {"NAME", "ORDER_ID"}))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
 @AdminPresentationMergeOverrides(
     {

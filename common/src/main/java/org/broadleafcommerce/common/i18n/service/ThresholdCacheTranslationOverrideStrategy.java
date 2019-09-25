@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Element;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
@@ -73,8 +71,8 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
                                              String localeCode, String localeCountryCode, String basicCacheKey) {
         String specificPropertyKey = property + "_" + localeCountryCode;
         String generalPropertyKey = property + "_" + localeCode;
-        Element cacheResult = translationSupport.getCache().get(basicCacheKey);
-        Element result;
+        Object cacheResult = translationSupport.getCache().get(basicCacheKey);
+        Object result = null;
         LocalePair response = new LocalePair();
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
@@ -91,9 +89,8 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
                         propertyTranslationMap.get(key).put(translation.getEntityId(), standardCache);
                     }
                 }
-                Element newElement = new Element(basicCacheKey, propertyTranslationMap);
-                translationSupport.getCache().put(newElement);
-                result = newElement;
+                translationSupport.getCache().put(basicCacheKey, propertyTranslationMap);
+                result = propertyTranslationMap;
             } else {
                 //Translation is dual discriminated by site and catalog, which can make it impossible to find results under normal
                 //circumstances because the two discriminators can cancel eachother out. We use the CATALOG_ONLY ResultType
@@ -106,7 +103,7 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
             result = cacheResult;
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
         }
-        Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = (Map<String, Map<String, StandardCacheItem>>) result.getObjectValue();
+        Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = (Map<String, Map<String, StandardCacheItem>>) result;
         // Check For a Specific Standard Site Match (language and country)
         StandardCacheItem specificTranslation = translationSupport.lookupTranslationFromMap(specificPropertyKey, propertyTranslationMap, entityId);
         // Check For a General Match (language and country)
@@ -120,7 +117,7 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
     @Override
     public LocalePair getLocaleBasedTemplateValue(String templateCacheKey, String property, TranslatedEntity entityType,
                                                   String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
-        Element cacheResult = translationSupport.getCache().get(templateCacheKey);
+        Object cacheResult = translationSupport.getCache().get(templateCacheKey);
         LocalePair response = new LocalePair();
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
@@ -136,7 +133,7 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
                         propertyTranslationMap.get(key).put(translation.getEntityId(), translation);
                     }
                 }
-                translationSupport.getCache().put(new Element(templateCacheKey, propertyTranslationMap));
+                translationSupport.getCache().put(templateCacheKey, propertyTranslationMap);
                 Translation translation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
                 if (translation != null) {
                     buildSingleItemResponse(response, translation);
@@ -149,7 +146,7 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
             }
         } else {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
-            Map<String, Map<String, Translation>> propertyTranslationMap = (Map<String, Map<String, Translation>>) cacheResult.getObjectValue();
+            Map<String, Map<String, Translation>> propertyTranslationMap = (Map<String, Map<String, Translation>>) cacheResult;
             Translation bestTranslation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
             if (bestTranslation != null) {
                 buildSingleItemResponse(response, bestTranslation);

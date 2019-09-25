@@ -79,10 +79,10 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
         if (!dirty) {
             Object value = request.getFieldManager().getFieldValue(instance, request.getProperty().getName());
             if (checkValue instanceof String) {
-                checkValue = ((String) checkValue).trim();
+                checkValue = ((String) checkValue).replaceAll("\\s+[</]|\\r\\n+[</]","</").trim();
             }
             if (value instanceof String) {
-                value = ((String) value).trim();
+                value = ((String) value).replaceAll("\\s+[</]|\\r\\n+[</]","</").trim();
             }
             if (value instanceof BigDecimal) {
                 BigDecimal origValue = (BigDecimal) value;

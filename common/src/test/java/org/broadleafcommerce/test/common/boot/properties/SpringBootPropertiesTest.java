@@ -21,6 +21,7 @@
 package org.broadleafcommerce.test.common.boot.properties;
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,11 +54,11 @@ public class SpringBootPropertiesTest {
     
     @Test
     public void testProfileSourcesRegisteredOverridesCommon() {
-        Assert.assertTrue(env.getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.FRAMEWORK_SOURCES_NAME));
-        Assert.assertTrue(env.getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.PROFILE_AWARE_SOURCES_NAME));
+        Assert.assertTrue(env.getPropertySources().contains(BroadleafEnvironmentConfigurer.FRAMEWORK_SOURCES_NAME));
+        Assert.assertTrue(env.getPropertySources().contains(BroadleafEnvironmentConfigurer.PROFILE_AWARE_SOURCES_NAME));
         
         String developmentSourceName = new ClassPathResource("common-test-properties/profile-aware-properties/development.properties").getDescription();
-        CompositePropertySource profileAwareSource = (CompositePropertySource) env.getPropertySources().get(BroadleafEnvironmentConfiguringApplicationListener.PROFILE_AWARE_SOURCES_NAME);
+        CompositePropertySource profileAwareSource = (CompositePropertySource) env.getPropertySources().get(BroadleafEnvironmentConfigurer.PROFILE_AWARE_SOURCES_NAME);
         
         Assert.assertTrue(profileAwareSource.getPropertySources().contains(PropertySource.named(developmentSourceName)));
     }

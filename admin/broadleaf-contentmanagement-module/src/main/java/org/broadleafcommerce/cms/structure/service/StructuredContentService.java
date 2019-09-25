@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
-import net.sf.ehcache.Cache;
-
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -29,6 +27,8 @@ import org.hibernate.Criteria;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.cache.Cache;
 
 /**
  * Provides services to manage <code>StructuredContent</code> items.

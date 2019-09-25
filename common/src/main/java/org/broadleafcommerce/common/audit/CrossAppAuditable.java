@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2019 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,26 +15,14 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.cache.engine;
-
-import java.io.Serializable;
-import java.util.Hashtable;
+package org.broadleafcommerce.common.audit;
 
 /**
+ * Marker class that allows the auditable fields to be udpated from either the site or the admin.  Classes should implement the AdminAuditableListener.
  * 
- * @author jfischer
+ * @author dcolgrove
  *
  */
-@Deprecated
-public class HydratedCacheElement extends Hashtable<String, Object> {
+public interface CrossAppAuditable {
 
-    private static final long serialVersionUID = 1L;
-
-    public Object getCacheElementItem(String elementItemName, Serializable parentKey) {
-        return get(elementItemName + "_" + parentKey);
-    }
-    
-    public Object putCacheElementItem(String elementItemName, Serializable parentKey, Object value) {
-        return put(elementItemName +"_"+parentKey, value);
-    }
 }

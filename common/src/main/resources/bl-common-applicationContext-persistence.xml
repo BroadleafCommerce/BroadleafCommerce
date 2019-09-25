@@ -86,10 +86,11 @@
             </list>
         </property>
     </bean>
-
     
-    <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
-        <property name="shared" value="true"/>
+    <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.jcache.MergeJCacheManagerFactoryBean"/>
+    
+    <bean id="blJCacheUtil" class="org.broadleafcommerce.common.extensibility.cache.ehcache.DefaultEhCacheUtil">
+        <constructor-arg ref="blCacheManager"/>
     </bean>
 
     <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">

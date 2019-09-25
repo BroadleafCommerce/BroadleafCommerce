@@ -55,6 +55,7 @@
                 <ref bean="blProductCustomPersistenceHandler" />
                 <ref bean="blChildCategoriesCustomPersistenceHandler" />
                 <ref bean="blSkuCustomPersistenceHandler" />
+                <ref bean="blSkuLookupByProductCustomPersistenceHandler" />
                 <ref bean="blISOCountryPersistenceHandler"/>
                 <ref bean="blSkuBundleItemCustomPersistenceHandler" />
                 <ref bean="blSearchFacetRangeCustomPersistenceHandler" />
@@ -63,6 +64,7 @@
                 <ref bean="blFieldOnlyPropertiesCustomPersistenceHandler" />
                 <ref bean="blSearchFacetCustomPersistenceHandler" />
                 <ref bean="blOfferCustomPersistenceHandler" />
+                <ref bean="blOfferCodeCustomPersistenceHandler" />
                 <ref bean="blProductOptionValuesCustomPersistenceHandler" />
             </list>
         </property>

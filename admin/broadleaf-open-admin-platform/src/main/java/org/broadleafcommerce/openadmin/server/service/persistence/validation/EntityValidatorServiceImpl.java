@@ -18,6 +18,8 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -29,18 +31,20 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceExc
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 
@@ -53,15 +57,48 @@ import javax.annotation.Resource;
  * @see {@link ValidationConfiguration}
  */
 @Service("blEntityValidatorService")
-public class EntityValidatorServiceImpl implements EntityValidatorService, ApplicationContextAware {
+public class EntityValidatorServiceImpl implements EntityValidatorService {
+	protected static final Log LOG = LogFactory.getLog(EntityValidatorServiceImpl.class);
     
     @Resource(name = "blGlobalEntityPropertyValidators")
     protected List<GlobalPropertyValidator> globalEntityValidators;
-    
-    protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected ApplicationContext applicationContext;
+    
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService securityService;
+    
+    private Map<String, List<BroadleafEntityValidator<?>>> formFoxValidatorMap;
+
+	@PostConstruct
+	public void populateFormFoxValidatorMap() {
+		String[] beanNames = applicationContext.getBeanNamesForType(BroadleafEntityValidator.class);
+		formFoxValidatorMap = new HashMap<>(beanNames.length);
+
+		for (String beanName : beanNames) {
+			BroadleafEntityValidator<?> formFoxValidator = applicationContext.getBean(beanName,
+					BroadleafEntityValidator.class);
+			Class<?> entityType = GenericTypeResolver.resolveTypeArgument(formFoxValidator.getClass(),
+					BroadleafEntityValidator.class);
+			if (entityType != null) {
+				String entityClassName = entityType.getName();
+				LOG.info(String.format("Registering validator %s for entity type %s",
+						formFoxValidator.getClass().getName(), entityClassName));
+
+				List<BroadleafEntityValidator<?>> registeredValidatorsForType = formFoxValidatorMap
+						.get(entityClassName);
+				if (registeredValidatorsForType == null) {
+					registeredValidatorsForType = new ArrayList<>();
+					formFoxValidatorMap.put(entityClassName, registeredValidatorsForType);
+				}
+				registeredValidatorsForType.add(formFoxValidator);
+			} else {
+				LOG.warn("Could not determine entity type for " + formFoxValidator.getClass().getName());
+			}
+		}
+	}
+    
     
     @Override
     public void validate(Entity submittedEntity, @Nullable Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
@@ -192,6 +229,17 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                 }
             }
         }
+        if (instance != null) {
+			List<BroadleafEntityValidator<?>> formFoxValidators = formFoxValidatorMap
+					.get(instance.getClass().getName());
+			if (formFoxValidators != null) {
+				for (BroadleafEntityValidator<?> formFoxValidator : formFoxValidators) {
+					LOG.debug("Calling validator " + formFoxValidator.getClass().getName());
+					formFoxValidator.validate(submittedEntity, instance, propertiesMetadata, recordHelper,
+							validateUnsubmittedProperties);
+				}
+			}
+		}
     }
 
     /**
@@ -236,11 +284,4 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     public void setGlobalEntityValidators(List<GlobalPropertyValidator> globalEntityValidators) {
         this.globalEntityValidators = globalEntityValidators;
     }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-
 }

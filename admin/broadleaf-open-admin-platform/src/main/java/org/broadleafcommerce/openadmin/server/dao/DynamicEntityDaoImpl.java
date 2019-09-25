@@ -921,7 +921,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] entities, ClassMetadata cmd) {
         Class<?>[] superClassEntities = getSuperClassHierarchy(entities[entities.length-1]);
 
-        Map<String, TabMetadata> mergedTabAndGroupMetadata = metadata.getBaseTabAndGroupMetadata(superClassEntities);
+        Map<String, TabMetadata> mergedTabAndGroupMetadata = metadata.getBaseTabAndGroupMetadata(entities);
         metadata.applyTabAndGroupMetadataOverrides(superClassEntities, mergedTabAndGroupMetadata);
         metadata.buildAdditionalTabAndGroupMetadataFromCmdProperties(cmd, mergedTabAndGroupMetadata);
 

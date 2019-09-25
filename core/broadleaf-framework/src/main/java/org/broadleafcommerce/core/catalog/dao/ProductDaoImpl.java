@@ -168,7 +168,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> readActiveProductsByCategory(Long categoryId) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readActiveProductsByCategoryInternal(categoryId, currentDate);
     }
 
@@ -190,7 +190,7 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public List<Product> readFilteredActiveProductsByQuery(String query, SearchCriteria searchCriteria) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readFilteredActiveProductsByQueryInternal(query, currentDate, searchCriteria);
     }
 
@@ -243,7 +243,7 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public List<Product> readFilteredActiveProductsByCategory(Long categoryId, SearchCriteria searchCriteria) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readFilteredActiveProductsByCategoryInternal(categoryId, currentDate, searchCriteria);
     }
 
@@ -427,7 +427,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> readActiveProductsByCategory(Long categoryId, int limit, int offset) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readActiveProductsByCategoryInternal(categoryId, currentDate, limit, offset);
     }
     
@@ -484,7 +484,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<ProductBundle> readAutomaticProductBundles() {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         TypedQuery<ProductBundle> query = em.createNamedQuery("BC_READ_AUTOMATIC_PRODUCT_BUNDLES", ProductBundle.class);
         query.setParameter("currentDate", currentDate);
         query.setParameter("autoBundle", Boolean.TRUE);
@@ -519,7 +519,7 @@ public class ProductDaoImpl implements ProductDao {
         query = em.createNamedQuery("BC_READ_PRODUCTS_BY_OUTGOING_URL");
         query.setParameter("url", uri);
         query.setParameter("urlKey", urlKey);
-        query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution));
+        query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
     
@@ -530,13 +530,13 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public List<Product> readAllActiveProducts(int page, int pageSize) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readAllActiveProductsInternal(page, pageSize, currentDate);
     }
 
     @Override
     public List<Product> readAllActiveProducts(Integer pageSize, Long lastId) {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readAllActiveProductsInternal(pageSize, currentDate, lastId);
     }
     
@@ -567,7 +567,7 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public List<Product> readAllActiveProducts() {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readAllActiveProductsInternal(currentDate);
     }
     
@@ -588,7 +588,7 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public Long readCountAllActiveProducts() {
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
         return readCountAllActiveProductsInternal(currentDate);
     }
     

@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.vendor.service.cache;
 
-import net.sf.ehcache.Cache;
+import javax.cache.Cache;
 
 
 /**

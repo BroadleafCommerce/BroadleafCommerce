@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.common.config.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
@@ -36,6 +32,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 
 /**
  * Service that retrieves property settings from the database.   If not set in
@@ -48,6 +46,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     public static final String PROPERTY_SOURCE_NAME = "systemPropertySource";
     protected static final String ENV_CACHE_PREFIX = "ORIGIN_FROM_ENV";
+    protected static final String SYSTEM_PROPERTY_CACHE_NAME = "blSystemPropertyElements";
 
     /**
      * If the property resoltion comes from the Spring Environment I don't want to try to re-resolve a property from the Environment. This
@@ -57,7 +56,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     private static final String NULL_RESPONSE = "*NULL_RESPONSE*";
 
-    protected Cache systemPropertyCache;
+    protected Cache<String, String> systemPropertyCache;
 
     @Resource(name="blSystemPropertiesDao")
     protected SystemPropertiesDao systemPropertiesDao;
@@ -67,6 +66,9 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     @Value("${system.property.cache.timeout}")
     protected int systemPropertyCacheTimeout;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     @Autowired
     protected Environment env;
@@ -131,21 +133,12 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {
         String key = buildKey(propertyName);
-        if (systemPropertyCacheTimeout < 0) {
-            getSystemPropertyCache().put(new Element(key, propertyValue));
-        } else {
-            getSystemPropertyCache().put(new Element(key, propertyValue, systemPropertyCacheTimeout,
-                    systemPropertyCacheTimeout));
-        }
+        getSystemPropertyCache().put(key, propertyValue);
     }
 
     protected String getPropertyFromCache(String propertyName) {
         String key = buildKey(propertyName);
-        Element cacheElement = getSystemPropertyCache().get(key);
-        if (cacheElement != null && cacheElement.getObjectValue() != null) {
-            return (String) cacheElement.getObjectValue();
-        }
-        return null;
+        return getSystemPropertyCache().get(key);
     }
 
     /**
@@ -208,11 +201,19 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         return key;
     }
 
-    protected Cache getSystemPropertyCache() {
+    protected Cache<String, String> getSystemPropertyCache() {
         if (systemPropertyCache == null) {
-            systemPropertyCache = CacheManager.getInstance().getCache("blSystemPropertyElements");
+            synchronized (this) {
+                if (systemPropertyCache == null) {
+                    systemPropertyCache = cacheManager.getCache(getCacheName());
+                }
+            }
         }
         return systemPropertyCache;
+    }
+
+    protected String getCacheName() {
+        return SYSTEM_PROPERTY_CACHE_NAME;
     }
 
     @Override

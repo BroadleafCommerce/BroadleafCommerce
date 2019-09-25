@@ -19,6 +19,9 @@ package org.broadleafcommerce.common.cache.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.cache.JCacheUtil;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,65 +30,60 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
+import javax.cache.Cache;
+import javax.cache.event.CacheEntryEvent;
+import javax.cache.event.CacheEntryListenerException;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManager {
+@Component("blHydratedCacheMangager")
+public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManager<Serializable, Object> {
 
+    private static final long serialVersionUID = 1L;
+    
     private static final Log LOG = LogFactory.getLog(EhcacheHydratedCacheManagerImpl.class);
     private static final EhcacheHydratedCacheManagerImpl MANAGER = new EhcacheHydratedCacheManagerImpl();
+    
+    public static final String HYDRATED_CACHE_NAME = "hydrated-cache";
 
     public static EhcacheHydratedCacheManagerImpl getInstance() {
         return MANAGER;
     }
 
     private Map<String, List<String>> cacheMembersByEntity = Collections.synchronizedMap(new HashMap<String, List<String>>(100));
-    private Cache heap = null;
+    private Cache<String, Object> heap = null;
 
-    private EhcacheHydratedCacheManagerImpl()  {
-        //CacheManager.getInstance() and CacheManager.create() cannot be called in this constructor because it will create two cache manager instances
-    }
-    
-    private synchronized Cache getHeap() {
+    private synchronized Cache<String, Object> getHeap() {
         if (heap == null) {
-            if (CacheManager.getInstance().cacheExists("hydrated-cache")) {
-                heap = CacheManager.getInstance().getCache("hydrated-cache");
-            } else {
-                CacheConfiguration config = new CacheConfiguration("hydrated-cache", 0).eternal(true).overflowToDisk(false).maxElementsInMemory(100000);
-                Cache cache = new Cache(config);
-                CacheManager.create().addCache(cache);
+            JCacheUtil cacheUtil = ApplicationContextHolder.getApplicationContext().getBean("blJCacheUtil", JCacheUtil.class);
+            Cache<String, Object> cache = cacheUtil.getCache(getHydratedCacheName());
+            if (cache != null) {
                 heap = cache;
+            } else {
+                //We want this to never expire, so we use a TTL of -1. Max elements are 100000.
+                heap = cacheUtil.createCache(getHydratedCacheName(), -1, 100000, String.class, Object.class);
             }
         }
         return heap;
     }
 
+    protected String getHydratedCacheName() {
+        return HYDRATED_CACHE_NAME;
+    }
+
     @Override
     public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
-        Object response = null;
-        Element element;
         String myKey = cacheRegion + '_' + cacheName + '_' + elementItemName + '_' + elementKey;
-        element = getHeap().get(myKey);
-        if (element != null) {
-            response = element.getObjectValue();
-        }
-        return response;
+        return getHeap().get(myKey);
     }
 
     @Override
     public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
         String heapKey = cacheRegion + '_' + cacheName + '_' + elementItemName + '_' + elementKey;
         String nameKey = cacheRegion + '_' + cacheName + '_' + elementKey;
-        Element element = new Element(heapKey, elementValue);
         if (!cacheMembersByEntity.containsKey(nameKey)) {
             List<String> myMembers = new ArrayList<String>(50);
             myMembers.add(elementItemName);
@@ -94,11 +92,12 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
             List<String> myMembers = cacheMembersByEntity.get(nameKey);
             myMembers.add(elementItemName);
         }
-        getHeap().put(element);
+        getHeap().put(heapKey, elementValue);
     }
 
     protected void removeCache(String cacheRegion, Serializable key) {
         String cacheName = cacheRegion;
+        // TODO 6.1 ehcache 3 Make sure this is adding correctly
         if (key.getClass().getName().equals("org.hibernate.cache.internal.CacheKeyImplementation")) {
             // Since CacheKeyImplementation is a protected Class we can't cast it nor can we access the entityOrRoleName property
             // therefore, to match how this worked in pre Hibernate 5, we split the toString since it's comprised of the fields we need
@@ -118,38 +117,31 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
         }
     }
     
-    protected void removeAll(String cacheName) {
-        //do nothing
+    @Override
+    public void onExpired(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) throws CacheEntryListenerException {
+        removeCache(events);
     }
 
     @Override
-    public void notifyElementEvicted(Ehcache arg0, Element arg1) {
-        removeCache(arg0.getName(), arg1.getKey());
+    public void onRemoved(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) throws CacheEntryListenerException {
+        removeCache(events);
     }
 
     @Override
-    public void notifyElementExpired(Ehcache arg0, Element arg1) {
-        removeCache(arg0.getName(), arg1.getKey());
+    public void onUpdated(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) throws CacheEntryListenerException {
+        removeCache(events);
     }
 
-    @Override
-    public void notifyElementPut(Ehcache arg0, Element arg1) throws CacheException {
-        //do nothing
-    }
-
-    @Override
-    public void notifyElementRemoved(Ehcache arg0, Element arg1) throws CacheException {
-        removeCache(arg0.getName(), arg1.getKey());
-    }
-
-    @Override
-    public void notifyElementUpdated(Ehcache arg0, Element arg1) throws CacheException {
-        removeCache(arg0.getName(), arg1.getKey());
-    }
-
-    @Override
-    public void notifyRemoveAll(Ehcache arg0) {
-        removeAll(arg0.getName());
+    protected void removeCache(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) {
+        if (events != null) {
+            for (CacheEntryEvent<? extends Serializable, ? extends Object> event : events) {
+                @SuppressWarnings("unchecked")
+                Cache<String, Object> cache = event.getSource();
+                String region = cache.getName();
+                Serializable key = event.getKey();
+                removeCache(region, key);
+            }
+        }
     }
 
 }

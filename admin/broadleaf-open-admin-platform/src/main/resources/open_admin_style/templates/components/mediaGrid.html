@@ -62,7 +62,7 @@
                     <!-- Title and Key links -->
                      <th:block th:each="action : ${listGrid.activeRowActions}" th:if="#{${action.displayText}} == 'Edit'">
                         <a href="#"
-                           class="media-link"
+                           class="js-media-link"
                            th:attr="data-urlpostfix=${action.urlPostfix},
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation},
@@ -70,7 +70,7 @@
                            th:title="#{${action.displayText}}" th:text="${asset.getField('media.title').getValue()}">
                         </a>
                          <a href="#"
-                            class="media-link media-key"
+                            class="js-media-link media-key"
                             th:attr="data-urlpostfix=${action.urlPostfix},
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation},

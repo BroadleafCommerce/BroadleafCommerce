@@ -354,6 +354,10 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         try {
             Product adminInstance = getAdminInstance(persistencePackage, dynamicEntityDao, helper, entity);
             removeProduct(persistencePackage, adminInstance, helper);
+            List<Sku> skuList = adminInstance.getAllSkus();
+            for (Sku sku : skuList) {
+                catalogService.removeSku(sku);
+            }
         } catch (ClassNotFoundException e) {
             throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
         }

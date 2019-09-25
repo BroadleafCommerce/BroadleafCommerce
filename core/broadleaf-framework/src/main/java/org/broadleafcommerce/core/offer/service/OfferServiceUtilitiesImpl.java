@@ -384,7 +384,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     @Override
     public Map<OrderItem, PromotableOrderItem> buildPromotableItemMap(PromotableOrder promotableOrder) {
         Map<OrderItem, PromotableOrderItem> promotableItemMap = new HashMap<OrderItem, PromotableOrderItem>();
-        for (PromotableOrderItem item : promotableOrder.getDiscountableOrderItems()) {
+        for (PromotableOrderItem item : promotableOrder.getAllOrderItems()) {
             promotableItemMap.put(item.getOrderItem(), item);
         }
         return promotableItemMap;

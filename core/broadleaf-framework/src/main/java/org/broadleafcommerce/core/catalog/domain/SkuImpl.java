@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -35,17 +36,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -59,52 +50,22 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -923,12 +884,15 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Override
     @Deprecated
     public Map<String, Media> getSkuMedia() {
-        if (legacySkuMedia.size() == 0) {
+        Map<String, Media> skuMediaMap = new LinkedHashMap<>(legacySkuMedia);
+
+        if (MapUtils.isEmpty(skuMediaMap)) {
             for (Map.Entry<String, SkuMediaXref> entry : getSkuMediaXref().entrySet()) {
-                legacySkuMedia.put(entry.getKey(), entry.getValue().getMedia());
+                skuMediaMap.put(entry.getKey(), entry.getValue().getMedia());
             }
         }
-        return Collections.unmodifiableMap(legacySkuMedia);
+
+        return Collections.unmodifiableMap(skuMediaMap);
     }
 
     @Override
@@ -943,22 +907,71 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Override
     public Map<String, SkuMediaXref> getSkuMediaXref() {
-        if (skuMedia == null || skuMedia.isEmpty()) {
+        Map<String, SkuMediaXref> skuMediaMap = skuMedia;
+
+        if (MapUtils.isEmpty(skuMediaMap)) {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().getSkuMediaXref();
             }
         }
-        return skuMedia;
+
+        if (isOrderedSkuMedia(skuMediaMap)) {
+            skuMediaMap = sortSkuMedia(skuMediaMap);
+        }
+
+        return skuMediaMap;
     }
 
     @Override
     public Map<String, SkuMediaXref> getSkuMediaXrefIgnoreDefaultSku() {
-        return skuMedia;
+        Map<String, SkuMediaXref> skuMediaMap = skuMedia;
+
+        if (isOrderedSkuMedia(skuMediaMap)) {
+            skuMediaMap = sortSkuMedia(skuMediaMap);
+        }
+
+        return skuMediaMap;
+    }
+
+    @Override
+    public Media getPrimarySkuMedia() {
+        Map<String, SkuMediaXref> skuMediaMap = getSkuMediaXrefIgnoreDefaultSku();
+
+        if (MapUtils.isNotEmpty(skuMediaMap)) {
+            if (isOrderedSkuMedia(skuMediaMap)) {
+                return skuMediaMap.values().stream()
+                        .map(OrderedSkuMediaXref.class::cast)
+                        .filter(OrderedSkuMediaXref::getShowInGallery)
+                        .findFirst()
+                        .map(SkuMediaXref.class::cast)
+                        .map(SkuMediaXref::getMedia)
+                        .orElse(null);
+            } else {
+                SkuMediaXref primaryXref = skuMediaMap.get("primary");
+
+                return (primaryXref == null)? null : primaryXref.getMedia();
+            }
+        }
+
+        return null;
     }
 
     @Override
     public void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref) {
         this.skuMedia = skuMediaXref;
+    }
+
+    protected boolean isOrderedSkuMedia(Map<String, SkuMediaXref> skuMedia) {
+        return skuMedia.values().stream()
+                .anyMatch(OrderedSkuMediaXref.class::isInstance);
+    }
+
+    protected Map<String, SkuMediaXref> sortSkuMedia(Map<String, SkuMediaXref> skuMedia) {
+        return skuMedia.values().stream()
+                .sorted(Comparator.comparing(xref -> ((OrderedSkuMediaXref) xref).getDisplayOrder()))
+                .collect(Collectors.toMap(SkuMediaXref::getKey, Function.identity(),
+                        (key1,key2) ->{ throw new IllegalStateException(String.format("Duplicate key %s", key1)); },
+                        LinkedHashMap::new));
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.i18n.domain.Translation;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.ehcache.Cache;
+import javax.cache.Cache;
 
 /**
  * {@link TranslationService} functionality, primarily in support of {@link TranslationOverrideStrategy} instances.
@@ -45,11 +45,11 @@ public interface TranslationSupport {
     StandardCacheItem lookupTranslationFromMap(String key, Map<String, Map<String, StandardCacheItem>> propertyTranslationMap, String entityId);
 
     /**
-     * Retrieve the backing Ehcache Cache instance
+     * Retrieve the backing Cache instance
      *
      * @return
      */
-    Cache getCache();
+    Cache<String, Object> getCache();
 
     /**
      *
