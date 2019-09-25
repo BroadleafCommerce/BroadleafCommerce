@@ -17,15 +17,19 @@
  */
 package org.broadleafcommerce.common.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.utils.URIBuilder;
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
+import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -35,9 +39,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+/**
+ * Filter that wraps the HttpServletResponse allowing the encodeURL method to be 
+ * overwritten in order to append a Theme reference to the URL.
+ * 
+ * @author Stanislav Fedorov
+ * @author dcolgrove
+ *
+ */
 @Component
 @ConditionalOnNotAdmin
-public class ThemeUrlEncodingFilter extends ResourceUrlEncodingFilter {
+public class ThemeUrlEncodingFilter extends GenericFilterBean {
 
     @Autowired
     @Qualifier("blThemeResolver")
@@ -56,32 +68,34 @@ public class ThemeUrlEncodingFilter extends ResourceUrlEncodingFilter {
 
     private static class ResourceUrlEncodingResponseWrapper extends HttpServletResponseWrapper {
 
+        private final Log LOG = LogFactory.getLog(ResourceUrlEncodingResponseWrapper.class);
+        
         private final BroadleafThemeResolver themeResolver;
+        private final HttpServletResponse wrappedResponse;
 
         public ResourceUrlEncodingResponseWrapper(HttpServletResponse wrapped, BroadleafThemeResolver themeResolver) {
             super(wrapped);
+            this.wrappedResponse = wrapped;
             this.themeResolver = themeResolver;
         }
 
+        /**
+         * Provide special encoding of .js and .css files - specifically providing the themeConfigId so that 
+         * subsequent requests can use the correct theme
+         */
         @Override
         public String encodeURL(String url) {
-            Theme theme = findTheme();
             if (url.contains(".js") || url.contains(".css")) {
-                return url + "?themeConfigId=" + theme.getId();
+                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                WebRequest request = brc.getWebRequest();
+                Theme theme = this.themeResolver.resolveTheme(request);
+                try {
+                    url = new URIBuilder(url).addParameter("themeConfigId", theme.getId().toString()).build().toString();
+                } catch (URISyntaxException e) {
+                    LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", url, "themeConfigId", theme.getId().toString()));
+                }
             }
-            return url;
-        }
-        
-        protected Theme findTheme() {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            Theme theme = brc.getTheme();
-            WebRequest request = brc.getWebRequest();
-            String themeID = request.getParameter("themeConfigId");
-            //If the passed themeConfigId is different than the theme set by the default themeResolver, then look it up
-            if (themeID != null && !brc.getTheme().getId().toString().equals(themeID)) {
-                theme = this.themeResolver.resolveTheme(request);
-            }
-            return theme;
+            return wrappedResponse.encodeURL(url);
         }
     }
 }
