@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import java.io.IOException;
@@ -64,14 +65,23 @@ public class ThemeUrlEncodingFilter extends ResourceUrlEncodingFilter {
 
         @Override
         public String encodeURL(String url) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            Theme theme = this.themeResolver.resolveTheme(brc.getWebRequest());
-
+            Theme theme = findTheme();
             if (url.contains(".js") || url.contains(".css")) {
                 return url + "?themeConfigId=" + theme.getId();
             }
-
             return url;
+        }
+        
+        protected Theme findTheme() {
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            Theme theme = brc.getTheme();
+            WebRequest request = brc.getWebRequest();
+            String themeID = request.getParameter("themeConfigId");
+            //If the passed themeConfigId is different than the theme set by the default themeResolver, then look it up
+            if (themeID != null && !brc.getTheme().getId().toString().equals(themeID)) {
+                theme = this.themeResolver.resolveTheme(request);
+            }
+            return theme;
         }
     }
 }
