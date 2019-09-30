@@ -40,6 +40,7 @@
 
     <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
         <property name="showDebugMessage" value="${exception.showDebugMessage}" />
+        <property name="order" value="#{T(org.springframework.core.Ordered).LOWEST_PRECEDENCE - 50}" />
     </bean>
     
     <bean id="blAdminTranslationControllerExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">

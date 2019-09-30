@@ -207,6 +207,7 @@
         <property name="sourceList">
             <list>
                 <ref bean="blValidateCheckoutActivity"/>
+                <ref bean="blValidateAvailabilityActivity"/>
                 <ref bean="blVerifyCustomerMaxOfferUsesActivity" />
                 <ref bean="blValidateProductOptionsActivity" />
                 <ref bean="blValidateAndConfirmPaymentActivity" />
