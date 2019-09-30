@@ -22,7 +22,7 @@
                            http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
 
     <service>
-        <jsr107:defaults enable-management="false" enable-statistics="true"/> 
+        <jsr107:defaults enable-management="true" enable-statistics="true"/> 
     </service>
     
     <persistence directory="${java.io.tmpdir}"/>
