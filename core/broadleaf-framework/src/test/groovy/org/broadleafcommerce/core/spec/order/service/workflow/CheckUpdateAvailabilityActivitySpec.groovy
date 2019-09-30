@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.spec.order.service.workflow
 
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
-import org.broadleafcommerce.core.inventory.service.ContextualInventoryService
+import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException
 import org.broadleafcommerce.core.inventory.service.type.InventoryType
 import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
@@ -53,7 +53,9 @@ class CheckUpdateAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
 
     CatalogService mockCatalogService = Mock()
     OrderItemService mockOrderItemService = Mock()
-    ContextualInventoryService mockInventoryService = Mock()
+    InventoryServiceImpl mockInventoryService = Spy(InventoryServiceImpl) {
+        retrieveQuantityAvailable(*_) >> 0
+    }
     
     
     /*
@@ -87,6 +89,7 @@ class CheckUpdateAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         then: "that sku is checked for availability"
         1 * mockOrderItem.getSku() >> mockSku
+        1 * mockInventoryService.checkSkuAvailability(*_)
         1 * mockSku.isAvailable() >> true
     }
     
@@ -105,6 +108,7 @@ class CheckUpdateAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         then: "that sku is checked for availability"
         1 * mockOrderItem.getSku() >> mockSku
+        1 * mockInventoryService.checkSkuAvailability(*_)
         1 * mockSku.isAvailable() >> true
     }
     
@@ -124,6 +128,7 @@ class CheckUpdateAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         
         then: "availability is not checked"
         0 * mockOrderItem.getSku() >> mockSku
+        0 * mockInventoryService.checkSkuAvailability(*_)
         0 * mockSku.isAvailable()
     }
     

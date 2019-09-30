@@ -376,4 +376,23 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         }
     }
 
+    @Override
+    public void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
+        // First check if this Sku is available
+        if (!sku.isAvailable()) {
+            throw new InventoryUnavailableException("The referenced Sku " + sku.getId() + " is marked as unavailable", sku.getId(), requestedQuantity, 0);
+        }
+
+        if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+            Map<String, Object> inventoryContext = new HashMap<>();
+            inventoryContext.put(ContextualInventoryService.ORDER_KEY, order);
+            boolean available = isAvailable(sku, requestedQuantity, inventoryContext);
+            if (!available) {
+                throw new InventoryUnavailableException(sku.getId(),
+                        requestedQuantity, retrieveQuantityAvailable(sku, inventoryContext));
+            }
+        }
+
+        // the other case here is ALWAYS_AVAILABLE and null, which we are treating as being available
+    }
 }

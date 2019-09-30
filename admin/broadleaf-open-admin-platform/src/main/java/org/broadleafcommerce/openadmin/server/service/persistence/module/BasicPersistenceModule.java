@@ -893,13 +893,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 return o1.getName().compareTo(o2.getName());
             }
         };
-        properties.sort(comparator);
-
+        Collections.sort(properties, comparator);
         for (Map.Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
             String property = entry.getKey();
             Property prop = new Property();
             FieldMetadata metadata = mergedProperties.get(property);
             prop.setName(property);
+
             int pos = Collections.binarySearch(properties, prop, comparator);
             if (pos >= 0 && MergedPropertyType.MAPSTRUCTUREKEY != type && MergedPropertyType.MAPSTRUCTUREVALUE != type) {
                 logWarn: {
