@@ -85,14 +85,17 @@ public class ThemeUrlEncodingFilter extends GenericFilterBean {
          */
         @Override
         public String encodeURL(String url) {
-            if (url.contains(".js") || url.contains(".css")) {
-                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-                WebRequest request = brc.getWebRequest();
-                Theme theme = this.themeResolver.resolveTheme(request);
-                try {
-                    url = new URIBuilder(url).addParameter("themeConfigId", theme.getId().toString()).build().toString();
-                } catch (URISyntaxException e) {
-                    LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", url, "themeConfigId", theme.getId().toString()));
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            Object themeChanged = brc.getAdditionalProperties().get(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS);
+            if (themeChanged != null && Boolean.TRUE.equals(themeChanged)) {
+                if (url.contains(".js") || url.contains(".css")) {
+                    //WebRequest request = brc.getWebRequest();
+                    Theme theme = brc.getTheme();
+                    try {
+                        url = new URIBuilder(url).addParameter("themeConfigId", theme.getId().toString()).build().toString();
+                    } catch (URISyntaxException e) {
+                        LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", url, "themeConfigId", theme.getId().toString()));
+                    }
                 }
             }
             return wrappedResponse.encodeURL(url);
