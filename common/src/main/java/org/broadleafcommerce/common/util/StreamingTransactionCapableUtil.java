@@ -90,8 +90,8 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
                 if (pagedItemCount == 0) {
                     holder.setVal(totalCount.intValue());
                 } else {
-                    if (!isFinalPage(holder, pagedItemCount, totalCount) && (pagedItemCount != pageSize)) {
-                        LOG.warn(String.format("In the previous iteration of this streaming transactional operation, " +
+                    if (LOG.isDebugEnabled() && !isFinalPage(holder, pagedItemCount, totalCount) && (pagedItemCount != pageSize)) {
+                        LOG.debug(String.format("In the previous iteration of this streaming transactional operation, " +
                                 "(%s) pagedItems were processed when we were expecting a full page of (%s) items. " +
                                 "Please ensure that your StreamCapableTransactionalOperation#retrieveTotalCount() " +
                                 "and StreamCapableTransactionalOperation#retrievePage(int startPos, int pageSize) " +
