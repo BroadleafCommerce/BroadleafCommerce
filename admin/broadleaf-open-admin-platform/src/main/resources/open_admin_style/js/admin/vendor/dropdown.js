@@ -10,16 +10,16 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /* ========================================================================
- * Bootstrap: dropdown.js v3.3.4
- * http://getbootstrap.com/javascript/#dropdowns
+ * Bootstrap: dropdown.js v3.4.1
+ * https://getbootstrap.com/docs/3.4/javascript/#dropdowns
  * ========================================================================
- * Copyright 2011-2015 Twitter, Inc.
+ * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -36,9 +36,41 @@
     $(element).on('click.bs.dropdown', this.toggle)
   };
 
-  Dropdown.VERSION = '3.3.4';
+    Dropdown.VERSION = '3.4.1';
 
-  Dropdown.prototype.toggle = function (e) {
+    function getParent($this) {
+        var selector = $this.attr('data-target');
+
+        if (!selector) {
+            selector = $this.attr('href');
+            selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, ''); // strip for ie7
+        }
+
+        var $parent = selector && $(selector);
+
+        return $parent && $parent.length ? $parent : $this.parent()
+    }
+
+    function clearMenus(e) {
+        if (e && e.which === 3) return;
+        $(backdrop).remove();
+        $(toggle).each(function () {
+            var $this         = $(this);
+            var $parent       = getParent($this);
+            var relatedTarget = { relatedTarget: this };
+
+            if (!$parent.hasClass('open')) return;
+
+            $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget));
+
+            if (e.isDefaultPrevented()) return;
+
+            $this.attr('aria-expanded', 'false');
+            $parent.removeClass('open').trigger('hidden.bs.dropdown', relatedTarget)
+        })
+    }
+
+    Dropdown.prototype.toggle = function (e) {
     var $this = $(this);
 
     if ($this.is('.disabled, :disabled')) return;
@@ -102,39 +134,6 @@
 
     $items.eq(index).trigger('focus')
   };
-
-  function clearMenus(e) {
-    if (e && e.which === 3) return;
-    $(backdrop).remove();
-    $(toggle).each(function () {
-      var $this         = $(this);
-      var $parent       = getParent($this);
-      var relatedTarget = { relatedTarget: this };
-
-      if (!$parent.hasClass('open')) return;
-
-      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget));
-
-      if (e.isDefaultPrevented()) return;
-
-      $this.attr('aria-expanded', 'false');
-      $parent.removeClass('open').trigger('hidden.bs.dropdown', relatedTarget)
-    })
-  }
-
-  function getParent($this) {
-    var selector = $this.attr('data-target');
-
-    if (!selector) {
-      selector = $this.attr('href');
-      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, ''); // strip for ie7
-    }
-
-    var $parent = selector && $(selector);
-
-    return $parent && $parent.length ? $parent : $this.parent()
-  }
-
 
   // DROPDOWN PLUGIN DEFINITION
   // ==========================
