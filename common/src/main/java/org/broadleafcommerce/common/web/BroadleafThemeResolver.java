@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface BroadleafThemeResolver {
     
+    public static final String BRC_THEME_CHANGE_STATUS = "themeChangeStatus";
+    
     /**
      * 
      * @deprecated Use {@link #resolveTheme(WebRequest)} instead

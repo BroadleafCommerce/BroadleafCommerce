@@ -18,14 +18,24 @@
 package org.broadleafcommerce.common.file.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.utils.URIBuilder;
+import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafThemeResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.WebRequest;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 @Service("blStaticAssetPathService")
 public class StaticAssetPathServiceImpl implements StaticAssetPathService {
+
+    private final Log LOG = LogFactory.getLog(StaticAssetPathServiceImpl.class);
 
     @Value("${asset.server.url.prefix.internal}")
     protected String staticAssetUrlPrefix;
@@ -89,7 +99,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
 
         }
 
-        return returnValue;
+        return addThemeContextIfNeeded(returnValue);
     }
 
     /**
@@ -180,7 +190,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
             }
         }
 
-        return returnValue;
+        return addThemeContextIfNeeded(returnValue);
     }
 
     @Override
@@ -242,4 +252,19 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
         return urlPrefix;
     }
 
+    
+    protected String addThemeContextIfNeeded(String assetURL) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Object themeChanged = brc.getAdditionalProperties().get(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS);
+        if (themeChanged != null && Boolean.TRUE.equals(themeChanged)) {
+            Theme theme = brc.getTheme();
+            try {
+                assetURL = new URIBuilder(assetURL).addParameter("themeConfigId", theme.getId().toString()).build().toString();
+            } catch (URISyntaxException e) {
+                LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", assetURL, "themeConfigId", theme.getId().toString()));
+            }
+        }
+        return assetURL;
+        
+    }
 }

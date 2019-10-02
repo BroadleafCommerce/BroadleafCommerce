@@ -40,11 +40,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Responsible for setting up the theme used by Broadleaf Commerce components.
+ * Responsible for setting up the theme used by Broadleaf Commerce components.  This Filter is specifically
+ * placed after the CustomerState is established to that a Content Targeter altering the Theme can make
+ * use of Customer/CustomerSegment attributes.
  *
  * @author Stanislav Fedorov
  */
-@Component("blThemeResolvertFilter")
+@Component("blThemeResolverFilter")
 @ConditionalOnNotAdmin
 public class BroadleafThemeResolverFilter extends AbstractIgnorableOncePerRequestFilter {
 

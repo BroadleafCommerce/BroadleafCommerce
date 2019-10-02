@@ -23,6 +23,9 @@ import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -42,10 +45,20 @@ public class BroadleafThemeProcessor extends AbstractBroadleafWebRequestProcesso
     public void process(WebRequest request) {
 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-
+        Theme originalTheme = brc.getTheme();
+        
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
-        Theme theme = themeResolver.resolveTheme(request);
-        brc.setTheme(theme);
+        Theme newTheme = themeResolver.resolveTheme(request);
+        
+        //Track if the theme changed
+        if (originalTheme != null && newTheme != null) {
+            if (!originalTheme.getId().equals(newTheme.getId())) {
+                Map<String, Object> properties = brc.getAdditionalProperties();
+                properties.put(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS, true);
+            }
+        }
+        
+        brc.setTheme(newTheme);
 
     }
 
