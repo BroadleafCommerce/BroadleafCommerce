@@ -93,7 +93,7 @@ public class UpdateExecutor {
                 query.setLong(counter, id);
                 counter++;
             }
-            FlushMode mode = em.unwrap(Session.class).getFlushMode();
+            FlushMode mode = em.unwrap(Session.class).getHibernateFlushMode();
             em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
             try {
                 response += query.executeUpdate();
@@ -140,7 +140,7 @@ public class UpdateExecutor {
                 query.setLong(counter, id);
                 counter++;
             }
-            FlushMode mode = em.unwrap(Session.class).getFlushMode();
+            FlushMode mode = em.unwrap(Session.class).getHibernateFlushMode();
             em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
             try {
                 response += query.executeUpdate();
