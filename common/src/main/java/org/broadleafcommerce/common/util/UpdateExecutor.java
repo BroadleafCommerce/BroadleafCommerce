@@ -20,12 +20,13 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.cache.spi.UpdateTimestampsCache;
 import org.hibernate.engine.spi.CacheImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.LongType;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
@@ -80,16 +81,16 @@ public class UpdateExecutor {
         List<Long[]> runs = buildRuns(ids);
         for (Long[] run : runs) {
             String queryString = String.format(template, buildInClauseTemplate(run.length));
-            SQLQuery query = em.unwrap(Session.class).createSQLQuery(queryString);
-            int counter = 0;
+            NativeQuery<?> query = em.unwrap(Session.class).createSQLQuery(queryString);
+            int counter = 1;
             if (!ArrayUtils.isEmpty(params)) {
                 for (Object param : params) {
-                    query.setParameter(counter, param, types[counter]);
+                    query.setParameter(counter, param, types[counter - 1]);
                     counter++;
                 }
             }
             for (Long id : run) {
-                query.setLong(counter, id);
+                query.setParameter(counter, id, LongType.INSTANCE);
                 counter++;
             }
             response += query.executeUpdate();
@@ -117,20 +118,20 @@ public class UpdateExecutor {
         List<Long[]> runs = buildRuns(ids);
         for (Long[] run : runs) {
             String queryString = String.format(template, buildInClauseTemplate(run.length));
-            SQLQuery query = em.unwrap(Session.class).createSQLQuery(queryString);
+            NativeQuery<?> query = em.unwrap(Session.class).createSQLQuery(queryString);
             //only check for null - an empty string is a valid value for tableSpace
             if (tableSpace != null) {
                 query.addSynchronizedQuerySpace(tableSpace);
             }
-            int counter = 0;
+            int counter = 1;
             if (!ArrayUtils.isEmpty(params)) {
                 for (Object param : params) {
-                    query.setParameter(counter, param, types[counter]);
+                    query.setParameter(counter, param, types[counter - 1]);
                     counter++;
                 }
             }
             for (Long id : run) {
-                query.setLong(counter, id);
+                query.setParameter(counter, id, LongType.INSTANCE);
                 counter++;
             }
             response += query.executeUpdate();
