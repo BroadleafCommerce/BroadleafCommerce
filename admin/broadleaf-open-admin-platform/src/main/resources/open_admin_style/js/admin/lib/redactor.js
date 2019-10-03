@@ -4347,10 +4347,11 @@
 
                     this.buffer.set();
 
-                    if (!this.utils.browser('msie') && !this.opts.linebreaks)
-                    {
-                        this.$editor.focus();
-                    }
+                    //According to QA #2059
+                    // if (!this.utils.browser('msie') && !this.opts.linebreaks)
+                    // {
+                    //     this.$editor.focus();
+                    // }
 
                     this.selection.get();
 
