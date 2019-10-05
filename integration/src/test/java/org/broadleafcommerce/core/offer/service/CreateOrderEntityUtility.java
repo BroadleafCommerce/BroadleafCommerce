@@ -45,6 +45,7 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.StateService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -178,6 +179,7 @@ public class CreateOrderEntityUtility {
         }
         sku.setDiscountable(isDiscountable);
         sku.setName("test");
+        sku.setActiveStartDate(new Date());
         sku = catalogService.saveSku(sku);
 
         item.setSku(sku);
