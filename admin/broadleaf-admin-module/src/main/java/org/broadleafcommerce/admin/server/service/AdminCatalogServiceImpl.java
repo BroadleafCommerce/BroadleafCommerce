@@ -106,8 +106,10 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             }
         }
 
+        LOG.info("Total number of permutations to generate: " + permutationsToGenerate.size());
+
         int numPermutationsCreated = 0;
-        if (extensionManager != null) {
+        if (extensionManager != null && CollectionUtils.isNotEmpty(permutationsToGenerate)) {
             ExtensionResultHolder<Integer> result = new ExtensionResultHolder<Integer>();
             ExtensionResultStatusType resultStatusType = extensionManager.getProxy().persistSkuPermutation(product, permutationsToGenerate, result);
             if (ExtensionResultStatusType.HANDLED == resultStatusType) {
@@ -115,7 +117,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             }
         }
 
-        LOG.info("Finished creating " + allPermutations.size() + " permutations.");
+        LOG.info("Total number of permutations generated: " + numPermutationsCreated);
 
         return numPermutationsCreated;
     }
