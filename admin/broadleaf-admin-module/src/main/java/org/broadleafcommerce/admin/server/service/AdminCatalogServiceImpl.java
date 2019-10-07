@@ -114,6 +114,9 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
                 numPermutationsCreated = result.getResult();
             }
         }
+
+        LOG.info("Finished creating " + allPermutations.size() + " permutations.");
+
         return numPermutationsCreated;
     }
 
