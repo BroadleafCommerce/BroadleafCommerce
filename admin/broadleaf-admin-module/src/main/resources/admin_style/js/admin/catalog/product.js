@@ -46,7 +46,15 @@
 $(document).ready(function() {
     
     $('body').on('click', 'button.generate-skus', function() {
-        var $container = $(this).closest('div.listgrid-container');
+        var $skuGenerationButton = $(this);
+        var $container = $skuGenerationButton.closest('div.listgrid-container');
+
+        $skuGenerationButton.prop("disabled", true);
+        BLCAdmin.listGrid.showAlert($container, "Generating SKUs...", {
+            alertType: 'save-alert',
+            clearOtherAlerts: true,
+            autoClose: 8000
+        });
         
         BLC.ajax({
             url : $(this).data('actionurl'),
@@ -63,6 +71,8 @@ $(document).ready(function() {
             if (data.skusGenerated > 0) {
                 BLCAdmin.product.refreshSkusGrid($container, data.listGridUrl);
             }
+
+            $skuGenerationButton.prop("disabled", false);
         });
         
         return false;
