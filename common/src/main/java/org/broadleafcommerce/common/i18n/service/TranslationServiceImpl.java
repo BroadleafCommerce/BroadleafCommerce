@@ -468,7 +468,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
             String requestedDefaultValue) {
 
         if (returnBlankTranslationForNotDefaultLocale
-                && !languageMatchesDefaultLocaleLanguage(locale)
+                && !localeMatchesDefaultLocale(locale)
                 && !propertyInDefaultLocaleExceptionList(entity, property)) {
             return "";
         }
@@ -510,7 +510,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
      * @param locale
      * @return
      */
-    protected boolean languageMatchesDefaultLocaleLanguage(Locale locale) {
+    protected boolean localeMatchesDefaultLocale(Locale locale) {
         String defaultLanguage = LocaleUtil.findLanguageCode(localeService.findDefaultLocale());
 
         if (defaultLanguage != null && locale != null) {
