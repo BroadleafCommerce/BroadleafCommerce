@@ -221,6 +221,10 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     protected boolean shouldTranslateLocale(String localeCode) {
         org.broadleafcommerce.common.locale.domain.Locale locale = localeService.findLocaleByCode(localeCode);
 
+        if (locale == null) {
+            throw new IllegalArgumentException("A locale could not be found for the provided localeCode: "+ localeCode);
+        }
+
         return !locale.getDefaultFlag();
     }
 
