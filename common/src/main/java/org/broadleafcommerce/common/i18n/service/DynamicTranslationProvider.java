@@ -32,6 +32,7 @@ public class DynamicTranslationProvider {
     /**
      * If translations are enabled, this method will look for a translation for the specified field. If translations are
      * disabled or if this particular field did not have a translation, it will return back the defaultValue.
+     * If the passed in locale's language matches the Broadleaf default locale, it will return back the defaultValue.
      * 
      * @param obj
      * @param field
@@ -39,11 +40,14 @@ public class DynamicTranslationProvider {
      * @return the translated value
      */
     public static String getValue(Object obj, String field, final String defaultValue) {
+        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
         String valueToReturn = defaultValue;
-        
-        if (TranslationConsiderationContext.hasTranslation()) {
+
+        // avoiding translation calls for the default locale
+        if (TranslationConsiderationContext.hasTranslation() &&
+                !requestContext.getLocale().getDefaultFlag()) {
             TranslationService translationService = TranslationConsiderationContext.getTranslationService();
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
+            Locale locale = requestContext.getJavaLocale();
             String translatedValue = translationService.getTranslatedValue(obj, field, locale);
             
             if (StringUtils.isNotBlank(translatedValue)) {
