@@ -19,10 +19,11 @@ package org.broadleafcommerce.test.translation.sitejvm;
 
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.Assert;
@@ -40,6 +41,9 @@ import javax.annotation.Resource;
 public class TranslationServiceTest extends TestNGSiteIntegrationSetup {
 
     @Resource
+    private LocaleService localeService;
+
+    @Resource
     private TranslationService translationService;
 
     @Resource
@@ -51,6 +55,14 @@ public class TranslationServiceTest extends TestNGSiteIntegrationSetup {
         Category category = new CategoryImpl();
         category.setName("Translation");
         category = catalogService.saveCategory(category);
+
+        org.broadleafcommerce.common.locale.domain.Locale esLocale = new LocaleImpl();
+        esLocale.setLocaleCode("es");
+        localeService.save(esLocale);
+
+        org.broadleafcommerce.common.locale.domain.Locale esMxLocale = new LocaleImpl();
+        esMxLocale.setLocaleCode("es_MX");
+        localeService.save(esMxLocale);
 
         translationService.save(TranslatedEntity.CATEGORY.getType(), String.valueOf(category.getId()), "name", "es_MX", "es_MX");
         translationService.save(TranslatedEntity.CATEGORY.getType(), String.valueOf(category.getId()), "name", "es", "es");
