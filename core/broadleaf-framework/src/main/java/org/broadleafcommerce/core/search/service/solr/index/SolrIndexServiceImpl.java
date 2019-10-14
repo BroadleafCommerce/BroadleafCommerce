@@ -80,6 +80,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 
 /**
@@ -154,6 +156,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
 
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+    
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
         try {
@@ -173,8 +178,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         try{
             preBuildIndex();
             buildIndex();
-        } finally {
             postBuildIndex();
+        } catch(RuntimeException e) {
+            LOG.error("Not able to complete SOLR index", e);
         }
 
         LOG.info(String.format("Finished building entire Solr index in %s", s.toLapString()));
@@ -253,6 +259,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                             LOG.info(String.format("Building page number %s", page));
                             lastId = buildIncrementalIndex(pageSize, lastId, operation);
                             page++;
+                            //clearing the L1 cache after each loop
+                            em.clear();
                         }
                     }
                 });
