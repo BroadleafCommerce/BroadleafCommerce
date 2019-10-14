@@ -32,8 +32,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 public class CustomerAddressTest extends CommonSetupBaseTest {
 
@@ -54,9 +55,9 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
     }
     
     @Test(groups = "testCustomerAddress")
-    @Transactional
     public void createNewDefaultAddress() {
         Customer customer = createCustomerWithAddresses();
+
         CustomerAddress ca = new CustomerAddressImpl();
         Address address = new AddressImpl();
         address.setAddressLine1("123 Main");
@@ -66,8 +67,8 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
         ca.setAddress(address);
         ca.setCustomer(customer);
         ca.setAddressName("address3");
-        CustomerAddress savedAddress = saveCustomerAddress(ca);
-        
+        CustomerAddress savedAddress = customerAddressService.saveCustomerAddress(ca);
+
         List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
         for (CustomerAddress customerAddress : customerAddressList) {
             if (customerAddress.getId().equals(savedAddress.getId())) {
