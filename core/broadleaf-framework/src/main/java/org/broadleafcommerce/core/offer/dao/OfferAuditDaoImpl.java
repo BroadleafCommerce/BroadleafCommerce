@@ -138,19 +138,15 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(
             builder.and(
-                        customerOrAccountPredicate, builder.equal(root.get("offerId"), offerId),
-                builder.or(
-                    builder.notEqual(root.get("orderId"),  getOrderId(order)),
-                    builder.isNull(root.get("orderId"))
-                ),
-                builder.equal(root.get("customerId"), customerId),
+                customerOrAccountPredicate, 
                 builder.equal(root.get("offerId"), offerId),
                 builder.or(
-                        builder.isNull(root.get("orderId")),
-                        builder.and(
-                                builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
-                                builder.equal(orderRoot.get("id"),root.get("orderId"))
-                        )
+                    builder.isNull(root.get("orderId")),
+                    builder.and(
+                        builder.notEqual(root.get("orderId"), getOrderId(order)),
+                        builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
+                        builder.equal(orderRoot.get("id"),root.get("orderId"))
+                    )
                 )
             )
         );

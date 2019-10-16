@@ -35,7 +35,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
@@ -118,7 +117,7 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         offerAudit.setId(1L);
         offerAudit.setCustomerId(customer.getId());
         offerAudit.setOfferId(offer.getId());
-        offerAudit.setOrderId(-10L);
+        offerAudit.setOrderId(null);
         offerAudit.setRedeemedDate(currentDate.getTime());
         
         offerAuditDao.save(offerAudit);
@@ -128,7 +127,7 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         offerAudit2.setId(2L);
         offerAudit2.setCustomerId(customer.getId());
         offerAudit2.setOfferId(offer.getId());
-        offerAudit2.setOrderId(-11L);
+        offerAudit2.setOrderId(null);
         offerAudit2.setRedeemedDate(currentDate.getTime());
         
         offerAuditDao.save(offerAudit2);
