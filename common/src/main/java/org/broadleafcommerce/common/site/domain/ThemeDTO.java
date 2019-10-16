@@ -25,7 +25,7 @@ public class ThemeDTO implements Theme {
 
     public String path = "";
     public String name = "";
-    public Long id;
+    public Long id=0;
     
     public ThemeDTO() {
         // empty constructor
