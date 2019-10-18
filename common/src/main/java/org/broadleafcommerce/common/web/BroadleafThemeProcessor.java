@@ -51,7 +51,7 @@ public class BroadleafThemeProcessor extends AbstractBroadleafWebRequestProcesso
         Theme newTheme = themeResolver.resolveTheme(request);
 
         //Track if the theme changed
-        if (originalTheme != null && newTheme != null && !Objects.equals(originalTheme, newTheme)) {
+        if (!Objects.equals(originalTheme, newTheme)) {
             Map<String, Object> properties = brc.getAdditionalProperties();
             properties.put(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS, true);
         }
