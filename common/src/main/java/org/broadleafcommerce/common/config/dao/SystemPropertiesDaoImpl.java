@@ -95,7 +95,7 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
                 queryExtensionManager.getProxy().refineOrder(SystemPropertyImpl.class, null, builder, criteria, handler, sorts);
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-            return em.createQuery(criteria).getResultList();
+            return em.createQuery(criteria).setHint(QueryHints.HINT_CACHEABLE, Boolean.TRUE).getResultList();
         } catch (NoResultException e) {
             LOG.error(e);
             return new ArrayList<SystemProperty>();
