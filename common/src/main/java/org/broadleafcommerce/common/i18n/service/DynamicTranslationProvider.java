@@ -39,13 +39,14 @@ public class DynamicTranslationProvider {
      * @return the translated value
      */
     public static String getValue(Object obj, String field, final String defaultValue) {
+        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
         String valueToReturn = defaultValue;
-        
+
         if (TranslationConsiderationContext.hasTranslation()) {
             TranslationService translationService = TranslationConsiderationContext.getTranslationService();
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
+            Locale locale = requestContext.getJavaLocale();
             String translatedValue = translationService.getTranslatedValue(obj, field, locale);
-            
+
             if (StringUtils.isNotBlank(translatedValue)) {
                 valueToReturn = translatedValue;
             } else {

@@ -446,7 +446,3 @@ td .listgrid-row-actions {
     color: #B3B3B3;
     font-size: 12px;
 }
-
-.list-grid-table.disabled {
-    pointer-events: none;
-}
