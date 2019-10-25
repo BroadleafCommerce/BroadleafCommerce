@@ -4347,7 +4347,8 @@
 
                     this.buffer.set();
 
-                    if (!this.utils.browser('msie') && !this.opts.linebreaks)
+                    // Related with QA #3773
+                    if (!this.utils.browser('msie') && !this.opts.linebreaks && !this.focus.isFocused())
                     {
                         this.$editor.focus();
                     }
