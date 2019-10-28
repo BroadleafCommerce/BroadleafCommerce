@@ -562,6 +562,7 @@
 
                                 $selectize.addOption({id: item, label: label});
                             }
+                            // leading 0s get stripped when converted to number
                             if (!isNaN(item) && !String(item).startsWith('0')) {
                                 $selectize.addItem(Number(item), false);
                             } else {
