@@ -562,7 +562,7 @@
 
                                 $selectize.addOption({id: item, label: label});
                             }
-                            if (!isNaN(item)) {
+                            if (!isNaN(item) && !String(item).startsWith('0')) {
                                 $selectize.addItem(Number(item), false);
                             } else {
                                 $selectize.addItem(item, false);
