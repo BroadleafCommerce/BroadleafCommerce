@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,11 +25,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
 /**
- *
  * @author Stanislav Fedorov
  * @see {@link BroadleafThemeResolverFilter}
  */
@@ -46,18 +46,16 @@ public class BroadleafThemeProcessor extends AbstractBroadleafWebRequestProcesso
 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         Theme originalTheme = brc.getTheme();
-        
+
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
         Theme newTheme = themeResolver.resolveTheme(request);
-        
+
         //Track if the theme changed
-        if (originalTheme != null && newTheme != null) {
-            if (!originalTheme.getId().equals(newTheme.getId())) {
-                Map<String, Object> properties = brc.getAdditionalProperties();
-                properties.put(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS, true);
-            }
+        if (originalTheme != null && newTheme != null && !Objects.equals(originalTheme, newTheme)) {
+            Map<String, Object> properties = brc.getAdditionalProperties();
+            properties.put(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS, true);
         }
-        
+
         brc.setTheme(newTheme);
 
     }
