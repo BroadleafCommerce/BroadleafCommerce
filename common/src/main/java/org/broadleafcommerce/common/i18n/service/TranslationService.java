@@ -167,4 +167,5 @@ public interface TranslationService {
      * @return
      */
     List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds);
+
 }
