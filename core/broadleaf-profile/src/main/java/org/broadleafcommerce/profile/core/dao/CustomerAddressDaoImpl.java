@@ -143,7 +143,6 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         }
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     @Override
     public CustomerAddress findDefaultCustomerAddress(Long customerId) {
