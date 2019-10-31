@@ -121,6 +121,11 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
     public Customer createCustomerWithAddresses() {
         createCountry();
         createState();
+
+        Customer customer = createCustomer();
+        customer.setUsername(String.valueOf(customer.getId()));
+        customer = customerService.saveCustomer(customer);
+
         CustomerAddress ca1 = new CustomerAddressImpl();
         Address address1 = new AddressImpl();
         address1.setAddressLine1("1234 Merit Drive");
@@ -128,10 +133,9 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
         address1.setPostalCode("75251");
         ca1.setAddress(address1);
         ca1.setAddressName("address1");
-        CustomerAddress caResult = createCustomerWithAddress(ca1);
-        assert caResult != null;
-        assert caResult.getCustomer() != null;
-        Customer customer = caResult.getCustomer();
+        ca1.setCustomer(customer);
+        CustomerAddress addResult1 = customerAddressService.saveCustomerAddress(ca1);
+        assert addResult1 != null;
 
         CustomerAddress ca2 = new CustomerAddressImpl();
         Address address2 = new AddressImpl();
@@ -141,8 +145,9 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
         ca2.setAddress(address2);
         ca2.setAddressName("address2");
         ca2.setCustomer(customer);
-        CustomerAddress addResult = saveCustomerAddress(ca2);
-        assert addResult != null;
+        CustomerAddress addResult2 = customerAddressService.saveCustomerAddress(ca2);
+        assert addResult2 != null;
+
         return customer;
     }
     
