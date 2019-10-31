@@ -50,6 +50,7 @@ import javassist.util.proxy.ProxyFactory;
 
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
+    public static final String HIBERNATE_PROXY = "$HibernateProxy";
     private static final Log LOG = LogFactory.getLog(DynamicDaoHelperImpl.class);
     public static final Object LOCK_OBJECT = new Object();
     public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<>(1000);
@@ -70,11 +71,21 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                         JAVASSIST_PROXY_KEY_PHRASE, candidate.getName()));
             }
             String implName = candidate.getName().substring(0, candidate.getName().lastIndexOf(JAVASSIST_PROXY_KEY_PHRASE));
-            try {
-                response = Class.forName(implName);
-            } catch (ClassNotFoundException e) {
-                throw ExceptionHelper.refineException(e);
-            }
+            response = getClazz(implName);
+        }else if(candidate.getName().contains(HIBERNATE_PROXY)){
+            String implName = candidate.getName().substring(0, candidate.getName().lastIndexOf(HIBERNATE_PROXY));
+            response = getClazz(implName);
+        }
+        return response;
+
+    }
+
+    private static Class<?> getClazz(String implName) {
+        Class<?> response;
+        try {
+            response = Class.forName(implName);
+        } catch (ClassNotFoundException e) {
+            throw ExceptionHelper.refineException(e);
         }
         return response;
     }
