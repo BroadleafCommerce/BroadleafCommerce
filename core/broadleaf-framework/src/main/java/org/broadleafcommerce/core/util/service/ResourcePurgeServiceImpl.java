@@ -225,7 +225,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
      */
     protected void deleteCart(Order cart) {
         //We delete the order this way (rather than with a delete query) in order to ensure the cascades take place
-        orderService.deleteOrderWithoutTransactions(cart);
+        orderService.deleteOrder(cart);
     }
 
     /**

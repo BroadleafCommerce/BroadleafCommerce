@@ -541,8 +541,6 @@ public interface OrderService {
 
     public void deleteOrder(Order cart);
 
-    void deleteOrderWithoutTransactions(Order order);
-
     Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
 
     /**
