@@ -64,6 +64,13 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
         }
     };
 
+    public static final ExtensionManagerOperation getTypeForSite = new ExtensionManagerOperation() {
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((EntityInformationServiceExtensionHandler) handler).getTypeForSite((Site) params[0], (ExtensionResultHolder<String>) params[1]);
+        }
+    };
+
     public static final ExtensionManagerOperation getParentSiteForProfile = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
@@ -120,6 +127,11 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     @Override
     public ExtensionResultStatusType getParentSiteForProfile(Site profile, ExtensionResultHolder<Site> erh) {
         return execute(getParentSiteForProfile, profile, erh);
+    }
+
+    @Override
+    public ExtensionResultStatusType getTypeForSite(Site site, ExtensionResultHolder<String> erh) {
+        return execute(getTypeForSite, site, erh);
     }
 
     @Override
