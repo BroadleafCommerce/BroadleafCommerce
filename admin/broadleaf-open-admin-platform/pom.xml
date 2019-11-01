@@ -71,7 +71,7 @@
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
             </plugin>
-            <!-- Include Spock specifications, exclude the browser tests 
+            <!-- Include Spock specifications, exclude the browser tests
                 by default -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -108,7 +108,7 @@
         </resources>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
+                <!--This plugin's configuration is used to store Eclipse
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>

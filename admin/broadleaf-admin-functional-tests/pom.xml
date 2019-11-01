@@ -38,7 +38,7 @@
     </developers>
     <build>
         <plugins>
-            <!-- Include Spock specifications, exclude the browser tests 
+            <!-- Include Spock specifications, exclude the browser tests
                 by default -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -126,7 +126,7 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <exclusions>
                 <exclusion>
-                    <!--exclude the outdated javassist, since we explicitly 
+                    <!--exclude the outdated javassist, since we explicitly
                         declare the newer one (note that the groupId has changed) -->
                     <artifactId>javassist</artifactId>
                     <groupId>javassist</groupId>
@@ -419,11 +419,11 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>de.jkeylockmanager</groupId>
-            <artifactId>jkeylockmanager</artifactId>            
-        </dependency>          
+            <artifactId>jkeylockmanager</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>

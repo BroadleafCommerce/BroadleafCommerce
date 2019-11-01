@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -477,6 +478,16 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         DynamicResultSet results = new DynamicResultSet(null, payload, totalRecords);
 
         return results;
+    }
+
+    public List<Serializable> fetch(PersistencePackage persistencePackage, AdornedTargetList adornedTargetList, CriteriaTransferObject cto) {
+        AdornedTargetRetrieval retrieval;
+        try {
+            retrieval = new AdornedTargetRetrieval(persistencePackage, adornedTargetList, cto).invokeForFetch();
+        } catch (Exception e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        return retrieval.getRecords();
     }
 
     public class AdornedTargetRetrieval {
