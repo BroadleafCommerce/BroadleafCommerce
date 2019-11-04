@@ -542,6 +542,23 @@ var BLCAdmin = (function($) {
             return false;
         },
 
+        /**
+         * Add URL parameters to an existing url
+         * @param {url}     string
+         * @param {params}    map of parameter keys to values
+         */
+        buildUrlWithParams : function (url, params) {
+            if (url.lastIndexOf("?") > -1) {
+                url = url + "&" + $.param(params);
+            } else {
+                if (!$.isEmptyObject(params)) {
+                    url = url + "?" + $.param(params);
+                }
+            }
+
+            return url;
+        },
+        
         initializeDateFields : function($container) {
             $container.find('.datetimepicker').each(function (index, element) {
                 // create a hidden clone, which will contain the actual value
