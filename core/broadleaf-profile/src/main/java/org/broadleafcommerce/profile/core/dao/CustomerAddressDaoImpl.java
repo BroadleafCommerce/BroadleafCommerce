@@ -129,9 +129,14 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         return query.getSingleResult();
     }
 
+    @SuppressWarnings("unchecked")
     protected void clearDefaultAddressForCustomer(Long customerId) {
-        Query update = em.createNamedQuery("BC_CLEAR_DEFAULT_ADDRESS_BY_CUSTOMER_ID");
-        update.setParameter("customerId", customerId);
+        // This has to be done in two queries because MySQL doesn't support updates on a table with a subquery on the same table
+        Query query = em.createNamedQuery("BC_READ_DEFAULT_ADDRESS_IDS_BY_CUSTOMER_ID");
+        query.setParameter("customerId", customerId);
+        List<Long> addressIds = query.getResultList();
+        Query update = em.createNamedQuery("BC_CLEAR_DEFAULT_ADDRESS_BY_IDS");
+        update.setParameter("addressIds", addressIds);
         update.executeUpdate();
     }
 
