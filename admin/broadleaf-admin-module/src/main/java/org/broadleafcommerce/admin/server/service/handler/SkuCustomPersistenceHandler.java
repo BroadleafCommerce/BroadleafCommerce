@@ -18,8 +18,6 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import static com.google.common.base.CharMatcher.DIGIT;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.BooleanUtils;
@@ -37,7 +35,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
-import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -80,6 +77,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,6 +87,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -741,12 +740,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return entity;
             }
 
+            // Persist our updates before making any other modifications.  Updating/removing
+            // ProductOptionValues cause an `em.flush()` downstream which can cause our changes
+            // to not be detected by the workflow management.
+            adminInstance = dynamicEntityDao.merge(adminInstance);
+
             // Only modify product options if this ISN'T an update for inventory properties
             if (!persistencePackage.containsCriteria(INVENTORY_ONLY_CRITERIA)) {
                 associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
             }
-
-            adminInstance = dynamicEntityDao.merge(adminInstance);
 
             extensionManager.getProxy().skuUpdated(adminInstance);
 
