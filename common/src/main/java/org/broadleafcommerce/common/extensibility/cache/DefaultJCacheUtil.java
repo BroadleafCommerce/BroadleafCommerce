@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.extensibility.cache;
 
 import org.springframework.util.Assert;
 
+import java.io.File;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -42,12 +43,12 @@ import javax.cache.expiry.ExpiryPolicy;
  */
 public class DefaultJCacheUtil implements JCacheUtil {
     
-    public static final String JCACHE_MERGED_XML_RESOUCE_URI = "jcache:merged-xml-resource";
+    public static final URI JCACHE_MERGED_XML_RESOUCE_URI = new File(System.getProperty("java.io.tmpdir"), "broadleaf-merged-jcache.xml").toURI();
     
     protected CacheManager cacheManager;
     
     public DefaultJCacheUtil() {
-        this.cacheManager = Caching.getCachingProvider().getCacheManager(URI.create(JCACHE_MERGED_XML_RESOUCE_URI), Caching.getCachingProvider().getDefaultClassLoader());
+        this.cacheManager = Caching.getCachingProvider().getCacheManager(JCACHE_MERGED_XML_RESOUCE_URI, Caching.getCachingProvider().getDefaultClassLoader());
     }
     
     public DefaultJCacheUtil(CacheManager cacheManager) {
@@ -83,7 +84,7 @@ public class DefaultJCacheUtil implements JCacheUtil {
             expiryPolicy = EternalExpiryPolicy.factoryOf();
         } else {
             //Number of seconds since created in cache
-            expiryPolicy = CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, (long) ttlSeconds));
+            expiryPolicy = CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, ttlSeconds));
         }
         
         final MutableConfiguration<K, V> config = new MutableConfiguration<>();

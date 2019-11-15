@@ -127,6 +127,7 @@
             <list>
                 <bean class="org.broadleafcommerce.common.extensibility.jpa.JPAPropertiesPersistenceUnitPostProcessor"/>
                 <bean class="org.broadleafcommerce.common.extensibility.jpa.ORMConfigPersistenceUnitPostProcessor"/>
+                <bean class="org.broadleafcommerce.common.extensibility.jpa.JCachePersistenceUnitPostProcessor"/>
             </list>
         </property>
     </bean>
