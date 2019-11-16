@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.common.extensibility.cache.jcache;
 
+import org.apache.commons.io.IOUtils;
 import org.broadleafcommerce.common.extensibility.cache.ehcache.DefaultEhCacheUtil;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
-import org.broadleafcommerce.url.handler.jcache.Handler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -34,7 +34,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +76,7 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
     protected List<Resource> configLocations;
     
     //We use EhCache as the default.  Provide the URI that referrs to a merged JCache (typically EhCache) XML file that will be created
-    protected URI cacheManagerUri = URI.create(DefaultEhCacheUtil.JCACHE_MERGED_XML_RESOUCE_URI);
+    protected URI cacheManagerUri = DefaultEhCacheUtil.JCACHE_MERGED_XML_RESOUCE_URI;
     
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -105,11 +109,9 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
                 sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                 j++;
             }
-            
+
             Resource mergeResource = merge.getMergedConfigResource(sources);
-            try (InputStream is = mergeResource.getInputStream()) {
-                Handler.setMergedJCacheXml(mergeResource.getInputStream());
-            }
+            createTemporaryMergeXml(mergeResource);
             
             //The ClassLoader needs to be the same as what Hibernate expects (see org.hibernate.cache.jcache.internal.JCacheRegionFactory).
             this.cacheManager = provider.getCacheManager(cacheManagerUri,  
@@ -168,4 +170,16 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
         return getClass().getClassLoader();
     }
     
+    protected File createTemporaryMergeXml(Resource mergedJcacheResource) throws FileNotFoundException, IOException {
+        File file = new File(cacheManagerUri);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            IOUtils.copy(mergedJcacheResource.getInputStream(), outputStream);
+        }
+        return file;
+    }
+
 }
