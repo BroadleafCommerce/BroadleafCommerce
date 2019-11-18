@@ -168,7 +168,7 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             bundleUrl = contextPath + bundleUrl;
         }
 
-        return bundleUrl;
+        return bundleUrl + "?themeConfigId=-2";
     }
 
     /**

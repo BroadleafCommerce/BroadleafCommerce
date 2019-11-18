@@ -37,11 +37,6 @@ public class ImportSQLConfig {
     public static final int BASIC_DATA_SPECIAL = AutoImportStage.PRIMARY_PRE_BASIC_DATA + 200;
 
     @Bean
-    public AutoImportSql blLocaleData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_locale.sql", BASIC_DATA_SPECIAL);
-    }
-
-    @Bean
     @Conditional(DemoCondition.class)
     public AutoImportSql blCMSBasicData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_content_structure.sql," +

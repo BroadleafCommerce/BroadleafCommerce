@@ -136,7 +136,6 @@ public class AdminAssetUploadController extends AdminAbstractController {
         }
 
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.add("Content-Type", "text/html; charset=utf-8");
         return new ResponseEntity<Map<String, Object>>(responseMap, responseHeaders, HttpStatus.OK);
     }
 
