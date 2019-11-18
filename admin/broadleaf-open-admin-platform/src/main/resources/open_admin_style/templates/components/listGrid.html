@@ -9,7 +9,7 @@
 <th:block th:unless="${!#strings.isEmpty(listGrid.templateOverride)}">
     <div class="listgrid-header-wrapper">
         <table class="list-grid-table table table-striped"
-               th:classappend="${(listGrid.className)+ (!listGrid.isReadOnly ? '' : ' disabled')}"
+               th:classappend="${listGrid.className}"
                th:attr="data-listgridtype=${listGrid.listGridType},
                         data-listgridselecttype=${listGrid.selectType},
                         data-currenturl=${currentUrl},
@@ -203,7 +203,7 @@
                             <a href="#" class="sub-list-grid-reorder"
                                style="visibility: hidden;"
                                th:if="${headerFieldStat.first} and ${listGrid.isSortable()}"
-                               th:unless="${isLookup}">
+                               th:unless="${isLookup} or ${listGrid.getIsReadOnly()}">
                                 <i class="fa fa-arrows-v fa-lg"></i>
                             </a>
 

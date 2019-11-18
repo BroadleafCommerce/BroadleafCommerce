@@ -18,14 +18,14 @@
 
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Cache;
-
 import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 
 import java.util.List;
 import java.util.Locale;
+
+import net.sf.ehcache.Cache;
 
 public interface TranslationService {
 
@@ -167,4 +167,5 @@ public interface TranslationService {
      * @return
      */
     List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds);
+
 }
