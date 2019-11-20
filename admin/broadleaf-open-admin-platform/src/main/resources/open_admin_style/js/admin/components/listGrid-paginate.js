@@ -853,7 +853,9 @@
             if (maxHeight < rowHeight) {
                 maxHeight = rowHeight;
             }
-            
+            if (maxHeight > desiredMaxHeight) {
+                maxHeight = desiredMaxHeight;
+            }
             return maxHeight;
         },
         
