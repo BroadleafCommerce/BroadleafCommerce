@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.0.1-GA-NBME-SPRING-4-SNAPSHOT</version>
+        <version>3.0.1-GA-NBME-SPRING-4-M1</version>
     </parent>
     <artifactId>broadleaf-open-admin-platform</artifactId>
     <packaging>jar</packaging>
