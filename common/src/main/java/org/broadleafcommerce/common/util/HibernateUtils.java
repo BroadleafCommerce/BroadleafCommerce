@@ -17,8 +17,12 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.hibernate.CacheMode;
+import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+
+import javax.persistence.EntityManager;
 
 /**
  * Hibernate convenience methods
@@ -26,6 +30,7 @@ import org.hibernate.proxy.LazyInitializer;
  * @author Philip Baggett (pbaggett)
  */
 public class HibernateUtils {
+    
     /**
      * <p>Ensure a domain object is an actual persisted object and not a Hibernate proxy object by getting its real implementation.
      *
@@ -41,5 +46,27 @@ public class HibernateUtils {
             return (T)lazyInitializer.getImplementation();
         }
         return t;
+    }
+    
+    /**
+     * During bulk operations such as reindexing we don't always want things to be cached.  This allows us to surgically turn off caching where appropriate.
+     * @param operation
+     * @param em
+     * @return
+     * @throws G
+     */
+    public static <T, G extends Throwable> T executeWithoutCache(UncacheableOperation<T,G> operation, EntityManager em) throws G {
+        final Session session = em.unwrap(Session.class);
+        final CacheMode initialCacheMode = session.getCacheMode();
+        session.setCacheMode(CacheMode.IGNORE);
+        try {
+            return operation.execute();
+        } finally {
+            session.setCacheMode(initialCacheMode);
+        }
+    }
+    
+    public static abstract class UncacheableOperation<T, G extends Throwable> {
+        public abstract T execute() throws G;
     }
 }

@@ -1,0 +1,223 @@
+package org.broadleafcommerce.core.search.service.solr.indexer;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.solr.common.SolrInputDocument;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.concurrent.locks.Lock;
+
+/**
+ * This component is an abstract component that will be extended by more concrete implementations for updating 
+ * or reindexing Solr.  This makes use of a single background Thread, per command type (or command identifier - i.e. "catalog") that monitors a command queue, ensuring that all 
+ * commands to update or reindex Solr happen serially for a given command identifier, but without blocking the calling thread that is issuing the command.
+ * 
+ * This component makes use of a {@link Lock} and a {@link BlockingQueue}.  The providers for these components, {@link SolrIndexQueueProvider} and 
+ * {@link SolrIndexLockProvider} provide an <code>isDistributed()</code> method.  They must both return the same value.  Note that if 
+ * <code>isDistributed()</code> returns false, then care must be taken to ensure that 2 or more nodes (i.e. JVMs) cannot execute at the same time. 
+ * This is typically done by ensuring that only a single node will receive calls/events to update a Solr index.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
+public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUpdateCommandService {
+    
+    private static final Log LOG = LogFactory.getLog(AbstractSolrIndexCommandManagerImpl.class);
+    private static final Map<String, AtomicReferenceArray<Runnable>> commandThreadRegistry = Collections.synchronizedMap(new HashMap<String, AtomicReferenceArray<Runnable>>());
+    
+    private final String commandGroup;
+    private BlockingQueue<? super SolrUpdateCommand> commandQueue;
+    private final SolrIndexUpdateCommandHandler commandHandler;
+    
+    public AbstractSolrIndexCommandManagerImpl(final String commandGroup, final SolrIndexQueueProvider queueProvider, final SolrIndexUpdateCommandHandler commandHandler) {
+        Assert.notNull(commandGroup, "The command group must not be null. Consider using a simple domain identifier such as 'catalog', 'customer', or 'order', for example.");
+        Assert.notNull(queueProvider, SolrIndexQueueProvider.class.getName() + " cannot be null.");
+        Assert.notNull(commandHandler, SolrIndexUpdateCommandHandler.class.getName() + " cannot be null.");
+        
+        this.commandGroup = commandGroup.trim();
+        Assert.hasLength(getCommandGroup(), "The command group must not be empty. Consider using a simple domain identifier such as 'catalog', 'customer', or 'order', for example.");
+        
+        Assert.notNull(commandHandler.getRelevantCommandGroup().equals(getCommandGroup()), "Command identifiers must match to avoid misconfiguration.");
+        this.commandHandler = commandHandler;
+        
+        this.commandQueue = queueProvider.createOrRetrieveCommandQueue(getCommandGroup() + "_commandQueue");
+        Assert.notNull(this.commandQueue, "The commandQueue cannot be null.  Check the " + queueProvider.getClass().getName() + ".");
+        
+        synchronized (AbstractSolrIndexCommandManagerImpl.class) {
+            if (!commandThreadRegistry.containsKey(getCommandGroup())) {
+                final Lock lock = queueProvider.createOrRetrieveCommandLock(getCommandGroup() + "_commandLock");
+                Assert.notNull(lock, "The lock cannot be null. Check the " + queueProvider.getClass().getName() + ".");
+                
+                final CommandCoorinator commandRunnable = new CommandCoorinator(this.commandQueue, lock, commandHandler);
+                final Thread commandThread = new Thread(commandRunnable, "Solr-Index-Update-Command-" + getCommandGroup());
+                commandThread.start();
+                
+                AtomicReferenceArray<Runnable> ref = new AtomicReferenceArray<>(2);
+                ref.set(0, commandRunnable);
+                ref.set(1, commandThread);
+                
+                commandThreadRegistry.put(getCommandGroup(), ref);
+            }
+        }
+    }
+    
+    /**
+     * Stops all threads that are listening to various command queues.
+     */
+    public static void shutdownAll() {
+        synchronized (AbstractSolrIndexCommandManagerImpl.class) {
+            Set<Entry<String, AtomicReferenceArray<Runnable>>> entries = commandThreadRegistry.entrySet();
+            for (Entry<String, AtomicReferenceArray<Runnable>> entry : entries) {
+                ((CommandCoorinator)entry.getValue().get(0)).stopRunning();
+                ((Thread)entry.getValue().get(1)).interrupt();
+            }
+            
+            commandThreadRegistry.clear();
+        }
+    }
+    
+    /**
+     * This is any arbitrary name to identify or group commands, typically based on the Solr index (or indexes) being updated.  
+     * For example, "catalog" will likely be a command identifier.  It could also be "product", but in less common cases where you want to 
+     * index categories or other things with products and you want to serialize those commands, then this can assist.
+     * 
+     * @return
+     */
+    public final String getCommandGroup() {
+        return commandGroup;
+    }
+    
+    protected final <C extends SolrUpdateCommand> void scheduleCommand(C command) {
+        if (!isRunning(getCommandGroup())) {
+            throw new IllegalStateException("Attempted to queue a SolrUpdateCommand but " + getClass().getName() + " is not initialized or has been shut down.");
+        }
+        if (command != null) {
+            try {
+                for (int i = 0; i < 5; i++) {
+                    if (commandQueue.offer(command, 1000L, TimeUnit.MILLISECONDS)) {
+                        return;
+                    } else if (!isRunning(getCommandGroup())) {
+                        throw new IllegalStateException("Attempted to queue a SolrUpdateCommand but " + getClass().getName() + " is not initialized or has been shut down.");
+                    }
+                }
+                throw new IllegalStateException("Unable to add a Solr index update command to the queue within 5 seconds.");
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Unexpected error occured attempting to add a command to the queue.", e);
+            }
+        }
+    }
+    
+    /**
+     * This provides a {@link Runnable} implementation that simply polls the command queue, but only if it can acquire a lock. It continuously attempts to obtain the lock, and 
+     * then when it does it continuously pulls commands from the command queue.  This ensures that exactly one thread at a time can access the commands to update Solr.
+     * @author Kelly Tisdell
+     *
+     */
+    private class CommandCoorinator implements Runnable {
+        
+        private final BlockingQueue<? super SolrUpdateCommand> queue;
+        private final Lock lock;
+        private final SolrIndexUpdateCommandHandler commandHandler;
+        private volatile boolean running = false;
+        
+        CommandCoorinator(BlockingQueue<? super SolrUpdateCommand> queue, Lock lock, SolrIndexUpdateCommandHandler commandHandler) {
+            this.queue = queue;
+            this.lock = lock;
+            this.commandHandler = commandHandler;
+        }
+        
+        @Override
+        public void run() {
+            try {
+                startRunning();
+                
+                while (isRunning()) {
+                    if (Thread.interrupted()) {
+                        stopRunning();
+                        return;
+                    }
+                    
+                    lock.lockInterruptibly();
+                    try {
+                        SolrUpdateCommand command;
+                        while (isRunning()) {
+                            if (Thread.interrupted()) {
+                                stopRunning();
+                                return;
+                            }
+                            
+                            command = (SolrUpdateCommand)queue.poll(1000L, TimeUnit.MILLISECONDS);
+                            
+                            if (command != null) {
+                                try {
+                                    commandHandler.executeCommand(command);
+                                } catch (Exception e) {
+                                    LOG.error("Unexpected error occured attempting to update a Solr index.", e);
+                                }
+                            }
+                        }
+                    } finally {
+                        lock.unlock();
+                    }
+                    
+                }
+                
+            } catch (InterruptedException e) {
+                stopRunning();
+                return;
+            }
+            
+        }
+        
+        public synchronized boolean isRunning() {
+            return running;
+        }
+        
+        public synchronized void stopRunning() {
+            this.running = false;
+        }
+        
+        private synchronized void startRunning() {
+            this.running = true;
+        }
+    }
+    
+    public static boolean isRunning(String commandIdentifier) {
+        synchronized (AbstractSolrIndexCommandManagerImpl.class) {
+            return commandThreadRegistry.containsKey(commandIdentifier) && ((CommandCoorinator)commandThreadRegistry.get(commandIdentifier).get(0)).isRunning();
+            
+        }
+    }
+    
+    @Override
+    public void rebuildIndex() throws ServiceException {
+        scheduleCommand(FullReindexCommand.DEFAULT_INSTANCE);
+    }
+    
+    @Override
+    public void updateIndex(List<SolrInputDocument> documents) {
+        updateIndex(documents, null);
+    }
+
+    @Override
+    public void updateIndex(List<SolrInputDocument> documents, List<String> deleteQueries) {
+        IncrementalUpdateCommand cmd = new IncrementalUpdateCommand(documents, deleteQueries);
+        scheduleCommand(cmd);
+    }
+    
+    @Override
+    public SolrInputDocument buildDocument(Indexable indexable) {
+        return commandHandler.buildDocument(indexable);
+    }
+}
