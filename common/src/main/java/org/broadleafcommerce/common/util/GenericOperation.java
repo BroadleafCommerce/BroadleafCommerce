@@ -6,7 +6,7 @@ package org.broadleafcommerce.common.util;
  * @author Kelly Tisdell
  *
  */
-public interface GenericOperation<R, T extends Throwable> {
+public interface GenericOperation<R, T extends Exception> {
 
     /**
      * Returns R, the return value and throws T, the Throwable.  Use {@link Void} as the return type 

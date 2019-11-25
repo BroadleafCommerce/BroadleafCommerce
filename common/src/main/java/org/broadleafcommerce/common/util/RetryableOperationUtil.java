@@ -7,21 +7,22 @@ package org.broadleafcommerce.common.util;
  *
  */
 public class RetryableOperationUtil {
-
-    public static <R> R executeRetryableOperation(final AbstractRetryableOperation<R, Exception> operation) throws Exception {
+    
+    public static <R, T extends Exception> R executeRetryableOperation(final GenericOperation<R,T> operation, 
+            final int retries, final long waitTime, final boolean isWaitTimesAdditive, final Class<? extends Exception>[] noRetriesForException) throws Exception {
         int count = 0;
-        long localWaitTime = operation.getWaitTime();
+        long localWaitTime = waitTime;
         while (true) {
             try {
                 return operation.execute();
             } catch (Exception e) {
-                if (count == operation.getRetries()) {
+                if (count == retries) {
                     throw e;
                 }
                 
-                if (operation.getThrowablesToIgnore() != null && operation.getThrowablesToIgnore().length > 0) {
-                    for (int i = 0; i < operation.getThrowablesToIgnore().length; i++) {
-                        if (operation.getThrowablesToIgnore()[i].isAssignableFrom(e.getClass())) {
+                if (noRetriesForException != null && noRetriesForException.length > 0) {
+                    for (int i = 0; i < noRetriesForException.length; i++) {
+                        if (noRetriesForException[i].isAssignableFrom(e.getClass())) {
                             throw e;
                         }
                     }
@@ -30,15 +31,15 @@ public class RetryableOperationUtil {
                 count++;
                 
                 try {
-                    if (localWaitTime > 0L) {
+                    if (waitTime > 0L) {
                         Thread.sleep(localWaitTime);
                     }
-                    if (operation.isAdditiveWaitTtimes()) {
-                        localWaitTime += operation.getWaitTime();
+                    if (isWaitTimesAdditive) {
+                        localWaitTime += waitTime;
                     }
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    throw e;
+                    throw ie;
                 }
                 
             }

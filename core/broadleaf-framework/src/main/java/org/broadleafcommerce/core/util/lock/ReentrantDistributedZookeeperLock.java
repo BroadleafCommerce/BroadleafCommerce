@@ -8,7 +8,7 @@ import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
-import org.broadleafcommerce.common.util.AbstractRetryableOperation;
+import org.broadleafcommerce.common.util.GenericOperation;
 import org.broadleafcommerce.common.util.RetryableOperationUtil;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
@@ -78,10 +78,10 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * In this case, InterruptedException and RuntimeException are the only exceptions that we do not retry.
      */
     @SuppressWarnings({ "unchecked" })
-    private final Class<Throwable>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Throwable>[])new Class<?>[]{InterruptedException.class, RuntimeException.class};
+    private final Class<Exception>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Exception>[])new Class<?>[]{InterruptedException.class, RuntimeException.class};
     
     /*
-     * This is a synchronization monitor for threads, locks, or environments that cannot obtain this lock.
+     * This is a synchronization monitor for threads, lock names, or environments for which this lock cannot be obtained.
      */
     private final Object NON_PARTICIPANT_LOCK_MONITOR = new Object();
     
@@ -255,15 +255,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         
         try {
             synchronized (LOCK_MONITOR) {
-                RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Void, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
-                    
+                RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Void, Exception>() {
                     @Override
                     public Void execute() throws Exception {
                         zk.delete(currentlockPath, -1, true);
                         return null;
                     }
-                    
-                });
+                }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY); 
+                
                 
                 if (THREAD_LOCK_PERMITS.get().decrementAndGet() < 1) {
                     THREAD_LOCK_PERMITS.remove();
@@ -356,12 +355,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         try {
             //Create a lock reference in Zookeeper.  It looks something like /broadleaf/app/distributed-locks/path/to/my/locks/myLock000000000015
             //The sequential part of this guaranteed by Zookeeper to be unique.  Creating this file does not guarantee that a lock has been acquired.
-            final String localLockPath = RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<String, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+            final String localLockPath = RetryableOperationUtil.executeRetryableOperation(new GenericOperation<String, Exception>() {
+
                 @Override
                 public String execute() throws Exception {
                     return zk.create(getLockFolderPath() + '/' + getFullLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
                 }
-            });
+                
+            }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
             
             synchronized (LOCK_MONITOR) {
                 boolean waitCompleted = false; //Allows us to avoid waiting indefinitely if the client specified a wait time.
@@ -370,7 +371,8 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                         throw new InterruptedException();
                     }
                     
-                    List<String> nodes = RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<List<String>, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                    List<String> nodes = RetryableOperationUtil.executeRetryableOperation(new GenericOperation<List<String>, Exception>() {
+                        
                         @Override
                         public List<String> execute() throws Exception {
                             return zk.getChildren(getLockFolderPath(), new Watcher() {
@@ -384,7 +386,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                             }, true);
                         }
                         
-                    });
+                    }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
                     
                      // ZooKeeper node names can be sorted.
                     Collections.sort(nodes);
@@ -415,14 +417,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     } else {
                         if (waitTime == 0L) {
                             //No need to try again, the caller does not want to wait.
-                            return RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Boolean, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                            return RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Boolean, Exception>() {
+
                                 @Override
                                 public Boolean execute() throws Exception {
                                     zk.delete(localLockPath, 0, true);
                                     return false;
                                 }
-                                
-                            });
+                            }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
                         } else if (waitTime < 0L) {
                             //Wait indefinitely.  If this notified (typically by the Watcher, above), then it will try to obtain the lock.
                             LOCK_MONITOR.wait();
@@ -430,14 +432,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                             if (waitCompleted) {
                                 //We already waited the specified time, so don't wait again.  
                                 //The caller specified a wait time, and we already waited so we'll just return false since we did not obtain the lock.
-                                return RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Boolean, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                                return RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Boolean, Exception>() {
+
                                     @Override
                                     public Boolean execute() throws Exception {
                                         zk.delete(localLockPath, 0, true);
                                         return false;
                                     }
-                                    
-                                });
+                                }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
                             }
                             //Indicate that we've already waited for the specified time so that we don't wait again.
                             waitCompleted = true; 
@@ -462,15 +464,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      */
     protected synchronized void initialize() {
         try {
-            RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Void, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+            RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Void, Exception>() {
 
                 @Override
                 public Void execute() throws Exception {
                     zk.makePath(getLockFolderPath(), false, true);
                     return null;
                 }
-                
-            });
+            }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
         } catch (Exception e) {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
@@ -537,11 +538,31 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         return lockFolderPath;
     }
     
+    /**
+     * This will retry any interactions with Zookeeper this many times.  Must be a positive number.  Zero (0) is OK.
+     * @return
+     */
     protected int getRetries() {
         return 5;
     }
     
+    /**
+     * If an interaction with Zookeeper fails, it will retry and this will be the pause time, in millis, between retries.
+     * @return
+     */
     protected long getRetryWaitTime() {
-        return 500L;
+        return 100L;
+    }
+    
+    /**
+     * If this is true, the wait time in millis will be incremented by itself each time a retry occurs, up to the retry count.
+     * 
+     * So, if the retries is 5 and the retryWaitTime is 100, then the max amount of time that the system will wait is 1500:
+     * 100 + 200 + 300 + 400 + 500, not including any wait time for IO for the execution of the Operation.
+     * 
+     * @return
+     */
+    protected boolean isAdditiveWaitTtimes() {
+        return true;
     }
 }
