@@ -56,6 +56,9 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     
     private static final Log LOG = LogFactory.getLog(ReentrantDistributedZookeeperLock.class);
     
+    /**
+     * Default property name to determine, globally, whether this environment (JVM) can obtain a lock of this type.
+     */
     public static final String GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY = ReentrantDistributedZookeeperLock.class.getName() + ".canParticipate";
     
     /**
@@ -65,21 +68,65 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     public static final String DEFAULT_BASE_FOLDER = "/broadleaf/app/distributed-locks";
     public static final String LOCK_PREFIX = "dzlck-";
     
+    /*
+     * Allows reentrant locking.  If the current thread already has a lock, then additional attempts at locking or unlocking will be incremented or decremented here.
+     */
     private final ThreadLocal<AtomicInteger> THREAD_LOCK_PERMITS = new ThreadLocal<>();
     
+    /*
+     * List of Exception classes for which to ignore a retry in the case of an error, when interacting with Solr.
+     * In this case, InterruptedException and RuntimeException are the only exceptions that we do not retry.
+     */
     @SuppressWarnings({ "unchecked" })
-    private final Class<Throwable>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Throwable>[])new Class<?>[]{InterruptedException.class};
+    private final Class<Throwable>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Throwable>[])new Class<?>[]{InterruptedException.class, RuntimeException.class};
     
+    /*
+     * This is a synchronization monitor for threads, locks, or environments that cannot obtain this lock.
+     */
     private final Object NON_PARTICIPANT_LOCK_MONITOR = new Object();
+    
+    /*
+     * This is a synchronization monitor for normal lock and unlock operations.
+     */
     private final Object LOCK_MONITOR = new Object();
+    
+    /*
+     * This provides the interface to Zookeeper.
+     */
     private final SolrZkClient zk;
+    
+    /*
+     * Optional Sping Environment object to assist in determining if the lock can be obtained.  This is 
+     * nullable, and if this is null then the default is to allow the lock to be obtained.
+     */
     private final Environment env;
     
+    /*
+     * Basic lock name (e.g. 'myLock')
+     */
     private final String lockName;
-    private final String fullLockName; //Includes the LOCK_PREFIX
+    
+    /*
+     * Full lock name, which includes the LOCK_PREFIX (e.g. 'dzlck-myLock')
+     */
+    private final String fullLockName;
+    
+    /*
+     * Path to the lock folder.  Typically, /broadleaf/app/distributed-locks/path/to/my/lock-folder
+     */
     private final String lockFolderPath;
+    
+    /*
+     * Property name, whose value should be null or boolean, to determine if this lock can be obtained by this environment.
+     * E.g. org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${getLockName()}.canParticipate=true
+     */
     private final String lockAccessPropertyName;
     
+    /*
+     * This is the full path to the ephemeral node in Zookeeper that represents the lock.
+     * E.g. /broadleaf/app/distributed-locks/path/to/my/lock-folder/dzlck-myLock00000000001
+     * 
+     */
     private String currentlockPath;
     
     /**
