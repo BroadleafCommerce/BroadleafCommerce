@@ -6,9 +6,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.broadleafcommerce.common.util.AbstractRetryableOperation;
+import org.broadleafcommerce.common.util.RetryableOperationUtil;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
@@ -62,8 +63,12 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * to this path.
      */
     public static final String DEFAULT_BASE_FOLDER = "/broadleaf/app/distributed-locks";
+    public static final String LOCK_PREFIX = "dzlck-";
     
     private final ThreadLocal<AtomicInteger> THREAD_LOCK_PERMITS = new ThreadLocal<>();
+    
+    @SuppressWarnings({ "unchecked" })
+    private final Class<Throwable>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Throwable>[])new Class<?>[]{InterruptedException.class};
     
     private final Object NON_PARTICIPANT_LOCK_MONITOR = new Object();
     private final Object LOCK_MONITOR = new Object();
@@ -71,6 +76,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     private final Environment env;
     
     private final String lockName;
+    private final String fullLockName; //Includes the LOCK_PREFIX
     private final String lockFolderPath;
     private final String lockAccessPropertyName;
     
@@ -83,12 +89,31 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * 
      * This {@link Lock} will, by default, participate in or be allowed to acquire a lock.
      * 
+     * The lockPath will be prepended with '/broadleaf/app/distributed-locks'.
+     * 
      * @param zk
      * @param lockPath
      * @param lockName
      */
     public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName) {
-        this(zk, lockPath, lockName, null);
+        this(zk, lockPath, lockName, null, true);
+    }
+    
+    /**
+     * This constructor takes in the {@link SolrZkClient} (non-nullable), 
+     * the lock path (non-nullable and in the format of '/path/to/this/lock/folder`), 
+     * and the lock name (non-nullable and non-empty string with no whitespaces, leading or trailing slashes, or special characters except '-' or '_').
+     * 
+     * This {@link Lock} will, by default, participate in or be allowed to acquire a lock.
+     * 
+     * If use defaultBasePath is true, then the lockPath will be prepended with '/broadleaf/app/distributed-locks'.
+     * 
+     * @param zk
+     * @param lockPath
+     * @param lockName
+     */
+    public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName, boolean useDefaultBasePath) {
+        this(zk, lockPath, lockName, null, useDefaultBasePath);
     }
     
     /**
@@ -100,19 +125,45 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * This {@link Lock} will, by default, participate in or be allowed to acquire a lock if the {@link Environment} argument is null or 
      * if the 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property is not set or is set to false.
      * 
+     * The lockPath will be prepended with '/broadleaf/app/distributed-locks'.
+     * 
      * @param zk
      * @param lockPath
      * @param lockName
      * @param env
      */
     public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName, Environment env) {
+        this(zk, lockPath, lockName, env, true);
+    }
+    
+    /**
+     * This constructor takes in the {@link SolrZkClient} (non-nullable), 
+     * the lock path (non-nullable and in the format of '/path/to/this/lock/folder`), 
+     * the lock name (non-nullable and non-empty string with no whitespaces, leading or trailing slashes, or special characters except '-' or '_'), and 
+     * an {@link Environment} object, which can be null.
+     * 
+     * This {@link Lock} will, by default, participate in or be allowed to acquire a lock if the {@link Environment} argument is null or 
+     * if the 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property is not set or is set to false.
+     * 
+     * If use defaultBasePath is true, then the lockPath will be prepended with '/broadleaf/app/distributed-locks'.
+     * 
+     * @param zk
+     * @param lockPath
+     * @param lockName
+     * @param env
+     * @param useDefaultBasePath
+     */
+    public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName, Environment env, boolean useDefaultBasePath) {
         Assert.notNull(zk, "SolrKzClient cannot be null.");
         Assert.isTrue(zk.isConnected(), "Please ensure that the SolrZkClient is connected.");
         Assert.notNull(lockName, "The lockName cannot be null.");
         Assert.notNull(lockPath, "The lockPath cannot be null and must be a Unix-style path (e.g. '/solr-index/command-lock').");
         
-        this.lockName = lockName.trim();
-        Assert.hasText(this.lockName, "The lockName must not be empty and should not contain white spaces.");
+        lockName = lockName.trim();
+        Assert.hasText(lockName, "The lockName must not be empty and should not contain white spaces.");
+        this.lockName = lockName;
+        
+        this.fullLockName = LOCK_PREFIX + this.lockName;
         
         Assert.hasText(lockPath.trim(), "The lockPath must not be empty and should not contain white spaces.");
         this.zk = zk;
@@ -120,10 +171,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         
         this.lockAccessPropertyName = ReentrantDistributedZookeeperLock.class.getName() + '.' + this.lockName + ".canParticipate";
         
-        if (lockPath.trim().startsWith("/")) {
-            this.lockFolderPath = DEFAULT_BASE_FOLDER + lockPath.trim();
+        if (useDefaultBasePath) {
+            if (lockPath.trim().startsWith("/")) {
+                this.lockFolderPath = DEFAULT_BASE_FOLDER + lockPath.trim();
+            } else {
+                this.lockFolderPath = DEFAULT_BASE_FOLDER + '/' + lockPath.trim();
+            }
         } else {
-            this.lockFolderPath = DEFAULT_BASE_FOLDER + '/' + lockPath.trim();
+            this.lockFolderPath = lockPath.trim();
         }
         
         initialize();
@@ -141,7 +196,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
 
     public void unlock() {
         if (THREAD_LOCK_PERMITS.get() == null || THREAD_LOCK_PERMITS.get().get() < 1) {
-            throw new DistributedLockException("The current thread did not contain this lock and thereforer cannot unlock it.");
+            throw new DistributedLockException("The current thread did not obtain this lock and thereforer cannot unlock it.");
         }
         
         if (THREAD_LOCK_PERMITS.get().get() > 1) {
@@ -153,7 +208,15 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         
         try {
             synchronized (LOCK_MONITOR) {
-                zk.delete(currentlockPath, -1, true);
+                RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Void, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                    
+                    @Override
+                    public Void execute() throws Exception {
+                        zk.delete(currentlockPath, -1, true);
+                        return null;
+                    }
+                    
+                });
                 
                 if (THREAD_LOCK_PERMITS.get().decrementAndGet() < 1) {
                     THREAD_LOCK_PERMITS.remove();
@@ -162,15 +225,16 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("ZK lock was released by " + Thread.currentThread().getName() + ". The lock name was " + currentlockPath);
                 }
+                
                 currentlockPath = null;
             }
-        } catch (KeeperException | InterruptedException e) {
+        } catch (Exception e) {
             LOG.error("An error occured trying to unlock a distributed lock stored in Zookeeper.  "
                     + "The lock has not been released and manual intervention may be required.  Lock path is: " + currentlockPath, e);
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
             }
-        }
+        } 
     }
 
     @Override
@@ -245,26 +309,47 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         try {
             //Create a lock reference in Zookeeper.  It looks something like /broadleaf/app/distributed-locks/path/to/my/locks/myLock000000000015
             //The sequential part of this guaranteed by Zookeeper to be unique.  Creating this file does not guarantee that a lock has been acquired.
-            final String localLockPath = zk.create(getLockFolderPath() + '/' + getLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
+            final String localLockPath = RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<String, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                @Override
+                public String execute() throws Exception {
+                    return zk.create(getLockFolderPath() + '/' + getFullLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
+                }
+            });
+            
             synchronized (LOCK_MONITOR) {
                 boolean waitCompleted = false; //Allows us to avoid waiting indefinitely if the client specified a wait time.
                 while(true) {
                     if (Thread.interrupted()) {
                         throw new InterruptedException();
                     }
-                    List<String> nodes = zk.getChildren(getLockFolderPath(), new Watcher() {
-                        @Override
-                        public void process(WatchedEvent event) {
-                            synchronized (LOCK_MONITOR) {
-                                //This will be executed in a callback on another thread, managed by the ZK client.
-                                LOCK_MONITOR.notifyAll();
-                            }
-                        }
-                    }, true);
                     
-                   // ZooKeeper node names can be sorted.
-                    Collections.sort(nodes); 
-                    if (localLockPath.endsWith(nodes.get(0))) {
+                    List<String> nodes = RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<List<String>, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                        @Override
+                        public List<String> execute() throws Exception {
+                            return zk.getChildren(getLockFolderPath(), new Watcher() {
+                                @Override
+                                public void process(WatchedEvent event) {
+                                    synchronized (LOCK_MONITOR) {
+                                        //This will be executed in a callback on another thread, managed by the ZK client.
+                                        LOCK_MONITOR.notifyAll();
+                                    }
+                                }
+                            }, true);
+                        }
+                        
+                    });
+                    
+                     // ZooKeeper node names can be sorted.
+                    Collections.sort(nodes);
+                    String firstLocked = null;
+                    for (String node : nodes) {
+                        if (node.startsWith(getFullLockName())) {
+                            firstLocked = node;
+                            break;
+                        }
+                    }
+                    
+                    if (firstLocked != null && localLockPath.endsWith(firstLocked)) {
                         //We got the lock so increment the fact that this thread has 1 permit.
                         AtomicInteger counter = THREAD_LOCK_PERMITS.get();
                         if (counter == null) {
@@ -283,28 +368,44 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     } else {
                         if (waitTime == 0L) {
                             //No need to try again, the caller does not want to wait.
-                            zk.delete(localLockPath, 0, true);
-                            return false;
+                            return RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Boolean, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                                @Override
+                                public Boolean execute() throws Exception {
+                                    zk.delete(localLockPath, 0, true);
+                                    return false;
+                                }
+                                
+                            });
                         } else if (waitTime < 0L) {
                             //Wait indefinitely.  If this notified (typically by the Watcher, above), then it will try to obtain the lock.
                             LOCK_MONITOR.wait();
                         } else {
                             if (waitCompleted) {
                                 //We already waited the specified time, so don't wait again.  
-                                //The caller specified a wait time, and we already waited so we'll just return.
-                                zk.delete(localLockPath, 0, true);
-                                return false;
+                                //The caller specified a wait time, and we already waited so we'll just return false since we did not obtain the lock.
+                                return RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Boolean, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+                                    @Override
+                                    public Boolean execute() throws Exception {
+                                        zk.delete(localLockPath, 0, true);
+                                        return false;
+                                    }
+                                    
+                                });
                             }
-                            //Wait for a specified period of time.
-                            LOCK_MONITOR.wait(waitTime);
                             //Indicate that we've already waited for the specified time so that we don't wait again.
                             waitCompleted = true; 
+                            //Wait for a specified period of time.
+                            LOCK_MONITOR.wait(waitTime);
                         }
                     }
                 }
             }
-        } catch (KeeperException e) {
+        } catch (Exception e) {
             LOG.error("Error occured trying to obtain a distributed lock from Zookeeper.", e);
+            if (InterruptedException.class.isAssignableFrom(e.getClass())) {
+                throw (InterruptedException)e;
+            }
+            
             return false;
         }
     }
@@ -314,8 +415,16 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      */
     protected synchronized void initialize() {
         try {
-            zk.makePath(getLockFolderPath(), false, true);
-        } catch (InterruptedException | KeeperException e) {
+            RetryableOperationUtil.executeRetryableOperation(new AbstractRetryableOperation<Void, Exception>(getRetries(), getRetryWaitTime(), true, IGNORABLE_EXCEPTIONS_FOR_RETRY) {
+
+                @Override
+                public Void execute() throws Exception {
+                    zk.makePath(getLockFolderPath(), false, true);
+                    return null;
+                }
+                
+            });
+        } catch (Exception e) {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
             }
@@ -325,21 +434,30 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     }
     
     /**
-     * Allows one to disable this locking mechansim via the 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property, which is true, by default. 
-     * If this property is set to false, then a lock will never be obtained.  This allows only certain environments or certain nodes (JVMs) to obtain the lock.
+     * Allows one to disable this locking mechanism via the 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.canParticipate' (globally) or the 
+     * 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property.  Both are true by default. 
+     * If either of these properties are set to false, then this lock will never be obtained.  This allows only certain environments or certain nodes (JVMs) to obtain the lock 
+     * while preventing others.  Assuming the {@link Environment} is not null, this first checks the more specific 
+     * 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property.  If that is true or 
+     * null, then it checks the more global 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.canParticipate'.  If that is true or null then it returns true.
      * 
-     * If this method returns false, then the locking mechanisms continue to work.  However, the lock will always be locked and will never allow the acquisition of a lock.
+     * By default, this method returns true if the {@link Environment} is null or if both properties are null.
+     * 
+     * If this method returns false, then the locking mechanisms and semantics will continue to work.  
+     * However, the lock will always be locked and will never allow the acquisition of a lock.
      * 
      * @return
      */
     @Override
     public boolean canParticipate() {
         if (getEnvironment() != null) {
-            Boolean result = getEnvironment().getProperty(GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY, Boolean.class);
-            if (result == null || result == true) {
-                result = getEnvironment().getProperty(lockAccessPropertyName, Boolean.class, true);
+            //Check the specific lock name first to see if this particular lock is allowed here.
+            boolean lockNameParticipation = getEnvironment().getProperty(lockAccessPropertyName, Boolean.class, true);
+            if (lockNameParticipation) {
+                //Now, check the global access in this environment.
+                return getEnvironment().getProperty(GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY, Boolean.class, true);
             }
-            return result;
+            return false;
         }
         
         return true;
@@ -349,11 +467,34 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         return env;
     }
     
+    /**
+     * The lock name provided in the constructor.
+     * @return
+     */
     protected String getLockName() {
         return lockName;
     }
     
+    /**
+     * Returns LOCK_PREFIX + getLockName()
+     * 
+     * E.g. dzlck-myLock
+     * 
+     * @return
+     */
+    protected String getFullLockName() {
+        return fullLockName;
+    }
+    
     protected String getLockFolderPath() {
         return lockFolderPath;
+    }
+    
+    protected int getRetries() {
+        return 5;
+    }
+    
+    protected long getRetryWaitTime() {
+        return 500L;
     }
 }
