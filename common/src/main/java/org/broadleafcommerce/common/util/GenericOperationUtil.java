@@ -6,7 +6,7 @@ package org.broadleafcommerce.common.util;
  * @author Kelly Tisdell
  *
  */
-public class RetryableOperationUtil {
+public class GenericOperationUtil {
     
     public static <R> R executeRetryableOperation(final GenericOperation<R> operation, 
             final int retries, final long waitTime, final boolean isWaitTimesAdditive, final Class<? extends Exception>[] noRetriesForException) throws Exception {
