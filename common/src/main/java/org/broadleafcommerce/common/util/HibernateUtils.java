@@ -55,7 +55,7 @@ public class HibernateUtils {
      * @return
      * @throws G
      */
-    public static <T, G extends Throwable> T executeWithoutCache(UncacheableOperation<T,G> operation, EntityManager em) throws G {
+    public static <T, G extends Throwable> T executeWithoutCache(PersistenceOperation<T,G> operation, EntityManager em) throws G {
         final Session session = em.unwrap(Session.class);
         final CacheMode initialCacheMode = session.getCacheMode();
         session.setCacheMode(CacheMode.IGNORE);
@@ -66,7 +66,15 @@ public class HibernateUtils {
         }
     }
     
-    public static abstract class UncacheableOperation<T, G extends Throwable> {
+    /**
+     * This represents any encapsulated operation that may include persistence operations or interactions with Hibernate.
+     * 
+     * @author Kelly Tisdell
+     *
+     * @param <T>
+     * @param <G>
+     */
+    public static abstract class PersistenceOperation<T, G extends Throwable> {
         public abstract T execute() throws G;
     }
 }
