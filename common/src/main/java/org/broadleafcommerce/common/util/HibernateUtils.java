@@ -55,7 +55,7 @@ public class HibernateUtils {
      * @return
      * @throws G
      */
-    public static <T, G extends Throwable> T executeWithoutCache(GenericOperation<T,G> operation, EntityManager em) throws G {
+    public static <T> T executeWithoutCache(GenericOperation<T> operation, EntityManager em) throws Exception {
         final Session session = em.unwrap(Session.class);
         final CacheMode initialCacheMode = session.getCacheMode();
         session.setCacheMode(CacheMode.IGNORE);

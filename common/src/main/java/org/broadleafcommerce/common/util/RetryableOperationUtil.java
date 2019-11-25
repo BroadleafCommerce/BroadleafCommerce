@@ -8,15 +8,15 @@ package org.broadleafcommerce.common.util;
  */
 public class RetryableOperationUtil {
     
-    public static <R, T extends Exception> R executeRetryableOperation(final GenericOperation<R,T> operation, 
+    public static <R, T extends Exception> R executeRetryableOperation(final GenericOperation<R> operation, 
             final int retries, final long waitTime, final boolean isWaitTimesAdditive, final Class<? extends Exception>[] noRetriesForException) throws Exception {
-        int count = 0;
+        int tries = 0;
         long localWaitTime = waitTime;
         while (true) {
             try {
                 return operation.execute();
             } catch (Exception e) {
-                if (count == retries) {
+                if (tries == retries) {
                     throw e;
                 }
                 
@@ -28,7 +28,7 @@ public class RetryableOperationUtil {
                     }
                 }
                 
-                count++;
+                tries++;
                 
                 try {
                     if (waitTime > 0L) {

@@ -255,7 +255,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         
         try {
             synchronized (LOCK_MONITOR) {
-                RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Void, Exception>() {
+                RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
                         zk.delete(currentlockPath, -1, true);
@@ -355,7 +355,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         try {
             //Create a lock reference in Zookeeper.  It looks something like /broadleaf/app/distributed-locks/path/to/my/locks/myLock000000000015
             //The sequential part of this guaranteed by Zookeeper to be unique.  Creating this file does not guarantee that a lock has been acquired.
-            final String localLockPath = RetryableOperationUtil.executeRetryableOperation(new GenericOperation<String, Exception>() {
+            final String localLockPath = RetryableOperationUtil.executeRetryableOperation(new GenericOperation<String>() {
 
                 @Override
                 public String execute() throws Exception {
@@ -371,7 +371,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                         throw new InterruptedException();
                     }
                     
-                    List<String> nodes = RetryableOperationUtil.executeRetryableOperation(new GenericOperation<List<String>, Exception>() {
+                    List<String> nodes = RetryableOperationUtil.executeRetryableOperation(new GenericOperation<List<String>>() {
                         
                         @Override
                         public List<String> execute() throws Exception {
@@ -417,7 +417,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     } else {
                         if (waitTime == 0L) {
                             //No need to try again, the caller does not want to wait.
-                            return RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Boolean, Exception>() {
+                            return RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
 
                                 @Override
                                 public Boolean execute() throws Exception {
@@ -432,7 +432,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                             if (waitCompleted) {
                                 //We already waited the specified time, so don't wait again.  
                                 //The caller specified a wait time, and we already waited so we'll just return false since we did not obtain the lock.
-                                return RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Boolean, Exception>() {
+                                return RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
 
                                     @Override
                                     public Boolean execute() throws Exception {
@@ -464,7 +464,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      */
     protected synchronized void initialize() {
         try {
-            RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Void, Exception>() {
+            RetryableOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
 
                 @Override
                 public Void execute() throws Exception {
