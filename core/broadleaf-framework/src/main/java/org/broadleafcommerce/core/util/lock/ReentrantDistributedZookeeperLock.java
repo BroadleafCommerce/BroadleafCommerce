@@ -335,11 +335,13 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                 //Simulate normal lock semantics,where the lock is unavailable, but we've been asked to wait interruptably for it indefinitely.
                 synchronized (NON_PARTICIPANT_LOCK_MONITOR) {
                     //This basically will cause this thread to block forever until the thread is interrupted, which is what we want.
-                    wait(); 
+                    NON_PARTICIPANT_LOCK_MONITOR.wait(); 
                 }
             } else if (waitTime > 0L) {
-                //Simulate normal lock semantics,where the lock is unavailable, but we've been asked to wait interruptably for it for a period of time.
-                Thread.sleep(waitTime);
+                //Simulate normal lock semantics, where the lock is unavailable, but we've been asked to wait interruptably for it for a period of time.
+                synchronized (NON_PARTICIPANT_LOCK_MONITOR) {
+                    NON_PARTICIPANT_LOCK_MONITOR.wait(waitTime);
+                }
             }
             
             return false;
@@ -371,7 +373,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                         throw new InterruptedException();
                     }
                     
-                    List<String> nodes = GenericOperationUtil.executeRetryableOperation(new GenericOperation<List<String>>() {
+                    final List<String> nodes = GenericOperationUtil.executeRetryableOperation(new GenericOperation<List<String>>() {
                         
                         @Override
                         public List<String> execute() throws Exception {
@@ -405,7 +407,9 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                             counter = new AtomicInteger();
                             THREAD_LOCK_PERMITS.set(counter);
                         }
+                        
                         counter.incrementAndGet();
+                        
                         //Set the currentLockPath with the one that we just obtained.
                         currentlockPath = localLockPath;
                         
@@ -417,14 +421,20 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     } else {
                         if (waitTime == 0L) {
                             //No need to try again, the caller does not want to wait.
-                            return GenericOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
-
-                                @Override
-                                public Boolean execute() throws Exception {
-                                    zk.delete(localLockPath, 0, true);
-                                    return false;
-                                }
-                            }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                            try {
+                                //Do some cleanup
+                                return GenericOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
+    
+                                    @Override
+                                    public Boolean execute() throws Exception {
+                                        zk.delete(localLockPath, 0, true);
+                                        return false;
+                                    }
+                                }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                            } catch (Exception e) {
+                                LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e);
+                                return false;
+                            }
                         } else if (waitTime < 0L) {
                             //Wait indefinitely.  If this notified (typically by the Watcher, above), then it will try to obtain the lock.
                             LOCK_MONITOR.wait();
@@ -432,14 +442,20 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                             if (waitCompleted) {
                                 //We already waited the specified time, so don't wait again.  
                                 //The caller specified a wait time, and we already waited so we'll just return false since we did not obtain the lock.
-                                return GenericOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
-
-                                    @Override
-                                    public Boolean execute() throws Exception {
-                                        zk.delete(localLockPath, 0, true);
-                                        return false;
-                                    }
-                                }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                                try {
+                                    //Do some cleanup
+                                    return GenericOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
+    
+                                        @Override
+                                        public Boolean execute() throws Exception {
+                                            zk.delete(localLockPath, 0, true);
+                                            return false;
+                                        }
+                                    }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                                } catch (Exception e) {
+                                    LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e);
+                                    return false;
+                                }
                             }
                             //Indicate that we've already waited for the specified time so that we don't wait again.
                             waitCompleted = true; 
@@ -558,7 +574,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * If this is true, the wait time in millis will be incremented by itself each time a retry occurs, up to the retry count.
      * 
      * So, if the retries is 5 and the retryWaitTime is 100, then the max amount of time that the system will wait is 1500:
-     * 100 + 200 + 300 + 400 + 500, not including any wait time for IO for the execution of the Operation.
+     * 100 + 200 + 300 + 400 + 500, not including any wait time associated with I/O or execution of the Operation.
      * 
      * @return
      */
