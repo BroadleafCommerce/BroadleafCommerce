@@ -49,6 +49,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * }
  * </code>
  * 
+ * In terms of performance, the average lock time, on a single quad-core laptop running a single Zookeeper instance, took about 7 milliseconds. 
+ * And the average unlock time took around 7 milliseconds during a simple test on a quad core laptop that was also running a single Zookeeper instance.
+ * This is with a single thread, and is assuming no contention or waiting for locks to become available.  
+ * In other words, disregarding blocking and contention, it will likely take, on average, 12-16 milliseconds to create and release a lock. These metrics 
+ * will depend on a number of things, including contention for locks, Zookeeper cluster, hardware, etc.
+ * 
  * @author Kelly Tisdell
  *
  */
@@ -74,7 +80,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     private final ThreadLocal<AtomicInteger> THREAD_LOCK_PERMITS = new ThreadLocal<>();
     
     /*
-     * List of Exception classes for which to ignore a retry in the case of an error, when interacting with Solr.
+     * List of Exception classes for which to ignore a retry in the case of an error, when interacting with Zookeeper.
      * In this case, InterruptedException and RuntimeException are the only exceptions that we do not retry.
      */
     @SuppressWarnings({ "unchecked" })
@@ -246,22 +252,22 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             throw new DistributedLockException("The current thread did not obtain this lock and thereforer cannot unlock it.");
         }
         
-        if (THREAD_LOCK_PERMITS.get().get() > 1) {
-            //Decrement the lock access but don't eliminate the lock from Zookeeper.
-            //This allows it to be reentrant.
-            THREAD_LOCK_PERMITS.get().decrementAndGet();
-            return;
-        }
-        
         try {
             synchronized (LOCK_MONITOR) {
+                if (THREAD_LOCK_PERMITS.get().get() > 1) {
+                    //Decrement the lock access but don't eliminate the lock from Zookeeper.
+                    //This allows it to be reentrant.
+                    THREAD_LOCK_PERMITS.get().decrementAndGet();
+                    return;
+                }
+                
                 GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
                         zk.delete(currentlockPath, -1, true);
                         return null;
                     }
-                }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY); 
+                }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY); 
                 
                 
                 if (THREAD_LOCK_PERMITS.get().decrementAndGet() < 1) {
@@ -280,6 +286,8 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
             }
+            throw new DistributedLockException("An error occured trying to unlock a distributed lock stored in Zookeeper. " + 
+                    "The lock has not been released and manual intervention may be required.  Lock path is: " + currentlockPath, e);
         } 
     }
 
@@ -364,7 +372,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     return zk.create(getLockFolderPath() + '/' + getFullLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
                 }
                 
-            }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+            }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
             
             synchronized (LOCK_MONITOR) {
                 boolean waitCompleted = false; //Allows us to avoid waiting indefinitely if the client specified a wait time.
@@ -388,7 +396,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                             }, true);
                         }
                         
-                    }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                    }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
                     
                      // ZooKeeper node names can be sorted.
                     Collections.sort(nodes);
@@ -430,7 +438,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                                         zk.delete(localLockPath, 0, true);
                                         return false;
                                     }
-                                }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                                }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
                             } catch (Exception e) {
                                 LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e);
                                 return false;
@@ -451,7 +459,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                                             zk.delete(localLockPath, 0, true);
                                             return false;
                                         }
-                                    }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                                    }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
                                 } catch (Exception e) {
                                     LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e);
                                     return false;
@@ -487,7 +495,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     zk.makePath(getLockFolderPath(), false, true);
                     return null;
                 }
-            }, getRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+            }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
         } catch (Exception e) {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
@@ -558,7 +566,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * This will retry any interactions with Zookeeper this many times.  Must be a positive number.  Zero (0) is OK.
      * @return
      */
-    protected int getRetries() {
+    protected int getFailureRetries() {
         return 5;
     }
     
