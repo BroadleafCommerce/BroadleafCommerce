@@ -14,7 +14,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -49,11 +51,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * }
  * </code>
  * 
- * In terms of performance, the average lock time, on a single quad-core laptop running a single Zookeeper instance, took about 7 milliseconds. 
- * And the average unlock time took around 7 milliseconds during a simple test on a quad core laptop that was also running a single Zookeeper instance.
- * This is with a single thread, and is assuming no contention or waiting for locks to become available.  
- * In other words, disregarding blocking and contention, it will likely take, on average, 12-16 milliseconds to create and release a lock. These metrics 
- * will depend on a number of things, including contention for locks, Zookeeper cluster, hardware, etc.
+ * In terms of performance, the average lock time, on a single quad-core laptop running a single Zookeeper instance, takes about 7-8 milliseconds. 
+ * And the average unlock time also takes around 7-8 milliseconds during a simple test on a quad core laptop that was also running a single Zookeeper instance.
+ * This is with a single thread, and is assuming no reentrant locks and no contention or waiting for locks to become available.  
+ * In other words, disregarding blocking and contention, it will likely take, on average, 14-16 milliseconds to create and release a lock 
+ * (approximately 55-65 locks and releases / second for any given lock). These metrics will depend on a number of things, including contention for locks, 
+ * Zookeeper cluster size and configuration, hardware, etc.
  * 
  * @author Kelly Tisdell
  *
@@ -65,14 +68,23 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     /**
      * Default property name to determine, globally, whether this environment (JVM) can obtain a lock of this type.
      */
-    public static final String GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY = ReentrantDistributedZookeeperLock.class.getName() + ".canParticipate";
+    public static final String GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY_NAME = ReentrantDistributedZookeeperLock.class.getName() + ".canParticipate";
     
     /**
      * This is the base folder that all locks will be written to in Zookeeper.  The constructors require a lock path, which will be appended 
      * to this path.
      */
     public static final String DEFAULT_BASE_FOLDER = "/broadleaf/app/distributed-locks";
+    
+    /**
+     * This is the prefix of any lock entry.  It is dzlck-.  A lock file (node) will be dzlck-mylock, for example.
+     */
     public static final String LOCK_PREFIX = "dzlck-";
+    
+    /**
+     * For performance reasons, any paths that have already been created will not be attempted to be created again.
+     */
+    private static final Set<String> INITIALIZED_LOCK_PATHS = Collections.synchronizedSet(new HashSet<String>());
     
     /*
      * Allows reentrant locking.  If the current thread already has a lock, then additional attempts at locking or unlocking will be incremented or decremented here.
@@ -84,7 +96,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * In this case, InterruptedException and RuntimeException are the only exceptions that we do not retry.
      */
     @SuppressWarnings({ "unchecked" })
-    private final Class<Exception>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Exception>[])new Class<?>[]{InterruptedException.class, RuntimeException.class};
+    private final Class<Exception>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Exception>[])new Class<?>[]{InterruptedException.class};
     
     /*
      * This is a synchronization monitor for threads, lock names, or environments for which this lock cannot be obtained.
@@ -248,12 +260,12 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     }
 
     public void unlock() {
-        if (THREAD_LOCK_PERMITS.get() == null || THREAD_LOCK_PERMITS.get().get() < 1) {
-            throw new DistributedLockException("The current thread did not obtain this lock and thereforer cannot unlock it.");
-        }
-        
         try {
             synchronized (LOCK_MONITOR) {
+                if (!currentThreadHoldsLock()) {
+                    throw new DistributedLockException("The current thread did not obtain this lock and thereforer cannot unlock it.");
+                }
+                
                 if (THREAD_LOCK_PERMITS.get().get() > 1) {
                     //Decrement the lock access but don't eliminate the lock from Zookeeper.
                     //This allows it to be reentrant.
@@ -264,7 +276,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                 GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
-                        zk.delete(currentlockPath, -1, true);
+                        getSolrZkClient().delete(currentlockPath, -1, true);
                         return null;
                     }
                 }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY); 
@@ -369,7 +381,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
 
                 @Override
                 public String execute() throws Exception {
-                    return zk.create(getLockFolderPath() + '/' + getFullLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
+                    return getSolrZkClient().create(getLockFolderPath() + '/' + getFullLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
                 }
                 
             }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
@@ -385,7 +397,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                         
                         @Override
                         public List<String> execute() throws Exception {
-                            return zk.getChildren(getLockFolderPath(), new Watcher() {
+                            return getSolrZkClient().getChildren(getLockFolderPath(), new Watcher() {
                                 @Override
                                 public void process(WatchedEvent event) {
                                     synchronized (LOCK_MONITOR) {
@@ -435,7 +447,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     
                                     @Override
                                     public Boolean execute() throws Exception {
-                                        zk.delete(localLockPath, 0, true);
+                                        getSolrZkClient().delete(localLockPath, 0, true);
                                         return false;
                                     }
                                 }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
@@ -456,7 +468,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     
                                         @Override
                                         public Boolean execute() throws Exception {
-                                            zk.delete(localLockPath, 0, true);
+                                            getSolrZkClient().delete(localLockPath, 0, true);
                                             return false;
                                         }
                                     }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
@@ -488,14 +500,20 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      */
     protected synchronized void initialize() {
         try {
+            if (INITIALIZED_LOCK_PATHS.contains(getLockFolderPath())) {
+                return;
+            }
+            
             GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
 
                 @Override
                 public Void execute() throws Exception {
-                    zk.makePath(getLockFolderPath(), false, true);
+                    getSolrZkClient().makePath(getLockFolderPath(), false, true);
                     return null;
                 }
             }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+            
+            INITIALIZED_LOCK_PATHS.add(getLockFolderPath());
         } catch (Exception e) {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
@@ -527,12 +545,23 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             boolean lockNameParticipation = getEnvironment().getProperty(lockAccessPropertyName, Boolean.class, true);
             if (lockNameParticipation) {
                 //Now, check the global access in this environment.
-                return getEnvironment().getProperty(GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY, Boolean.class, true);
+                return getEnvironment().getProperty(GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY_NAME, Boolean.class, true);
             }
             return false;
         }
         
         return true;
+    }
+    
+    @Override
+    public boolean currentThreadHoldsLock() {
+        synchronized (LOCK_MONITOR) {
+            return THREAD_LOCK_PERMITS.get() != null && THREAD_LOCK_PERMITS.get().get() > 0;
+        }
+    }
+
+    protected SolrZkClient getSolrZkClient() {
+        return zk;
     }
     
     protected Environment getEnvironment() {

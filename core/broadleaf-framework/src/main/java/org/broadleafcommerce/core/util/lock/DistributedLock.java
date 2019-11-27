@@ -24,6 +24,13 @@ public interface DistributedLock extends Lock {
      * @return
      */
     public boolean canParticipate();
+    
+    /**
+     * Indicates if the current thread holds the lock.
+     * 
+     * @return
+     */
+    public boolean currentThreadHoldsLock();
 
     /**
      * RuntimeException to identify that there was an issue obtaining or otherwise releasing a distributed lock.
