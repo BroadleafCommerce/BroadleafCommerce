@@ -13,6 +13,11 @@ import java.util.concurrent.locks.Lock;
 public interface DistributedLock extends Lock {
     
     /**
+     * Default property name to determine, globally, whether this environment (JVM) can obtain a lock of this type.
+     */
+    public static final String GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY_NAME = DistributedLock.class.getName() + ".canParticipate";
+    
+    /**
      * Indicates if the current thread, JVM, or environment can use this lock.  Callers may call this method to know whether they can obtain a lock.
      * Internally, implementations must continue to respect the normal lock semantics provided by the {@link Lock} interface.  For example if this method 
      * returns false and someone calls {@link DistributedLock#lockInterruptibly()}, then the thread must block interruptably, but should never provide a lock. 

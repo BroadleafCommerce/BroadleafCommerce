@@ -66,11 +66,6 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     private static final Log LOG = LogFactory.getLog(ReentrantDistributedZookeeperLock.class);
     
     /**
-     * Default property name to determine, globally, whether this environment (JVM) can obtain a lock of this type.
-     */
-    public static final String GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY_NAME = ReentrantDistributedZookeeperLock.class.getName() + ".canParticipate";
-    
-    /**
      * This is the base folder that all locks will be written to in Zookeeper.  The constructors require a lock path, which will be appended 
      * to this path.
      */
@@ -136,7 +131,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     
     /*
      * Property name, whose value should be null or boolean, to determine if this lock can be obtained by this environment.
-     * E.g. org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${getLockName()}.canParticipate=true
+     * E.g. org.broadleafcommerce.core.util.lock.DistributedLock.${getLockName()}.canParticipate=true
      */
     private final String lockAccessPropertyName;
     
@@ -188,7 +183,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * an {@link Environment} object, which can be null.
      * 
      * This {@link Lock} will, by default, participate in or be allowed to acquire a lock if the {@link Environment} argument is null or 
-     * if the 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property is not set or is set to false.
+     * if the 'org.broadleafcommerce.core.util.lock.DistributedLock.${lockName}.canParticipate' property is not set or is set to false.
      * 
      * The lockPath will be prepended with '/broadleaf/app/distributed-locks'.
      * 
@@ -208,7 +203,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * an {@link Environment} object, which can be null.
      * 
      * This {@link Lock} will, by default, participate in or be allowed to acquire a lock if the {@link Environment} argument is null or 
-     * if the 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property is not set or is set to false.
+     * if the 'org.broadleafcommerce.core.util.lock.DistributedLock.${lockName}.canParticipate' property is not set or is set to false.
      * 
      * If use defaultBasePath is true, then the lockPath will be prepended with '/broadleaf/app/distributed-locks'.
      * 
@@ -234,7 +229,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         this.zk = zk;
         this.env = env;
         
-        this.lockAccessPropertyName = ReentrantDistributedZookeeperLock.class.getName() + '.' + this.lockName + ".canParticipate";
+        this.lockAccessPropertyName = DistributedLock.class.getName() + '.' + this.lockName + ".canParticipate";
         
         if (useDefaultBasePath) {
             if (lockPath.trim().startsWith("/")) {
@@ -524,12 +519,12 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     }
     
     /**
-     * Allows one to disable this locking mechanism via the 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.canParticipate' (globally) or the 
-     * 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property.  Both are true by default. 
+     * Allows one to disable this locking mechanism via the 'org.broadleafcommerce.core.util.lock.DistributedLock.canParticipate' (globally) or the 
+     * 'org.broadleafcommerce.core.util.lock.DistributedLock.${lockName}.canParticipate' property.  Both are true by default. 
      * If either of these properties are set to false, then this lock will never be obtained.  This allows only certain environments or certain nodes (JVMs) to obtain the lock 
      * while preventing others.  Assuming the {@link Environment} is not null, this first checks the more specific 
-     * 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.${lockName}.canParticipate' property.  If that is true or 
-     * null, then it checks the more global 'org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock.canParticipate'.  If that is true or null then it returns true.
+     * 'org.broadleafcommerce.core.util.lock.DistributedLock.${lockName}.canParticipate' property.  If that is true or 
+     * null, then it checks the more global 'org.broadleafcommerce.core.util.lock.DistributedLock.canParticipate'.  If that is true or null then it returns true.
      * 
      * By default, this method returns true if the {@link Environment} is null or if both properties are null.
      * 
@@ -542,12 +537,13 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     public boolean canParticipate() {
         if (getEnvironment() != null) {
             //Check the specific lock name first to see if this particular lock is allowed here.
-            boolean lockNameParticipation = getEnvironment().getProperty(lockAccessPropertyName, Boolean.class, true);
+            boolean lockNameParticipation = getEnvironment().getProperty(getLockAccessPropertyName(), Boolean.class, true);
             if (lockNameParticipation) {
                 //Now, check the global access in this environment.
-                return getEnvironment().getProperty(GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY_NAME, Boolean.class, true);
+                return getEnvironment().getProperty(DistributedLock.GLOBAL_ENV_CAN_OBTAIN_LOCK_PROPERTY_NAME, Boolean.class, true);
+            } else {
+                return false;
             }
-            return false;
         }
         
         return true;
@@ -617,5 +613,9 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      */
     protected boolean isAdditiveWaitTtimes() {
         return true;
+    }
+    
+    protected String getLockAccessPropertyName() {
+        return lockAccessPropertyName;
     }
 }
