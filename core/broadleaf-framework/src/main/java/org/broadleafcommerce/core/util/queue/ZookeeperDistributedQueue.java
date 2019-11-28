@@ -30,12 +30,12 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Represents a {@link Queue} that is distributed (used by multiple JVMs or nodes) and managed by Zookeeper.
+ * Represents a {@link Queue} that is distributed (used by multiple JVMs or nodes) and managed by Zookeeper.  This queue uses distributed locks, also backed by Zookeeper.
  * 
  * Please note that while this works quite well in certain circumstances, it is not recommended for high volume or high capacity queues, 
  * nor for large queue messages.  Zookeeper allows you to create queues that can be used in a distributed way, but very large queues can cause performance problems 
  * in Zookeeper, and Zookeeper has a 1MB transport limit, so messages have to be smaller than that.  
- * This Queue works quite well for smaller, lower capacity queues.  Try to limit the size of this queue to a few hundred elements. Otherwise, consider a different queue implementation.
+ * This Queue works quite well for smaller, lower capacity queues.  Try to limit the size of this queue to around 500 elements. Otherwise, consider a different queue implementation.
  * 
  * @author Kelly Tisdell
  *
@@ -67,7 +67,6 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     
     protected final Object QUEUE_MONITOR = new Object();
     private final String queueFolderPath;
-    private final String queueEntryPath;
     private final SolrZkClient zk;
     private final int requestedMaxQueueSize;
     private final DistributedLock queueAccessLock;
@@ -119,14 +118,14 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         Assert.isTrue(zk.isConnected(), "Please ensure that the SolrZkClient is connected.");
         Assert.notNull(queuePath, "The queuePath cannot be null and must be a Unix-style path (e.g. '/solr-index/command-queue').");
         Assert.hasText(queuePath.trim(), "The queuePath must not be empty and should not contain white spaces.");
-        Assert.isTrue(maxQueueSize > 0, "queueSize must be greater than 0.");
+        Assert.isTrue(maxQueueSize > 0, "maxQueueSize must be greater than 0.");
         
         this.requestedMaxQueueSize = maxQueueSize;
         setMaxQueueSize(requestedMaxQueueSize);
         this.zk = zk;
         
-        if (this.requestedMaxQueueSize > DEFAULT_MAX_QUEUE_SIZE) {
-            LOG.warn("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. Please consider reducing the size of this queue.");
+        if (this.requestedMaxQueueSize > 500) {
+            LOG.error("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. Anything over 1000 is considered unsupported. Please consider reducing the size of this queue.");
         }
         
         if (useDefaultBasePath) {
@@ -136,11 +135,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 this.queueFolderPath = DEFAULT_BASE_FOLDER + '/' + queuePath.trim();
             }
         } else {
-            this.queueFolderPath = queuePath.trim();
+            if (queuePath.trim().startsWith("/")) {
+                this.queueFolderPath = queuePath.trim();
+            } else {
+                this.queueFolderPath = '/' + queuePath.trim();
+            }
         }
-        
-        
-        this.queueEntryPath = this.queueFolderPath + QUEUE_ENTRY_FOLDER;
         
         intializeQueueFolders();
         
@@ -672,12 +672,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 executeOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
-                        if (!zk.exists(getConfigsFolder() + "/queueSize", true)) {
+                        if (!getSolrZkClient().exists(getConfigsFolder() + "/queueSize", true)) {
                             final int size = getRequestedMaxQueueSize();
-                            zk.create(getConfigsFolder() + "/queueSize", serialize(size), CreateMode.EPHEMERAL, true);
+                            getSolrZkClient().create(getConfigsFolder() + "/queueSize", serialize(size), CreateMode.EPHEMERAL, true);
                             setMaxQueueSize(size);
                         } else {
-                            final Integer size = (Integer)deserialize(zk.getData(getConfigsFolder() + "/queueSize", new Watcher() {
+                            final Integer size = (Integer)deserialize(getSolrZkClient().getData(getConfigsFolder() + "/queueSize", new Watcher() {
                                 @Override
                                 public void process(WatchedEvent event) {
                                     //This happens in a callback on another thread, allowing us to avoid an infinite recursive loop.
@@ -808,7 +808,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     }
     
     protected String getQueueEntryFolder() {
-        return queueEntryPath;
+        return getQueueFolderPath() + QUEUE_ENTRY_FOLDER;
     }
     
     protected int getMaxQueueSize() {
