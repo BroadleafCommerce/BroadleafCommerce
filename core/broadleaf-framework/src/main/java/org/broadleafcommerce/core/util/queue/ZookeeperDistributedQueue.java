@@ -33,9 +33,12 @@ import java.util.concurrent.TimeUnit;
  * Represents a {@link Queue} that is distributed (used by multiple JVMs or nodes) and managed by Zookeeper.  This queue uses distributed locks, also backed by Zookeeper.
  * 
  * Please note that while this works quite well in certain circumstances, it is not recommended for high volume or high capacity queues, 
- * nor for large queue messages.  Zookeeper allows you to create queues that can be used in a distributed way, but very large queues can cause performance problems 
- * in Zookeeper, and Zookeeper has a 1MB transport limit, so messages have to be smaller than that.  
- * This Queue works quite well for smaller, lower capacity queues.  Try to limit the size of this queue to around 500 elements. Otherwise, consider a different queue implementation.
+ * nor for large queue messages.  It's a relatively slow queue.  Zookeeper allows you to create queues that can be used in a distributed way, but large queues can cause performance problems 
+ * in Zookeeper, and Zookeeper has a 1MB transport limit, so messages have to be smaller than that.  Incidentally, initial performance tests showed queue operations (put / take) taking 
+ * approximately 25-30 milliseconds, or about 40 queue operations per second with a small payload (about 15 bytes).
+ * 
+ * This Queue works quite well for smaller, lower capacity queues where you need to read/write in a distributed way. 
+ * Try to limit the size of this queue to around 500 elements or fewer. Otherwise, consider a different queue implementation.
  * 
  * @author Kelly Tisdell
  *
