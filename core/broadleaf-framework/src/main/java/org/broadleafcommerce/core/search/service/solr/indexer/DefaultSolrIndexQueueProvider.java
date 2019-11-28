@@ -6,6 +6,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock;
+import org.broadleafcommerce.core.util.queue.ZookeeperDistributedQueue;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
@@ -115,7 +116,7 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     }
     
     protected BlockingQueue<SolrUpdateCommand> createDistributedQueue(String queueName) {
-        return null;
+        return new ZookeeperDistributedQueue<>(QUEUE_PATH, ((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient(), MAX_QUEUE_SIZE);
     }
     
     protected Lock createLocalLock(String lockName) {
