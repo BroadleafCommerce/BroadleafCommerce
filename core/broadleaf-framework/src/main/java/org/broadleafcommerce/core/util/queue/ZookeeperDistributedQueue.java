@@ -7,6 +7,7 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.data.Stat;
 import org.broadleafcommerce.common.util.GenericOperation;
 import org.broadleafcommerce.common.util.GenericOperationUtil;
 import org.broadleafcommerce.core.util.lock.DistributedLock;
@@ -24,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
@@ -124,7 +127,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         Assert.isTrue(maxQueueSize > 0, "maxQueueSize must be greater than 0.");
         
         this.requestedMaxQueueSize = maxQueueSize;
-        setMaxQueueSize(requestedMaxQueueSize);
+        seMaxCapacity(requestedMaxQueueSize);
         this.zk = zk;
         
         if (this.requestedMaxQueueSize > 500) {
@@ -153,18 +156,19 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         Assert.notNull(this.queueAccessLock, "The queue access lock cannot be null.");
         Assert.notNull(this.configLock, "The config lock cannot be null.");
         
-        determineMaxQueueSize();
+        determineMaxCapacity();
     }
     
     @Override
     public T remove() {
         try {
-            List<T> entries = readQueueInternal(1, true, 0L);
-            if (entries != null && !entries.isEmpty()) {
-                return entries.get(0);
-            } else {
-                throw new DistributedQueueException("The queue was empty.");
+            Map<String, T> entries = readQueueInternal(1, true, 0L);
+            Iterator<Map.Entry<String, T>> itr = entries.entrySet().iterator();
+            if (itr.hasNext()) {
+                return itr.next().getValue();
             }
+            
+            throw new DistributedQueueException("The queue was empty.");
         } catch (InterruptedException e) {
             throw new DistributedQueueException("Thread was interrupdated removing an entry from the Zookeeper queue: " + getQueueFolderPath(), e);
         }
@@ -173,12 +177,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public T poll() {
         try {
-            List<T> entries = readQueueInternal(1, true, 0L);
-            if (entries != null && ! entries.isEmpty()) {
-                return entries.get(0);
-            } else {
-                return null;
+            Map<String, T> entries = readQueueInternal(1, true, 0L);
+            Iterator<Map.Entry<String, T>> itr = entries.entrySet().iterator();
+            if (itr.hasNext()) {
+                return itr.next().getValue();
             }
+            return null;
         } catch (InterruptedException e) {
             return null;
         }
@@ -196,12 +200,13 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public T peek() {
         try {
-            List<T> elements = readQueueInternal(1, false, 0L);
-            if (elements != null && ! elements.isEmpty()) {
-                return elements.get(0);
-            } else {
-                return null;
+            Map<String, T> elements = readQueueInternal(1, false, 0L);
+            Iterator<Map.Entry<String, T>> entries = elements.entrySet().iterator();
+            if (entries.hasNext()) {
+                return entries.next().getValue();
             }
+            
+            return null;
         } catch (InterruptedException e) {
             return null;
         }
@@ -213,18 +218,14 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         try {
             lock.lockInterruptibly();
             try {
-                List<String> elementNames = executeOperation(new GenericOperation<List<String>>() {
+                return executeOperation(new GenericOperation<Integer>() {
                     @Override
-                    public List<String> execute() throws Exception {
-                        return getSolrZkClient().getChildren(getQueueEntryFolder(), null, true);
+                    public Integer execute() throws Exception {
+                        final Stat stat = new Stat();
+                        getSolrZkClient().getData(getQueueEntryFolder(), null, stat, true);
+                        return stat.getNumChildren();
                     }
                 });
-                
-                if (elementNames == null) {
-                    return 0;
-                }
-                
-                return elementNames.size();
                 
             } finally {
                 lock.unlock();
@@ -263,9 +264,9 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         try {
             lock.lockInterruptibly();
             try {
-                List<T> elements = readQueueInternal(getMaxQueueSize(), false, 0L);
-                if (elements != null && !elements.isEmpty()) {
-                    return elements.containsAll(c);
+                Map<String, T> elements = readQueueInternal(geMaxCapacity(), false, 0L);
+                if (!elements.isEmpty()) {
+                    return elements.values().containsAll(c);
                 }
                 
                 return false;
@@ -333,7 +334,9 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public boolean add(T e) {
         try {
-            int count = writeToQueue(Collections.singletonList(e), 0L);
+            final ArrayList<T> lst = new ArrayList<>();
+            lst.add(e);
+            int count = writeToQueue(lst, 0L);
             if (count != 1) {
                 throw new IllegalStateException("The Zookeeper queue was full.");
             } else {
@@ -376,30 +379,69 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
 
     @Override
     public T take() throws InterruptedException { 
-        return readQueueInternal(1, true, -1L).get(0);
+        Map<String, T> elements = readQueueInternal(1, true, -1L);
+        Iterator<Map.Entry<String,T>> itr = elements.entrySet().iterator();
+        if (itr.hasNext()) {
+            return itr.next().getValue();
+        }
+        
+        return null;
     }
 
     @Override
     public T poll(long timeout, TimeUnit unit) throws InterruptedException {
-        List<T> elements = readQueueInternal(1, true, unit.toMillis(timeout));
-        if (elements != null && ! elements.isEmpty()) {
-            return elements.get(0);
-        } else {
-            return null;
+        Map<String, T> elements = readQueueInternal(1, true, unit.toMillis(timeout));
+        Iterator<Map.Entry<String,T>> itr = elements.entrySet().iterator();
+        if (itr.hasNext()) {
+            return itr.next().getValue();
         }
+        
+        return null;
     }
 
     @Override
     public int remainingCapacity() {
         synchronized (QUEUE_MONITOR) {
-            return getMaxQueueSize() - size();
+            final int cap = geMaxCapacity() - size();
+            if (cap < 0) {
+                return 0;
+            }
+            return cap;
         }
     }
 
     @Override
     public boolean remove(Object o) {
-        // TODO Auto-generated method stub
-        return false;
+        try {
+            DistributedLock lock = getQueueAccessLock();
+            lock.lockInterruptibly();
+            try {
+                Map<String, T> entries = readQueueInternal(geMaxCapacity(), false, 0L);
+                if (!entries.isEmpty()) {
+                    Iterator<Map.Entry<String, T>> itr = entries.entrySet().iterator();
+                    while (itr.hasNext()) {
+                        final Map.Entry<String, T> entry = itr.next();
+                        if (entry.getValue().equals(o)) {
+                            executeOperation(new GenericOperation<Void>() {
+                                @Override
+                                public Void execute() throws Exception {
+                                    getSolrZkClient().delete(getQueueEntryFolder() + '/' + entry.getKey(), 0, true);
+                                    return null;
+                                }
+                            });
+                            
+                            return true;
+                        }
+                        
+                    }
+                }
+                return false;
+            } finally {
+                lock.unlock();
+            }
+        } catch (InterruptedException e) {
+            return false;
+        }
     }
 
     @Override
@@ -410,8 +452,8 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public int drainTo(Collection<? super T> c) {
         try {
-            List<T> entries = readQueueInternal(getMaxQueueSize(), true, 0L);
-            c.addAll(entries);
+            Map<String, T> entries = readQueueInternal(geMaxCapacity(), true, 0L);
+            c.addAll(entries.values());
             return entries.size();
         } catch (InterruptedException e) {
             return 0;
@@ -421,8 +463,8 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public int drainTo(Collection<? super T> c, int maxElements) {
         try {
-            List<T> entries = readQueueInternal(maxElements, true, 0L);
-            c.addAll(entries);
+            Map<String,T> entries = readQueueInternal(maxElements, true, 0L);
+            c.addAll(entries.values());
             return entries.size();
         } catch (InterruptedException e) {
             return 0;
@@ -438,19 +480,24 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         long waitTime = timeout;
         synchronized (QUEUE_MONITOR) {
             while (true) {
+                boolean locked = false;
                 DistributedLock lock = getQueueAccessLock();
                 if (timeout < 0L) {
                     lock.lockInterruptibly();
+                    locked = true;
                 } else if (timeout > 0L && waitTime > 0L) {
                     long start = System.currentTimeMillis();
-                    lock.tryLock(waitTime, TimeUnit.MILLISECONDS);
+                    locked = lock.tryLock(waitTime, TimeUnit.MILLISECONDS);
                     long end = System.currentTimeMillis();
                     waitTime -= (end - start);
                 } else {
-                    lock.tryLock();
+                    locked = lock.tryLock();
+                    if (! locked) {
+                        return entryCount;
+                    }
                 }
                 
-                if (lock.currentThreadHoldsLock()) {
+                if (locked) {
                     try {
                         int remainingCapacity = remainingCapacity();
                         if (remainingCapacity > 0) {
@@ -485,6 +532,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                             
                         } else {
                             lock.unlock();
+                            locked = false;
                             
                             if (timeout < 0L) {
                                 //Wait forever
@@ -500,34 +548,40 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                             }   
                         }
                     } finally {
-                        if (lock.currentThreadHoldsLock()) {
+                        if (locked) {
                             lock.unlock();
                         }
                     }
+                } else if (timeout >= 0L && waitTime <= 0L) {
+                    return entryCount;  
                 }
-                
             }
         }
     }
     
-    protected List<T> readQueueInternal(final int qty, final boolean remove, final long timeout) throws InterruptedException {
-        final ArrayList<T> out = new ArrayList<>();
+    protected Map<String, T> readQueueInternal(final int qty, final boolean remove, final long timeout) throws InterruptedException {
+        final Map<String, T> out = new LinkedHashMap<>();
         long waitTime = timeout;
         synchronized (QUEUE_MONITOR) {
             while (true) {
+                boolean locked;
                 DistributedLock lock = getQueueAccessLock();
                 if (timeout < 0L) {
                     lock.lockInterruptibly();
+                    locked = true;
                 } else if (timeout > 0L && waitTime > 0L) {
                     long start = System.currentTimeMillis();
-                    lock.tryLock(waitTime, TimeUnit.MILLISECONDS);
+                    locked = lock.tryLock(waitTime, TimeUnit.MILLISECONDS);
                     long end = System.currentTimeMillis();
                     waitTime -= (end - start);
                 } else {
-                    lock.tryLock();
+                    locked = lock.tryLock();
+                    if (!locked) {
+                        return out;
+                    }
                 }
                 
-                if (lock.currentThreadHoldsLock()) {
+                if (locked) {
                     try {
                         List<String> entryNames = executeOperation(new GenericOperation<List<String>>() {
                             @Override
@@ -547,47 +601,45 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         if (entryNames != null && ! entryNames.isEmpty()) {
                             Collections.sort(entryNames);
                             
-                            if (lock.currentThreadHoldsLock()) {
-                                int count = 0;
-                                for (final String entryName : entryNames) {
-                                    try {
-                                        T entry = executeOperation(new GenericOperation<T>() {
-                                            @Override
-                                            public T execute() throws Exception {
-                                                byte[] data = getSolrZkClient().getData(getQueueEntryFolder() + '/' + entryName, null, null, true);
-                                                
-                                                @SuppressWarnings("unchecked")
-                                                T deserialized = (T)deserialize(data);
-                                                
-                                                if (remove) {
-                                                    getSolrZkClient().delete(getQueueEntryFolder() + '/' + entryName, 0, true);
-                                                }
-                                                
-                                                return deserialized;
+                            int count = 0;
+                            for (final String entryName : entryNames) {
+                                try {
+                                    T entry = executeOperation(new GenericOperation<T>() {
+                                        @Override
+                                        public T execute() throws Exception {
+                                            byte[] data = getSolrZkClient().getData(getQueueEntryFolder() + '/' + entryName, null, null, true);
+                                            
+                                            @SuppressWarnings("unchecked")
+                                            T deserialized = (T)deserialize(data);
+                                            
+                                            if (remove) {
+                                                getSolrZkClient().delete(getQueueEntryFolder() + '/' + entryName, 0, true);
                                             }
-                                        });
-                                        
-                                        if (entry != null) {
-                                            count++;
-                                            out.add(entry);
+                                            
+                                            return deserialized;
                                         }
-                                        
-                                        if (count >= qty) {
-                                            break;
-                                        }
-                                        
-                                    } catch (Exception e) {
-                                        //This may have been removed by another thread, so just continue.
-                                        if (e.getCause() != null && KeeperException.NoNodeException.class.isAssignableFrom(e.getCause().getClass())) {
-                                            continue;
-                                        } else if (RuntimeException.class.isAssignableFrom(e.getClass())) {
-                                            throw (RuntimeException)e;
-                                        } else if (InterruptedException.class.isAssignableFrom(e.getClass())) {
-                                            Thread.currentThread().interrupt();
-                                            throw (InterruptedException)e;
-                                        } else {
-                                            throw new DistributedQueueException("An unexpected error occured executing a retryable operation for distributed Zookeeper queue, " + getQueueFolderPath(), e);
-                                        }
+                                    });
+                                    
+                                    if (entry != null) {
+                                        count++;
+                                        out.put(entryName, entry);
+                                    }
+                                    
+                                    if (count >= qty) {
+                                        break;
+                                    }
+                                    
+                                } catch (Exception e) {
+                                    //This may have been removed by another thread, so just continue.
+                                    if (e.getCause() != null && KeeperException.NoNodeException.class.isAssignableFrom(e.getCause().getClass())) {
+                                        continue;
+                                    } else if (RuntimeException.class.isAssignableFrom(e.getClass())) {
+                                        throw (RuntimeException)e;
+                                    } else if (InterruptedException.class.isAssignableFrom(e.getClass())) {
+                                        Thread.currentThread().interrupt();
+                                        throw (InterruptedException)e;
+                                    } else {
+                                        throw new DistributedQueueException("An unexpected error occured executing a retryable operation for distributed Zookeeper queue, " + getQueueFolderPath(), e);
                                     }
                                 }
                             }
@@ -596,6 +648,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         } else {
                             //Unlock here so that we're not holding the lock while we wait...
                             lock.unlock();
+                            locked = false;
                             
                             if (timeout < 0L) {
                                 //Wait forever
@@ -608,16 +661,17 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                 waitTime -= (end - start);  //Keep track of how long we waited.
                             } else {
                                 return out;
-                            }   
+                            }
                         }
                     } finally {
-                        if (lock.currentThreadHoldsLock()) {
+                        if (locked) {
                             lock.unlock();
                         }
                     }
+                } else if (timeout >= 0L && waitTime <= 0L) {
+                    return out;  
                 }
             }
-            
         }
     }
     
@@ -667,25 +721,25 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         }
     }
     
-    protected synchronized void determineMaxQueueSize() {
-        final DistributedLock lock = getQueueAccessLock();
+    protected synchronized void determineMaxCapacity() {
+        final DistributedLock lock = getConfigLock();
         try {
             lock.lockInterruptibly();
             try {
                 executeOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
-                        if (!getSolrZkClient().exists(getConfigsFolder() + "/queueSize", true)) {
+                        if (!getSolrZkClient().exists(getConfigsFolder() + "/maxCapacity", true)) {
                             final int size = getRequestedMaxQueueSize();
-                            getSolrZkClient().create(getConfigsFolder() + "/queueSize", serialize(size), CreateMode.EPHEMERAL, true);
-                            setMaxQueueSize(size);
+                            getSolrZkClient().create(getConfigsFolder() + "/maxCapacity", serialize(size), CreateMode.EPHEMERAL, true);
+                            seMaxCapacity(size);
                         } else {
-                            final Integer size = (Integer)deserialize(getSolrZkClient().getData(getConfigsFolder() + "/queueSize", new Watcher() {
+                            final Integer size = (Integer)deserialize(getSolrZkClient().getData(getConfigsFolder() + "/maxCapacity", new Watcher() {
                                 @Override
                                 public void process(WatchedEvent event) {
                                     //This happens in a callback on another thread, allowing us to avoid an infinite recursive loop.
                                     try {
-                                        determineMaxQueueSize();
+                                        determineMaxCapacity();
                                     } catch (Exception e) {
                                         LOG.error("An error occured in a callback to determine the max queue size.", e);
                                         if (InterruptedException.class.isAssignableFrom(e.getClass())) {
@@ -695,7 +749,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                 }
                                 
                             }, null, true));
-                            setMaxQueueSize(size);
+                            seMaxCapacity(size);
                         }
                         return null;
                     }
@@ -814,13 +868,13 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         return getQueueFolderPath() + QUEUE_ENTRY_FOLDER;
     }
     
-    protected int getMaxQueueSize() {
+    protected int geMaxCapacity() {
         synchronized (QUEUE_MONITOR) {
             return capacity;
         }
     }
     
-    protected void setMaxQueueSize(int size) {
+    protected void seMaxCapacity(int size) {
         synchronized (QUEUE_MONITOR) {
             this.capacity = size;
         }
