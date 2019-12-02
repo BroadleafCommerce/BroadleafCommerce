@@ -145,7 +145,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         this.requestedMaxQueueCapacity = maxQueueSize;
         seMaxCapacity(this.requestedMaxQueueCapacity);
         
-        if (this.requestedMaxQueueCapacity > 500) {
+        if (this.requestedMaxQueueCapacity > DEFAULT_MAX_QUEUE_SIZE) {
             LOG.error("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. "
                     + "Anything over 1000 is considered unsupported. Please consider reducing the maximum capacity of this queue.");
         }
@@ -188,7 +188,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     public T element() {
         T element = peek();
         if (element == null) {
-            throw new IllegalStateException("The Zookeeper queue was empty." + getQueueFolderPath());
+            throw new DistributedQueueException("The Zookeeper queue was empty." + getQueueFolderPath());
         }
         return element;
     }
