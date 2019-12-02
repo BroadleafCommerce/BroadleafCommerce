@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * Please note that while this works quite well in certain circumstances, it is not recommended for high volume or high capacity queues, 
  * nor for large queue messages.  It's a relatively slow queue.  Zookeeper allows you to create queues that can be used in a distributed way, but large queues can cause performance problems 
  * in Zookeeper, and Zookeeper has a 1MB transport limit, so messages have to be smaller than that.  Incidentally, initial performance tests showed queue operations (put / take) taking 
- * approximately 25-30 milliseconds, or about 40 queue operations per second with a small payload (about 15 bytes).
+ * approximately 25-30 milliseconds, or about 30-40 queue operations per second with a small payload (about 15 bytes).
  * 
  * This Queue works quite well for smaller, lower capacity queues where you need to read/write in a distributed way. 
  * Try to limit the size of this queue to around 500 elements or fewer. Otherwise, consider a different queue implementation.
@@ -55,17 +55,9 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
      * to this path.
      */
     public static final String DEFAULT_BASE_FOLDER = "/broadleaf/app/distributed-queues";
-    
-    protected static final String QUEUE_ENTRY_FOLDER = "/elements";
-    protected static final String QUEUE_LOCKS_FOLDER = "/locks";
-    protected static final String QUEUE_CONFIGS_FOLDER = "/configs";
-    
-    /*
-     * List of Exception classes for which to ignore a retry in the case of an error, when interacting with Zookeeper.
-     * In this case, InterruptedException is the only exceptions that we do not retry.
-     */
-    @SuppressWarnings({ "unchecked" })
-    protected static final Class<Exception>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Exception>[])new Class<?>[]{InterruptedException.class};
+    public static final String QUEUE_ENTRY_FOLDER = "/elements";
+    public static final String QUEUE_LOCKS_FOLDER = "/locks";
+    public static final String QUEUE_CONFIGS_FOLDER = "/configs";
     
     public static final int DEFAULT_MAX_QUEUE_SIZE = 100;
     
@@ -74,7 +66,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     protected final Object QUEUE_MONITOR = new Object();
     private final String queueFolderPath;
     private final SolrZkClient zk;
-    private final int requestedMaxQueueSize;
+    private final int requestedMaxQueueCapacity;
     private final DistributedLock queueAccessLock;
     private final DistributedLock configLock;
     private int capacity;
@@ -126,13 +118,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         Assert.hasText(queuePath.trim(), "The queuePath must not be empty and should not contain white spaces.");
         Assert.isTrue(maxQueueSize > 0, "maxQueueSize must be greater than 0.");
         
-        this.requestedMaxQueueSize = maxQueueSize;
-        seMaxCapacity(requestedMaxQueueSize);
         this.zk = zk;
-        
-        if (this.requestedMaxQueueSize > 500) {
-            LOG.error("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. Anything over 1000 is considered unsupported. Please consider reducing the size of this queue.");
-        }
         
         if (useDefaultBasePath) {
             if (queuePath.trim().startsWith("/")) {
@@ -155,6 +141,14 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         
         Assert.notNull(this.queueAccessLock, "The queue access lock cannot be null.");
         Assert.notNull(this.configLock, "The config lock cannot be null.");
+        
+        this.requestedMaxQueueCapacity = maxQueueSize;
+        seMaxCapacity(this.requestedMaxQueueCapacity);
+        
+        if (this.requestedMaxQueueCapacity > 500) {
+            LOG.error("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. "
+                    + "Anything over 1000 is considered unsupported. Please consider reducing the size of this queue.");
+        }
         
         determineMaxCapacity();
     }
@@ -849,7 +843,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     }
     
     protected int getRequestedMaxQueueSize() {
-        return requestedMaxQueueSize;
+        return requestedMaxQueueCapacity;
     }
     
     public String getQueueFolderPath() {
@@ -901,7 +895,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
      */
     protected <R> R executeOperation(GenericOperation<R> operation) throws InterruptedException {
         try {
-            return GenericOperationUtil.executeRetryableOperation(operation, 5, 100L, true, IGNORABLE_EXCEPTIONS_FOR_RETRY);
+            return GenericOperationUtil.executeRetryableOperation(operation, 5, 100L, true, null);
         } catch (Exception e) {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();

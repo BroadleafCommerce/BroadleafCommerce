@@ -8,6 +8,22 @@ package org.broadleafcommerce.common.util;
  */
 public class GenericOperationUtil {
     
+    /**
+     * Executes the provided operation up to as many times as the retries argument.  The method will return upon successful completion.  However, it will retry up to 
+     * <code>retries</code> times.  The wait time is the amount of time that this method will wait between tries.  If <code>isWaitTimesAdditive</code>, then the waitTime parameter 
+     * will be multiplied by the current retry iteration each time.  Otherwise, the waitTime will not change between tries.
+     * 
+     * If retries == 5, waitTime == 100, and isWaitTimesAdditive == false, then the total wait time, assuming no successful iterations, will be 500 milliseconds (100 + 100 + 100 + 100 + 100).
+     * If retries == 5, waitTime == 100, and isWaitTimesAdditive == true, then the total wait time, assuming no successful iterations, will be 1500 milliseconds (100 + 200 + 300 + 400 + 500).
+     * 
+     * @param operation
+     * @param retries
+     * @param waitTime
+     * @param isWaitTimesAdditive
+     * @param noRetriesForException
+     * @return
+     * @throws Exception
+     */
     public static <R> R executeRetryableOperation(final GenericOperation<R> operation, 
             final int retries, final long waitTime, final boolean isWaitTimesAdditive, final Class<? extends Exception>[] noRetriesForException) throws Exception {
         int tries = 0;
@@ -17,6 +33,11 @@ public class GenericOperationUtil {
                 return operation.execute();
             } catch (Exception e) {
                 if (tries == retries) {
+                    throw e;
+                }
+                
+                if (InterruptedException.class.isAssignableFrom(e.getClass())) {
+                    Thread.currentThread().interrupt();
                     throw e;
                 }
                 

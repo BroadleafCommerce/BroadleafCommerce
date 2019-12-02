@@ -87,13 +87,6 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     private final ThreadLocal<AtomicInteger> THREAD_LOCK_PERMITS = new ThreadLocal<>();
     
     /*
-     * List of Exception classes for which to ignore a retry in the case of an error, when interacting with Zookeeper.
-     * In this case, InterruptedException and RuntimeException are the only exceptions that we do not retry.
-     */
-    @SuppressWarnings({ "unchecked" })
-    private final Class<Exception>[] IGNORABLE_EXCEPTIONS_FOR_RETRY = (Class<Exception>[])new Class<?>[]{InterruptedException.class};
-    
-    /*
      * This is a synchronization monitor for threads, lock names, or environments for which this lock cannot be obtained.
      */
     private final Object NON_PARTICIPANT_LOCK_MONITOR = new Object();
@@ -274,7 +267,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                         getSolrZkClient().delete(currentlockPath, -1, true);
                         return null;
                     }
-                }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY); 
+                }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null); 
                 
                 
                 if (THREAD_LOCK_PERMITS.get().decrementAndGet() < 1) {
@@ -379,7 +372,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     return getSolrZkClient().create(getLockFolderPath() + '/' + getFullLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
                 }
                 
-            }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+            }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
             
             synchronized (LOCK_MONITOR) {
                 boolean waitCompleted = false; //Allows us to avoid waiting indefinitely if the client specified a wait time.
@@ -403,7 +396,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                             }, true);
                         }
                         
-                    }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                    }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
                     
                      // ZooKeeper node names can be sorted.
                     Collections.sort(nodes);
@@ -445,7 +438,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                                         getSolrZkClient().delete(localLockPath, 0, true);
                                         return false;
                                     }
-                                }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                                }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
                             } catch (Exception e) {
                                 LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e);
                                 return false;
@@ -466,7 +459,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                                             getSolrZkClient().delete(localLockPath, 0, true);
                                             return false;
                                         }
-                                    }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+                                    }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
                                 } catch (Exception e) {
                                     LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e);
                                     return false;
@@ -506,7 +499,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     getSolrZkClient().makePath(getLockFolderPath(), false, true);
                     return null;
                 }
-            }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), IGNORABLE_EXCEPTIONS_FOR_RETRY);
+            }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
             
             INITIALIZED_LOCK_PATHS.add(getLockFolderPath());
         } catch (Exception e) {
