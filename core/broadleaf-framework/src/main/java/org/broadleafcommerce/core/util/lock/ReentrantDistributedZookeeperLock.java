@@ -247,6 +247,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         }
     }
 
+    @Override
     public void unlock() {
         try {
             synchronized (LOCK_MONITOR) {
@@ -545,7 +546,16 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     @Override
     public boolean currentThreadHoldsLock() {
         synchronized (LOCK_MONITOR) {
-            return THREAD_LOCK_PERMITS.get() != null && THREAD_LOCK_PERMITS.get().get() > 0;
+            return getCurrentThreadLockPermits() > 0;
+        }
+    }
+    
+    public int getCurrentThreadLockPermits() {
+        synchronized (LOCK_MONITOR) {
+            if (THREAD_LOCK_PERMITS.get() == null) {
+                return 0;
+            }
+            return THREAD_LOCK_PERMITS.get().get();
         }
     }
 
