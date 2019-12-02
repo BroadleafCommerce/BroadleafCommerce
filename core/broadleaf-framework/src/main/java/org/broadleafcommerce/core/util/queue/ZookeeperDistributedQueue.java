@@ -59,7 +59,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     public static final String QUEUE_LOCKS_FOLDER = "/locks";
     public static final String QUEUE_CONFIGS_FOLDER = "/configs";
     
-    public static final int DEFAULT_MAX_QUEUE_SIZE = 100;
+    public static final int DEFAULT_MAX_QUEUE_SIZE = 500;
     
     private static final String QUEUE_ENTRY_NAME = "dz-queue-entry";
     
@@ -75,7 +75,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
      * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not 
      * end with a slash.  This argument should not contain whitespaces or other special characters.
      * 
-     * The default max queue size will be 100.
+     * The default max queue size will be 500.
      * 
      * @param queuePath
      * @param zk
@@ -88,7 +88,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
      * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not 
      * end with a slash.  This argument should not contain whitespaces or other special characters.
      * 
-     * The default max queue size will be 100.
+     * The default max queue size will be 500.
      * 
      * @param queuePath
      * @param zk
@@ -147,7 +147,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         
         if (this.requestedMaxQueueCapacity > 500) {
             LOG.error("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. "
-                    + "Anything over 1000 is considered unsupported. Please consider reducing the size of this queue.");
+                    + "Anything over 1000 is considered unsupported. Please consider reducing the maximum capacity of this queue.");
         }
         
         determineMaxCapacity();
@@ -164,6 +164,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             
             throw new DistributedQueueException("The queue was empty.");
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new DistributedQueueException("Thread was interrupdated removing an entry from the Zookeeper queue: " + getQueueFolderPath(), e);
         }
     }
@@ -178,6 +179,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             }
             return null;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return null;
         }
     }
@@ -202,6 +204,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             
             return null;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return null;
         }
     }
@@ -225,6 +228,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 lock.unlock();
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new DistributedQueueException("Thread was interrupted while trying to determine queue size for distributed Zookeeper queue, " + getQueueFolderPath(), e);
         }
     }
@@ -269,6 +273,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 lock.unlock();
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new DistributedQueueException("The thread was interrupted while trying to determine if elements are contained in the Zookeeper queue, " + getQueueFolderPath(), e);
         }
     }
@@ -337,6 +342,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 return true;
             }
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             return false;
         }
     }
@@ -353,6 +359,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 return true;
             }
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             return false;
         }
     }
@@ -450,6 +457,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             c.addAll(entries.values());
             return entries.size();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return 0;
         }
     }
@@ -461,6 +469,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             c.addAll(entries.values());
             return entries.size();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return 0;
         }
     }
