@@ -30,7 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 
  * <code>
  * Lock lock = new ReentrantDistributedZookeeperLock(zk, "/solr-update/locks", "solrUpdate_commandLock");
- * lock.lockInterruptibly();  //This will block until a lock is acquired or until a 
+ * lock.lockInterruptibly();  //This will block until a lock is acquired or until the Thread is interrupted. 
  * try {
  *     //Do something in a globally locked state
  * } finally {
