@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * in Zookeeper, and Zookeeper has a 1MB transport limit, so messages have to be smaller than that.  Incidentally, initial performance tests showed queue operations (put / take) taking 
  * approximately 25-30 milliseconds, or about 30-40 queue operations per second with a small payload (about 15 bytes).
  * 
- * This Queue works quite well for smaller, lower capacity queues where you need to read/write in a distributed way. 
+ * This Queue works quite well for smaller, lower capacity / throughput queues where you need to read/write in a distributed way. 
  * Try to limit the size of this queue to around 500 elements or fewer. Otherwise, consider a different queue implementation.
  * 
  * @author Kelly Tisdell
