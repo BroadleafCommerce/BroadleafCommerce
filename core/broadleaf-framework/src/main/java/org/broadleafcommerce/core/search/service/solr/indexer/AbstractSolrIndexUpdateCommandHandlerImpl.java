@@ -21,18 +21,15 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
     private static final Log LOG = LogFactory.getLog(AbstractSolrIndexUpdateCommandHandlerImpl.class);
     
     private final String commandGroup;
-    private final SolrConfiguration solrConfiguration;
     
-    public AbstractSolrIndexUpdateCommandHandlerImpl(String commandGroup, SolrConfiguration solrConfiguration) {
-        Assert.notNull(solrConfiguration, "SolrConfiguration cannot be null.");
+    public AbstractSolrIndexUpdateCommandHandlerImpl(String commandGroup) {
         Assert.notNull(commandGroup, "Command group cannot be null.");
         this.commandGroup = commandGroup.trim();
         Assert.hasText(this.commandGroup, "Command group must not be empty and should not contain white spaces.");
-        this.solrConfiguration = solrConfiguration;
     }
     
     @Override
-    public String getRelevantCommandGroup() {
+    public String getCommandGroup() {
         return commandGroup;
     }
 
@@ -99,7 +96,7 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * @param command
      * @throws Exception
      */
-    protected void executeCommandInternalNoDefaultCommandType(SolrUpdateCommand command) throws Exception {
+    protected void executeCommandInternalNoDefaultCommandType(SolrUpdateCommand command) throws ServiceException {
         if (command == null) {
             LOG.warn("Unable to process SolrUpdateCommand as the command was null.");
         } else {
@@ -118,7 +115,7 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * @throws SolrServerException
      */
     protected void commit(String collectionName, boolean waitSearcher) throws IOException, SolrServerException {
-        solrConfiguration.getReindexServer().commit(collectionName, true, waitSearcher, false);
+        getSolrConfiguration().getReindexServer().commit(collectionName, true, waitSearcher, false);
     }
     
     /**
@@ -130,7 +127,7 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * @throws SolrServerException
      */
     protected void rollback(String collectionName) throws IOException, SolrServerException {
-        solrConfiguration.getReindexServer().rollback(collectionName);
+        getSolrConfiguration().getReindexServer().rollback(collectionName);
     }
     
     /**
@@ -143,7 +140,7 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      */
     protected void addDocuments(String collection, List<SolrInputDocument> docs) throws IOException, SolrServerException {
         if (docs != null && !docs.isEmpty()) {
-            solrConfiguration.getReindexServer().add(collection, docs);
+            getSolrConfiguration().getReindexServer().add(collection, docs);
         }
     }
     
@@ -157,7 +154,7 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      */
     protected void deleteByQuery(String collection, String query) throws IOException, SolrServerException {
         if (query != null) {
-            solrConfiguration.getReindexServer().deleteByQuery(collection, query);
+            getSolrConfiguration().getReindexServer().deleteByQuery(collection, query);
         }
     }
     
@@ -187,18 +184,19 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      */
     protected void deleteByIds(String collection, List<String> ids) throws IOException, SolrServerException {
         if (ids != null && !ids.isEmpty()) {
-            solrConfiguration.getReindexServer().deleteById(collection, ids);
+            getSolrConfiguration().getReindexServer().deleteById(collection, ids);
         }
     }
     
     @Override
     public String getForegroundCollectionName() {
-        return solrConfiguration.getPrimaryName();
+        return getSolrConfiguration().getPrimaryName();
     }
     
     @Override
     public String getBackgroundCollectionName() {
-        return solrConfiguration.getReindexName();
+        return getSolrConfiguration().getReindexName();
     }
 
+    protected abstract SolrConfiguration getSolrConfiguration();
 }
