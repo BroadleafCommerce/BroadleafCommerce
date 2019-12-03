@@ -2,7 +2,9 @@ package org.broadleafcommerce.core.search.service.solr.indexer;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.core.search.domain.IndexField;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ import java.util.List;
  * @author Kelly Tisdell
  *
  */
-public interface SolrIndexUpdateCommandService {
+public interface SolrIndexUpdateService {
     
     /**
      * Default behavior is to truncate the background collection (offline index), populate it with documents, 
@@ -56,5 +58,15 @@ public interface SolrIndexUpdateCommandService {
      * @return
      */
     public SolrInputDocument buildDocument(Indexable indexable);
-
+    
+    /**
+     * Provides an interface for a caller to convert an {@link Indexable} into a {@link SolrInputDocument}. This may return null if the implementor does not want 
+     * the specified {@link Indexable} indexed.
+     * 
+     * @param indexable
+     * @param fields
+     * @param locales
+     * @return
+     */
+    public SolrInputDocument buildDocument(Indexable indexable, List<IndexField> fields, List<Locale> locales);
 }

@@ -4,7 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
@@ -31,16 +34,16 @@ import java.util.concurrent.locks.Lock;
  * @author Kelly Tisdell
  *
  */
-public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUpdateCommandService {
+public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpdateService, DisposableBean {
     
-    private static final Log LOG = LogFactory.getLog(AbstractSolrIndexCommandManagerImpl.class);
+    private static final Log LOG = LogFactory.getLog(AbstractSolrIndexUpdateServiceImpl.class);
     private static final Map<String, AtomicReferenceArray<Runnable>> commandThreadRegistry = Collections.synchronizedMap(new HashMap<String, AtomicReferenceArray<Runnable>>());
     
     private final String commandGroup;
     private BlockingQueue<? super SolrUpdateCommand> commandQueue;
     private final SolrIndexUpdateCommandHandler commandHandler;
     
-    public AbstractSolrIndexCommandManagerImpl(final String commandGroup, final SolrIndexQueueProvider queueProvider, final SolrIndexUpdateCommandHandler commandHandler) {
+    public AbstractSolrIndexUpdateServiceImpl(final String commandGroup, final SolrIndexQueueProvider queueProvider, final SolrIndexUpdateCommandHandler commandHandler) {
         Assert.notNull(commandGroup, "The command group must not be null. Consider using a simple domain identifier such as 'catalog', 'customer', or 'order', for example.");
         Assert.notNull(queueProvider, SolrIndexQueueProvider.class.getName() + " cannot be null.");
         Assert.notNull(commandHandler, SolrIndexUpdateCommandHandler.class.getName() + " cannot be null.");
@@ -48,13 +51,13 @@ public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUp
         this.commandGroup = commandGroup.trim();
         Assert.hasLength(getCommandGroup(), "The command group must not be empty. Consider using a simple domain identifier such as 'catalog', 'customer', or 'order', for example.");
         
-        Assert.notNull(commandHandler.getRelevantCommandGroup().equals(getCommandGroup()), "Command identifiers must match to avoid misconfiguration.");
+        Assert.notNull(commandHandler.getCommandGroup().equals(getCommandGroup()), "Command identifiers must match to avoid misconfiguration.");
         this.commandHandler = commandHandler;
         
         this.commandQueue = queueProvider.createOrRetrieveCommandQueue(getCommandGroup() + "_commandQueue");
         Assert.notNull(this.commandQueue, "The commandQueue cannot be null.  Check the " + queueProvider.getClass().getName() + ".");
         
-        synchronized (AbstractSolrIndexCommandManagerImpl.class) {
+        synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
             if (!commandThreadRegistry.containsKey(getCommandGroup())) {
                 final Lock lock = queueProvider.createOrRetrieveCommandLock(getCommandGroup() + "_commandLock");
                 Assert.notNull(lock, "The lock cannot be null. Check the " + queueProvider.getClass().getName() + ".");
@@ -72,11 +75,22 @@ public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUp
         }
     }
     
+    @Override
+    public void destroy() throws Exception {
+        synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
+            AtomicReferenceArray<Runnable> runnables = commandThreadRegistry.remove(getCommandGroup());
+            if (runnables != null) {
+                ((CommandCoorinator)runnables.get(0)).stopRunning();
+                ((Thread)runnables.get(1)).interrupt();
+            }
+        }
+    }
+    
     /**
      * Stops all threads that are listening to various command queues.
      */
     public static void shutdownAll() {
-        synchronized (AbstractSolrIndexCommandManagerImpl.class) {
+        synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
             Set<Entry<String, AtomicReferenceArray<Runnable>>> entries = commandThreadRegistry.entrySet();
             for (Entry<String, AtomicReferenceArray<Runnable>> entry : entries) {
                 ((CommandCoorinator)entry.getValue().get(0)).stopRunning();
@@ -105,10 +119,12 @@ public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUp
         if (command != null) {
             try {
                 for (int i = 0; i < 5; i++) {
-                    if (commandQueue.offer(command, 1000L, TimeUnit.MILLISECONDS)) {
-                        return;
-                    } else if (!isRunning(getCommandGroup())) {
-                        throw new IllegalStateException("Attempted to queue a SolrUpdateCommand but " + getClass().getName() + " is not initialized or has been shut down.");
+                    if (!commandQueue.contains(command)) {
+                        if (commandQueue.offer(command, getQueueOfferTime(), TimeUnit.MILLISECONDS)) {
+                            return;
+                        } else if (!isRunning(getCommandGroup())) {
+                            throw new IllegalStateException("Attempted to queue a SolrUpdateCommand but " + getClass().getName() + " is not initialized or has been shut down.");
+                        }
                     }
                 }
                 throw new IllegalStateException("Unable to add a Solr index update command to the queue within 5 seconds.");
@@ -157,7 +173,7 @@ public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUp
                                 return;
                             }
                             
-                            command = (SolrUpdateCommand)queue.poll(1000L, TimeUnit.MILLISECONDS);
+                            command = (SolrUpdateCommand)queue.poll(getQueuePollTime(), TimeUnit.MILLISECONDS);
                             
                             if (command != null) {
                                 try {
@@ -194,7 +210,7 @@ public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUp
     }
     
     public static boolean isRunning(String commandIdentifier) {
-        synchronized (AbstractSolrIndexCommandManagerImpl.class) {
+        synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
             return commandThreadRegistry.containsKey(commandIdentifier) && ((CommandCoorinator)commandThreadRegistry.get(commandIdentifier).get(0)).isRunning();
             
         }
@@ -219,5 +235,29 @@ public abstract class AbstractSolrIndexCommandManagerImpl implements SolrIndexUp
     @Override
     public SolrInputDocument buildDocument(Indexable indexable) {
         return commandHandler.buildDocument(indexable);
+    }
+    
+    @Override
+    public SolrInputDocument buildDocument(Indexable indexable, List<IndexField> fields, List<Locale> locales) {
+        return commandHandler.buildDocument(indexable, fields, locales);
+    }
+    
+    /**
+     * Amount of time in millis that the queue will be polled before returning an item or null.  Default is 1 minute (60000 ms).  If you override this method, it must return 
+     * a positive long value, preferrably greater than 60000 to reduce the polling cycles.
+     * 
+     * @return
+     */
+    protected long getQueuePollTime() {
+        return 60000L;
+    }
+    
+    /**
+     * Amount of time that will be waited, assuming the queue is full, for space to become available in the queue.  Default is 1 second (1000 ms).
+     * 
+     * @return
+     */
+    protected long getQueueOfferTime() {
+        return 1000L;
     }
 }

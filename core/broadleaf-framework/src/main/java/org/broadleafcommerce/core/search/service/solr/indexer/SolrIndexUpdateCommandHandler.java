@@ -2,11 +2,15 @@ package org.broadleafcommerce.core.search.service.solr.indexer;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.core.search.domain.IndexField;
+
+import java.util.List;
 
 /**
  * Implementations of this interface do the heavy lifting with respect to executing the provided commands.  This should only be called from within 
- * the {@link AbstractSolrIndexCommandManagerImpl}, which provides serialization of the commands.
+ * the {@link AbstractSolrIndexUpdateServiceImpl}, which provides serialization of the commands.
  * 
  * @author Kelly Tisdell
  *
@@ -16,7 +20,7 @@ public interface SolrIndexUpdateCommandHandler {
     /**
      * Entry point from which this component can delegate action based on the type of {@link SolrUpdateCommand}.
      * 
-     * This should never be called directly.  Rather it will be called from inside the {@link AbstractSolrIndexCommandManagerImpl}.
+     * This should never be called directly.  Rather it will be called from inside the {@link AbstractSolrIndexUpdateServiceImpl}.
      * 
      * @param command
      * @throws ServiceException
@@ -31,7 +35,7 @@ public interface SolrIndexUpdateCommandHandler {
      * 
      * @return
      */
-    public String getRelevantCommandGroup();
+    public String getCommandGroup();
     
     /**
      * The "live" or customer facing collection (index) name or alias. This should return a non-null, non-empty string.  Every invocation should return the same value. (e.g. "catalog").
@@ -55,6 +59,15 @@ public interface SolrIndexUpdateCommandHandler {
      */
     public SolrInputDocument buildDocument(Indexable indexable);
     
-    
+    /**
+     * Provides an interface for a caller to convert an {@link Indexable} into a {@link SolrInputDocument}.  This may return null if the implementor does not want 
+     * the specified {@link Indexable} indexed.
+     * 
+     * @param indexable
+     * @param fields
+     * @param locales
+     * @return
+     */
+    public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales);
     
 }
