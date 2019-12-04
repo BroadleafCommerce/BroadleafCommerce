@@ -54,12 +54,12 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
         Assert.notNull(commandHandler.getCommandGroup().equals(getCommandGroup()), "Command identifiers must match to avoid misconfiguration.");
         this.commandHandler = commandHandler;
         
-        this.commandQueue = queueProvider.createOrRetrieveCommandQueue(getCommandGroup() + "_commandQueue");
+        this.commandQueue = queueProvider.createOrRetrieveCommandQueue(getCommandGroup() + SolrIndexQueueProvider.COMMAND_QUEUE_NAME);
         Assert.notNull(this.commandQueue, "The commandQueue cannot be null.  Check the " + queueProvider.getClass().getName() + ".");
         
         synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
             if (!commandThreadRegistry.containsKey(getCommandGroup())) {
-                final Lock lock = queueProvider.createOrRetrieveCommandLock(getCommandGroup() + "_commandLock");
+                final Lock lock = queueProvider.createOrRetrieveCommandLock(getCommandGroup() + SolrIndexQueueProvider.COMMAND_LOCK_NAME);
                 Assert.notNull(lock, "The lock cannot be null. Check the " + queueProvider.getClass().getName() + ".");
                 
                 final CommandCoorinator commandRunnable = new CommandCoorinator(this.commandQueue, lock, commandHandler);
