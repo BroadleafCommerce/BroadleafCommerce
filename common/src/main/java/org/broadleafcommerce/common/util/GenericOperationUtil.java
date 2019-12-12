@@ -9,12 +9,46 @@ package org.broadleafcommerce.common.util;
 public class GenericOperationUtil {
     
     /**
+     * Executes the provided operation up to 5 times if there are exceptions, waiting an additive 100 ms between tries.
+     * 
+     * Total wait time, assuming no successful iterations, will be 1500 milliseconds (100 + 200 + 300 + 400 + 500).
+     * 
+     * This will never retry for an {@link InterruptedException}.
+     * 
+     * @param operation
+     * @return
+     * @throws Exception
+     */
+    public static <R> R executeRetryableOperation(final GenericOperation<R> operation) throws Exception {
+        return executeRetryableOperation(operation, 5, 100L, true, null);
+    }
+    
+    /**
+     * Executes the provided operation up to 5 times if there are exceptions, waiting an additive 100 ms between tries.
+     * 
+     * Total wait time, assuming no successful iterations, will be 1500 milliseconds (100 + 200 + 300 + 400 + 500).
+     * 
+     * This will never retry for an {@link InterruptedException}.
+     * 
+     * @param operation
+     * @param noRetriesForException
+     * @return
+     * @throws Exception
+     */
+    public static <R> R executeRetryableOperation(final GenericOperation<R> operation, 
+            final Class<? extends Exception>[] noRetriesForException) throws Exception {
+        return executeRetryableOperation(operation, 5, 100L, true, noRetriesForException);
+    }
+    
+    /**
      * Executes the provided operation up to as many times as the retries argument.  The method will return upon successful completion.  However, it will retry up to 
      * <code>retries</code> times.  The wait time is the amount of time that this method will wait between tries.  If <code>isWaitTimesAdditive</code>, then the waitTime parameter 
      * will be multiplied by the current retry iteration each time.  Otherwise, the waitTime will not change between tries.
      * 
      * If retries == 5, waitTime == 100, and isWaitTimesAdditive == false, then the total wait time, assuming no successful iterations, will be 500 milliseconds (100 + 100 + 100 + 100 + 100).
      * If retries == 5, waitTime == 100, and isWaitTimesAdditive == true, then the total wait time, assuming no successful iterations, will be 1500 milliseconds (100 + 200 + 300 + 400 + 500).
+     * 
+     * This will never retry for an {@link InterruptedException}.
      * 
      * @param operation
      * @param retries

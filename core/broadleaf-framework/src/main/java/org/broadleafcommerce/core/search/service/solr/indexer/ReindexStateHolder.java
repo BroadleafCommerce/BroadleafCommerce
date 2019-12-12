@@ -2,6 +2,7 @@ package org.broadleafcommerce.core.search.service.solr.indexer;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -17,15 +18,22 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ReindexStateHolder {
 
+    private final String collectionName;
     private final Map<String, Object> additionalState = Collections.synchronizedMap(new HashMap<String, Object>());
     private final AtomicLong indexableCount = new AtomicLong();
-    private final AtomicLong documentErrorCount = new AtomicLong();
+    private final AtomicLong unindexedItemCount = new AtomicLong();
     private final AtomicBoolean failed = new AtomicBoolean(false);
     private final AtomicBoolean queueLoadCompleted = new AtomicBoolean(false);
     private final AtomicReference<Exception> throwable = new AtomicReference<>();
-    private final BlockingQueue<Long[]> idQueue = new ArrayBlockingQueue<>(1000);
+    private final BlockingQueue<List<Long>> idQueue = new ArrayBlockingQueue<>(1000);
     
-    public ReindexStateHolder() {}
+    public ReindexStateHolder(String collectionName) {
+        this.collectionName = collectionName;
+    }
+    
+    public String getCollectionName() {
+        return collectionName;
+    }
     
     public synchronized boolean isFailed() {
         return failed.get();
@@ -45,19 +53,27 @@ public class ReindexStateHolder {
         return null;
     }
     
+    public synchronized long getIndexableCount() {
+        return indexableCount.get();
+    }
+    
     public synchronized long incrementIndexableCount(long delta) {
         return indexableCount.addAndGet(delta);
     }
     
-    public synchronized long incrementDocumentErrorCount(long delta) {
-        return documentErrorCount.addAndGet(delta);
+    public synchronized long getUnindexedItemCount() {
+        return unindexedItemCount.get();
+    }
+    
+    public synchronized long incrementUnindexedItemCount(long delta) {
+        return unindexedItemCount.addAndGet(delta);
     }
     
     public Map<String, Object> getAdditionalState() {
         return additionalState;
     }
     
-    public BlockingQueue<Long[]> getIdQueue() {
+    public BlockingQueue<List<Long>> getIdQueue() {
         return idQueue;
     }
     

@@ -5,6 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.util.GenericOperation;
+import org.broadleafcommerce.common.util.GenericOperationUtil;
 import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.springframework.util.Assert;
 
@@ -98,9 +100,9 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      */
     protected void executeCommandInternalNoDefaultCommandType(SolrUpdateCommand command) throws ServiceException {
         if (command == null) {
-            LOG.warn("Unable to process SolrUpdateCommand as the command was null.");
+            LOG.error("Unable to process SolrUpdateCommand as the command was null.");
         } else {
-            LOG.warn("Unable to process SolrUpdateCommand of type: " 
+            LOG.error("Unable to process SolrUpdateCommand of type: " 
                     + command.getClass().getName() + ". Consider overriding the executeCommandInternalNoDefaultCommandType method in " 
                     + this.getClass().getName() + ".");
         }
@@ -111,11 +113,17 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * It is recommended that you off Solr's autoCommit and autoSoftCommit features.
      * 
      * @param collectionName
-     * @throws IOException
-     * @throws SolrServerException
+     * @throws Exception
+     * 
      */
-    protected void commit(String collectionName, boolean waitSearcher) throws IOException, SolrServerException {
-        getSolrConfiguration().getReindexServer().commit(collectionName, true, waitSearcher, false);
+    protected synchronized void commit(final String collectionName, final boolean waitSearcher) throws Exception {
+        GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
+            @Override
+            public Void execute() throws Exception {
+                getSolrConfiguration().getReindexServer().commit(collectionName, true, waitSearcher, false);
+                return null;
+            }
+        });
     }
     
     /**
@@ -123,11 +131,33 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * It is recommended that you off Solr's autoCommit and autoSoftCommit features.
      * 
      * @param collectionName
-     * @throws IOException
-     * @throws SolrServerException
+     * @throws Exception
+     * 
      */
-    protected void rollback(String collectionName) throws IOException, SolrServerException {
-        getSolrConfiguration().getReindexServer().rollback(collectionName);
+    protected synchronized void rollback(final String collectionName) throws Exception {
+        GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
+            @Override
+            public Void execute() throws Exception {
+                getSolrConfiguration().getReindexServer().rollback(collectionName);
+                return null;
+            }
+        });
+    }
+    
+    /**
+     * Adds the document to the specified collection but does not issue a commit.
+     * @param collection
+     * @param doc
+     * @throws Exception
+     */
+    protected void addDocument(final String collection, final SolrInputDocument doc) throws Exception {
+        GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
+            @Override
+            public Void execute() throws Exception {
+                getSolrConfiguration().getReindexServer().add(doc);
+                return null;
+            }
+        });
     }
     
     /**
@@ -135,13 +165,19 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * 
      * @param collection
      * @param docs
-     * @throws IOException
-     * @throws SolrServerException
+     * @throws Exception
+     * 
      */
-    protected void addDocuments(String collection, List<SolrInputDocument> docs) throws IOException, SolrServerException {
-        if (docs != null && !docs.isEmpty()) {
-            getSolrConfiguration().getReindexServer().add(collection, docs);
-        }
+    protected void addDocuments(final String collection, final List<SolrInputDocument> docs) throws Exception {
+        GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
+            @Override
+            public Void execute() throws Exception {
+                if (docs != null && !docs.isEmpty()) {
+                    getSolrConfiguration().getReindexServer().add(collection, docs);
+                }
+                return null;
+            }
+        });
     }
     
     /**
@@ -149,13 +185,19 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * 
      * @param collection
      * @param query
-     * @throws IOException
-     * @throws SolrServerException
+     * @throws Exception
+     * 
      */
-    protected void deleteByQuery(String collection, String query) throws IOException, SolrServerException {
-        if (query != null) {
-            getSolrConfiguration().getReindexServer().deleteByQuery(collection, query);
-        }
+    protected void deleteByQuery(final String collection, final String query) throws Exception {
+        GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
+            @Override
+            public Void execute() throws Exception {
+                if (query != null) {
+                    getSolrConfiguration().getReindexServer().deleteByQuery(collection, query);
+                }
+                return null;
+            }
+        });
     }
     
     /**
@@ -163,10 +205,10 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * 
      * @param collection
      * @param queries
-     * @throws IOException
-     * @throws SolrServerException
+     * @throws Exception
+     * 
      */
-    protected void deleteByQueries(String collection, List<String> queries) throws IOException, SolrServerException {
+    protected void deleteByQueries(String collection, List<String> queries) throws Exception {
         if (queries != null) {
             for (String query : queries) {
                 deleteByQuery(collection, query);
@@ -182,10 +224,16 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * @throws IOException
      * @throws SolrServerException
      */
-    protected void deleteByIds(String collection, List<String> ids) throws IOException, SolrServerException {
-        if (ids != null && !ids.isEmpty()) {
-            getSolrConfiguration().getReindexServer().deleteById(collection, ids);
-        }
+    protected void deleteByIds(final String collection, final List<String> ids) throws Exception {
+        GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
+            @Override
+            public Void execute() throws Exception {
+                if (ids != null && !ids.isEmpty()) {
+                    getSolrConfiguration().getReindexServer().deleteById(collection, ids);
+                }
+                return null;
+            }
+        });
     }
     
     @Override
