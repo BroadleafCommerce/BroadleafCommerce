@@ -3,7 +3,6 @@ package org.broadleafcommerce.core.search.service.solr.indexer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -12,9 +11,12 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.EntityManagerAwareRunnable;
-import org.broadleafcommerce.common.util.StringUtil;
+import org.broadleafcommerce.common.util.GenericOperation;
+import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.FieldDao;
@@ -22,6 +24,7 @@ import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
@@ -38,7 +41,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import javax.annotation.Resource;
@@ -102,6 +105,9 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     @Value("${solr.index.product.pageSize:100}")
     protected int pageSize = 100;
     
+    @Value("${solr.index.catalog.pageSize:0.01}")
+    protected float documentErrorTolerance = 0.01F;
+    
     private final ThreadPoolTaskExecutor executor;
     
     public CatalogSolrIndexUpdateCommandHandlerImpl() {
@@ -145,8 +151,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         deleteAllDocuments(getSolrConfiguration().getReindexName());
         boolean error = false;
         try {
-            populateIndex();
-            commit(getSolrConfiguration().getReindexName(), true);
+            populateIndex(getSolrConfiguration().getReindexName(), null, null);
         } catch (Exception e) {
             error = true;
             if (ServiceException.class.isAssignableFrom(e.getClass())) {
@@ -380,24 +385,32 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         }
     }
     
-    protected void populateIndex() throws ServiceException {
-        final ReindexStateHolder holder = new ReindexStateHolder();
+    protected void populateIndex(final String collectionName, final Long catalogId, final Long siteId) throws ServiceException {
+        final ReindexStateHolder holder = new ReindexStateHolder(collectionName);
         final Semaphore sem = new Semaphore(0);
         try {
             try {
                 final int threads = getThreadsForBackgroundExecution();
                 Assert.isTrue(threads > 0, "getThreadsForBackgroundExecution() must return an integer that is greater than 0."); 
+                boolean incrementalCommits = false;
+                if (!collectionName.equals(getForegroundCollectionName())) {
+                    incrementalCommits = true;
+                }
+                
                 for (int i = 0; i < threads; i++) {
-                    getTaskExecutor().execute(createBackgroundExecutorRunnable(holder, sem));
+                    getTaskExecutor().execute(createBackgroundExecutorRunnable(getBackgroundCollectionName(), holder, sem, incrementalCommits));
                 }
                 
                 try {
                     //Begin filling the queue
                     //TODO
                     
+                    holder.markQueueLoadCompleted();
                     sem.acquire(threads);
                     
                     if (holder.isFailed()) {
+                        //Log failure
+                        
                         if (holder.getFailure() != null) {
                             if (holder.getFailure() instanceof ServiceException) {
                                 throw (ServiceException)holder.getFailure();
@@ -425,18 +438,11 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     
     protected void deleteAllDocuments(String collection) throws ServiceException {
         try {
-            //First, delete the data in the background index.
-            final String deleteQuery = StringUtil.sanitize(shs.getNamespaceFieldName()) + ":(\"" 
-                    + StringUtil.sanitize(solrConfiguration.getNamespace()) + "\")";
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Deleting by query: " + deleteQuery);
-            }
-            
-            getSolrConfiguration().getReindexServer().deleteByQuery(collection, deleteQuery);
+            getSolrConfiguration().getReindexServer().deleteByQuery(collection, "(*:*)");
             if (!solrConfiguration.isSingleCoreMode()) {
                 commit(collection, true);
             }
-        } catch (SolrServerException | IOException e) {
+        } catch (Exception e) {
             throw new ServiceException("An error occured deleting the contents of background Solr index, " + getSolrConfiguration().getReindexName(), e);
         }
     }
@@ -451,7 +457,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                     shs.swapActiveCores(solrConfiguration);
                 }
             }
-        } catch (SolrServerException | IOException e) {
+        } catch (Exception e) {
             throw new ServiceException("An error occured committing and swapping the Solr index, " + collection, e);
         }
     }
@@ -481,19 +487,100 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         return exec;
     }
     
-    protected EntityManagerAwareRunnable createBackgroundExecutorRunnable(final ReindexStateHolder holder, final Semaphore sem) {
+    /**
+     * This is where most of the heavy lifting happens.
+     * 
+     * @param collectionName
+     * @param holder
+     * @param sem
+     * @param incrementalCommits
+     * @return
+     */
+    protected EntityManagerAwareRunnable createBackgroundExecutorRunnable(final String collectionName, final ReindexStateHolder holder, final Semaphore sem, final boolean incrementalCommits) {
         return new EntityManagerAwareRunnable(sem) {
             
             @Override
             protected void executeInternal() throws Exception {
-                performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
-                    @Override
-                    public void execute() throws ServiceException {
-                        //TODO
-                    }
-                });
+                //It's expected that this is run in another thread, so this should create a brand new BroadleafRequestContext
+                final BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                try {
+                    //Pass shared state from the ReindexStateHolder to the thread-bound BroadleafRequestContext.
+                    brc.getAdditionalProperties().putAll(holder.getAdditionalState());
+                    
+                    performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
+                        @Override
+                        public void execute() throws ServiceException {
+                            try {
+                                final List<Locale> locales = getAllLocales();
+                                final List<IndexField> fields = getIndexFields();
+                                
+                                while (!holder.isFailed()) {
+                                    getEntityManager().clear();
+                                    final List<Long> ids = holder.getIdQueue().poll(1000L, TimeUnit.MILLISECONDS);
+                                    if (ids != null) {
+                                        final List<SolrInputDocument> documents = HibernateUtils.executeWithoutCache(new GenericOperation<List<SolrInputDocument>>() {
+                                            @Override
+                                            public List<SolrInputDocument> execute() throws Exception {
+                                                return buildPage(ids, locales, fields, holder);
+                                            }
+                                            
+                                        }, getEntityManager());
+                                        
+                                        if (! documents.isEmpty()) {
+                                            addDocuments(collectionName, documents);
+                                            
+                                            if (incrementalCommits) {
+                                                commit(collectionName, false);
+                                            }
+                                        }
+                                        
+                                    } else if (holder.isQueueLoadCompleted()) {
+                                        return;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                holder.failFast(e);
+                                return;
+                            }
+                        }
+                    });
+                } finally {
+                    BroadleafRequestContext.setBroadleafRequestContext(null);
+                }
+            }
+
+            @Override
+            protected void registerError(Exception e) {
+                holder.failFast(e);
             }
         };
-        
+    }
+    
+    protected List<SolrInputDocument> buildPage(List<Long> productIds, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) {
+        ArrayList<SolrInputDocument> docs = new ArrayList<>();
+        List<Product> products = readProductsByIds(productIds);
+        if (products != null) {
+            for (Product product : products) {
+                SolrInputDocument document = buildDocument(product, fields, locales);
+                if (document != null) {
+                    docs.add(document);
+                    holder.incrementIndexableCount(1L);
+                } else {
+                    holder.incrementUnindexedItemCount(1L);
+                }
+            }
+        }
+        return docs;
+    }
+    
+    protected List<Product> readProductsByIds(List<Long> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return null;
+        }
+        return productDao.readProductsByIds(productIds);
+    }
+    
+    protected List<IndexField> getIndexFields() {
+        return indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
     }
 }

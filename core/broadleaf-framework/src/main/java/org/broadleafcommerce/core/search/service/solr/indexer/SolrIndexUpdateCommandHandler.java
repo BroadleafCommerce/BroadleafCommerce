@@ -56,6 +56,7 @@ public interface SolrIndexUpdateCommandHandler {
      * the specified {@link Indexable} indexed.
      * @param indexable
      * @return
+     * 
      */
     public SolrInputDocument buildDocument(Indexable indexable);
     
@@ -67,6 +68,7 @@ public interface SolrIndexUpdateCommandHandler {
      * @param fields
      * @param locales
      * @return
+     * 
      */
     public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales);
     

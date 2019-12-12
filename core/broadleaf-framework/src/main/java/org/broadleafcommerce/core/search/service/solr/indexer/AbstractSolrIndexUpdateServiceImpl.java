@@ -62,7 +62,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                 final Lock lock = queueProvider.createOrRetrieveCommandLock(getCommandGroup() + SolrIndexQueueProvider.COMMAND_LOCK_NAME);
                 Assert.notNull(lock, "The lock cannot be null. Check the " + queueProvider.getClass().getName() + ".");
                 
-                final CommandCoorinator commandRunnable = new CommandCoorinator(this.commandQueue, lock, commandHandler);
+                final CommandCoordinator commandRunnable = new CommandCoordinator(this.commandQueue, lock, commandHandler);
                 final Thread commandThread = new Thread(commandRunnable, "Solr-Index-Update-Command-" + getCommandGroup());
                 commandThread.start();
                 
@@ -80,7 +80,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
         synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
             AtomicReferenceArray<Runnable> runnables = commandThreadRegistry.remove(getCommandGroup());
             if (runnables != null) {
-                ((CommandCoorinator)runnables.get(0)).stopRunning();
+                ((CommandCoordinator)runnables.get(0)).stopRunning();
                 ((Thread)runnables.get(1)).interrupt();
             }
         }
@@ -93,7 +93,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
         synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
             Set<Entry<String, AtomicReferenceArray<Runnable>>> entries = commandThreadRegistry.entrySet();
             for (Entry<String, AtomicReferenceArray<Runnable>> entry : entries) {
-                ((CommandCoorinator)entry.getValue().get(0)).stopRunning();
+                ((CommandCoordinator)entry.getValue().get(0)).stopRunning();
                 ((Thread)entry.getValue().get(1)).interrupt();
             }
             
@@ -140,14 +140,14 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
      * @author Kelly Tisdell
      *
      */
-    private class CommandCoorinator implements Runnable {
+    private class CommandCoordinator implements Runnable {
         
         private final BlockingQueue<? super SolrUpdateCommand> queue;
         private final Lock lock;
         private final SolrIndexUpdateCommandHandler commandHandler;
         private volatile boolean running = false;
         
-        CommandCoorinator(BlockingQueue<? super SolrUpdateCommand> queue, Lock lock, SolrIndexUpdateCommandHandler commandHandler) {
+        CommandCoordinator(BlockingQueue<? super SolrUpdateCommand> queue, Lock lock, SolrIndexUpdateCommandHandler commandHandler) {
             this.queue = queue;
             this.lock = lock;
             this.commandHandler = commandHandler;
@@ -211,7 +211,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
     
     public static boolean isRunning(String commandIdentifier) {
         synchronized (AbstractSolrIndexUpdateServiceImpl.class) {
-            return commandThreadRegistry.containsKey(commandIdentifier) && ((CommandCoorinator)commandThreadRegistry.get(commandIdentifier).get(0)).isRunning();
+            return commandThreadRegistry.containsKey(commandIdentifier) && ((CommandCoordinator)commandThreadRegistry.get(commandIdentifier).get(0)).isRunning();
             
         }
     }
