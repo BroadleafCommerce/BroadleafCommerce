@@ -3,13 +3,15 @@ package org.broadleafcommerce.core.util.lock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.ACL;
 import org.broadleafcommerce.common.util.GenericOperation;
 import org.broadleafcommerce.common.util.GenericOperationUtil;
+import org.broadleafcommerce.core.util.ZookeeperUtil;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
@@ -24,7 +26,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This is similar to a {@link ReentrantLock}, except that it uses Zookeeper (and, specifically, {@link CloudSolrClient}'s {@link SolrZkClient}) to 
+ * This is similar to a {@link ReentrantLock}, except that it uses Zookeeper to 
  * share the lock state across multiple nodes, allowing for a distributed lock.  The owning thread may acquire the lock multiple times, but must unlock for each time the lock is 
  * acquired.  It's important to get in the habit of unlocking immediately in a finally block to prevent orphaned locks:
  * 
@@ -99,7 +101,12 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     /*
      * This provides the interface to Zookeeper.
      */
-    private final SolrZkClient zk;
+    private final ZooKeeper zk;
+    
+    /*
+     * Zookeeper ACLs
+     */
+    private final List<ACL> acls;
     
     /*
      * Optional Sping Environment object to assist in determining if the lock can be obtained.  This is 
@@ -135,8 +142,12 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      */
     private String currentlockPath;
     
+    public ReentrantDistributedZookeeperLock(ZooKeeper zk, String lockPath, String lockName) {
+        this(zk, lockPath, lockName, null);
+    }
+    
     /**
-     * This constructor takes in the {@link SolrZkClient} (non-nullable), 
+     * This constructor takes in the {@link ZooKeeper} (non-nullable), 
      * the lock path (non-nullable and in the format of '/path/to/this/lock/folder`), 
      * and the lock name (non-nullable and non-empty string with no whitespaces, leading or trailing slashes, or special characters except '-' or '_').
      * 
@@ -147,13 +158,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * @param zk
      * @param lockPath
      * @param lockName
+     * @param acls
      */
-    public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName) {
-        this(zk, lockPath, lockName, null, true);
+    public ReentrantDistributedZookeeperLock(ZooKeeper zk, String lockPath, String lockName, List<ACL> acls) {
+        this(zk, lockPath, lockName, null, true, acls);
     }
     
     /**
-     * This constructor takes in the {@link SolrZkClient} (non-nullable), 
+     * This constructor takes in the {@link ZooKeeper} (non-nullable), 
      * the lock path (non-nullable and in the format of '/path/to/this/lock/folder`), 
      * and the lock name (non-nullable and non-empty string with no whitespaces, leading or trailing slashes, or special characters except '-' or '_').
      * 
@@ -164,13 +176,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * @param zk
      * @param lockPath
      * @param lockName
+     * @param acls
      */
-    public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName, boolean useDefaultBasePath) {
-        this(zk, lockPath, lockName, null, useDefaultBasePath);
+    public ReentrantDistributedZookeeperLock(ZooKeeper zk, String lockPath, String lockName, boolean useDefaultBasePath, List<ACL> acls) {
+        this(zk, lockPath, lockName, null, useDefaultBasePath, acls);
     }
     
     /**
-     * This constructor takes in the {@link SolrZkClient} (non-nullable), 
+     * This constructor takes in the {@link Zookeeper} (non-nullable), 
      * the lock path (non-nullable and in the format of '/path/to/this/lock/folder`), 
      * the lock name (non-nullable and non-empty string with no whitespaces, leading or trailing slashes, or special characters except '-' or '_'), and 
      * an {@link Environment} object, which can be null.
@@ -184,13 +197,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * @param lockPath
      * @param lockName
      * @param env
+     * @param acls
      */
-    public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName, Environment env) {
-        this(zk, lockPath, lockName, env, true);
+    public ReentrantDistributedZookeeperLock(ZooKeeper zk, String lockPath, String lockName, Environment env, List<ACL> acls) {
+        this(zk, lockPath, lockName, env, true, acls);
     }
     
     /**
-     * This constructor takes in the {@link SolrZkClient} (non-nullable), 
+     * This constructor takes in the {@link ZooKeeper} (non-nullable), 
      * the lock path (non-nullable and in the format of '/path/to/this/lock/folder`), 
      * the lock name (non-nullable and non-empty string with no whitespaces, leading or trailing slashes, or special characters except '-' or '_'), and 
      * an {@link Environment} object, which can be null.
@@ -205,10 +219,10 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * @param lockName
      * @param env
      * @param useDefaultBasePath
+     * @param acls
      */
-    public ReentrantDistributedZookeeperLock(SolrZkClient zk, String lockPath, String lockName, Environment env, boolean useDefaultBasePath) {
-        Assert.notNull(zk, "SolrKzClient cannot be null.");
-        Assert.isTrue(zk.isConnected(), "Please ensure that the SolrZkClient is connected.");
+    public ReentrantDistributedZookeeperLock(ZooKeeper zk, String lockPath, String lockName, Environment env, boolean useDefaultBasePath, List<ACL> acls) {
+        Assert.notNull(zk, "Zookeeper cannot be null.");
         Assert.notNull(lockName, "The lockName cannot be null.");
         Assert.notNull(lockPath, "The lockPath cannot be null and must be a Unix-style path (e.g. '/solr-index/command-lock').");
         
@@ -232,6 +246,13 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             }
         } else {
             this.lockFolderPath = lockPath.trim();
+        }
+        
+        if (acls == null || acls.isEmpty()) {
+            LOG.info("ACL list passed to the constructor was null or empty.  Using 'ZooDefs.Ids.OPEN_ACL_UNSAFE'.");
+            this.acls = ZooDefs.Ids.OPEN_ACL_UNSAFE;
+        } else {
+            this.acls = acls;
         }
         
         initialize();
@@ -265,7 +286,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                 GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
-                        getSolrZkClient().delete(currentlockPath, -1, true);
+                        getZookeeperClient().delete(currentlockPath, -1);
                         return null;
                     }
                 }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null); 
@@ -370,7 +391,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
 
                 @Override
                 public String execute() throws Exception {
-                    return getSolrZkClient().create(getLockFolderPath() + '/' + getFullLockName(), null, CreateMode.EPHEMERAL_SEQUENTIAL, true);
+                    return getZookeeperClient().create(getLockFolderPath() + '/' + getFullLockName(), null, getAcls(), CreateMode.EPHEMERAL_SEQUENTIAL);
                 }
                 
             }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
@@ -386,7 +407,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                         
                         @Override
                         public List<String> execute() throws Exception {
-                            return getSolrZkClient().getChildren(getLockFolderPath(), new Watcher() {
+                            return getZookeeperClient().getChildren(getLockFolderPath(), new Watcher() {
                                 @Override
                                 public void process(WatchedEvent event) {
                                     synchronized (LOCK_MONITOR) {
@@ -394,7 +415,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                                         LOCK_MONITOR.notifyAll();
                                     }
                                 }
-                            }, true);
+                            });
                         }
                         
                     }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
@@ -436,7 +457,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     
                                     @Override
                                     public Boolean execute() throws Exception {
-                                        getSolrZkClient().delete(localLockPath, 0, true);
+                                        getZookeeperClient().delete(localLockPath, 0);
                                         return false;
                                     }
                                 }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
@@ -457,7 +478,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     
                                         @Override
                                         public Boolean execute() throws Exception {
-                                            getSolrZkClient().delete(localLockPath, 0, true);
+                                            getZookeeperClient().delete(localLockPath, 0);
                                             return false;
                                         }
                                     }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
@@ -497,7 +518,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
 
                 @Override
                 public Void execute() throws Exception {
-                    getSolrZkClient().makePath(getLockFolderPath(), false, true);
+                    ZookeeperUtil.makePath(getLockFolderPath(), null, getZookeeperClient(), CreateMode.PERSISTENT, acls);
                     return null;
                 }
             }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
@@ -507,7 +528,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
             }
-            throw new DistributedLockException("SolrZkClient encountered an error trying to create the persistent path, " 
+            throw new DistributedLockException("Zookeeper encountered an error trying to create the persistent path, " 
                     + getLockFolderPath() + " in Zookeeper.", e);
         }
     }
@@ -559,7 +580,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
         }
     }
 
-    protected SolrZkClient getSolrZkClient() {
+    protected ZooKeeper getZookeeperClient() {
         return zk;
     }
     
@@ -620,5 +641,14 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     
     protected String getLockAccessPropertyName() {
         return lockAccessPropertyName;
+    }
+    
+    /**
+     * Returns a list of Zookeeper ACLs to be used for this lock.
+     * 
+     * @return
+     */
+    protected List<ACL> getAcls() {
+        return acls;
     }
 }

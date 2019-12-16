@@ -116,7 +116,7 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     }
     
     protected BlockingQueue<SolrUpdateCommand> createDistributedQueue(String queueName) {
-        return new ZookeeperDistributedQueue<>(QUEUE_PATH, ((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient(), MAX_QUEUE_SIZE);
+        return new ZookeeperDistributedQueue<>(QUEUE_PATH, ((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient().getSolrZooKeeper(), MAX_QUEUE_SIZE);
     }
     
     protected Lock createLocalLock(String lockName) {
@@ -128,7 +128,7 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     }
     
     protected Lock createDistributedLock(String lockName) {
-        return new ReentrantDistributedZookeeperLock(((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient(), LOCK_PATH, lockName, getEnvironment());
+        return new ReentrantDistributedZookeeperLock(((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient().getSolrZooKeeper(), LOCK_PATH, lockName, getEnvironment(), null);
     }
     
 }
