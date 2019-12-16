@@ -2,14 +2,17 @@ package org.broadleafcommerce.core.util.queue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
 import org.broadleafcommerce.common.util.GenericOperation;
 import org.broadleafcommerce.common.util.GenericOperationUtil;
+import org.broadleafcommerce.core.util.ZookeeperUtil;
 import org.broadleafcommerce.core.util.lock.DistributedLock;
 import org.broadleafcommerce.core.util.lock.DistributedLock.DistributedLockException;
 import org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock;
@@ -65,7 +68,8 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     
     protected final Object QUEUE_MONITOR = new Object();
     private final String queueFolderPath;
-    private final SolrZkClient zk;
+    private final ZooKeeper zk;
+    private final List<ACL> acls;
     private final int requestedMaxQueueCapacity;
     private final DistributedLock queueAccessLock;
     private final DistributedLock configLock;
@@ -80,8 +84,8 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
      * @param queuePath
      * @param zk
      */
-    public ZookeeperDistributedQueue(String queuePath, SolrZkClient zk) {
-        this(queuePath, zk, DEFAULT_MAX_QUEUE_SIZE, true);
+    public ZookeeperDistributedQueue(String queuePath, ZooKeeper zk) {
+        this(queuePath, zk, DEFAULT_MAX_QUEUE_SIZE, true, null);
     }
     
     /**
@@ -94,8 +98,8 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
      * @param zk
      * @param maxQueueSize
      */
-    public ZookeeperDistributedQueue(String queuePath, SolrZkClient zk, int maxQueueSize) {
-        this(queuePath, zk, maxQueueSize, true);
+    public ZookeeperDistributedQueue(String queuePath, ZooKeeper zk, int maxQueueSize) {
+        this(queuePath, zk, maxQueueSize, true, null);
     }
     
     /**
@@ -110,15 +114,20 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
      * @param zk
      * @param maxQueueSize
      * @param useDefaultBasePath
+     * @param acls
      */
-    public ZookeeperDistributedQueue(String queuePath, SolrZkClient zk, int maxQueueSize, boolean useDefaultBasePath) {
+    public ZookeeperDistributedQueue(String queuePath, ZooKeeper zk, int maxQueueSize, boolean useDefaultBasePath, List<ACL> acls) {
         Assert.notNull(zk, "The SolrZkClient cannot be null.");
-        Assert.isTrue(zk.isConnected(), "Please ensure that the SolrZkClient is connected.");
         Assert.notNull(queuePath, "The queuePath cannot be null and must be a Unix-style path (e.g. '/solr-index/command-queue').");
         Assert.hasText(queuePath.trim(), "The queuePath must not be empty and should not contain white spaces.");
         Assert.isTrue(maxQueueSize > 0, "maxQueueSize must be greater than 0.");
         
         this.zk = zk;
+        if (acls == null || acls.isEmpty()) {
+            this.acls = ZooDefs.Ids.OPEN_ACL_UNSAFE;
+        } else {
+            this.acls = acls;
+        }
         
         if (useDefaultBasePath) {
             if (queuePath.trim().startsWith("/")) {
@@ -219,7 +228,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                     @Override
                     public Integer execute() throws Exception {
                         final Stat stat = new Stat();
-                        getSolrZkClient().getData(getQueueEntryFolder(), null, stat, true);
+                        getZookeeperClient().getData(getQueueEntryFolder(), null, stat);
                         return stat.getNumChildren();
                     }
                 });
@@ -311,10 +320,10 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 executeOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
-                        List<String> entryNames = getSolrZkClient().getChildren(getQueueEntryFolder(), null, true);
+                        List<String> entryNames = getZookeeperClient().getChildren(getQueueEntryFolder(), null);
                         if (entryNames != null) {
                             for (String entry : entryNames) {
-                                getSolrZkClient().delete(getQueueEntryFolder() + '/' + entry, 0, true);
+                                getZookeeperClient().delete(getQueueEntryFolder() + '/' + entry, 0);
                             }
                         }
                         return null;
@@ -426,7 +435,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                             executeOperation(new GenericOperation<Void>() {
                                 @Override
                                 public Void execute() throws Exception {
-                                    getSolrZkClient().delete(getQueueEntryFolder() + '/' + entry.getKey(), 0, true);
+                                    getZookeeperClient().delete(getQueueEntryFolder() + '/' + entry.getKey(), 0);
                                     return null;
                                 }
                             });
@@ -512,7 +521,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                         @Override
                                         public Void execute() throws Exception {
                                             byte[] data = serialize(entry);
-                                            getSolrZkClient().makePath(getQueueEntryFolder() + '/' + getQueueEntryName(), data, CreateMode.PERSISTENT_SEQUENTIAL, null, true);
+                                            ZookeeperUtil.makePath(getQueueEntryFolder() + '/' + getQueueEntryName(), data, getZookeeperClient(), CreateMode.PERSISTENT_SEQUENTIAL, getAcls());
                                             return null;
                                         }
                                     });
@@ -589,7 +598,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         List<String> entryNames = executeOperation(new GenericOperation<List<String>>() {
                             @Override
                             public List<String> execute() throws Exception {
-                                return getSolrZkClient().getChildren(getQueueEntryFolder(), new Watcher() {
+                                return getZookeeperClient().getChildren(getQueueEntryFolder(), new Watcher() {
                                     @Override
                                     public void process(WatchedEvent event) {
                                         synchronized (QUEUE_MONITOR) {
@@ -597,7 +606,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                         }
                                     }
                                     
-                                }, true);
+                                });
                             }
                         });
                         
@@ -610,13 +619,13 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                     T entry = executeOperation(new GenericOperation<T>() {
                                         @Override
                                         public T execute() throws Exception {
-                                            byte[] data = getSolrZkClient().getData(getQueueEntryFolder() + '/' + entryName, null, null, true);
+                                            byte[] data = getZookeeperClient().getData(getQueueEntryFolder() + '/' + entryName, null, null);
                                             
                                             @SuppressWarnings("unchecked")
                                             T deserialized = (T)deserialize(data);
                                             
                                             if (remove) {
-                                                getSolrZkClient().delete(getQueueEntryFolder() + '/' + entryName, 0, true);
+                                                getZookeeperClient().delete(getQueueEntryFolder() + '/' + entryName, 0);
                                             }
                                             
                                             return deserialized;
@@ -687,7 +696,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the queue structure...
-                    getSolrZkClient().makePath(getQueueFolderPath(), false, true);
+                    ZookeeperUtil.makePath(getQueueFolderPath(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
                     return null;
                 }
             });
@@ -696,7 +705,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the queue elements...
-                    getSolrZkClient().makePath(getQueueEntryFolder(), false, true);
+                    ZookeeperUtil.makePath(getQueueEntryFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
                     return null;
                 }
             });
@@ -705,7 +714,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the locks...
-                    getSolrZkClient().makePath(getLocksFolder(), false, true);
+                    ZookeeperUtil.makePath(getLocksFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
                     return null;
                 }
             });
@@ -714,7 +723,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the queue state...
-                    getSolrZkClient().makePath(getConfigsFolder(), false, true);
+                    ZookeeperUtil.makePath(getConfigsFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
                     return null;
                 }
             });
@@ -732,12 +741,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 executeOperation(new GenericOperation<Void>() {
                     @Override
                     public Void execute() throws Exception {
-                        if (!getSolrZkClient().exists(getConfigsFolder() + "/maxCapacity", true)) {
+                        if (getZookeeperClient().exists(getConfigsFolder() + "/maxCapacity", false) == null) {
                             final int size = getRequestedMaxQueueSize();
-                            getSolrZkClient().create(getConfigsFolder() + "/maxCapacity", serialize(size), CreateMode.EPHEMERAL, true);
+                            ZookeeperUtil.makePath(getConfigsFolder() + "/maxCapacity", serialize(size), getZookeeperClient(), CreateMode.EPHEMERAL, getAcls());
                             seMaxCapacity(size);
                         } else {
-                            final Integer size = (Integer)deserialize(getSolrZkClient().getData(getConfigsFolder() + "/maxCapacity", new Watcher() {
+                            final Integer size = (Integer)deserialize(getZookeeperClient().getData(getConfigsFolder() + "/maxCapacity", new Watcher() {
                                 @Override
                                 public void process(WatchedEvent event) {
                                     //This happens in a callback on another thread, allowing us to avoid an infinite recursive loop.
@@ -751,7 +760,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                     }
                                 }
                                 
-                            }, null, true));
+                            }, null));
                             seMaxCapacity(size);
                         }
                         return null;
@@ -840,15 +849,11 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     }
     
     protected DistributedLock initializeQueueAccessLock() {
-        return new ReentrantDistributedZookeeperLock(getSolrZkClient(), getLocksFolder() + "/access", "queueAccessLock", false);
+        return new ReentrantDistributedZookeeperLock(getZookeeperClient(), getLocksFolder() + "/access", "queueAccessLock", false, getAcls());
     }
     
     protected DistributedLock initializeConfigLock() {
-        return new ReentrantDistributedZookeeperLock(getSolrZkClient(), getLocksFolder() + "/config", "configLock", false);
-    }
-    
-    protected SolrZkClient getSolrZkClient() {
-        return zk;
+        return new ReentrantDistributedZookeeperLock(getZookeeperClient(), getLocksFolder() + "/config", "configLock", false, getAcls());
     }
     
     protected int getRequestedMaxQueueSize() {
@@ -893,6 +898,14 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     
     protected String getQueueEntryName() {
         return QUEUE_ENTRY_NAME;
+    }
+    
+    protected ZooKeeper getZookeeperClient() {
+        return zk;
+    }
+    
+    protected List<ACL> getAcls() {
+        return acls;
     }
     
     /**
