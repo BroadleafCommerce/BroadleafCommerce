@@ -183,7 +183,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 
             filterOffersByQualifyingAndSubtotalRequirements(order, fgOffers);
             //if there are still candidate offers available, calculate the potential and add it into the potentials list
-            if (fgOffers.size() > 1) {
+            if (fgOffers.size() >= 1) {
                 for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
                     if (potential.getTotalSavings().getAmount().equals(BankersRounding.zeroAmount())) {
                         BroadleafCurrency currency = order.getOrderCurrency();
