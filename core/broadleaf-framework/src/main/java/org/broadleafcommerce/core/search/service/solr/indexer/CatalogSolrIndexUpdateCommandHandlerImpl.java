@@ -99,6 +99,9 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     @Resource(name = "blSolrIndexQueueProvider")
     protected SolrIndexQueueProvider queueProvider;
     
+    @Resource(name = "blCatalogSolrIndexUpdateServiceExtensionManager")
+    protected CatalogSolrIndexUpdateServiceExtensionManager catalogSolrIndexUpdateServiceExtensionManager;
+    
     @Value("${solr.index.product.pageSize:100}")
     protected int pageSize = 100;
     
@@ -159,8 +162,11 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         }
         
         try {
+            catalogSolrIndexUpdateServiceExtensionManager.getProxy().preProcess(holder);
+            
             deleteAllDocuments(getSolrConfiguration().getReindexName(), !solrConfiguration.isSingleCoreMode());
             populateIndex(holder, null, null);
+            catalogSolrIndexUpdateServiceExtensionManager.getProxy().postProcess(holder);
         } catch (Exception e) {
             error = true;
             if (ServiceException.class.isAssignableFrom(e.getClass())) {
@@ -191,10 +197,12 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     public SolrInputDocument buildDocument(Indexable indexable, List<IndexField> fields, List<Locale> locales) {
         try {
             final SolrInputDocument document = new SolrInputDocument();
+            catalogSolrIndexUpdateServiceExtensionManager.getProxy().preDocument(indexable, fields, locales, document);
             attachBasicDocumentFields(indexable, document);
             attachIndexableDocumentFields(document, indexable, fields, locales);
             attachAdditionalDocumentFields(indexable, document);
             extensionManager.getProxy().attachChildDocuments(indexable, document, fields, locales);
+            catalogSolrIndexUpdateServiceExtensionManager.getProxy().postDocument(indexable, fields, locales, document);
             return document;
         } catch (Exception e) {
             LOG.warn("An error occured trying to build a SolrInputDocument for Indexable of type, " + indexable.getClass().getName() + " with an ID of " + indexable.getId(), e);
@@ -596,6 +604,9 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     
     protected List<SolrInputDocument> buildPage(List<Long> productIds, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws Exception {
         ArrayList<SolrInputDocument> docs = new ArrayList<>();
+        
+        catalogSolrIndexUpdateServiceExtensionManager.getProxy().prePage(productIds, locales, fields, holder);
+        
         TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
@@ -630,6 +641,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                 }
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            catalogSolrIndexUpdateServiceExtensionManager.getProxy().postPage(productIds, locales, fields, holder);
             return docs;
         } catch (Exception e) {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
