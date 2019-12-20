@@ -17,8 +17,10 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,21 +38,21 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
-        // if parameter address is set as default, unset all other default addresses
-        List<CustomerAddress> activeCustomerAddresses = readActiveCustomerAddressesByCustomerId(customerAddress.getCustomer().getId());
-        if (activeCustomerAddresses != null && activeCustomerAddresses.isEmpty()) {
+        Customer customer = customerAddress.getCustomer();
+
+        List<CustomerAddress> activeCustomerAddresses = readActiveCustomerAddressesByCustomerId(customer.getId());
+        if (CollectionUtils.isEmpty(activeCustomerAddresses)) {
             customerAddress.getAddress().setDefault(true);
-        } else {
-            if (customerAddress.getAddress().isDefault()) {
-                for (CustomerAddress activeCustomerAddress : activeCustomerAddresses) {
-                    if (!activeCustomerAddress.getId().equals(customerAddress.getId()) && activeCustomerAddress.getAddress().isDefault()) {
-                        activeCustomerAddress.getAddress().setDefault(false);
-                        customerAddressDao.save(activeCustomerAddress);
-                    }
-                }
-            }
         }
-        return customerAddressDao.save(customerAddress);
+
+        customerAddress = customerAddressDao.save(customerAddress);
+
+        // if parameter address is set as default, unset all other default addresses
+        if (customerAddress.getAddress().isDefault()) {
+            customerAddressDao.makeCustomerAddressDefault(customerAddress.getId(), customer.getId());
+        }
+
+        return customerAddress;
     }
 
     @Override

@@ -23,21 +23,23 @@ import java.util.List;
 
 public interface CustomerAddressDao {
 
-    public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId);
+    List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId);
 
-    public CustomerAddress save(CustomerAddress customerAddress);
+    CustomerAddress save(CustomerAddress customerAddress);
 
-    public CustomerAddress readCustomerAddressById(Long customerAddressId);
+    CustomerAddress readCustomerAddressById(Long customerAddressId);
 
-    public void makeCustomerAddressDefault(Long customerAddressId, Long customerId);
+    CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId);
 
-    public void deleteCustomerAddressById(Long customerAddressId);
+    void makeCustomerAddressDefault(Long customerAddressId, Long customerId);
 
-    public CustomerAddress findDefaultCustomerAddress(Long customerId);
+    void deleteCustomerAddressById(Long customerAddressId);
 
-    public CustomerAddress create();
+    CustomerAddress findDefaultCustomerAddress(Long customerId);
 
-    public List<CustomerAddress> readBatchCustomerAddresses(int start, int pageSize);
+    CustomerAddress create();
+
+    List<CustomerAddress> readBatchCustomerAddresses(int start, int pageSize);
 
     Long readNumberOfAddresses();
 

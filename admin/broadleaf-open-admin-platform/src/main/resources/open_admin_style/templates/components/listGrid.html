@@ -203,7 +203,7 @@
                             <a href="#" class="sub-list-grid-reorder"
                                style="visibility: hidden;"
                                th:if="${headerFieldStat.first} and ${listGrid.isSortable()}"
-                               th:unless="${isLookup}">
+                               th:unless="${isLookup} or ${listGrid.getIsReadOnly()}">
                                 <i class="fa fa-arrows-v fa-lg"></i>
                             </a>
 
