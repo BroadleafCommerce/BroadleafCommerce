@@ -119,7 +119,9 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
         if (command != null) {
             try {
                 for (int i = 0; i < 5; i++) {
-                    if (!commandQueue.contains(command)) {
+                    //Assuming there is not already an equal command in the queue, and not a FullReindexCommand in the queue, then add the command 
+                    //for processing in a background thread.
+                    if (!commandQueue.contains(FullReindexCommand.DEFAULT_INSTANCE) && !commandQueue.contains(command)) {
                         if (commandQueue.offer(command, getQueueOfferTime(), TimeUnit.MILLISECONDS)) {
                             return;
                         } else if (!isRunning(getCommandGroup())) {

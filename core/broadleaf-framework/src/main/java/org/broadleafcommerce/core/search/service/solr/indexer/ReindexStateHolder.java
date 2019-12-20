@@ -18,7 +18,9 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ReindexStateHolder {
 
+    private static final Map<String, ReindexStateHolder> STATE_HOLDER_REGISTRY = Collections.synchronizedMap(new HashMap<String, ReindexStateHolder>());
     private final String collectionName;
+    private final boolean incrementalCommits;
     private final Map<String, Object> additionalState = Collections.synchronizedMap(new HashMap<String, Object>());
     private final AtomicLong indexableCount = new AtomicLong();
     private final AtomicLong unindexedItemCount = new AtomicLong();
@@ -27,12 +29,68 @@ public class ReindexStateHolder {
     private final AtomicReference<Exception> throwable = new AtomicReference<>();
     private final BlockingQueue<List<Long>> idQueue = new ArrayBlockingQueue<>(1000);
     
-    public ReindexStateHolder(String collectionName) {
+    private ReindexStateHolder(String collectionName, boolean incrementalCommits) {
         this.collectionName = collectionName;
+        this.incrementalCommits = incrementalCommits;
+        synchronized (STATE_HOLDER_REGISTRY) {
+            if (STATE_HOLDER_REGISTRY.containsKey(collectionName)) {
+                throw new IllegalStateException("There was already a ReindexStateHolder registered for collection name: " 
+                        + collectionName + ". Ensure that you call the destroy method after you are done using the object.");
+            }
+            STATE_HOLDER_REGISTRY.put(collectionName, this);
+        }
+    }
+    
+    /**
+     * Returns a shared instance of this class or null.
+     * 
+     * This method will typically be used by background worker threads that will use an instance that has already been created.  This may return null if 
+     * an instance has not yet been created by the control thread or the control thread has already deregistered the instance by calling deregister.
+     * 
+     * @param collectionName
+     * @return
+     */
+    public static ReindexStateHolder getInstance(String collectionName) {
+        return getInstance(collectionName, false, false);
+    }
+    
+    /**
+     * Creates or returns a shared instance of this class associated with the collectionName.  If createIfAbsent is set to false, this will return null if an 
+     * instance has not been created.  The argument for incrementalCommits is a hint indicating that commits may be issued during a reindex process. This 
+     * argument is ignored if an instance has already been created.
+     * 
+     * This method will typically be used by a control thread that will create a new instance for a process that may be multi-threaded.
+     * 
+     * @param collectionName
+     * @param incrementalCommits
+     * @param createIfAbsent
+     * @return
+     */
+    public static ReindexStateHolder getInstance(String collectionName, boolean incrementalCommits, boolean createIfAbsent) {
+        synchronized (STATE_HOLDER_REGISTRY) {
+            ReindexStateHolder holder = STATE_HOLDER_REGISTRY.get(collectionName);
+            if (holder == null) {
+                if (createIfAbsent) {
+                    //This automatically registers this holder.
+                    holder = new ReindexStateHolder(collectionName, incrementalCommits);
+                }
+            }
+            return holder;
+        }
+    }
+    
+    public static void deregister(String collectionName) {
+        synchronized (STATE_HOLDER_REGISTRY) {
+            STATE_HOLDER_REGISTRY.remove(collectionName);
+        }
     }
     
     public String getCollectionName() {
         return collectionName;
+    }
+    
+    public boolean isIncrementalCommits() {
+        return incrementalCommits;
     }
     
     public synchronized boolean isFailed() {
