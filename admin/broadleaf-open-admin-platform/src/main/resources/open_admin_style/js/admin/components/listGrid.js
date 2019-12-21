@@ -392,8 +392,10 @@
             // update duration fields
             $("[data-fieldname='durationLabel']").find('.column-text').each(function () {
                 var parsed = parseInt($(this).data("fieldvalue"));
-                var day = moment.duration(parsed).format('h[h] m[m] s[s]');
-                $(this).html(day);
+                if (!isNaN(parsed)) {
+                    var day = moment.duration(parsed).format('h[h] m[m] s[s]');
+                    $(this).html(day);
+                }
             });
 
             // Run any additionally configured initialization handlers
