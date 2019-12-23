@@ -115,9 +115,11 @@ public class ReindexStateHolder {
     }
     
     public synchronized void failFast(Exception t) {
-        failed.set(true);
-        if (t != null && throwable.get() == null) {
-            throwable.set(t);
+        if (!failed.get()) {
+            failed.set(true);
+            if (t != null && throwable.get() == null) {
+                throwable.set(t);
+            }
         }
     }
     
