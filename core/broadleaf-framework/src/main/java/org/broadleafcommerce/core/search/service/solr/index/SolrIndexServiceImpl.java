@@ -118,6 +118,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Value("${solr.index.waitFlush}")
     protected boolean waitFlush;
+    
+    @Value(value = "${solr.catalog.useLegacySolrIndexer:true}")
+    protected boolean useLegacySolrIndexer = true;
 
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
@@ -851,5 +854,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.debug("Delete query: " + deleteQuery);
         }
     }
-
+    
+    @Override
+    public boolean useLegacyIndexer() {
+        return useLegacySolrIndexer;
+    }
 }

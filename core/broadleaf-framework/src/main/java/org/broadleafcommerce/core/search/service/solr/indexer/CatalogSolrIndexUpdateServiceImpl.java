@@ -17,10 +17,40 @@
  */
 package org.broadleafcommerce.core.search.service.solr.indexer;
 
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.site.domain.Catalog;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+/**
+ * Command service for issuing (queuing) Catalog (re)index commands.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
+@Service("blCatalogSolrIndexUpdateService")
 public class CatalogSolrIndexUpdateServiceImpl extends AbstractSolrIndexUpdateServiceImpl implements CatalogSolrIndexUpdateService {
 
-    public CatalogSolrIndexUpdateServiceImpl(SolrIndexQueueProvider queueProvider, SolrIndexUpdateCommandHandler commandHandler) {
+    @Autowired
+    public CatalogSolrIndexUpdateServiceImpl(
+            @Qualifier("blSolrIndexQueueProvider") SolrIndexQueueProvider queueProvider, 
+            @Qualifier("blCatalogSolrUpdateCommandHandler") SolrIndexUpdateCommandHandler commandHandler) {
         super("catalog", queueProvider, commandHandler);
     }
 
+    @Override
+    public void rebuildIndex(Catalog catalog) throws ServiceException {
+        CatalogReindexCommand cmd = new CatalogReindexCommand(catalog.getId());
+        scheduleCommand(cmd);
+    }
+
+    @Override
+    public void rebuildIndex(Site site) throws ServiceException {
+        SiteReindexCommand cmd = new SiteReindexCommand(site.getId());
+        scheduleCommand(cmd);
+    }
+
+    
 }

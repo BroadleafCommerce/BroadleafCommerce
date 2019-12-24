@@ -17,6 +17,13 @@
  */
 package org.broadleafcommerce.core.search.service.solr.indexer;
 
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.site.domain.Catalog;
+import org.broadleafcommerce.common.site.domain.Site;
+
 public interface CatalogSolrIndexUpdateService extends SolrIndexUpdateService {
     
+    public void rebuildIndex(Catalog catalog) throws ServiceException;
+    
+    public void rebuildIndex(Site site) throws ServiceException;
 }
