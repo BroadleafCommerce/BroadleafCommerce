@@ -39,7 +39,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Default component to obtain a command {@link Queue} and a {@link Lock} to access the command queue.
  * The queue should only be accessed by a single thread at a time, and so accessors must first 
- * obtain a lock.
+ * obtain a lock. This is to prevent two threads, even across nodes, from issuing commands to Solr that might interfere with 
+ * one another (e.g. re-aliasing or committing).
  * 
  * This default implementation evaluates the {@link SolrClient} to determine whether to use a local {@link Queue} 
  * and {@link Lock}, or whether to use a distributed {@link Queue} and {@link Lock}.  If the SolrClient is an 
@@ -66,11 +67,16 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     private final boolean distributed;
     private final Environment env;
     
+    public DefaultSolrIndexQueueProvider() {
+        this(null, null);
+    }
+    
+    public DefaultSolrIndexQueueProvider(Environment env) {
+        this(null, env);
+    }
+    
     public DefaultSolrIndexQueueProvider(SolrConfiguration solrConfiguration, Environment env) {
-        Assert.notNull(solrConfiguration, "SolrConfiguration cannot be null");
-        Assert.notNull(solrConfiguration.getReindexServer(), "The Reindex SolrClient cannot be null.");
-        
-        if (solrConfiguration.isSolrCloudMode()) {
+        if (solrConfiguration != null && solrConfiguration.isSolrCloudMode()) {
             this.distributed = true;
         } else {
             this.distributed = false;
@@ -133,7 +139,7 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     }
     
     protected BlockingQueue<SolrUpdateCommand> createDistributedQueue(String queueName) {
-        return new ZookeeperDistributedQueue<>(QUEUE_PATH, ((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient().getSolrZooKeeper(), MAX_QUEUE_SIZE);
+        return new ZookeeperDistributedQueue<>(QUEUE_PATH + '/' + queueName, ((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient().getSolrZooKeeper(), MAX_QUEUE_SIZE);
     }
     
     protected Lock createLocalLock(String lockName) {

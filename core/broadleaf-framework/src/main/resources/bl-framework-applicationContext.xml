@@ -234,5 +234,14 @@
     </bean>
 
 	<bean id="blEntityIdentifierUtil" class="org.broadleafcommerce.core.util.EntityIdentifierUtil" />
-
+	
+	<bean id="blSolrIndexQueueProvider" class="org.broadleafcommerce.core.search.service.solr.indexer.DefaultSolrIndexQueueProvider">
+	   <constructor-arg index="0">
+	       <!-- We don't have all the info we need here to provide the SolrConfiguration, so by default, we leave it null and allow 
+	            someone to override this bean later.  -->
+	       <null/> 
+	   </constructor-arg>
+	   <constructor-arg index="1" ref="environment"/>
+	</bean>
+	
 </beans>
