@@ -27,7 +27,6 @@ public class Expression {
     protected String field;
     protected BLCOperator operator;
     protected String value;
-    protected String entityKey;
 
     public String getField() {
         return field;
@@ -51,13 +50,5 @@ public class Expression {
 
     public void setValue(String value) {
         this.value = value.trim();
-    }
-
-    public String getEntityKey() {
-        return entityKey;
-    }
-
-    public void setEntityKey(String entityKey) {
-        this.entityKey = entityKey;
     }
 }

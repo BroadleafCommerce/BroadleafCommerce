@@ -184,7 +184,6 @@ public class PhraseTranslator {
         BLCOperator operatorId = getOperator(field, operator, value, isNegation, isFieldComparison, isIgnoreCase);
         expression.setOperator(operatorId);
         expression.setValue(value);
-        expression.setEntityKey(entityKey);
 
         return expression;
     }

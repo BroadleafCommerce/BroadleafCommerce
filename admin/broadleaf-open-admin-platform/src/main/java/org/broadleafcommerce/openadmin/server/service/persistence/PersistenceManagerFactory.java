@@ -41,14 +41,6 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
         PersistenceManagerFactory.applicationContext = applicationContext;
     }
 
-    /**
-     * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager and EJB3ConfigurationDao.
-     *  It also uses a {@link TargetModeType} of {@link TargetModeType#SANDBOX}
-     */
-    public static PersistenceManager getDefaultPersistenceManager() {
-        return getPersistenceManager(TargetModeType.SANDBOX);
-    }
-
     public static PersistenceManager getPersistenceManager() {
         if (PersistenceManagerContext.getPersistenceManagerContext() != null) {
             return PersistenceManagerContext.getPersistenceManagerContext().getPersistenceManager();

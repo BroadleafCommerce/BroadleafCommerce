@@ -213,12 +213,9 @@ public class MultiTenantCopyContext {
     }
 
     protected void validateOriginal(Object instance) throws CloneNotSupportedException {
-        // TODO I don't think this should throw an exception for archived. This will cause the
-        // ProductOptionCopier, for example, to fail when it's related to a product that has been
-        // archived. It would be hard to guarantee cleanup on all these references.
-        // if (instance instanceof Status && 'Y' == ((Status) instance).getArchived()) {
-        // throw new CloneNotSupportedException("Attempting to clone an archived instance");
-        // }
+        if (instance instanceof Status && 'Y' == ((Status) instance).getArchived()) {
+            throw new CloneNotSupportedException("Attempting to clone an archived instance");
+        }
     }
 
     protected void tearDownContext(BroadleafRequestContext context) {
@@ -296,9 +293,6 @@ public class MultiTenantCopyContext {
             }
         } catch (IllegalAccessException e) {
             throw ExceptionHelper.refineException(e);
-        }
-        if ((instance instanceof Status) && 'Y' == ((Status) instance).getArchived()) {
-            ((Status) response).setArchived('Y');
         }
         return response;
     }

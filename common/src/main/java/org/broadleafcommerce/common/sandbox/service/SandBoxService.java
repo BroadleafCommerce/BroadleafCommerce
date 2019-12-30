@@ -66,8 +66,6 @@ public interface SandBoxService {
     public SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType) throws Exception;
 
     public SandBox createUserSandBox(Long authorId, SandBox approvalSandBox);
-
-    Long createUserSandBox(Long authorId, Long approvalSandbox);
     
     public SandBox retrieveSandBox(String sandBoxName, SandBoxType sandBoxType);
 

@@ -39,12 +39,6 @@ public class TransactionUtils {
     public static final String DEFAULT_TRANSACTION_MANAGER = "blTransactionManager";
 
     /**
-     * Intended for use in all @Transactional definitions that operate against the <pre>blEventPU</pre> persistence unit. For instance:
-     * <pre>@Transactional(TransactionUtils.EVENT_TRANSACTION_MANAGER)</pre>
-     */
-    public static final String EVENT_TRANSACTION_MANAGER = "blTransactionManagerEventInfo";
-
-    /**
      * Intended for use in all @Transactional definitions that operate against the <pre>blSecurePU</pre> persistence unit. For instance:
      * <pre>@Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)</pre>
      */
