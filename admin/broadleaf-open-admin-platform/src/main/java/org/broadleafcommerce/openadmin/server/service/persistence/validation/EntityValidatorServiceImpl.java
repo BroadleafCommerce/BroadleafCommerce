@@ -68,32 +68,32 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 	@Resource(name = "blRowLevelSecurityService")
 	protected RowLevelSecurityService securityService;
 
-	private Map<String, List<BroadleafEntityValidator<?>>> broadLeafValidatorMap;
+	private Map<String, List<BroadleafEntityValidator<?>>> broadleafValidatorMap;
 
 	@PostConstruct
 	public void populateBroadleafValidatorMap() {
 		String[] beanNames = applicationContext.getBeanNamesForType(BroadleafEntityValidator.class);
-		broadLeafValidatorMap = new HashMap<>(beanNames.length);
+		broadleafValidatorMap = new HashMap<>(beanNames.length);
 
 		for (String beanName : beanNames) {
-			BroadleafEntityValidator<?> formFoxValidator = applicationContext.getBean(beanName,
+			BroadleafEntityValidator<?> broadleafValidator = applicationContext.getBean(beanName,
 					BroadleafEntityValidator.class);
-			Class<?> entityType = GenericTypeResolver.resolveTypeArgument(formFoxValidator.getClass(),
+			Class<?> entityType = GenericTypeResolver.resolveTypeArgument(broadleafValidator.getClass(),
 					BroadleafEntityValidator.class);
 			if (entityType != null) {
 				String entityClassName = entityType.getName();
 				LOG.info(String.format("Registering validator %s for entity type %s",
-						formFoxValidator.getClass().getName(), entityClassName));
+						broadleafValidator.getClass().getName(), entityClassName));
 
-				List<BroadleafEntityValidator<?>> registeredValidatorsForType = broadLeafValidatorMap
+				List<BroadleafEntityValidator<?>> registeredValidatorsForType = broadleafValidatorMap
 						.get(entityClassName);
 				if (registeredValidatorsForType == null) {
 					registeredValidatorsForType = new ArrayList<>();
-					broadLeafValidatorMap.put(entityClassName, registeredValidatorsForType);
+					broadleafValidatorMap.put(entityClassName, registeredValidatorsForType);
 				}
-				registeredValidatorsForType.add(formFoxValidator);
+				registeredValidatorsForType.add(broadleafValidator);
 			} else {
-				LOG.warn("Could not determine entity type for " + formFoxValidator.getClass().getName());
+				LOG.warn("Could not determine entity type for " + broadleafValidator.getClass().getName());
 			}
 		}
 	}
@@ -125,8 +125,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 				// This is for an update, as the submittedEntity instance will likely only contain the dirty properties
 				entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
 				// acquire any missing properties not harvested from the instance and add to the entity. A use case for
-				// this
-				// would be the confirmation field for a password validation
+				// this would be the confirmation field for a password validation
 				for (Map.Entry<String, FieldMetadata> entry : propertiesMetadata.entrySet()) {
 					if (entity.findProperty(entry.getKey()) == null) {
 						Property myProperty = submittedEntity.findProperty(entry.getKey());
@@ -165,8 +164,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 				}
 
 				// for radio buttons, it's possible that the entity property was never populated in the first place from
-				// the POST
-				// and so it will be null
+				// the POST and so it will be null
 				String propertyName = metadataEntry.getKey();
 				String propertyValue = (property == null) ? null : property.getValue();
 
@@ -226,7 +224,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 			}
 		}
 		if (instance != null) {
-			List<BroadleafEntityValidator<?>> formFoxValidators = broadLeafValidatorMap
+			List<BroadleafEntityValidator<?>> formFoxValidators = broadleafValidatorMap
 					.get(instance.getClass().getName());
 			if (formFoxValidators != null) {
 				for (BroadleafEntityValidator<?> formFoxValidator : formFoxValidators) {

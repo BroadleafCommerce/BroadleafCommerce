@@ -18,7 +18,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
  * 
  * In the implementation of validate {@link Entity#addValidationError(String, String)} and
  * {@link Entity#addValidationError(String, String)} can be used to create an error that is displayed to the user before
- * an add or update occurs. {@link Entity#isValidationFailure()} can be used to see if there core validation found any
+ * an add or update occurs. {@link Entity#isValidationFailure()} can be used to see if the core validation found any
  * issues like required fields being blank to decide if any additional validation should be executed.
  * 
  * @param <T> Persistence Entity implementation to validate
