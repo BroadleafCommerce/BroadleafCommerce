@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
+import org.apache.zookeeper.ZooKeeper;
 import org.broadleafcommerce.core.util.lock.ReentrantDistributedZookeeperLock;
 import org.broadleafcommerce.core.util.queue.ZookeeperDistributedQueue;
 import org.springframework.core.env.Environment;
@@ -56,41 +56,49 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     
     private static final Log LOG = LogFactory.getLog(DefaultSolrIndexQueueProvider.class);
-    private static final Map<String, BlockingQueue<SolrUpdateCommand>> QUEUE_REGISTRY = Collections.synchronizedMap(new HashMap<String, BlockingQueue<SolrUpdateCommand>>());
-    private static final Map<String, Lock> LOCK_REGISTRY = Collections.synchronizedMap(new HashMap<String, Lock>());
+    protected static final Map<String, BlockingQueue<? super SolrUpdateCommand>> QUEUE_REGISTRY = Collections.synchronizedMap(new HashMap<String, BlockingQueue<? super SolrUpdateCommand>>());
+    protected static final Map<String, Lock> LOCK_REGISTRY = Collections.synchronizedMap(new HashMap<String, Lock>());
     
-    protected static final int MAX_QUEUE_SIZE = 500;
-    protected static final String LOCK_PATH = "/solr-index/command-lock";
-    protected static final String QUEUE_PATH = "/solr-index/command-queue";
+    public static final int MAX_QUEUE_SIZE = 500;
+    public static final String LOCK_PATH = "/solr-index/command-lock";
+    public static final String QUEUE_PATH = "/solr-index/command-queue";
     
-    private final SolrConfiguration solrConfiguration;
+    private final ZooKeeper zk;
     private final boolean distributed;
     private final Environment env;
     
     public DefaultSolrIndexQueueProvider() {
-        this(null, null);
+        this.distributed = false;
+        this.zk = null;
+        this.env = null;
     }
     
-    public DefaultSolrIndexQueueProvider(Environment env) {
-        this(null, env);
-    }
-    
-    public DefaultSolrIndexQueueProvider(SolrConfiguration solrConfiguration, Environment env) {
-        if (solrConfiguration != null && solrConfiguration.isSolrCloudMode()) {
+    public DefaultSolrIndexQueueProvider(SolrClient solrClient, Environment env) {
+        if (solrClient != null && CloudSolrClient.class.isAssignableFrom(solrClient.getClass())) {
             this.distributed = true;
+            this.zk = ((CloudSolrClient)solrClient).getZkStateReader().getZkClient().getSolrZooKeeper();
         } else {
             this.distributed = false;
+            this.zk = null;
         }
         
-        this.solrConfiguration = solrConfiguration;
         this.env = env;
     }
     
+    public DefaultSolrIndexQueueProvider(ZooKeeper zookeeper, Environment env) {
+        this.zk = zookeeper;
+        this.env = env;
+        if (zk == null) {
+            this.distributed = false;
+        } else {
+            this.distributed = true;
+        }
+    }
 
     @Override
-    public synchronized BlockingQueue<SolrUpdateCommand> createOrRetrieveCommandQueue(String queueName) {
+    public synchronized BlockingQueue<? super SolrUpdateCommand> createOrRetrieveCommandQueue(String queueName) {
         Assert.hasText(queueName, "Queue name must not be null.");
-        BlockingQueue<SolrUpdateCommand> queue = QUEUE_REGISTRY.get(queueName);
+        BlockingQueue<? super SolrUpdateCommand> queue = QUEUE_REGISTRY.get(queueName);
         if (queue == null) {
             if (isDistributed()) {
                 queue = createDistributedQueue(queueName);
@@ -117,20 +125,34 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
         return lock;
     }
 
+    /**
+     * Indicates if this is a distributed environment (e.g. the Lock and Queue are distributed, e.g. using Zookeeper.
+     */
     @Override
     public boolean isDistributed() {
         return distributed;
     }
     
-    protected SolrConfiguration getSolrConfiguration() {
-        return solrConfiguration;
-    }
-    
+    /**
+     * Returns the {@link Environment} object, which is used in a distributed situation to determine if the current node or application 
+     * can obtain a lock.  This may return null.
+     * 
+     * @return
+     */
     protected Environment getEnvironment() {
         return env;
     }
     
-    protected BlockingQueue<SolrUpdateCommand> createLocalQueue(String queueName) {
+    /**
+     * Returns the {@link ZooKeeper} instance that distributes the Lock and the Queue.  This may return null in non-distributed situation.
+     * 
+     * @return
+     */
+    protected ZooKeeper getZookeeper() {
+        return zk;
+    }
+    
+    protected BlockingQueue<? super SolrUpdateCommand> createLocalQueue(String queueName) {
         LOG.warn("Creating Local Queue for Solr update commands with the name " 
                 + queueName 
                 + ". This will be thread safe within a single JVM but is unsafe for multiple JVMs.  "
@@ -138,8 +160,8 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
         return new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     }
     
-    protected BlockingQueue<SolrUpdateCommand> createDistributedQueue(String queueName) {
-        return new ZookeeperDistributedQueue<>(QUEUE_PATH + '/' + queueName, ((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient().getSolrZooKeeper(), MAX_QUEUE_SIZE);
+    protected BlockingQueue<? super SolrUpdateCommand> createDistributedQueue(String queueName) {
+        return new ZookeeperDistributedQueue<>(QUEUE_PATH + '/' + queueName, getZookeeper(), MAX_QUEUE_SIZE);
     }
     
     protected Lock createLocalLock(String lockName) {
@@ -151,7 +173,7 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     }
     
     protected Lock createDistributedLock(String lockName) {
-        return new ReentrantDistributedZookeeperLock(((CloudSolrClient)getSolrConfiguration().getReindexServer()).getZkStateReader().getZkClient().getSolrZooKeeper(), LOCK_PATH, lockName, getEnvironment(), null);
+        return new ReentrantDistributedZookeeperLock(getZookeeper(), LOCK_PATH, lockName, getEnvironment(), null);
     }
     
 }

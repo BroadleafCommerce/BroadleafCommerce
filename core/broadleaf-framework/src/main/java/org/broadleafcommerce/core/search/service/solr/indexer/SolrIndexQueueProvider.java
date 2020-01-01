@@ -37,7 +37,7 @@ public interface SolrIndexQueueProvider {
     public static final String COMMAND_LOCK_NAME = "_commandLock";
     public static final String COMMAND_QUEUE_NAME = "_commandQueue";
 
-    public BlockingQueue<SolrUpdateCommand> createOrRetrieveCommandQueue(String queueName);
+    public BlockingQueue<? super SolrUpdateCommand> createOrRetrieveCommandQueue(String queueName);
     
     public Lock createOrRetrieveCommandLock(String lockName);
     

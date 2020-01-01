@@ -34,7 +34,6 @@ import org.broadleafcommerce.common.util.EntityManagerAwareRunnable;
 import org.broadleafcommerce.common.util.GenericOperation;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -604,31 +603,36 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                                 
                                 while (!holder.isFailed()) {
                                     final List<Long> ids = holder.getIdQueue().poll(1000L, TimeUnit.MILLISECONDS);
-                                    boolean finished;
+                                    if (ids == null) {
+                                        if (holder.isQueueLoadCompleted()) {
+                                            return;
+                                        } else {
+                                            continue;
+                                        }
+                                    }
                                     
                                     if (catalog != null) {
-                                        finished = IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<Boolean, Exception>() {
+                                        IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<Void, Exception>() {
                                             @Override
-                                            public Boolean execute() throws Exception {
+                                            public Void execute() throws Exception {
                                                 List<Product> products = readProductsByIds(ids);
-                                                return getReindexBatchOperation(ids, products, locales, fields, holder, catalog, site).execute();
+                                                buildIncrementalIndex(ids, products, locales, fields, holder, catalog, site);
+                                                return null;
                                             }
                                         }, site, catalog);
                                     } else {
-                                        finished = IdentityExecutionUtils.runOperationAndIgnoreIdentifier(new IdentityOperation<Boolean, Exception>() {
+                                        IdentityExecutionUtils.runOperationAndIgnoreIdentifier(new IdentityOperation<Void, Exception>() {
                                             @Override
-                                            public Boolean execute() throws Exception {
+                                            public Void execute() throws Exception {
                                                 List<Product> products = readProductsByIds(ids);
-                                                return getReindexBatchOperation(ids, products, locales, fields, holder, catalog, site).execute();
+                                                buildIncrementalIndex(ids, products, locales, fields, holder, catalog, site);
+                                                return null;
                                             }
                                         });
                                     }
                                     
                                     getEntityManager().clear();
                                     
-                                    if (finished) {
-                                        return;
-                                    }
                                 }
                             } catch (Exception e) {
                                 holder.failFast(e);
@@ -652,17 +656,10 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         };
     }
     
-    protected Tuple<List<SolrInputDocument>, List<Product>> buildPage(List<Long> productIds, List<Product> products, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws Exception {
+    protected List<SolrInputDocument> buildPage(List<Long> productIds, List<Product> products, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws Exception {
         final List<SolrInputDocument> docs = new ArrayList<>();
         
         beforePage(productIds, products, locales, fields, holder);
-        
-        TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
-                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
-        if (SolrIndexCachedOperation.getCache() == null) {
-            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
-                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
-        }
         try {
             if (products != null && !products.isEmpty()) {
                 sandBoxHelper.ignoreCloneCache(true);
@@ -692,14 +689,9 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                     }
                 }
             }
-            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            return docs;
+        } finally {
             afterPage(productIds, products, locales, fields, holder);
-            
-            Tuple<List<SolrInputDocument>, List<Product>> out = new Tuple<>(docs, products);
-            return out;
-        } catch (Exception e) {
-            TransactionUtils.finalizeTransaction(status, transactionManager, true);
-            throw e;
         }
     }
     
@@ -719,38 +711,25 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         return indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
     }
     
-    protected GenericOperation<Boolean> getReindexBatchOperation(
-            final List<Long> ids, 
-            final List<Product> products, 
+    protected void buildIncrementalIndex(
+            final List<Long> productIds,
+            final List<Product> products,
             final List<Locale> locales, 
             final List<IndexField> fields, 
             final ReindexStateHolder holder, 
             final Catalog catalog, 
-            final Site site) {
-        return new GenericOperation<Boolean>() {
-            @Override
-            public Boolean execute() throws Exception {
-                if (products != null && ! products.isEmpty()) {
-                    Tuple<List<SolrInputDocument>, List<Product>> results = buildPage(ids, products, locales, fields, holder);
-                    
-                    if (results.getFirst() != null && ! results.getFirst().isEmpty()) {
-                        addDocuments(holder.getCollectionName(), results.getFirst());
-                        
-                        if (holder.isIncrementalCommits()) {
-                            commit(holder.getCollectionName(), false);
-                        }
-                    }
-                    //Go get some more.
-                    return false;
-                } else if (holder.isQueueLoadCompleted()) {
-                    //We're done here.
-                    return true;
-                }
+            final Site site) throws Exception {
+        
+        if (products != null && ! products.isEmpty()) {
+            List<SolrInputDocument> docs = buildPage(productIds, products, locales, fields, holder);
+            if (docs != null && ! docs.isEmpty()) {
+                addDocuments(holder.getCollectionName(), docs);
                 
-                //Keep trying
-                return false;
+                if (holder.isIncrementalCommits()) {
+                    commit(holder.getCollectionName(), false);
+                }
             }
-        };
+        }
     }
     
     protected void populateProductIdQueue(ReindexStateHolder holder) throws Exception {
