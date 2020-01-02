@@ -115,11 +115,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 			}
 		}
 		Entity entity;
-		boolean isUpdateRequest;
 		if (idValue == null) {
 			// This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
 			entity = submittedEntity;
-			isUpdateRequest = false;
 		} else {
 			if (validateUnsubmittedProperties) {
 				// This is for an update, as the submittedEntity instance will likely only contain the dirty properties
@@ -142,7 +140,6 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 			} else {
 				entity = submittedEntity;
 			}
-			isUpdateRequest = true;
 		}
 
 		List<String> types = getTypeHierarchy(entity);
@@ -224,12 +221,12 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 			}
 		}
 		if (instance != null) {
-			List<BroadleafEntityValidator<?>> formFoxValidators = broadleafValidatorMap
+			List<BroadleafEntityValidator<?>> broadleafValidators = broadleafValidatorMap
 					.get(instance.getClass().getName());
-			if (formFoxValidators != null) {
-				for (BroadleafEntityValidator<?> formFoxValidator : formFoxValidators) {
-					LOG.debug("Calling validator " + formFoxValidator.getClass().getName());
-					formFoxValidator.validate(submittedEntity, instance, propertiesMetadata, recordHelper,
+			if (broadleafValidators != null) {
+				for (BroadleafEntityValidator<?> broadleafValidator : broadleafValidators) {
+					LOG.debug("Calling validator " + broadleafValidator.getClass().getName());
+					broadleafValidator.validate(submittedEntity, instance, propertiesMetadata, recordHelper,
 							validateUnsubmittedProperties);
 				}
 			}
