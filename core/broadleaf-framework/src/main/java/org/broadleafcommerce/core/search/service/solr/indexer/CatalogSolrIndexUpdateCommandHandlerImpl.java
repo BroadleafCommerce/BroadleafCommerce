@@ -88,7 +88,7 @@ import javax.annotation.Resource;
  *
  */
 @Service("blCatalogSolrUpdateCommandHandler")
-public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexUpdateCommandHandlerImpl implements DisposableBean {
+public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexUpdateCommandHandlerImpl implements CatalogSolrIndexCommandHandler, DisposableBean {
     
     private static final Log LOG = LogFactory.getLog(CatalogSolrIndexUpdateCommandHandlerImpl.class);
     
@@ -526,7 +526,13 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                 }
             }
         } catch (Exception e) {
-            throw new ServiceException("An error occured committing and swapping the Solr index, " + collection, e);
+            if (error) {
+                throw new ServiceException("An error rolling back the Solr index, " + collection, e);
+            } else if (swap){
+                throw new ServiceException("An error occured committing and swapping the Solr index, " + collection, e);
+            } else {
+                throw new ServiceException("An error occured committing the Solr index, " + collection, e);
+            }
         }
     }
     
