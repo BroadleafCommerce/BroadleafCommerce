@@ -91,7 +91,7 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
             
             try {
                 if (changeMade) {
-                    commit(collectionName, true);
+                    commit(collectionName, true, true, false);
                 }
             } catch (Exception e) {
                 throw new ServiceException("An error occured during commit while incrementally updating the Solr collection '" + collectionName + "' with: \n" + command.toString(), e);
@@ -130,14 +130,17 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * It is recommended that you off Solr's autoCommit and autoSoftCommit features.
      * 
      * @param collectionName
+     * @param waitFlush
+     * @param waitSearcher
+     * @param softCommit
      * @throws Exception
      * 
      */
-    protected synchronized void commit(final String collectionName, final boolean waitSearcher) throws Exception {
+    protected synchronized void commit(final String collectionName, final boolean waitFlush, final boolean waitSearcher, final boolean softCommit) throws Exception {
         GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
             @Override
             public Void execute() throws Exception {
-                getSolrConfiguration().getReindexServer().commit(collectionName, true, waitSearcher, false);
+                getSolrConfiguration().getReindexServer().commit(collectionName, waitFlush, waitSearcher, softCommit);
                 return null;
             }
         });

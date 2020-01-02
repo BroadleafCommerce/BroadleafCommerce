@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.springframework.beans.factory.DisposableBean;
@@ -182,7 +183,6 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                         stopRunning();
                         return;
                     }
-                    
                     lock.lockInterruptibly();
                     try {
                         SolrUpdateCommand command;
@@ -196,9 +196,13 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                             
                             if (command != null) {
                                 try {
+                                    //We're running in a background thread, so let's just set up a new BroadleafRequestContext.
+                                    BroadleafRequestContext.setBroadleafRequestContext(new BroadleafRequestContext());
                                     commandHandler.executeCommand(command);
                                 } catch (Exception e) {
                                     LOG.error("Unexpected error occured attempting to update a Solr index.", e);
+                                } finally {
+                                    BroadleafRequestContext.setBroadleafRequestContext(null);
                                 }
                             }
                         }

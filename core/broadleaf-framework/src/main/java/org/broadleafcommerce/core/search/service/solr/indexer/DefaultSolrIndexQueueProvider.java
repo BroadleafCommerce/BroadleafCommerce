@@ -156,7 +156,8 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
         LOG.warn("Creating Local Queue for Solr update commands with the name " 
                 + queueName 
                 + ". This will be thread safe within a single JVM but is unsafe for multiple JVMs.  "
-                + "Use SolrCloud and CloudSolrClient to automatically enable a distributed Queue.  Zookeeper will be used as the shared Queue store.");
+                + "Use SolrCloud and CloudSolrClient to automatically enable a distributed Queue.  "
+                + "With CloudSolrClient, Zookeeper will be used as the shared Queue store.");
         return new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     }
     
@@ -168,7 +169,8 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
         LOG.warn("Creating Local Lock for lock name " 
                 + lockName 
                 + ". This will be thread safe within a single JVM but is unsafe for multiple JVMs.  "
-                + "Use SolrCloud and CloudSolrClient to automatically enable a distributed lock.  Zookeeper will be used as the shared lock store.");
+                + "Use SolrCloud and CloudSolrClient to automatically enable a distributed lock.  "
+                + "With CloudSolrClient, Zookeeper will be used as the shared Lock store.");
         return new ReentrantLock();
     }
     
