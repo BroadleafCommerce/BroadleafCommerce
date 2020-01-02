@@ -41,10 +41,12 @@ public class ReindexStateHolder {
     private final Map<String, Object> additionalState = Collections.synchronizedMap(new HashMap<String, Object>());
     private final AtomicLong indexableCount = new AtomicLong();
     private final AtomicLong unindexedItemCount = new AtomicLong();
+    private final AtomicLong lastComitted = new AtomicLong(-1L);
     private final AtomicBoolean failed = new AtomicBoolean(false);
     private final AtomicBoolean queueLoadCompleted = new AtomicBoolean(false);
     private final AtomicReference<Exception> throwable = new AtomicReference<>();
-    private final BlockingQueue<List<Long>> idQueue = new ArrayBlockingQueue<>(1000);
+    private final BlockingQueue<List<Long>> generalIdQueue = new ArrayBlockingQueue<>(1000);
+    private final Map<Long, BlockingQueue<List<Long>>> contextualQueues = Collections.synchronizedMap(new HashMap<Long, BlockingQueue<List<Long>>>());
     
     private ReindexStateHolder(String collectionName, boolean incrementalCommits) {
         this.collectionName = collectionName;
@@ -150,8 +152,26 @@ public class ReindexStateHolder {
         return additionalState;
     }
     
-    public BlockingQueue<List<Long>> getIdQueue() {
-        return idQueue;
+    public synchronized BlockingQueue<List<Long>> getIdQueue() {
+        return getContextualIdQueue(null);
+    }
+    
+    public synchronized BlockingQueue<List<Long>> getContextualIdQueue(Long contextId) {
+        if (contextId == null) {
+            return generalIdQueue;
+        }
+        BlockingQueue<List<Long>> catalogQueue = contextualQueues.get(contextId);
+        if (catalogQueue == null) {
+            catalogQueue = new ArrayBlockingQueue<>(1000);
+            contextualQueues.put(contextId, catalogQueue);
+        }
+        return catalogQueue;
+    }
+    
+    public synchronized void removeContextualIdQueue(Long catalogId) {
+        if (catalogId != null) {
+            contextualQueues.remove(catalogId);
+        }
     }
     
     public synchronized void markQueueLoadCompleted() {
@@ -160,5 +180,13 @@ public class ReindexStateHolder {
     
     public synchronized boolean isQueueLoadCompleted() {
         return queueLoadCompleted.get();
+    }
+    
+    public long getLastCommitted() {
+        return lastComitted.get();
+    }
+    
+    public void setLastCommitted(long lastCommitted) {
+        this.lastComitted.set(lastCommitted);
     }
 }
