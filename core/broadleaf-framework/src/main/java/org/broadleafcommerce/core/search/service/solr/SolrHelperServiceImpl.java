@@ -140,6 +140,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
 
+    @Value(value = "${enable.solr.optimize:true}")
+    private boolean optimizeEnabled;
+
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex.
      * @throws SecurityException
@@ -438,8 +441,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Optimizing the index...");
             }
-            if (isSolrConfigured) {
+            if (isSolrConfigured && optimizeEnabled) {
                 server.optimize(collection);
+            }
+            if(!optimizeEnabled){
+                LOG.warn("property enable.solr.optimize is false so no optimize will happen, but SolrHelperServiceImpl.optimizeIndex was invoked, check if you need to call this method");
             }
         } catch (SolrServerException e) {
             throw new ServiceException("Could not optimize index", e);
