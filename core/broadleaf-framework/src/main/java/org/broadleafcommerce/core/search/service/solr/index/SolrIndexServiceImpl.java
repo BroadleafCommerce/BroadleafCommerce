@@ -190,10 +190,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         if(optimizeEnabled) {
             // this is required to be at the very very very end after rebuilding the whole index
             optimizeIndex(solrConfiguration.getReindexCollectionName(), solrConfiguration.getReindexServer());
-            // Swap the active and the reindex cores
-            if (!solrConfiguration.isSingleCoreMode()) {
-                shs.swapActiveCores(solrConfiguration);
-            }
+        }
+        // Swap the active and the reindex cores
+        if (!solrConfiguration.isSingleCoreMode()) {
+            shs.swapActiveCores(solrConfiguration);
         }
     }
 
