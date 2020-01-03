@@ -19,10 +19,7 @@ package org.broadleafcommerce.core.search.service.solr.indexer;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,10 +40,7 @@ public class ReindexStateHolder {
     private final AtomicLong unindexedItemCount = new AtomicLong();
     private final AtomicLong lastComitted = new AtomicLong(-1L);
     private final AtomicBoolean failed = new AtomicBoolean(false);
-    private final AtomicBoolean queueLoadCompleted = new AtomicBoolean(false);
     private final AtomicReference<Exception> throwable = new AtomicReference<>();
-    private final BlockingQueue<List<Long>> generalIdQueue = new ArrayBlockingQueue<>(1000);
-    private final Map<Long, BlockingQueue<List<Long>>> contextualQueues = Collections.synchronizedMap(new HashMap<Long, BlockingQueue<List<Long>>>());
     
     private ReindexStateHolder(String collectionName, boolean incrementalCommits) {
         this.collectionName = collectionName;
@@ -150,36 +144,6 @@ public class ReindexStateHolder {
     
     public Map<String, Object> getAdditionalState() {
         return additionalState;
-    }
-    
-    public synchronized BlockingQueue<List<Long>> getIdQueue() {
-        return getContextualIdQueue(null);
-    }
-    
-    public synchronized BlockingQueue<List<Long>> getContextualIdQueue(Long contextId) {
-        if (contextId == null) {
-            return generalIdQueue;
-        }
-        BlockingQueue<List<Long>> catalogQueue = contextualQueues.get(contextId);
-        if (catalogQueue == null) {
-            catalogQueue = new ArrayBlockingQueue<>(1000);
-            contextualQueues.put(contextId, catalogQueue);
-        }
-        return catalogQueue;
-    }
-    
-    public synchronized void removeContextualIdQueue(Long catalogId) {
-        if (catalogId != null) {
-            contextualQueues.remove(catalogId);
-        }
-    }
-    
-    public synchronized void markQueueLoadCompleted() {
-        queueLoadCompleted.set(true);
-    }
-    
-    public synchronized boolean isQueueLoadCompleted() {
-        return queueLoadCompleted.get();
     }
     
     public long getLastCommitted() {

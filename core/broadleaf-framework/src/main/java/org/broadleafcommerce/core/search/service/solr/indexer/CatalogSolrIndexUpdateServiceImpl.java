@@ -36,7 +36,7 @@ public class CatalogSolrIndexUpdateServiceImpl extends AbstractSolrIndexUpdateSe
     @Autowired
     public CatalogSolrIndexUpdateServiceImpl(
             @Qualifier("blSolrIndexQueueProvider") SolrIndexQueueProvider queueProvider, 
-            @Qualifier("blCatalogSolrUpdateCommandHandler") SolrIndexUpdateCommandHandler commandHandler) {
+            @Qualifier("blCatalogSolrUpdateCommandHandler") CatalogSolrIndexCommandHandler commandHandler) {
         super("catalog", queueProvider, commandHandler);
     }
 

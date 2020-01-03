@@ -97,7 +97,6 @@ public abstract class EntityManagerAwareRunnable implements Runnable {
     		    registerError(e);
     			LOG.error("An error occured executing in an EntityManagerAwareRunnable background thread.", e);
     		} finally {
-    		    em = null;
     		    if (!participate) {
         			EntityManagerHolder emHolder = (EntityManagerHolder)
         					TransactionSynchronizationManager.unbindResource(emf);
@@ -105,6 +104,7 @@ public abstract class EntityManagerAwareRunnable implements Runnable {
     		    }
     		}
 	    } finally {
+	        em = null;
 	        if (semaphore != null) {
                 semaphore.release();
             }
