@@ -51,9 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -69,18 +66,55 @@ public class BroadleafRequestContext {
     
     protected static final Log LOG = LogFactory.getLog(BroadleafRequestContext.class);
     
-    private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = ThreadLocalManager.createThreadLocal(BroadleafRequestContext.class);
+    private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = ThreadLocalManager.createThreadLocal(BroadleafRequestContext.class, false);
     
+    /**
+     * Returns the current, thread-bound {@link BroadleafRequestContext}.  This creates and binds one if it does not exist.
+     * 
+     * This is the same as calling {@link BroadleafRequestContext#getBroadleafRequestContext(boolean)} with parameter equal to true.
+     * 
+     * @return
+     */
     public static BroadleafRequestContext getBroadleafRequestContext() {
-        return BROADLEAF_REQUEST_CONTEXT.get();
+        return getBroadleafRequestContext(true);
     }
     
+    /**
+     * Returns the current, thread-bound {@link BroadleafRequestContext}, or null if one does not exist.  
+     * However, this creates and binds one and returns the newly created context if it does not exist and the createIfAbsent parameter is true.
+     * 
+     * @param createIfAbsent
+     * @return
+     */
+    public static BroadleafRequestContext getBroadleafRequestContext(boolean createIfAbsent) {
+        BroadleafRequestContext ctx = BROADLEAF_REQUEST_CONTEXT.get();
+        if (ctx == null && createIfAbsent) {
+            ctx = new BroadleafRequestContext();
+            BROADLEAF_REQUEST_CONTEXT.set(ctx);
+        }
+        return ctx;
+    }
+    
+    /**
+     * Initializes or sets the {@link BroadleafRequestContext} on the current thread.  If the provided parameter is null, this removes the 
+     * thread-bound context.
+     * 
+     * @param broadleafRequestContext
+     */
     public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
-        BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
+        if (broadleafRequestContext == null) {
+            BROADLEAF_REQUEST_CONTEXT.remove();
+        } else {
+            BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
+        }
+    }
+    
+    public static boolean isContextInitialized() {
+        return getBroadleafRequestContext(false) != null;
     }
 
     public static boolean hasLocale(){
-        if (getBroadleafRequestContext() != null) {
+        if (isContextInitialized()) {
             if(getBroadleafRequestContext().getLocale() != null){
                 return true;
             }
@@ -89,7 +123,7 @@ public class BroadleafRequestContext {
     }
     
     public static boolean hasCurrency() {
-        if (getBroadleafRequestContext() != null) {
+        if (isContextInitialized()) {
             if (getBroadleafRequestContext().getBroadleafCurrency() != null) {
                 return true;
             }
@@ -99,7 +133,7 @@ public class BroadleafRequestContext {
 
     public static BroadleafCurrency getCurrency() {
         BroadleafCurrency returnCurrency = null;
-        if (getBroadleafRequestContext() != null) {
+        if (isContextInitialized()) {
             returnCurrency = getBroadleafRequestContext().getBroadleafCurrency();
         }
 
@@ -398,7 +432,6 @@ public class BroadleafRequestContext {
         this.currentProfile = currentProfile;
     }
 
-    @SuppressWarnings("unchecked")
     public static Map<String, String[]> getRequestParameterMap() {
         return getBroadleafRequestContext().getRequest().getParameterMap();
     }
