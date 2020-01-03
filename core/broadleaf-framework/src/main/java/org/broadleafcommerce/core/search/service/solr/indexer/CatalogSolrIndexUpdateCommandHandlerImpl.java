@@ -76,14 +76,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 
 import javax.annotation.Resource;
 
 /**
- * Default command handler to handle Catalog Solr index commands.
+ * Default command handler to handle Catalog Solr index commands. This is multi-threaded.  SKU browsing is not supported with this implementation.
  * 
  * @author Kelly Tisdell
  *
@@ -316,7 +315,6 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
             String msg = "SolrIndexService.performCachedOperation() must be used in conjuction with"
                 + " solrIndexDao.populateProductCatalogStructure() in order to correctly build catalog documents or should"
                 + " be invoked from buildIncrementalIndex()";
-            LOG.error(msg);
             throw new IllegalStateException(msg);
         }
 
@@ -433,76 +431,81 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     }
     
     protected void populateIndex(final ReindexStateHolder holder, final Long catalogId, final Long siteId, final SandBox sandbox) throws ServiceException {
-        final BroadleafRequestContext originalBrc = BroadleafRequestContext.getBroadleafRequestContext();
         try {
             final Semaphore sem = new Semaphore(0);
             try {
-                final BroadleafRequestContext brc = new BroadleafRequestContext();
-                BroadleafRequestContext.setBroadleafRequestContext(brc);
-                brc.setSandBox(sandbox);
-                
                 final Catalog catalog = findCatalog(catalogId);
                 final Site site = findSite(siteId);
+                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                brc.setSandBox(sandbox);
+                brc.setCurrentCatalog(catalog);
+                brc.setNonPersistentSite(site);
                 
-                final int threads = getThreadsForBackgroundExecution();
-                Assert.isTrue(threads > 0, "getThreadsForBackgroundExecution() must return an integer that is greater than 0.");
-                if (threads > 25) {
-                    LOG.info("The number of threads used to reindex the catalog is " + threads + ". This may cause performance issues, depending on the environment.");
-                }
+                int leases = 0;
                 
-                for (int i = 0; i < threads; i++) {
-                    getBackgroundOperationExecutor().execute(createBackgroundRunnable(holder, sem, catalogId, siteId, sandbox));
-                }
-                try {
-                    //Begin filling the queue
+                final int batchSize = pageSize * 10;
+                final AtomicReference<Long> lastId = new AtomicReference<>();
+                while (true) {
+                    if (holder.isFailed()) {
+                        break;
+                    }
+                    final List<Long> batch;
                     if (catalog != null) {
-                        IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<Void, Exception>() {
+                        batch = IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<List<Long>, Exception>() {
                             @Override
-                            public Void execute() throws Exception {
-                                populateProductIdQueue(holder, catalogId);
-                                return null;
+                            public List<Long> execute() throws Exception {
+                                return readIdBatch(holder, catalogId, batchSize, lastId.get());
                             }
                         }, site, catalog);
                     } else {
-                        IdentityExecutionUtils.runOperationAndIgnoreIdentifier(new IdentityOperation<Void, Exception>() {
+                        batch = IdentityExecutionUtils.runOperationAndIgnoreIdentifier(new IdentityOperation<List<Long>, Exception>() {
                             @Override
-                            public Void execute() throws Exception {
-                                populateProductIdQueue(holder, null);
-                                return null;
+                            public List<Long> execute() throws Exception {
+                                return readIdBatch(holder, catalogId, batchSize, lastId.get());
                             }
                         });
                     }
                     
-                    holder.markQueueLoadCompleted();
-                    sem.acquire(threads);
-                    if (holder.isFailed()) {
-                        if (holder.getFailure() != null) {
-                            if (holder.getFailure() instanceof ServiceException) {
-                                throw (ServiceException)holder.getFailure();
-                            } else {
-                                throw new ServiceException("An unexpected error occured reindexing solr for command group " + getCommandGroup() + ". Please check the logs.", holder.getFailure());
-                            }
-                        } else {
-                            throw new ServiceException("An unknown error occured reindexing solr for command group " + getCommandGroup() + ". Please check the logs.");
-                        }
-                    } else {
-                        //Log success...
-                        
+                    if (batch == null || batch.isEmpty()) {
+                        break;
                     }
-                } catch (InterruptedException e) {
-                    holder.failFast(e);
-                    throw e;
+                    
+                    ArrayList<Long> pageHolder = new ArrayList<>(pageSize);
+                    Iterator<Long> itr = batch.iterator();
+                    while (itr.hasNext()) {
+                        pageHolder.add(itr.next());
+                        if (pageHolder.size() == pageSize) {
+                            if (holder.isFailed()) {
+                                return;
+                            }
+                            final ArrayList<Long> page = new ArrayList<>(pageHolder);
+                            getBackgroundOperationExecutor().execute(createBackgroundRunnable(holder, page, sem, catalogId, siteId, sandbox));
+                            leases++;
+                            pageHolder = new ArrayList<>(pageSize);
+                        }
+                    }
+                    
+                    if (!pageHolder.isEmpty()) {
+                        getBackgroundOperationExecutor().execute(createBackgroundRunnable(holder, pageHolder, sem, catalogId, siteId, sandbox));
+                        leases++;
+                    }
+                    
+                    if (batch.size() < batchSize) {
+                        break;
+                    }
+                    
+                    lastId.set(batch.get(batch.size() - 1));
+                    
                 }
+                
+                sem.acquire(leases);
+                
             } catch (Exception e) {
                 holder.failFast(e);
-                if (holder.getFailure() != null) {
-                    throw new ServiceException("An unexpected error occured reindexing solr for command group " + getCommandGroup() + ". Please check the logs.", holder.getFailure());
-                } else {
-                    throw new ServiceException("An unexpected error occured reindexing solr for command group " + getCommandGroup() + ". Please check the logs.");
-                }
+                throw new ServiceException("An unexpected error occured reindexing solr for command group " + getCommandGroup() + ". Please check the logs.", holder.getFailure());
             }
         } finally {
-            BroadleafRequestContext.setBroadleafRequestContext(originalBrc);
+            //
         }
     }
     
@@ -556,7 +559,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     }
     
     protected int getThreadsForBackgroundExecution() {
-        return 25;
+        return 10;
     }
     
     protected ThreadPoolTaskExecutor createBackgroundOperationExecutor() {
@@ -578,16 +581,22 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
      * @param incrementalCommits
      * @return
      */
-    protected EntityManagerAwareRunnable createBackgroundRunnable(final ReindexStateHolder holder, final Semaphore sem, final Long catalogId, final Long siteId, final SandBox sandBox) {
+    protected EntityManagerAwareRunnable createBackgroundRunnable(final ReindexStateHolder holder, final List<Long> ids, final Semaphore sem, final Long catalogId, final Long siteId, final SandBox sandBox) {
         return new EntityManagerAwareRunnable(sem) {
             @Override
             protected void executeInternal() throws Exception {
+                if (ids == null || ids.isEmpty() || holder.isFailed()) {
+                    return;
+                }
+                
                 //It's expected that this is run in another thread, so this should create a brand new BroadleafRequestContext
                 final BroadleafRequestContext brc = new BroadleafRequestContext();
                 BroadleafRequestContext.setBroadleafRequestContext(brc);
-                brc.setSandBox(sandBox);
                 final Catalog catalog = findCatalog(catalogId);
                 final Site site = findSite(siteId);
+                brc.setSandBox(sandBox);
+                brc.setCurrentCatalog(catalog);
+                brc.setNonPersistentSite(site);
                 
                 beforeBackgroundThread(holder, catalog, site, sandBox);
                 
@@ -604,24 +613,14 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                                     @Override
                                     public void execute() throws ServiceException {
                                         try {
-                                            while (!holder.isFailed()) {
-                                                final List<Long> ids = holder.getContextualIdQueue(catalog.getId()).poll(1000L, TimeUnit.MILLISECONDS);
-                                                if (ids == null) {
-                                                    if (holder.isQueueLoadCompleted()) {
-                                                        return;
-                                                    } else {
-                                                        continue;
-                                                    }
-                                                }
-                                                
-                                                List<Product> products = readProductsByIds(ids);
-                                                buildIncrementalIndex(ids, products, holder, catalog, site);
-                                                
-                                                getEntityManager().clear();
+                                            List<Product> products = readProductsByIds(holder, ids);
+                                            buildIncrementalIndex(ids, products, holder, catalog, site);
+                                            if (LOG.isInfoEnabled()) {
+                                                LOG.info("Processed " + products.size() + " products for catalog " + catalog.getName() + " with ID of " + catalog.getId() 
+                                                    + ". Number of Product IDs provided were " + ids.size() + ".");
                                             }
                                         } catch (Exception e) {
                                             holder.failFast(e);
-                                            LOG.error("An error occured reindexing the catalog.", e);
                                             return;
                                         }
                                     }
@@ -640,23 +639,13 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                                     @Override
                                     public void execute() throws ServiceException {
                                         try {
-                                            while (!holder.isFailed()) {
-                                                final List<Long> ids = holder.getIdQueue().poll(1000L, TimeUnit.MILLISECONDS);
-                                                if (ids == null) {
-                                                    if (holder.isQueueLoadCompleted()) {
-                                                        return;
-                                                    } else {
-                                                        continue;
-                                                    }
-                                                }
-                                                List<Product> products = readProductsByIds(ids);
-                                                buildIncrementalIndex(ids, products, holder, catalog, site);
-                                                
-                                                getEntityManager().clear();
+                                            List<Product> products = readProductsByIds(holder, ids);
+                                            buildIncrementalIndex(ids, products, holder, catalog, site);
+                                            if (LOG.isDebugEnabled()) {
+                                                LOG.debug("Processed " + products.size() + " products.");
                                             }
                                         } catch (Exception e) {
                                             holder.failFast(e);
-                                            LOG.error("An error occured reindexing the catalog.", e);
                                             return;
                                         }
                                     }
@@ -686,8 +675,8 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     protected List<SolrInputDocument> buildPage(List<Long> productIds, List<Product> products, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws Exception {
         final List<SolrInputDocument> docs = new ArrayList<>();
         
-        beforePage(productIds, products, locales, fields, holder);
         try {
+            beforePage(productIds, products, locales, fields, holder);
             if (products != null && !products.isEmpty()) {
                 sandBoxHelper.ignoreCloneCache(true);
                 try {
@@ -722,16 +711,21 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         }
     }
     
-    protected List<Product> readProductsByIds(final List<Long> productIds) throws Exception {
-        if (productIds == null || productIds.isEmpty()) {
-            return null;
-        }
-        return HibernateUtils.executeWithoutCache(new GenericOperation<List<Product>>() {
-            @Override
-            public List<Product> execute() throws Exception {
-                return productDao.readProductsByIds(productIds);
+    protected List<Product> readProductsByIds(final ReindexStateHolder holder, final List<Long> productIds) throws Exception {
+        try {
+            beforeReadProducts(holder, productIds);
+            if (productIds == null || productIds.isEmpty()) {
+                return null;
             }
-        });
+            return HibernateUtils.executeWithoutCache(new GenericOperation<List<Product>>() {
+                @Override
+                public List<Product> execute() throws Exception {
+                    return productDao.readProductsByIds(productIds);
+                }
+            });
+        } finally {
+            afterReadProducts(holder, productIds);
+        }
     }
     
     protected List<IndexField> getIndexFields() {
@@ -751,36 +745,24 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
             List<SolrInputDocument> docs = buildPage(productIds, products, locales, fields, holder);
             if (docs != null && ! docs.isEmpty()) {
                 addDocuments(holder.getCollectionName(), docs);
-                
-                if (holder.isIncrementalCommits()) {
-                    //Commits in Solr are global, so no need for all threads to be issuing commits all the time.
-                    synchronized (holder) {
-                        long currentTime = System.currentTimeMillis();
-                        if (holder.getLastCommitted() < 0L || (currentTime - holder.getLastCommitted() > getIncrementalCommitInterval())) {
-                            commit(holder.getCollectionName(), true, false, false);
-                            holder.setLastCommitted(currentTime);
-                        }
-                    }
-                    
-                }
+                incrementalCommit(holder);
             }
         }
     }
     
-    protected void populateProductIdQueue(final ReindexStateHolder holder, final Long catalogId) throws Exception {
+    protected List<Long> readIdBatch(final ReindexStateHolder holder, final Long catalogId, int batchSize, final Long lastId) throws Exception {
         Assert.isTrue(pageSize > 0, "Page size must be greater than 0.  Default is 100.");
-        final AtomicReference<Long> lastId = new AtomicReference<>();
         
-        //We're going to query for 10 pages at a time to stay ahead of the workers
-        final int batchSize = pageSize * 10;
-        while (true) {
-            boolean readError = false;
-            final List<Long> batch;
+        boolean readError = false;
+        final List<Long> batch;
+        
+        try {
+            beforeReadIdBatch(holder, catalogId, batchSize, lastId);
             
-            TransactionStatus status = TransactionUtils.createTransaction("readProductIdsForReindexing",
+            TransactionStatus status = TransactionUtils.createTransaction("readProductIdBatchForReindexing",
                     TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
             try {
-                batch = productDao.readAllActiveProductIds(lastId.get(), batchSize);
+                batch = productDao.readAllActiveProductIds(lastId, batchSize);
             } catch (Exception e) {
                 readError = true;
                 throw new ServiceException("An error occured reading batches of product IDs.", e);
@@ -788,43 +770,12 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                 TransactionUtils.finalizeTransaction(status, transactionManager, readError);
             }
             
-            if (batch == null || batch.isEmpty()) {
-                //Nothing left to do so let's break.
-                break;
-            }
-            
-            //Now break the batch up into pages and add them to the queue.
-            final ArrayList<Long> page = new ArrayList<>(pageSize);
-            
-            Iterator<Long> itr = batch.iterator();
-            while (itr.hasNext()) {
-                page.add(itr.next());
-                if (page.size() == pageSize) {
-                    final ArrayList<Long> queueEntry = new ArrayList<>(page);
-                    while (!holder.getContextualIdQueue(catalogId).offer(queueEntry, 1000L, TimeUnit.MILLISECONDS)) {
-                        if (holder.isFailed()) {
-                            return;
-                        }
-                    }
-                    
-                    page.clear();
-                }
-            }
-            
-            if (!page.isEmpty()) {
-                while (!holder.getContextualIdQueue(catalogId).offer(page, 1000L, TimeUnit.MILLISECONDS)) {
-                    if (holder.isFailed()) {
-                        return;
-                    }
-                }
-            }
-            
-            if (batch.size() < batchSize) {
-                break;
-            }
-            
-            lastId.set(batch.get(batch.size() - 1));
+            LOG.info("Read batch ids for catalog " + catalogId + ". Last ID was " + lastId + ". Number of IDs found was " + batch.size());
+        } finally {
+            afterReadIdBatch(holder, catalogId, batchSize, lastId);
         }
+        
+        return batch;
     }
     
     protected void beforeProcess(ReindexStateHolder holder) throws ServiceException {
@@ -851,12 +802,27 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         //Nothing to do by default.
     }
     
+    protected void beforeReadProducts(ReindexStateHolder holder, List<Long> productIds) throws ServiceException {
+        //Nothing to do by default.
+    }
+    
+    protected void afterReadProducts(ReindexStateHolder holder, List<Long> productIds) throws ServiceException {
+        //Nothing to do by default.
+    }
+    
+    protected void beforeReadIdBatch(final ReindexStateHolder holder, final Long catalogId, int batchSize, final Long lastId) throws ServiceException {
+        //Nothing to do by default.
+    }
+    
+    protected void afterReadIdBatch(final ReindexStateHolder holder, final Long catalogId, int batchSize, final Long lastId) throws ServiceException {
+        //Nothing to do by default.
+    }
+    
     protected Catalog findCatalog(final Long catalogId) {
         if (catalogId == null) {
             return null;
         }
         return IdentityExecutionUtils.runOperationAndIgnoreIdentifier(new IdentityOperation<Catalog, RuntimeException>() {
-
             @Override
             public Catalog execute() throws RuntimeException {
                 return siteService.findCatalogById(catalogId);
@@ -879,11 +845,21 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     /**
      * The amount of time between commits during a full reindex.  Commits are global, so there's no need to have every thread committing every page.
      * 
-     * Default is 15 seconds.
+     * Default is 30 seconds.
      * 
      * @return
      */
     protected long getIncrementalCommitInterval() {
-        return 15000L;
+        return 30000L;
+    }
+    
+    protected synchronized void incrementalCommit(ReindexStateHolder holder) throws Exception {
+        if (holder.isIncrementalCommits()) {
+            long currentTime = System.currentTimeMillis();
+            if (holder.getLastCommitted() < 0L || (currentTime - holder.getLastCommitted() > getIncrementalCommitInterval())) {
+                commit(holder.getCollectionName(), true, false, false);
+                holder.setLastCommitted(currentTime);
+            }
+        }
     }
 }

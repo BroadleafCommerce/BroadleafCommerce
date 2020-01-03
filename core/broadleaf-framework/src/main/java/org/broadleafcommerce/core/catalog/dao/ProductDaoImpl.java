@@ -564,10 +564,10 @@ public class ProductDaoImpl implements ProductDao {
 
         // Ensure the product is currently active
         List<Predicate> restrictions = new ArrayList<Predicate>();
-        attachActiveRestriction(currentDate, product, sku, restrictions);
         if (lastId != null) {
             restrictions.add(cb.gt(product.get("id").as(Long.class), lastId));
         }
+        attachActiveRestriction(currentDate, product, sku, restrictions);
 
         // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
