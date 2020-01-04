@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.LazyInitializationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
@@ -54,7 +55,7 @@ public abstract class EntityManagerAwareRunnable implements Runnable {
      * to the current thread.
 	 */
 	public EntityManagerAwareRunnable() {
-	    this(null);
+	    this.semaphore = null;
 	}
 	
 	/**
@@ -69,8 +70,16 @@ public abstract class EntityManagerAwareRunnable implements Runnable {
 	    this.semaphore = sem;
 	}
 	
+	/**
+	 * This method attempts to create / bind an {@link EntityManager} prior to execution.  This will also create and bind a {@link BroadleafRequestContext}, which should 
+	 * not already be bound to the background thread.  If the run method is executed in a foreground thread, any existing {@link BroadleafRequestContext} bound to the thread 
+	 * will be returned to its previous state.
+	 */
 	@Override
 	public final void run() {
+	    //This will typically be null, especially if executing in a background thread.
+	    final BroadleafRequestContext originalCtx = BroadleafRequestContext.getBroadleafRequestContext(false);
+	    BroadleafRequestContext.setBroadleafRequestContext(new BroadleafRequestContext());
 	    try {
     		final EntityManagerFactory emf = getEntityManagerFactory();
     		boolean participate = false;
@@ -105,6 +114,7 @@ public abstract class EntityManagerAwareRunnable implements Runnable {
     		}
 	    } finally {
 	        em = null;
+	        BroadleafRequestContext.setBroadleafRequestContext(originalCtx);
 	        if (semaphore != null) {
                 semaphore.release();
             }
