@@ -436,7 +436,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
             try {
                 final Catalog catalog = findCatalog(catalogId);
                 final Site site = findSite(siteId);
-                BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+                final BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
                 brc.setSandBox(sandbox);
                 brc.setCurrentCatalog(catalog);
                 brc.setNonPersistentSite(site);
@@ -505,7 +505,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                 throw new ServiceException("An unexpected error occured reindexing solr for command group " + getCommandGroup() + ". Please check the logs.", holder.getFailure());
             }
         } finally {
-            //
+            //Don't reset the BroadleafRequestContext here because we did not create / bind it.
         }
     }
     
@@ -589,9 +589,8 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                     return;
                 }
                 
-                //It's expected that this is run in another thread, so this should create a brand new BroadleafRequestContext
-                final BroadleafRequestContext brc = new BroadleafRequestContext();
-                BroadleafRequestContext.setBroadleafRequestContext(brc);
+                //The BroadleafRequestContext was created in the superclass.
+                final BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
                 final Catalog catalog = findCatalog(catalogId);
                 final Site site = findSite(siteId);
                 brc.setSandBox(sandBox);
@@ -660,7 +659,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                     try {
                         afterBackgroundThread(holder, catalog, site, sandBox);
                     } finally {
-                        BroadleafRequestContext.setBroadleafRequestContext(null);
+                        //Don't reset the BroadleafRequestContext here because we did not create / bind it.
                     }
                 }
             }
