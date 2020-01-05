@@ -79,8 +79,8 @@ public abstract class EntityManagerAwareRunnable implements Runnable {
 	public final void run() {
 	    //This will typically be null, especially if executing in a background thread.
 	    final BroadleafRequestContext originalCtx = BroadleafRequestContext.getBroadleafRequestContext(false);
-	    BroadleafRequestContext.setBroadleafRequestContext(new BroadleafRequestContext());
 	    try {
+	        BroadleafRequestContext.setBroadleafRequestContext(new BroadleafRequestContext());
     		final EntityManagerFactory emf = getEntityManagerFactory();
     		boolean participate = false;
     		
