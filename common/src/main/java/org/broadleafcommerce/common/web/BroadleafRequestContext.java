@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,7 @@ public class BroadleafRequestContext {
     /**
      * Returns the current, thread-bound {@link BroadleafRequestContext}.  This creates and binds one if it does not exist.
      * 
-     * This is the same as calling {@link BroadleafRequestContext#getBroadleafRequestContext(boolean)} with parameter equal to true.
+     * This is the same as calling {@link BroadleafRequestContext#getBroadleafRequestContext(boolean)} with the value true.
      * 
      * @return
      */
@@ -109,6 +110,11 @@ public class BroadleafRequestContext {
         }
     }
     
+    /**
+     * Checks to see if there is a {@link BroadleafRequestContext} already bound to the current thread.
+     * 
+     * @return
+     */
     public static boolean isContextInitialized() {
         return getBroadleafRequestContext(false) != null;
     }
@@ -161,7 +167,7 @@ public class BroadleafRequestContext {
     protected List<Long> explicitCatalogs = new ArrayList<>();
     protected Site currentProfile;
     protected Boolean ignoreSite = false;
-    protected Map<String, Object> additionalProperties = new HashMap<>();
+    protected Map<String, Object> additionalProperties = Collections.synchronizedMap(new HashMap<String, Object>());
     protected MessageSource messageSource;
     protected RequestDTO requestDTO;
     protected Boolean isAdmin = false;

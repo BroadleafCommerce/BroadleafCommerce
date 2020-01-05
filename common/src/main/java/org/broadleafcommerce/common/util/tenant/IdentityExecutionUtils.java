@@ -53,20 +53,20 @@ public class IdentityExecutionUtils {
         Site previousSite = null;
         Catalog previousCatalog = null;
         Site previousProfile = null;
-        boolean previousIsIgnoringSite = false;
+        Boolean previousIsIgnoringSite = false;
+        
+        BroadleafRequestContext originalBrc = BroadleafRequestContext.getBroadleafRequestContext(false);
+        if (originalBrc != null) {
+            previousSite = originalBrc.getNonPersistentSite();
+            previousCatalog = originalBrc.getCurrentCatalog();
+            previousProfile = originalBrc.getCurrentProfile();
+            previousIsIgnoringSite = originalBrc.getIgnoreSite();
+        }
         
         boolean isNew = initRequestContext(site, profile, catalog);
         
         try {
             activateSession();
-            
-            BroadleafRequestContext originalBrc = BroadleafRequestContext.getBroadleafRequestContext(false);
-            if (originalBrc != null) {
-                previousSite = originalBrc.getNonPersistentSite();
-                previousCatalog = originalBrc.getCurrentCatalog();
-                previousProfile = originalBrc.getCurrentProfile();
-                previousIsIgnoringSite = originalBrc.getIgnoreSite();
-            }
             
             if (transactionManager != null) {
                 container = establishTransaction(transactionManager);
@@ -124,7 +124,7 @@ public class IdentityExecutionUtils {
         Site previousSite = null;
         Catalog previousCatalog = null;
         Site previousProfile = null;
-        boolean previousIsIgnoringSite = false;
+        Boolean previousIsIgnoringSite = false;
         
         if (brc != null) {
             previousSite = brc.getNonPersistentSite();
@@ -185,8 +185,6 @@ public class IdentityExecutionUtils {
         
         if (site != null) {
             requestContext.setIgnoreSite(false);
-        } else {
-            requestContext.setIgnoreSite(true);
         }
 
         return isNew;
