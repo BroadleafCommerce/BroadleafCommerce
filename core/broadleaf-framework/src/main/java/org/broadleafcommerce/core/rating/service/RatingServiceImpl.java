@@ -155,7 +155,8 @@ public class RatingServiceImpl implements RatingService {
             ratingSummary = ratingSummaryDao.createSummary(itemId, type);
         }
 
-        RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
+        RatingDetail ratingDetail = ratingSummary.getId() == null ?
+            null : ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
 
         if (ratingDetail == null) {
             ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customer);
