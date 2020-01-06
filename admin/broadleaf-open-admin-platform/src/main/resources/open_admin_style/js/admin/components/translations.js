@@ -116,4 +116,33 @@ $(document).ready(function() {
         return false;
     });
 
+    $('body').on('click', 'button.translation-revert-button', function() {
+        var $form = BLCAdmin.getForm($(this));
+        var currentAction = $form.attr('action');
+        var revertUrl = currentAction + '/revert';
+
+        BLCAdmin.showActionSpinner($(this).closest('.entity-form-actions'));
+		
+		BLC.ajax({
+	        url: revertUrl,
+	        type: "POST",
+	        data: $form.serializeArray(),
+	        complete: BLCAdmin.hideActionSpinner
+		}, function(data) {
+			if (data.errors == undefined){
+				//if there are no errors, hide the form and return to the translation listgrid
+				BLCAdmin.hideCurrentModal();
+		        BLCAdmin.listGrid.replaceRelatedCollection($(data));
+			}else{
+				var $modal = $form.closest('.modal');
+				//add the error
+				$modal.find('.modal-body .errors').text(data.errors.message);
+				//the empty-section-tabs hide the error section, removing so the error is shown
+				$modal.find('.empty-section-tabs').removeClass('empty-section-tabs');
+			}
+	    });
+		
+		return false;
+    });
+    
 });
