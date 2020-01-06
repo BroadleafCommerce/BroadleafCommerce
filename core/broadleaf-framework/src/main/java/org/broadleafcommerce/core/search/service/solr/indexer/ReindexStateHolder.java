@@ -92,7 +92,7 @@ public class ReindexStateHolder {
         }
     }
     
-    public static void deregister(String collectionName) {
+    public static void unregister(String collectionName) {
         synchronized (STATE_HOLDER_REGISTRY) {
             STATE_HOLDER_REGISTRY.remove(collectionName);
         }

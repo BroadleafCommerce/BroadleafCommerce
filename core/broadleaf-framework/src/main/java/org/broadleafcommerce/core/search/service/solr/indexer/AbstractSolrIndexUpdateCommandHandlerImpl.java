@@ -137,6 +137,7 @@ public abstract class AbstractSolrIndexUpdateCommandHandlerImpl implements SolrI
      * 
      */
     protected synchronized void commit(final String collectionName, final boolean waitFlush, final boolean waitSearcher, final boolean softCommit) throws Exception {
+        LOG.info("Issuing commit to Solr index: " + collectionName + " - with waitFlush=" + waitFlush + ", waitSearcher=" + waitSearcher + ", and softCommit=" + softCommit + ".");
         GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
             @Override
             public Void execute() throws Exception {
