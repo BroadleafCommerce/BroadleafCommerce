@@ -167,7 +167,6 @@ public class SolrConfiguration implements InitializingBean {
                 ((BroadleafCloudSolrClient) server).setSolrConfig(this);
             }
         }
-
         primaryServer = server;
     }
 
@@ -310,14 +309,23 @@ public class SolrConfiguration implements InitializingBean {
         //get primary and reindex names from http urls
         if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
             this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
+            this.setServer(new DelegatingHttpSolrClient((HttpSolrClient)solrServer));
+        } else {
+            this.setServer(solrServer);
         }
+        
         if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
             this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
+            this.setReindexServer(new DelegatingHttpSolrClient((HttpSolrClient)reindexServer));
+        } else {
+            this.setReindexServer(reindexServer);
         }
-
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
+        
+        if (HttpSolrClient.class.isAssignableFrom(adminServer.getClass())) {
+            this.setAdminServer(new DelegatingHttpSolrClient((HttpSolrClient)adminServer));
+        } else {
+            this.setAdminServer(adminServer);
+        }
     }
 
     /**
@@ -344,14 +352,23 @@ public class SolrConfiguration implements InitializingBean {
         this.setNamespace(namespace);
         if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
             this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
+            this.setServer(new DelegatingHttpSolrClient((HttpSolrClient)solrServer));
+        } else {
+            this.setServer(solrServer);
         }
+        
         if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
             this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
+            this.setReindexServer(new DelegatingHttpSolrClient((HttpSolrClient)reindexServer));
+        } else {
+            this.setReindexServer(reindexServer);
         }
-
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
+        
+        if (HttpSolrClient.class.isAssignableFrom(adminServer.getClass())) {
+            this.setAdminServer(new DelegatingHttpSolrClient((HttpSolrClient)adminServer));
+        } else {
+            this.setAdminServer(adminServer);
+        }
     }
 
     /**
@@ -378,9 +395,23 @@ public class SolrConfiguration implements InitializingBean {
     public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer, String primaryCoreName, String reindexCoreName) throws IllegalStateException {
         this.setPrimaryName(primaryCoreName);
         this.setReindexName(reindexCoreName);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
+        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            this.setServer(new DelegatingHttpSolrClient((HttpSolrClient)solrServer, primaryCoreName));
+        } else {
+            this.setServer(solrServer);
+        }
+        
+        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexServer(new DelegatingHttpSolrClient((HttpSolrClient)reindexServer, reindexCoreName));
+        } else {
+            this.setReindexServer(reindexServer);
+        }
+        
+        if (HttpSolrClient.class.isAssignableFrom(adminServer.getClass())) {
+            this.setAdminServer(new DelegatingHttpSolrClient((HttpSolrClient)adminServer));
+        } else {
+            this.setAdminServer(adminServer);
+        }
     }
 
     /**
@@ -410,9 +441,23 @@ public class SolrConfiguration implements InitializingBean {
         this.setPrimaryName(primaryCoreName);
         this.setReindexName(reindexCoreName);
         this.setNamespace(namespace);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
+        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            this.setServer(new DelegatingHttpSolrClient((HttpSolrClient)solrServer));
+        } else {
+            this.setServer(solrServer);
+        }
+        
+        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexServer(new DelegatingHttpSolrClient((HttpSolrClient)reindexServer));
+        } else {
+            this.setReindexServer(reindexServer);
+        }
+        
+        if (HttpSolrClient.class.isAssignableFrom(adminServer.getClass())) {
+            this.setAdminServer(new DelegatingHttpSolrClient((HttpSolrClient)adminServer));
+        } else {
+            this.setAdminServer(adminServer);
+        }
     }
 
     /**
@@ -429,8 +474,17 @@ public class SolrConfiguration implements InitializingBean {
     public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, String solrCloudConfigName, int solrCloudNumShards) throws IllegalStateException {
         this.setSolrCloudConfigName(solrCloudConfigName);
         this.setSolrCloudNumShards(solrCloudNumShards);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
+        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            this.setServer(new DelegatingHttpSolrClient((HttpSolrClient)solrServer));
+        } else {
+            this.setServer(solrServer);
+        }
+        
+        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexServer(new DelegatingHttpSolrClient((HttpSolrClient)reindexServer));
+        } else {
+            this.setReindexServer(reindexServer);
+        }
     }
 
     /**
@@ -450,8 +504,18 @@ public class SolrConfiguration implements InitializingBean {
         this.setSolrCloudConfigName(solrCloudConfigName);
         this.setSolrCloudNumShards(solrCloudNumShards);
         this.setNamespace(namespace);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
+        
+        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            this.setServer(new DelegatingHttpSolrClient((HttpSolrClient)solrServer));
+        } else {
+            this.setServer(solrServer);
+        }
+        
+        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexServer(new DelegatingHttpSolrClient((HttpSolrClient)reindexServer));
+        } else {
+            this.setReindexServer(reindexServer);
+        }
     }
 
     @Override
