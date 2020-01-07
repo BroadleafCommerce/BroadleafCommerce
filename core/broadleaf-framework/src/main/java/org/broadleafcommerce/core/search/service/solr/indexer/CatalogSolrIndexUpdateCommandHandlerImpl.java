@@ -17,13 +17,10 @@
  */
 package org.broadleafcommerce.core.search.service.solr.indexer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.common.SolrInputDocument;
-import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
@@ -44,11 +41,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SolrIndexDao;
-import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.core.search.domain.IndexFieldType;
-import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation;
@@ -64,17 +58,11 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.util.Assert;
 
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -126,8 +114,17 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     @Resource(name = "blSolrIndexQueueProvider")
     protected SolrIndexQueueProvider queueProvider;
     
+    @Resource(name = "blCatalogDocumentBuilder")
+    protected CatalogDocumentBuilder documentBuilder;
+    
     @Value("${solr.index.product.pageSize:100}")
     protected int pageSize = 100;
+    
+    @Value("${solr.index.product.workerThreads:10}")
+    protected int workerThreads = 10;
+    
+    @Value("${solr.index.product.reindexCommitInterval:30000}")
+    protected long reindexCommitInterval = 30000L;
     
     private final ThreadPoolTaskExecutor backgroundOperationExecutor;
     
@@ -165,6 +162,16 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         } else {
             throw new ServiceException("Unable to immediately acquire a command lock. Unable to execute or handle the SolrUpdateCommand.");
         }
+    }
+    
+    @Override
+    public SolrInputDocument buildDocument(Indexable indexable, List<IndexField> fields, List<Locale> locales) {
+        return documentBuilder.buildDocument(indexable, fields, locales);
+    }
+    
+    @Override
+    public SolrInputDocument buildDocument(Indexable indexable) {
+        return buildDocument(indexable, indexFieldDao.readFieldsByEntityType(indexable.getFieldEntityType()), getAllLocales());
     }
     
     protected void executeFullReindexCommand(FullReindexCommand command) throws ServiceException {
@@ -217,44 +224,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
     protected void executeSiteReindexCommand(SiteReindexCommand command) throws ServiceException {
         throw new UnsupportedOperationException("By default, the " + command.getClass().getName() + " is not supported. Consider overriding this method or installing Broadleaf's Multi-Tenant module.");
     }
-
-    @Override
-    public SolrInputDocument buildDocument(Indexable indexable) {
-        return buildDocument(indexable, indexFieldDao.readFieldsByEntityType(indexable.getFieldEntityType()), getAllLocales());
-    }
     
-    @Override
-    public SolrInputDocument buildDocument(final Indexable indexable, final List<IndexField> fields, final List<Locale> locales) {
-        try {
-            final SolrInputDocument document = new SolrInputDocument();
-            HibernateUtils.executeWithoutCache(new GenericOperation<Void>() {
-                @Override
-                public Void execute() throws Exception {
-                    attachBasicDocumentFields(indexable, document);
-                    attachIndexableDocumentFields(document, indexable, fields, locales);
-                    attachAdditionalDocumentFields(indexable, document);
-                    extensionManager.getProxy().attachChildDocuments(indexable, document, fields, locales);
-                    return null;
-                }
-            });
-            modifyDocument(indexable, fields, locales);
-            return document;
-        } catch (Exception e) {
-            LOG.warn("An error occured trying to build a SolrInputDocument for Indexable of type, " + indexable.getClass().getName() + " with an ID of " + indexable.getId(), e);
-            return null;
-        }
-    }
-    
-    /**
-     * This is a simple hook point to allow implementors to override and modify the documents after the default functionality has created them.
-     * @param indexable
-     * @param fields
-     * @param locales
-     */
-    protected void modifyDocument(final Indexable indexable, final List<IndexField> fields, final List<Locale> locales) {
-        //Do nothing by default.
-    }
-
     @Override
     protected SolrConfiguration getSolrConfiguration() {
         return solrConfiguration;
@@ -280,163 +250,6 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         return new ArrayList<>(processedLocales.values());
     }
     
-    protected void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<IndexField> fields, List<Locale> locales) {
-        for (IndexField indexField : fields) {
-            try {
-                // If we find an IndexField entry for this field, then we need to store it in the index
-                if (indexField != null) {
-                    List<IndexFieldType> searchableFieldTypes = indexField.getFieldTypes();
-
-                    // For each of its search field types, get the property values, and add a field to the document for each property value
-                    for (IndexFieldType sft : searchableFieldTypes) {
-                        FieldType fieldType = sft.getFieldType();
-                        Map<String, Object> propertyValues = getPropertyValues(indexable, indexField.getField(), fieldType, locales);
-
-                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(document, indexField, fieldType, propertyValues);
-
-                        if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                            // Build out the field for every prefix
-                            for (Entry<String, Object> entry : propertyValues.entrySet()) {
-                                String prefix = entry.getKey();
-                                prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
-
-                                String solrPropertyName = shs.getPropertyNameForIndexField(indexField, fieldType, prefix);
-                                Object value = entry.getValue();
-
-                                if (FieldType.isMultiValued(fieldType)) {
-                                    document.addField(solrPropertyName, value);
-                                } else {
-                                    document.setField(solrPropertyName, value);
-                                }
-                            }
-                        }
-                    }
-                }
-
-            } catch (Exception e) {
-                LOG.error("Could not get value for property[" + indexField.getField().getQualifiedFieldName() + "] for product id["
-                        + indexable.getId() + "]", e);
-                throw ExceptionHelper.refineException(e);
-            }
-        }
-    }
-    
-    protected void attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document) {
-        //Empty implementation. Placeholder for others to extend and add additional fields
-        extensionManager.getProxy().attachAdditionalDocumentFields(indexable, document);
-    }
-    
-    protected void attachBasicDocumentFields(Indexable indexable, SolrInputDocument document) {
-        CatalogStructure cache = SolrIndexCachedOperation.getCache();
-        if (cache == null) {
-            String msg = "SolrIndexService.performCachedOperation() must be used in conjuction with"
-                + " solrIndexDao.populateProductCatalogStructure() in order to correctly build catalog documents or should"
-                + " be invoked from buildIncrementalIndex()";
-            throw new IllegalStateException(msg);
-        }
-
-        // Add the namespace and ID fields for this product
-        document.addField(shs.getNamespaceFieldName(), solrConfiguration.getNamespace());
-        document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
-        document.addField(shs.getTypeFieldName(), shs.getDocumentType(indexable));
-        document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
-
-        extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
-
-        Long cacheKey = this.shs.getCurrentProductId(indexable); // current
-        if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-            cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
-            if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-                cacheKey = shs.getIndexableId(indexable); // master
-            }
-        }
-
-        // TODO: figure this out more generally; this doesn't work for CMS content
-        // The explicit categories are the ones defined by the product itself
-        if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-            for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
-                document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
-
-                // Make sure that we're always referencing the parent for the sort field
-                String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                // The issue here was the super category id is always what is stored in the cache, while the category
-                // by product id is the overridden versions. Need to always look at parent version for cache stuff, which
-                // is given from shs.getCategoryId
-                // First try the current level
-                String displayOrderKey = categoryId + "-" + cacheKey;
-                Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
-                if (displayOrder == null) {
-                    // Didn't find the cache at the current level, this might be an override so look upwards
-                    displayOrderKey = shs.getCategoryId(categoryId) + "-" + cacheKey;
-                    displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
-                }
-                
-                if (document.getField(categorySortFieldName) == null && displayOrder != null) {
-                    document.addField(categorySortFieldName, displayOrder);
-                }
-
-                // This is the entire tree of every category defined on the product
-                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
-            }
-        }
-    }
-    
-    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId, Set<Long> indexedParents) {
-        Long catIdToAdd = shs.getCategoryId(categoryId); 
-
-        Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
-        if (existingValues == null || !existingValues.contains(catIdToAdd)) {
-            document.addField(shs.getCategoryFieldName(), catIdToAdd);
-        }
-
-        Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
-        for (Long parent : parents) {
-            if (!indexedParents.contains(parent)) {
-                indexedParents.add(parent);
-                buildFullCategoryHierarchy(document, cache, parent, indexedParents);
-            }
-        }
-    }
-    
-    protected Map<String, Object> getPropertyValues(Indexable indexedItem, Field field, FieldType fieldType, List<Locale> locales)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        String propertyName = field.getPropertyName();
-        Map<String, Object> values = new HashMap<>();
-
-        ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
-        if (extensionManager != null) {
-            extensionResult = extensionManager.getProxy().addPropertyValues(indexedItem, field, fieldType, values, propertyName, locales);
-        }
-        
-        if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
-            Object propertyValue = shs.getPropertyValue(indexedItem, field);
-            if (propertyValue != null) {
-                values.put("", propertyValue);
-            }
-        }
-
-        return values;
-    }
-    
-    /**
-     *  We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
-     *  displayOrder value.
-     *
-     * @param cache
-     * @param displayOrderKey
-     * @return
-     */
-    protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
-        BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-
-        if (displayOrder == null) {
-            return null;
-        }
-
-        return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
-    }
-    
     protected void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
         try {
             CatalogStructure cache = new CatalogStructure();
@@ -447,6 +260,11 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         }
     }
     
+    /**
+     * This method populates the index.
+     * 
+     * It is not recommended that you override this method.  Rather, consider overriding one of the other methods as this one generally coordinates and delegates to others.
+     */
     protected void populateIndex(final ReindexStateHolder holder, final Long catalogId, final Long siteId, final SandBox sandbox) throws ServiceException {
         try {
             final Semaphore sem = new Semaphore(0);
@@ -458,6 +276,8 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                 
                 int leases = 0;
                 
+                //We'll make the batch size 10 times the page size so that we can break up the results into pages for 
+                //fewer round trips to the DB, especially since we're only reading IDs here.
                 final int batchSize = pageSize * 10;
                 final AtomicReference<Long> lastId = new AtomicReference<>();
                 
@@ -520,6 +340,16 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         }
     }
     
+    /**
+     * Provides an {@link IdentityOperation} (function that runs in the context of a Site and/or Catalog) to read batches of IDs.
+     * 
+     * @param holder
+     * @param catalogId
+     * @param siteId
+     * @param batchSize
+     * @param lastId
+     * @return
+     */
     protected IdentityOperation<List<Long>, Exception> getReadIdsOperation(final ReindexStateHolder holder, final Long catalogId, final Long siteId, final Integer batchSize, final Long lastId) {
         return new IdentityOperation<List<Long>, Exception>() {
             @Override
@@ -534,6 +364,14 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         };
     }
     
+    /**
+     * By default this deletes all items in the collection, since there is a good chance that the collection will be re-aliased or swapped into the foreground 
+     * after reindexing is complete.
+     * 
+     * @param collection
+     * @param commit
+     * @throws ServiceException
+     */
     protected void deleteAllDocuments(String collection, boolean commit) throws ServiceException {
         try {
             getSolrConfiguration().getReindexServer().deleteByQuery(collection, "(*:*)");
@@ -545,6 +383,13 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         }
     }
     
+    /**
+     * Composite method that issues a commit or rollback (if there is an error), and optionally swaps (if there is no error).
+     * @param collection
+     * @param error
+     * @param swap
+     * @throws ServiceException
+     */
     protected void finalizeChanges(final String collection, final boolean error, boolean swap) throws ServiceException {
         try {
             if (error) {
@@ -571,7 +416,11 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
             shs.swapActiveCores(solrConfiguration);
         }
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * @see org.springframework.beans.factory.DisposableBean#destroy()
+     */
     @Override
     public void destroy() throws Exception {
         if (backgroundOperationExecutor != null) {
@@ -583,13 +432,20 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         return backgroundOperationExecutor;
     }
     
+    /**
+     * Number of worker threads (page processing threads) in the thread pool.
+     * 
+     * Default is 10.
+     * 
+     * @return
+     */
     protected int getThreadsForBackgroundExecution() {
-        return 10;
+        return workerThreads;
     }
     
     protected ThreadPoolTaskExecutor createBackgroundOperationExecutor() {
         ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
-        exec.setThreadGroupName(getCommandGroup() + "-solr-reindex-workers");
+        exec.setThreadGroupName(getCommandGroup() + "-solr-reindex-worker");
         exec.setThreadNamePrefix(getCommandGroup() + "-solr-reindex-worker-");
         exec.setCorePoolSize(getThreadsForBackgroundExecution());
         exec.setMaxPoolSize(getThreadsForBackgroundExecution());
@@ -649,6 +505,15 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         };
     }
     
+    /**
+     * Returns an {@link IdentityOperation} who may be executed in the context of a {@link Catalog} and/or {@link Site} to read products by IDs, and then build the index incrementally.
+     * 
+     * @param holder
+     * @param catalog
+     * @param site
+     * @param ids
+     * @return
+     */
     protected IdentityOperation<Void, Exception> getIncrementalIndexOperation(final ReindexStateHolder holder, final Catalog catalog, final Site site, final List<Long> ids) {
         return new IdentityOperation<Void, Exception>() {
 
@@ -691,6 +556,17 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         };
     }
     
+    /**
+     * Given the arguments, this builds a list of {@link SolrInputDocument}s.  This does not write them to Solr.
+     * 
+     * @param productIds
+     * @param products
+     * @param locales
+     * @param fields
+     * @param holder
+     * @return
+     * @throws Exception
+     */
     protected List<SolrInputDocument> buildPage(List<Long> productIds, List<Product> products, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws Exception {
         final List<SolrInputDocument> docs = new ArrayList<>();
         
@@ -725,6 +601,14 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         return docs;
     }
     
+    /**
+     * Reads a batch of products by IDs.
+     * 
+     * @param holder
+     * @param productIds
+     * @return
+     * @throws Exception
+     */
     protected List<Product> readProductsByIds(final ReindexStateHolder holder, final List<Long> productIds) throws Exception {
         if (productIds == null || productIds.isEmpty()) {
             return null;
@@ -741,6 +625,17 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         return indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
     }
     
+    /**
+     * Builds an incremental or batch portion of the index.  Activities include reading {@link Locale}s and {@link IndexField}s, building a page, 
+     * adding the documents to the index, and incrementally committing.  It is not recommended that you override this method.  Rather, consider overriding 
+     * one of the other methods as this is largely responsible for orchestrating and delegating.
+     * @param productIds
+     * @param products
+     * @param holder
+     * @param catalog
+     * @param site
+     * @throws Exception
+     */
     protected void buildIncrementalIndex(
             final List<Long> productIds,
             final List<Product> products,
@@ -765,6 +660,16 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         }
     }
     
+    /**
+     * Reads a batch of {@link Product} IDs from the DB.
+     * 
+     * @param holder
+     * @param catalogId
+     * @param batchSize
+     * @param lastId
+     * @return
+     * @throws Exception
+     */
     protected List<Long> readIdBatch(final ReindexStateHolder holder, final Long catalogId, final int batchSize, final Long lastId) throws Exception {
         Assert.isTrue(pageSize > 0, "Page size must be greater than 0.  Default is 100.");
         
@@ -795,46 +700,150 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         return batch;
     }
     
+    /**
+     * Hook point that is executed at the beginning of the reindex process.  If you extend this class and implement this method, consider calling the super method.
+     * @param holder
+     * @throws ServiceException
+     */
     protected void beforeProcess(ReindexStateHolder holder) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * Hook point at that is executed at the end of the reindex process. If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occured during the process.
+     * 
+     * @param holder
+     * @throws ServiceException
+     */
     protected void afterProcess(ReindexStateHolder holder) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * The reindex process, specifically page processing, is executed in background threads.  This executes prior to the main execution of the thread. 
+     * If you extend this class and implement this method, consider calling the super method.
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param holder
+     * @param catalog
+     * @param site
+     * @param sandBox
+     * @throws ServiceException
+     */
     protected void beforeBackgroundThread(ReindexStateHolder holder, Catalog catalog, Site site, SandBox sandBox) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This executes after to the main execution of the background (page) thread(s).
+     * If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param holder
+     * @param catalog
+     * @param site
+     * @param sandBox
+     * @throws ServiceException
+     */
     protected void afterBackgroundThread(ReindexStateHolder holder, Catalog catalog, Site site, SandBox sandBox) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This is executed immediately before a page is processed.  
+     * If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param productIds
+     * @param products
+     * @param locales
+     * @param fields
+     * @param holder
+     * @throws ServiceException
+     */
     protected void beforePage(List<Long> productIds, List<Product> products, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This executes immediately after a page is processed.
+     * If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param productIds
+     * @param products
+     * @param locales
+     * @param fields
+     * @param holder
+     * @throws ServiceException
+     */
     protected void afterPage(List<Long> productIds, List<Product> products, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This executes immediately prior to reading a batch of products.
+     * If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param holder
+     * @param productIds
+     * @throws ServiceException
+     */
     protected void beforeReadProducts(ReindexStateHolder holder, List<Long> productIds) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This executes immediately after reading a batch of products.
+     * If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param holder
+     * @param productIds
+     * @throws ServiceException
+     */
     protected void afterReadProducts(ReindexStateHolder holder, List<Long> productIds) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This executes immediately prior to reading a batch of product IDs for processing in a background thread.
+     * If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param holder
+     * @param catalogId
+     * @param batchSize
+     * @param lastId
+     * @throws ServiceException
+     */
     protected void beforeReadIdBatch(final ReindexStateHolder holder, final Long catalogId, int batchSize, final Long lastId) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This executes immediately after reading a batch of product IDs for processing in a background thread.
+     * If you extend this class and implement this method, consider calling the super method. 
+     * Note that you can query the {@link ReindexStateHolder} to determine if an error has occurred during the process.
+     * 
+     * @param holder
+     * @param catalogId
+     * @param batchSize
+     * @param lastId
+     * @throws ServiceException
+     */
     protected void afterReadIdBatch(final ReindexStateHolder holder, final Long catalogId, int batchSize, final Long lastId) throws ServiceException {
         //Nothing to do by default.
     }
     
+    /**
+     * This reads a {@link Catalog} by ID.  If the ID is null (default, unless in Multi-Tenant mode), this returns null.
+     * 
+     * @param catalogId
+     * @return
+     */
     protected Catalog findCatalog(final Long catalogId) {
         if (catalogId == null) {
             return null;
@@ -847,6 +856,12 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
         });
     }
 
+    /**
+     * This reads a {@link Site} by ID.  If the ID is null (default, unless in Multi-Tenant mode), this returns null.
+     * 
+     * @param siteId
+     * @return
+     */
     protected Site findSite(final Long siteId) {
         if (siteId == null) {
             return null;
@@ -867,9 +882,15 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
      * @return
      */
     protected long getIncrementalCommitInterval() {
-        return 30000L;
+        return reindexCommitInterval;
     }
     
+    /**
+     * Issues incremental commits.  Commits in Sorl are global, so we don't need multiple threads issuing commits at the same time, or even back-to-back.  This uses a 
+     * commit interval to determine if a commit should be issued.
+     * @param holder
+     * @throws Exception
+     */
     protected synchronized void incrementalCommit(ReindexStateHolder holder) throws Exception {
         if (holder.isIncrementalCommits()) {
             long currentTime = System.currentTimeMillis();
