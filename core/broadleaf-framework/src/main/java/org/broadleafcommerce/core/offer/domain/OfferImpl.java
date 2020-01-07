@@ -81,7 +81,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "BLC_OFFER")
+@Table(name = "BLC_OFFER", indexes = {@javax.persistence.Index(name = "IDX_BLOFFER_START_DATE", columnList = "START_DATE")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
