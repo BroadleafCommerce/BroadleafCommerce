@@ -879,4 +879,18 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
             }
         }
     }
+    
+    /**
+     * Method to determine whether a full reindex was successful.  By default, this simply returns whether the {@link ReindexStateHolder#isFailed()} returns false 
+     * and that at least 1 document was indexed.  Implementors may wish to 
+     * override this to determine whether the {@link ReindexStateHolder#getIndexableCount()} is a certain number, 
+     * or if {@link ReindexStateHolder#getUnindexedItemCount()} is at least a percentage of total items or of the items that were indexed, given 
+     * that the failure to build a single document / product does not stop the reindex process.
+     * 
+     * @param holder
+     * @return
+     */
+    protected boolean isReindexSuccessful(final ReindexStateHolder holder) {
+        return (! holder.isFailed() && holder.getIndexableCount() > 0L);
+    }
 }
