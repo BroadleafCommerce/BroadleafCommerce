@@ -164,7 +164,8 @@ public class RatingServiceImpl implements RatingService {
             ratingDetail.setRating(rating);         
         }
 
-        ReviewDetail reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
+        ReviewDetail reviewDetail = ratingSummary.getId() == null ?
+            null : ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
 
         if (reviewDetail == null) {
             reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
