@@ -205,7 +205,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                     afterProcess(holder);
                 } finally {
                     try {
-                        finalizeChanges(reindexCollectionName, holder.isFailed(), true);
+                        finalizeChanges(reindexCollectionName, !isReindexSuccessful(holder), true);
                     } finally {
                         ReindexStateHolder.unregister(reindexCollectionName);
                     }
