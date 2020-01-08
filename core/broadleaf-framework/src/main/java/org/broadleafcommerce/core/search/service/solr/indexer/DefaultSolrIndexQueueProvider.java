@@ -126,7 +126,7 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     }
 
     /**
-     * Indicates if this is a distributed environment (e.g. the Lock and Queue are distributed, e.g. using Zookeeper.
+     * Indicates if this is a distributed environment (e.g. the Lock and Queue are distributed, e.g. backed by Zookeeper.)
      */
     @Override
     public boolean isDistributed() {
