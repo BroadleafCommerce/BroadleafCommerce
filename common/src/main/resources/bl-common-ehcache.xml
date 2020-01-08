@@ -44,31 +44,26 @@
     
     <!-- This is required by Hibernate to ensure that query caches return
           correct results. It must contain at least as many entries as there are
-          DB tables and must never expire. 
-          This cache name is deprecated in favor of org.hibernate.cache.spi.TimestampsCache. 
-          We'll leave it here for now. -->
-     <cache alias="org.hibernate.cache.spi.UpdateTimestampsCache">
+          DB tables and must never expire. -->
+     <cache alias="default-update-timestamps-region">
          <expiry>
              <none/>
          </expiry>
          <heap>5000</heap>
      </cache>
      
-     <!-- This is required by Hibernate to ensure that query caches return
-          corrrect results. It must contain at least as many entries as there are
-          DB tables and must never expire.-->
-     <cache alias="org.hibernate.cache.spi.TimestampsCache">
-         <expiry>
-             <none/>
-         </expiry>
-         <heap>5000</heap>
-     </cache>
-    
+     <cache alias="default-query-results-region">
+        <expiry>
+            <ttl>600</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
+     
     <cache alias="blStandardElements" uses-template="hydratedCacheTemplate">
         <expiry>
             <ttl>86400</ttl>
         </expiry>
-        <heap>10000</heap>
+        <heap>100000</heap>
     </cache>
     
     <cache alias="blProducts" uses-template="hydratedCacheTemplate">
@@ -82,14 +77,14 @@
         <expiry>
             <ttl>3600</ttl>
         </expiry>
-        <heap>10000</heap>
+        <heap>1000</heap>
     </cache>
     
     <cache alias="blCategories" uses-template="hydratedCacheTemplate">
         <expiry>
             <ttl>86400</ttl>
         </expiry>
-        <heap>1000</heap>
+        <heap>100000</heap>
     </cache>
 
     <cache alias="blCategoryUrlCache">
@@ -111,13 +106,6 @@
             <ttl>60</ttl>
         </expiry>
         <heap>100000</heap>
-    </cache>
-
-    <cache alias="org.hibernate.cache.internal.StandardQueryCache">
-        <expiry>
-            <ttl>600</ttl>
-        </expiry>
-        <heap>1000</heap>
     </cache>
 
     <cache alias="query.Catalog">
