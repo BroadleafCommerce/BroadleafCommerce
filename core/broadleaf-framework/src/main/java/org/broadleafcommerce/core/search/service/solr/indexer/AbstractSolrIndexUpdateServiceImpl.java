@@ -81,7 +81,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                 Assert.notNull(lock, "The lock cannot be null. Check the " + queueProvider.getClass().getName() + ".");
                 
                 final CommandCoordinator commandRunnable = new CommandCoordinator(this.commandQueue, lock, commandHandler);
-                final Thread commandThread = new Thread(commandRunnable, "Solr-Index-Update-Command-" + getCommandGroup());
+                final Thread commandThread = new Thread(commandRunnable, getCommandGroup() + "-Solr-Index-Update-Command-Master");
                 commandThread.start();
                 
                 AtomicReferenceArray<Runnable> ref = new AtomicReferenceArray<>(2);

@@ -18,6 +18,7 @@
 
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
@@ -60,22 +61,30 @@ public class DelegatingHttpSolrClient extends SolrClient {
     
     protected final HttpSolrClient delegate;
     protected final String defaultCollection;
+    protected final String defaultCollectionPath;
     
     public DelegatingHttpSolrClient(HttpSolrClient delegate) {
         Assert.notNull(delegate, "SolrClient cannot be null.");
         this.delegate = delegate;
         this.defaultCollection = null;
+        defaultCollectionPath = null;
     }
     
     public DelegatingHttpSolrClient(HttpSolrClient delegate, String defaultCollection) {
         Assert.notNull(delegate, "SolrClient cannot be null.");
         this.delegate = delegate;
-        this.defaultCollection = defaultCollection;
+        if (StringUtils.isNotBlank(defaultCollection)) {
+            this.defaultCollection = defaultCollection;
+            this.defaultCollectionPath = '/' + defaultCollection;
+        } else {
+            this.defaultCollection = null;
+            this.defaultCollectionPath = null;
+        }
     }
 
     @Override
     public NamedList<Object> request(@SuppressWarnings("rawtypes") SolrRequest request, String collection) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.request(request);
         } else {
             return delegate.request(request, collection);
@@ -90,7 +99,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(String collection, Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.add(docs);
         } else {
             return delegate.add(collection, docs);
@@ -99,7 +108,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.add(docs);
         } else {
             return delegate.add(defaultCollection, docs);
@@ -108,7 +117,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(String collection, Collection<SolrInputDocument> docs, int commitWithinMs) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.add(docs, commitWithinMs);
         } else {
             return delegate.add(collection, docs, commitWithinMs);
@@ -117,7 +126,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(Collection<SolrInputDocument> docs, int commitWithinMs) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.add(docs, commitWithinMs);
         } else {
             return delegate.add(defaultCollection, docs, commitWithinMs);
@@ -126,7 +135,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(String collection, SolrInputDocument doc) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.add(doc);
         } else {
             return delegate.add(collection, doc);
@@ -135,7 +144,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(SolrInputDocument doc) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.add(doc);
         } else {
             return delegate.add(defaultCollection, doc);
@@ -144,7 +153,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(String collection, SolrInputDocument doc, int commitWithinMs) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.add(doc, commitWithinMs);
         } else {
             return delegate.add(collection, doc, commitWithinMs);
@@ -153,7 +162,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(SolrInputDocument doc, int commitWithinMs) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.add(doc, commitWithinMs);
         } else {
             return delegate.add(defaultCollection, doc, commitWithinMs);
@@ -162,7 +171,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(String collection, Iterator<SolrInputDocument> docIterator) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.add(docIterator);
         } else {
             return delegate.add(collection, docIterator);
@@ -171,7 +180,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse add(Iterator<SolrInputDocument> docIterator) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.add(docIterator);
         } else {
             return delegate.add(defaultCollection, docIterator);
@@ -180,7 +189,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBean(String collection, Object obj) throws IOException, SolrServerException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.addBean(obj);
         } else {
             return delegate.addBean(collection, obj);
@@ -189,7 +198,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBean(Object obj) throws IOException, SolrServerException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.addBean(obj);
         } else {
             return delegate.addBean(defaultCollection, obj);
@@ -198,7 +207,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBean(String collection, Object obj, int commitWithinMs) throws IOException, SolrServerException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.addBean(obj, commitWithinMs);
         } else {
             return delegate.addBean(collection, obj, commitWithinMs);
@@ -207,7 +216,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBean(Object obj, int commitWithinMs) throws IOException, SolrServerException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.addBean(obj, commitWithinMs);
         } else {
             return delegate.addBean(defaultCollection, obj, commitWithinMs);
@@ -216,7 +225,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBeans(String collection, Collection<?> beans) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.addBeans(beans);
         } else {
             return delegate.addBeans(collection, beans);
@@ -225,7 +234,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBeans(Collection<?> beans) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.addBeans(beans);
         } else {
             return delegate.addBeans(defaultCollection, beans);
@@ -234,7 +243,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBeans(String collection, Collection<?> beans, int commitWithinMs) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.addBeans(beans, commitWithinMs);
         } else {
             return delegate.addBeans(collection, beans, commitWithinMs);
@@ -243,7 +252,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBeans(Collection<?> beans, int commitWithinMs) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.addBeans(beans, commitWithinMs);
         } else {
             return delegate.addBeans(defaultCollection, beans, commitWithinMs);
@@ -252,7 +261,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBeans(String collection, Iterator<?> beanIterator) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.addBeans(beanIterator);
         } else {
             return delegate.addBeans(collection, beanIterator);
@@ -261,7 +270,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse addBeans(Iterator<?> beanIterator) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.addBeans(beanIterator);
         } else {
             return delegate.addBeans(defaultCollection, beanIterator);
@@ -270,7 +279,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse commit(String collection) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.commit();
         } else {
             return delegate.commit(collection);
@@ -279,7 +288,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse commit() throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.commit();
         } else {
             return delegate.commit(defaultCollection);
@@ -288,7 +297,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse commit(String collection, boolean waitFlush, boolean waitSearcher) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.commit(waitFlush, waitSearcher);
         } else {
             return delegate.commit(collection, waitFlush, waitSearcher);
@@ -297,7 +306,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse commit(boolean waitFlush, boolean waitSearcher) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.commit(waitFlush, waitSearcher);
         } else {
             return delegate.commit(defaultCollection, waitFlush, waitSearcher);
@@ -306,7 +315,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse commit(String collection, boolean waitFlush, boolean waitSearcher, boolean softCommit) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.commit(waitFlush, waitSearcher, softCommit);
         } else {
             return delegate.commit(collection, waitFlush, waitSearcher, softCommit);
@@ -315,7 +324,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse commit(boolean waitFlush, boolean waitSearcher, boolean softCommit) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.commit(waitFlush, waitSearcher, softCommit);
         } else {
             return delegate.commit(defaultCollection, waitFlush, waitSearcher, softCommit);
@@ -324,7 +333,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse optimize(String collection) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.optimize();
         } else {
             return delegate.optimize(collection);
@@ -333,7 +342,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse optimize() throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.optimize();
         } else {
             return delegate.optimize(defaultCollection);
@@ -342,7 +351,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse optimize(String collection, boolean waitFlush, boolean waitSearcher) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.optimize(waitFlush, waitSearcher);
         } else {
             return delegate.optimize(collection, waitFlush, waitSearcher);
@@ -351,7 +360,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse optimize(boolean waitFlush, boolean waitSearcher) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.optimize(waitFlush, waitSearcher);
         } else {
             return delegate.optimize(defaultCollection, waitFlush, waitSearcher);
@@ -360,7 +369,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse optimize(String collection, boolean waitFlush, boolean waitSearcher, int maxSegments) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.optimize(waitFlush, waitSearcher, maxSegments);
         } else {
             return delegate.optimize(collection, waitFlush, waitSearcher, maxSegments);
@@ -369,7 +378,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse optimize(boolean waitFlush, boolean waitSearcher, int maxSegments) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.optimize(waitFlush, waitSearcher, maxSegments);
         } else {
             return delegate.optimize(defaultCollection, waitFlush, waitSearcher, maxSegments);
@@ -378,7 +387,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse rollback(String collection) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.rollback();
         } else {
             return delegate.rollback(collection);
@@ -387,7 +396,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse rollback() throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.rollback();
         } else {
             return delegate.rollback(defaultCollection);
@@ -396,7 +405,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(String collection, String id) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.deleteById(id);
         } else {
             return delegate.deleteById(collection, id);
@@ -405,7 +414,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(String id) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.deleteById(id);
         } else {
             return delegate.deleteById(defaultCollection, id);
@@ -414,7 +423,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(String collection, String id, int commitWithinMs) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.deleteById(id, commitWithinMs);
         } else {
             return delegate.deleteById(collection, id, commitWithinMs);
@@ -423,7 +432,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(String id, int commitWithinMs) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.deleteById(id, commitWithinMs);
         } else {
             return delegate.deleteById(defaultCollection, id, commitWithinMs);
@@ -432,7 +441,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(String collection, List<String> ids) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.deleteById(ids);
         } else {
             return delegate.deleteById(collection, ids);
@@ -441,7 +450,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(List<String> ids) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.deleteById(ids);
         } else {
             return delegate.deleteById(defaultCollection, ids);
@@ -450,7 +459,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(String collection, List<String> ids, int commitWithinMs) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.deleteById(ids, commitWithinMs);
         } else {
             return delegate.deleteById(collection, ids, commitWithinMs);
@@ -459,7 +468,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteById(List<String> ids, int commitWithinMs) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.deleteById(ids, commitWithinMs);
         } else {
             return delegate.deleteById(defaultCollection, ids, commitWithinMs);
@@ -468,7 +477,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteByQuery(String collection, String query) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.deleteByQuery(query);
         } else {
             return delegate.deleteByQuery(collection, query);
@@ -477,7 +486,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteByQuery(String query) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.deleteByQuery(query);
         } else {
             return delegate.deleteByQuery(defaultCollection, query);
@@ -486,7 +495,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteByQuery(String collection, String query, int commitWithinMs) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.deleteByQuery(query, commitWithinMs);
         } else {
             return delegate.deleteByQuery(collection, query, commitWithinMs);
@@ -495,7 +504,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public UpdateResponse deleteByQuery(String query, int commitWithinMs) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.deleteByQuery(query, commitWithinMs);
         } else {
             return delegate.deleteByQuery(defaultCollection, query, commitWithinMs);
@@ -509,7 +518,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public QueryResponse query(String collection, SolrParams params) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.query(params);
         } else {
             return delegate.query(collection, params);
@@ -518,7 +527,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public QueryResponse query(SolrParams params) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.query(params);
         } else {
             return delegate.query(defaultCollection, params);
@@ -527,7 +536,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public QueryResponse query(String collection, SolrParams params, METHOD method) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.query(params, method);
         } else {
             return delegate.query(collection, params, method);
@@ -536,7 +545,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public QueryResponse query(SolrParams params, METHOD method) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.query(params, method);
         } else {
             return delegate.query(defaultCollection, params, method);
@@ -545,7 +554,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public QueryResponse queryAndStreamResponse(String collection, SolrParams params, StreamingResponseCallback callback) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.queryAndStreamResponse(params, callback);
         } else {
             return delegate.queryAndStreamResponse(collection, params, callback);
@@ -554,7 +563,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public QueryResponse queryAndStreamResponse(SolrParams params, StreamingResponseCallback callback) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.queryAndStreamResponse(params, callback);
         } else {
             return delegate.queryAndStreamResponse(defaultCollection, params, callback);
@@ -563,7 +572,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocument getById(String collection, String id) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.getById(id);
         } else {
             return delegate.getById(collection, id);
@@ -572,7 +581,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocument getById(String id) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.getById(id);
         } else {
             return delegate.getById(defaultCollection, id);
@@ -581,7 +590,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocument getById(String collection, String id, SolrParams params) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.getById(id, params);
         } else {
             return delegate.getById(collection, id, params);
@@ -590,7 +599,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocument getById(String id, SolrParams params) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.getById(id, params);
         } else {
             return delegate.getById(defaultCollection, id, params);
@@ -599,7 +608,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocumentList getById(String collection, Collection<String> ids) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.getById(ids);
         } else {
             return delegate.getById(collection, ids);
@@ -608,7 +617,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocumentList getById(Collection<String> ids) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.getById(ids);
         } else {
             return delegate.getById(defaultCollection, ids);
@@ -617,7 +626,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocumentList getById(String collection, Collection<String> ids, SolrParams params) throws SolrServerException, IOException {
-        if (collection != null && delegate.getBaseURL().endsWith('/' + collection)) {
+        if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.getById(ids, params);
         } else {
             return delegate.getById(collection, ids, params);
@@ -626,7 +635,7 @@ public class DelegatingHttpSolrClient extends SolrClient {
 
     @Override
     public SolrDocumentList getById(Collection<String> ids, SolrParams params) throws SolrServerException, IOException {
-        if (defaultCollection != null && delegate.getBaseURL().endsWith('/' + defaultCollection)) {
+        if (defaultCollection == null || delegate.getBaseURL().endsWith(defaultCollectionPath)) {
             return delegate.getById(ids, params);
         } else {
             return delegate.getById(defaultCollection, ids, params);
@@ -641,5 +650,13 @@ public class DelegatingHttpSolrClient extends SolrClient {
     @Override
     public void close() throws IOException {
         delegate.close();
+    }
+    
+    public HttpSolrClient getDelegate() {
+        return delegate;
+    }
+    
+    public String getDefaultCollection() {
+        return defaultCollection;
     }
 }
