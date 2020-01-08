@@ -108,23 +108,14 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         }
         
         if (!CollectionUtils.isEmpty(sections)) {
-            AdminSection returnSection = sections.get(0);
-            if (sectionId == null) {
-                // if no sectionId was passed, ensure we are returning the correct section based on the request's sectionkey
-                sectionId = getSectionKey(true);
-            }
-
-            if (!sectionId.startsWith("/")) {
-                sectionId = "/" + sectionId;
-            }
             for (AdminSection section : sections) {
-                if (sectionId.equals(section.getUrl())) {
-                    returnSection = section;
-                    break;
+                //When identifying the "base" section, multiple can be returned.  "Type" sections (e.g. product:addon) will have a ":".
+                //  Since we are looking for the base section, the "type" sections should be ignored
+                if(!section.getUrl().contains(":")){
+                    return section;
                 }
             }
-
-            return returnSection;
+            return sections.get(0);
         }
         
         return null;
