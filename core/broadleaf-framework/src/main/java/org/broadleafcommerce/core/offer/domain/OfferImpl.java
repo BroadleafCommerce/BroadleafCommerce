@@ -81,7 +81,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "BLC_OFFER", indexes = {@javax.persistence.Index(name = "IDX_BLOFFER_START_DATE", columnList = "START_DATE")})
+@Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
@@ -168,6 +168,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected Integer priority;
 
     @Column(name = "START_DATE")
+    @Index(name="idx_BLOF_START_DATE", columnNames={"START_DATE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date",
         group = GroupName.ActivityRange, order = FieldOrder.StartDate,
         prominent = true, gridOrder = 2,
