@@ -319,6 +319,8 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                 
                 currentlockPath = null;
             }
+        } catch (DistributedLockException e) {
+            throw e;
         } catch (Exception e) {
             LOG.error("An error occured trying to unlock a distributed lock stored in Zookeeper.  "
                     + "The lock has not been released and manual intervention may be required.  Lock path is: " + currentlockPath, e);
@@ -375,7 +377,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
      * @param waitTime
      * @throws InterruptedException
      */
-    protected boolean lockInternally(long waitTime) throws InterruptedException {
+    protected boolean lockInternally(final long waitTime) throws InterruptedException {
         if (!canParticipate()) {
             //No lock will be provided in this case, but we want to simulate the normal lock semantics.
             if (waitTime < 0L) {
@@ -414,7 +416,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
             
             synchronized (LOCK_MONITOR) {
-                boolean waitCompleted = false; //Allows us to avoid waiting indefinitely if the client specified a wait time.
+                long timeToWait = waitTime;
                 while(true) {
                     if (Thread.interrupted()) {
                         throw new InterruptedException();
@@ -441,6 +443,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     Collections.sort(nodes);
                     String firstLocked = null;
                     for (String node : nodes) {
+                        //Make sure that there's no stray data in this directory that we don't care about...
                         if (node.startsWith(getFullLockName())) {
                             firstLocked = node;
                             break;
@@ -448,14 +451,8 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                     }
                     
                     if (firstLocked != null && localLockPath.endsWith(firstLocked)) {
-                        //We got the lock so increment the fact that this thread has 1 permit.
-                        AtomicInteger counter = THREAD_LOCK_PERMITS.get();
-                        if (counter == null) {
-                            counter = new AtomicInteger();
-                            THREAD_LOCK_PERMITS.set(counter);
-                        }
-                        
-                        counter.incrementAndGet();
+                        //We got the lock so keep track of the fact that this thread has 1 permit.
+                        THREAD_LOCK_PERMITS.set(new AtomicInteger(1));
                         
                         //Set the currentLockPath with the one that we just obtained.
                         currentlockPath = localLockPath;
@@ -483,12 +480,17 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                                 return false;
                             }
                         } else if (waitTime < 0L) {
-                            //Wait indefinitely.  If this notified (typically by the Watcher, above), then it will try to obtain the lock.
+                            //Wait indefinitely.  If this notified (typically by the Watcher, above), then it will try to obtain the lock 
+                            //and will continue to wait and retry until it does.
                             LOCK_MONITOR.wait();
                         } else {
-                            if (waitCompleted) {
+                            //There is a specific wait time that has been specified.  We'll wait for that wait time.  However, we have to keep track of 
+                            //how long we've waited since there may be events that notify this thread to wake up and try to obtain the lock again.
+                            //If the lock is not obtained, but we've not waited long enough, then we want to wait some more.
+                            //The original timeToWait will be the waitTime, which, in this case, will be greater than zero.  But we'll decrement it the amount of time that we've waited.
+                            if (timeToWait <= 0L) {
                                 //We already waited the specified time, so don't wait again.  
-                                //The caller specified a wait time, and we already waited so we'll just return false since we did not obtain the lock.
+                                //The caller specified a wait time, and we already waited the full amount of time so we'll just return false since we did not obtain the lock.
                                 try {
                                     //Do some cleanup
                                     return GenericOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
@@ -503,11 +505,16 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                                     LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e);
                                     return false;
                                 }
+                            } else {
+                                //Begin waiting and keep track of how long we've waited.
+                                long beginWait = System.currentTimeMillis();
+                                //Wait for a specified period of time.
+                                LOCK_MONITOR.wait(timeToWait);
+                                long endWait = System.currentTimeMillis();
+                                //Time to wait started as waitTime, which is greater than 0.
+                                //Decrement the time that we've waited so far.
+                                timeToWait -= (endWait - beginWait);
                             }
-                            //Indicate that we've already waited for the specified time so that we don't wait again.
-                            waitCompleted = true; 
-                            //Wait for a specified period of time.
-                            LOCK_MONITOR.wait(waitTime);
                         }
                     }
                 }
