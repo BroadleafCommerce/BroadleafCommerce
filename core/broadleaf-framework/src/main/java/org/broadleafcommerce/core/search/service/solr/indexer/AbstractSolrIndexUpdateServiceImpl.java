@@ -89,6 +89,8 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                 ref.set(1, commandThread);
                 
                 commandThreadRegistry.put(getCommandGroup(), ref);
+            } else {
+                LOG.warn("A command thread has already been registered for the following command group: " + getCommandGroup());
             }
         }
     }
@@ -137,8 +139,12 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
         if (command != null) {
             try {
                 for (int i = 0; i < 5; i++) {
-                    //Assuming there is not already an equal command in the queue, and not a FullReindexCommand in the queue, then add the command 
-                    //for processing in a background thread.
+                    // Assuming there is not already an equal command in the queue, and not a FullReindexCommand in the queue, then add the command
+                    // for processing in a background thread.
+                    // If a FullReindexCommand is in the queue, then all incremental update commands are ignored since they'll
+                    // be overridden when the full reindex is applied. Just before the FullReindexCommand begins, it
+                    // is removed from the queue.  This allows incremental update commands to be queued with the assumption
+                    // that the full reindex may be mid-stream & may not have picked up the update.
                     if (!commandQueue.contains(FullReindexCommand.DEFAULT_INSTANCE) && !commandQueue.contains(command)) {
                         if (commandQueue.offer(command, getQueueOfferTime(), TimeUnit.MILLISECONDS)) {
                             return;
@@ -149,7 +155,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                 }
                 throw new IllegalStateException("Unable to add a Solr index update command to the queue within 5 seconds.");
             } catch (InterruptedException e) {
-                throw new RuntimeException("Unexpected error occured attempting to add a command to the queue.", e);
+                throw new RuntimeException("Unexpected error occurred attempting to add a command to the queue.", e);
             }
         }
     }
