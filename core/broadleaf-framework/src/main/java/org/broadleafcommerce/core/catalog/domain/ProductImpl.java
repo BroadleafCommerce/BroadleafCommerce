@@ -108,12 +108,14 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@javax.persistence.Table(name = "BLC_PRODUCT", indexes = {@javax.persistence.Index(name = "IDX_BLPRD_URL_KEY", columnList = "URL_KEY")})
+@javax.persistence.Table(name = "BLC_PRODUCT")
 //multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
 @org.hibernate.annotations.Table(appliesTo = "BLC_PRODUCT", indexes = {
         @Index(name = "PRODUCT_URL_INDEX",
                 columnNames = {"URL", "URL_KEY"}
-        )
+        ),
+        @Index(name = "PRODUCT_URL_KEY_INDEX",
+                columnNames = {"URL_KEY"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationMergeOverrides(
