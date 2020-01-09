@@ -60,6 +60,7 @@ import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -90,7 +91,7 @@ import javax.annotation.Resource;
  * @author Jeff Fischer
  */
 @Service("blSolrIndexService")
-public class SolrIndexServiceImpl implements SolrIndexService {
+public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean {
 
     private static final Log LOG = LogFactory.getLog(SolrIndexServiceImpl.class);
 
@@ -157,6 +158,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (!useLegacySolrIndexer) {
+            if (useSku) {
+                throw new IllegalStateException("The property 'solr.catalog.useLegacySolrIndexer' was false and 'solr.index.use.sku' was true, which is not supported.");
+            }
+            if (solrConfiguration != null && solrConfiguration.isSiteCollections()) {
+                throw new IllegalStateException("The property 'solr.catalog.useLegacySolrIndexer' was false and 'solr.index.site.collections' was true, which is not supported.");
+            }
+        }
+    }
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
