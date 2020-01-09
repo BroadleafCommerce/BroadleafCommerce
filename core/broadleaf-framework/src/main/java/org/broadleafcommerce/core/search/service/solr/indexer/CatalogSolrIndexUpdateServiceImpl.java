@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.search.service.solr.indexer;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.core.search.dao.CatalogStructure;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -52,5 +54,14 @@ public class CatalogSolrIndexUpdateServiceImpl extends AbstractSolrIndexUpdateSe
         scheduleCommand(cmd);
     }
 
-    
+    @Override
+    public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
+        try {
+            CatalogStructure cache = new CatalogStructure();
+            SolrIndexCachedOperation.setCache(cache);
+            cacheOperation.execute();
+        } finally {
+            SolrIndexCachedOperation.clearCache();
+        }
+    }
 }
