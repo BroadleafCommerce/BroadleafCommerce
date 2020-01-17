@@ -83,15 +83,31 @@ public interface ProductOptionValue extends Serializable, MultiTenantCloneable<P
      * Gets the price adjustment associated with this value. For instance,
      * if this ProductOptionValue represented an extra-large shirt, that
      * might be a $1 upcharge. This adjustments will be automatically
-     * added to the Sku retail price and sale price
-     * <br />
-     * <br />
-     * Note: This could also be a negative value if you wanted to offer
+     * added to the Sku retail price and sale price.
+     * <p>
+     * This may be a negative value if you wanted to offer
      * a particular ProductOptionValue at a discount
+     * <p>
+     * Depending on the implementation, this may perform dynamic pricing,
+     * which influences the value returned by examining price lists for
+     * the product option.
+     * <p>
+     * To retrieve the price adjustment without dynamic pricing applied,
+     * see {@link #getPriceAdjustmentSkipDynamicPricing()}.
      * 
-     * @return the price adjustment for this 
+     * @return The price adjustment for this product option, with dynamic
+     * pricing applied, if applicable.
      */
     public Money getPriceAdjustment();
+
+    /**
+     * Retrieve the Product Option's price adjustment without dynamic pricing
+     * applied.
+     *
+     * @return The price adjustment for this product option.
+     * @see #getPriceAdjustment()
+     */
+    public Money getPriceAdjustmentSkipDynamicPricing();
 
     /**
      * Gets the price adjustment associated with this value. For instance,
