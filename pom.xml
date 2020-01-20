@@ -44,7 +44,7 @@
         </repository>
         <repository>
             <id>spring-milestones</id>
-            <url>http://repo.spring.io/milestone</url>
+            <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
     <properties>
@@ -61,6 +61,7 @@
         <selenium.version>2.43.1</selenium.version>
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>2.4.15</groovy.version>
+        <gpg.plugin.version>1.6</gpg.plugin.version>
         <broadleaf-presentation.version>1.1.0-GA</broadleaf-presentation.version>
         <lombok.version>1.18.0</lombok.version>
         <database.starter.version>2.0.0-GA</database.starter.version>

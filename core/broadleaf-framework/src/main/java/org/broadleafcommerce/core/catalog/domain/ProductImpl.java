@@ -113,7 +113,9 @@ import javax.persistence.Transient;
 @org.hibernate.annotations.Table(appliesTo = "BLC_PRODUCT", indexes = {
         @Index(name = "PRODUCT_URL_INDEX",
                 columnNames = {"URL", "URL_KEY"}
-        )
+        ),
+        @Index(name = "PRODUCT_URL_KEY_INDEX",
+                columnNames = {"URL_KEY"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationMergeOverrides(

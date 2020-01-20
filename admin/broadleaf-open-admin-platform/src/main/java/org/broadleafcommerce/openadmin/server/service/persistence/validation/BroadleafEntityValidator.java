@@ -18,7 +18,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -26,8 +25,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Map;
-
-
 
 /**
  * A Spring bean extending this class will automatically be called when validation is done on the entity specified by

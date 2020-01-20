@@ -38,7 +38,7 @@ public class ImportSQLConfig {
 
     @Bean
     public AutoImportSql blLocaleData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_locale.sql,", BASIC_DATA_SPECIAL);
+        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_locale.sql", BASIC_DATA_SPECIAL);
     }
 
     @Bean

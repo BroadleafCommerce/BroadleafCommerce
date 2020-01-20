@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
+
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;

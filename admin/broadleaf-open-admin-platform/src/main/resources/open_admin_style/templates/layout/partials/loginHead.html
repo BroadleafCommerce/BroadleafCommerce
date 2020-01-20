@@ -1,0 +1,79 @@
+<head>
+    
+    <div th:replace="layout/partials/preHeadContent" ></div>
+
+    <meta th:if="${#httpSession?.maxInactiveInterval != null and #httpSession?.maxInactiveInterval &gt; 0}"
+          http-equiv="refresh"
+          th:content="${#httpSession.maxInactiveInterval}"></meta>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta http-equiv="Content-Author" content="Broadleaf Commerce" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>
+        [[#{Admin_Title}]]
+        <th:block th:if="${entityFriendlyName}">
+             - [[#{#{${currentAdminSection.sectionKey}}}]]
+        </th:block>
+        <th:block th:if="${entityForm}">
+             - [[${entityForm.mainEntityName}]]
+        </th:block>
+    </title>
+    
+    <!--[if IE 7]>
+    <link rel="stylesheet" th:href="@{/css/font-awesome-ie7.min.css}" />
+    <![endif]-->
+    
+    <th:block th:unless="${#arrays.contains({'iw','ar','fa','ur'},session.blLocale.localeCode)}">
+        <blc:bundle name="admin/admin.css" 
+                    mapping-prefix="/css/"
+                    files="admin/icon-style.css,
+                           admin/bootstrap.css,
+                           admin/blc-admin.css,
+                           admin/redactor.css,
+                           admin/selectize.css,
+                           admin/spectrum.css,
+                           admin/font-awesome.min.css,
+                           admin/blc-query-builder.css,
+                           admin/jquery-ui-1.10.2.custom.css,
+                           admin/jquery.mCustomScrollbar.css,
+                           admin/entityForm.css,
+                           admin/listGrid.css,
+                           admin/modal.css,
+                           admin/media-asset.css,
+                           admin/tooltips.css,
+                           admin/session-expiration.css,
+                           admin/jquery-confirm.min.css,
+                           admin/selectize-admin-customizations.css" ></blc:bundle>
+    </th:block>
+    <th:block th:if="${#arrays.contains({'iw','ar','fa','ur'},session.blLocale.localeCode)}">
+        <blc:bundle name="admin/admin.rtl.css" 
+                        mapping-prefix="/css/"
+                        files="admin/rtl/icon-style.rtl.css,
+                               admin/rtl/bootstrap.rtl.css,
+                               admin/rtl/blc-admin.rtl.css,
+                               admin/redactor.css,
+                               admin/selectize.css,
+                               admin/rtl/spectrum.rtl.css,
+                               admin/font-awesome.min.rtl.css,
+                               admin/rtl/blc-query-builder.rtl.css,
+                               admin/jquery-ui-1.10.2.custom.css,
+                               admin/rtl/jquery.mCustomScrollbar.rtl.css,
+                               admin/rtl/entityForm.rtl.css,
+                               admin/rtl/listGrid.rtl.css,
+                               admin/rtl/modal.rtl.css,
+                               admin/rtl/media-asset.rtl.css,
+                               admin/rtl/tooltips.rtl.css,
+                               admin/rtl/session-expiration.rtl.css,
+                               admin/jquery-confirm.min.css,
+                               admin/rtl/selectize-admin-customizations.rtl.css,
+                               admin/rtl/rtl-overrides.css" ></blc:bundle>
+    </th:block>
+
+    <script type="text/javascript" th:src="@{/js/admin/lib/modernizr.foundation.js}"></script>
+    
+    <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    
+    <div th:replace="layout/partials/postHeadContent" ></div>
+    
+</head>
