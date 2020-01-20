@@ -23,6 +23,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -32,6 +33,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Repository("blCustomerAddressDao")
@@ -95,11 +97,47 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
 
     @Override
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId) {
-        List<CustomerAddress> customerAddresses = readActiveCustomerAddressesByCustomerId(customerId);
-        for (CustomerAddress customerAddress : customerAddresses) {
-            customerAddress.getAddress().setDefault(customerAddress.getId().equals(customerAddressId));
-            em.merge(customerAddress);
+        // Throws a RuntimeException if the CustomerAddress is not found
+        CustomerAddress customerAddress = readCustomerAddressByIdAndCustomerId(customerAddressId, customerId);
+
+        if (customerAddress != null) {
+            clearDefaultAddressForCustomer(customerId);
+
+            em.refresh(customerAddress);
+            customerAddress.getAddress().setDefault(true);
+
+            save(customerAddress);
         }
+    }
+
+    @Override
+    public CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<CustomerAddress> criteria = builder.createQuery(CustomerAddress.class);
+        Root<CustomerAddressImpl> customerAddress = criteria.from(CustomerAddressImpl.class);
+        criteria.select(customerAddress);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(customerAddress.get("id"), customerAddressId));
+        predicates.add(builder.equal(customerAddress.get("customer").get("id"), customerId));
+
+        criteria.where(builder.and(predicates.toArray(new Predicate[predicates.size()])));
+        TypedQuery<CustomerAddress> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.CustomerAddress");
+
+        return query.getSingleResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void clearDefaultAddressForCustomer(Long customerId) {
+        // This has to be done in two queries because MySQL doesn't support updates on a table with a subquery on the same table
+        Query query = em.createNamedQuery("BC_READ_DEFAULT_ADDRESS_IDS_BY_CUSTOMER_ID");
+        query.setParameter("customerId", customerId);
+        List<Long> addressIds = query.getResultList();
+        Query update = em.createNamedQuery("BC_CLEAR_DEFAULT_ADDRESS_BY_IDS");
+        update.setParameter("addressIds", addressIds);
+        update.executeUpdate();
     }
 
     @Override

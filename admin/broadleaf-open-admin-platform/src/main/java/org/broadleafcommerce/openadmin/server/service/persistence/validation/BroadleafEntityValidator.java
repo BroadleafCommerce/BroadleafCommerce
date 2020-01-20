@@ -18,14 +18,16 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
+
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * A Spring bean extending this class will automatically be called when validation is done on the entity specified by
@@ -44,11 +46,11 @@ import javax.annotation.Nonnull;
  */
 public abstract class BroadleafEntityValidator<T> {
 
-	/**
-	 * Validation that should be done on the specified entity after core validation is completed.
-	 */
-	abstract void validate(Entity submittedEntity, @Nonnull T instance, Map<String, FieldMetadata> propertiesMetadata,
-			RecordHelper recordHelper, boolean validateUnsubmittedProperties);
+    /**
+     * Validation that should be done on the specified entity after core validation is completed.
+     */
+    public abstract void validate(Entity submittedEntity, @Nonnull T instance, Map<String, FieldMetadata> propertiesMetadata,
+                                  RecordHelper recordHelper, boolean validateUnsubmittedProperties);
 
 	@SuppressWarnings("unchecked")
 	void validate(Entity submittedEntity, @Nonnull Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
