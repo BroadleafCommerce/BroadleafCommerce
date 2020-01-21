@@ -36,37 +36,51 @@ import javax.persistence.PersistenceContext;
 public class DialectHelper {
 
     @PersistenceContext(unitName="blPU")
-    protected EntityManager em;
+    protected EntityManager defaultEntityManager;
 
-    protected Dialect cachedDialect = null;
 
-    public synchronized Dialect getHibernateDialect() {
-        if (cachedDialect == null) {
-            SessionFactoryImplementor factory = (SessionFactoryImplementor) em.unwrap(Session.class).getSessionFactory();
-            cachedDialect = factory.getDialect();
-        }
-        return cachedDialect;
+    public Dialect getHibernateDialect() {
+        return getHibernateDialect(defaultEntityManager);
+    }
+
+    public Dialect getHibernateDialect(EntityManager em) {
+        SessionFactoryImplementor factory = (SessionFactoryImplementor) em.unwrap(Session.class).getSessionFactory();
+        return factory.getDialect();
     }
 
     public boolean isOracle() {
-        //Since should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        return getHibernateDialect() instanceof Oracle8iDialect;
+        //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
+        return getHibernateDialect(defaultEntityManager) instanceof Oracle8iDialect;
+    }
+
+    public boolean isOracle(EntityManager em) {
+        //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
+        return getHibernateDialect(em) instanceof Oracle8iDialect;
     }
 
     public boolean isPostgreSql() {
-        //Since should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect() instanceof PostgreSQL81Dialect;
+        //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
+        return getHibernateDialect(defaultEntityManager) instanceof PostgreSQL81Dialect;
+    }
+
+    public boolean isPostgreSql(EntityManager em) {
+        //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
+        return getHibernateDialect(em) instanceof PostgreSQL81Dialect;
     }
 
     public boolean isSqlServer() {
-        return getHibernateDialect() instanceof SQLServerDialect;
+        return getHibernateDialect(defaultEntityManager) instanceof SQLServerDialect;
+    }
+
+    public boolean isSqlServer(EntityManager em) {
+        return getHibernateDialect(em) instanceof SQLServerDialect;
     }
 
     public boolean isMySql() {
-        return getHibernateDialect() instanceof MySQLDialect;
+        return getHibernateDialect(defaultEntityManager) instanceof MySQLDialect;
     }
 
-    public void clear() {
-        cachedDialect = null;
+    public boolean isMySql(EntityManager em) {
+        return getHibernateDialect(em) instanceof MySQLDialect;
     }
 }
