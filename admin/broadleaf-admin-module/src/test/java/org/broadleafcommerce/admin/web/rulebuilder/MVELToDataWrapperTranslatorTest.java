@@ -606,4 +606,68 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(exp.getValue().equals("[45,75]"));
     }
 
+    public void testInBetweenRuleOrderItemPrice() throws MVELTranslationException {
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+
+        Property[] properties = new Property[3];
+        Property mvelProperty = new Property();
+        mvelProperty.setName("matchRule");
+        mvelProperty.setValue("(orderItem.?price.getAmount()>2&&orderItem.?price.getAmount()<4)");
+        Property quantityProperty = new Property();
+        quantityProperty.setName("quantity");
+        quantityProperty.setValue("1");
+        Property idProperty = new Property();
+        idProperty.setName("id");
+        idProperty.setValue("100");
+        properties[0] = mvelProperty;
+        properties[1] = quantityProperty;
+        properties[2] = idProperty;
+        Entity[] entities = new Entity[1];
+        Entity entity = new Entity();
+        entity.setProperties(properties);
+        entities[0] = entity;
+
+        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", "quantity", "id", orderItemFieldService);
+        assert (dataWrapper.getData().size() == 1);
+        assert (dataWrapper.getData().get(0).getQuantity() == 1);
+        assert (dataWrapper.getData().get(0).getRules().size() == 1);
+        assert (dataWrapper.getData().get(0).getRules().get(0) instanceof ExpressionDTO);
+        ExpressionDTO exp = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(0);
+        assert (exp.getId().equals("price"));
+        assert (exp.getOperator().equals(BLCOperator.BETWEEN.name()));
+        assert (exp.getValue().equals("[2,4]"));
+    }
+
+    public void testInBetweenInclusiveRuleOrderItemPrice() throws MVELTranslationException {
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+
+        Property[] properties = new Property[3];
+        Property mvelProperty = new Property();
+        mvelProperty.setName("matchRule");
+        mvelProperty.setValue("(orderItem.?price.getAmount()>=2&&orderItem.?price.getAmount()<=4)");
+        Property quantityProperty = new Property();
+        quantityProperty.setName("quantity");
+        quantityProperty.setValue("1");
+        Property idProperty = new Property();
+        idProperty.setName("id");
+        idProperty.setValue("100");
+        properties[0] = mvelProperty;
+        properties[1] = quantityProperty;
+        properties[2] = idProperty;
+        Entity[] entities = new Entity[1];
+        Entity entity = new Entity();
+        entity.setProperties(properties);
+        entities[0] = entity;
+
+        DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", "quantity", "id", orderItemFieldService);
+        assert (dataWrapper.getData().size() == 1);
+        assert (dataWrapper.getData().get(0).getQuantity() == 1);
+        assert (dataWrapper.getData().get(0).getRules().size() == 1);
+        assert (dataWrapper.getData().get(0).getRules().get(0) instanceof ExpressionDTO);
+        ExpressionDTO exp = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(0);
+        assert (exp.getId().equals("price"));
+        assert (exp.getOperator().equals(BLCOperator.BETWEEN_INCLUSIVE.name()));
+        assert (exp.getValue().equals("[2,4]"));
+    }
+
 }

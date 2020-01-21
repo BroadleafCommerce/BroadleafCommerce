@@ -187,24 +187,26 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
             }
 
             filterOffersByQualifyingAndSubtotalRequirements(order, fgOffers);
-            
-            for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
-                if (potential.getTotalSavings().getAmount().equals(BankersRounding.zeroAmount())) {
-                    BroadleafCurrency currency = order.getOrderCurrency();
-                    if (currency != null) {
-                        potential.setTotalSavings(new Money(BigDecimal.ZERO, currency.getCurrencyCode()));
-                    } else {
-                        potential.setTotalSavings(new Money(BigDecimal.ZERO));
+            //if there are still candidate offers available, calculate the potential and add it into the potentials list
+            if (fgOffers.size() >= 1) {
+                for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
+                    if (potential.getTotalSavings().getAmount().equals(BankersRounding.zeroAmount())) {
+                        BroadleafCurrency currency = order.getOrderCurrency();
+                        if (currency != null) {
+                            potential.setTotalSavings(new Money(BigDecimal.ZERO, currency.getCurrencyCode()));
+                        } else {
+                            potential.setTotalSavings(new Money(BigDecimal.ZERO));
+                        }
                     }
+
+                    Money priceBeforeAdjustments = candidate.getFulfillmentGroup().calculatePriceWithoutAdjustments();
+                    Money discountedPrice = candidate.getDiscountedPrice();
+                    potential.setTotalSavings(potential.getTotalSavings().add(priceBeforeAdjustments.subtract(discountedPrice)));
+                    potential.setPriority(candidate.getOffer().getPriority());
                 }
-
-                Money priceBeforeAdjustments = candidate.getFulfillmentGroup().calculatePriceWithoutAdjustments();
-                Money discountedPrice = candidate.getDiscountedPrice();
-                potential.setTotalSavings(potential.getTotalSavings().add(priceBeforeAdjustments.subtract(discountedPrice)));
-                potential.setPriority(candidate.getOffer().getPriority());
+                potentials.add(potential);
             }
-
-            potentials.add(potential);
+            
         }
 
         // Sort fg potentials by priority and discount
