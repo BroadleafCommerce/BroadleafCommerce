@@ -410,7 +410,9 @@ public class BroadleafCartController extends AbstractCartController {
                         exception = "Invalid Code";
                     }
                 }
-                cart = orderService.save(cart, true);
+                if(exception.equals("")) {
+                    cart = orderService.save(cart, true);
+                }
             } else {
                 exception = "Unknown Code";
             }

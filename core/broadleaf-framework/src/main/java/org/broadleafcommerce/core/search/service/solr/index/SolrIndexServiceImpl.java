@@ -148,6 +148,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
 
+    @Value(value = "${enable.solr.optimize:false}")
+    private boolean optimizeEnabled;
+
+
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
         try {
@@ -183,8 +187,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void postBuildIndex() throws IOException, ServiceException {
-        // this is required to be at the very very very end after rebuilding the whole index
-        optimizeIndex(solrConfiguration.getReindexCollectionName(), solrConfiguration.getReindexServer());
+        if(optimizeEnabled) {
+            // this is required to be at the very very very end after rebuilding the whole index
+            optimizeIndex(solrConfiguration.getReindexCollectionName(), solrConfiguration.getReindexServer());
+        }
         // Swap the active and the reindex cores
         if (!solrConfiguration.isSingleCoreMode()) {
             shs.swapActiveCores(solrConfiguration);

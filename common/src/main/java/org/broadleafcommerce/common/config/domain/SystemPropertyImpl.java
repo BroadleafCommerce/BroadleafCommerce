@@ -37,6 +37,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
@@ -48,7 +49,9 @@ import javax.persistence.Table;
  * Date: 6/20/12
  */
 @Entity
-@Table(name="BLC_SYSTEM_PROPERTY")
+@Table(name="BLC_SYSTEM_PROPERTY", indexes = { 
+        @Index(name = "IDX_BLSYPR_PROPERTY_NAME", columnList = "PROPERTY_NAME")
+    })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @DirectCopyTransform({

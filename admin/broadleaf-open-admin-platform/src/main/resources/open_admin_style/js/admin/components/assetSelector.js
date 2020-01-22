@@ -36,11 +36,11 @@
                 'class' : 'upload_target hidden'
             });
             $form.before($iframe);
-            
+
             if (currentRedactor == null) {
-                $iframe.load(this.iframeOnLoad);
+                $iframe.on('load', this.iframeOnLoad);
             } else {
-                $iframe.load(this.iframeOnLoadRedactor);
+                $iframe.on('load', this.iframeOnLoadRedactor);
             }
 
             $form.attr('target', 'upload_target');

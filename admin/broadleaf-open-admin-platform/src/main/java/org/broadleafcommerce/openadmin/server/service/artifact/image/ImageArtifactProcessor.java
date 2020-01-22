@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.Deflater;
 
 import javax.annotation.Resource;
 import javax.imageio.IIOImage;
@@ -204,7 +205,7 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
     protected InputStream compressPNG(InputStream artifactStream) throws Exception {
         PngImage pngImage = new PngImage(artifactStream);
         PngOptimizer optimizer = new PngOptimizer();
-        PngImage response = optimizer.optimize(pngImage, true, null);
+        PngImage response = optimizer.optimize(pngImage, true, Deflater.DEFLATED);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         response.writeDataOutputStream(baos);
         return new ByteArrayInputStream(baos.toByteArray());

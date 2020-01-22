@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>6.0.7-SNAPSHOT</version>
+    <version>6.0.8-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -44,7 +44,7 @@
         </repository>
         <repository>
             <id>spring-milestones</id>
-            <url>http://repo.spring.io/milestone</url>
+            <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
     <properties>
@@ -61,6 +61,7 @@
         <selenium.version>2.43.1</selenium.version>
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>2.4.15</groovy.version>
+        <gpg.plugin.version>1.6</gpg.plugin.version>
         <broadleaf-presentation.version>1.1.0-GA</broadleaf-presentation.version>
         <lombok.version>1.18.0</lombok.version>
         <database.starter.version>2.0.0-GA</database.starter.version>
@@ -404,18 +405,48 @@
         </profile>
         <profile>
             <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>${gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>info@broadleafcommerce.org</keyname>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- IMPORTANT -->
+            <!-- This relies on a gpg.passphrase property set either at build time or in a settings.xml. If within
+               a <profile><properties> section, that <profile><id> must match _exactly_ to this id for gpg.passphrase to be picked up.
+               You know you have messed up if, on signing, GPG signing fails with this message:
+                   "gpg: signing failed: Inappropriate ioctl for device" -->
+            <!-- Older versions of GPG (specifically versions older than 2.2) don't know about a pinentry-mode argument. As a
+                result, signing will fail. If we ever retire the old build server (that still needs GPG prior to 2.2 because of the older
+                version of Ubuntu and requirement to work with older builds -->
+            <id>release-sign-artifacts-old-gpg</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -434,12 +465,6 @@
         </profile>
         <profile>
             <id>javadocs</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -475,12 +500,6 @@
         </profile>
         <profile>
             <id>sources</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -494,7 +513,7 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                     <goal>test-jar</goal>
                                 </goals>
                             </execution>

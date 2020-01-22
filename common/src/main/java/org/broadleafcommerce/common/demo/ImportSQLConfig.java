@@ -35,13 +35,11 @@ public class ImportSQLConfig {
     }
 
     @Bean
-    @Conditional(DemoCondition.class)
     public AutoImportSql blCommonBasicData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_admin_users.sql,config/bc/sql/demo/load_sitemap_data.sql", AutoImportStage.PRIMARY_BASIC_DATA);
     }
 
     @Bean
-    @Conditional({MTCondition.class, DemoCondition.class})
     public AutoImportSql blCommonLateData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_admin_user_data.sql,config/bc/sql/demo/fix_system_property_data.sql", AutoImportStage.PRIMARY_LATE);
     }

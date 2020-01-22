@@ -168,6 +168,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected Integer priority;
 
     @Column(name = "START_DATE")
+    @Index(name="idx_BLOF_START_DATE", columnNames={"START_DATE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date",
         group = GroupName.ActivityRange, order = FieldOrder.StartDate,
         prominent = true, gridOrder = 2,
