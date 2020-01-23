@@ -49,7 +49,7 @@
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.0.8.RELEASE</spring.version>
+        <spring.version>5.0.16.RELEASE</spring.version>
         <spring.security.version>5.0.12.RELEASE</spring.security.version>
         <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
         <spring.mobile.version>2.0.0.M3</spring.mobile.version>
@@ -1275,7 +1275,7 @@
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.0.9.Final</version>
+                <version>6.0.18.Final</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
