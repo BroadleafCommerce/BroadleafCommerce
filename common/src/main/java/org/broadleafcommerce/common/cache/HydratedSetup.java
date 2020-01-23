@@ -23,22 +23,22 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.cache.engine.HydratedAnnotationManager;
-import org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory;
 import org.broadleafcommerce.common.cache.engine.HydratedCacheManager;
 import org.broadleafcommerce.common.cache.engine.HydrationDescriptor;
 import org.hibernate.annotations.Cache;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
  * 
@@ -49,6 +49,11 @@ public class HydratedSetup {
     
     private static final Log LOG = LogFactory.getLog(HydratedSetup.class);
     private static Map<String, String> inheritanceHierarchyRoots = Collections.synchronizedMap(new HashMap<String, String>());
+    private static HydratedCacheManager manager;
+
+    public static void setHydratedCacheManager(HydratedCacheManager hydratedCacheManager) {
+        manager = hydratedCacheManager;
+    }
 
     private static String getInheritanceHierarchyRoot(Class<?> myEntityClass) {
         String myEntityName = myEntityClass.getName();
@@ -79,7 +84,6 @@ public class HydratedSetup {
     }
 
     public static void populateFromCache(Object entity, String propertyName) {
-        HydratedCacheManager manager = HydratedCacheEventListenerFactory.getConfiguredManager();
         HydrationDescriptor descriptor = ((HydratedAnnotationManager) manager).getHydrationDescriptor(entity);
         if (!MapUtils.isEmpty(descriptor.getHydratedMutators())) {
             Method[] idMutators = descriptor.getIdMutators();
@@ -111,12 +115,10 @@ public class HydratedSetup {
     }
 
     public static void addCacheItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
-        HydratedCacheManager manager = HydratedCacheEventListenerFactory.getConfiguredManager();
         manager.addHydratedCacheElementItem(cacheRegion, cacheName, elementKey, elementItemName, elementValue);
     }
 
     public static Object getCacheItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
-        HydratedCacheManager manager = HydratedCacheEventListenerFactory.getConfiguredManager();
         return manager.getHydratedCacheElementItem(cacheRegion, cacheName, elementKey, elementItemName);
     }
 

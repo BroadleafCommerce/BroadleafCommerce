@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.cache.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.HydratedSetup;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -26,19 +27,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.cache.event.CacheEntryExpiredListener;
-import javax.cache.event.CacheEntryRemovedListener;
-import javax.cache.event.CacheEntryUpdatedListener;
-
 /**
  * @author jfischer
  */
-public abstract class AbstractHydratedCacheManager<K, V> implements CacheEntryExpiredListener<K, V>, CacheEntryRemovedListener<K, V>, CacheEntryUpdatedListener<K, V>, 
-                                                                    HydratedCacheManager, HydratedAnnotationManager {
+public abstract class AbstractHydratedCacheManager implements HydratedCacheManager, HydratedAnnotationManager {
 
     private static final Log LOG = LogFactory.getLog(AbstractHydratedCacheManager.class);
 
     private Map<String, HydrationDescriptor> hydrationDescriptors = Collections.synchronizedMap(new HashMap(100));
+
+    public AbstractHydratedCacheManager() {
+        HydratedSetup.setHydratedCacheManager(this);
+    }
 
     @Override
     public HydrationDescriptor getHydrationDescriptor(Object entity) {
@@ -73,6 +73,28 @@ public abstract class AbstractHydratedCacheManager<K, V> implements CacheEntryEx
             superClass = superClass.getSuperclass();
         }
         return myClass;
+    }
+
+    protected String createNameKey(String cacheRegion, String cacheName, Serializable elementKey) {
+        String myKey = "";
+        if (useCacheRegionInKey()) {
+            myKey += cacheRegion + '_';
+        }
+        myKey += cacheName + '_' + elementKey;
+        return myKey;
+    }
+
+    protected String createHeapKey(String cacheRegion, String cacheName, String elementItemName, Serializable elementKey) {
+        String myKey = "";
+        if (useCacheRegionInKey()) {
+            myKey += cacheRegion + "_";
+        }
+        myKey += cacheName + '_' + elementItemName + '_' + elementKey;
+        return myKey;
+    }
+
+    protected boolean useCacheRegionInKey() {
+        return true;
     }
 
     @Override

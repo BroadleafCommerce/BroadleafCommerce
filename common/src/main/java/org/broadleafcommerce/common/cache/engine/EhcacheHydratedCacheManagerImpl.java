@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.cache.JCacheUtil;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,27 +30,19 @@ import java.util.List;
 import java.util.Map;
 
 import javax.cache.Cache;
-import javax.cache.event.CacheEntryEvent;
-import javax.cache.event.CacheEntryListenerException;
 
 /**
  * 
  * @author jfischer
  *
  */
-@Component("blHydratedCacheMangager")
-public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManager<Serializable, Object> {
+public abstract class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManager {
 
     private static final long serialVersionUID = 1L;
     
     private static final Log LOG = LogFactory.getLog(EhcacheHydratedCacheManagerImpl.class);
-    private static final EhcacheHydratedCacheManagerImpl MANAGER = new EhcacheHydratedCacheManagerImpl();
     
     public static final String HYDRATED_CACHE_NAME = "hydrated-cache";
-
-    public static EhcacheHydratedCacheManagerImpl getInstance() {
-        return MANAGER;
-    }
 
     private Map<String, List<String>> cacheMembersByEntity = Collections.synchronizedMap(new HashMap<String, List<String>>(100));
     private Cache<String, Object> heap = null;
@@ -76,14 +67,14 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
 
     @Override
     public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
-        String myKey = cacheRegion + '_' + cacheName + '_' + elementItemName + '_' + elementKey;
+        String myKey = createHeapKey(cacheRegion, cacheName, elementItemName, elementKey);
         return getHeap().get(myKey);
     }
 
     @Override
     public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
-        String heapKey = cacheRegion + '_' + cacheName + '_' + elementItemName + '_' + elementKey;
-        String nameKey = cacheRegion + '_' + cacheName + '_' + elementKey;
+        String heapKey = createHeapKey(cacheRegion, cacheName, elementItemName, elementKey);
+        String nameKey = createNameKey(cacheRegion, cacheName, elementKey);
         if (!cacheMembersByEntity.containsKey(nameKey)) {
             List<String> myMembers = new ArrayList<String>(50);
             myMembers.add(elementItemName);
@@ -93,6 +84,10 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
             myMembers.add(elementItemName);
         }
         getHeap().put(heapKey, elementValue);
+    }
+
+    protected void removeCache(Serializable key) {
+        removeCache("", key);
     }
 
     protected void removeCache(String cacheRegion, Serializable key) {
@@ -105,43 +100,16 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
             cacheName = keyPieces[0];
             key = keyPieces[1];
         }
-        String nameKey = cacheRegion + '_' + cacheName + '_' + key;
+        String nameKey = createNameKey(cacheRegion, cacheName, key);
         if (cacheMembersByEntity.containsKey(nameKey)) {
             String[] members = new String[cacheMembersByEntity.get(nameKey).size()];
             members = cacheMembersByEntity.get(nameKey).toArray(members);
             for (String myMember : members) {
-                String itemKey = cacheRegion + '_' + cacheName + '_' + myMember + '_' + key;
+                String itemKey = createHeapKey(cacheRegion, cacheName, myMember, key);
                 getHeap().remove(itemKey);
             }
             cacheMembersByEntity.remove(nameKey);
         }
     }
     
-    @Override
-    public void onExpired(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) throws CacheEntryListenerException {
-        removeCache(events);
-    }
-
-    @Override
-    public void onRemoved(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) throws CacheEntryListenerException {
-        removeCache(events);
-    }
-
-    @Override
-    public void onUpdated(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) throws CacheEntryListenerException {
-        removeCache(events);
-    }
-
-    protected void removeCache(Iterable<CacheEntryEvent<? extends Serializable, ? extends Object>> events) {
-        if (events != null) {
-            for (CacheEntryEvent<? extends Serializable, ? extends Object> event : events) {
-                @SuppressWarnings("unchecked")
-                Cache<String, Object> cache = event.getSource();
-                String region = cache.getName();
-                Serializable key = event.getKey();
-                removeCache(region, key);
-            }
-        }
-    }
-
 }

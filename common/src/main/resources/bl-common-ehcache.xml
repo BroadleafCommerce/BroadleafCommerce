@@ -30,7 +30,7 @@
     <cache-template name="hydratedCacheTemplate">
         <listeners>
             <listener>
-                <class>org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory</class>
+                <class>org.broadleafcommerce.common.cache.engine.EhcacheHydratedCacheEventListener</class>
                 <event-firing-mode>SYNCHRONOUS</event-firing-mode>
                 <event-ordering-mode>ORDERED</event-ordering-mode>
                 <events-to-fire-on>CREATED</events-to-fire-on>
