@@ -413,6 +413,7 @@ var BLC = (function($) {
         serializeObject : serializeObject,
         getUrlParameters : getUrlParameters,
         addUrlParam : addUrlParam,
+        addUrlQueryParam : addUrlQueryParam,
         buildUrlWithParams : buildUrlWithParams,
         servletContext : servletContext,
         siteBaseUrl : siteBaseUrl
