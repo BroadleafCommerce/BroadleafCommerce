@@ -700,6 +700,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 return entity;
             }
 
+            dynamicEntityDao.persist(adminInstance.getProduct());
             //persist the newly-created Sku
             adminInstance = dynamicEntityDao.persist(adminInstance);
 
