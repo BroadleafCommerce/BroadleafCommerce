@@ -312,13 +312,13 @@ public class SolrConfiguration implements InitializingBean {
         if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
             this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
         } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            this.setPrimaryName(determineCoreName(((DelegatingHttpSolrClient) solrServer).getDelegate()));
+            this.setPrimaryName(((DelegatingHttpSolrClient) solrServer).getDefaultCollection());
         }
 
         if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
             this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
         } else if (DelegatingHttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
-            this.setReindexName(determineCoreName(((DelegatingHttpSolrClient) reindexServer).getDelegate()));
+            this.setReindexName(((DelegatingHttpSolrClient) reindexServer).getDefaultCollection());
         }
 
         this.setServer(solrServer);
