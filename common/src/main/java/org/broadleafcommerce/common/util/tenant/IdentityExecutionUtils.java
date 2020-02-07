@@ -140,6 +140,8 @@ public class IdentityExecutionUtils {
         
         boolean isError = false;
         try {
+            BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
+
             activateSession();
             if (transactionManager != null) {
                 container = establishTransaction(transactionManager);
