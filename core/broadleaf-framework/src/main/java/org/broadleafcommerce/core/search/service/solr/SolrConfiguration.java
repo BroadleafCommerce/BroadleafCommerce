@@ -308,24 +308,17 @@ public class SolrConfiguration implements InitializingBean {
      */
     public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer) throws IllegalStateException {
         //get primary and reindex names from http urls
+
         if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
             this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
         } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            if (((DelegatingHttpSolrClient)solrServer).getDefaultCollection() == null) {
-                this.setReindexName(determineCoreName(((DelegatingHttpSolrClient)solrServer).getDelegate()));
-            } else {
-                this.setReindexName(((DelegatingHttpSolrClient)solrServer).getDefaultCollection());
-            }
+            this.setPrimaryName(determineCoreName(((DelegatingHttpSolrClient) solrServer).getDelegate()));
         }
-        
+
         if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
             this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
-        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            if (((DelegatingHttpSolrClient)reindexServer).getDefaultCollection() == null) {
-                this.setReindexName(determineCoreName(((DelegatingHttpSolrClient)reindexServer).getDelegate()));
-            } else {
-                this.setReindexName(((DelegatingHttpSolrClient)reindexServer).getDefaultCollection());
-            }
+        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexName(determineCoreName(((DelegatingHttpSolrClient) reindexServer).getDelegate()));
         }
 
         this.setServer(solrServer);
