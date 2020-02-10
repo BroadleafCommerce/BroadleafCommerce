@@ -878,8 +878,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     protected String translateErrorMessage(ObjectError error) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
+        if (context != null && context.getMessageSource() != null && error.getDefaultMessage() == null) {
             return context.getMessageSource().getMessage(error.getCode(), null, error.getCode(), context.getJavaLocale());
+        } else if (context != null && context.getMessageSource() != null && error.getDefaultMessage() != null) {
+            return context.getMessageSource().getMessage(error.getCode(), null, error.getDefaultMessage(), context.getJavaLocale());
         } else {
             LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
             return error.getCode();
