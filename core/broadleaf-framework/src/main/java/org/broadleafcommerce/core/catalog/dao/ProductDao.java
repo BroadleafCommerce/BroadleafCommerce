@@ -336,4 +336,14 @@ public interface ProductDao {
      */
     public void setCurrentDateResolution(Long currentDateResolution);
     
+    /**
+     * Reads a paginated list of active product IDs, in ascending order, starting immediately after the lastId.  
+     * If the lastId is null, then this returns the first page.
+     * 
+     * @param lastId
+     * @param pageSize
+     * @return
+     */
+    public List<Long> readAllActiveProductIds(Long lastId, int pageSize);
+    
 }
