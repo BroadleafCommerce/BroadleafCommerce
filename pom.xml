@@ -35,12 +35,12 @@
         <repository>
             <id>releases</id>
             <name>public releases</name>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/groups/community-releases/</url>
+            <url>https://nexus.broadleafcommerce.org/nexus/content/groups/community-releases/</url>
         </repository>
         <repository>
             <id>snapshots</id>
             <name>public snapshots</name>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/groups/community-snapshots/</url>
+            <url>https://nexus.broadleafcommerce.org/nexus/content/groups/community-snapshots/</url>
         </repository>
         <repository>
             <id>spring-milestones</id>
@@ -376,11 +376,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-snapshots</url>
+            <url>https://nexus.broadleafcommerce.org/nexus/content/repositories/framework-snapshots</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
+            <url>https://nexus.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
         </repository>
     </distributionManagement>
     <profiles>
