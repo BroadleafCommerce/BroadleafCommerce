@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.site.service.SiteService;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafTagReplacementProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
@@ -30,16 +29,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 @Component("blGoogleTagManagerProcessor")
 public class GoogleTagManagerProcessor extends AbstractBroadleafTagReplacementProcessor {
 
     @Autowired
     Environment env;
-
-    @Resource(name = "blSiteService")
-    protected SiteService siteService;
 
     @Override
     public String getName() {
