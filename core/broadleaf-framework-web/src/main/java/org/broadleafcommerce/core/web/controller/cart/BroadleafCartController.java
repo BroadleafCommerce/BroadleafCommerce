@@ -350,7 +350,7 @@ public class BroadleafCartController extends AbstractCartController {
 
     @Deprecated
     public String remove(HttpServletRequest request, HttpServletResponse response, Model model,
-                         AddToCartItem itemRequest) throws IOException, PricingException, RemoveFromCartException {
+                         ConfigurableOrderItemRequest itemRequest) throws IOException, PricingException, RemoveFromCartException {
         return remove(request, response, model, (OrderItemRequestDTO) itemRequest);
     }
 

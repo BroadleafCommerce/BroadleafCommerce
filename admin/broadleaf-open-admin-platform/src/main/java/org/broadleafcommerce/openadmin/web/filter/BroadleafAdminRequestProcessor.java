@@ -131,12 +131,12 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
 
-        if (brc.getSite() == null) {
+        if (brc.getNonPersistentSite() == null) {
             Site site = siteResolver.resolveSite(request);
             brc.setSite(site);
         }
         brc.setWebRequest(request);
-        brc.setIgnoreSite(brc.getSite() == null);
+        brc.setIgnoreSite(brc.getNonPersistentSite() == null);
         brc.setAdmin(true);
 
         if (adminStrictValidateProductionChanges) {

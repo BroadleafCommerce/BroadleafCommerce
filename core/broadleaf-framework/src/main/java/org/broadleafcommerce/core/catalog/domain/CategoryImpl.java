@@ -127,14 +127,14 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         StringBuilder linkBuffer = new StringBuilder(50);
         while (myCategory != null && !preventRecursionCategoryIds.contains(myCategory.getId())) {
             preventRecursionCategoryIds.add(myCategory.getId());
-            if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
+            if (!ignoreTopLevel || myCategory.getParentCategory() != null) {
                 if (linkBuffer.length() == 0) {
                     linkBuffer.append(myCategory.getUrlKey());
                 } else if(myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())){
                     linkBuffer.insert(0, myCategory.getUrlKey() + '/');
                 }
             }
-            myCategory = myCategory.getDefaultParentCategory();
+            myCategory = myCategory.getParentCategory();
         }
 
         return linkBuffer.toString();
@@ -362,8 +362,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Transient
     protected Map<String, Media> legacyCategoryMedia = new HashMap<String, Media>();
 
-    @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @BatchSize(size = 50)
@@ -375,7 +375,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
 
-    @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
@@ -387,8 +387,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
-    @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 3000,
@@ -1391,7 +1391,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             cloned.getAllParentCategoryXrefs().add(clonedEntry);
         }
         if (getDefaultParentCategory() != null) {
-            cloned.setDefaultParentCategory(getDefaultParentCategory().createOrRetrieveCopyInstance(context).getClone());
+            cloned.setParentCategory(getDefaultParentCategory().createOrRetrieveCopyInstance(context).getClone());
         }
         for(CategoryXref entry : allChildCategoryXrefs){
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();

@@ -42,18 +42,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
- * 
+ *
  * @author Phillip Verheyden
  *
  */
 @Service("blAdminCatalogService")
 public class AdminCatalogServiceImpl implements AdminCatalogService {
-    
+
     private static final Log LOG = LogFactory.getLog(AdminCatalogServiceImpl.class);
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
 
@@ -62,15 +62,15 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
 
     @Resource(name = "blAdminCatalogServiceExtensionManager")
     protected AdminCatalogServiceExtensionManager extensionManager;
-    
+
     @Override
     public Integer generateSkusFromProduct(Long productId) {
         Product product = catalogService.findProductById(productId);
-        
-        if (CollectionUtils.isEmpty(product.getProductOptions())) {
+
+        if (CollectionUtils.isEmpty(product.getProductOptionXrefs())) {
             return -1;
         }
-        
+
         List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<ProductOptionValue>(), product.getProductOptions());
 
         // return -2 to indicate that one of the Product Options used in Sku generation has no Allowed Values
@@ -80,7 +80,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
 
         LOG.info("Total number of permutations: " + allPermutations.size());
         LOG.info(allPermutations);
-        
+
         //determine the permutations that I already have Skus for
         List<List<ProductOptionValue>> previouslyGeneratedPermutations = new ArrayList<List<ProductOptionValue>>();
         if (CollectionUtils.isNotEmpty(product.getAdditionalSkus())) {
@@ -90,7 +90,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
                 }
             }
         }
-        
+
         List<List<ProductOptionValue>> permutationsToGenerate = new ArrayList<List<ProductOptionValue>>();
         for (List<ProductOptionValue> permutation : allPermutations) {
             boolean previouslyGenerated = false;
@@ -100,7 +100,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
                     break;
                 }
             }
-            
+
             if (!previouslyGenerated) {
                 permutationsToGenerate.add(permutation);
             }
@@ -124,26 +124,26 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
 
     protected boolean isSamePermutation(List<ProductOptionValue> perm1, List<ProductOptionValue> perm2) {
         if (perm1.size() == perm2.size()) {
-            
+
             Collection<Long> perm1Ids = BLCCollectionUtils.collect(perm1, new TypedTransformer<Long>() {
                 @Override
                 public Long transform(Object input) {
                     return ((ProductOptionValue) input).getId();
                 }
             });
-            
+
             Collection<Long> perm2Ids = BLCCollectionUtils.collect(perm2, new TypedTransformer<Long>() {
                 @Override
                 public Long transform(Object input) {
                     return ((ProductOptionValue) input).getId();
                 }
             });
-            
+
             return perm1Ids.containsAll(perm2Ids);
         }
         return false;
     }
-    
+
     /**
      * Generates all the possible permutations for the combinations of given ProductOptions
      * @param currentTypeIndex
@@ -157,7 +157,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             result.add(currentPermutation);
             return result;
         }
-        
+
         ProductOption currentOption = options.get(currentTypeIndex);
         List<ProductOptionValue> allowedValues = currentOption.getAllowedValues();
         if (!currentOption.getUseInSkuGeneration()) {
@@ -180,7 +180,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             // There are still product options left in our array to compute permutations, even though this ProductOption does not have any values associated.
             result.addAll(generatePermutations(currentTypeIndex + 1, currentPermutation, options));
         }
-        
+
         return result;
     }
 
@@ -196,13 +196,13 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         cloneSku.getSkuMedia().size();
         em.detach(cloneSku);
         cloneSku.setId(null);
-        
+
         cloneProduct.setDefaultSku(cloneSku);
 
         em.detach(cloneProduct);
         cloneProduct.setId(null);
         Product derivedProduct = catalogService.saveProduct(cloneProduct);
-        
+
         cloneProduct = catalogService.findProductById(productId);
         //Re-associate the new Skus to the new Product
         for (Sku additionalSku : cloneProduct.getAdditionalSkus()) {

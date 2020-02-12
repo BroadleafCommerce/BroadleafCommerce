@@ -357,8 +357,8 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         if (!skipSite) {
             // Create site specific directory if Multi-site (all site files will be located in the same directory)
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            if (brc != null && brc.getSite() != null) {
-                String siteDirectory = "site-" + brc.getSite().getId();
+            if (brc != null && brc.getNonPersistentSite() != null) {
+                String siteDirectory = "site-" + brc.getNonPersistentSite().getId();
                 String siteHash = DigestUtils.md5Hex(siteDirectory);
                 path = FilenameUtils.concat(path, siteHash.substring(0, 2));
                 path = FilenameUtils.concat(path, siteDirectory);
