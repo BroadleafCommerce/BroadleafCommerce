@@ -72,7 +72,7 @@ public class RequiredIfPropertyValidator extends ValidationConfigurationBasedPro
             if (compareFieldProperty != null) {
                 if (compareFieldValue != null) {
                     valid = !compareFieldValue.equals(compareFieldProperty.getValue());
-                } else if (compareFieldRegEx != null) {
+                } else if (compareFieldRegEx != null && compareFieldProperty.getValue() != null) {
                     String expression = validationConfiguration.get("compareFieldRegEx");
                     valid = !compareFieldProperty.getValue().matches(expression);
                 }
