@@ -91,12 +91,6 @@ public class DelegatingHttpSolrClient extends SolrClient {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void shutdown() {
-        delegate.shutdown();
-    }
-
     @Override
     public UpdateResponse add(String collection, Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
         if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
