@@ -494,6 +494,7 @@ $(document).ready(function() {
                     });
                 } else {
                     BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDeleting);
+                    $('.submit-button').prop('disabled', true);
                 }
 
                 BLCAdmin.runPostFormSubmitHandlers($form, data);

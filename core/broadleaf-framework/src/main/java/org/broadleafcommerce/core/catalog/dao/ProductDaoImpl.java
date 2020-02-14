@@ -36,9 +36,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -58,7 +56,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -544,6 +541,46 @@ public class ProductDaoImpl implements ProductDao {
     @Deprecated
     public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {    
         return readAllActiveProductsInternal(page, pageSize, currentDate);
+    }
+    
+    @Override
+    public List<Long> readAllActiveProductIds(Long lastId, int pageSize) {
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
+        
+        // Set up the criteria query that specifies we want to return Products
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        
+        //We want to get back IDs.
+        CriteriaQuery<Long> criteria = cb.createQuery(Long.class);
+
+        // The root of our search is Product
+        Root<ProductImpl> product = criteria.from(ProductImpl.class);
+
+        // We need to filter on active date on the sku
+        Join<Product, Sku> sku = product.join("defaultSku");
+        
+        // Product IDs are what we want back
+        criteria.select(product.<Long>get("id"));
+
+        // Ensure the product is currently active
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        if (lastId != null) {
+            restrictions.add(cb.gt(product.get("id").as(Long.class), lastId));
+        }
+        attachActiveRestriction(currentDate, product, sku, restrictions);
+
+        // Add the restrictions to the criteria query
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        //Add ordering so that paginated queries are consistent
+        criteria.orderBy(cb.asc(product.get("id")));
+        
+        //Note that we are purposefully NOT caching results as this is typically used for gathering 
+        //IDs and caching would not generally be relevant or helpful.
+        TypedQuery<Long> query = em.createQuery(criteria);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+        
     }
 
     protected List<Product> readAllActiveProductsInternal(int page, int pageSize, Date currentDate) {
