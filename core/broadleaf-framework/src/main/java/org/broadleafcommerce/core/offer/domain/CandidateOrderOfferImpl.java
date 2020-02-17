@@ -47,7 +47,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     public static final long serialVersionUID = 1L;

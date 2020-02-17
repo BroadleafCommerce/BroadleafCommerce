@@ -67,14 +67,14 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Discrete_Order_Items",
             tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
             tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
     protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
     
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Item_Fee_Prices",
             tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
             tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
@@ -409,6 +409,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         return getProductBundle();
     }
 
+    @Override
     protected Money convertToMoney(BigDecimal amount) {
         return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
     }

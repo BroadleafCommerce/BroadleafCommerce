@@ -99,7 +99,7 @@ import javax.persistence.Table;
                                             booleanOverrideValue = true))
     }
 )
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
 public class AddressImpl implements Address {
 
