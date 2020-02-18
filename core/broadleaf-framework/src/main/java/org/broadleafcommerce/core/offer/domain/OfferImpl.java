@@ -133,8 +133,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         largeEntry = true, fieldType = SupportedFieldType.DESCRIPTION, defaultValue = "")
     protected String description;
 
-    @Column(name = "MARKETING_MESSASGE")
-    @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
+    @Column(name = "MARKETING_MESSAGE")
+    @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSAGE" })
     @AdminPresentation(friendlyName = "OfferImpl_marketingMessage",
         group = GroupName.Marketing, order = FieldOrder.Message,
         translatable = true, defaultValue = "")
