@@ -1600,6 +1600,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 populateTypeAndId = false;
             }
 
+            //For MappedCollections, we need to be specific on what translation ceilingEntity and Id is used.
+            //It should be the entity and referenced Id of the value entity (not the target entity and Id).
+            entityForm.setTranslationCeilingEntity(fmd.getValueClassName());
+            entityForm.setTranslationId(collectionItemId);
+            
             formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateMapEntityFormFields(entityForm, entity);
             addAuditableDisplayFields(entityForm);
