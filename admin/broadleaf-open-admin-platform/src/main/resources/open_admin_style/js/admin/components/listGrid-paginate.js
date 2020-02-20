@@ -757,13 +757,22 @@
                 || $table.data('listgridtype') === 'asset_grid_folder'
                 || $table.data('listgridtype') === 'tree')) {
                 var $window = $(window);
-                var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+                var wrapperTopOffset = 0;
+
+                if ($wrapper.offset() != undefined) {
+                    wrapperTopOffset = $wrapper.offset().top;
+                }
+
+                var wrapperHeight = $window.height() - wrapperTopOffset - 50;
 
                 if ($modalBody.length > 0) {
                     wrapperHeight = $tbody.closest('.select-group').outerHeight();
                 }
 
-                wrapperHeight -= $wrapper.next('.listgrid-table-footer:visible').outerHeight();
+                var footerOuterHeight = $wrapper.next('.listgrid-table-footer:visible').outerHeight();
+                if (typeof footerOuterHeight !== "undefined") {
+                    wrapperHeight -= footerOuterHeight;
+                }
                 wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
 
                 $wrapper.css('max-height', wrapperHeight);
@@ -796,9 +805,11 @@
                     maxHeight -= $wrapper.parent().find('label').outerHeight(true);
                     maxHeight -= 5;
                 }
-                
-                if ($wrapper.closest('.listgrid-container').find('.listgrid-toolbar').length > 0) {
-                    maxHeight -= $wrapper.parent().find('.listgrid-toolbar').outerHeight(true);
+
+                closestListgridContainer = $wrapper.closest('.listgrid-container').find('.listgrid-toolbar');
+
+                if (closestListgridContainer.length > 0 && closestListgridContainer.outerHeight(true) !== undefined) {
+                    maxHeight -= closestListgridContainer.outerHeight(true);
                 }
                 
                 var minHeight = Math.max($wrapper.find('table tr:not(.width-control-header)').outerHeight() + 1, maxSubCollectionListGridHeight);;
