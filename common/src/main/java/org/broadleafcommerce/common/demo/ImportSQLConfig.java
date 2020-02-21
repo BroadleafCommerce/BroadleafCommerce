@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.demo;
 
+import org.broadleafcommerce.common.condition.CheckPresentMultiTenantModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,7 @@ public class ImportSQLConfig {
     }
 
     @Bean
+    @Conditional(CheckPresentMultiTenantModule.class)
     public AutoImportSql blCommonLateData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_admin_user_data.sql,config/bc/sql/demo/fix_system_property_data.sql", AutoImportStage.PRIMARY_LATE);
     }
