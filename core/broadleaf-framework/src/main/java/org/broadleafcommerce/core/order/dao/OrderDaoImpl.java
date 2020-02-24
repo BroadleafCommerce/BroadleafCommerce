@@ -186,6 +186,32 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public void delete(Order salesOrder, boolean isRemoveHistory) {
+        salesOrder= readOrderById(1L);
+        if (isRemoveHistory = true) {
+            if (!em.contains(salesOrder)) {
+                Long id = salesOrder.getId();
+                salesOrder = readOrderById(id);
+            }
+
+            //need to null out the reference to the Order for all the OrderPayments
+            //as they are not deleted but Archived.
+            for (OrderPayment payment : salesOrder.getPayments()) {
+                payment.setOrder(null);
+                payment.setArchived('Y');
+                for (PaymentTransaction transaction : payment.getTransactions()) {
+                    transaction.setArchived('Y');
+                }
+            }
+            delete(salesOrder);
+
+//            em.remove(salesOrder);
+        }else {
+            delete(salesOrder);
+        }
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<Order> readOrdersForCustomer(final Customer customer, final OrderStatus orderStatus) {
         if (orderStatus == null) {

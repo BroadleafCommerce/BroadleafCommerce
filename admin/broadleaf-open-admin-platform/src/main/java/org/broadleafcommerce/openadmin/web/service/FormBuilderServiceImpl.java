@@ -1646,7 +1646,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @see {@link #getSecurityClassname(EntityForm, ClassMetadata)}
      * @see {@link RowLevelSecurityService#canUpdate(AdminUser, Entity)}
      */
-    protected void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
+    public void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
         boolean readOnly = true;
         
         // If all of the fields are read only, we'll mark the form as such

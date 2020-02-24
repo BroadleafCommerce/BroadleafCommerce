@@ -157,9 +157,51 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
         }
         restrictions.add(builder.and(inRestrictions.toArray(new Predicate[inRestrictions.size()])));
     }
-    
+
     protected <T> TypedQuery<T> buildCartQuery(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, Class<T> returnType,
-            List<Long> excludedIds) {
+                                               List<Long> excludedIds) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<T> criteria = builder.createQuery(returnType);
+        Root<OrderImpl> root = criteria.from(OrderImpl.class);
+        if (Long.class.equals(returnType)) {
+            criteria.select((Selection<? extends T>) builder.count(root));
+        } else {
+            criteria.select((Selection<? extends T>) root);
+        }
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<String> statusList = new ArrayList<String>();
+        if (statuses != null) {
+            for (OrderStatus status : statuses) {
+                statusList.add(status.getType());
+            }
+        } else {
+            statusList.add("IN_PROCESS");
+        }
+//        restrictions.add(root.get("status").in(statusList));
+//        if (names != null) {
+//            restrictions.add(root.get("name").in(Arrays.asList(names)));
+//        }
+//        if (dateCreatedMinThreshold != null) {
+//            restrictions.add(builder.lessThan(root.get("auditable").get("dateCreated").as(Date.class), dateCreatedMinThreshold));
+//        }
+//        if (isPreview != null) {
+//            if (isPreview) {
+//                restrictions.add(builder.isTrue(root.get("previewable").get("isPreview").as(Boolean.class)));
+//            } else {
+//                restrictions.add(builder.or(builder.isNull(root.get("previewable").get("isPreview")),
+//                        builder.isFalse(root.get("previewable").get("isPreview").as(Boolean.class))));
+//            }
+//        }
+//        if (excludedIds != null && excludedIds.size() > 0) {
+//            applyLimitedInClause(excludedIds, builder, root, restrictions);
+//        }
+//        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        return em.createQuery(criteria);
+    }
+
+
+    protected <T> TypedQuery<T> buildHistoryQuery(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, Class<T> returnType,
+                                               List<Long> excludedIds) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> criteria = builder.createQuery(returnType);
         Root<OrderImpl> root = criteria.from(OrderImpl.class);

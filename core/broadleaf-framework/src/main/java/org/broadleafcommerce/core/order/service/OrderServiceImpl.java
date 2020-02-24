@@ -45,6 +45,7 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
@@ -59,6 +60,7 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.core.pricing.service.PricingService;
@@ -427,10 +429,34 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.save(order);
     }
 
+
+
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
+
     @Override
     @Transactional("blTransactionManager")
-    public void cancelOrder(Order order) {
-        orderDao.delete(order);
+    public void cancelOrder(Order salesOrder) {
+//        orderDao.delete(order);
+        salesOrder=  em.find(OrderImpl.class, 1L);
+        if (!em.contains(salesOrder)) {
+            salesOrder = em.find(OrderImpl.class, salesOrder.getId());;
+        }
+
+        //need to null out the reference to the Order for all the OrderPayments
+        //as they are not deleted but Archived.
+//        for (OrderPayment payment : salesOrder.getPayments()) {
+//            payment.setOrder(null);
+//            payment.setArchived('Y');
+//            for (PaymentTransaction transaction : payment.getTransactions()) {
+//                transaction.setArchived('Y');
+//            }
+//
+//        }
+//        orderDao.delete(salesOrder);
+        orderService.deleteOrder(salesOrder);
+
+//        em.remove(salesOrder);
     }
 
     @Override
