@@ -274,6 +274,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 } else {
                     dirty = checkDirtyState(populateValueRequest, instance, mvel);
                 }
+                // Restore JSON rule after AntiSamy policy
+                if (!populateValueRequest.getProperty().getValue().equals(populateValueRequest.getProperty().getUnHtmlEncodedValue())) {
+                    populateValueRequest.getProperty().setValue(populateValueRequest.getProperty().getUnHtmlEncodedValue());
+                }
                 populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
             }
             if (SimpleRule.class.isAssignableFrom(valueType)) {
