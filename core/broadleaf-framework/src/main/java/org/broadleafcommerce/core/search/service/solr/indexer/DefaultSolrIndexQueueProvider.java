@@ -56,7 +56,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     
     private static final Log LOG = LogFactory.getLog(DefaultSolrIndexQueueProvider.class);
-
     protected static final Map<String, BlockingQueue<? super SolrUpdateCommand>> QUEUE_REGISTRY = Collections.synchronizedMap(new HashMap<String, BlockingQueue<? super SolrUpdateCommand>>());
     protected static final Map<String, Lock> LOCK_REGISTRY = Collections.synchronizedMap(new HashMap<String, Lock>());
     
@@ -64,9 +63,9 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     public static final String LOCK_PATH = "/solr-index/command-lock";
     public static final String QUEUE_PATH = "/solr-index/command-queue";
     
-    protected final ZooKeeper zk;
-    protected final boolean distributed;
-    protected final Environment env;
+    private final ZooKeeper zk;
+    private final boolean distributed;
+    private final Environment env;
     
     public DefaultSolrIndexQueueProvider() {
         this.distributed = false;
