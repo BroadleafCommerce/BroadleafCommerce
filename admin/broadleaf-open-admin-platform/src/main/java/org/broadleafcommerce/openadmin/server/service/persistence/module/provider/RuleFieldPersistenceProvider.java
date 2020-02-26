@@ -704,7 +704,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         QuantityBasedRule original = itr.next();
                         for (QuantityBasedRule quantityBasedRule : updatedRules) {
                             Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
-                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId());
+                            Long origId = sandBoxHelper.getOriginalId(original);
+                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId()) || id.equals(origId);
                             if (isMatch) {
                                 break checkForRemove;
                             }
