@@ -64,6 +64,10 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
         }
     }
 
+    protected boolean getTranslationEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
+    }
+
     /**
      * If the locale of the cart does not match the current locale, then this extension handler will
      * attempt to translate the order items.  
@@ -76,7 +80,7 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
      * @return
      */
     public ExtensionResultStatusType updateAndValidateCart(Order cart, ExtensionResultHolder resultHolder) {
-        if (BroadleafRequestContext.hasLocale()) {
+        if (BroadleafRequestContext.hasLocale() && getTranslationEnabled()) {
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             if (!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())) {
                 if (LOG.isDebugEnabled()) {
