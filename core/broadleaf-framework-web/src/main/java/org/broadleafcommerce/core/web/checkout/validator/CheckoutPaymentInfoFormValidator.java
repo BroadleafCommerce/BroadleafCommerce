@@ -17,10 +17,13 @@
  */
 package org.broadleafcommerce.core.web.checkout.validator;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * @author Chris Kittrell (ckittrell)
@@ -37,7 +40,13 @@ public class CheckoutPaymentInfoFormValidator extends PaymentInfoFormValidator {
         } else {
             super.validate(obj, errors);
 
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
+            String emailAddress = paymentInfoForm.getEmailAddress();
+            if (!EmailValidator.getInstance().isValid(emailAddress)) {
+                errors.rejectValue("emailAddress", "emailAddress.invalid", null, null);
+                if (StringUtils.isNotEmpty(emailAddress)) {
+                    paymentInfoForm.setEmailAddress(HtmlUtils.htmlEscape(emailAddress));
+                }
+            }
         }
     }
 }

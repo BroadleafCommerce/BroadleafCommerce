@@ -274,6 +274,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 } else {
                     dirty = checkDirtyState(populateValueRequest, instance, mvel);
                 }
+                // Restore JSON rule after AntiSamy policy
+                if (!populateValueRequest.getProperty().getValue().equals(populateValueRequest.getProperty().getUnHtmlEncodedValue())) {
+                    populateValueRequest.getProperty().setValue(populateValueRequest.getProperty().getUnHtmlEncodedValue());
+                }
                 populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
             }
             if (SimpleRule.class.isAssignableFrom(valueType)) {
@@ -700,7 +704,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         QuantityBasedRule original = itr.next();
                         for (QuantityBasedRule quantityBasedRule : updatedRules) {
                             Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
-                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId());
+                            Long origId = sandBoxHelper.getOriginalId(original);
+                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId()) || id.equals(origId);
                             if (isMatch) {
                                 break checkForRemove;
                             }

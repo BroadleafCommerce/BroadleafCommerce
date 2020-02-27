@@ -42,6 +42,7 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
     public static final FieldEntity PRODUCT = new FieldEntity("PRODUCT", "Product");
     public static final FieldEntity SKU = new FieldEntity("SKU", "Sku");
     public static final FieldEntity CUSTOMER = new FieldEntity("CUSTOMER", "Customer");
+    public static final FieldEntity CATEGORY = new FieldEntity("CATEGORY", "Category");
     public static final FieldEntity ORDER = new FieldEntity("ORDER", "Order");
     public static final FieldEntity ORDERITEM = new FieldEntity("ORDER_ITEM", "Order Item");
     public static final FieldEntity OFFER = new FieldEntity("OFFER", "Offer");
