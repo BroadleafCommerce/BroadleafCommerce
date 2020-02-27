@@ -1774,6 +1774,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
+            boolean listGridReadOnly = !rowLevelSecurityService.canUpdate(adminRemoteSecurityService.getPersistentAdminUser(), entity);
+            if(listGridReadOnly){
+                        throw new SecurityServiceException();
+            }
             if (!StringUtils.isEmpty(cd.getSortProperty())) {
                 Field f = new Field()
                         .withName(cd.getSortProperty())
