@@ -152,7 +152,7 @@ public class EmailInfo implements Serializable {
 
     public synchronized EmailInfo clone() {
         EmailInfo info = new EmailInfo();
-        info.setAttachments(attachments);
+        info.setAttachments(new ArrayList<Attachment>(attachments));
         info.setEmailTemplate(emailTemplate);
         info.setEmailType(emailType);
         info.setFromAddress(fromAddress);
