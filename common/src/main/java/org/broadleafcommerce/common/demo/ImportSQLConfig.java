@@ -17,9 +17,7 @@
  */
 package org.broadleafcommerce.common.demo;
 
-import org.broadleafcommerce.common.condition.CheckPresentMultiTenantModule;
 import org.broadleafcommerce.common.condition.ConditionalOnBroadleafModule;
-import org.broadleafcommerce.common.condition.OnBroadleafModuleCondition;
 import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
