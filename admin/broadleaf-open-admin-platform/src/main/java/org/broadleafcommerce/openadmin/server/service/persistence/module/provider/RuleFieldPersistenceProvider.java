@@ -78,7 +78,7 @@ import javax.persistence.OneToMany;
  * Provides persistence (read/write) behavior for rule builder fields. This includes two types: Rule with quantity, and
  * simple rule. OfferImpl#targetItemCriteria and OfferImpl#offerMatchRules are examples of each, respectively. This class
  * is only compatible with quantity-based rules modeled using a Set and @OneToMany, and with simple rules modeled using
- * a Map and @OneToMany.
+ * a Map and @OneToMany. 
  *
  * @author Jeff Fischer
  */
@@ -705,7 +705,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         for (QuantityBasedRule quantityBasedRule : updatedRules) {
                             Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
                             Long origId = sandBoxHelper.getOriginalId(original);
-                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId()) || id.equals(origId);
+                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId()) ||
+                                    (id!=null && id.equals(origId));
                             if (isMatch) {
                                 break checkForRemove;
                             }
