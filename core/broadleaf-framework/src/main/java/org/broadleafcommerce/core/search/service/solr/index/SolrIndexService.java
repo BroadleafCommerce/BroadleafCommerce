@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.service.solr.indexer.CatalogSolrIndexUpdateService;
 
 import java.io.IOException;
 import java.util.Collection;
