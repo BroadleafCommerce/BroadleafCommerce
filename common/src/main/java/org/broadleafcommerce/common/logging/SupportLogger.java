@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
  * <p>SupportLogger class that provides support for the new SUPPORT log level type.
  * The SUPPORT log level is independent of any configured logging framework and should be able to be configured independently.</p>
  *
- * <p>This Logger was originally built as an extension to Log4j's {@link Logger}. As a result,
+ * <p>This Logger was originally built as an extension to Log4j's {@link org.apache.log4j.Logger}. As a result,
  * other levels must be supported to maintain backwards compatibility.</p>
  *
  * <p>It is important to note that the SupportLogger can be called outside a Spring Context.
