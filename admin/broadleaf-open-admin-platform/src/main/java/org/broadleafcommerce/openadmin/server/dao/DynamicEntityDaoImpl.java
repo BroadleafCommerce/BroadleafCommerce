@@ -1588,11 +1588,16 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Override
     public FieldManager getFieldManager() {
+        return this.getFieldManager(true);
+    }
+
+    @Override
+    public FieldManager getFieldManager(boolean cleanFieldManager) {
         if (fieldManager == null) {
             //keep in mind that getStandardEntityManager() can return null, this is in general OK,
             // we re-init fieldManager in setStandardEntityManager method
             fieldManager = new FieldManager(entityConfiguration, getStandardEntityManager());
-        } else {
+        } else if (cleanFieldManager){
             fieldManager.clearMiddleFields();
         }
         return fieldManager;

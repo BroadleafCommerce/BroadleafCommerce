@@ -110,6 +110,8 @@ public interface DynamicEntityDao {
 
     FieldManager getFieldManager();
 
+    FieldManager getFieldManager(boolean cleanFieldManger);
+    
     EntityConfiguration getEntityConfiguration();
 
     void setEntityConfiguration(EntityConfiguration entityConfiguration);
