@@ -53,6 +53,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
@@ -155,9 +156,9 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType")
     protected String gatewayType;
-    
-    //TODO: add a filter for archived transactions
+
     @OneToMany(mappedBy = "orderPayment", targetEntity = PaymentTransactionImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Where(clause = "archived != 'Y'")
     @AdminPresentationCollection(friendlyName="OrderPaymentImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
