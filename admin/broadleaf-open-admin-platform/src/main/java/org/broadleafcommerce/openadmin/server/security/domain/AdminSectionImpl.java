@@ -82,6 +82,7 @@ public class AdminSectionImpl implements AdminSection {
     protected String sectionKey;
 
     @Column(name = "URL", nullable=true)
+    @Index(name="BLC_ADMIN_SECTION_URL", columnNames={"URL"})
     @AdminPresentation(friendlyName = "AdminSectionImpl_Url", order=3, group = "AdminSectionImpl_Section", prominent=true)
     protected String url;
 
