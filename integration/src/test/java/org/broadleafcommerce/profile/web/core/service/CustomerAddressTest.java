@@ -18,8 +18,6 @@
 package org.broadleafcommerce.profile.web.core.service;
 
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
-import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -34,9 +32,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import java.util.List;
-
 import javax.annotation.Resource;
+import java.util.List;
 
 public class CustomerAddressTest extends CommonSetupBaseTest {
 
@@ -57,10 +54,8 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
     }
     
     @Test(groups = "testCustomerAddress")
-    @Transactional
     public void createNewDefaultAddress() {
         Customer customer = createCustomerWithAddresses();
-
         CustomerAddress ca = new CustomerAddressImpl();
         Address address = new AddressImpl();
         address.setAddressLine1("123 Main");
@@ -70,15 +65,14 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
         ca.setAddress(address);
         ca.setCustomer(customer);
         ca.setAddressName("address3");
-        CustomerAddress savedAddress = customerAddressService.saveCustomerAddress(ca);
+        CustomerAddress savedAddress = saveCustomerAddress(ca);
 
         List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
         for (CustomerAddress customerAddress : customerAddressList) {
-            Address addr = HibernateUtils.deproxy(customerAddress.getAddress());
             if (customerAddress.getId().equals(savedAddress.getId())) {
-                assert addr.isDefault();
+                assert customerAddress.getAddress().isDefault();
             } else {
-                assert !addr.isDefault();
+                assert !customerAddress.getAddress().isDefault();
             }
         }
     }
