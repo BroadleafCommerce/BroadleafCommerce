@@ -55,6 +55,7 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
     }
     
     @Test(groups = "testCustomerAddress")
+    @Transactional
     public void createNewDefaultAddress() {
         Customer customer = createCustomerWithAddresses();
 
