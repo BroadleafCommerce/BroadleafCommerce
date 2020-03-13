@@ -18,6 +18,8 @@
 package org.broadleafcommerce.profile.web.core.service;
 
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -72,10 +74,11 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
 
         List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
         for (CustomerAddress customerAddress : customerAddressList) {
+            Address addr = HibernateUtils.deproxy(customerAddress.getAddress());
             if (customerAddress.getId().equals(savedAddress.getId())) {
-                assert customerAddress.getAddress().isDefault();
+                assert addr.isDefault();
             } else {
-                assert !customerAddress.getAddress().isDefault();
+                assert !addr.isDefault();
             }
         }
     }
