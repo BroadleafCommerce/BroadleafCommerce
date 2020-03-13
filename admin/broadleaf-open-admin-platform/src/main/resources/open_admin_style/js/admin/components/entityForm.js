@@ -241,7 +241,19 @@
             // Redactor fields
 
             $tabsContent.find('.redactor-field').addClass("disabled");
+            $tabsContent.find('.thumbnail').addClass("disabled");
+            $tabsContent.find('.content-item-add-sc').addClass("disabled");
+            $tabsContent.find('.remove-scitem').addClass("disabled");
+            $tabsContent.find('.move-scitem-up').addClass("disabled");
+            $tabsContent.find('.move-scitem-down').addClass("disabled");
+            $tabsContent.find('.hover-cursor').addClass("disabled");
             $tabsContent.find('textarea').not('.description-field textarea').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.thumbnail').not('.description-field textarea').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.content-item-add-sc').not('.description-field textarea').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.remove-scitem').not('.description-field textarea').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.move-scitem-up').not('.description-field textarea').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.move-scitem-down').not('.description-field textarea').prop('disabled', true).addClass('disabled');
+            $tabsContent.find('.hover-cursor').not('.description-field textarea').prop('disabled', true).addClass('disabled');
             $tabsContent.find('textarea').css({color: 'rgb(84, 84, 84)', padding: 'padding: 12px', border: 'none'});
 
             // Radio buttons
