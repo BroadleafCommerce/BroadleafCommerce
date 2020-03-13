@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.util.List;
+
 import javax.annotation.Resource;
 
 public class CustomerAddressTest extends CommonSetupBaseTest {
@@ -56,6 +57,7 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
     @Test(groups = "testCustomerAddress")
     public void createNewDefaultAddress() {
         Customer customer = createCustomerWithAddresses();
+
         CustomerAddress ca = new CustomerAddressImpl();
         Address address = new AddressImpl();
         address.setAddressLine1("123 Main");
