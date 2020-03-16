@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
@@ -37,6 +38,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.extension.QuantityRuleExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.RuleFieldPersistenceProviderCascadeExtensionManager;
@@ -112,6 +114,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
     @Resource(name = "blRuleFieldPersistenceProviderCascadeExtensionManager")
     protected RuleFieldPersistenceProviderCascadeExtensionManager cascadeExtensionManager;
+
+    @Resource(name = "blQuantityRuleExtensionManager")
+    protected QuantityRuleExtensionManager quantityRuleExtensionManager;
+
 
     @Override
     public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
@@ -643,6 +649,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                         // update the quantity based rule
                                         quantityBasedRule.setQuantity(dto.getQuantity());
                                         quantityBasedRule.setMatchRule(mvel);
+                                        quantityRuleExtensionManager.getProxy().unarchiveAndUndelete(quantityBasedRule);
                                         quantityBasedRule = em.merge(quantityBasedRule);
                                     }
                                     updatedRules.add(quantityBasedRule);
