@@ -697,24 +697,29 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 //as the CacheInvalidationProducer will need this in order to remove each collection member cache instance as well.
                 BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
                 context.getAdditionalProperties().put("deletedQuantityBasedRules", new HashSet<QuantityBasedRule>());
-
-                while (itr.hasNext()) {
-                    checkForRemove:
-                    {
-                        QuantityBasedRule original = itr.next();
-                        for (QuantityBasedRule quantityBasedRule : updatedRules) {
-                            Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
-                            Long origId = sandBoxHelper.getOriginalId(original);
-                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId()) ||
-                                    (id!=null && id.equals(origId));
-                            if (isMatch) {
-                                break checkForRemove;
+                Set<String> otherChangeSetProps =
+                        (Set<String>) context.getAdditionalProperties().get("otherChangeSetProps");
+                if(otherChangeSetProps!= null && !otherChangeSetProps.contains(property.getName())) {
+                    while (itr.hasNext()) {
+                        checkForRemove:
+                        {
+                            QuantityBasedRule original = itr.next();
+                            for (QuantityBasedRule quantityBasedRule : updatedRules) {
+                                Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
+                                Long origId = sandBoxHelper.getOriginalId(original);
+                                boolean isMatch = original.getId().equals(id) || original.getId()
+                                        .equals(quantityBasedRule.getId()) ||
+                                        (id != null && id.equals(origId));
+                                if (isMatch) {
+                                    break checkForRemove;
+                                }
                             }
+                            ((Set<QuantityBasedRule>) context.getAdditionalProperties()
+                                    .get("deletedQuantityBasedRules")).add(original);
+                            em.remove(original);
+                            itr.remove();
+                            dirty = true;
                         }
-                        ((Set<QuantityBasedRule>)context.getAdditionalProperties().get("deletedQuantityBasedRules")).add(original);
-                        em.remove(original);
-                        itr.remove();
-                        dirty = true;
                     }
                 }
                 ObjectMapper mapper = new ObjectMapper();
