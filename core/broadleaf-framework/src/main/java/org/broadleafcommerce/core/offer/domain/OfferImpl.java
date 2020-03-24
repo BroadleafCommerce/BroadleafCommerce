@@ -108,7 +108,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "offerCodeTitle",
@@ -312,7 +312,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         visibility = VisibilityEnum.HIDDEN_ALL, defaultValue = "false")
     protected Boolean requiresRelatedTargetAndQualifiers = false;
 
-    @OneToMany(mappedBy = "offer", targetEntity = OfferOfferRuleXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "offer", targetEntity = OfferOfferRuleXrefImpl.class, cascade = { CascadeType.ALL })
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentationMapFields(
