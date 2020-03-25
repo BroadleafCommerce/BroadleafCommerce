@@ -59,8 +59,6 @@ public interface OrderDao {
 
     void delete(Order order);
 
-    void delete(Order salesOrder, boolean isRemoveHistory);
-
     Order submitOrder(Order cartOrder);
 
     Order create();

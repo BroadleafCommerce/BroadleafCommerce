@@ -491,6 +491,4 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      */
     public void setTaxOverride(Boolean taxOverride);
 
-
-
 }
