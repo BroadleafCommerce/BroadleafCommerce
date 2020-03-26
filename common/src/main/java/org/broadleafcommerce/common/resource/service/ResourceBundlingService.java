@@ -92,4 +92,12 @@ public interface ResourceBundlingService {
      */
     boolean checkForRegisteredBundleFile(String versionedBundleName);
 
+    /**
+     * Returns names of bundles which contain the given file
+     * @param fileName file to find in the bungle
+     * @return first bundle name that has file, null otherwise
+     */
+    List<String> findBundlesNameByResourceFileName(String fileName);
+
+    boolean removeBundle(String bundleName);
 }
