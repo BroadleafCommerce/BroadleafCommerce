@@ -97,7 +97,7 @@ public interface ResourceBundlingService {
      * @param fileName file to find in the bungle
      * @return first bundle name that has file, null otherwise
      */
-    public List<String> findBundlesNameByResourceFileName(String fileName);
+    List<String> findBundlesNameByResourceFileName(String fileName);
 
     boolean removeBundle(String bundleName);
 }
