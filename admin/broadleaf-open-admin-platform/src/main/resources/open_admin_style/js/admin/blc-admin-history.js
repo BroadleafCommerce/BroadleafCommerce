@@ -55,8 +55,11 @@
                 if (urlParams.endsWith('&')) {
                     urlParams = urlParams.substring(0, urlParams.length - 1);
                 }
-                paramObj = JSON.parse('{"'
-                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
+                var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")));
+                if (params.includes('%')) {
+                    params = decodeURIComponent(params);
+                }
+                paramObj = JSON.parse('{"' + params + '"}');
 
             }
             

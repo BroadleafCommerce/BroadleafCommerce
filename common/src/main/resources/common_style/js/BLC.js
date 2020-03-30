@@ -363,6 +363,17 @@ var BLC = (function($) {
     }
 
     /**
+     * Returns url without parameters
+     */
+    function getUrlWithoutParameters(url) {
+        var indexOfQ = url.indexOf('?');
+        if (indexOfQ >= 0) {
+            return url.substring(0, indexOfQ);
+        }
+        return url;
+    }
+
+    /**
      * Gathers all parameters from the current url
      */
     function getUrlParameters() {
@@ -372,8 +383,30 @@ var BLC = (function($) {
         if (indexOfQ >= 0) {
             urlParams = baseUrl.substring(indexOfQ + 1);
             if (urlParams != null && urlParams != '') {
-                return JSON.parse('{"'
-                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
+                var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")));
+                if (params.includes('%')) {
+                    params = decodeURIComponent(params);
+                }
+                return JSON.parse('{"' + params + '"}');
+            }
+        }
+        return {};
+    }
+
+    /**
+     * Returns all parameters from the given url
+     */
+    function getParametersFromUrl(url) {
+        var indexOfQ = url.indexOf('?');
+        var urlParams = null;
+        if (indexOfQ >= 0) {
+            urlParams = url.substring(indexOfQ + 1);
+            if (urlParams != null && urlParams != '') {
+                var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")));
+                if (params.includes('%')) {
+                    params = decodeURIComponent(params);
+                }
+                return JSON.parse('{"' + params + '"}');
             }
         }
         return {};
@@ -411,7 +444,9 @@ var BLC = (function($) {
         getStateVersionToken : getStateVersionToken,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
+        getUrlWithoutParameters : getUrlWithoutParameters,
         getUrlParameters : getUrlParameters,
+        getParametersFromUrl : getParametersFromUrl,
         addUrlParam : addUrlParam,
         buildUrlWithParams : buildUrlWithParams,
         servletContext : servletContext,
