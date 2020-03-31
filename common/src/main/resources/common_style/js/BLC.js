@@ -372,8 +372,11 @@ var BLC = (function($) {
         if (indexOfQ >= 0) {
             urlParams = baseUrl.substring(indexOfQ + 1);
             if (urlParams != null && urlParams != '') {
-                return JSON.parse('{"'
-                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
+                var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g, "\":\"")));
+                if (params.includes('|')) {
+                    params = params.replace(/\|/g, '%7C');
+                }
+                return JSON.parse('{"' + params + '"}');
             }
         }
         return {};
