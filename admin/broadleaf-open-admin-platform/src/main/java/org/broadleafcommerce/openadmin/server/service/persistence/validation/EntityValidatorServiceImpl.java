@@ -107,7 +107,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
             String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC))
                     .getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
             try {
-                idValue = recordHelper.getFieldManager().getFieldValue(instance, idField);
+                idValue = recordHelper.getFieldManager(false).getFieldValue(instance, idField);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (FieldNotAvailableException e) {

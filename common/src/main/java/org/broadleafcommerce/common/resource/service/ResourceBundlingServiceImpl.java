@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
-import de.jkeylockmanager.manager.KeyLockManager;
-import de.jkeylockmanager.manager.KeyLockManagers;
-import de.jkeylockmanager.manager.LockCallback;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +43,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -61,6 +57,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.http.HttpServletRequest;
+
+import de.jkeylockmanager.manager.KeyLockManager;
+import de.jkeylockmanager.manager.KeyLockManagers;
+import de.jkeylockmanager.manager.LockCallback;
 
 /**
  * @see ResourceBundlingService
@@ -447,5 +449,31 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         } else {
             return Charset.forName(charsetProperty);
         }
+    }
+
+    @Override
+    public List<String> findBundlesNameByResourceFileName(String fileName){
+        List<String> result = new ArrayList<>();
+        for (Entry<String, BundledResourceInfo> bundleInfo : createdBundles.entrySet()) {
+            BundledResourceInfo value = bundleInfo.getValue();
+            for (String s : value.getBundledFilePaths()) {
+                String f = FilenameUtils.removeExtension(fileName);
+                if(s.startsWith(f)){
+                    result.add(bundleInfo.getKey());
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean removeBundle(String bundleName) {
+        String resourceName = lookupBundlePath(bundleName);
+        BundledResourceInfo bundleInfo = createdBundles.get(resourceName);
+
+        if (bundleInfo != null) {
+            return createdBundles.remove(resourceName) != null;
+        }
+        return false;
     }
 }

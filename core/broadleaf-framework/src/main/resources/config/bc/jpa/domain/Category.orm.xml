@@ -69,4 +69,15 @@
         </query>
     </named-query>
 
+    <named-query name="BC_READ_COUNT_ALL_ACTIVE_PRODUCTS_BY_CATEGORY" >
+        <query>SELECT COUNT(xref) FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXref xref
+            LEFT JOIN xref.product AS product
+            LEFT JOIN product.defaultSku AS defaultSku
+            WHERE xref.category.id = :categoryId
+            AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
+            AND (defaultSku.activeStartDate &lt; :currentDate)
+            AND (defaultSku.activeEndDate IS NULL OR defaultSku.activeEndDate &gt; :currentDate)
+        </query>
+    </named-query>
+
 </entity-mappings>
