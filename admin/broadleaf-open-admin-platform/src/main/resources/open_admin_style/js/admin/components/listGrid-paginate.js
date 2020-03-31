@@ -473,11 +473,9 @@
                     }
                 });
 
-                params = BLC.getParametersFromUrl(url);
-                url = BLC.getUrlWithoutParameters(url);
                 //console.log('Loading more records -- ' + url);
                 
-                BLC.ajax({ url: url, type: 'GET', data: params }, function(data) {
+                BLC.ajax({ url: url, type: 'GET' }, function(data) {
                     var $newTbody;
                     if ($tbody.closest('.tree-column-wrapper').length) {
                         var treeColumnParentId = $tbody.closest('.select-column').data('parentid');
@@ -1135,12 +1133,9 @@ $(document).ready(function() {
         currentUrl = BLCAdmin.history.getUrlWithParameter('pageSize', pageSize, null, currentUrl);
         var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (BLCAdmin.listGrid.paginate.getRowHeight($tbody));
         BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
-        var params = BLC.getParametersFromUrl(currentUrl);
-        currentUrl = BLC.getUrlWithoutParameters(currentUrl);
         BLC.ajax({
             url: currentUrl,
-            type: "GET",
-            data: params
+            type: "GET"
         }, function(data) {
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);
             BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
@@ -1168,12 +1163,9 @@ $(document).ready(function() {
         currentUrl = BLCAdmin.history.getUrlWithParameter('pageSize', pageSize, null, currentUrl);
         var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (BLCAdmin.listGrid.paginate.getRowHeight($tbody));
         BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
-        var params = BLC.getParametersFromUrl(currentUrl);
-        currentUrl = BLC.getUrlWithoutParameters(currentUrl);
         BLC.ajax({
             url: currentUrl,
-            type: "GET",
-            data: params
+            type: "GET"
         }, function(data) {
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);
             var $newTBody = $(data).find('tbody');
