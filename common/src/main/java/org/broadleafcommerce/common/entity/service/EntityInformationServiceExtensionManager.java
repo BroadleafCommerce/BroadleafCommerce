@@ -51,10 +51,24 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
         }
     };
 
+    public static final ExtensionManagerOperation updateBasicEntityInformationDto = new ExtensionManagerOperation() {
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((EntityInformationServiceExtensionHandler) handler).updateBasicEntityInformationDto((EntityInformationDto) params[0], params[1]);
+        }
+    };
+
     public static final ExtensionManagerOperation getBaseProfileIdForSite = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
             return ((EntityInformationServiceExtensionHandler) handler).getBaseProfileIdForSite((Site) params[0], (ExtensionResultHolder<Long>) params[1]);
+        }
+    };
+
+    public static final ExtensionManagerOperation getTypeForSite = new ExtensionManagerOperation() {
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((EntityInformationServiceExtensionHandler) handler).getTypeForSite((Site) params[0], (ExtensionResultHolder<String>) params[1]);
         }
     };
 
@@ -96,6 +110,11 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     }
 
     @Override
+    public ExtensionResultStatusType updateBasicEntityInformationDto(EntityInformationDto dto, Object entityInstance) {
+        return execute(updateBasicEntityInformationDto, dto, entityInstance);
+    }
+
+    @Override
     public boolean isEnabled() {
         //not used - fulfills interface contract
         return true;
@@ -129,5 +148,10 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     @Override
     public ExtensionResultStatusType getChildSiteIdsForProfile(Site profile, ExtensionResultHolder<Set<Long>> erh) {
         return execute(getChildSiteIdsForProfile, profile, erh);
+    }
+
+    @Override
+    public ExtensionResultStatusType getTypeForSite(Site site, ExtensionResultHolder<String> erh) {
+        return execute(getTypeForSite, site, erh);
     }
 }

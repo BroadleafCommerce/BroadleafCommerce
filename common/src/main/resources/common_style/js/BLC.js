@@ -328,7 +328,7 @@ var BLC = (function($) {
             }
         }
 
-        return document.location.search = params;
+        return params;
     }
 
     /**
@@ -416,6 +416,7 @@ var BLC = (function($) {
         serializeObject : serializeObject,
         getUrlParameters : getUrlParameters,
         addUrlParam : addUrlParam,
+        addUrlQueryParam : addUrlQueryParam,
         buildUrlWithParams : buildUrlWithParams,
         servletContext : servletContext,
         siteBaseUrl : siteBaseUrl
