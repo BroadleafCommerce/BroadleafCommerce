@@ -176,6 +176,7 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
         else {
             return bundleUrl;
         }
+
     }
 
     /**
