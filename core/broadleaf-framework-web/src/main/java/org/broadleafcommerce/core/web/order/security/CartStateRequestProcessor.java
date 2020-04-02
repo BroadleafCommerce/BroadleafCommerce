@@ -71,8 +71,6 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    private final String mergeCartResponseKey = "bl_merge_cart_response";
-
     @Resource(name = "blCartStateRequestProcessorExtensionManager")
     protected CartStateRequestProcessorExtensionManager extensionManager;
 
