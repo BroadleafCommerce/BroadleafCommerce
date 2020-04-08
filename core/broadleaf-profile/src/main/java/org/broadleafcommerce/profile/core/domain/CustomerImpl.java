@@ -49,11 +49,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -69,6 +64,10 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -168,7 +167,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             group = GroupName.QualificationOptions, order = FieldOrder.DEACTIVATED)
     protected Boolean deactivated = false;
 
-    @ManyToOne(targetEntity = LocaleImpl.class, fetch = FetchType.LAZY\)
+    @ManyToOne(targetEntity = LocaleImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
         excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
