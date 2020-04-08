@@ -170,7 +170,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @ManyToOne(targetEntity = LocaleImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
-        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+            excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
