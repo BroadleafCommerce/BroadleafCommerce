@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import java.io.Serializable;
 
-public interface Address extends Serializable, MultiTenantCloneable<Address> {
+public interface SkuAddress extends Serializable, MultiTenantCloneable<Address> {
 
     public void setId(Long id);
 
