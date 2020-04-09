@@ -328,7 +328,7 @@ var BLC = (function($) {
             }
         }
 
-        return params;
+        return document.location.search = params;
     }
 
     /**
