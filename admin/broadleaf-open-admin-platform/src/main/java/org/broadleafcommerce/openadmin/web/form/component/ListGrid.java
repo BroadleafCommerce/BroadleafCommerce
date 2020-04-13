@@ -29,15 +29,14 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ListGrid {
 
-    protected String className;
+    // We may have cases, when className not set.
+    // In that case we need to initialize field with empty string,
+    // to prevent "null" as css class for ListGrid
+    protected String className = "";
     protected String friendlyName = null;
     protected String idProperty;
     protected int order;
@@ -67,6 +66,7 @@ public class ListGrid {
 
     // These actions will start greyed out and unable to be clicked until a specific row has been selected
     protected List<ListGridAction> modalRowActions = new ArrayList<ListGridAction>();
+    private Set<String> cssClasses = new HashSet<>();
     protected int totalRecords;
     protected int startIndex;
     protected int pageSize;
@@ -768,5 +768,25 @@ public class ListGrid {
     public String getHelpText() { return helpText; }
 
     public void setHelpText(String helpText) { this.helpText = helpText; }
+
+    /* ***************************** */
+    /* CSS CLASSES GETTERS / SETTERS */
+    /* ***************************** */
+
+    public void addCssClass(String className) {
+        this.cssClasses.add(className);
+    }
+
+    public void removeCssClass(String className) {
+        this.cssClasses.remove(className);
+    }
+
+    public void clearCssClasses() {
+        this.cssClasses.clear();
+    }
+
+    public String getCssClassNames() {
+        return StringUtils.join(this.cssClasses, " ");
+    }
 
 }
