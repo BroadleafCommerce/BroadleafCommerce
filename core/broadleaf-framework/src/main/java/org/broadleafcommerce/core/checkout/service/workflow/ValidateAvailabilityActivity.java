@@ -79,6 +79,7 @@ public class ValidateAvailabilityActivity extends BaseActivity<ProcessContext<Ch
         for (Map.Entry<Sku, Integer> entry : skuItems.entrySet()) {
             inventoryService.checkSkuAvailability(order, entry.getKey(), entry.getValue());
         }
+
         return context;
     }
 }
