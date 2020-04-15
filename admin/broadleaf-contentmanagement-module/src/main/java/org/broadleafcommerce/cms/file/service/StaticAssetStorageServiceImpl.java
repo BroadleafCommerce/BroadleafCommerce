@@ -531,4 +531,12 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         String extensions = env.getProperty("admin.image.file.extensions", String.class, DEFAULT_ADMIN_IMAGE_EXTENSIONS);
         return Arrays.asList(extensions.split(","));
     }
+
+    @Override
+    public void validateFileSize(MultipartFile file) throws IOException {
+        long maxSize = getMaxUploadSizeForFile(file.getOriginalFilename());
+        if (file.getSize() > maxSize) {
+            throw new IOException("Maximum Upload File Size Exceeded");
+        }
+    }
 }

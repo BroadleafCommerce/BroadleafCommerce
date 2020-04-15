@@ -226,6 +226,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties) {
         try {
             validateFileExtension(file);
+            staticAssetStorageService.validateFileSize(file);
             return createStaticAsset(file.getInputStream(), normalizeFileExtension(file), file.getSize(), properties);
         } catch (IOException e) {
             throw new RuntimeException(e);
