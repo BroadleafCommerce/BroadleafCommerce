@@ -1610,7 +1610,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm.findField("priorKey").setValue(priorKey);
                 populateTypeAndId = false;
             }
-
+            try {
+                entityForm.setTranslationCeilingEntity(Class.forName(fmd.getValueClassName()).getDeclaredField(fmd.getToOneTargetProperty()).getType().getName());
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+            entityForm.setTranslationId(entity.getPMap().get(fmd.getToOneTargetProperty()+".id").getValue());
             formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateMapEntityFormFields(entityForm, entity);
             addAuditableDisplayFields(entityForm);
