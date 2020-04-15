@@ -156,8 +156,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
             deleteEntityUponRemove = true,
             mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
-            mapKeyOptionEntityValueField = "localeCode"
-)
+            mapKeyOptionEntityValueField = "localeCode")
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
     @Column(name = "STORAGE_TYPE")
