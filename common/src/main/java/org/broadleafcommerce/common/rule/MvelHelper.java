@@ -36,6 +36,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -149,22 +150,7 @@ public class MvelHelper {
                 exp = expressionCache.get(rule);
             }
             if (exp == null) {
-                ParserContext context = new ParserContext();
-                context.addImport("MVEL", MVEL.class);
-                context.addImport("MvelHelper", MvelHelper.class);
-                context.addImport("CollectionUtils", SelectizeCollectionUtils.class);
-                if (MapUtils.isNotEmpty(additionalContextImports)) {
-                    for (Entry<String, Class<?>> entry : additionalContextImports.entrySet()) {
-                        context.addImport(entry.getKey(), entry.getValue());
-                    }
-                }
-                
-                String modifiedRule = modifyExpression(rule, ruleParameters, context);
-
-                synchronized (expressionCache) {
-                    exp = MVEL.compileExpression(modifiedRule, context);
-                    expressionCache.put(rule, exp);
-                }
+                exp = getExpression(rule, ruleParameters, expressionCache, additionalContextImports, exp);
             }
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();
@@ -193,7 +179,65 @@ public class MvelHelper {
             }
         }
     }
-    
+
+    private static Serializable getExpression(String rule, Map<String, Object> ruleParameters, Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports, Serializable exp) {
+        ParserContext context = new ParserContext();
+        if (expressionCache instanceof ConcurrentHashMap) {
+            exp = processConcurrentMap(rule, ruleParameters, expressionCache, additionalContextImports, exp, context);
+        } else {
+            String modifiedRule = setupContext(rule, ruleParameters, additionalContextImports, context);
+
+            synchronized (expressionCache) {
+                exp = MVEL.compileExpression(modifiedRule, context);
+                expressionCache.put(rule, exp);
+            }
+        }
+        return exp;
+    }
+
+    private static Serializable processConcurrentMap(String rule, Map<String, Object> ruleParameters, Map<String, Serializable> expressionCache,
+                                                     Map<String, Class<?>> additionalContextImports, Serializable exp, ParserContext context) {
+        ConcurrentHashMap<String, Serializable> concurrentExpressionCache = (ConcurrentHashMap<String, Serializable>) expressionCache;
+        exp = concurrentExpressionCache.putIfAbsent(rule, new RuleCountDownLatch());
+
+        //if null, there was no rule defined yet so we have a latch on it
+        if (exp == null ) {
+            //get the latch so we can do a count down later
+            Serializable latch = concurrentExpressionCache.get(rule);
+            try {
+                String modifiedRule = setupContext(rule, ruleParameters, additionalContextImports, context);
+                exp = MVEL.compileExpression(modifiedRule, context);
+                concurrentExpressionCache.put(rule, exp);
+            } finally {
+                ((RuleCountDownLatch)latch).countDown();
+            }
+        }
+        //if a concurrent thread happena to get the RuleCountDownLatch, we have the thread wait
+        if (exp instanceof RuleCountDownLatch) {
+            try {
+                //have thread wait until Latch is released
+                ((RuleCountDownLatch)exp).await();
+            } catch (InterruptedException e) {
+                //no action can be taken
+            }
+            //once the thread is released, we should be able to get the compiled rule
+            exp = expressionCache.get(rule);
+        }
+        return exp;
+    }
+
+    private static String setupContext(String rule, Map<String, Object> ruleParameters, Map<String, Class<?>> additionalContextImports, ParserContext context) {
+        context.addImport("MVEL", MVEL.class);
+        context.addImport("MvelHelper", MvelHelper.class);
+        context.addImport("CollectionUtils", SelectizeCollectionUtils.class);
+        if (MapUtils.isNotEmpty(additionalContextImports)) {
+            for (Entry<String, Class<?>> entry : additionalContextImports.entrySet()) {
+                context.addImport(entry.getKey(), entry.getValue());
+            }
+        }
+        return modifyExpression(rule, ruleParameters, context);
+    }
+
     /**
      * <p>
      * Provides a hook point to modify the final expression before it's built. By default, this looks for attribute

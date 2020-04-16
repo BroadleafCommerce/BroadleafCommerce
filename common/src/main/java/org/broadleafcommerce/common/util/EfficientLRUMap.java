@@ -203,4 +203,19 @@ public class EfficientLRUMap<K, V> implements Map<K, V> {
             return concurrentMap.getClass();
         }
     }
+
+    public V putIfAbsent(K key, V value) {
+        if (usingLRUMap) {
+            return lruMap.put(key, value);
+        } else {
+            V returnVal = ((ConcurrentHashMap<K, V>) concurrentMap).putIfAbsent(key, value);
+            if (switchToLRUMap()) {
+                // The switch could have happened on another thread.
+                if (!lruMap.containsKey(key)) {
+                    lruMap.put(key, value);
+                }
+            }
+            return returnVal;
+        }
+    }
 }
