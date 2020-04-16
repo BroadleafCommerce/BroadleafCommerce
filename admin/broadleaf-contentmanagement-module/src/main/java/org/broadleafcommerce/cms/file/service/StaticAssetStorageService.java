@@ -132,4 +132,11 @@ public interface StaticAssetStorageService {
      */
     void createStaticAssetStorage(InputStream fileInputStream, StaticAsset staticAsset) throws IOException;
 
+    /**
+     * Validates given file with the maximum upload file size value
+     * @param file
+     * @throws IOException
+     */
+    void validateFileSize(MultipartFile file) throws IOException;
+
 }
