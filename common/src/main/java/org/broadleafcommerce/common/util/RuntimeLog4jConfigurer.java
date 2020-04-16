@@ -23,7 +23,11 @@ import java.io.FileNotFoundException;
 
 /**
  * @author Jeff Fischer
+ * @deprecated This was originally intended to override existing log4j with a modified configuration file for load testing. 
+ * We no longer use Log4J as the default and Spring has deprecated Log4jConfigurer in favor of using a method compatible with Log4J2. 
+ * If the functionality provided by this class is required, that should be done as a customization.
  */
+@Deprecated
 public class RuntimeLog4jConfigurer {
 
     private String log4jConfigLocation;
