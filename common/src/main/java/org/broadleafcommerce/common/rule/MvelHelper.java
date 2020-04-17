@@ -182,7 +182,7 @@ public class MvelHelper {
 
     private static Serializable getExpression(String rule, Map<String, Object> ruleParameters, Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports, Serializable exp) {
         ParserContext context = new ParserContext();
-        if (expressionCache instanceof ConcurrentHashMap) {
+        if (expressionCache instanceof ConcurrentHashMap || expressionCache instanceof EfficientLRUMap) {
             exp = processConcurrentMap(rule, ruleParameters, expressionCache, additionalContextImports, exp, context);
         } else {
             String modifiedRule = setupContext(rule, ruleParameters, additionalContextImports, context);
