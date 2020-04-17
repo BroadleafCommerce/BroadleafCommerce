@@ -30,14 +30,14 @@ import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Helper class for some common rule functions that can be called from mvel as well as utility functions
@@ -182,7 +182,7 @@ public class MvelHelper {
 
     private static Serializable getExpression(String rule, Map<String, Object> ruleParameters, Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports, Serializable exp) {
         ParserContext context = new ParserContext();
-        if (expressionCache instanceof ConcurrentHashMap || expressionCache instanceof EfficientLRUMap) {
+        if (expressionCache instanceof EfficientLRUMap) {
             exp = processConcurrentMap(rule, ruleParameters, expressionCache, additionalContextImports, exp, context);
         } else {
             String modifiedRule = setupContext(rule, ruleParameters, additionalContextImports, context);
@@ -197,7 +197,7 @@ public class MvelHelper {
 
     private static Serializable processConcurrentMap(String rule, Map<String, Object> ruleParameters, Map<String, Serializable> expressionCache,
                                                      Map<String, Class<?>> additionalContextImports, Serializable exp, ParserContext context) {
-        ConcurrentHashMap<String, Serializable> concurrentExpressionCache = (ConcurrentHashMap<String, Serializable>) expressionCache;
+        EfficientLRUMap<String, Serializable> concurrentExpressionCache = (EfficientLRUMap<String, Serializable>) expressionCache;
         exp = concurrentExpressionCache.putIfAbsent(rule, new RuleCountDownLatch());
 
         //if null, there was no rule defined yet so we have a latch on it
