@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -299,4 +298,14 @@ public class CategoryDaoImpl implements CategoryDao {
         }
     }
 
+    @Override
+    public Long readCountAllActiveProductsByCategory(Category category) {
+        TypedQuery<Long> query = em.createNamedQuery("BC_READ_COUNT_ALL_ACTIVE_PRODUCTS_BY_CATEGORY", Long.class);
+        query.setParameter("categoryId", category.getId());
+        query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getSingleResult();
+    }
 }

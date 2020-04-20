@@ -190,7 +190,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             group = GroupName.QualificationOptions, order = FieldOrder.DEACTIVATED)
     protected Boolean deactivated = false;
 
-    @ManyToOne(targetEntity = LocaleImpl.class)
+    @ManyToOne(targetEntity = LocaleImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
         excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)

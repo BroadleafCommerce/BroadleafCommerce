@@ -681,6 +681,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         try {
+            List<Property> productOptionProperties = getProductOptionProperties(entity);
+
+            //Verify that none of the selected options is null
+            Entity errorEntity = validateNotNullProductOptions(productOptionProperties);
+            if (errorEntity != null) {
+                entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
+                return entity;
+            }
+
             //Fill out the Sku instance from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Sku adminInstance = (Sku) Class.forName(entity.getType()[0]).newInstance();
@@ -689,9 +698,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             adminInstance = (Sku) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             //Verify that there isn't already a Sku for this particular product option value combo
-            Entity errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
-                                                                             getProductOptionProperties(entity),
-                                                                             null);
+            errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
+                    productOptionProperties,
+                    null);
             if (errorEntity != null) {
                 entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
@@ -708,7 +717,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             //Fill out the DTO and add in the product option value properties to it
             Entity result = helper.getRecord(adminProperties, adminInstance, null, null);
-            for (Property property : getProductOptionProperties(entity)) {
+            for (Property property : productOptionProperties) {
                 result.addProperty(property);
             }
             return result;
@@ -721,6 +730,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         try {
+            List<Property> productOptionProperties = getProductOptionProperties(entity);
+
+            //Verify that none of the selected options is null
+            Entity errorEntity = validateNotNullProductOptions(productOptionProperties);
+            if (errorEntity != null) {
+                entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
+                return entity;
+            }
+
             //Fill out the Sku instance from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
@@ -730,9 +748,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             adminInstance = (Sku) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             //Verify that there isn't already a Sku for this particular product option value combo
-            Entity errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
-                                                                            getProductOptionProperties(entity),
-                                                                            adminInstance);
+            errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
+                    productOptionProperties,
+                    adminInstance);
             if (errorEntity != null) {
                 entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
@@ -749,7 +767,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             //Fill out the DTO and add in the product option value properties to it
             Entity result = helper.getRecord(adminProperties, adminInstance, null, null);
-            for (Property property : getProductOptionProperties(entity)) {
+            for (Property property : productOptionProperties) {
                 result.addProperty(property);
             }
             return result;
@@ -863,6 +881,31 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
         }
         return null;
+    }
+
+    /**
+     * Verify that none of the selected options is null.
+     * If one of the option's value is null, means that the option in the combo box wasn't correctly selected.
+     * @param productOptionProperties
+     * @return <b>null</b> if successfully validation, the error entity otherwise
+     */
+    private Entity validateNotNullProductOptions(List<Property> productOptionProperties) {
+        List<Property> nullValueProps = new ArrayList<>();
+
+        for (Property property : productOptionProperties) {
+            if (property.getValue() == null) {
+                nullValueProps.add(property);
+            }
+        }
+
+        if (nullValueProps.size() > 0) {
+            Entity errorEntity = new Entity();
+            for (Property productOptionProperty : nullValueProps) {
+                errorEntity.addValidationError(productOptionProperty.getName(), "skuNullProductOption");
+            }
+            return errorEntity;
+        }
+        return  null;
     }
 
 }
