@@ -32,7 +32,6 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustment;
 import org.hibernate.jpa.QueryHints;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +48,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-@Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
 
     @PersistenceContext(unitName="blPU")
@@ -58,7 +56,7 @@ public class OfferDaoImpl implements OfferDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected Long currentDateResolution = 10000L;
+    protected Long currentDateResolution;
     protected Date cachedDate = SystemTime.asDate();
 
     protected Date getCurrentDateAfterFactoringInDateResolution() {

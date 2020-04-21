@@ -28,7 +28,6 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.hibernate.jpa.QueryHints;
-import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
@@ -47,10 +46,10 @@ import javax.persistence.criteria.CriteriaQuery;
  * 
  * @author Jeff Fischer
  */
-@Repository("blCategoryDao")
+
 public class CategoryDaoImpl implements CategoryDao {
 
-    protected Long currentDateResolution = 10000L;
+    protected Long currentDateResolution;
     protected Date cachedDate = SystemTime.asDate();
 
     protected Date getCurrentDateAfterFactoringInDateResolution() {
