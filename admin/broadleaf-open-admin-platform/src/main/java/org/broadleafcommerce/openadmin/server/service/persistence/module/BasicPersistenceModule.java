@@ -89,6 +89,7 @@ import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderRespo
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Primary;
@@ -169,6 +170,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name = "blFetchWrapper")
     protected FetchWrapper fetchWrapper;
+
+    @Value("${use.translation.search:false}")
+    protected boolean useTranslationSearch;
 
     @PostConstruct
     public void init() {
@@ -1196,7 +1200,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
 
             Map<String, FieldMetadata> mergedProperties = getMergedProperties(persistencePackage, cto);
-            addTranslationSearchIfNeeded(cto, mergedProperties);
+            if (useTranslationSearch) {
+                addTranslationSearchIfNeeded(cto, mergedProperties);
+            }
             List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
                     .getFetchTypeFullyQualifiedClassname(), mergedProperties);
             List<FilterMapping> standardFilterMappings = new ArrayList<FilterMapping>(filterMappings);
@@ -1231,6 +1237,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     private void addTranslationSearchIfNeeded(CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties) {
         Map<String, FilterAndSortCriteria> criteriaMap = cto.getCriteriaMap();
+        FilterAndSortCriteria fsc = criteriaMap.get("translationLocale");
+        List<String> filterValues = new ArrayList<>();
+        if (fsc != null) {
+            filterValues = fsc.getFilterValues();
+            criteriaMap.remove("translationLocale");
+        }
         Iterator<Entry<String, FilterAndSortCriteria>> iterator = criteriaMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<String, FilterAndSortCriteria> next = iterator.next();
@@ -1244,6 +1256,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     final String targetClass = basicFieldMetadata.getTargetClass();
                     final String fieldName = basicFieldMetadata.getFieldName();
                     final String friendlyType = getTranslationFriendlyType(targetClass);
+                    final List<String> localeValues = filterValues;
                     if (friendlyType != null) {
                         iterator.remove();
                         cto.getAdditionalFilterMappings().add(new FilterMapping()
@@ -1279,10 +1292,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                                 String likeValue = "%" + value + "%";
                                                 Predicate transValue =
                                                         builder.like(transRoot.get("translatedValue"), likeValue);
+                                                Predicate localeValue =
+                                                        builder.isTrue(transRoot.get("localeCode").in(localeValues));
                                                 Path y = split.length > 1 ? root.get(split[0]).get("id") : root.get("id");
                                                 Predicate entityId = builder.equal(transRoot.get("entityId"),
                                                         y);
-                                                subquery.where(builder.and(type, entityId, transValue, name));
+                                                if (localeValues.size() > 0) {
+                                                    subquery.where(builder.and(type, entityId, transValue, name, localeValue));
+                                                } else {
+                                                    subquery.where(builder.and(type, entityId, transValue, name));
+                                                }
 
                                                 Predicate like = builder.like(x,
                                                         likeValue);
