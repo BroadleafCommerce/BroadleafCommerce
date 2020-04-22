@@ -183,8 +183,10 @@ public class MvelHelper {
     private static Serializable getExpression(String rule, Map<String, Object> ruleParameters, Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports, Serializable exp) {
         ParserContext context = new ParserContext();
         if (expressionCache instanceof EfficientLRUMap) {
+            LOG.debug("Processing MVEL on concurrent approach.");
             exp = processConcurrentMap(rule, ruleParameters, expressionCache, additionalContextImports, exp, context);
         } else {
+            LOG.debug("Processing MVEL on legacy synchronized approach.");
             String modifiedRule = setupContext(rule, ruleParameters, additionalContextImports, context);
 
             synchronized (expressionCache) {
@@ -209,8 +211,9 @@ public class MvelHelper {
                 exp = MVEL.compileExpression(modifiedRule, context);
                 concurrentExpressionCache.put(rule, exp);
             } finally {
-                LOG.debug("Releasing thread for rule:" + rule);
-                ((RuleCountDownLatch)latch).countDown();
+                RuleCountDownLatch countDownLatch = ((RuleCountDownLatch)latch);
+                countDownLatch.countDown();
+                LOG.debug("Done compiling rule: " + rule + ". Threads waiting: " + countDownLatch.count());
             }
         }
         //if a concurrent thread happens to get the RuleCountDownLatch, we have the thread wait
@@ -218,8 +221,10 @@ public class MvelHelper {
             try {
                 //have thread wait until Latch is released
                 RuleCountDownLatch latch = ((RuleCountDownLatch)exp);
-                LOG.debug("Locking thread until MVEL is done processing rule: " + rule +". Threads waiting: " + latch.count());
+                LOG.debug("Locking thread until MVEL is done processing rule: " + rule + ". Threads waiting: "
+                        + latch.count());
                 latch.await();
+                LOG.debug("Releasing thread for rule: " + rule +". Threads waiting: " + latch.count());
             } catch (InterruptedException e) {
                 //no action can be taken
             }
