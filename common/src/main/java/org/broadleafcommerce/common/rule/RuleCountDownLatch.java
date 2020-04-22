@@ -32,4 +32,8 @@ class RuleCountDownLatch implements Serializable {
     public void countDown() {
         latch.countDown();
     }
+
+    public long count() {
+        return latch.getCount();
+    }
 }

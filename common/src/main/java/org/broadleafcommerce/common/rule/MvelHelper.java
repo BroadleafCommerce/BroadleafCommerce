@@ -209,14 +209,17 @@ public class MvelHelper {
                 exp = MVEL.compileExpression(modifiedRule, context);
                 concurrentExpressionCache.put(rule, exp);
             } finally {
+                LOG.debug("Releasing thread for rule:" + rule);
                 ((RuleCountDownLatch)latch).countDown();
             }
         }
-        //if a concurrent thread happena to get the RuleCountDownLatch, we have the thread wait
+        //if a concurrent thread happens to get the RuleCountDownLatch, we have the thread wait
         if (exp instanceof RuleCountDownLatch) {
             try {
                 //have thread wait until Latch is released
-                ((RuleCountDownLatch)exp).await();
+                RuleCountDownLatch latch = ((RuleCountDownLatch)exp);
+                LOG.debug("Locking thread until MVEL is done processing rule: " + rule +". Threads waiting: " + latch.count());
+                latch.await();
             } catch (InterruptedException e) {
                 //no action can be taken
             }
