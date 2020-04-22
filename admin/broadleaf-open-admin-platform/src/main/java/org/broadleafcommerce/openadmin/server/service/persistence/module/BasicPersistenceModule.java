@@ -165,6 +165,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     @Override
+    public FieldManager getFieldManager(boolean cleanFieldManger) {
+        return persistenceManager.getDynamicEntityDao().getFieldManager(cleanFieldManger);
+    }
+
+    @Override
     public DecimalFormat getDecimalFormatter() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         Locale locale = brc.getJavaLocale();

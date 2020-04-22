@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
@@ -106,7 +108,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
 
     @Override
     public String getTitle() {
-        return title;
+        if (TranslatedEntity.getInstance(Media.class.getName()) != null) {
+            return DynamicTranslationProvider.getValue(this, "title", this.title);
+        } else {
+            return this.title;
+        }
     }
 
     @Override
@@ -116,7 +122,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
 
     @Override
     public String getAltText() {
-        return altText;
+        if (TranslatedEntity.getInstance(Media.class.getName()) != null) {
+            return DynamicTranslationProvider.getValue(this, "altText", this.altText);
+        } else {
+            return this.altText;
+        }
     }
 
     @Override

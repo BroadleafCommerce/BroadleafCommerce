@@ -301,7 +301,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         defaultValue = "false")
     protected Boolean isMachineSortable;
 
-    @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = { CascadeType.ALL })
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
@@ -347,7 +347,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @JoinColumn(name = "ADDL_PRODUCT_ID")
     protected Product product;
 
-    @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "skuAttributesTitle",
@@ -421,7 +421,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
      * Normally null and hidden.  Use Meta-Data overrides to display in the admin.
      * @see Sku#getCurrency() for further cautions about using this field.
      */
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "SkuImpl_Currency",
             group = GroupName.Advanced, order = 3000,

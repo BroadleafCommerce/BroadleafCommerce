@@ -360,6 +360,10 @@ public class FieldManager {
         }
     }
 
+    public void clearMiddleFields() {
+        middleFields.clear();
+    }
+
     private class SortableValue implements Comparable<SortableValue> {
 
         private Integer pos;

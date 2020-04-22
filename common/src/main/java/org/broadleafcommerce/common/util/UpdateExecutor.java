@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.cache.spi.UpdateTimestampsCache;
 import org.hibernate.engine.spi.CacheImplementor;
@@ -93,7 +94,13 @@ public class UpdateExecutor {
                 query.setParameter(counter, id, LongType.INSTANCE);
                 counter++;
             }
-            response += query.executeUpdate();
+            FlushMode mode = em.unwrap(Session.class).getHibernateFlushMode();
+            em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+            try {
+                response += query.executeUpdate();
+            } finally {
+                em.unwrap(Session.class).setFlushMode(mode);
+            }
         }
         return response;
     }
@@ -134,7 +141,13 @@ public class UpdateExecutor {
                 query.setParameter(counter, id, LongType.INSTANCE);
                 counter++;
             }
-            response += query.executeUpdate();
+            FlushMode mode = em.unwrap(Session.class).getHibernateFlushMode();
+            em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+            try {
+                response += query.executeUpdate();
+            } finally {
+                em.unwrap(Session.class).setFlushMode(mode);
+            }
         }
         return response;
     }

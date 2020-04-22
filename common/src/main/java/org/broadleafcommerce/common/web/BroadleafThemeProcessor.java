@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.web;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
@@ -51,7 +52,7 @@ public class BroadleafThemeProcessor extends AbstractBroadleafWebRequestProcesso
         Theme newTheme = themeResolver.resolveTheme(request);
 
         //Track if the theme changed
-        if (originalTheme != null && newTheme != null && !Objects.equals(originalTheme, newTheme)) {
+        if (originalTheme != null && newTheme != null && ObjectUtils.compare(originalTheme.getId(), newTheme.getId()) != 0) {
             Map<String, Object> properties = brc.getAdditionalProperties();
             properties.put(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS, true);
         }

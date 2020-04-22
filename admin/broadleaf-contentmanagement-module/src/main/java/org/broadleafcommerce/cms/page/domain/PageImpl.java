@@ -135,7 +135,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
         validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String fullUrl;
 
-    @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = { CascadeType.ALL })
     @MapKey(name = "fieldKey")
     @BatchSize(size = 20)
     @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "pageFields")
@@ -165,7 +165,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     /*
      * This will not work with Enterprise workflows. Do not use.
      */
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF",
         joinColumns = @JoinColumn(name = "PAGE_ID"),
         inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
@@ -178,7 +178,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
         tab = TabName.Seo, group = GroupName.Sitemap, defaultValue = "false")
     protected Boolean excludeFromSiteMap = false;
 
-    @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL })
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PageImpl_Page_Attributes_Title",

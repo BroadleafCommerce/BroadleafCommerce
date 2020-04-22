@@ -16,7 +16,7 @@
  * #L%
  */
 (function($, BLCAdmin) {
-    
+
     BLCAdmin.translations = {
         getProperties : function($container) {
             return {
@@ -27,28 +27,28 @@
             };
         }
     };
-    
+
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
-    
+
     $('body').on('click', 'a.show-translations', function() {
         if ($(this).data('disabled') != 'disabled') {
             BLCAdmin.showLinkAsModal($(this).attr('href'));
         }
     	return false;
     });
-    
+
     $('body').on('click', 'button.translation-submit-button', function() {
 	    var $form = $(this).closest('.modal').find('.modal-body form');
-		
+
 		BLC.ajax({
 			url: $form.attr('action'),
 			type: "POST",
 			data: BLCAdmin.serialize($form)
 		}, function(data) {
 			//prevenSubmit is a hidden field whose value is sent from the translations controller, when there are errors
-			//"data" contains the new copy of the form, validated 
+			//"data" contains the new copy of the form, validated
 			var preventSubmit = $(data).find(".modal-body").find("input[name=preventSubmit]").attr("value");
 			if (!preventSubmit){
               BLCAdmin.listGrid.replaceRelatedCollection($(data));
@@ -63,48 +63,48 @@ $(document).ready(function() {
 						var value = item[name];
 						//"name" and "value" are the field name and the internationalized error message, respectively
 						//now, build the jQuery search string to pinpoint the field's box, and add the error message right after the label
-						var searchString = ".field-box[id=field-" + name + "]";
-						$form.find(searchString).find(".field-label").append("<span class='fieldError error'>" + value + "</span>");
+						var searchString = ".field-group[id=field-" + name + "]";
+						$form.find(searchString).append("<span class='fieldError error errors'>" + value + "</span>");
 					}
 				});
 			}
 	    });
-		
+
 		return false;
     });
-    
+
     $('body').on('click', 'button.translation-grid-add', function() {
         var $container = $(this).closest('.listgrid-container');
         var baseUrl = $container.find('.listgrid-header-wrapper table').data('currenturl');
         var properties = BLCAdmin.translations.getProperties($container);
-        
+
         BLCAdmin.showLinkAsModal(baseUrl + '/add?' + $.param(properties));
         return false;
     });
-    
+
     $('body').on('click', 'button.translation-grid-update', function() {
         var $container = $(this).closest('.listgrid-container');
         var $selectedRows = $container.find('table tr.selected');
         var baseUrl = $container.find('.listgrid-header-wrapper table').data('currenturl');
         var rowFields = BLCAdmin.listGrid.getRowFields($selectedRows);
         var properties = BLCAdmin.translations.getProperties($container);
-        
+
         properties.localeCode = rowFields.localeCode;
         properties.translationId = rowFields.id;
-        
+
         BLCAdmin.showLinkAsModal(baseUrl + '/update?' + $.param(properties));
         return false;
     });
-    
+
     $('body').on('click', 'button.translation-grid-remove', function() {
         var $container = $(this).closest('.listgrid-container');
         var $selectedRows = $container.find('table tr.selected');
         var baseUrl = $container.find('.listgrid-header-wrapper table').data('currenturl');
         var rowFields = BLCAdmin.listGrid.getRowFields($selectedRows);
         var properties = BLCAdmin.translations.getProperties($container);
-        
+
         properties.translationId = rowFields.id;
-        
+
         BLC.ajax({
             url: baseUrl + '/delete',
             data: properties,
@@ -112,7 +112,7 @@ $(document).ready(function() {
         }, function(data) {
             BLCAdmin.listGrid.replaceRelatedCollection($(data));
         });
-        
+
         return false;
     });
 

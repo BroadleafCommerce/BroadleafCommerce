@@ -148,8 +148,8 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public CustomerAddress findDefaultCustomerAddress(Long customerId) {
         Query query = em.createNamedQuery("BC_FIND_DEFAULT_ADDRESS_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);

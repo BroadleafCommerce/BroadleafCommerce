@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.copy;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -29,17 +31,13 @@ import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
+import javax.persistence.Embeddable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.Embeddable;
 
 public class MultiTenantCopyContext {
 
@@ -60,8 +58,8 @@ public class MultiTenantCopyContext {
      */
     protected Map<String, String> copyHints = new HashMap<String, String>();
     protected Boolean isForDuplicate = false;
-    
-    public MultiTenantCopyContext(Catalog fromCatalog, Catalog toCatalog, Site fromSite, Site toSite, 
+
+    public MultiTenantCopyContext(Catalog fromCatalog, Catalog toCatalog, Site fromSite, Site toSite,
             GenericEntityService genericEntityService, MultiTenantCopierExtensionManager extensionManager) {
         equivalentsMap = new HashMap<String, Map<Object, Object>>();
         this.fromCatalog = fromCatalog;
@@ -88,7 +86,7 @@ public class MultiTenantCopyContext {
         }, getToSite(), getToSite(), getToCatalog());
     }
 
-    
+
     public Object getEquivalentId(String className, Object fromId) {
         String ceilingImpl = genericEntityService.getCeilingImplClass(className).getName();
         Map<Object, Object> keys = equivalentsMap.get(ceilingImpl);
@@ -102,11 +100,11 @@ public class MultiTenantCopyContext {
             keys = new HashMap<Object, Object>();
             equivalentsMap.put(ceilingImpl, keys);
         }
-        
+
         if (keys.containsKey(fromId)) {
             throw new IllegalArgumentException("Object [" + className + ":" + fromId + "] has already been cloned.");
         }
-        
+
         keys.put(fromId, toId);
     }
 
@@ -241,9 +239,12 @@ public class MultiTenantCopyContext {
     }
 
     protected void validateOriginal(Object instance) throws CloneNotSupportedException {
-        if (instance instanceof Status && 'Y' == ((Status) instance).getArchived()) {
-            throw new CloneNotSupportedException("Attempting to clone an archived instance");
-        }
+        // TODO I don't think this should throw an exception for archived. This will cause the
+        // ProductOptionCopier, for example, to fail when it's related to a product that has been
+        // archived. It would be hard to guarantee cleanup on all these references.
+        // if (instance instanceof Status && 'Y' == ((Status) instance).getArchived()) {
+        // throw new CloneNotSupportedException("Attempting to clone an archived instance");
+        // }
     }
 
     protected void tearDownContext(BroadleafRequestContext context) {
@@ -321,6 +322,9 @@ public class MultiTenantCopyContext {
             }
         } catch (IllegalAccessException e) {
             throw ExceptionHelper.refineException(e);
+        }
+        if ((instance instanceof Status) && 'Y' == ((Status) instance).getArchived()) {
+            ((Status) response).setArchived('Y');
         }
         return response;
     }

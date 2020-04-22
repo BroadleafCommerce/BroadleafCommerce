@@ -881,6 +881,22 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
 
 
+    @RequestMapping(
+            value = "/{id}/{collectionField:.*}/{collectionItemId}/view/{tab:[0-9]+}/{tabName}",
+            method = RequestMethod.POST
+    )
+    public String viewReadOnlyCollectionItemTab(HttpServletRequest request, HttpServletResponse response, Model model,
+                                        @PathVariable  Map<String, String> pathVars,
+                                        @PathVariable(value="id") String id,
+                                        @PathVariable(value="collectionField") String collectionField,
+                                        @PathVariable(value="collectionItemId") String collectionItemId,
+                                        @PathVariable(value="tabName") String tabName,
+                                        @ModelAttribute(value = "entityForm") EntityForm entityForm) throws Exception {
+
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, ModalHeaderType.VIEW_COLLECTION_ITEM.getType(), entityForm, null);
+    }
+
+
     /**
      * Returns the records for a given collectionField filtered by a particular criteria
      *
@@ -1671,7 +1687,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm.findField("priorKey").setValue(priorKey);
                 populateTypeAndId = false;
             }
-
+            try {
+                entityForm.setTranslationCeilingEntity(Class.forName(fmd.getValueClassName()).getDeclaredField(fmd.getToOneTargetProperty()).getType().getName());
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+            entityForm.setTranslationId(entity.getPMap().get(fmd.getToOneTargetProperty()+".id").getValue());
+            formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
+            formService.populateMapEntityFormFields(entityForm, entity);
             formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateMapEntityFormFields(entityForm, entity);
             addAuditableDisplayFields(entityForm);
@@ -1865,6 +1888,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
+            boolean listGridReadOnly = !rowLevelSecurityService.canUpdate(adminRemoteSecurityService.getPersistentAdminUser(), entity);
+            if(listGridReadOnly){
+                        throw new SecurityServiceException();
+            }
             if (!StringUtils.isEmpty(cd.getSortProperty())) {
                 Field f = new Field()
                         .withName(cd.getSortProperty())

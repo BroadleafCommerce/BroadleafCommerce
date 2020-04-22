@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.util.BroadleafUrlParamUtils;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -62,6 +63,9 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
 
     @Resource(name = "blSearchService")
     protected SearchService searchService;
+
+    @Resource(name = "blCategoryDao")
+    protected CategoryDao categoryDao;
 
     @Override
     public String getProductTitlePattern(Product product) {
@@ -303,7 +307,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
     }
 
     protected Integer getPageCount(Category category) {
-        int activeCategoryCount = category.getActiveProductXrefs().size();
+        long activeCategoryCount = categoryDao.readCountAllActiveProductsByCategory(category);
 
         return (int) Math.ceil(activeCategoryCount * 1.0 / getPageSize());
     }

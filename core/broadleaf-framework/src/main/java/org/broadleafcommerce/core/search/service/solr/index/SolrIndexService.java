@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -114,7 +113,7 @@ public interface SolrIndexService {
      * @param indexables the list of items to index
      * @param solrServer if non-null, adds and commits the indexed documents to the server. If this is null, this will
      * simply return the documents that were built from <b>indexables</b>
-     * 
+     *
      * @throws ServiceException
      * @return the {@link SolrInputDocument}s that were built from the given <b>indexables</b>
      */
@@ -125,10 +124,10 @@ public interface SolrIndexService {
      * @param indexables the list of items to index
      * @param solrServer if non-null, adds and commits the indexed documents to the server. If this is null, this will
      * simply return the documents that were built from <b>indexables</b>
-     * 
+     *
      * @throws ServiceException
      * @return the {@link SolrInputDocument}s that were built from the given <b>indexables</b>
-     * @deprecated Use {@link #buildIncrementalIndex(String, List, SolrClient)} instead so that the collection that's being used can be customized otherwise the default collection will always be used. Generally use {@link SolrConfiguration#getQueryCollectionName()} or {@link SolrConfiguration#getReindexCollectionName()} 
+     * @deprecated Use {@link #buildIncrementalIndex(String, List, SolrClient)} instead so that the collection that's being used can be customized otherwise the default collection will always be used. Generally use {@link SolrConfiguration#getQueryCollectionName()} or {@link SolrConfiguration#getReindexCollectionName()}
      */
     @Deprecated
     public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException;
@@ -152,7 +151,7 @@ public interface SolrIndexService {
      * Triggers the Solr optimize index function on the given server. This is typically called at the end of a {@link #rebuildIndex()}
      * @param collection The collection to optimize
      * @param server The server to use to optimze the given collection
-     * 
+     *
      * @throws ServiceException
      * @throws IOException
      */
@@ -161,7 +160,7 @@ public interface SolrIndexService {
     /**
      * Triggers the Solr optimize index function on the given server. This is typically called at the end of a {@link #rebuildIndex()}
      * @param server The server to use to optimze the default collection
-     * 
+     *
      * @throws ServiceException
      * @throws IOException
      * @deprecated Use {@link #optimizeIndex(String, SolrClient)} instead so that the collection that's being used can be customized otherwise the default collection will always be used. Generally use {@link SolrConfiguration#getQueryCollectionName()} or {@link SolrConfiguration#getReindexCollectionName()}
@@ -178,7 +177,7 @@ public interface SolrIndexService {
      * solr.index.waitFlush - indicates if the process should wait for a flush to disk
      * @param collection The collection to commit
      * @param server The server used to commit the specified collection
-     * 
+     *
      * @throws ServiceException
      * @throws IOException
      */
@@ -187,13 +186,13 @@ public interface SolrIndexService {
 
     /**
      * Allows a commit to be called.  By default, the details of the commit will depend on system properties, including:
-     * 
+     *
      * solr.index.commit - if false, then no commit will be performed. autoCommit (and autoSoftCommit) should be configured in Solr.
      * solr.index.softCommit - indicates if a soft commit should be performed
      * solr.index.waitSearcher - indicates if the process should wait for a searcher to be configured
      * solr.index.waitFlush - indicates if the process should wait for a flush to disk
      * @param server The server used to commit the default collection
-     * 
+     *
      * @throws ServiceException
      * @throws IOException
      * @deprecated Use {@link #commit(String, SolrClient)} instead so that the collection that's being used can be customized otherwise the default collection will always be used. Generally use {@link SolrConfiguration#getQueryCollectionName()} or {@link SolrConfiguration#getReindexCollectionName()}
@@ -212,7 +211,7 @@ public interface SolrIndexService {
      * @param softCommit - soft commit is an efficient commit that does not write the data to the file system
      * @param waitSearcher - whether or not to wait for a new searcher to be created
      * @param waitFlush - whether or not to wait for a flush to disk.
-     * 
+     *
      * @throws ServiceException
      * @throws IOException
      */
@@ -220,15 +219,15 @@ public interface SolrIndexService {
 
     /**
      * This allows an external caller to force a commit to the SolrClient.  See Solr Documentation for
-     * additional details.  If using softCommit, you should ensure that a hardCommit is performed, either 
+     * additional details.  If using softCommit, you should ensure that a hardCommit is performed, either
      * using autoCommit, or at the end of the commit process to flush the changes to the disk.
-     * 
+     *
      * Note that this method will force a commit even if solr.index.commit=false
      * @param server - the SolrClient to commit with
      * @param softCommit - soft commit is an efficient commit that does not write the data to the file system
      * @param waitSearcher - whether or not to wait for a new searcher to be created
      * @param waitFlush - whether or not to wait for a flush to disk.
-     * 
+     *
      * @throws ServiceException
      * @throws IOException
      * @deprecated Use {@link #commit(String, SolrClient, boolean, boolean, boolean)} instead so that the collection that's being used can be customized otherwise the default collection will always be used. Generally use {@link SolrConfiguration#getQueryCollectionName()} or {@link SolrConfiguration#getReindexCollectionName()}
@@ -237,7 +236,7 @@ public interface SolrIndexService {
     public void commit(SolrClient server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException;
 
     public void deleteAllNamespaceDocuments(String collection, SolrClient server) throws ServiceException;
-    
+
     /**
      * @deprecated Use {@link #deleteAllNamespaceDocuments(String, SolrClient)} instead so that the collection that's being used can be customized otherwise the default collection will always be used. Generally use {@link SolrConfiguration#getQueryCollectionName()} or {@link SolrConfiguration#getReindexCollectionName()}
      */
@@ -298,7 +297,7 @@ public interface SolrIndexService {
      * @throws ServiceException
      */
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
-    
+
     /**
      * Iterates through the fields for this indexable and indexes any SearchField's or SearchFacet's.
      *  @param document
@@ -313,5 +312,13 @@ public interface SolrIndexService {
     void addDocuments(Collection<SolrInputDocument> documents) throws IOException, SolrServerException;
 
     void logDeleteQuery(String deleteQuery);
+
+    /**
+     * Indicates if this should be used.  The alternative is to use {@link CatalogSolrIndexUpdateService}. By default, this is driven by the property,
+     * 'solr.catalog.useLegacySolrIndexer', which defaults to true.
+     *
+     * @return
+     */
+    public boolean useLegacyIndexer();
 }
 

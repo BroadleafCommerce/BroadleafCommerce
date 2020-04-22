@@ -2,15 +2,11 @@
 
     <div th:replace="layout/partials/preFooterContent" ></div>
 
-    <script th:inline="text">
-        //<![CDATA[
-        window.jQuery || document.write('<script src="[[@{/js/admin/vendor/jquery-3.4.1.js}]]"><\/script>');
-        //]]>
-    </script>
+    <script src="/admin/js/admin/vendor/jquery-3.4.1.js" type="text/javascript"></script>
 
     <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
     <blc:form id="js-error-handling" method="POST" ></blc:form>
-    <script th:with="adminUser=${adminUser}" th:inline="javascript">
+    <script th:attr="nonce=${blcCspNonce}" th:with="adminUser=${adminUser}" th:inline="javascript">
         var BLC_USER_PREFS = /*[[${adminUser.flatAdditionalFields}]]*/ {};
     </script>
 

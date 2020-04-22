@@ -149,6 +149,8 @@ public interface RecordHelper extends DataFormatProvider {
     
     FieldManager getFieldManager();
 
+    FieldManager getFieldManager(boolean cleanFieldManger);
+
     PersistenceModule getCompatibleModule(OperationType operationType);
 
     /**

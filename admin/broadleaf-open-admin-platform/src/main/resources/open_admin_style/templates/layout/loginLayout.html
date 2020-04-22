@@ -13,6 +13,8 @@
 <head th:replace="layout/partials/loginHead" ></head>
 
 <body class="login">
+    <blc:google_end_tag_manager></blc:google_end_tag_manager>
+
 
     <div class="login-box">
         <div class="logo">
@@ -29,11 +31,6 @@
             <div th:replace="${templateName}::form" ></div>
         </div>
 
-        <script type="text/javascript">
-            // Act on this immediately to prevent the flash of unrendered content.
-            document.getElementById('js-warning').setAttribute('style', 'display: none;');
-            document.getElementById('js-visible').setAttribute('style', 'display: block;');
-        </script>
     </div> <!--  /login-container -->
 
 </body>

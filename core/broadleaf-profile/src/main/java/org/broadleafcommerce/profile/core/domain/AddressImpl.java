@@ -41,6 +41,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -154,7 +155,7 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_City", order=70, group = "AddressImpl_Address")
     protected String city;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
     @AdminPresentation(friendlyName = "StateImpl_State", order=70, group = "AddressImpl_Address", prominent = true)
@@ -174,14 +175,14 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_County", order=90, group = "AddressImpl_Address")
     protected String county;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
     @AdminPresentation(friendlyName = "CountryImpl_Country", order=100, group = "AddressImpl_Address", prominent = true, translatable = true)
     @Deprecated
     protected Country country;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
     @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
     @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
@@ -196,17 +197,17 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_Four_Digit_Zip", order=130, group = "AddressImpl_Address")
     protected String zipFour;
 
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "PHONE_PRIMARY_ID")
     @Index(name="ADDRESS_PHONE_PRI_IDX", columnNames={"PHONE_PRIMARY_ID"})
     protected Phone phonePrimary;
 
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "PHONE_SECONDARY_ID")
     @Index(name="ADDRESS_PHONE_SEC_IDX", columnNames={"PHONE_SECONDARY_ID"})
     protected Phone phoneSecondary;
 
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "PHONE_FAX_ID")
     @Index(name="ADDRESS_PHONE_FAX_IDX", columnNames={"PHONE_FAX_ID"})
     protected Phone phoneFax;

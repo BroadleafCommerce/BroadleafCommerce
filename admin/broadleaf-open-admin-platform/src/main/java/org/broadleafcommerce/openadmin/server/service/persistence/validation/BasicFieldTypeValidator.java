@@ -58,6 +58,8 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
                         Short.parseShort(populateValueRequest.getRequestedValue());
                     } else if (long.class.isAssignableFrom(populateValueRequest.getReturnType()) || Long.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Long.parseLong(populateValueRequest.getRequestedValue());
+                    } else {
+                        Integer.parseInt(populateValueRequest.getRequestedValue());
                     }
                 } catch (NumberFormatException e) {
                     return new PropertyValidationResult(false, "Field must be an valid number");

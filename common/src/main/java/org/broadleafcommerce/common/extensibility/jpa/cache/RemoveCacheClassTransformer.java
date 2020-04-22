@@ -30,12 +30,12 @@ import javassist.bytecode.annotation.StringMemberValue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.context.merge.Merge;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.AbstractClassTransformer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 import java.io.ByteArrayInputStream;
@@ -56,8 +56,6 @@ import java.util.Properties;
  * @Merge("blMergedClassTransformers")
  * public RemoveCacheClassTransformer RemoveProductCache() {
  *     RemoveCacheClassTransformer transformer = new RemoveCacheClassTransformer("Remove Product Cache");
- *     //optional property that can be enabled/disabled as needed
- *     transformer.setConditionalPropertyName("remove.order.customer.entity.l2cache");
  *     List<String> cacheRegions = new ArrayList<String>();
  *     cacheRegions.add("blCustomerElements");
  *     cacheRegions.add("blOrderElements");
@@ -66,6 +64,8 @@ import java.util.Properties;
  * }
  * }
  * </pre>
+ * 
+ * This feature requires that the property "remove.order.customer.entity.l2cache" be enabled (true).
  * 
  * @author Jeff Fischer
  * @author Daniel Colgrove
@@ -78,9 +78,11 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
     protected List<String> classNames = new ArrayList<String>();
     protected List<String> cacheRegions = new ArrayList<String>();
     protected String annotationClass = "org.hibernate.annotations.Cache";
-    protected String conditionalPropertyName;
     protected ConfigurableBeanFactory beanFactory;
 
+    @Value("${remove.order.customer.entity.l2cache:false}")
+    protected Boolean removeOrderCustomerEntityL2Cache;
+    
     public RemoveCacheClassTransformer(String moduleName) {
         this.moduleName = moduleName;
     }
@@ -111,7 +113,7 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
             String convertedClassName = className.replace('/', '.');
             
             // If there is a class list specified, make sure the current class qualifies to have the annotation removed
-            if (conditionalPropertyEnabled() && classQualifies(convertedClassName)) {
+            if (removeOrderCustomerEntityL2Cache && !cacheRegions.isEmpty() && classQualifies(convertedClassName)) {
                 ClassPool classPool = ClassPool.getDefault();
                 clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                 clazz.defrost();
@@ -153,12 +155,6 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
         return null;
     }
 
-    // If there is a conditional, it should be true.  Also verifies that region names are set, which is required
-    protected Boolean conditionalPropertyEnabled() {
-        Boolean conditionTrue = conditionalPropertyName == null || ( conditionalPropertyName != null && isPropertyEnabled(conditionalPropertyName) );
-        return conditionTrue && !cacheRegions.isEmpty();
-    }
-    
     // Checks that the passes class name qualifies to be transformed
     protected Boolean classQualifies(String className) {
         Boolean classQualifies = classNames.isEmpty() || ( !classNames.isEmpty() && classNames.contains(className) );
@@ -273,17 +269,4 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
         this.annotationClass = annotationClass;
     }
 
-    /**
-     * Optional property to declare to gate the activity of this instance of the class tranformer. If a property is specified,
-     * and it does not exist or is set to "false", the class transformation will be skipped.
-     *
-     * @return
-     */
-    public String getConditionalPropertyName() {
-        return conditionalPropertyName;
-    }
-
-    public void setConditionalPropertyName(String conditionalPropertyName) {
-        this.conditionalPropertyName = conditionalPropertyName;
-    }
 }
