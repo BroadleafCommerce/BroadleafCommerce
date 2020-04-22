@@ -927,6 +927,7 @@
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache3.version}</version>
+                <optional>true</optional>
             </dependency>
 
             <!--Spring Libraries -->
