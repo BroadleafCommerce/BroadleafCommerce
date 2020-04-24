@@ -34,6 +34,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
+import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -173,6 +174,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Value("${use.translation.search:false}")
     protected boolean useTranslationSearch;
+
+    @Resource(name = "blLocaleService")
+    protected LocaleService localeService;
 
     @PostConstruct
     public void init() {
@@ -1242,6 +1246,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         if (fsc != null) {
             filterValues = fsc.getFilterValues();
             criteriaMap.remove("translationLocale");
+        }
+        //If locale is generic - than we use all locales of this language
+        //For example, if locale = "en" than we use also "en_GB" and "en_US"
+        if (filterValues.size() > 0 && filterValues.get(0).indexOf("_") < 0) {
+            String currentLocaleCode = filterValues.get(0);
+            List<org.broadleafcommerce.common.locale.domain.Locale> locales = localeService.findAllLocales();
+            for (org.broadleafcommerce.common.locale.domain.Locale locale : locales) {
+                if (!locale.getLocaleCode().equals(currentLocaleCode) && currentLocaleCode.equals(locale.getLocaleCode().substring(0,2))) {
+                    filterValues.add(locale.getLocaleCode());
+                }
+            }
         }
         Iterator<Entry<String, FilterAndSortCriteria>> iterator = criteriaMap.entrySet().iterator();
         while (iterator.hasNext()) {
