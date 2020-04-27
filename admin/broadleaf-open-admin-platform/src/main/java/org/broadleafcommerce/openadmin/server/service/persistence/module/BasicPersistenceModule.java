@@ -32,6 +32,9 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
+import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
+import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -66,7 +69,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaConversionException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslator;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter.FilterValueConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.EqPredicateProvider;
@@ -85,6 +90,7 @@ import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderRespo
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Primary;
@@ -110,6 +116,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -118,6 +125,12 @@ import java.util.StringTokenizer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 /**
  * @author jfischer
@@ -158,6 +171,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name = "blFetchWrapper")
     protected FetchWrapper fetchWrapper;
+
+    @Value("${use.translation.search:false}")
+    protected boolean useTranslationSearch;
+
+    @Resource(name = "blLocaleService")
+    protected LocaleService localeService;
 
     @PostConstruct
     public void init() {
@@ -1185,7 +1204,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
 
             Map<String, FieldMetadata> mergedProperties = getMergedProperties(persistencePackage, cto);
-
+            if (useTranslationSearch) {
+                addTranslationSearchIfNeeded(cto, mergedProperties);
+            }
             List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
                     .getFetchTypeFullyQualifiedClassname(), mergedProperties);
             List<FilterMapping> standardFilterMappings = new ArrayList<FilterMapping>(filterMappings);
@@ -1216,6 +1237,117 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
 
         return new DynamicResultSet(null, payload, totalRecords);
+    }
+
+    private void addTranslationSearchIfNeeded(CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties) {
+        Map<String, FilterAndSortCriteria> criteriaMap = cto.getCriteriaMap();
+        FilterAndSortCriteria fsc = criteriaMap.get("translationLocale");
+        List<String> filterValues = new ArrayList<>();
+        if (fsc != null) {
+            filterValues = fsc.getFilterValues();
+            criteriaMap.remove("translationLocale");
+        }
+        //If locale is generic - than we use all locales of this language
+        //For example, if locale = "en" than we use also "en_GB" and "en_US"
+        if (filterValues.size() > 0 && filterValues.get(0).indexOf("_") < 0) {
+            String currentLocaleCode = filterValues.get(0);
+            List<org.broadleafcommerce.common.locale.domain.Locale> locales = localeService.findAllLocales();
+            for (org.broadleafcommerce.common.locale.domain.Locale locale : locales) {
+                if (!locale.getLocaleCode().equals(currentLocaleCode) && currentLocaleCode.equals(locale.getLocaleCode().substring(0,2))) {
+                    filterValues.add(locale.getLocaleCode());
+                }
+            }
+        }
+        Iterator<Entry<String, FilterAndSortCriteria>> iterator = criteriaMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<String, FilterAndSortCriteria> next = iterator.next();
+
+            final String key = next.getKey();
+            FieldMetadata fieldMetadata = mergedProperties.get(key);
+            if (fieldMetadata != null && fieldMetadata instanceof BasicFieldMetadata && ((BasicFieldMetadata) fieldMetadata).getTranslatable()!=null && ((BasicFieldMetadata) fieldMetadata).getTranslatable()) {
+                BasicFieldMetadata basicFieldMetadata = ((BasicFieldMetadata) fieldMetadata);
+                if (next.getValue().getFilterValues().size() > 0) {
+                    final String value = next.getValue().getFilterValues().get(0);
+                    final String targetClass = basicFieldMetadata.getTargetClass();
+                    final String fieldName = basicFieldMetadata.getFieldName();
+                    final String friendlyType = getTranslationFriendlyType(targetClass);
+                    final List<String> localeValues = filterValues;
+                    if (friendlyType != null) {
+                        iterator.remove();
+                        cto.getAdditionalFilterMappings().add(new FilterMapping()
+                                .withDirectFilterValues(new EmptyFilterValues())
+                                .withRestriction(
+                                        new Restriction().withPredicateProvider(new PredicateProvider() {
+                                            @Override
+                                            public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                            FieldPathBuilder fieldPathBuilder,
+                                                                            From root,
+                                                                            String ceilingEntity,
+                                                                            String fullPropertyName,
+                                                                            Path explicitPath,
+                                                                            List directValues) {
+                                                Subquery subquery =
+                                                        fieldPathBuilder.getCriteria().subquery(Long.class);
+                                                Root transRoot = subquery.from(TranslationImpl.class);
+                                                subquery.select(builder.count(transRoot.get("id")));
+                                                Predicate type =
+                                                        builder.equal(transRoot.get("entityType"), friendlyType);
+                                                Predicate name =
+                                                        builder.equal(transRoot.get("fieldName"), fieldName);
+                                                String[] split = key.split("\\.");
+                                                Path x = null;
+                                                for (int i = 0; i < split.length; i++) {
+                                                    if (x == null) {
+                                                        x = root.get(split[i]);
+                                                    } else {
+                                                        x = x.get(split[i]);
+                                                    }
+                                                }
+
+                                                String likeValue = "%" + value + "%";
+                                                Predicate transValue =
+                                                        builder.like(transRoot.get("translatedValue"), likeValue);
+                                                Predicate localeValue =
+                                                        builder.isTrue(transRoot.get("localeCode").in(localeValues));
+                                                Path y = split.length > 1 ? root.get(split[0]).get("id") : root.get("id");
+                                                Predicate entityId = builder.equal(transRoot.get("entityId"),
+                                                        y);
+                                                if (localeValues.size() > 0) {
+                                                    subquery.where(builder.and(type, entityId, transValue, name, localeValue));
+                                                } else {
+                                                    subquery.where(builder.and(type, entityId, transValue, name));
+                                                }
+
+                                                Predicate like = builder.like(x,
+                                                        likeValue);
+                                                Predicate predicate = builder.or(like, builder.greaterThan(subquery, 0));
+                                                return predicate;
+                                            }
+                                        })));
+                    }
+                }
+                System.out.println("");
+            }
+        }
+    }
+
+    private String getTranslationFriendlyType(String targetClass) {
+
+        TranslatedEntity instance = TranslatedEntity.getInstance(targetClass);
+        if (instance == null) {
+            try {
+                Class<?>[] interfaces = Class.forName(targetClass).getInterfaces();
+                int i = 0;
+                while (instance == null && i < interfaces.length) {
+                    instance = TranslatedEntity.getInstance(interfaces[i].getName());
+                    i++;
+                }
+            } catch (ClassNotFoundException e) {
+
+            }
+        }
+
+        return instance == null ? null : instance.getFriendlyType();
     }
 
     @Override
