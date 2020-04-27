@@ -54,6 +54,8 @@
                 th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation} + ${#strings.isEmpty(action.actionTargetEntity) ? '' : '&amp;entityType=' + action.actionTargetEntity}},
                          data-urlpostfix=${action.urlPostfix},
                          data-queryparams=${listGrid.sectionCrumbRepresentation},
+                         data-confirm=${action.isConfirmEnabled},
+                         data-confirm-text=${action.confirmEnabledText},
                          disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
             <th:block th:text="#{${action.displayText}}"></th:block>
         </button>

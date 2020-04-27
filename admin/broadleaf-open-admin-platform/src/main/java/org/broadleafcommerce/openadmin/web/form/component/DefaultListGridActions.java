@@ -68,7 +68,16 @@ public class DefaultListGridActions {
         .withButtonClass("sub-list-grid-remove")
         .withUrlPostfix("/delete")
         .withIconClass("blc-icon-close")
-        .withDisplayText("Delete");
+        .withDisplayText("Delete")
+        .withIsConfirmEnabled(false);
+
+    // Will display a confirmation modal before deleting
+    public static final ListGridAction CONFIRMABLE_REMOVE = new ListGridAction(ListGridAction.REMOVE)
+        .withButtonClass("sub-list-grid-remove")
+        .withUrlPostfix("/delete")
+        .withIconClass("blc-icon-close")
+        .withDisplayText("Delete")
+        .withIsConfirmEnabled(true);
     
     public static final ListGridAction UPDATE = new ListGridAction(ListGridAction.UPDATE)
         .withButtonClass("sub-list-grid-update")
