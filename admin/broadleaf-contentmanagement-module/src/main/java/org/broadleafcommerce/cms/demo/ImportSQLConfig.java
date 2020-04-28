@@ -50,12 +50,6 @@ public class ImportSQLConfig {
     }
 
     @Bean
-    @Conditional(DemoCondition.class)
-    public AutoImportSql blCMSSequenceData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.ALL,"config/bc/sql/demo/load_cms_table_sequences.sql", AutoImportStage.ALL_TABLE_SEQUENCE);
-    }
-
-    @Bean
     @Conditional({MTCondition.class, DemoCondition.class})
     public AutoImportSql blCMSLateData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_static_asset_data.sql", AutoImportStage.PRIMARY_LATE);

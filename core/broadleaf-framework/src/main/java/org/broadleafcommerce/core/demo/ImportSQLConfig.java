@@ -59,12 +59,6 @@ public class ImportSQLConfig {
     }
 
     @Bean
-    @Conditional(DemoCondition.class)
-    public AutoImportSql blFrameworkSequenceData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.ALL,"config/bc/sql/demo/load_framework_table_sequences.sql", AutoImportStage.ALL_TABLE_SEQUENCE);
-    }
-
-    @Bean
     @Conditional({MTCondition.class, DemoCondition.class})
     public AutoImportSql blFrameworkLateData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_catalog_data.sql", AutoImportStage.PRIMARY_LATE);
