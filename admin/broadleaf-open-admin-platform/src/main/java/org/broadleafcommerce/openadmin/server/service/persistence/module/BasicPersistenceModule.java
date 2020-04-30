@@ -48,6 +48,7 @@ import org.broadleafcommerce.common.util.dao.TQOrder;
 import org.broadleafcommerce.common.util.dao.TQRestriction;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -1374,7 +1375,48 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public List<Serializable> getPersistentRecords(FetchRequest fetchRequest) {
+        if (getAdornedTargetList(fetchRequest) != null) {
+            updateTargetEntityIdFilterValues(fetchRequest);
+        }
         return fetchWrapper.getPersistentRecords(fetchRequest);
+    }
+
+    /**
+     * Look in FilterMappings for a mapping where {@link FilterMapping#getFullPropertyName()} equals the adorned target entity's id field.
+     * If present, update the mapping filter values from the CTO.
+     *
+     * This method adds support for using "entity.id" in a filter mapping property name.
+     * This compensates for behavior in {@link EnterpriseAdornedTargetListPersistenceModule#prepareFilterMappings} that
+     * makes it difficult to filter an adorned target collection by adorned target entity id.
+     *
+     * @param fetchRequest
+     */
+    private void updateTargetEntityIdFilterValues(FetchRequest fetchRequest) {
+        AdornedTargetList adornedTargetList = getAdornedTargetList(fetchRequest);
+        String prefix = adornedTargetList.getTargetObjectPath();
+        String idProperty = adornedTargetList.getIdProperty();
+
+        final String ctoKey = prefix + "." + prefix + "." + idProperty;
+        final String filterKey = prefix + "." + idProperty;
+
+        if (fetchRequest.getCto().getCriteriaMap().containsKey(ctoKey)) {
+
+             List<FilterMapping> filterMappings = fetchRequest.getFilterMappings();
+            for (FilterMapping filterMapping : filterMappings) {
+                if (filterKey.equals(filterMapping.getFullPropertyName())) {
+                    FilterAndSortCriteria filterAndSortCriteria = fetchRequest.getCto().getCriteriaMap().get(ctoKey);
+                    filterMapping.getFilterValues().addAll(filterAndSortCriteria.getFilterValues());
+                }
+            }
+            
+        }
+    }
+
+    private AdornedTargetList getAdornedTargetList(FetchRequest fetchRequest) {
+        PersistencePackage persistencePackage = fetchRequest.getPersistencePackage();
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        return (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().
+                get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
     }
 
     @Override
