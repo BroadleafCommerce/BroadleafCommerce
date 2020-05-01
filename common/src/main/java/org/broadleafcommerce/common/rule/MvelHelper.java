@@ -149,7 +149,7 @@ public class MvelHelper {
             if (expressionCache != null) {
                 exp = expressionCache.get(rule);
             }
-            if (exp == null) {
+            if (exp == null || exp instanceof RuleCountDownLatch) {
                 exp = getExpression(rule, ruleParameters, expressionCache, additionalContextImports, exp);
             }
 
