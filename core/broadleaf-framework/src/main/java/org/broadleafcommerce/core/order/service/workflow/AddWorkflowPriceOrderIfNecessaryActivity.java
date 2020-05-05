@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.order.service.workflow;
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -123,35 +122,8 @@ public class AddWorkflowPriceOrderIfNecessaryActivity extends BaseActivity<Proce
         Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap = new HashMap<>();
         Map<OrderItem, OrderItem> savedOrderItems = new HashMap<>();
         for (OrderItem oi : order.getOrderItems()) {
-            if (oi instanceof BundleOrderItem) {
-                // We first need to save the discrete order items that are part of this bundle. Once they're saved, we'll
-                // mark them and remove them from this bundle.
-                List<DiscreteOrderItem> doisToAdd = new ArrayList<>();
-                ListIterator<DiscreteOrderItem> li = ((BundleOrderItem) oi ).getDiscreteOrderItems().listIterator();
-                while (li.hasNext()) {
-                    DiscreteOrderItem doi = li.next();
-                    getOiFgiMap(order, oiFgiMap, doi);
-                    DiscreteOrderItem savedDoi = (DiscreteOrderItem) orderItemService.saveOrderItem(doi);
-                    savedOrderItems.put(doi, savedDoi);
-                    li.remove();
-                    doisToAdd.add(savedDoi);
-                }
-
-                // After the discrete order items are saved, we can re-add the saved versions to our bundle and then
-                // save the bundle as well.
-                ((BundleOrderItem) oi).getDiscreteOrderItems().addAll(doisToAdd);
-                BundleOrderItem savedBoi = (BundleOrderItem) orderItemService.saveOrderItem(oi);
-                savedOrderItems.put(oi, savedBoi);
-
-                // Lastly, we'll want to go through our saved discrete order items and update the bundle that they relate
-                // to to the saved version of the bundle.
-                for (DiscreteOrderItem doi : savedBoi.getDiscreteOrderItems()) {
-                    doi.setBundleOrderItem(savedBoi);
-                }
-            } else {
                 getOiFgiMap(order, oiFgiMap, oi);
                 savedOrderItems.put(oi, orderItemService.saveOrderItem(oi));
-            }
         }
 
         // Now, we'll update the orderitems in the order to their saved counterparts
