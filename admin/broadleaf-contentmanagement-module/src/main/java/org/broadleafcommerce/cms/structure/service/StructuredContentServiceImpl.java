@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.SetUtils;
@@ -68,6 +64,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * @author bpolster

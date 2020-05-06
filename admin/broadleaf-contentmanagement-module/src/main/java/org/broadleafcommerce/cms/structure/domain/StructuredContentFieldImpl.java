@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -24,8 +25,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -78,6 +77,10 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     protected String stringValue;
 
     @AdminPresentation
+    @Column (name = "DEFAULT_VALUE")
+    protected String defaultValue;
+
+    @AdminPresentation
     @Column (name = "LOB_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.MaterializedClobType")
@@ -107,7 +110,10 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     public String getValue() {
         if (stringValue != null && stringValue.length() > 0) {
             return stringValue;
-        } else {
+        }if (StringUtils.isEmpty(stringValue)&&StringUtils.isEmpty(lobValue)){
+            return defaultValue;
+        }
+        else {
             return lobValue;
         }
     }
@@ -127,7 +133,18 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
             stringValue = null;
         }
     }
-    
+
+    @Override
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+
+    @Override
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     @Override
     public StructuredContentField clone() {
         StructuredContentField clone = null;
