@@ -39,10 +39,4 @@ public class ImportSQLConfig {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_code_tables.sql", AutoImportStage.PRIMARY_PRE_BASIC_DATA);
     }
 
-    @Bean
-    @Conditional(DemoCondition.class)
-    public AutoImportSql blProfileSequenceData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.ALL,"config/bc/sql/demo/load_profile_table_sequences.sql", AutoImportStage.ALL_TABLE_SEQUENCE);
-    }
-
 }
