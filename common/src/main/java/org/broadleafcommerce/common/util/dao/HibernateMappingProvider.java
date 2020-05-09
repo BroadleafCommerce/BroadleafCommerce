@@ -58,7 +58,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
      * @param metadataMap seed data
      */
     public HibernateMappingProvider(Map<String, PersistentClass> metadataMap) {
-        metadataMap.putAll(metadataMap);
+        HibernateMappingProvider.metadataMap.putAll(metadataMap);
     }
 
     @Override
