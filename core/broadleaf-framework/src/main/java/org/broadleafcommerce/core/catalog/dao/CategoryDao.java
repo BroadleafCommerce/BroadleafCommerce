@@ -224,4 +224,6 @@ public interface CategoryDao {
      */
     public void setCurrentDateResolution(Long currentDateResolution);
 
+    Long readCountAllActiveProductsByCategory(Category category);
+
 }

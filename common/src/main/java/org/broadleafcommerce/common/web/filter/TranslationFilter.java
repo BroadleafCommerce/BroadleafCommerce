@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -46,14 +47,26 @@ public class TranslationFilter extends AbstractIgnorableFilter {
     @Qualifier("blTranslationRequestProcessor")
     protected TranslationRequestProcessor translationRequestProcessor;
 
+    @Autowired
+    protected Environment env;
+
     @Override
     public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            translationRequestProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+            if (areTranslationsEnabled()) {
+                translationRequestProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+            }
+
             filterChain.doFilter(request, response);
         } finally {
-            translationRequestProcessor.postProcess(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+            if (areTranslationsEnabled()) {
+                translationRequestProcessor.postProcess(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+            }
         }
+    }
+
+    protected boolean areTranslationsEnabled() {
+        return env.getProperty("i18n.translation.enabled", boolean.class, false);
     }
 
     @Override

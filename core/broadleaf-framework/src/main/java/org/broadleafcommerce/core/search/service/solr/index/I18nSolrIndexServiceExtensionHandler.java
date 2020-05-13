@@ -86,7 +86,7 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
         Set<String> processedLocaleCodes = new HashSet<String>();
 
         ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
-        if (field.getTranslatable()) {
+        if (field.getTranslatable() && getTranslationEnabled()) {
             result = ExtensionResultStatusType.HANDLED;
 
             TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
@@ -136,7 +136,7 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
      * @return
      */
     protected ExtensionResultStatusType getLocalePrefix(Field field, List<String> prefixList) {
-        if (field.getTranslatable()) {
+        if (field.getTranslatable() && getTranslationEnabled()) {
             if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
                 Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
                 if (locale != null) {
@@ -183,11 +183,13 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
             }
         }
 
-        addEntitiesToTranslationCache(skuIds, TranslatedEntity.SKU);
-        addEntitiesToTranslationCache(productIds, TranslatedEntity.PRODUCT);
-        addEntitiesToTranslationCache(skuAttributeIds, TranslatedEntity.SKU_ATTRIBUTE);
-        addEntitiesToTranslationCache(productAttributeIds, TranslatedEntity.PRODUCT_ATTRIBUTE);
-        
+        if (getTranslationEnabled()) {
+            addEntitiesToTranslationCache(skuIds, TranslatedEntity.SKU);
+            addEntitiesToTranslationCache(productIds, TranslatedEntity.PRODUCT);
+            addEntitiesToTranslationCache(skuAttributeIds, TranslatedEntity.SKU_ATTRIBUTE);
+            addEntitiesToTranslationCache(productAttributeIds, TranslatedEntity.PRODUCT_ATTRIBUTE);
+        }
+
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 

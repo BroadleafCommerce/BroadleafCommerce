@@ -53,6 +53,8 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
      */
     ExtensionResultStatusType updateEntityInformationDto(EntityInformationDto dto, Object entityInstance);
 
+    ExtensionResultStatusType updateBasicEntityInformationDto(EntityInformationDto dto, Object entityInstance);
+
     /**
      * Handler implementations will populate the {@link ExtensionResultHolder} with a valid 
      * base profile id if one exists for the site
@@ -61,6 +63,8 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
      * @param erh {@link ExtensionResultHolder} a container for the result     
      */
     ExtensionResultStatusType getBaseProfileIdForSite(Site site, ExtensionResultHolder<Long> erh);
+
+    ExtensionResultStatusType getTypeForSite(Site site, ExtensionResultHolder<String> erh);
 
     /**
      * Handler implementations will populate the {@link ExtensionResultHolder} with a valid

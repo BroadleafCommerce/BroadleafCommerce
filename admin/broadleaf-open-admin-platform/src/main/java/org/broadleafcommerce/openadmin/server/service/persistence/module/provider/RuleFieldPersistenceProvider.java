@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -56,29 +57,19 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * Provides persistence (read/write) behavior for rule builder fields. This includes two types: Rule with quantity, and
  * simple rule. OfferImpl#targetItemCriteria and OfferImpl#offerMatchRules are examples of each, respectively. This class
  * is only compatible with quantity-based rules modeled using a Set and @OneToMany, and with simple rules modeled using
- * a Map and @OneToMany.
+ * a Map and @OneToMany. 
  *
  * @author Jeff Fischer
  */
@@ -273,6 +264,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     dirty = value != null;
                 } else {
                     dirty = checkDirtyState(populateValueRequest, instance, mvel);
+                }
+                // Restore JSON rule after AntiSamy policy
+                if (!populateValueRequest.getProperty().getValue().equals(populateValueRequest.getProperty().getUnHtmlEncodedValue())) {
+                    populateValueRequest.getProperty().setValue(populateValueRequest.getProperty().getUnHtmlEncodedValue());
                 }
                 populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
             }
@@ -693,22 +688,30 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 //as the CacheInvalidationProducer will need this in order to remove each collection member cache instance as well.
                 BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
                 context.getAdditionalProperties().put("deletedQuantityBasedRules", new HashSet<QuantityBasedRule>());
-
-                while (itr.hasNext()) {
-                    checkForRemove:
-                    {
-                        QuantityBasedRule original = itr.next();
-                        for (QuantityBasedRule quantityBasedRule : updatedRules) {
-                            Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
-                            boolean isMatch = original.getId().equals(id) || original.getId().equals(quantityBasedRule.getId());
-                            if (isMatch) {
-                                break checkForRemove;
+                Set<String> otherChangeSetProps =
+                        (Set<String>) context.getAdditionalProperties().get("otherChangeSetProps");
+                if (otherChangeSetProps == null || (otherChangeSetProps != null && !otherChangeSetProps
+                        .contains(property.getName()))) {
+                    while (itr.hasNext()) {
+                        checkForRemove:
+                        {
+                            QuantityBasedRule original = itr.next();
+                            for (QuantityBasedRule quantityBasedRule : updatedRules) {
+                                Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
+                                Long origId = sandBoxHelper.getOriginalId(original);
+                                boolean isMatch = original.getId().equals(id) || original.getId()
+                                        .equals(quantityBasedRule.getId()) ||
+                                        (id != null && id.equals(origId));
+                                if (isMatch) {
+                                    break checkForRemove;
+                                }
                             }
+                            ((Set<QuantityBasedRule>) context.getAdditionalProperties()
+                                    .get("deletedQuantityBasedRules")).add(original);
+                            em.remove(original);
+                            itr.remove();
+                            dirty = true;
                         }
-                        ((Set<QuantityBasedRule>)context.getAdditionalProperties().get("deletedQuantityBasedRules")).add(original);
-                        em.remove(original);
-                        itr.remove();
-                        dirty = true;
                     }
                 }
                 ObjectMapper mapper = new ObjectMapper();
