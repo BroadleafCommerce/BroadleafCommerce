@@ -366,6 +366,19 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 					$this.mCustomScrollbar("scrollTo",(mCSB_dragger.position().top-(mCSB_draggerDragY))+y,{moveDragger:true,trigger:"internal"});
 				}
 			}
+			function PixelsScrollTo(to){
+				if(!mCSB_dragger.data("preventAction")){
+					mCSB_dragger.data("preventAction",true);
+					$this.mCustomScrollbar("scrollTo",to,{trigger:"internal"});
+				}
+			}
+			function ScrollButtonsSpeed(){
+				var speed=$this.data("scrollButtons_scrollSpeed");
+				if($this.data("scrollButtons_scrollSpeed")==="auto"){
+					speed=Math.round(($this.data("scrollInertia")+100)/40);
+				}
+				return speed;
+			}
 			/*content touch-drag*/
 			if($.support.touch && $this.data("contentTouchScroll")){
 				if(!$this.data("bindEvent_content_touch")){
@@ -469,12 +482,6 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 							$this.data({"bindEvent_buttonsPixels_y":true});
 						}
 					}
-					function PixelsScrollTo(to){
-						if(!mCSB_dragger.data("preventAction")){
-							mCSB_dragger.data("preventAction",true);
-							$this.mCustomScrollbar("scrollTo",to,{trigger:"internal"});
-						}
-					}
 				}else{ /*continuous scrolling*/
 					if($this.data("horizontalScroll")){
 						mCSB_buttonRight.add(mCSB_buttonLeft).unbind("click");
@@ -536,13 +543,6 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 							mCSB_buttonUp.bind("mouseup touchend MSPointerUp mouseout MSPointerOut",mCSB_buttonUp_stop);
 							$this.data({"bindEvent_buttonsContinuous_y":true});
 						}
-					}
-					function ScrollButtonsSpeed(){
-						var speed=$this.data("scrollButtons_scrollSpeed");
-						if($this.data("scrollButtons_scrollSpeed")==="auto"){
-							speed=Math.round(($this.data("scrollInertia")+100)/40);
-						}
-						return speed;
 					}
 				}
 			}

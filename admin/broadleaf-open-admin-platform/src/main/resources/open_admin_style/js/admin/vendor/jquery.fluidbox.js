@@ -119,12 +119,7 @@
 
 				// Get image dimensions and aspect ratio
 				if($fbItem.hasClass('fluidbox')) {
-					var $img	= $fbItem.find('img'),
-						$ghost	= $fbItem.find('.fluidbox-ghost'),
-						$wrap	= $fbItem.find('.fluidbox-wrap'),
-						data	= $img.data();
-
-					function imageProp() {
+					var imageProp = function imageProp() {
 						// Store image dimensions in jQuery object
 						data.imgWidth	= $img.width();
 						data.imgHeight	= $img.height();
@@ -144,7 +139,12 @@
 						} else {
 							data.imgScale = $w.width()*settings.viewportFill/$img.width();
 						}						
-					}
+					};
+
+					var $img	= $fbItem.find('img'),
+						$ghost	= $fbItem.find('.fluidbox-ghost'),
+						$wrap	= $fbItem.find('.fluidbox-wrap'),
+						data	= $img.data();
 
 					imageProp();					
 
