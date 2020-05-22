@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.service.ProductOptionValidationServiceIm
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException
 import org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity
 import org.broadleafcommerce.core.workflow.ActivityMessages
+import org.springframework.core.env.Environment
 
 /**
  *  findMatchingSku:
@@ -73,11 +74,14 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
     OrderService mockOrderService = Mock()
     OrderItemService mockOrderItemService = Mock()
     CatalogService mockCatalogService = Mock()
-    ProductOptionValidationService mockProductOptionValidationService = Spy(ProductOptionValidationServiceImpl) {
-        findSkuIdsForProductOptionValues(*_) >> []
-    }
+    Environment mockEnvironment = Mock()
+    ProductOptionValidationService mockProductOptionValidationService;
     
     def setup() {
+        mockProductOptionValidationService = Spy(ProductOptionValidationServiceImpl) {
+            findSkuIdsForProductOptionValues(*_) >> []
+        }
+        mockProductOptionValidationService.environment=mockEnvironment;
         activity = Spy(ValidateAddRequestActivity).with {
             orderService = mockOrderService
             orderItemService = mockOrderItemService
@@ -147,6 +151,7 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
         activity.productOptionValidationService = Spy(ProductOptionValidationServiceImpl) {
             findSkuIdsForProductOptionValues(*_) >> [1l]
         }
+        activity.productOptionValidationService.environment=mockEnvironment;
         activity.catalogService = Mock(CatalogService) {
             findSkuById(1l) >> testSku
         }
