@@ -119,7 +119,9 @@ public class OrderItemServiceImpl implements OrderItemService {
             }
             for (String key : attributes.keySet()) {
                 String value = attributes.get(key);
-
+                if(value == null){
+                    continue;
+                }
                 OrderItemAttribute attribute = orderItemAttributes.get(key);
 
                 if(attribute == null) {
