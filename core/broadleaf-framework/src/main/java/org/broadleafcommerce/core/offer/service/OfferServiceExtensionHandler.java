@@ -134,7 +134,11 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode);
 
-
+    /**
+     * Clear hidden qualifiers when switching offer type.
+     * @param entity
+     * @return
+     */
     ExtensionResultStatusType clearHiddenQualifiers(Entity entity);
 
 }
