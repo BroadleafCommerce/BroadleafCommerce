@@ -44,11 +44,13 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
+import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -94,6 +96,13 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
 
     @Value("${admin.offer.isactive.filter:false}")
     protected boolean isActiveFilter = false;
+
+
+    @Resource(name = "blOfferServiceExtensionManager")
+    protected OfferServiceExtensionManager extensionManager;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     public OfferCustomPersistenceHandler() {
         super(Offer.class);
@@ -381,6 +390,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
         }
 
         Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
+        
         if (qualifiersCanBeQualifiers != null) {
             qualifiersCanBeQualifiers.setIsDirty(true);
         }

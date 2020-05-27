@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.HashMap;
@@ -91,4 +92,10 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     public ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public  ExtensionResultStatusType clearHiddenQualifiers(Entity entity) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
 }
