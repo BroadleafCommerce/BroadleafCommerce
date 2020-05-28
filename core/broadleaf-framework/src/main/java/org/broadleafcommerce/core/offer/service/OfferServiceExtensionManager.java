@@ -29,7 +29,6 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
-import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
@@ -116,12 +115,6 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
         }
     };
 
-    public static final ExtensionManagerOperation clearHiddenQualifiers = new ExtensionManagerOperation() {
-        @Override
-        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).clearHiddenQualifiers((Entity) params[0]);
-        }
-    };
 
     public OfferServiceExtensionManager() {
         super(OfferServiceExtensionHandler.class);
@@ -177,10 +170,6 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
         return execute(addAdditionalOffersForCode, offers, offerCode);
     }
 
-    @Override
-    public ExtensionResultStatusType clearHiddenQualifiers(Entity entity) {
-        return execute(clearHiddenQualifiers, entity);
-    }
 
     @Override
     public boolean isEnabled() {

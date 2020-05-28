@@ -27,9 +27,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
-import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.profile.core.domain.Customer;
-
 
 import java.util.HashMap;
 import java.util.List;
@@ -134,11 +132,5 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode);
 
-    /**
-     * Clear hidden qualifiers when switching offer type.
-     * @param entity
-     * @return
-     */
-    ExtensionResultStatusType clearHiddenQualifiers(Entity entity);
 
 }

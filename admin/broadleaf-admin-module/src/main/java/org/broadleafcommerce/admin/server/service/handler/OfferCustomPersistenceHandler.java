@@ -21,6 +21,7 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.admin.server.service.extension.OfferCustomServiceExtensionManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
@@ -35,7 +36,6 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
-import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -99,8 +99,8 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     protected boolean isActiveFilter = false;
 
 
-    @Resource(name = "blOfferServiceExtensionManager")
-    protected OfferServiceExtensionManager extensionManager;
+    @Resource(name = "blOfferCustomServiceExtensionManager")
+    protected OfferCustomServiceExtensionManager extensionManager;
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
