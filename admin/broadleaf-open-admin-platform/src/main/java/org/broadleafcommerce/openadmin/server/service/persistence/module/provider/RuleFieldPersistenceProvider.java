@@ -687,7 +687,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 //Since this class explicitly removes the quantity based rule - we must also preserve the id of the element
                 //as the CacheInvalidationProducer will need this in order to remove each collection member cache instance as well.
                 BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-                context.getAdditionalProperties().put("deletedQuantityBasedRules", new HashSet<QuantityBasedRule>());
+                Object deletedQuantityBasedRules = context.getAdditionalProperties().get("deletedQuantityBasedRules");
+                if (deletedQuantityBasedRules == null) {
+                    context.getAdditionalProperties().put("deletedQuantityBasedRules", new HashSet<QuantityBasedRule>());
+                }
                 Set<String> otherChangeSetProps =
                         (Set<String>) context.getAdditionalProperties().get("otherChangeSetProps");
                 if (otherChangeSetProps == null || (otherChangeSetProps != null && !otherChangeSetProps
