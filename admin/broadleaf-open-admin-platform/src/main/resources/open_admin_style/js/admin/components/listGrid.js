@@ -214,7 +214,7 @@
             //add hidden fields to the array
             var hiddenFields = $tr.data('hiddenfields');
             if (hiddenFields) {
-                for (let j = 0; j < hiddenFields.hiddenFields.length; j++) {
+                for (var j = 0; j < hiddenFields.hiddenFields.length; j++) {
                     var fieldName = hiddenFields.hiddenFields[j].name;
                     var value = hiddenFields.hiddenFields[j].val;
                     fields[fieldName] = value;

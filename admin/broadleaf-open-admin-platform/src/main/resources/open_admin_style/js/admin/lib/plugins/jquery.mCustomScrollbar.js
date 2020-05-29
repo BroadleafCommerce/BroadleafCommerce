@@ -469,7 +469,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 							$this.data({"bindEvent_buttonsPixels_y":true});
 						}
 					}
-					function PixelsScrollTo(to){
+					var PixelsScrollTo =function(to){
 						if(!mCSB_dragger.data("preventAction")){
 							mCSB_dragger.data("preventAction",true);
 							$this.mCustomScrollbar("scrollTo",to,{trigger:"internal"});
@@ -537,7 +537,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 							$this.data({"bindEvent_buttonsContinuous_y":true});
 						}
 					}
-					function ScrollButtonsSpeed(){
+					var ScrollButtonsSpeed = function (){
 						var speed=$this.data("scrollButtons_scrollSpeed");
 						if($this.data("scrollButtons_scrollSpeed")==="auto"){
 							speed=Math.round(($this.data("scrollInertia")+100)/40);
@@ -585,7 +585,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 		},
 		scrollTo:function(scrollTo,options){
 			/*change start*/
-			let draggerSpeed;
+			var draggerSpeed;
 			/*change end*/
 			var $this=$(this),
 				defaults={
@@ -848,7 +848,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 				_delay=1000/60;
 				el._time=progress+_delay;
 				/*start change*/
-				let _request=(!window.requestAnimationFrame) ? function(f){_tween(); return setTimeout(f,0.01);} : window.requestAnimationFrame;
+				var _request=(!window.requestAnimationFrame) ? function(f){_tween(); return setTimeout(f,0.01);} : window.requestAnimationFrame;
 				/*change end*/
 				el._id=_request(_step);
 			}

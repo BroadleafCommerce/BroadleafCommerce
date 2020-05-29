@@ -171,12 +171,12 @@ $(document).ready(function() {
 
         var $modal = BLCAdmin.getModalSkeleton();
         var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
-        let primaryDatum = primaryData['id'];
-        let linkTitleTranslations ="<a class=\"show-translations\" href=\"/admin/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=title&isRte=false\">"+
+        var primaryDatum = primaryData['id'];
+        var linkTitleTranslations ="<a class=\"show-translations\" href=\"/admin/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=title&isRte=false\">"+
             "<i class=\"blc-icon-globe\" style=\"color: #94AF39; \">"+"</i>"+
             "<span>"+" Translations"+"</span>"+"</a>";
 
-        let linkAltTextTranslations ="<a class=\"show-translations\" href=\"/admin/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=altText&isRte=false\">"+
+        var linkAltTextTranslations ="<a class=\"show-translations\" href=\"/admin/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=altText&isRte=false\">"+
             "<i class=\"blc-icon-globe\" style=\"color: #94AF39; \">"+"</i>"+
             "<span>"+" Translations"+"</span>"+"</a>";
 

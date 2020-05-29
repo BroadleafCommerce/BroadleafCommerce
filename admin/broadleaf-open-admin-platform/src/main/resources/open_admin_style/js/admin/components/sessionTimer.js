@@ -65,7 +65,7 @@
                  * doesn't expire before the client session
                  */
                 sessionTimeoutInterval = data.serverSessionTimeoutInterval - 60000;
-               let resetTime = (new Date()).getTime();
+               var resetTime = (new Date()).getTime();
                 $.cookie("sessionResetTime", resetTime - (resetTime % pingInterval) , { path : resetTimeCookiePath });
                 
                 BLCAdmin.sessionTimer.updateTimeLeft();

@@ -17,7 +17,7 @@
  */
 $(document).ready(function(){
 
-    let equalHeight = function(container){
+    var equalHeight = function(container){
 
         var currentTallest = 0,
             currentRowStart = 0,

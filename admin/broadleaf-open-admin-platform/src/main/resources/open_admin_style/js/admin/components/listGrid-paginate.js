@@ -828,7 +828,7 @@
                     maxHeight -= 5;
                 }
 
-               let closestListgridContainer = $wrapper.closest('.listgrid-container').find('.listgrid-toolbar');
+               var closestListgridContainer = $wrapper.closest('.listgrid-container').find('.listgrid-toolbar');
 
                 if (closestListgridContainer.length > 0 && closestListgridContainer.outerHeight(true) !== undefined) {
                     maxHeight -= closestListgridContainer.outerHeight(true);
