@@ -1615,7 +1615,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             } catch (Exception e) {
                 LOG.error(e);
             }
-            entityForm.setTranslationId(entity.getPMap().get(fmd.getToOneTargetProperty()+".id").getValue());
+            String entityId = (fmd.getToOneTargetProperty().equals("") ? "id" : fmd.getToOneTargetProperty() + ".id");
+            entityForm.setTranslationId(entity.getPMap().get(entityId).getValue());
             formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateMapEntityFormFields(entityForm, entity);
             addAuditableDisplayFields(entityForm);
