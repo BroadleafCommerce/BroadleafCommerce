@@ -301,7 +301,22 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         entities[0] = entity;
 
         DataWrapper dataWrapper = translator.createRuleData(entities, "matchRule", null, null, fulfillmentGroupFieldService);
-        assert(dataWrapper.getError().equals(MVELToDataWrapperTranslator.SUB_GROUP_MESSAGE));
+        assert(dataWrapper.getData().size() == 1);
+        assert(dataWrapper.getData().get(0).getQuantity() == null);
+        assert(dataWrapper.getData().get(0).getCondition().equals(BLCOperator.AND.name()));
+        assert(dataWrapper.getData().get(0).getRules().size()==2);
+
+        assert(dataWrapper.getData().get(0).getRules().get(0) instanceof ExpressionDTO);
+        ExpressionDTO e1 = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(0);
+        assert(e1.getId().equals("address.state.name"));
+        assert(e1.getOperator().equals(BLCOperator.EQUALS.name()));
+        assert(e1.getValue().equals("Texas"));
+
+        assert(dataWrapper.getData().get(0).getRules().get(1) instanceof ExpressionDTO);
+        ExpressionDTO e2 = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(1);
+        assert(e2.getId().equals("retailFulfillmentPrice"));
+        assert(e2.getOperator().equals(BLCOperator.BETWEEN_INCLUSIVE.name()));
+        assert(e2.getValue().equals("[99,199]"));
     }
 
     public void testItemQualificationCollectionDataWrapper() throws MVELTranslationException {
@@ -412,7 +427,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         entities[1] = e2;
 
         DataWrapper dataWrapper = translator.createRuleData(entities, "orderItemMatchRule", "quantity", "id", orderItemFieldService);
-        assert(dataWrapper.getError().equals(MVELToDataWrapperTranslator.SUB_GROUP_MESSAGE));
+        assert(MVELToDataWrapperTranslator.SUB_GROUP_MESSAGE.equals(dataWrapper.getError()));
 
     }
 
