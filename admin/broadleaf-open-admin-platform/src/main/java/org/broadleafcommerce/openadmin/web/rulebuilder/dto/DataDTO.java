@@ -35,7 +35,7 @@ public class DataDTO implements Serializable {
     protected Long previousContainedPk;
     protected Integer quantity;
     protected String condition;
-    protected boolean createdFromSubGroup;
+    protected boolean createdFromSubGroup=false;
     protected ArrayList<DataDTO> rules = new ArrayList<DataDTO>();
 
     public Long getPk() {

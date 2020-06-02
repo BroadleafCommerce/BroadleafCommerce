@@ -287,7 +287,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(e2.getValue().equals("[99,199]"));
     }
 
-    public void testNestedExpressionExceptionForFulfillmentGroupQualificationDataWrapper() throws MVELTranslationException {
+    public void testNestedExpressionForFulfillmentGroupQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
         Property[] properties = new Property[1];
