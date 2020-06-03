@@ -42,6 +42,7 @@ public class PomEvaluator {
     private static Category JAVAX = new Category("javax", LicenseType.JAVA_EXTENSION, FrameworkType.OTHER);
     private static Category SLF4J = new Category("slfj", LicenseType.MIT, FrameworkType.LOGGING);
     private static Category LOG4J = new Category("log4j", LicenseType.APACHE2, FrameworkType.LOGGING);
+    private static Category LOG4J2 = new Category("log4j2", LicenseType.APACHE2, FrameworkType.LOGGING);
     private static Category OTHER = new Category("Other", LicenseType.OTHER, FrameworkType.OTHER);
     private static Category YAHOO = new Category("Yahoo", LicenseType.YAHOO_YUI, FrameworkType.UI);
     
@@ -90,6 +91,7 @@ public class PomEvaluator {
         // Logging
         knownLibraries.put("org.slf4j", SLF4J);
         knownLibraries.put("log4j", LOG4J);
+        knownLibraries.put("org.apache.logging.log4j", LOG4J2);
 
         // Apache
         knownLibraries.put("commons-validator", APACHE_FOUNDATION);
