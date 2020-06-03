@@ -18,6 +18,17 @@
 package org.broadleafcommerce.core.config;
 
 import org.broadleafcommerce.common.config.FrameworkCommonClasspathPropertySource;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
+import org.broadleafcommerce.core.catalog.dao.CategoryDaoImpl;
+import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.ProductDaoImpl;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
+import org.broadleafcommerce.core.catalog.dao.SkuDaoImpl;
+import org.broadleafcommerce.core.offer.dao.OfferDao;
+import org.broadleafcommerce.core.offer.dao.OfferDaoImpl;
+import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDao;
+import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDaoImpl;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
@@ -36,5 +47,40 @@ public class FrameworkConfig {
         }
         
     }
-    
+
+    @Bean
+    public CategoryDao blCategoryDao() {
+        CategoryDaoImpl categoryDao = new CategoryDaoImpl();
+        categoryDao.setCurrentDateResolution(10000L);
+        return categoryDao;
+    }
+
+    @Bean
+    public ProductDao blProductDao() {
+        ProductDaoImpl productDao = new ProductDaoImpl();
+        productDao.setCurrentDateResolution(10000L);
+        return productDao;
+    }
+
+    @Bean
+    public SkuDao blSkuDao() {
+        SkuDaoImpl skuDao = new SkuDaoImpl();
+        skuDao.setCurrentDateResolution(10000L);
+        return skuDao;
+    }
+
+    @Bean
+    public OfferDao blOfferDao() {
+        OfferDaoImpl offerDao = new OfferDaoImpl();
+        offerDao.setCurrentDateResolution(10000L);
+        return offerDao;
+    }
+
+
+    @Bean
+    public SearchRedirectDao blSearchRedirectDao() {
+        SearchRedirectDaoImpl searchRedirectDao = new SearchRedirectDaoImpl();
+        searchRedirectDao.setCurrentDateResolution(10000L);
+        return searchRedirectDao;
+    }
 }
