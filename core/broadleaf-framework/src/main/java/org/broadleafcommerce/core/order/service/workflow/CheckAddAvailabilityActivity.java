@@ -21,12 +21,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -68,7 +74,23 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
 
         Order order = context.getSeedData().getOrder();
         Integer requestedQuantity = request.getItemRequest().getQuantity();
-        checkSkuAvailability(order, sku, requestedQuantity);
+
+        Map<Sku, Integer> skuItems = new HashMap<>();
+        for (OrderItem orderItem : order.getOrderItems()) {
+            Sku skuFromOrder = null;
+            if (orderItem instanceof DiscreteOrderItem) {
+                skuFromOrder = ((DiscreteOrderItem) orderItem).getSku();
+            } else if (orderItem instanceof BundleOrderItem) {
+                skuFromOrder = ((BundleOrderItem) orderItem).getSku();
+            }
+            if (skuFromOrder != null && skuFromOrder.equals(sku)) {
+                skuItems.merge(sku, orderItem.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
+            }
+        }
+        skuItems.merge(sku, requestedQuantity, (oldVal, newVal) -> oldVal + newVal);
+        for (Map.Entry<Sku, Integer> entry : skuItems.entrySet()) {
+            checkSkuAvailability(order, entry.getKey(), entry.getValue());
+        }
 
         return context;
     }

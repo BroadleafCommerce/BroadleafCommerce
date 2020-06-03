@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>6.0.9-SNAPSHOT</version>
+    <version>6.0.10-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -416,7 +416,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>${gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -426,6 +426,10 @@
                                 </goals>
                                 <configuration>
                                     <keyname>info@broadleafcommerce.org</keyname>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
                                 </configuration>
                             </execution>
                         </executions>

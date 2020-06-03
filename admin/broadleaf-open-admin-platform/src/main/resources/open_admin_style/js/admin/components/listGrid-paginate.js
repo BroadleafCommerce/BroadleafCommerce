@@ -496,7 +496,7 @@
                     var topIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, topIndex);
                     var botIndex = BLCAdmin.listGrid.paginate.getBottomVisibleIndex($tbody);
                     var botIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, botIndex);
-                    if (!botIndexLoaded || !topIndexLoaded) {
+                    if ((!botIndexLoaded || !topIndexLoaded)&&(!$tbody.is(':visible'))) {
                         BLCAdmin.listGrid.paginate.loadRecords($tbody, baseUrl);
                     } else {
                         BLCAdmin.listGrid.hideLoadingSpinner($tbody);

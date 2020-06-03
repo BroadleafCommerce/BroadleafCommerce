@@ -29,6 +29,9 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -57,6 +60,7 @@ public class ValidateAvailabilityActivity extends BaseActivity<ProcessContext<Ch
             return context;
         }
 
+        Map<Sku, Integer> skuItems = new HashMap<>();
         for (OrderItem orderItem : order.getOrderItems()) {
             Sku sku;
             if (orderItem instanceof DiscreteOrderItem) {
@@ -67,13 +71,13 @@ public class ValidateAvailabilityActivity extends BaseActivity<ProcessContext<Ch
                 LOG.warn("Could not check availability; did not recognize passed-in item " + orderItem.getClass().getName());
                 return context;
             }
-
             if (!sku.isActive()) {
                 throw new IllegalArgumentException("The requested skuId (" + sku.getId() + ") is no longer active");
             }
-
-            Integer requestedQuantity = orderItem.getQuantity();
-            inventoryService.checkSkuAvailability(order, sku, requestedQuantity);
+            skuItems.merge(sku, orderItem.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
+        }
+        for (Map.Entry<Sku, Integer> entry : skuItems.entrySet()) {
+            inventoryService.checkSkuAvailability(order, entry.getKey(), entry.getValue());
         }
 
         return context;
