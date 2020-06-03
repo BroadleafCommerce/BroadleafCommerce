@@ -115,6 +115,7 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
         }
     };
 
+
     public OfferServiceExtensionManager() {
         super(OfferServiceExtensionHandler.class);
     }
@@ -168,6 +169,7 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     public ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode) {
         return execute(addAdditionalOffersForCode, offers, offerCode);
     }
+
 
     @Override
     public boolean isEnabled() {
