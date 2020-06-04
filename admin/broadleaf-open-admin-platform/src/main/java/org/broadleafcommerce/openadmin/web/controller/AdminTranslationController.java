@@ -367,7 +367,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * Changing the default button class to "translation-revert-button" so that the JQuery action will be correct
-     * @param entityForm
+     * @param entityForm - EntityForm where revert action will be modified
      */
     protected void modifyRevertButton(EntityForm entityForm) {
         EntityFormAction action = entityForm.findActionById("REVERT");
