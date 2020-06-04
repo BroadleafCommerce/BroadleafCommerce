@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.common.weave;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -29,6 +32,7 @@ import java.io.Serializable;
  */
 public class ConditionalDirectCopyTransformMemberDto implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     protected String[] templateTokens;
     protected boolean renameMethodOverlaps = false;
 
@@ -82,5 +86,34 @@ public class ConditionalDirectCopyTransformMemberDto implements Serializable {
 
     public void setConditionalValue(Boolean conditionalValue) {
         this.conditionalValue = conditionalValue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || !getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        ConditionalDirectCopyTransformMemberDto rhs = (ConditionalDirectCopyTransformMemberDto) obj;
+        return new EqualsBuilder()
+                .append(this.templateTokens, rhs.templateTokens)
+                .append(this.renameMethodOverlaps, rhs.renameMethodOverlaps)
+                .append(this.skipOverlaps, rhs.skipOverlaps)
+                .append(this.conditionalProperty, rhs.conditionalProperty)
+                .append(this.conditionalValue, rhs.conditionalValue)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(templateTokens)
+                .append(renameMethodOverlaps)
+                .append(skipOverlaps)
+                .append(conditionalProperty)
+                .append(conditionalValue)
+                .toHashCode();
     }
 }

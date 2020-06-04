@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -114,5 +115,20 @@ public class DataDTO implements Serializable {
                 .build();
         }
         return false;
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(pk)
+                .append(containedPk)
+                .append(previousPk)
+                .append(previousContainedPk)
+                .append(quantity)
+                .append(condition)
+                .append(rules)
+                .toHashCode();
     }
 }

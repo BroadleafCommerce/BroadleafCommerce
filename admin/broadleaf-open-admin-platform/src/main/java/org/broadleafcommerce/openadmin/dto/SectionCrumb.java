@@ -24,6 +24,8 @@ import java.io.Serializable;
  */
 public class SectionCrumb implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     protected String sectionIdentifier;
     protected String sectionId;
     protected String originalSectionIdentifier;
