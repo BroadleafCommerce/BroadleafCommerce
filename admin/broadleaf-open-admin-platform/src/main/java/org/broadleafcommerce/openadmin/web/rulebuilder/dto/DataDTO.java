@@ -36,6 +36,7 @@ public class DataDTO implements Serializable {
     protected Long previousContainedPk;
     protected Integer quantity;
     protected String condition;
+    protected boolean createdFromSubGroup=false;
     protected ArrayList<DataDTO> rules = new ArrayList<DataDTO>();
 
     public Long getPk() {
@@ -92,6 +93,14 @@ public class DataDTO implements Serializable {
 
     public void setPreviousContainedPk(Long previousContainedPk) {
         this.previousContainedPk = previousContainedPk;
+    }
+
+    public boolean isCreatedFromSubGroup() {
+        return createdFromSubGroup;
+    }
+
+    public void setCreatedFromSubGroup(boolean createdFromSubGroup) {
+        this.createdFromSubGroup = createdFromSubGroup;
     }
 
     @Override

@@ -332,6 +332,37 @@ var BLC = (function($) {
     }
 
     /**
+     * Add a URL parameter (or changing it if it already exists)
+     * This method does the same as {@link #addUrlParam (search, key, val)},
+     * but does not update document.location.search to prevent page reload
+     * @param {search} string  this is typically document.location.search
+     * @param {key}    string  the key to set
+     * @param {val}    string  value
+     */
+    function addUrlQueryParam(search, key, val){
+        var newParam = key + '=' + val,
+            params = '?' + newParam;
+
+        // If the "search" string exists, then build params from it
+        if (search) {
+            // Try to replace an existing instance
+            params = search.replace(new RegExp('[\?]' + key + '[^&]*'), '?' + newParam);
+
+            // If nothing was replaced, then check if it exists as a trailing param
+            if (params === search) {
+                params = search.replace(new RegExp('[\&]' + key + '[^&]*'), '&' + newParam);
+
+                // If nothing was replaced and the key is not already present, then add the new param to the end
+                if ((params === search) && (search.indexOf(val) == -1) ) {
+                    params += '&' + newParam;
+                }
+            }
+        }
+
+        return params;
+    }
+
+    /**
      * Gathers all parameters from the current url
      */
     function getUrlParameters() {
@@ -341,8 +372,11 @@ var BLC = (function($) {
         if (indexOfQ >= 0) {
             urlParams = baseUrl.substring(indexOfQ + 1);
             if (urlParams != null && urlParams != '') {
-                return JSON.parse('{"'
-                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
+                var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g, "\":\"")));
+                if (params.includes('|')) {
+                    params = params.replace(/\|/g, '%7C');
+                }
+                return JSON.parse('{"' + params + '"}');
             }
         }
         return {};
@@ -382,6 +416,7 @@ var BLC = (function($) {
         serializeObject : serializeObject,
         getUrlParameters : getUrlParameters,
         addUrlParam : addUrlParam,
+        addUrlQueryParam : addUrlQueryParam,
         buildUrlWithParams : buildUrlWithParams,
         servletContext : servletContext,
         siteBaseUrl : siteBaseUrl

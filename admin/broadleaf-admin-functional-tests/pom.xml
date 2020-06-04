@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.broadleafcommerce</groupId>
         <artifactId>admin</artifactId>
-        <version>5.2.14-SNAPSHOT</version>
+        <version>5.2.17-SNAPSHOT</version>
     </parent>
     <artifactId>broadleaf-admin-functional-tests</artifactId>
     <name>BroadleafCommerce Admin Functional Tests</name>

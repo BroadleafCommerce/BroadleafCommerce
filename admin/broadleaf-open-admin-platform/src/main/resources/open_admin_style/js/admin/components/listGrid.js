@@ -214,7 +214,7 @@
             //add hidden fields to the array
             var hiddenFields = $tr.data('hiddenfields');
             if (hiddenFields) {
-                for (j = 0; j < hiddenFields.hiddenFields.length; j++) {
+                for (var j = 0; j < hiddenFields.hiddenFields.length; j++) {
                     var fieldName = hiddenFields.hiddenFields[j].name;
                     var value = hiddenFields.hiddenFields[j].val;
                     fields[fieldName] = value;
@@ -392,8 +392,10 @@
             // update duration fields
             $("[data-fieldname='durationLabel']").find('.column-text').each(function () {
                 var parsed = parseInt($(this).data("fieldvalue"));
-                var day = moment.duration(parsed).format('h[h] m[m] s[s]');
-                $(this).html(day);
+                if (!isNaN(parsed)) {
+                    var day = moment.duration(parsed).format('h[h] m[m] s[s]');
+                    $(this).html(day);
+                }
             });
 
             // Run any additionally configured initialization handlers

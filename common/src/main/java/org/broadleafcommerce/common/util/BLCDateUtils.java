@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -38,13 +39,8 @@ public class BLCDateUtils {
     private static final Log LOG = LogFactory.getLog(BLCDateUtils.class);
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.s";
-    
-    /**
-     * Converts the given date to the UTC time zone so that dates can be correctly converted on the client side
-     * 
-     * @param date
-     * @return the message
-     */
+    public static final String DISPLAY_DATE_FORMAT = "MMM d, Y @ hh:mma";
+
     public static String convertDateToUTC(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -53,11 +49,18 @@ public class BLCDateUtils {
     }
 
     public static String formatDateAsString(Date date) {
-        // format date list grid cells
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, Y @ hh:mma");
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        TimeZone timeZone = brc.getTimeZone();
+
+        return formatDateAsString(date, timeZone);
+    }
+
+    public static String formatDateAsString(Date date, TimeZone timeZone) {
+        SimpleDateFormat formatter = new SimpleDateFormat(DISPLAY_DATE_FORMAT);
         DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
         symbols.setAmPmStrings(new String[] { "am", "pm" });
         formatter.setDateFormatSymbols(symbols);
+        formatter.setTimeZone(timeZone);
 
         return formatter.format(date);
     }
@@ -80,14 +83,28 @@ public class BLCDateUtils {
     }
 
     public static String formatDate(Date date) {
-        return formatDate(date, DEFAULT_DATE_FORMAT);
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        TimeZone timeZone = brc.getTimeZone();
+
+        return formatDate(date, DEFAULT_DATE_FORMAT, timeZone);
     }
 
     public static String formatDate(Date date, String format) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        TimeZone timeZone = brc.getTimeZone();
+
+        return formatDate(date, format, timeZone);
+    }
+
+    public static String formatDate(Date date, String format, TimeZone timeZone) {
         if (date == null) {
             return null;
         }
 
-        return new SimpleDateFormat(format).format(date);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        dateFormat.setTimeZone(timeZone);
+
+        return dateFormat.format(date);
     }
+
 }

@@ -256,5 +256,13 @@ public interface SolrIndexService {
     void addDocuments(Collection<SolrInputDocument> documents) throws IOException, SolrServerException;
 
     void logDeleteQuery(String deleteQuery);
+    
+    /**
+     * Indicates if this should be used.  The alternative is to use {@link CatalogSolrIndexUpdateService}. By default, this is driven by the property, 
+     * 'solr.catalog.useLegacySolrIndexer', which defaults to true.
+     * 
+     * @return
+     */
+    public boolean useLegacyIndexer();
 }
 

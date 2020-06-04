@@ -23,22 +23,18 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.*;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -73,11 +69,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     
     @Column(name = "TITLE")
     @Index(name="MEDIA_TITLE_INDEX", columnNames={"TITLE"})
-    @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order = 2, gridOrder = 2, prominent = true)
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order = 2, gridOrder = 2, prominent = true, translatable = true)
     protected String title;
     
     @Column(name = "ALT_TEXT")
-    @AdminPresentation(friendlyName = "MediaImpl_Media_Alt_Text", order = 3, gridOrder = 3, prominent = true)
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Alt_Text", order = 3, gridOrder = 3, prominent = true, translatable = true)
     protected String altText;
     
     @Column(name = "TAGS")
@@ -106,7 +102,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
 
     @Override
     public String getTitle() {
-        return title;
+        if (TranslatedEntity.getInstance(Media.class.getName()) != null) {
+            return DynamicTranslationProvider.getValue(this, "media__title", this.title);
+        } else {
+            return this.title;
+        }
     }
 
     @Override
@@ -116,7 +116,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
 
     @Override
     public String getAltText() {
-        return altText;
+        if (TranslatedEntity.getInstance(Media.class.getName()) != null) {
+            return DynamicTranslationProvider.getValue(this, "media__altText", this.altText);
+        } else {
+            return this.altText;
+        }
     }
 
     @Override

@@ -77,7 +77,6 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         return getLocalePrefix(field.getField(), prefixList);
     }
 
-
     /**
      * If the field is translatable, take the current locale and add that as a prefix.
      * @param context
@@ -85,7 +84,7 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
      * @return
      */
     protected ExtensionResultStatusType getLocalePrefix(Field field, List<String> prefixList) {
-        if (field.getTranslatable()) {
+        if (field.getTranslatable() && getTranslationEnabled()) {
             if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
                 Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
                 if (locale != null) {

@@ -169,14 +169,18 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
 
     @Override
     public String getTranslatedValue(Object entity, String property, Locale locale) {
-        TranslatedEntity entityType = getEntityType(entity);
-        String entityId = dao.getEntityId(entityType, entity);
-
         String localeCode = locale.getLanguage();
         String localeCountryCode = localeCode;
         if (StringUtils.isNotBlank(locale.getCountry())) {
             localeCountryCode += "_" + locale.getCountry();
         }
+
+        if (!shouldTranslateLocale(localeCountryCode)) {
+            return null;
+        }
+
+        TranslatedEntity entityType = getEntityType(entity);
+        String entityId = dao.getEntityId(entityType, entity);
         
         if (TranslationBatchReadCache.hasCache()) {
             Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
@@ -206,6 +210,23 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         }
 
         return getOverrideTranslatedValue(property, entityType, entityId, localeCode, localeCountryCode);
+    }
+
+    /**
+     * Whether translations should be gathered for the provided locale.
+     *
+     * @param localeCode
+     * @return Whether translations should be gathered for the provided locale.
+     */
+    protected boolean shouldTranslateLocale(String localeCode) {
+        org.broadleafcommerce.common.locale.domain.Locale locale = localeService.findLocaleByCode(localeCode);
+
+        if (locale == null) {
+            LOG.warn("A locale could not be found for the provided localeCode: "+ localeCode);
+            return true;
+        }
+
+        return !locale.getDefaultFlag();
     }
 
     @Override
@@ -451,7 +472,9 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     public String getDefaultTranslationValue(Object entity, String property, Locale locale,
             String requestedDefaultValue) {
 
-        if (returnBlankTranslationForNotDefaultLocale && !localeMatchesDefaultLocale(locale) && !propertyInDefaultLocaleExceptionList(entity, property)) {
+        if (returnBlankTranslationForNotDefaultLocale
+                && !localeMatchesDefaultLocale(locale)
+                && !propertyInDefaultLocaleExceptionList(entity, property)) {
             return "";
         }
 

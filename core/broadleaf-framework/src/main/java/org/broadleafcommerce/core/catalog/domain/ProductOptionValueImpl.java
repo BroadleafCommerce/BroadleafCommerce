@@ -34,6 +34,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -131,21 +132,26 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
 
     @Override
     public Money getPriceAdjustment() {
-
         Money returnPrice = null;
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-
-            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this, priceAdjustment == null ? null : new Money(priceAdjustment), SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+            HashMap pricingConsiderationContext = SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
+            Money adjustment = priceAdjustment == null ? null : new Money(priceAdjustment);
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext
+                                                     .getSkuPricingService()
+                                                     .getPriceAdjustment(this, adjustment, pricingConsiderationContext);
             returnPrice = dynamicPrices.getPriceAdjustment();
 
-        } else {
-            if (priceAdjustment != null) {
-                returnPrice = new Money(priceAdjustment, Money.defaultCurrency());
-            }
+        } else if (priceAdjustment != null) {
+            returnPrice = new Money(priceAdjustment, Money.defaultCurrency());
         }
 
         return returnPrice;
+    }
+
+    @Override
+    public Money getPriceAdjustmentSkipDynamicPricing() {
+        return priceAdjustment != null ? new Money(priceAdjustment, Money.defaultCurrency()) : null;
     }
 
     @Override

@@ -18,24 +18,10 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.admin.server.service.extension.OfferCustomServiceExtensionManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
@@ -44,6 +30,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -74,6 +61,22 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+
 /**
  * Created by Jon on 11/23/15.
  */
@@ -94,6 +97,13 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
 
     @Value("${admin.offer.isactive.filter:false}")
     protected boolean isActiveFilter = false;
+
+
+    @Resource(name = "blOfferCustomServiceExtensionManager")
+    protected OfferCustomServiceExtensionManager extensionManager;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     public OfferCustomPersistenceHandler() {
         super(Offer.class);
@@ -380,7 +390,11 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             }
         }
 
+        if (!sandBoxHelper.isPromote()) {
+            extensionManager.getProxy().clearHiddenQualifiers(entity);
+        }
         Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
+        
         if (qualifiersCanBeQualifiers != null) {
             qualifiersCanBeQualifiers.setIsDirty(true);
         }

@@ -55,9 +55,11 @@
                 if (urlParams.endsWith('&')) {
                     urlParams = urlParams.substring(0, urlParams.length - 1);
                 }
-                paramObj = JSON.parse('{"'
-                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
-
+                var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")));
+                if (params.includes('|')) {
+                    params = params.replace(/\|/g, '%7C');
+                }
+                paramObj = JSON.parse('{"' + params + '"}');
             }
             
             if (value == null || value === "") {
@@ -80,7 +82,7 @@
             
             // Reassemble the new url
             var newUrl = baseUrl + '?';
-            for (i in paramObj) {
+            for (var i in paramObj) {
                 if (paramObj[i] != null) {
                     newUrl += i + '=' + paramObj[i] + '&';
                 }

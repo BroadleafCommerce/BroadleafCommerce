@@ -365,9 +365,14 @@ $(document).ready(function() {
      * search box.
      */
     $('body').on('click', '.custom-entity-search button.search-button', function(event) {
+        var $this = $(this);
+        var $contents = $this.html();
+        $this.html('<i class="fa-pulse fa fa-spinner" style="width: 38px"/>');
+        $this.removeClass('search-button').addClass('disabled');
+
         //this takes place on the main list grid screen so there should be a single list grid
-        var search = $(this).closest('form').find('input').val();
-        var $container = $(this).closest('.listgrid-container');
+        var search = $this.closest('form').find('input').val();
+        var $container = $this.closest('.listgrid-container');
         var tableId = $container.find('table').last().attr('id');
         var $firstInput = $($container.find('#listGrid-main-header th .listgrid-criteria-input')[0]);
 
@@ -393,7 +398,7 @@ $(document).ready(function() {
         }
 
         BLC.ajax({
-            url: BLC.buildUrlWithParams($(this).closest('form').attr('action'), oldParams),
+            url: BLC.buildUrlWithParams($this.closest('form').attr('action'), oldParams),
             type: "GET"
         }, function(data) {
             if ($(data).find('table').length === 1 && (BLCAdmin.currentModal() === undefined || BLCAdmin.currentModal().length === 0)) {
@@ -424,6 +429,9 @@ $(document).ready(function() {
             var hiddenId = $('.filter-button').data('hiddenid');
             var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
             BLCAdmin.filterBuilders.addExistingFilters(filterBuilder);
+
+            $this.html($contents);
+            $this.addClass('search-button').removeClass('disabled');
         });
         return false;
     });

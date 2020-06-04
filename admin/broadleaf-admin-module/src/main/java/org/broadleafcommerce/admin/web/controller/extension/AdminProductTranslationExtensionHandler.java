@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -48,20 +49,26 @@ public class AdminProductTranslationExtensionHandler extends AbstractAdminTransl
             extensionManager.registerHandler(this);
         }
     }
-    
+
+    protected boolean getTranslationEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
+    }
+
     /**
      * If we are trying to translate a field on Product that starts with "defaultSku.", we really want to associate the
      * translation with Sku, its associated id, and the property name without "defaultSku."
      */
     @Override
     public ExtensionResultStatusType applyTransformation(TranslationForm form) {
-        String defaultSkuPrefix = "defaultSku.";
-        String unencodedPropertyName = JSCompatibilityHelper.unencode(form.getPropertyName());
-        if (form.getCeilingEntity().equals(Product.class.getName()) && unencodedPropertyName.startsWith(defaultSkuPrefix)) {
-            Product p = catalogService.findProductById(Long.parseLong(form.getEntityId()));
-            form.setCeilingEntity(Sku.class.getName());
-            form.setEntityId(String.valueOf(p.getDefaultSku().getId()));
-            form.setPropertyName(unencodedPropertyName.substring(defaultSkuPrefix.length()));
+        if (getTranslationEnabled()) {
+            String defaultSkuPrefix = "defaultSku.";
+            String unencodedPropertyName = JSCompatibilityHelper.unencode(form.getPropertyName());
+            if (form.getCeilingEntity().equals(Product.class.getName()) && unencodedPropertyName.startsWith(defaultSkuPrefix)) {
+                Product p = catalogService.findProductById(Long.parseLong(form.getEntityId()));
+                form.setCeilingEntity(Sku.class.getName());
+                form.setEntityId(String.valueOf(p.getDefaultSku().getId()));
+                form.setPropertyName(unencodedPropertyName.substring(defaultSkuPrefix.length()));
+            }
         }
         
         return ExtensionResultStatusType.HANDLED;

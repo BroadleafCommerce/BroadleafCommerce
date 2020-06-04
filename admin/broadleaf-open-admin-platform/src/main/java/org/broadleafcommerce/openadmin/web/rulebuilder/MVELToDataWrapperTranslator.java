@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -117,34 +119,35 @@ public class MVELToDataWrapperTranslator {
     }
 
     protected Boolean checkForInvalidSubGroup(DataDTO dataDTO) {
-        Boolean invalidSubGroupFound = false;
-
         for (DataDTO rules : dataDTO.getRules()) {
+            if(!rules.isCreatedFromSubGroup()){
+                continue;
+            }
             ArrayList<DataDTO> subRules = rules.getRules();
 
-            if (subRules != null && subRules.size() == 2) {
+            if (CollectionUtils.size(subRules) == 2 && isExpressionDTO(subRules.get(0)) && isExpressionDTO(subRules.get(1))) {
                 ExpressionDTO expression1 = (ExpressionDTO) subRules.get(0);
                 ExpressionDTO expression2 = (ExpressionDTO) subRules.get(1);
 
-                Boolean isBetweenDetected = false;
-                Boolean isBetweenInclusiveDetected = false;
+                boolean isBetween = StringUtils.equals(expression1.getOperator(), BLCOperator.GREATER_THAN.name()) && StringUtils.equals(expression2.getOperator(), BLCOperator.LESS_THAN.name());
+                boolean isBetweenInclusive = StringUtils.equals(expression1.getOperator(), BLCOperator.GREATER_OR_EQUAL.name()) && StringUtils.equals(expression2.getOperator(), BLCOperator.LESS_OR_EQUAL.name());
 
-                if (expression1.getOperator().equals("GREATER_THAN") && expression2.getOperator().equals("LESS_THAN")) {
-                    isBetweenDetected = true;
-                }
+                return !(isBetween || isBetweenInclusive);
+            } else if (isExpressionDTO(rules)) {
+                ExpressionDTO expression = (ExpressionDTO) rules;
 
-                if (expression1.getOperator().equals("GREATER_OR_EQUAL") && expression2.getOperator().equals("LESS_OR_EQUAL")) {
-                    isBetweenInclusiveDetected = true;
-                }
-
-                if (!isBetweenDetected && !isBetweenInclusiveDetected) {
-                    invalidSubGroupFound = true;
+                if (!StringUtils.equals(expression.getOperator(), BLCOperator.BETWEEN.name()) && !StringUtils.equals(expression.getOperator(), BLCOperator.BETWEEN_INCLUSIVE.name())) {
+                    return true;
                 }
             } else {
-                invalidSubGroupFound = true;
+                return true;
             }
         }
-        return invalidSubGroupFound;
+        return false;
+    }
+
+    protected Boolean isExpressionDTO(DataDTO rules) {
+        return ExpressionDTO.class.isAssignableFrom(rules.getClass());
     }
 
     protected DataDTO createRuleDataDTO(DataDTO parentDTO, Group group, RuleBuilderFieldService fieldService)
@@ -153,11 +156,17 @@ public class MVELToDataWrapperTranslator {
         if (group.getOperatorType() == null) {
             group.setOperatorType(BLCOperator.AND);
         }
+        if(parentDTO == null){
+            data.setCreatedFromSubGroup(false);
+        }else{
+            data.setCreatedFromSubGroup(true);
+        }
         BLCOperator operator = group.getOperatorType();
         data.setCondition(operator.name());
         List<ExpressionDTO> myCriteriaList = new ArrayList<ExpressionDTO>();
         if (BLCOperator.NOT.equals(group.getOperatorType()) && group.getIsTopGroup()) {
             group = group.getSubGroups().get(0);
+            data.setCreatedFromSubGroup(true);
             group.setOperatorType(operator);
         }
         for (String phrase : group.getPhrases()) {
@@ -165,6 +174,11 @@ public class MVELToDataWrapperTranslator {
         }
         if (!myCriteriaList.isEmpty()) {
             data.getRules().addAll(myCriteriaList);
+        }
+        if(data.isCreatedFromSubGroup()){
+            for (DataDTO rule : data.getRules()) {
+                rule.setCreatedFromSubGroup(true);
+            }
         }
         for (Group subgroup : group.getSubGroups()) {
             DataDTO subCriteria = createRuleDataDTO(data, subgroup, fieldService);
@@ -190,7 +204,9 @@ public class MVELToDataWrapperTranslator {
         }
         SupportedFieldType type = fieldService.getSupportedFieldType(expression.getField());
         ExpressionDTO expressionDTO = createExpressionDTO(expression);
-
+        if(parentDTO!=null){
+            expressionDTO.setCreatedFromSubGroup(true);
+        }
         postProcessCriteria(parentDTO, myCriteriaList, expressionDTO, type);
     }
 
