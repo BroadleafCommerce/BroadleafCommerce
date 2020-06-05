@@ -30,6 +30,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PreviewStatus implements Serializable, Previewable {
 
+    private static final long serialVersionUID = 1L;
     @Column(name = "IS_PREVIEW")
     @AdminPresentation(excluded = true)
     protected Boolean isPreview;

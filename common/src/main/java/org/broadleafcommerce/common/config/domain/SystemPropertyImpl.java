@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.config.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -219,5 +221,42 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
         cloned.setValue(value);
         cloned.setPropertyType(getPropertyType());
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || !getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+
+        SystemPropertyImpl rhs = (SystemPropertyImpl) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.name, rhs.name)
+                .append(this.overrideGeneratedPropertyName, rhs.overrideGeneratedPropertyName)
+                .append(this.value, rhs.value)
+                .append(this.propertyType, rhs.propertyType)
+                .append(this.friendlyName, rhs.friendlyName)
+                .append(this.friendlyGroup, rhs.friendlyGroup)
+                .append(this.friendlyTab, rhs.friendlyTab)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(name)
+                .append(overrideGeneratedPropertyName)
+                .append(value)
+                .append(propertyType)
+                .append(friendlyName)
+                .append(friendlyGroup)
+                .append(friendlyTab)
+                .toHashCode();
     }
 }

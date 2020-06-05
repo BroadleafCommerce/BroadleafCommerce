@@ -17,7 +17,7 @@
  */
 $(document).ready(function(){
 
-    equalheight = function(container){
+    var equalHeight = function(container){
 
         var currentTallest = 0,
             currentRowStart = 0,
@@ -49,12 +49,12 @@ $(document).ready(function(){
     };
 
     $(window).on('load', function() {
-        equalheight('.equals .equal');
+        equalHeight('.equals .equal');
     });
 
 
     $(window).resize(function(){
-        equalheight('.equals .equal');
+        equalHeight('.equals .equal');
     });
 
     window.remodalGlobals = {

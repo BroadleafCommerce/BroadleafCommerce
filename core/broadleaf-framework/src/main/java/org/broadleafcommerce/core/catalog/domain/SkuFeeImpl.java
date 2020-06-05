@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -200,5 +202,44 @@ public class SkuFeeImpl implements SkuFee {
     @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || !getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        SkuFeeImpl rhs = (SkuFeeImpl) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.name, rhs.name)
+                .append(this.description, rhs.description)
+                .append(this.amount, rhs.amount)
+                .append(this.taxable, rhs.taxable)
+                .append(this.expression, rhs.expression)
+                .append(this.feeType, rhs.feeType)
+                .append(this.skus, rhs.skus)
+                .append(this.currency, rhs.currency)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(name)
+                .append(description)
+                .append(amount)
+                .append(taxable)
+                .append(expression)
+                .append(feeType)
+                .append(skus)
+                .append(currency)
+                .toHashCode();
     }
 }
