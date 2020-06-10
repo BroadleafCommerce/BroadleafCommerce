@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.order.service.ProductOptionValidationServiceIm
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException
 import org.broadleafcommerce.core.workflow.ActivityMessages
+import org.springframework.core.env.Environment
 
 
 /**
@@ -53,6 +54,7 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
     Product product
     List<ProductOptionXref> productOptions
     List<OrderItem> orderItems
+    Environment mockEnvironment = Mock()
 
     def setup() {
         orderItem = new DiscreteOrderItemImpl()
@@ -63,6 +65,7 @@ class ValidateProductOptionsActivitySpec extends BaseCheckoutActivitySpec {
         orderItems = new ArrayList()
 
         mockProductOptionValidationService = Spy(ProductOptionValidationServiceImpl)
+        mockProductOptionValidationService.environment=mockEnvironment
     }
 
     def "Test that exception is thrown when attributeValues for a DiscreteOrder Item when ProductOptions are required are not provided"() {
