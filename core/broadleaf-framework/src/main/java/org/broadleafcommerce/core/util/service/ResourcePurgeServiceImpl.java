@@ -35,6 +35,8 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.purge.SpecDefinition;
+import org.broadleafcommerce.core.purge.dao.SpecBasedPurgeDao;
 import org.broadleafcommerce.core.util.dao.ResourcePurgeDao;
 import org.broadleafcommerce.core.util.service.type.PurgeCartVariableNames;
 import org.broadleafcommerce.core.util.service.type.PurgeCustomerVariableNames;
@@ -102,6 +104,12 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
+    @Resource(name = "blAnonymousCustomerPurgeSpec")
+    protected SpecDefinition anonymousCustomerPurgeSpec;
+
+    @Resource(name = "blSpecPurgeDao")
+    protected SpecBasedPurgeDao purgeDao;
+    
     @Override
     public void purgeCarts(final Map<String, String> config) {
         if (LOG.isDebugEnabled()) {
@@ -167,7 +175,38 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                 }
             }
         }
-        LOG.info(String.format("Customer purge batch processed.  Purged %d from total batch size of %d, %d failures cached", processedCount, batchCount, customerPurgeErrors.size()));
+        LOG.info(String.format("Customer purge batch processed.  Purged %d from total batch size of %d", processedCount, batchCount));
+    }
+
+    
+    @Override
+    public void purgeCustomersFromSpec(final Map<String, String> config) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Purging customers");
+        }
+        if (MapUtils.isEmpty(config)) {
+            throw new IllegalArgumentException("Cannot purge customers since there was no configuration provided. " +
+                    "In the absence of config params, all customers would be candidates for deletion.");
+        }
+        CustomerPurgeParams purgeParams = new CustomerPurgeParams(config).invoke();
+        int processedCount = 0, batchCount = 0;
+        synchronized(customerPurgeErrors) {
+            Set<Long> failedCustomerIds = getCustomersInErrorToIgnore(purgeParams);
+            batchCount = getCustomersToPurgeLength(purgeParams, new ArrayList<Long>(failedCustomerIds)).intValue();
+            List<Long> customerIds = getCustomerIdsToPurge(purgeParams, 0, batchCount, new ArrayList<Long>(failedCustomerIds));
+            TransactionStatus status = TransactionUtils.createTransaction("Customer Purge",
+                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
+            try {
+                purgeDao.cascadeDeleteList(anonymousCustomerPurgeSpec.getPurgeSpecification(), null, customerIds);
+                TransactionUtils.finalizeTransaction(status, transactionManager, false);
+                processedCount = processedCount + customerIds.size();
+            } catch (Exception e) {
+                if (! status.isCompleted()) {
+                    TransactionUtils.finalizeTransaction(status, transactionManager, true);
+                }
+            }
+        }
+        LOG.info(String.format("Customer purge from Spec batch processed.  Purged %d from total batch size of %d", processedCount, batchCount));
     }
 
     /**
@@ -239,7 +278,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         Set<Long> ignoreFailedCustomerIds = customerPurgeErrors.getEntriesSince(ignoreFailedExpiration);
         return ignoreFailedCustomerIds;
     }
-    
+
     /**
      * Get the list of carts to delete from the database. Subclasses may override for custom cart retrieval logic.
      *
@@ -253,6 +292,20 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         Date dateCreatedMinThreshold = purgeParams.getDateCreatedMinThreshold();
         Boolean isPreview = purgeParams.getIsPreview();
         return resourcePurgeDao.findCustomers(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview, startPos, length, customersInError);
+    }
+    /**
+     * Get the list of carts to delete from the database. Subclasses may override for custom cart retrieval logic.
+     *
+     * @param purgeParams configured parameters for the Customer purge process
+     * @param customersInError list of customer ids to be ignored/excluded from the query
+     * @return list of customers to delete
+     */
+    protected List<Long> getCustomerIdsToPurge(CustomerPurgeParams purgeParams, int startPos, int length, List<Long> customersInError) {
+        Boolean isRegistered = purgeParams.getIsRegistered();
+        Boolean isDeactivated = purgeParams.getIsDeactivated();
+        Date dateCreatedMinThreshold = purgeParams.getDateCreatedMinThreshold();
+        Boolean isPreview = purgeParams.getIsPreview();
+        return resourcePurgeDao.findCustomerIds(dateCreatedMinThreshold, isRegistered, isDeactivated, isPreview, startPos, length, customersInError);
     }
 
     /**

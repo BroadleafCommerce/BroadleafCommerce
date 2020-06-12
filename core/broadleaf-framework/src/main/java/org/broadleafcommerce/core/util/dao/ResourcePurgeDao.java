@@ -96,6 +96,19 @@ public interface ResourcePurgeDao {
     List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, List<Long> excludedIds);
 
     /**
+     * Find ids for customers in the database. The method parameters can be left null, or included to refine
+     * the select criteria.
+     *
+     * @param dateCreatedMinThreshold Min creation date to restrict the select by. Customers created before this date
+     *                                are retrieved. Can be null.
+     * @param registered Whether or not the results should be registered customers. Can be null.
+     * @param deactivated Whether or not the results should be deactivated customers. Can be null.
+     * @param isPreview Whether or not the results should be preview customers. Can be null.
+     * @return the list of found customers
+     */
+    List<Long> findCustomerIds(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, int startPos, int length, List<Long> excludedIds);
+
+    /**
      * Find customers in the database. The method parameters can be left null, or included to refine
      * the select criteria. This overloaded version of the method is capable of
      * retrieving a portion or "page" of the total results.
