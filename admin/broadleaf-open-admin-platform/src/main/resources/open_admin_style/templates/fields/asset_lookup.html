@@ -13,16 +13,16 @@
 
     <div class="media-image-container" th:classappend="${field.readOnly}? 'disabled'">
         <div class="media-image">
+            <img class="placeholder" style="display:none;" th:src="@{/img/admin/placeholder-60x60.gif}" />
+
             <span th:if="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}" >
                 <img class="thumbnail"
-                     th:src="@{*{fields['__${field.name}__'].value}}"
+                     blc:src="@{*{fields['__${field.name}__'].value}}"
                      th:attr="data-fullurl=@{*{fields['__${field.name}__'].value}}" />
-                <img class="placeholder" style="display:none;" th:src="@{/img/admin/placeholder-60x60.gif}" />
             </span>
 
             <span th:unless="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}" >
-                <img class="thumbnail placeholder-image"
-                     th:src="@{/img/admin/placeholder-60x60.gif}" />
+                <img class="thumbnail placeholder-image" th:src="@{/img/admin/placeholder-60x60.gif}" />
             </span>
         </div>
         <div class="media-actions" style="background: transparent;">

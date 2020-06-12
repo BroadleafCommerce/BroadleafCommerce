@@ -93,13 +93,23 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
             Matcher matcher = pattern.matcher(statement);
             while (matcher.find()) {
                 String date = matcher.group(1);
-                statement = statement.substring(0, statements[x].indexOf(date)) + "{ts " + date + "}" +
+                statement = statement.substring(0, statement.indexOf(date)) + "{ts " + date + "}" +
                     statement.substring(statement.indexOf(date) + date.length(), statement.length());
             }
             
             // Any MySQL-specific newlines replace with newline character concatenation
             statement = statement.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
-            
+            // Any MySQL CHAR functions with CHR
+            Pattern charPattern = Pattern.compile("CHAR\\((\\d+)\\)");
+            Matcher charMatcher = charPattern.matcher(statement);
+            if (charMatcher.find()) {
+                String charCode = charMatcher.group(1);
+                statement = charMatcher.replaceAll("CHR(" + charCode + ")");
+            }
+
+            // replace double backslashes with single, since all strings in oracle are literal
+            statement = statement.replace("\\\\", "\\");
+
             statements[x] = statement;
         }
 

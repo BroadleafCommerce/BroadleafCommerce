@@ -94,13 +94,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                     order = ProductAdminPresentation.GroupOrder.ShippingContainer,
                     untitled = true, column = 1)
             }
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Advanced,
-            order = ProductAdminPresentation.TabOrder.Advanced,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Advanced,
-                    order = ProductAdminPresentation.GroupOrder.Advanced)
-            }
         )
     }
 )
@@ -116,7 +109,6 @@ public interface ProductAdminPresentation {
         public static final String ProductOptions = "ProductImpl_Product_Options_Tab";
         public static final String Inventory = "ProductImpl_Inventory_Tab";
         public static final String Shipping = "ProductImpl_Shipping_Tab";
-        public static final String Advanced = "ProductImpl_Advanced_Tab";
 
     }
 
@@ -129,7 +121,6 @@ public interface ProductAdminPresentation {
         public static final int ProductOptions = 5000;
         public static final int Inventory = 6000;
         public static final int Shipping = 7000;
-        public static final int Advanced = 8000;
     }
 
     public static class GroupName {

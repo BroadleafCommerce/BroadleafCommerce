@@ -98,4 +98,32 @@ class PhraseTranslatorSpec extends Specification {
         expression.value.equals("[\"test1\",\"test2\"]");
     }
 
+    def "Legacy String Contains Test"() {
+        setup: "Initialize the PhraseTranslator and test data"
+        PhraseTranslator translator = new PhraseTranslator();
+        String phrase = "MvelHelper.toUpperCase(pricingContext.?localeCode).contains(MvelHelper.toUpperCase(\"MX\"))";
+
+        when: "PhraseTranslator is executed"
+        Expression expression = translator.createExpression(phrase);
+
+        then: "The correct expression is produced"
+        expression.field.equals("localeCode");
+        expression.operator.equals(BLCOperator.ICONTAINS);
+        expression.value.equals("MX");
+    }
+
+    def "String Contains Test"() {
+        setup: "Initialize the PhraseTranslator and test data"
+        PhraseTranslator translator = new PhraseTranslator();
+        String phrase = "org.apache.commons.lang3.StringUtils.contains(MvelHelper.toUpperCase(pricingContext.?localeCode),MvelHelper.toUpperCase(\"MX\"))";
+
+        when: "PhraseTranslator is executed"
+        Expression expression = translator.createExpression(phrase);
+
+        then: "The correct expression is produced"
+        expression.field.equals("localeCode");
+        expression.operator.equals(BLCOperator.ICONTAINS);
+        expression.value.equals("MX");
+    }
+
 }

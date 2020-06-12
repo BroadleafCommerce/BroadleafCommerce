@@ -37,7 +37,7 @@ var BLCAdmin = (function($) {
     };
 
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container, .redactor_box, ' +
-                         '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
+                         '.asset-selector-container .media-image, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
                          'textarea:not(.redactor-box textarea), div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
     
@@ -308,9 +308,13 @@ var BLCAdmin = (function($) {
                 }
                 $buttonDiv.remove().appendTo($footer);
             }
-        },
+    	},
 
         showMessageAsModal : function(header, message) {
+            this.showMessageAsModalWithCallback(header, message);
+        },
+
+    	showMessageAsModalWithCallback : function(header, message, onModalHide, onModalHideArgs) {
             if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
                 BLCAdmin.hideCurrentModal();
             }
@@ -321,7 +325,7 @@ var BLCAdmin = (function($) {
             $modal.find('.modal-body').append(message);
             $modal.find('.modal-body').css('padding-bottom', '20px');
 
-            this.showElementAsModal($modal);
+            this.showElementAsModal($modal, onModalHide, onModalHideArgs);
         },
 
         showElementAsModal : function($element, onModalHide, onModalHideArgs) {
@@ -410,7 +414,7 @@ var BLCAdmin = (function($) {
                     BLCAdmin.currentModal().trigger('content-loaded');
                 });
             } else {
-                showLinkAsModal(link);
+                BLCAdmin.showLinkAsModal(link);
             }
         },
 
@@ -473,7 +477,10 @@ var BLCAdmin = (function($) {
             var continueInitialization = BLCAdmin.runFieldInitializationHandlers($container);
 
             // If we've already initialized this container, we'll skip it.
-            if ($container.data('initialized') == 'true' || !continueInitialization) {
+            if ($container.data('initialized') === 'true' || !continueInitialization) {
+                if ($container.closest('.oms-tab').length) {
+                    return;
+                }
                 // Update all listgrids sizing on the current tab just in case.
                 $container.find('.listgrid-container tbody').each(function (index, element) {
                     BLCAdmin.listGrid.updateGridTitleBarSize($(element).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
@@ -535,6 +542,7 @@ var BLCAdmin = (function($) {
 
                 // create the datetimepicker with the desired display format
                 $self.datetimepicker({
+                    formatTime: "g:ia",
                     format: "l, F d, Y \@ g:ia",
                     onClose: function(current_time, $input) {
                         if (current_time) {
@@ -1376,6 +1384,7 @@ $(document).ready(function() {
     // primary entity buttons should be disabled until page is loaded
     $(window).load(function () {
         $('.button.primary.large:not(.submit-button):not(.modify-production-inventory)').prop('disabled', false).removeClass('disabled');
+        $('a.show-translations').removeClass('disabled');
     });
 
     $(window).resize(function() {

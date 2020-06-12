@@ -183,6 +183,12 @@
                 fields['selectedRow'] = $tr;
             }
 
+            var $selectedAssetImg = $('.asset-item.active .image-wrapper img');
+
+            if ($selectedAssetImg.length) {
+                fields['altText'] = $selectedAssetImg.attr('alt');
+            }
+
             return fields;
         },
 
@@ -312,6 +318,11 @@
             $spinner.parent().find('.spinner-backdrop').remove();
         },
 
+        isLoading : function($tbody) {
+            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
+            return $spinner.parent().css('display') === 'block';
+        },
+
         initialize: function ($container) {
             BLCAdmin.listGrid.updateActionButtons($container);
             BLCAdmin.adornedEntityForm.updateActionButtons($container);
@@ -335,7 +346,8 @@
 
             // update duration fields
             $($.find("[data-fieldname='durationLabel']")).each(function () {
-                var day = moment.duration(parseInt($(this).html())).format('h[h] m[m] s[s]');
+                var parsed = parseInt($(this).data("fieldvalue"));
+                var day = moment.duration(parsed).format('h[h] m[m] s[s]');
                 $(this).html(day);
             });
 

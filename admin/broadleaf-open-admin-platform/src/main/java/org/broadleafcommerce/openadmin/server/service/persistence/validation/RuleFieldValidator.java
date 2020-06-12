@@ -104,7 +104,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                                     if (sandBoxVersionId == null) {
                                         sandBoxVersionId = dto.getPk();
                                     }
-                                    if (sandBoxVersionId.equals(quantityBasedRule.getId())) {
+                                    if (sandBoxVersionId.equals(quantityBasedRule.getId()) || sandBoxHelper.isRelatedToParentCatalogIds(quantityBasedRule, dto.getPk())) {
                                         foundIdToUpdate = true;
                                         try {
                                             String mvel = ruleFieldExtractionUtility.convertDTOToMvelString(translator, entityKey, dto, fieldService);

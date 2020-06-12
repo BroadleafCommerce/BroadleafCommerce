@@ -51,11 +51,13 @@
         </property>
     </bean>
     
-    <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <bean id="blTransactionManager" class="org.broadleafcommerce.common.persistence.transaction.LifecycleAwareJpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
     <!-- Allows the use if @Transactional without any qualifiers -->
     <alias alias="transactionManager" name="blTransactionManager"/>
+
+    <bean id="blTransactionLifecycleMonitor" class="org.broadleafcommerce.common.persistence.transaction.TransactionLifecycleMonitor"/>
 
     <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
         <tx:attributes>

@@ -383,7 +383,7 @@ public class OrderServiceImpl implements OrderService {
                 
                 if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
                     throw new OfferAlreadyAddedException("The offer has already been added.");
-                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
+                } else if (!offerService.verifyMaxCustomerUsageThreshold(order, offerCode)) {
                     throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
                 } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
                     throw new OfferExpiredException("The offer has expired.");

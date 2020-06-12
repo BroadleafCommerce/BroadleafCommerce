@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
@@ -72,7 +73,14 @@ public class ListGrid {
     protected Boolean canFilterAndSort;
     protected Boolean isReadOnly;
     protected Boolean hideIdColumn;
-    
+    protected String fetchType = FetchType.DEFAULT.toString();
+    protected long firstId;
+    protected long lastId;
+    protected int upperCount;
+    protected int lowerCount;
+    protected boolean totalCountLessThanPageSize;
+    protected boolean promptSearch;
+
     protected AddMethodType addMethodType;
     protected String listGridType;
     protected String selectType;
@@ -271,7 +279,7 @@ public class ListGrid {
     public void addModalRowAction(ListGridAction action) {
         getModalRowActions().add(action);
     }
-    
+
     public void addToolbarAction(ListGridAction action) {
         getToolbarActions().add(action);
     }
@@ -303,7 +311,7 @@ public class ListGrid {
     public void removeAllModalRowActions() {
         getModalRowActions().clear();
     }
-    
+
     public ListGridAction findToolbarAction(String actionId) {
         for (ListGridAction action : getToolbarActions()) {
             if (action.getActionId().equals(actionId)) {
@@ -381,7 +389,7 @@ public class ListGrid {
     public void setSelectTypeString(String selectType) {
         this.selectType = selectType;
     }
-    
+
     public Boolean getCanFilterAndSort() {
         return (canFilterAndSort == null ? true : canFilterAndSort);
     }
@@ -590,7 +598,7 @@ public class ListGrid {
     public void setSelectizeUrl(String selectizeUrl) {
         this.selectizeUrl = selectizeUrl;
     }
-    
+
     public String getExternalEntitySectionKey() {
         return externalEntitySectionKey;
     }
@@ -681,5 +689,61 @@ public class ListGrid {
 
     public void setJsonFieldName(String jsonFieldName) {
         this.jsonFieldName = jsonFieldName;
+    }
+
+    public String getFetchType() {
+        return fetchType;
+    }
+
+    public void setFetchType(String fetchType) {
+        this.fetchType = fetchType;
+    }
+
+    public long getFirstId() {
+        return firstId;
+    }
+
+    public void setFirstId(long firstId) {
+        this.firstId = firstId;
+    }
+
+    public long getLastId() {
+        return lastId;
+    }
+
+    public void setLastId(long lastId) {
+        this.lastId = lastId;
+    }
+
+    public int getUpperCount() {
+        return upperCount;
+    }
+
+    public void setUpperCount(int upperCount) {
+        this.upperCount = upperCount;
+    }
+
+    public int getLowerCount() {
+        return lowerCount;
+    }
+
+    public void setLowerCount(int lowerCount) {
+        this.lowerCount = lowerCount;
+    }
+
+    public boolean isTotalCountLessThanPageSize() {
+        return totalCountLessThanPageSize;
+    }
+
+    public void setTotalCountLessThanPageSize(boolean totalCountLessThanPageSize) {
+        this.totalCountLessThanPageSize = totalCountLessThanPageSize;
+    }
+
+    public boolean isPromptSearch() {
+        return promptSearch;
+    }
+
+    public void setPromptSearch(boolean promptSearch) {
+        this.promptSearch = promptSearch;
     }
 }

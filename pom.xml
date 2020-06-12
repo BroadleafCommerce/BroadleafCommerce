@@ -42,13 +42,14 @@
         <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.3.11</groovy.version>
+        <gpg.plugin.version>1.6</gpg.plugin.version>
         <project.uri>${project.baseUri}</project.uri>
     </properties>
     <scm>
-        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
-        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
+        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
+        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>broadleaf-5.0.9-GA</tag>
+        <tag>HEAD</tag>
     </scm>
     <build>
         <pluginManagement>
@@ -106,7 +107,10 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>1.3</version>
+                    <version>1.5</version>
+                    <configuration>
+                        <targetBytecode>1.7</targetBytecode>
+                    </configuration>
                     <executions>
                         <execution>
                             <goals>
@@ -204,6 +208,27 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.16</version>
+                <executions>
+                    <execution>
+                        <id>sniff</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java17</artifactId>
+                        <version>1.0</version>
+                    </signature>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.3</version>
@@ -260,7 +285,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.2.201409121644</version>
+                <version>0.7.9</version>
                 <executions>
                     <!-- Unit test coverage prep; generates jacoco.exec -->
                     <execution>
@@ -346,18 +371,54 @@
         </profile>
         <profile>
             <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>${gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>info@broadleafcommerce.org</keyname>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- IMPORTANT -->
+            <!-- This relies on a gpg.passphrase property set either at build time or in a settings.xml. If within
+               a <profile><properties> section, that <profile><id> must match _exactly_ to this id for gpg.passphrase to be picked up.
+               You know you have messed up if, on signing, GPG signing fails with this message:
+                   "gpg: signing failed: Inappropriate ioctl for device" -->
+            <!-- Older versions of GPG (specifically versions older than 2.2) don't know about a pinentry-mode argument. As a
+                result, signing will fail. If we ever retire the old build server (that still needs GPG prior to 2.2 because of the older
+                version of Ubuntu and requirement to work with older builds -->
+            <id>release-sign-artifacts-old-gpg</id>
+<!--             <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation> -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -393,6 +454,7 @@
                                 <id>attach-javadocs</id>
                                 <goals>
                                     <goal>jar</goal>
+                                    <goal>test-jar</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -406,16 +468,12 @@
         </profile>
         <profile>
             <id>sources</id>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>snapshots</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>releases</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-source-releases</url>
-                </repository>
-            </distributionManagement>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -437,6 +495,15 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>disable-java8-doclint</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
         </profile>
     </profiles>
     <dependencyManagement>
@@ -614,7 +681,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.3.1</version>
+                <version>1.3.3</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -669,9 +736,17 @@
 
             <!-- Logging -->
             <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>2.13.1</version>
+                <scope>import</scope>
+                <type>pom</type>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.12</version>
+                <version>1.2.17</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -781,7 +856,7 @@
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
-                <version>4.1.4</version>
+                <version>4.2.1</version>
             </dependency>
             
             <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
@@ -850,6 +925,12 @@
                 <version>${thymeleaf.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ognl</groupId>
+                        <artifactId>ognl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>nz.net.ultraq.thymeleaf</groupId>
@@ -1017,6 +1098,22 @@
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm-commons</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-common</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-auth</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1062,7 +1159,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.2.1.Final</version>
+                <version>2.4.3.Final</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1435,8 +1532,14 @@
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.4.5</version>
+                <version>1.5.7</version>
                 <scope>compile</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-httpclient</artifactId>
+                        <groupId>commons-httpclient</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
@@ -1452,6 +1555,11 @@
                         <artifactId>xalan</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.6</version>
             </dependency>
             <!--update xalan dependency for esapi for a xalan security vulnerability-->
             <dependency>

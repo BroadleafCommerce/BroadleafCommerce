@@ -90,6 +90,16 @@ public interface StaticAssetStorageService {
     Blob createBlob(MultipartFile uploadedFile) throws IOException;
 
     /**
+     * Creates a blob from an input stream with a given filesize.  This method wraps the call in a transactional tag.
+     *
+     * @param uploadedFileInputStream
+     * @param fileSize
+     * @return
+     * @throws IOException
+     */
+    Blob createBlob(InputStream uploadedFileInputStream, long fileSize) throws IOException;
+
+    /**
      * @param fullUrl
      * @param sandBox
      * @param parameterMap

@@ -59,7 +59,7 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATALOG")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSiteElements")
 @AdminPresentationClass(friendlyName = "CatalogImpl")
 @SQLDelete(sql = "UPDATE BLC_CATALOG SET ARCHIVED = 'Y' WHERE CATALOG_ID = ?")
 @DirectCopyTransform({
@@ -89,7 +89,7 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
 
     @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "catalog", orphanRemoval = true)
     @Cascade(value = { org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSiteElements")
     @BatchSize(size = 50)
     protected List<SiteCatalogXref> siteXrefs = new ArrayList<SiteCatalogXref>();
 

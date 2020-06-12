@@ -49,8 +49,14 @@
         problemSaving : 'There was a problem saving. See errors below',
         problemDeleting : 'There was a problem deleting this record. See errors below',
         problemReverting : 'There was a problem reverting this record.',
-        globalErrors : 'Global Errors'
+        globalErrors : 'Global Errors',
 
+        // Media attributes modal messages
+        primaryMediaAttrsFormTitle : 'Update primary media attrs',
+        primaryMediaAttrsTitle : 'Title',
+        primaryMediaAttrsAltText : 'Alt Text',
+        primaryMediaAttrsTags : 'Tags',
+        primaryMediaAttrsBtnApply : 'Apply',
     };
             
 })(jQuery, BLCAdmin);

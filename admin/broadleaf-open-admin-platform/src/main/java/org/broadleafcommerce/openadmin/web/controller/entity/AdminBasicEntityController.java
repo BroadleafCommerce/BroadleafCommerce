@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -47,7 +48,6 @@ import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
@@ -414,8 +414,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Entity entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
 
-        TabMetadata firstTab = cmd.getFirstTab();
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, firstTab == null ? "General" : firstTab.getTabName());
+        Map<String, DynamicResultSet> subRecordsMap = getViewSubRecords(request, pathVars, cmd, entity, crumbs);
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
@@ -460,6 +459,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
     }
 
+    protected Map<String, DynamicResultSet> getViewSubRecords(HttpServletRequest request, Map<String, String> pathVars,
+                                                              ClassMetadata cmd, Entity entity,
+                                                              List<SectionCrumb> crumbs) throws Exception {
+        String tabName = pathVars.get("tabName");
+        if (StringUtils.isEmpty(tabName)) {
+            tabName = cmd.getFirstTab() == null ? "General" : cmd.getFirstTab().getTabName();
+        }
+        return service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
+    }
+
     private boolean isAddRequest(Entity entity) {
         ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
         ExtensionResultStatusType result = extensionManager.getProxy().isAddRequest(entity, resultHolder);
@@ -497,7 +506,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, pathVars);
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
+        Map<String, DynamicResultSet> subRecordsMap = getViewSubRecords(request, pathVars, cmd, entity, crumbs);
         entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
         if (isAddRequest(entity)) {
@@ -881,7 +890,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
-                .withMaxIndex(getMaxIndex(requestParams));
+                .withMaxIndex(getMaxIndex(requestParams))
+                .withLastId(getLastId(requestParams))
+                .withFirstId(getFirstId(requestParams))
+                .withUpperCount(getUpperCount(requestParams))
+                .withLowerCount(getLowerCount(requestParams))
+                .withPageSize(getPageSize(requestParams))
+                .withPresentationFetch(true);
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
@@ -1034,6 +1049,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must save the collection entity
@@ -1050,6 +1066,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
             returnVal.put("alternateId", savedEntity.findProperty(ALTERNATE_ID_PROPERTY).getValue());
         }
         return returnVal;
+    }
+
+    protected void declareShouldIgnoreAdditionStatusFilter() {
+        Map<String, Object> additionalProperties = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties();
+        additionalProperties.put("shouldIgnoreAdditionStatusFilter", true);
     }
 
     /**
@@ -1085,6 +1106,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         // First, we must save the collection entity
@@ -1797,6 +1819,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String priorKey = request.getParameter("key");
         
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        declareShouldIgnoreAdditionStatusFilter();
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must remove the collection entity

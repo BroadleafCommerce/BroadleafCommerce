@@ -116,7 +116,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         if (deproxiedSku == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (postLoaderDao != null) {
+            if (postLoaderDao != null && sku.getId() != null) {
                 Long id = sku.getId();
                 deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
             } else if (sku instanceof HibernateProxy) {
@@ -149,7 +149,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         if (deproxiedProductBundle == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (postLoaderDao != null) {
+            if (postLoaderDao != null && productBundle.getId() != null) {
                 Long id = productBundle.getId();
                 deproxiedProductBundle = postLoaderDao.find(ProductBundleImpl.class, id);
             } else if (productBundle instanceof HibernateProxy) {

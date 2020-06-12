@@ -21,8 +21,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -42,6 +45,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,8 +144,13 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
             for (int i = 0; i < payload.length; i++) {
                 Entity entity = payload[i];
                 SkuBundleItem bundleItem = (SkuBundleItem) records.get(i);
-
-                Property optionsProperty = skuPersistenceHandler.getConsolidatedOptionProperty(bundleItem.getSku().getProductOptionValuesCollection());
+                Sku bundleSku = bundleItem.getSku();
+                entity.findProperty("sku").setDisplayValue(bundleSku.getName());
+                List<ProductOptionValue> productOptionValues = new ArrayList<>();
+                for(SkuProductOptionValueXref skuProductOptionValueXref : bundleSku.getProductOptionValueXrefs()) {
+                    productOptionValues.add(skuProductOptionValueXref.getProductOptionValue());
+                }
+                Property optionsProperty = skuPersistenceHandler.getConsolidatedOptionProperty(productOptionValues);
                 entity.addProperty(optionsProperty);
             }
 

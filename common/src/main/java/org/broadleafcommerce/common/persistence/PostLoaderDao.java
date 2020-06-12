@@ -37,4 +37,17 @@ public interface PostLoaderDao {
      * @return deproxied entity or null if not found
      */
     <T> T find(Class<T> clazz, Object id);
+
+    /**
+     * If within the context of a sandbox, return the sandbox entity by primary key and class.
+     *
+     * This purposefully uses the Entity Manager in order to trigger the hibernate filters.
+     *
+     * @param clazz
+     * @param id
+     * @param <T>
+     * @return
+     */
+    <T> T findSandboxEntity(Class<T> clazz, Object id);
+
 }

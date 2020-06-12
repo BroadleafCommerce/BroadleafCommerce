@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -73,14 +74,17 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     protected Long id;
 
     @Column (name = "FLD_KEY")
+    @AdminPresentation
     protected String fieldKey;
 
     @Column (name = "VALUE")
+    @AdminPresentation
     protected String stringValue;
 
     @Column(name = "LOB_VALUE", length = Integer.MAX_VALUE-1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
+    @AdminPresentation
     protected String lobValue;
 
     @ManyToOne(targetEntity = PageImpl.class, optional = false, cascade = CascadeType.REFRESH)

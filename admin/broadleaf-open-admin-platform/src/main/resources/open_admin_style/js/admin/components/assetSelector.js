@@ -55,8 +55,9 @@
             $redactor.on('assetInfoSelected', function(event, fields) {
                 currentRedactor.selection.restore();
                 var assetUrl =   fields['assetUrl'];
+                var altText = fields['altText'];
                 if (assetUrl.charAt(0) == "/") assetUrl = assetUrl.substr(1);
-                var $img = $('<img>', { 'src' : assetUrl });
+                var $img = $('<img>', { 'src' : assetUrl, 'alt': altText });
                 currentRedactor.insert.html($img.outerHTML());
                 BLCAdmin.hideCurrentModal();
             });
@@ -145,10 +146,11 @@ $(document).ready(function() {
                 } else {
                     var mediaJson = mediaItem.val() == "" || mediaItem.val() == "null" ? {} : jQuery.parseJSON(mediaItem.val());
                     mediaJson.url = fields['assetUrl'];
+                    mediaJson.altText = fields['altText'];
                     mediaItem.val(JSON.stringify(mediaJson)).trigger('input');
                 }
             }
-            $container.find('button.clear-asset-selector').show();
+            $container.find('button.clear-asset-selector, button.edit-asset-selector').show();
             $container.find('.media-image-container .media-actions').css('display', '');
 
             $container.find('div.asset-url').html(fields['assetUrl']);
@@ -161,6 +163,49 @@ $(document).ready(function() {
         });
         
         return false;
+    });
+
+    $('body').on('click', 'button.edit-asset-selector', function() {
+        var $modal = BLCAdmin.getModalSkeleton();
+        $modal.addClass('primary-media-attrs-modal');
+        $modal.find('.modal-header h3').text(BLCAdmin.messages.primaryMediaAttrsFormTitle);
+        $modal.find('.modal-body').append(
+            "<form id='primary-media-attrs-form'>" +
+                "<div class='field-group'>" +
+                    "<label for='primary-media-title'>" +
+                         "<span>" + BLCAdmin.messages.primaryMediaAttrsTitle + "</span>" +
+                    "</label>" +
+                    "<div><input id='primary-media-title' type='text'></div>" +
+                "</div>" +
+                "<div class='field-group'>" +
+                    "<label for='primary-media-altText'>" +
+                        "<span>" + BLCAdmin.messages.primaryMediaAttrsAltText + "</span>" +
+                    "</label>" +
+                    "<div><input id='primary-media-altText' type='text'></div>" +
+                "</div>" +
+                "<div class='field-group'>" +
+                    "<label for='primary-media-tags'>" +
+                        "<span>" + BLCAdmin.messages.primaryMediaAttrsTags + "</span>" +
+                    "</label>" +
+                    "<div><input id='primary-media-tags' type='text'></div>" +
+                "</div>" +
+            "</form>"
+        );
+        $modal.find('.modal-footer').append(
+            "<button form='primary-media-attrs-form' class='button primary large' disabled>" +
+                BLCAdmin.messages.primaryMediaAttrsBtnApply +
+            "</button>"
+        );
+
+        BLCAdmin.showElementAsModal($modal);
+
+
+        var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
+
+        var $form = $('#primary-media-attrs-form');
+        $form.find('#primary-media-title').val(primaryData['title']);
+        $form.find('#primary-media-altText').val(primaryData['altText']);
+        $form.find('#primary-media-tags').val(primaryData['tags']);
     });
 
     $('body').on('click', 'button.clear-asset-selector', function(event) {
@@ -186,11 +231,11 @@ $(document).ready(function() {
         $thumbnail.attr('src', src);
         $thumbnail.addClass('placeholder-image');
         $this.hide();
+        $container.find('.edit-asset-selector').hide();
 
         var $mediaImageContainer = $container.find('.media-image-container');
         $mediaImageContainer.find('.media-actions').css('display', 'block');
 
-        positionMediaButtons($mediaImageContainer);
         $container.find('div.asset-url').html('No media selected.');
     });
 
@@ -218,29 +263,33 @@ $(document).ready(function() {
         $('#assetUploadForm').removeClass('hidden');
     }
 
-    $('body').on('mouseover', '.media-image-container', function() {
-        positionMediaButtons(this);
-    });
-
     // On the asset list view, the upload button triggers this form
        $('body').on('click', 'button.upload-asset', function(event) {
                $('#assetUploadFile').click();
     });
 
-    function positionMediaButtons(container) {
-        var center = $(container).width() / 2;
-        var spacing = 15;
+    $('body').on('input', '#primary-media-attrs-form input, #primary-media-attrs-form textarea', function () {
+        $("button[form='primary-media-attrs-form']").prop('disabled', false);
+    });
 
-        // clear goes on the right
-        var clearBtn = $(container).find('.media-actions button.clear-asset-selector');
-        clearBtn.css('left', parseInt(center + spacing) + 'px');
+    $('body').on('submit', '#primary-media-attrs-form', function () {
+        var $this = $(this);
 
-        // lookup goes on the left unless clear is hidden
-        var lookupBtn = $(container).find('.media-actions button.show-asset-selector');
-        if (clearBtn.css('display') != 'none') {
-            lookupBtn.css('left', parseInt(center - spacing - 50) + 'px');
-        } else {
-            lookupBtn.css('left', parseInt(center - 25) + 'px');
-        }
-    }
+        var $primaryDataField = $("#fields\\'defaultSku__skuMedia---primary\\'\\.value");
+
+        var primaryData = JSON.parse($primaryDataField.val());
+        primaryData['title'] = $this.find('#primary-media-title').val();
+        primaryData['altText'] = $this.find('#primary-media-altText').val();
+        primaryData['tags'] = $this.find('#primary-media-tags').val();
+
+        $primaryDataField.val(JSON.stringify(primaryData));
+
+        $('.submit-button').prop('disabled', false);
+
+        BLCAdmin.hideCurrentModal();
+
+        return false;
+    });
+
+
 });

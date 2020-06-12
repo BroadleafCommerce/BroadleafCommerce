@@ -60,10 +60,12 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
         if (!canHandlePersistence(populateValueRequest, instance)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
+        boolean handled = false;
         if (extensionManager != null) {
-            extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Product) instance);
+            ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Product) instance);
+            handled = ExtensionResultStatusType.NOT_HANDLED != result;
         }
-        if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
+        if (!handled || BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
             Long requestedValue = null;
             if (StringUtils.isNotEmpty(populateValueRequest.getRequestedValue())) {
                 requestedValue = Long.parseLong(populateValueRequest.getRequestedValue());

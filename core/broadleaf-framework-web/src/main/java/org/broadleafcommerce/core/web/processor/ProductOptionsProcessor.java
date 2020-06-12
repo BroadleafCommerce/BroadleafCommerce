@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +29,9 @@ import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierPro
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -44,6 +48,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -91,8 +96,9 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             
             List<Long> productOptionValueIds = new ArrayList<Long>();
             
-            List<ProductOptionValue> productOptionValues = sku.getProductOptionValues();
-            for (ProductOptionValue productOptionValue : productOptionValues) {
+            Set<SkuProductOptionValueXref> productOptionValueXrefs = SetUtils.emptyIfNull(sku.getProductOptionValueXrefs());
+            for (SkuProductOptionValueXref skuProductOptionValueXref : productOptionValueXrefs) {
+                ProductOptionValue productOptionValue = skuProductOptionValueXref.getProductOptionValue();
                 productOptionValueIds.add(productOptionValue.getId());
             }
             
@@ -101,11 +107,13 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             
             ProductOptionPricingDTO dto = new ProductOptionPricingDTO();
             Money currentPrice;
+
             if (sku.isOnSale()) {
                 currentPrice = sku.getSalePrice();
             } else {
                 currentPrice = sku.getRetailPrice();
             }
+
             dto.setPrice(formatPrice(currentPrice));
             dto.setSelectedOptions(values);
             skuPricing.add(dto);
@@ -114,25 +122,39 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
     }
     
     private void addAllProductOptionsToModel(Arguments arguments, Product product) {
-        List<ProductOption> productOptions = product.getProductOptions();
-        List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
-        for (ProductOption option : productOptions) {
+        List<ProductOptionXref> productOptionXrefs = ListUtils.emptyIfNull(product.getProductOptionXrefs());
+        List<ProductOptionDTO> dtos = new ArrayList<>();
+
+        for (ProductOptionXref optionXref : productOptionXrefs) {
             ProductOptionDTO dto = new ProductOptionDTO();
-            dto.setId(option.getId());
-            dto.setType(option.getType().getType());
-            Map<Long, String> values = new HashMap<Long, String>();
-            for (ProductOptionValue value : option.getAllowedValues()) {
+            ProductOption productOption = optionXref.getProductOption();
+
+            dto.setId(productOption.getId());
+            dto.setType(productOption.getType().getType());
+
+            Map<Long, String> values = new HashMap<>();
+            Map<Long, Double> priceAdjustments = new HashMap<>();
+
+            for (ProductOptionValue value : productOption.getAllowedValues()) {
                 values.put(value.getId(), value.getAttributeValue());
+
+                Money priceAdjustment = value.getPriceAdjustment();
+                Double priceAdjustmentValue = (priceAdjustment != null) ? priceAdjustment.doubleValue() : null;
+                priceAdjustments.put(value.getId(), priceAdjustmentValue);
             }
+
             dto.setValues(values);
+            dto.setPriceAdjustments(priceAdjustments);
             dtos.add(dto);
         }
+
         writeJSONToModel(arguments, "allProductOptions", dtos);
     }
     
     private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
         try {
             String jsonValue = JSON_CACHE.get(o);
+
             if (jsonValue == null) {
                 ObjectMapper mapper = new ObjectMapper();
                 Writer strWriter = new StringWriter();
@@ -140,6 +162,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
                 jsonValue = strWriter.toString();
                 JSON_CACHE.put(o, jsonValue);
             }
+
             addToModel(arguments, modelKey, jsonValue);
         } catch (Exception ex) {
             LOG.error("There was a problem writing the product option map to JSON", ex);
@@ -152,8 +175,8 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         }
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
-            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format
-                                (price.getAmount());
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(),
+                                                                   price.getCurrency()).format(price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
             return "$ " + price.getAmount().toString();
@@ -164,60 +187,90 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         private Long id;
         private String type;
         private Map<Long, String> values;
+        private Map<Long, Double> priceAdjustments;
         private String selectedValue;
-        @SuppressWarnings("unused")
+
         public Long getId() {
             return id;
         }
+
         public void setId(Long id) {
             this.id = id;
         }
-        @SuppressWarnings("unused")
+
         public String getType() {
             return type;
         }
+
         public void setType(String type) {
             this.type = type;
         }
-        @SuppressWarnings("unused")
+
         public Map<Long, String> getValues() {
             return values;
         }
+
         public void setValues(Map<Long, String> values) {
             this.values = values;
         }
-        @SuppressWarnings("unused")
+
         public String getSelectedValue() {
             return selectedValue;
         }
-        @SuppressWarnings("unused")
+
         public void setSelectedValue(String selectedValue) {
             this.selectedValue = selectedValue;
         }
 
+        public Map<Long, Double> getPriceAdjustments() {
+            return priceAdjustments;
+        }
+
+        @SuppressWarnings("unused")
+        public void setPriceAdjustments(Map<Long, Double> priceAdjustments) {
+            this.priceAdjustments = priceAdjustments;
+        }
+
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null) return false;
-            if (!getClass().isAssignableFrom(o.getClass())) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null) {
+                return false;
+            }
+            if (!getClass().isAssignableFrom(o.getClass())) {
+                return false;
+            }
 
             ProductOptionDTO that = (ProductOptionDTO) o;
 
-            if (id != null ? !id.equals(that.id) : that.id != null) return false;
-            if (selectedValue != null ? !selectedValue.equals(that.selectedValue) : that.selectedValue != null)
+            if ((id != null) ? !id.equals(that.id) : (that.id != null)) {
                 return false;
-            if (type != null ? !type.equals(that.type) : that.type != null) return false;
-            if (values != null ? !values.equals(that.values) : that.values != null) return false;
+            }
+            if ((selectedValue != null) ? !selectedValue.equals(that.selectedValue) : (that.selectedValue != null)) {
+                return false;
+            }
+            if ((type != null) ? !type.equals(that.type) : (that.type != null)) {
+                return false;
+            }
+            if ((values != null) ? !values.equals(that.values) : (that.values != null)) {
+                return false;
+            }
+            if ((priceAdjustments != null) ? !priceAdjustments.equals(that.priceAdjustments) : (that.priceAdjustments != null)) {
+                return false;
+            }
 
             return true;
         }
 
         @Override
         public int hashCode() {
-            int result = id != null ? id.hashCode() : 0;
+            int result = (id != null) ? id.hashCode() : 0;
             result = 31 * result + (type != null ? type.hashCode() : 0);
             result = 31 * result + (values != null ? values.hashCode() : 0);
             result = 31 * result + (selectedValue != null ? selectedValue.hashCode() : 0);
+            result = 31 * result + (priceAdjustments != null ? priceAdjustments.hashCode() : 0);
             return result;
         }
     }
@@ -225,39 +278,51 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
     private class ProductOptionPricingDTO {
         private Long[] skuOptions;
         private String price;
-        @SuppressWarnings("unused")
+
         public Long[] getSelectedOptions() {
             return skuOptions;
         }
+
         public void setSelectedOptions(Long[] skuOptions) {
             this.skuOptions = skuOptions;
         }
-        @SuppressWarnings("unused")
+
         public String getPrice() {
             return price;
         }
+
         public void setPrice(String price) {
             this.price = price;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null) return false;
-            if (!getClass().isAssignableFrom(o.getClass())) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null) {
+                return false;
+            }
+            if (!getClass().isAssignableFrom(o.getClass())) {
+                return false;
+            }
 
             ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
 
-            if (price != null ? !price.equals(that.price) : that.price != null) return false;
-            if (!Arrays.equals(skuOptions, that.skuOptions)) return false;
+            if ((price != null) ? !price.equals(that.price) : (that.price != null)) {
+                return false;
+            }
+            if (!Arrays.equals(skuOptions, that.skuOptions)) {
+                return false;
+            }
 
             return true;
         }
 
         @Override
         public int hashCode() {
-            int result = skuOptions != null ? Arrays.hashCode(skuOptions) : 0;
-            result = 31 * result + (price != null ? price.hashCode() : 0);
+            int result = (skuOptions != null) ? Arrays.hashCode(skuOptions) : 0;
+            result = (31 * result) + ((price != null) ? price.hashCode() : 0);
             return result;
         }
     }

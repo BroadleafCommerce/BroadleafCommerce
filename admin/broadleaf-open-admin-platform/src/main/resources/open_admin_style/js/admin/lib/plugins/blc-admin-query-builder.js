@@ -165,7 +165,12 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
 
         if ($ruleBuilderContainer.attr('data-orig-val') === undefined) {
             // In order to get the new rules on this `RuleBuilder` we need to grab the actual `RuleBuilder`
-            var hiddenId = $ruleBuilderContainer.next('.rule-builder-data').data('hiddenid');
+
+            var attrId = $ruleBuilderContainer.attr('id');
+            if(attrId.indexOf('-modal', attrId.length - '-modal'.length) !== -1){
+                attrId = attrId.slice(0, -('-modal'.length));
+            }
+            var hiddenId = $('#'+attrId).next('.rule-builder-data').data('hiddenid');
             var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
 
             var origVal = ruleBuilder.builders[0].queryBuilder('getRules', { displayErrors : ruleBuilder.displayErrors });

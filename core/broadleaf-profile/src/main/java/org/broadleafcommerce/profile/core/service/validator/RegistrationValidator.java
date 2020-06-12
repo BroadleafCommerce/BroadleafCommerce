@@ -18,6 +18,7 @@
 package org.broadleafcommerce.profile.core.service.validator;
 
 import org.apache.commons.validator.GenericValidator;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -27,13 +28,9 @@ import org.springframework.validation.Validator;
 @Component("blRegistrationValidator")
 public class RegistrationValidator implements Validator {
 
-    public static final String DEFAULT_VALID_NAME_REGEX = "[A-Za-z'. ]{1,80}";
+    private static final String DEFAULT_VALID_NAME_REGEX = "[A-Za-z'. -]{1,80}";
 
-    public static final String DEFAULT_VALID_PASSWORD_REGEX = "[0-9A-Za-z]{4,15}";
-
-    private String validNameRegex = DEFAULT_VALID_NAME_REGEX;
-
-    private String validPasswordRegex = DEFAULT_VALID_PASSWORD_REGEX;
+    private static final String DEFAULT_VALID_PASSWORD_REGEX = "[^\\s]{6,}";
 
     public void validate(Customer customer, String password, String passwordConfirm, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "password.required");
@@ -48,15 +45,16 @@ public class RegistrationValidator implements Validator {
             if (!passwordConfirm.equals(password)) {
                 errors.rejectValue("passwordConfirm", "invalid"); 
             }
-            if (!customer.getFirstName().matches(validNameRegex)) {
+            
+            if (!customer.getFirstName().matches(getValidNameRegex())) {
                 errors.rejectValue("firstName", "firstName.invalid", null, null);
             }
 
-            if (!customer.getLastName().matches(validNameRegex)) {
+            if (!customer.getLastName().matches(getValidNameRegex())) {
                 errors.rejectValue("lastName", "lastName.invalid", null, null);
             }
 
-            if (!customer.getPassword().matches(validPasswordRegex)) {
+            if (!customer.getPassword().matches(getValidPasswordRegex())) {
                 errors.rejectValue("password", "password.invalid", null, null);
             }
 
@@ -70,20 +68,12 @@ public class RegistrationValidator implements Validator {
         }
     }
 
-    public String getValidNameRegex() {
-        return validNameRegex;
+    public static String getValidNameRegex() {
+        return BLCSystemProperty.resolveSystemProperty("name.valid.regex", DEFAULT_VALID_NAME_REGEX);
     }
 
-    public void setValidNameRegex(String validNameRegex) {
-        this.validNameRegex = validNameRegex;
-    }
-
-    public String getValidPasswordRegex() {
-        return validPasswordRegex;
-    }
-
-    public void setValidPasswordRegex(String validPasswordRegex) {
-        this.validPasswordRegex = validPasswordRegex;
+    public static String getValidPasswordRegex() {
+        return BLCSystemProperty.resolveSystemProperty("password.valid.regex", DEFAULT_VALID_PASSWORD_REGEX);
     }
 
     @Override
@@ -92,6 +82,5 @@ public class RegistrationValidator implements Validator {
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
-    }
+    public void validate(Object target, Errors errors) {}
 }

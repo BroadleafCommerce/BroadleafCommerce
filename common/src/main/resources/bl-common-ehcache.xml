@@ -143,7 +143,7 @@
             eternal="false"
             overflowToDisk="false"
             timeToLiveSeconds="600"/>
-        
+
      <cache
         name="generatedResourceCache"
         maxElementsInMemory="100"
@@ -226,11 +226,39 @@
         timeToLiveSeconds="86400"/>
 
     <cache
+        name="blSandBoxElements"
+        maxElementsInMemory="2000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="3"/>
+
+    <cache
+        name="query.blSandBoxElements"
+        maxElementsInMemory="500"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="3"/>
+
+    <cache
         name="blSecurityElements"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false"
         timeToLiveSeconds="86400">
     </cache>
+
+    <cache
+        name="blSiteElements"
+        maxElementsInMemory="5000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="3600"/>
+
+    <cache
+        name="blSiteElementsQuery"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="3600"/>
 
 </ehcache>

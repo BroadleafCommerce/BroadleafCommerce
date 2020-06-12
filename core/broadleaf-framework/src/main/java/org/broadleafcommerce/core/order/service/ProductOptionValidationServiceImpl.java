@@ -17,10 +17,12 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
+import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
@@ -31,7 +33,10 @@ import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+import javax.annotation.Resource;
 
 @Service("blProductOptionValidationService")
 public class ProductOptionValidationServiceImpl implements ProductOptionValidationService  {
@@ -39,6 +44,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     private static final Log LOG = LogFactory.getLog(ProductOptionValidationServiceImpl.class);
     protected static final Integer ADD_TYPE_RANK = ProductOptionValidationStrategyType.ADD_ITEM.getRank();
     protected static final Integer SUBMIT_TYPE_RANK = ProductOptionValidationStrategyType.SUBMIT_ORDER.getRank();
+
+    @Resource
+    protected ProductOptionDao productOptionDao;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.order.service.ProductOptionValidationService#validate(org.broadleafcommerce.core.catalog.domain.ProductOption, java.lang.String)
@@ -122,5 +130,10 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
 
             messages.getActivityMessages().add(msg);
         }
+    }
+
+    @Override
+    public List<Long> findSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
+        return productOptionDao.readSkuIdsForProductOptionValues(productId, attributeName, attributeValue, possibleSkuIds);
     }
 }

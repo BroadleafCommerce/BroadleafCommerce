@@ -125,6 +125,10 @@ legend {
 a:active,a:focus {
     outline: none;
 }
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+}
 blockquote{
     display: block;
     padding: 15px 20px 15px 50px;
@@ -186,6 +190,11 @@ circle {
 }
 .mCSB_draggerContainer {
     background-color: #F9F7F3;
+}
+
+/* temporarily disable EntityForm scrolling */
+.app-content .content .section-content .main-content {
+    overflow: hidden;
 }
 /****************************************
  ADMIN DROPDOWN RELATED STYLES
@@ -381,4 +390,27 @@ circle {
 }
 .back-button:hover {
     color: #F2B95A;
+}
+a.previous-page {
+    cursor: pointer;
+    padding-right: 50px;
+    display: none;
+}
+
+a.next-page {
+    cursor: pointer;
+    padding-left: 50px;
+    display: none;
+}
+
+div.result-page-size {
+    padding-left: 50px;
+    display: inline;
+    float: right;
+}
+
+input.result-page-size-input {
+    width: 50px;
+    float: right;
+    padding-left: 10px;
 }

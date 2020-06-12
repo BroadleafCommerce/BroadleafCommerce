@@ -55,15 +55,49 @@ public interface RecordHelper extends DataFormatProvider {
                                                      Map<String, FieldMetadata> mergedUnfilteredProperties,
                                                      RestrictionFactory customRestrictionFactory);
 
-    Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
-                                   Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
+    /**
+     * Based on retrieved persistent entities and entity metadata, construct data transfer object instances to represent these records
+     * to the caller.
+     *
+     * @param fetchExtractionRequest
+     * @return
+     */
+    Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest);
 
+    /**
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
+     * @param primaryMergedProperties
+     * @param records
+     * @param alternateMergedProperties
+     * @param pathToTargetObject
+     * @param customCriteria
+     * @return
+     */
+    @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
                                Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject,
                                String[] customCriteria);
 
+    /**
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
+     * @param primaryMergedProperties
+     * @param records
+     * @param alternateMergedProperties
+     * @param pathToTargetObject
+     * @return
+     */
+    @Deprecated
+    Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
+
+    /**
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead.
+     * @param primaryMergedProperties
+     * @param records
+     * @return
+     */
+    @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records);
-    
+
     Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<? extends Serializable> records);
     
     Entity getRecord(Map<String, FieldMetadata> primaryMergedProperties, Serializable record, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
@@ -74,7 +108,7 @@ public interface RecordHelper extends DataFormatProvider {
      * <p>Populates a Hibernate entity <b>instance</b> based on the values from <b>entity</b> (the DTO representation of
      * <b>instance</b>) and the metadata from <b>mergedProperties</b>.</p>
      * <p>While populating <b>instance</b>, validation is also performed using the {@link EntityValidatorService}. If this
-     * validation fails, then the instance is left unchanged and a {@link ValidationExcpetion} is thrown. In the common
+     * validation fails, then the instance is left unchanged and a {@link ValidationException} is thrown. In the common
      * case, this exception bubbles up to the {@link DynamicRemoteService} which catches the exception and communicates
      * appropriately to the invoker</p>
      * 
@@ -102,6 +136,14 @@ public interface RecordHelper extends DataFormatProvider {
             Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException;
     
     Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties);
+
+    /**
+     * For the fully qualified entity class name, find the primary key property name.
+     *
+     * @param entityClass
+     * @return
+     */
+    String getIdPropertyName(String entityClass);
     
     Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective);
     
@@ -129,11 +171,47 @@ public interface RecordHelper extends DataFormatProvider {
      */
     boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties);
 
+    /**
+     * Retrieve a total count of persistent entities given some basic metadata and restrictions
+     *
+     * @deprecated use {@link #getTotalRecords(FetchRequest)} instead
+     * @param ceilingEntity
+     * @param filterMappings
+     * @return
+     */
+    @Deprecated
     Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings);
+
+    /**
+     * Retrieve a total count of persistent entities given some basic metadata and restrictions
+     *
+     * @param fetchRequest
+     * @return
+     */
+    Integer getTotalRecords(FetchRequest fetchRequest);
 
     Serializable getMaxValue(String ceilingEntity, List<FilterMapping> filterMappings, String maxField);
 
+    /**
+     * Retrieve a paged list of persistent entity instances given some basic metadata and restrictions.
+     *
+     * @deprecated use {@link #getPersistentRecords(FetchRequest)} instead
+     * @param ceilingEntity
+     * @param filterMappings
+     * @param firstResult
+     * @param maxResults
+     * @return
+     */
+    @Deprecated
     List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults);
+
+    /**
+     * Retrieve a paged list of persistent entity instances given some basic metadata and restrictions.
+     *
+     * @param fetchRequest
+     * @return
+     */
+    List<Serializable> getPersistentRecords(FetchRequest fetchRequest);
 
     EntityResult update(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
 

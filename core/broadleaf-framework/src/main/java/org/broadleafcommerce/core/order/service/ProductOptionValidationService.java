@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
+import java.util.List;
 
 public interface ProductOptionValidationService {
 
@@ -32,4 +33,6 @@ public interface ProductOptionValidationService {
     boolean isAddOrNoneType(ProductOption productOption);
 
     void validateWithoutException(ProductOption productOption, String attributeValue, ActivityMessages messages);
+
+    List<Long> findSkuIdsForProductOptionValues(Long id, String key, String value, List<Long> possibleSkuIds);
 }

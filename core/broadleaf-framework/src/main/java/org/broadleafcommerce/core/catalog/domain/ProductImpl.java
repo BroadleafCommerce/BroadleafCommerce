@@ -304,7 +304,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "productAttributesTitle",
-            tab = TabName.Advanced, order = 1000)
+            tab = TabName.General, order = 6000)
     protected List<ProductAttribute> productAttributes = new ArrayList<ProductAttribute>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product",

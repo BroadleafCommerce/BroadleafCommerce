@@ -10,7 +10,7 @@
         <div class="media-image">
             <span th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
                 <img class="thumbnail" th:attrappend="data-fullurl=@{*{fields['__${field.name}__'].media.url}}"
-                    th:src="@{*{fields['__${field.name}__'].media.url}}" />
+                    blc:src="@{*{fields['__${field.name}__'].media.url}}" />
                     <img class="placeholder" style="display:none" th:src="@{/img/admin/placeholder-60x60.gif}" />
             </span>
 
@@ -32,6 +32,14 @@
                     th:unless="${overrideAssetSectionKey}"
                     th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
                 <i class="fa fa-search"></i>
+            </button>
+
+            <!-- edit button -->
+            <button class="edit-asset-selector tiny radius secondary button hover-cursor"
+                    type="button" th:inline="text"
+                    th:unless="${field.required}"
+                    th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+                <i class="fa fa-pencil"></i>
             </button>
 
             <!-- clear image button -->

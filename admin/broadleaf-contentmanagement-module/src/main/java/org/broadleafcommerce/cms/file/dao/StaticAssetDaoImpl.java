@@ -68,20 +68,26 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         criteria.select(handler);
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(handler.get("id"), id));
+        try {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().setup(StaticAssetImpl.class, null);
+                queryExtensionManager.getProxy().refineRetrieve(StaticAssetImpl.class, null, builder, criteria, handler, restrictions);
 
-        if (queryExtensionManager != null) {
-            queryExtensionManager.getProxy().setup(StaticAssetImpl.class, null);
-            queryExtensionManager.getProxy().refineRetrieve(StaticAssetImpl.class, null, builder, criteria, handler, restrictions);
-        }
-        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+            }
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
-        TypedQuery<StaticAsset> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        List<StaticAsset> response = query.getResultList();
-        if (response.size() > 0) {
-            return response.get(0);
+            TypedQuery<StaticAsset> query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            List<StaticAsset> response = query.getResultList();
+            if (response.size() > 0) {
+                return response.get(0);
+            }
+            return null;
+        } finally {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().breakdown(StaticAssetImpl.class, null);
+            }
         }
-        return null;
     }
     
     public List<StaticAsset> readAllStaticAssets() {
@@ -101,6 +107,10 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
             return em.createQuery(criteria).getResultList();
         } catch (NoResultException e) {
             return new ArrayList<StaticAsset>();
+        } finally {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().breakdown(StaticAssetImpl.class, null);
+            }
         }
     }
 

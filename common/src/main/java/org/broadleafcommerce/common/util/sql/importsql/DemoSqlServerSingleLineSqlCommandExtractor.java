@@ -36,8 +36,8 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
 
     private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoSqlServerSingleLineSqlCommandExtractor.class);
 
-    private static final String BOOLEANTRUEMATCH = "(?i)(true)";
-    private static final String BOOLEANFALSEMATCH = "(?i)(false)";
+    private static final String BOOLEANTRUEMATCH = "(?i)(true)(?=(?:[^']|'[^']*')*$)";
+    private static final String BOOLEANFALSEMATCH = "(?i)(false)(?=(?:[^']|'[^']*')*$)";
     private static final String TIMESTAMPMATCH = "(?i)(current_date)";
     public static final String DOUBLEBACKSLASHMATCH = "(\\\\\\\\)";
     public static final String TRUE = "'TRUE'";

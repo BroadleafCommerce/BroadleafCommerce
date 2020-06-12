@@ -811,6 +811,8 @@
 
                     for (var i = 0; i < data.length; i++) {
                         var dataDTO = data[i];
+                        var condition = dataDTO.condition;
+
                         var prefix = $("<span>", {
                             'class': 'readable-rule-prefix',
                             'text': dataDTO.quantity ?
@@ -823,63 +825,67 @@
                         $(readableElement).append(listElement);
 
                         var allRules = {};
-                        for (var k = 0; k < dataDTO.rules.length; k++) {
-                            var ruleDTO = dataDTO.rules[k];
-                            var condition = dataDTO.condition;
+                        for (var j = 0; j < dataDTO.rules.length; j++) {
+                            var ruleDTO = dataDTO.rules[j];
+                            var fieldLabel = ruleBuilder.getFieldLabelById(ruleDTO.id);
+                            var operator = ruleBuilder.getOperatorLabelByOperatorType(ruleDTO.operator);
 
-                            var key = ruleBuilder.getFieldLabelById(ruleDTO.id);
+                            var key = fieldLabel + ":" + operator;
 
-                            var valArray;
+                            var valArray = [];
                             try {
-                                valArray = $.parseJSON(ruleDTO.value);
+                                valArray = valArray.concat($.parseJSON(ruleDTO.value));
                             } catch(err) {
-                                valArray = [ruleDTO.value];
+                                valArray = valArray.concat(ruleDTO.value);
                             }
 
-                            var valueString = undefined;
-                            if (valArray != null) {
-                                for(var i = 0; i < valArray.length; i++){
-                                    var val = ruleBuilder.getFieldValueById(ruleDTO.id, valArray[i]);
+                            if (!allRules[key]) allRules[key] = [];
 
-                                    if (allRules[key] === undefined) {
-                                        allRules[key] = ['<strong>' + val + '</strong>'];
-                                    } else {
-                                        allRules[key].push('<strong>' + val + '</strong>');
-                                    }
-
-                                    var values = allRules[key];
-                                    valueString = values.join(' OR ');
+                            if (valArray) {
+                                for(var k = 0; k < valArray.length; k++) {
+                                    var val = ruleBuilder.getFieldValueById(ruleDTO.id, valArray[k]);
+                                    if (val) allRules[key].push(val);
                                 }
                             }
 
-                            key = '<strong>' + key + '</strong>';
-                            if (k != 0) {
-                                key = condition + ' ' + key;
+                        }
+
+                        Object.keys(allRules).sort().forEach(function(key, index) {
+                            var colonIndex = key.indexOf(":");
+                            var fieldLabel = key.substring(0, colonIndex);
+                            var operator = key.substring(colonIndex + 1);
+
+                            if (index !== 0) {
+                                fieldLabel = condition + ' ' + fieldLabel;
                             }
 
                             var listItem = $('<li>');
-                            var name = $("<span>", {
+
+                            var nameHtml = $("<span>", {
                                 'class': 'readable-rule-field',
-                                'html': key
+                                'html': "<strong>" + fieldLabel + "</strong>"
                             });
-                            var operator = $("<span>", {
+
+                            $(listItem).append(nameHtml);
+
+                            var operatorHtml = $("<span>", {
                                 'class': 'readable-rule-operator',
-                                'text': ruleBuilder.getOperatorLabelByOperatorType(ruleDTO.operator)
+                                'text': operator
                             });
 
-                            $(listItem).append(name);
-                            $(listItem).append(operator);
+                            $(listItem).append(operatorHtml);
 
-                            if (valueString !== undefined) {
-                                var value = $("<span>", {
+                            var values = allRules[key];
+                            if (values && values.length) {
+                                var valueHtml = $("<span>", {
                                     'class': 'readable-rule-value',
-                                    'html': valueString
+                                    'html':"<strong>" + values.join("</strong> OR <strong>") + "</strong>"
                                 });
-                                $(listItem).append(value);
+                                $(listItem).append(valueHtml);
                             }
 
                             $(listElement).append(listItem);
-                        }
+                        });
                     }
                     $(readableElement).parent().addClass('can-edit');
 

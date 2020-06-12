@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 
 import java.util.List;
 
@@ -64,4 +65,12 @@ public interface SearchFacetDao {
      * @return the SearchFacet for the given field
      */
     public SearchFacet readSearchFacetForField(Field field);
+
+    /**
+     * Returns a list of SearchFacetRanges for a given SearchFacet
+     *
+     * @param searchFacet the SearchFacet to use
+     * @return the SearchFacetRanges for the given SearchFacet
+     */
+    public List<SearchFacetRange> readSearchFacetRangesForSearchFacet(SearchFacet searchFacet);
 }

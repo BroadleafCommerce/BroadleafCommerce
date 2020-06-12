@@ -17,29 +17,44 @@
  */
 package org.broadleafcommerce.common.web.filter;
 
+import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This filter adds security response headers to help protect against MIME type confusion and Cross-Site-Scripting attacks. 
+ * This filter adds security response headers to help protect against MIME type confusion, Cross-Site-Scripting and Clickjacking attacks. 
  * 
  * @author Chad Harchar (charchar)
  */
 @Component("blSecurityHeaderFilter")
 public class SecurityHeaderFilter extends OncePerRequestFilter {
+    
+    @Resource(name = "blBaseUrlResolver")
+    BaseUrlResolver baseUrlResolver;
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         response.setHeader("X-Content-Type-Options", "nosniff");
         response.setHeader("X-XSS-Protection", "1; mode=block");
+
+
+        if (BLCSystemProperty.resolveBooleanSystemProperty("security.header.x.frame.options", false)) {
+            response.setHeader("X-Frame-Options", "SAMEORIGIN");
+        }
+        
+        if (BLCSystemProperty.resolveBooleanSystemProperty("security.header.content.security.policy", false)) {
+            response.setHeader("Content-Security-Policy", "frame-ancestors " + baseUrlResolver.getAdminBaseUrl() + " " + baseUrlResolver.getSiteBaseUrl());
+        }
         
         filterChain.doFilter(request, response);
         return;

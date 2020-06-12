@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -86,7 +87,12 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
         Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                 .parseExpression(arguments.getConfiguration(), arguments, elementValue);
         String assetPath = (String) expression.execute(arguments.getConfiguration(), arguments);
-        
+
+        // If this is an image tag, we want to fallback to default images for non-image files
+        if ("img".equals(element.getOriginalName()) && BroadleafRequestContext.getBroadleafRequestContext().getAdmin()) {
+            assetPath = getAssetImagePath(assetPath, arguments);
+        }
+
         // We are forcing an evaluation of @{} from Thymeleaf above which will automatically add a contextPath, no need to
         // add it twice
         assetPath = staticAssetPathService.convertAssetPath(assetPath, null, secureRequest);
@@ -94,6 +100,33 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
         attrs.put("src", assetPath);
         
         return attrs;
+    }
+
+    protected String getAssetImagePath(String assetPath, Arguments arguments) {
+        Expression expression;
+        String extension;
+        int extensionStartIndex = assetPath.lastIndexOf(".") + 1;
+        int queryStartIndex = assetPath.lastIndexOf("?");
+        if (queryStartIndex > 0) {
+            extension = assetPath.substring(extensionStartIndex, queryStartIndex);
+        } else {
+            extension = assetPath.substring(extensionStartIndex);
+        }
+
+        String queryString = (queryStartIndex > 0) ? assetPath.substring(queryStartIndex) : "";
+        if (!isImageExtension(extension)) {
+            assetPath = getDefaultFileTypeImage(extension);
+        } else {
+            return assetPath;
+        }
+
+        // Add the query string back to the url
+        assetPath = "@{ " + assetPath + queryString + " }";
+
+        // Process and return the new image path
+        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, assetPath);
+        return (String) expression.execute(arguments.getConfiguration(), arguments);
     }
 
     @Override
@@ -109,5 +142,40 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
     @Override
     protected boolean recomputeProcessorsAfterExecution(Arguments arguments, Element element, String attributeName) {
         return false;
+    }
+
+    protected Boolean isImageExtension(String extension) {
+        String imageExtensions = BLCSystemProperty.resolveSystemProperty("admin.image.file.extensions");
+        if (imageExtensions.contains(extension)) {
+            return true;
+        }
+        return false;
+    }
+
+    protected String getDefaultFileTypeImage(String extension) {
+        String imageUrl;
+        switch (extension) {
+            case "txt":
+                imageUrl = "/img/admin/file-txt.png";
+                break;
+            case "pdf":
+                imageUrl = "/img/admin/file-pdf.png";
+                break;
+            case "doc":
+            case "docx":
+                imageUrl = "/img/admin/file-doc.png";
+                break;
+            case "xls":
+            case "xlsx":
+                imageUrl = "/img/admin/file-xls.png";
+                break;
+            case "ppt":
+            case "pptx":
+                imageUrl = "/img/admin/file-ppt.png";
+                break;
+            default:
+                imageUrl = "/img/admin/file-unkn.png";
+        }
+        return imageUrl;
     }
 }

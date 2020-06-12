@@ -108,7 +108,7 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
         if (deproxiedOffer == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
 
-            if (postLoaderDao != null) {
+            if (postLoaderDao != null && offer.getId() != null) {
                 Long id = offer.getId();
                 deproxiedOffer = postLoaderDao.find(OfferImpl.class, id);
             } else if (offer instanceof HibernateProxy) {

@@ -21,16 +21,23 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author gdiaz
@@ -40,11 +47,21 @@ public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceH
 
     private static final Log LOG = LogFactory.getLog(SearchFacetRangeCustomPersistenceHandler.class);
 
+    private static String[] sortFields = new String[] { "embeddablePriceList.priceList", "minValue", "maxValue" };
+
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
+        return canHandle(persistencePackage);
+    }
+
+    @Override
+    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+        return canHandle(persistencePackage);
+    }
+
+    public Boolean canHandle(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         return SearchFacetRangeImpl.class.getName().equals(ceilingEntityFullyQualifiedClassname);
-
     }
 
     @Override
@@ -53,11 +70,8 @@ public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceH
 
         PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
         DynamicResultSet results = myModule.fetch(persistencePackage, cto);
-
         return results;
     }
-
-    private static String[] sortFields = new String[] { "embeddablePriceList.priceList", "minValue", "maxValue" };
 
     protected void addDefaultSort(CriteriaTransferObject cto) {
         boolean userSort = false;
@@ -81,4 +95,30 @@ public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceH
         }
     }
 
+    @Override
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper)
+            throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+
+        try {
+            SearchFacetRange adminInstance = getAdminInstance(persistencePackage, dynamicEntityDao, helper, entity);
+            if (Status.class.isAssignableFrom(adminInstance.getClass())) {
+                ((Status) adminInstance).setArchived('Y');
+                dynamicEntityDao.merge(adminInstance);
+            }
+        } catch (Exception e) {
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+        }
+    }
+
+    protected SearchFacetRange getAdminInstance(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper,
+                                       Entity entity) throws ClassNotFoundException {
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchFacetRange.class.getName(), persistencePerspective);
+        Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+        String type = entity.getType()[0];
+        SearchFacetRange adminInstance = (SearchFacetRange) dynamicEntityDao.retrieve(Class.forName(type), primaryKey);
+
+        return adminInstance;
+    }
 }

@@ -76,7 +76,42 @@ public interface SandBoxHelper {
      */
     Long getSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
 
+    /**
+     * Find the production sandbox clone, if any, in the current site for the supplied type and primary key value. The
+     * assumption is that the primary key value supplied is from a parent catalog or profile. Since these are multitenant
+     * concepts, the response from this method should only be non-null when the multitenant module is loaded and active.
+     * When multitenant is used, changes can "cascade" through catalogs or profiles, finally ending at a standard site level.
+     *
+     * @param linkedObjectType
+     * @param requestedParent
+     * @return
+     */
     Long getCascadedProductionStateId(Class<?> linkedObjectType, Long requestedParent);
+
+    /**
+     * Find the production version of an entity in the current catalog. The idVal supplied is presumably from a parent
+     * catalog from which the current catalog is derived. This is different than {@link #getCascadedProductionStateId(Class, Long)}
+     * in that the other is only targeting the production state existing as an override in a standard site. However, in contrast,
+     * this method will find the current production version in the current catalog related to a parent catalog version id, regardless
+     * if the current catalog belongs to a standard site or a template site.
+     *
+     * @param ceilingImpl
+     * @param requestedParent
+     * @param em
+     * @return
+     */
+    Long retrieveCascadedState(Class<?> ceilingImpl, Long requestedParent, EntityManager em);
+
+    /**
+     * Determine if the current entity is related via propagation inheritance to any of the candidate primary key
+     * values. If you have one of more parent catalog primary key values for the current entity type, then this is a
+     * convenient way to determine if the current entity directly inherits from one or more of them.
+     *
+     * @param entity
+     * @param candidateRelatedIds
+     * @return
+     */
+    boolean isRelatedToParentCatalogIds(Object entity, Long... candidateRelatedIds);
 
     /**
      * Return the original id for the requested id. Will return the passed in id if
@@ -125,6 +160,13 @@ public interface SandBoxHelper {
      * @return whether or not a reject is currently taking place
      */
     boolean isReject();
+
+    /**
+     * Is the current thread involved in a replay operation (i.e. promote, revert, reject, approve and sync).
+     *
+     * @return whether or not there is a replay operation in progress
+     */
+    boolean isReplayOperation();
 
     /**
      * For the passed in code block (Runnable), whether or not sandbox entities marked

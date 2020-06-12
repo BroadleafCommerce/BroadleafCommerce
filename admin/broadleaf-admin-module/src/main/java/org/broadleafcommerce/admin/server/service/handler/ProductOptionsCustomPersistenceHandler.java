@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -52,6 +53,9 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
 
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
@@ -120,8 +124,9 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
      */
     protected boolean needsAllowedValue(ProductOption adminInstance) {
         // validate "Use in Sku generation"
-        // Check if "use in sku generation" is true and that there are allowed values set
-        if (adminInstance.getUseInSkuGeneration()) {
+        // Check during a save (not in a replay operation) if "use in sku generation" is true
+        // and that there are allowed values set
+        if (adminInstance.getUseInSkuGeneration() && !sandBoxHelper.isReplayOperation()) {
             Long count = productOptionDao.countAllowedValuesForProductOptionById(adminInstance.getId());
             return count.equals(0L);
         }

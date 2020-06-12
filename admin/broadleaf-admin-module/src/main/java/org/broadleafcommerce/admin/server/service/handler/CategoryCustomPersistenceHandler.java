@@ -47,6 +47,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -57,8 +58,10 @@ import javax.annotation.Resource;
  */
 @Component("blCategoryCustomPersistenceHandler")
 public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-    
+
     private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
+    
+    protected static final String DEFAULT_PARENT_CATEGORY = "defaultParentCategory";
 
     @Resource(name = "blCategoryCustomPersistenceHandlerExtensionManager")
     protected CategoryCustomPersistenceHandlerExtensionManager extensionManager;
@@ -87,7 +90,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         if (!isDefaultCategoryLegacyMode()) {
             md.remove("allParentCategoryXrefs");
 
-            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get("defaultParentCategory"));
+            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) md.get(DEFAULT_PARENT_CATEGORY));
             defaultCategory.setFriendlyName("CategoryImpl_ParentCategory");
         }
 
@@ -98,49 +101,76 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
         try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Category adminInstance = (Category) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
-            adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            adminInstance = dynamicEntityDao.merge(adminInstance);
-            boolean handled = false;
-            if (extensionManager != null) {
-                ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForAdd(persistencePackage, adminInstance);
-                handled = ExtensionResultStatusType.NOT_HANDLED != result;
-            }
-            if (!handled) {
-                setupXref(adminInstance);
-            }
-            adminInstance = dynamicEntityDao.merge(adminInstance);
+            entity = validateParentCategory(entity, true);
 
-            return helper.getRecord(adminProperties, adminInstance, null, null);
+            if (entity.isValidationFailure()) {
+                return entity;
+            } else {
+                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+                Category adminInstance = (Category) Class.forName(entity.getType()[0]).newInstance();
+                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+                adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
+                boolean handled = false;
+                if (extensionManager != null) {
+                    ExtensionResultStatusType result = extensionManager.getProxy()
+                            .manageParentCategoryForAdd(persistencePackage, adminInstance);
+                    handled = ExtensionResultStatusType.NOT_HANDLED != result;
+                }
+                if (!handled) {
+                    setupXref(adminInstance);
+                }
+                adminInstance = dynamicEntityDao.merge(adminInstance);
+
+                return helper.getRecord(adminProperties, adminInstance, null, null);
+            }
         } catch (Exception e) {
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
 
+    protected Entity validateParentCategory(Entity entity, boolean isAdd) {
+        String defaultParentCategoryId = (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null)
+                ? entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue() : null;
+        String categoryId = entity.findProperty("id").getValue();
+
+        if (!isAdd && Objects.equals(defaultParentCategoryId, categoryId)) {
+            entity.addValidationError(DEFAULT_PARENT_CATEGORY, "admin.cantAddCategoryAsOwnParent");
+        }
+
+        return entity;
+    }
+
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
+        
         try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
-            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            Category adminInstance = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            CategoryXref oldDefault = getCurrentDefaultXref(adminInstance);
-            adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            adminInstance = dynamicEntityDao.merge(adminInstance);
-            boolean handled = false;
-            if (extensionManager != null) {
-                ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForUpdate(persistencePackage, adminInstance);
-                handled = ExtensionResultStatusType.NOT_HANDLED != result;
-            }
-            if (!handled) {
-                setupXref(adminInstance);
-                removeOldDefault(adminInstance, oldDefault, entity);
-            }
+            entity = validateParentCategory(entity, false);
+            
+            if (entity.isValidationFailure()) {
+                return entity;
+            } else {
+                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+                Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+                Category adminInstance = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+                CategoryXref oldDefault = getCurrentDefaultXref(adminInstance);
+                adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+                adminInstance = dynamicEntityDao.merge(adminInstance);
+                boolean handled = false;
+                if (extensionManager != null) {
+                    ExtensionResultStatusType result = extensionManager.getProxy()
+                            .manageParentCategoryForUpdate(persistencePackage, adminInstance);
+                    handled = ExtensionResultStatusType.NOT_HANDLED != result;
+                }
+                if (!handled) {
+                    setupXref(adminInstance);
+                    removeOldDefault(adminInstance, oldDefault, entity);
+                }
 
-            return helper.getRecord(adminProperties, adminInstance, null, null);
+                return helper.getRecord(adminProperties, adminInstance, null, null);
+            }
         } catch (Exception e) {
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
@@ -158,7 +188,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         //Make sure we get the actual field value - not something manipulated in the getter
         Category parentCategory;
         try {
-            Field defaultCategory = CategoryImpl.class.getDeclaredField("defaultParentCategory");
+            Field defaultCategory = CategoryImpl.class.getDeclaredField(DEFAULT_PARENT_CATEGORY);
             defaultCategory.setAccessible(true);
             parentCategory = (Category) defaultCategory.get(category);
         } catch (NoSuchFieldException e) {
@@ -171,7 +201,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     protected void removeOldDefault(Category adminInstance, CategoryXref oldDefault, Entity entity) {
         if (!isDefaultCategoryLegacyMode()) {
-            if (entity.findProperty("defaultParentCategory") != null && StringUtils.isEmpty(entity.findProperty("defaultParentCategory").getValue())) {
+            if (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null && StringUtils.isEmpty(entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue())) {
                 adminInstance.setParentCategory(null);
             }
             CategoryXref newDefault = getCurrentDefaultXref(adminInstance);
@@ -205,5 +235,4 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         }
         return currentDefault;
     }
-
 }

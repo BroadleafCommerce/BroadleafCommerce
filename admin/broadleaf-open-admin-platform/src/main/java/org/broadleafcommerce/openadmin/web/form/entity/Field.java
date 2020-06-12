@@ -58,6 +58,7 @@ public class Field {
     protected Boolean isMainEntityLink;
     protected Boolean isFilterSortDisabled;
     protected Boolean isResizeDisabled;
+    protected Boolean isContentOverflowAllowed;
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
     protected Boolean isDirty;
@@ -300,6 +301,10 @@ public class Field {
     public Boolean getResizeDisabled() {
         return isResizeDisabled == null ? false : isResizeDisabled;
     }
+
+    public Boolean getContentOverflowAllowed() {
+        return isContentOverflowAllowed == null ? false : isContentOverflowAllowed;
+    }
     
     public Object getAttribute(String key) {
         return getAttributes().get(key);
@@ -492,6 +497,10 @@ public class Field {
     public void setResizeDisabled(Boolean isResizeDisabled) {
         this.isResizeDisabled = isResizeDisabled;
     }
+
+    public void setContentOverflowAllowed(Boolean isContentOverflowAllowed) {
+            this.isContentOverflowAllowed = isContentOverflowAllowed;
+        }
     
     public Boolean getIsDerived() {
         return isDerived == null ? false : isDerived;

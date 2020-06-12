@@ -394,7 +394,7 @@ $(document).ready(function() {
 
         BLC.ajax({
             url: BLCAdmin.buildUrlWithParams($(this).closest('form').attr('action'), oldParams),
-            type: "GET",
+            type: "GET"
         }, function(data) {
             if ($(data).find('table').length === 1 && (BLCAdmin.currentModal() === undefined || BLCAdmin.currentModal().length === 0)) {
                 BLCAdmin.history.replaceUrlParameter('startIndex');
@@ -412,12 +412,13 @@ $(document).ready(function() {
                     $relatedListGrid = $(data).find("div.listgrid-container");
                 }
             }
-            BLCAdmin.listGrid.replaceRelatedCollection($relatedListGrid, null, { isRefresh : false});
-            $firstInput.trigger('input');
 
-            if (search == "") {
+            if (search === "") {
                 BLCAdmin.history.replaceUrlParameter($firstInput.data('name'), null);
             }
+
+            BLCAdmin.listGrid.replaceRelatedCollection($relatedListGrid, null, { isRefresh : false});
+            $firstInput.trigger('input');
 
             // update the filter builder
             var hiddenId = $('.filter-button').data('hiddenid');

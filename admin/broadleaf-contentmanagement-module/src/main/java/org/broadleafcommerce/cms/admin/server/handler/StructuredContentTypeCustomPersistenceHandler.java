@@ -239,7 +239,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             Map<String, StructuredContentFieldXref> structuredContentFieldMap =
                     structuredContent.getStructuredContentFieldXrefs();
             for (Property property : persistencePackage.getEntity().getProperties()) {
-                if (templateFieldNames.contains(property.getName())) {
+                if (property.getEnabled() && templateFieldNames.contains(property.getName())) {
                     StructuredContentFieldXref scXref = structuredContentFieldMap.get(property.getName());
                     if (scXref != null && scXref.getStructuredContentField() != null) {
                         StructuredContentField structuredContentField = scXref.getStructuredContentField();

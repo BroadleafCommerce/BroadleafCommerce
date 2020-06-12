@@ -91,6 +91,13 @@ public interface StaticAssetService {
     public String getStaticAssetUrlPrefix();
 
     /**
+     * Return a prefixed version of the given asset url, assuming a static asset url prefix is set
+     * @param assetUrl
+     * @return
+     */
+    public String getPrefixedStaticAssetUrl(String assetUrl);
+
+    /**
      * @see StaticAssetPathService#getStaticAssetEnvironmentUrlPrefix()
      * @deprecated since 3.1.0. 
      */

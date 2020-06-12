@@ -40,7 +40,8 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
-        List<OfferCode> offerCodes = offerService.buildOfferCodeListForCustomer(order.getCustomer());
+        List<OfferCode> offerCodes = offerService.buildOfferCodeListForCustomer(order);
+        
         if (offerCodes != null && !offerCodes.isEmpty()) {
             order = orderService.addOfferCodes(order, offerCodes, false);
         }

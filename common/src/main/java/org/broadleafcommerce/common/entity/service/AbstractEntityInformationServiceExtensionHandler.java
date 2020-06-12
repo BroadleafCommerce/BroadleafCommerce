@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 
 import java.util.List;
+import java.util.Set;
 
 public class AbstractEntityInformationServiceExtensionHandler extends AbstractExtensionHandler
         implements EntityInformationServiceExtensionHandler {
@@ -36,6 +37,11 @@ public class AbstractEntityInformationServiceExtensionHandler extends AbstractEx
 
     @Override
     public ExtensionResultStatusType getBaseProfileIdForSite(Site site, ExtensionResultHolder<Long> erh) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType getChildSiteIdsForProfile(Site profile, ExtensionResultHolder<Set<Long>> erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

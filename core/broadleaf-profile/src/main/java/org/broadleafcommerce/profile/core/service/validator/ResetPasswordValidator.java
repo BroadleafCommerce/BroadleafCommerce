@@ -24,9 +24,6 @@ import org.springframework.validation.Validator;
 
 @Component("blResetPasswordValidator")
 public class ResetPasswordValidator implements Validator {
-    
-    private String validPasswordRegex = RegistrationValidator.DEFAULT_VALID_PASSWORD_REGEX;
-
     public void validate(String username, String password, String confirmPassword, Errors errors) {
         if (StringUtils.isEmpty(password)) {
             errors.reject("password", "password.required");
@@ -37,7 +34,7 @@ public class ResetPasswordValidator implements Validator {
         }
         
         if (! errors.hasErrors()) {
-            if (! password.matches(validPasswordRegex)) {
+            if (! password.matches(RegistrationValidator.getValidPasswordRegex())) {
                 errors.rejectValue("password", "password.invalid", null, null);
             } else {
                 if (!password.equals(confirmPassword)) {
@@ -53,14 +50,5 @@ public class ResetPasswordValidator implements Validator {
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
-    }
-    
-    public String getValidPasswordRegex() {
-        return validPasswordRegex;
-    }
-
-    public void setValidPasswordRegex(String validPasswordRegex) {
-        this.validPasswordRegex = validPasswordRegex;
-    }
+    public void validate(Object target, Errors errors) {}
 }

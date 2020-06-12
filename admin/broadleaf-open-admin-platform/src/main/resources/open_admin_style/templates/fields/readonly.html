@@ -7,7 +7,7 @@
         <a th:if="*{fields['__${field.name}__'].media != null and fields['__${field.name}__'].media.url != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}"
             th:href="@{*{fields['__${field.name}__'].media.url}}" target="_blank">
             <img class="thumbnail"
-                th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
+                blc:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
         </a>
         <input type="hidden" th:field="*{fields['__${field.name}__'].value}" />
     </span>

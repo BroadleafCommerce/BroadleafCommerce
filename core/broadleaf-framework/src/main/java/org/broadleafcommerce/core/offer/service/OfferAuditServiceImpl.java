@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.service;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,12 +59,25 @@ public class OfferAuditServiceImpl implements OfferAuditService {
     public OfferAudit create() {
         return offerAuditDao.create();
     }
+
+    @Override
+    public Long countUsesByCustomer(Order order, Long customerId, Long offerId) {
+        return offerAuditDao.countUsesByCustomer(order, customerId, offerId);
+    }
     
+    
+    @Deprecated
     @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
         return offerAuditDao.countUsesByCustomer(customerId, offerId);
     }
 
+    @Override
+    public Long countOfferCodeUses(Order order, Long offerCodeId) {
+        return offerAuditDao.countOfferCodeUses(order, offerCodeId);
+    }
+    
+    @Deprecated
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
         return offerAuditDao.countOfferCodeUses(offerCodeId);

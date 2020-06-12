@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.logging.SupportLogger;
 import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
 
 import java.io.Reader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -63,7 +65,14 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
             
             // Any MySQL-specific newlines replace with special character newlines
             newCommand = newCommand.replaceAll(NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
-            
+            // Any MySQL CHAR functions with CHR
+            Pattern charPattern = Pattern.compile("CHAR\\((\\d+)\\)");
+            Matcher charMatcher = charPattern.matcher(newCommand);
+            if (charMatcher.find()) {
+                String charCode = charMatcher.group(1);
+                newCommand = charMatcher.replaceAll("CHR(" + charCode + ")");
+            }
+
             newCommands[i] = newCommand;
             i++;
         }

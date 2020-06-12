@@ -18,6 +18,9 @@
 package org.broadleafcommerce.core.offer.domain;
 
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 
@@ -27,7 +30,7 @@ import java.math.BigDecimal;
  * @author bpolster
  *
  */
-public interface OfferTier extends Comparable<OfferTier>{
+public interface OfferTier extends Comparable<OfferTier>, Serializable, MultiTenantCloneable<OfferTier> {
 
     /**
      * Returns the unique id of the offer tier.

@@ -73,7 +73,9 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
     OrderService mockOrderService = Mock()
     OrderItemService mockOrderItemService = Mock()
     CatalogService mockCatalogService = Mock()
-    ProductOptionValidationService mockProductOptionValidationService = Spy(ProductOptionValidationServiceImpl)
+    ProductOptionValidationService mockProductOptionValidationService = Spy(ProductOptionValidationServiceImpl) {
+        findSkuIdsForProductOptionValues(*_) >> []
+    }
     
     def setup() {
         activity = Spy(ValidateAddRequestActivity).with {
@@ -140,7 +142,14 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
         }
         
         Sku testSku = new SkuImpl()
+        testSku.id = 1l
         testSku.setProductOptionValueXrefs([valueXref] as Set)
+        activity.productOptionValidationService = Spy(ProductOptionValidationServiceImpl) {
+            findSkuIdsForProductOptionValues(*_) >> [1l]
+        }
+        activity.catalogService = Mock(CatalogService) {
+            findSkuById(1l) >> testSku
+        }
         
         ProductImpl testProduct = new ProductImpl().with {
             productOptionXrefs = [new ProductOptionXrefImpl().with {

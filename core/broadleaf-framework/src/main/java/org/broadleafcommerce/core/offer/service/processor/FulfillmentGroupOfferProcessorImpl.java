@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -179,6 +180,9 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
                     fgOffers.remove(j);
                 }
             }
+
+            filterOffersByQualifyingAndSubtotalRequirements(order, fgOffers);
+            
             for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
                 if (potential.getTotalSavings().getAmount().equals(BankersRounding.zeroAmount())) {
                     BroadleafCurrency currency = order.getOrderCurrency();
@@ -228,6 +232,26 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         }
 
         return fgOfferApplied;
+    }
+
+    protected void filterOffersByQualifyingAndSubtotalRequirements(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> fgOffers) {
+        Iterator<PromotableCandidateFulfillmentGroupOffer> fgOffersIterator = fgOffers.iterator();
+
+        while (fgOffersIterator.hasNext()) {
+            PromotableCandidateFulfillmentGroupOffer offer = fgOffersIterator.next();
+
+            if (!orderMeetsQualifyingSubtotalRequirements(order, offer) || !orderMeetsSubtotalRequirements(order, offer)) {
+                fgOffersIterator.remove();
+            }
+        }
+    }
+
+    protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateFulfillmentGroupOffer fgOffer) {
+        return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, fgOffer.getOffer(), fgOffer.getCandidateQualifiersMap());
+    }
+
+    protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateFulfillmentGroupOffer fgOffer) {
+        return offerServiceUtilities.orderMeetsSubtotalRequirements(order, fgOffer.getOffer());
     }
 
     protected boolean compareAndAdjustFulfillmentGroupOffers(PromotableOrder order, boolean fgOfferApplied) {

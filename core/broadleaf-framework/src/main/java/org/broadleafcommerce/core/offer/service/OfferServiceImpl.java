@@ -175,7 +175,7 @@ public class OfferServiceImpl implements OfferService {
         }
         List<Offer> globalOffers = lookupAutomaticDeliveryOffers();
         for (Offer globalOffer : globalOffers) {
-            if (!offers.contains(globalOffer) && verifyMaxCustomerUsageThreshold(order.getCustomer(), globalOffer)) {
+            if (!offers.contains(globalOffer) && verifyMaxCustomerUsageThreshold(order, globalOffer)) {
                 offers.add(globalOffer);
             }
         }
@@ -187,6 +187,27 @@ public class OfferServiceImpl implements OfferService {
         return offers;
     }
 
+    @Override
+    public List<OfferCode> buildOfferCodeListForCustomer(Order order) {
+        Customer customer = order.getCustomer();
+        ArrayList<OfferCode> offerCodes = new ArrayList<>();
+        
+        if (extensionManager != null) {
+            extensionManager.buildOfferCodeListForCustomer(customer, offerCodes);
+        }
+        if (!offerCodes.isEmpty()) {
+            Iterator<OfferCode> itr = offerCodes.iterator();
+            while (itr.hasNext()) {
+                OfferCode offerCode = itr.next();
+                if (!offerCode.isActive() || !verifyMaxCustomerUsageThreshold(order, offerCode)) {
+                    itr.remove();
+                }
+            }
+        }
+        return offerCodes;
+    }
+    
+    @Deprecated
     @Override
     public List<OfferCode> buildOfferCodeListForCustomer(Customer customer) {
         ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
@@ -439,20 +460,51 @@ public class OfferServiceImpl implements OfferService {
         }
         return order;
     }
-    
+
     @Override
-    public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer) {
-        if (offer.isLimitedUsePerCustomer()) {                
-            Long currentUses = offerAuditService.countUsesByCustomer(customer.getId(), offer.getId());
+    public boolean verifyMaxCustomerUsageThreshold(Order order, Offer offer) {
+        Customer customer = order.getCustomer();
+        
+        if (offer.isLimitedUsePerCustomer()) {
+            Long currentUses = offerAuditService.countUsesByCustomer(order, customer.getId(), offer.getId());
+            
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
             }
         }
+        
         return true;
     }
     
+    @Deprecated
     @Override
-    public boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, OfferCode code) {
+    public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer) {
+        if (offer.isLimitedUsePerCustomer()) {                
+            Long currentUses = offerAuditService.countUsesByCustomer(customer.getId(), offer.getId());
+            
+            if (currentUses >= offer.getMaxUsesPerCustomer()) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    @Override
+    public boolean verifyMaxCustomerUsageThreshold(Order order, OfferCode code) {
+        boolean underCodeMaxUses = true;
+        
+        if (code.isLimitedUse()) {
+            Long currentCodeUses = offerAuditService.countOfferCodeUses(order, code.getId());
+            underCodeMaxUses = currentCodeUses < code.getMaxUses();
+        }
+        
+        return underCodeMaxUses && verifyMaxCustomerUsageThreshold(order, code.getOffer());
+    }
+
+    @Deprecated
+    @Override
+    public boolean verifyMaxCustomerUsageThreshold(Customer customer, OfferCode code) {
         boolean underCodeMaxUses = true;
         if (code.isLimitedUse()) {
             Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());

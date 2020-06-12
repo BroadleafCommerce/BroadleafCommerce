@@ -22,9 +22,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-
+import java.util.Set;
 import javax.annotation.Resource;
 
 /**
@@ -48,6 +47,13 @@ public class EntityInformationServiceImpl implements EntityInformationService {
     public Long getBaseProfileIdForSite(Site site) {
         ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
         extensionManager.getProxy().getBaseProfileIdForSite(site, erh);
+        return erh.getResult();
+    }
+
+    @Override
+    public Set<Long> getChildSiteIdsForProfile(Site profile) {
+        ExtensionResultHolder<Set<Long>> erh = new ExtensionResultHolder<>();
+        extensionManager.getProxy().getChildSiteIdsForProfile(profile, erh);
         return erh.getResult();
     }
 

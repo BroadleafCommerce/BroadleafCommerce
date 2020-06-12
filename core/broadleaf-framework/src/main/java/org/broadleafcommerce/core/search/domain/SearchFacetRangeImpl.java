@@ -18,6 +18,8 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -60,7 +62,8 @@ import javax.persistence.Table;
         @AdminPresentationOverride(name = "priceList.friendlyName", value = @AdminPresentation(excluded = false, friendlyName = "PriceListImpl_Friendly_Name", order = 1, gridOrder = 1, group = "SearchFacetRangeImpl_Description", prominent = true, visibility = VisibilityEnum.FORM_HIDDEN))
 })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
@@ -86,11 +89,11 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
     protected SearchFacet searchFacet = new SearchFacetImpl();
 
     @Column(name = "MIN_VALUE", precision = 19, scale = 5, nullable = false)
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_minValue", order = 2, gridOrder = 2, group = "SearchFacetRangeImpl_Description", prominent = true)
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_minValue", order = 3, gridOrder = 10, group = "SearchFacetRangeImpl_Description", prominent = true)
     protected BigDecimal minValue;
 
     @Column(name = "MAX_VALUE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_maxValue", order = 3, gridOrder = 3, group = "SearchFacetRangeImpl_Description", prominent = true, validationConfigurations = {
+    @AdminPresentation(friendlyName = "SearchFacetRangeImpl_maxValue", order = 4, gridOrder = 11, group = "SearchFacetRangeImpl_Description", prominent = true, validationConfigurations = {
             @ValidationConfiguration(
                     validationImplementation = "blMaxGreaterThanMinValidator",
                     configurationItems = {
@@ -137,6 +140,28 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
     @Override
     public void setMaxValue(BigDecimal maxValue) {
         this.maxValue = maxValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(1, 31)
+                .append(searchFacet)
+                .append(minValue)
+                .append(maxValue)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+            SearchFacetRangeImpl other = (SearchFacetRangeImpl) obj;
+            return new EqualsBuilder()
+                    .append(searchFacet, other.searchFacet)
+                    .append(minValue, other.minValue)
+                    .append(maxValue, other.maxValue)
+                    .build();
+        }
+        return false;
     }
 
     @Override

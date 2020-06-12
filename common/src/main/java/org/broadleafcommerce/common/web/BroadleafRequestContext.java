@@ -18,9 +18,6 @@
 package org.broadleafcommerce.common.web;
 
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -42,14 +39,19 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+
+import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -118,7 +120,7 @@ public class BroadleafRequestContext {
     protected Catalog currentCatalog;
     protected Site currentProfile;
     protected Boolean ignoreSite = false;
-    protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    protected Map<String, Object> additionalProperties = new HashMap<>();
     protected MessageSource messageSource;
     protected RequestDTO requestDTO;
     protected Boolean isAdmin = false;
@@ -129,6 +131,7 @@ public class BroadleafRequestContext {
     protected Boolean internalIgnoreFilters = false;
     protected ValidateProductionChangesState validateProductionChangesState = ValidateProductionChangesState.UNDEFINED;
     protected EnforceEnterpriseCollectionBehaviorState enforceEnterpriseCollectionBehaviorState = EnforceEnterpriseCollectionBehaviorState.UNDEFINED;
+    protected Boolean internalValidateFind = false;
 
     /**
      * Gets the current request on the context
@@ -465,10 +468,28 @@ public class BroadleafRequestContext {
     }
 
     /**
-     * Intended for internal use only
+     * Used to ignore all of the underlying automatic Hibernate filters applied by Broadleaf (e.g. for sandboxing, multi-tenant and archiving filters).
      */
     public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
         this.internalIgnoreFilters = internalIgnoreFilters;
+    }
+
+    /**
+     * @see #setInternalValidateFind(Boolean)}
+     */
+    public Boolean getInternalValidateFind() {
+        return internalValidateFind;
+    }
+
+    /**
+     * Only relevant in multi-tenant scenarios with site-level overrides in a catalog or profile, and only when querying by primary key
+     * (e.g. using em.find()). Normally querying directly by ID does not engage the clone cache or any filter restrictions across sibling
+     * sites. This is done for performance reasons. Activating this behavior ensures that em.find() _does_ engage the clone cache and
+     * validation across sibling sites. Generally this is only used within API use cases where you often query for objects on their ID. In all
+     * other types of queries (e.g. using query.getResultList()) the automatic filtration and overriding is already applied.
+     */
+    public void setInternalValidateFind(Boolean internalValidateFind) {
+        this.internalValidateFind = internalValidateFind;
     }
 
     public DeployState getDeployState() {

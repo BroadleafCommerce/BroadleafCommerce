@@ -22,6 +22,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -42,7 +43,9 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -180,44 +183,22 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     }
 
     protected Sku findMatchingSku(Product product, Map<String, String> attributeValuesForSku) {
-        for (Sku sku : ListUtils.emptyIfNull(product.getAdditionalSkus())) {
-            if (isMatchingSku(sku, attributeValuesForSku)) {
-                return sku;
+        Sku matchingSku = null;
+        List<Long> possibleSkuIds = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : MapUtils.emptyIfNull(attributeValuesForSku).entrySet()) {
+            possibleSkuIds = productOptionValidationService.findSkuIdsForProductOptionValues(product.getId(), entry.getKey(), entry.getValue(), possibleSkuIds);
+
+            if (CollectionUtils.isEmpty(possibleSkuIds)) {
+                break;
             }
         }
 
-        return null;
-    }
-
-    protected boolean isMatchingSku(Sku sku, Map<String,String> attributeValues) {
-        if (MapUtils.isEmpty(attributeValues)) {
-            return false;
-        } else {
-            for (String attributeName : attributeValues.keySet()) {
-                boolean optionValueMatchFound = false;
-
-                for (SkuProductOptionValueXref productOptionValueXref : sku.getProductOptionValueXrefs()) {
-                    ProductOptionValue productOptionValue = productOptionValueXref.getProductOptionValue();
-                    boolean isSameAttribute = productOptionValue.getProductOption().getAttributeName().equals(attributeName);
-
-                    if (isSameAttribute) {
-                        optionValueMatchFound = productOptionValue.getAttributeValue().equals(attributeValues.get(attributeName));
-
-                        if (optionValueMatchFound) {
-                            break;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-
-                if (!optionValueMatchFound) {
-                    return false;
-                }
-            }
-
-            return true;
+        if (CollectionUtils.isNotEmpty(possibleSkuIds)) {
+            matchingSku = catalogService.findSkuById(possibleSkuIds.iterator().next());
         }
+
+        return matchingSku;
     }
 
     protected void addSkuToCart(Sku sku, OrderItemRequestDTO orderItemRequestDTO, Product product, CartOperationRequest request) {
@@ -266,7 +247,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     }
 
     protected boolean hasSameCurrency(OrderItemRequestDTO orderItemRequestDTO, CartOperationRequest request, Sku sku) {
-        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO || sku == null || sku.getCurrency() == null) {
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO || sku == null || sku.getCurrency() == null || request.getOrder().getCurrency() == null) {
             return true;
         } else {
             BroadleafCurrency orderCurrency = request.getOrder().getCurrency();

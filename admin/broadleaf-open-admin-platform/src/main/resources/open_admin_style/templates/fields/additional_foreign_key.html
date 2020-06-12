@@ -38,6 +38,7 @@
                 <input class="display-value read-only form-control" type="text" th:value="*{fields['__${field.name}__'].displayValue}" readonly="readonly"/>
                 <span class="input-group-btn">
                     <button class="clear-foreign-key secondary button"
+                            th:classappend="${field.readOnly}? 'read-only'"
                             th:disabled="${field.readOnly}"
                             type="button" th:inline="text"
                             th:unless="${field.required}"
@@ -46,9 +47,10 @@
                     </button>
 
                     <button class="to-one-lookup secondary button"
+                            th:classappend="${field.readOnly}? 'read-only'"
                             th:disabled="${field.readOnly}"
                             type="button" th:inline="text"
-                            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
+                            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + #uris.escapePathSegment(field.name) + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
                                  data-dynamic-field=${field.attributes['dynamicField']},
                                  data-confirm=${field.isConfirmEnabled},
                                  data-confirm-text=${field.confirmEnabledText}">
@@ -66,7 +68,7 @@
                 th:disabled="${field.readOnly}"
                 th:placeholder="#{typeahead.placeholder(#{${field.friendlyName}})}"
                 th:value="*{fields['__${field.name}__'].displayValue}"
-                th:attr="data-typeahead-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/typeahead'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})}" />
+                th:attr="data-typeahead-url=@{${'/' + field.owningEntityClass + '/' + #uris.escapePathSegment(field.name) + '/typeahead'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})}" />
         </div>
 
         <span class="error" th:errors="*{fields['__${field.name}__'].value}" />

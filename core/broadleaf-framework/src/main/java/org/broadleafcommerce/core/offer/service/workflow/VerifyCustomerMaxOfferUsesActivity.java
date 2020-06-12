@@ -54,7 +54,8 @@ public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<ProcessCont
         
         for (Offer offer : appliedOffers) {
             if (offer.isLimitedUsePerCustomer()) {
-                Long currentUses = offerAuditService.countUsesByCustomer(order.getCustomer().getId(), offer.getId());
+                Long currentUses = offerAuditService.countUsesByCustomer(order, order.getCustomer().getId(), offer.getId());
+                
                 if (currentUses >= offer.getMaxUsesPerCustomer()) {
                     throw new OfferMaxUseExceededException("The customer has used this offer more than the maximum allowed number of times.");
                 }
@@ -64,7 +65,7 @@ public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<ProcessCont
         //TODO: allow lenient checking on offer code usage
         for (OfferCode code : order.getAddedOfferCodes()) {
             if (code.isLimitedUse()) {
-                Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());
+                Long currentCodeUses = offerAuditService.countOfferCodeUses(order, code.getId());
                 if (currentCodeUses >= code.getMaxUses()) {
                     throw new OfferMaxUseExceededException("Offer code " + code.getOfferCode() + " with id " + code.getId()
                             + " has been than the maximum allowed number of times.");

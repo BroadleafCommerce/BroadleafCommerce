@@ -46,6 +46,16 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
+    public Long retrieveCascadedState(Class<?> ceilingImpl, Long requestedParent, EntityManager em) {
+        return requestedParent;
+    }
+
+    @Override
+    public boolean isRelatedToParentCatalogIds(Object entity, Long... candidateRelatedIds) {
+        return false;
+    }
+
+    @Override
     public List<Long> mergeCloneIds(Class<?> type, Long... originalIds) {
         return Arrays.asList(originalIds);
     }
@@ -84,6 +94,11 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
 
     @Override
     public boolean isReject() {
+        return false;
+    }
+
+    @Override
+    public boolean isReplayOperation() {
         return false;
     }
 

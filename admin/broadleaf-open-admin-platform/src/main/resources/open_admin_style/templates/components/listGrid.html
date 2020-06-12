@@ -16,7 +16,8 @@
                         data-path=@{${listGrid.path}},
                         data-hiddenid=${listGrid.jsonFieldName},
                         data-currentparams=${currentParams},
-                        data-sectioncrumbs=${sectionCrumbs}"
+                        data-sectioncrumbs=${sectionCrumbs},
+                        data-fetchType=${listGrid.fetchType}"
                blc_admin:component_id="${listGrid}">
             <thead>
                 <tr>
@@ -91,13 +92,19 @@
             </thead>
             <tbody th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
                             data-totalrecords=${listGrid.totalRecords},
-                            data-pagesize=${listGrid.pageSize}">
+                            data-pagesize=${listGrid.pageSize},
+                            data-firstid=${listGrid.firstId},
+                            data-lastid=${listGrid.lastId},
+                            data-uppercount=${listGrid.upperCount},
+                            data-lowercount=${listGrid.lowerCount},
+                            data-lessthanpagesize=${listGrid.totalCountLessThanPageSize}">
 
                 <tr th:if="${#lists.isEmpty(listGrid.records)}" class="list-grid-no-results">
                     <td class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'"/>
                     <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
                         <td colspan="2" th:if="${index.count == 1}">
-                            (No records found)
+                            <span th:remove="tag" th:if="${listGrid.promptSearch}" th:text="#{listgrid.prompt.search}" />
+                            <span th:remove="tag" th:unless="${listGrid.promptSearch}" th:text="#{listgrid.no.records}" />
                         </td>
 
                         <td th:unless="${index.count == 1}"></td>
@@ -126,7 +133,8 @@
                         th:with="field=${record.getField(headerField.name)}"
                         th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
                         th:title="${field.displayValue}"
-                        th:class="${field.isDerived ? 'derived' : ''}">
+                        th:class="${field.isDerived ? 'derived' : ''}"
+                        th:style="${headerField.contentOverflowAllowed?'overflow: visible;':''}">
 
                         <span th:case="'main'" th:remove="tag">
                             <span th:substituteby="components/partials/listGridIcon"></span>
@@ -143,7 +151,7 @@
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
                                 <img class="thumbnail" th:style="${'width: 100%;'}"
-                                    th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                    blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
                                     th:attr="data-fullurl=@{${field.value}}" />
                             </span>
 
@@ -168,7 +176,7 @@
 
                             <span th:if="${field.fieldType == 'IMAGE'}">
                                 <img class="thumbnail" th:style="${'width: 100%;'}"
-                                     th:src="@{${field.value + '?largeAdminThumbnail'}}"
+                                     blc:src="@{${field.value + '?largeAdminThumbnail'}}"
                                      th:attr="data-fullurl=@{${field.value}}" />
                             </span>
 
@@ -202,7 +210,7 @@
 
                                 <span th:if="${field.fieldType == 'IMAGE'}">
                                     <img class="thumbnail" th:style="${'width: 100%;'}"
-                                        th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                        blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
                                         th:attr="data-fullurl=@{${field.value}}" />
                                 </span>
 
@@ -246,13 +254,24 @@
 
     <div class="listgrid-table-footer" th:inline="text">
         <span class="listgrid-table-footer-message" th:inline="text">
-            <span class="low-index" th:if="${listGrid.records}" th:text="${listGrid.startIndex + 1}"></span>
-            <span class="low-index" th:unless="${listGrid.records}">0</span>
-            -
-            <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}"></span>
-            <span th:text="${'of'}"></span>
-            <span class="total-records" th:text="${#lists.size(listGrid.records)}"></span>
-            <span th:text="${'records'}"></span>
+            <span th:style="${listGrid.fetchType=='LARGERESULTSET'?'display:inline':'display:none'}" class="page-results">
+                <a class="previous-page" th:text="'&lt;'+#{listgrid.page.previous}"/>
+                <span class="first-index" th:if="${#lists.size(listGrid.records) &gt; 1}" th:text="${listGrid.startIndex + 1}" />
+                <span class="first-index" th:unless="${#lists.size(listGrid.records) &gt; 1}">0</span>
+                -
+                <span class="last-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
+                <a class="next-page" th:text="#{listgrid.page.next}+'&gt;'"/>
+                <div class="result-page-size" style="padding-top: 5px"><span th:text="#{listgrid.page.size}+'&nbsp;&nbsp;:&nbsp;&nbsp;'"/><input type="text" class="result-page-size-input" style="height: 24px"/></div>
+            </span>
+            <span th:style="${listGrid.fetchType=='DEFAULT'?'display:inline':'display:none'}" class="scroll-results">
+                <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
+                <span class="low-index" th:unless="${records}">0</span>
+                -
+                <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
+                <span th:text="${'of'}"/>
+                <span class="total-records" th:text="${#lists.size(listGrid.records)}" />
+                <span th:text="${'records'}"/>
+            </span>
         </span>
     </div>
 

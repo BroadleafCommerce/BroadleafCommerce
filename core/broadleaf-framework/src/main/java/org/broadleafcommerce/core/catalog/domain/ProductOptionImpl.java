@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -88,7 +87,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
         group = GroupName.General, order = FieldOrder.name,
         prominent = true, gridOrder = 1000)
     protected String name;
-    
+
     @Column(name = "OPTION_TYPE")
     @AdminPresentation(friendlyName = "productOption_Type",
         group = GroupName.General, order = FieldOrder.type,
@@ -121,9 +120,8 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration",
         group = GroupName.Details, order = FieldOrder.useInSkuGeneration,
         tooltip = "productOption_useInSkuGenerationTip",
-        defaultValue = "true",
-        validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUseInSkuGenerationValidator") })
-    private Boolean useInSkuGeneration = Boolean.TRUE;
+        defaultValue = "false")
+    private Boolean useInSkuGeneration = Boolean.FALSE;
 
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder",
@@ -170,13 +168,13 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @AdminPresentationCollection(friendlyName = "ProductOptionImpl_Allowed_Values",
         group = GroupName.General,
         addType = AddMethodType.PERSIST)
-    protected List<ProductOptionValue> allowedValues = new ArrayList<ProductOptionValue>();
+    protected List<ProductOptionValue> allowedValues = new ArrayList<>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @ClonePolicyCollectionOverride
-    protected List<ProductOptionXref> products = new ArrayList<ProductOptionXref>();
+    protected List<ProductOptionXref> products = new ArrayList<>();
     
     @Override
     public Long getId() {
@@ -260,7 +258,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
 
     @Override
     public List<Product> getProducts() {
-        List<Product> response = new ArrayList<Product>();
+        List<Product> response = new ArrayList<>();
         for (ProductOptionXref xref : products) {
             response.add(xref.getProduct());
         }

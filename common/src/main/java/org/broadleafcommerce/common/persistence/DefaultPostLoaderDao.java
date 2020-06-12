@@ -64,4 +64,10 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     public <T> T find(Class<T> clazz, Object id) {
         return em.find(clazz, id);
     }
+
+    @Override
+    public <T> T findSandboxEntity(Class<T> clazz, Object id) {
+        return em.find(clazz, id);
+    }
+
 }

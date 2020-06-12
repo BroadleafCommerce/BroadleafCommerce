@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.weave;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -45,7 +46,11 @@ public class ConditionalDirectCopyTransformersManagerImpl implements BeanFactory
     @PostConstruct
     public void init() {
         for (Map.Entry<String, ConditionalDirectCopyTransformMemberDto> entry : entityToPropertyMap.entrySet()) {
-            if (isPropertyEnabled(entry.getValue().getConditionalProperty())) {
+            if (!StringUtils.isEmpty(entry.getValue().getConditionalProperty())) {
+                if (isPropertyEnabled(entry.getValue().getConditionalProperty())) {
+                    enabledEntities.put(entry.getKey(), entry.getValue());
+                }
+            } else if (entry.getValue().getConditionalValue() != null && entry.getValue().getConditionalValue()) {
                 enabledEntities.put(entry.getKey(), entry.getValue());
             }
         }
