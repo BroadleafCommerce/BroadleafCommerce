@@ -40,7 +40,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_CUSTOMER_ATTRIBUTE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProfileElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCustomerElements")
 public class CustomerAttributeImpl implements CustomerAttribute {
 
     /** The Constant serialVersionUID. */
