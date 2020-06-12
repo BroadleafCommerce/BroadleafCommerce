@@ -36,7 +36,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CHALLENGE_QUESTION")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProfileElements")
 @AdminPresentationClass(friendlyName = "ChallengeQuestionImpl_baseChallengeQuestion")
 public class ChallengeQuestionImpl implements ChallengeQuestion {
 
