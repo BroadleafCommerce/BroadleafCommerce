@@ -28,4 +28,5 @@ public enum PurgeCustomerVariableNames {
     ,SITE //looking for customers that belong to a particular site (generally only meaningful in an multi-tenant context)
     ,BATCH_SIZE //the max size of the purge batch (null results in the batch size matching the number of qualified customers to purge)
     ,RETRY_FAILED_SECONDS //the number of seconds that a failed purge should be ignored before being retrying
+    ,USE_SPEC //whether to use the spec purge process
 }

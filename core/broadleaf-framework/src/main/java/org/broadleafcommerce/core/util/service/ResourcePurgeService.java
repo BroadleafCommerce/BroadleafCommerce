@@ -39,4 +39,6 @@ public interface ResourcePurgeService {
 
     void purgeCustomers(final Map<String, String> config);
 
+    void purgeCustomersFromSpec(final Map<String, String> config);
+
 }

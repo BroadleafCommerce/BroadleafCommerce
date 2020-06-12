@@ -77,36 +77,49 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
 
     @Override
     public List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, List<Long> excludedIds) {
-        TypedQuery<Customer> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Customer.class, excludedIds);
+        TypedQuery<Customer> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Customer.class, excludedIds, false);
         return query.getResultList();
     }
 
     @Override
     public List<Customer> findCustomers(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, int startPos, int length, List<Long> excludedIds) {
         TypedQuery<Customer> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview,
-                Customer.class, excludedIds);
+                Customer.class, excludedIds, false);
         query.setFirstResult(startPos);
         query.setMaxResults(length);
         return query.getResultList();
     }
 
     @Override
+    public List<Long> findCustomerIds(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, int startPos, int length, List<Long> excludedIds) {
+        TypedQuery<Long> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview,
+                Long.class, excludedIds, false);
+        query.setFirstResult(startPos);
+        query.setMaxResults(length);
+        return query.getResultList();
+    }
+
+    
+    @Override
     public Long findCustomersCount(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, List<Long> excludedIds) {
-        TypedQuery<Long> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Long.class, excludedIds);
+        TypedQuery<Long> query = buildCustomerQuery(dateCreatedMinThreshold, registered, deactivated, isPreview, Long.class, excludedIds, true);
         return query.getSingleResult();
     }
 
     protected <T> TypedQuery<T> buildCustomerQuery(Date dateCreatedMinThreshold, Boolean registered, Boolean deactivated, Boolean isPreview, Class<T> returnType,
-            List<Long> excludedIds) {
+            List<Long> excludedIds, boolean isCount) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> criteria = builder.createQuery(returnType);
         Root<CustomerImpl> root = criteria.from(CustomerImpl.class);
-        if (Long.class.equals(returnType)) {
-            criteria.select((Selection<? extends T>) builder.count(root));
+        if (Customer.class.equals(returnType)) {
+            criteria.select((Selection<? extends T>) root);            
         } else {
-            criteria.select((Selection<? extends T>) root);
+            if (isCount) {
+                criteria.select((Selection<? extends T>) builder.count(root));
+            } else {
+                criteria.select((Selection<? extends T>) root.get("id").as(Long.class));
+            }
         }
-
         //find only customers that do not have any orders, otherwise a purge would fail because of referential integrity
         Subquery<Long> subquery = criteria.subquery(Long.class);
         Root orderRoot = subquery.from(OrderImpl.class);
@@ -148,7 +161,7 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         return em.createQuery(criteria);
     }
-
+    
     protected <T> void applyLimitedInClause(List<Long> ids, CriteriaBuilder builder, Root<T> root, List<Predicate> restrictions) {
         List<List<Long>> listsOfExcludeIds = Lists.partition(ids, RESTRICT_IN_CLAUSE_MAX_SIZE);
         List<Predicate> inRestrictions = new ArrayList<Predicate>();
