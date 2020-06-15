@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>5.0.9.1-GA</version>
+    <version>5.0.9.2-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -49,7 +49,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>broadleaf-5.0.9.1-GA</tag>
+        <tag>broadleaf-5.0.9-GA</tag>
     </scm>
     <build>
         <pluginManagement>
