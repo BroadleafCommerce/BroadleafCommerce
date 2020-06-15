@@ -40,7 +40,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProfileElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCountryElements")
 @AdminPresentationClass(friendlyName = "StateImpl_baseState")
 public class StateImpl implements State {
 

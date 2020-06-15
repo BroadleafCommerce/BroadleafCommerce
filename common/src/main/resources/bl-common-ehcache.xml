@@ -36,7 +36,7 @@
     </cache>
     
     <cache
-        name="blProfileElements"
+        name="blCountryElements"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="true"
