@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.purge;
 import org.springframework.stereotype.Component;
 
 /**
- * Default specificatoin for the customer purge.  
+ * Default specification for the customer purge.  
  * 
  * @author dcolgrove
  *
