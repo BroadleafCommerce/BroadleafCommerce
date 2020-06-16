@@ -639,7 +639,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.8.3</version>
+                <version>1.9.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -1260,7 +1260,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>22.0</version>
+                <version>24.1.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>de.jkeylockmanager</groupId>
