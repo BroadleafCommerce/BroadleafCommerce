@@ -1616,7 +1616,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>12.0</version>
+                <version>24.1.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>de.jkeylockmanager</groupId>
