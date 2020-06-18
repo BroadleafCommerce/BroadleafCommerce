@@ -41,11 +41,11 @@ import java.util.regex.Pattern;
 public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlCommandExtractor {
 
     public static final String NEWLINE_REPLACEMENT_REGEX = "\\\\r\\\\n";
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoPostgresSingleLineSqlCommandExtractor.class);
-    
+
     @Override
     public String[] extractCommands(Reader reader) {
         String[] commands = super.extractCommands(reader);
@@ -53,16 +53,7 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
         int i = 0;
         for (String command : commands) {
             String newCommand = command;
-            
-            // Replacing all double single quotes with double double quotes to simplify regex. Original regex caused
-            // StackOverFlow exception by exploiting a known issue in java. See - http://bugs.java.com/view_bug.do?bug_id=5050507
-            newCommand = newCommand.replaceAll("''", "\"\"");
-            
-            // Find all string values being set and put an 'E' outside. This has to be done in Postgres so that escapes
-            // are evaluated correctly
-            newCommand = newCommand.replaceAll("('.*?')", "E$1");
-            newCommand = newCommand.replaceAll("\"\"", "''");
-            
+
             // Any MySQL-specific newlines replace with special character newlines
             newCommand = newCommand.replaceAll(NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
             // Any MySQL CHAR functions with CHR
@@ -72,6 +63,15 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
                 String charCode = charMatcher.group(1);
                 newCommand = charMatcher.replaceAll("CHR(" + charCode + ")");
             }
+
+            // Replacing all double single quotes with double double quotes to simplify regex. Original regex caused
+            // StackOverFlow exception by exploiting a known issue in java. See - http://bugs.java.com/view_bug.do?bug_id=5050507
+            newCommand = newCommand.replaceAll("''", "\"\"");
+
+            // Find all string values being set and put an 'E' outside. This has to be done in Postgres so that escapes
+            // are evaluated correctly
+            newCommand = newCommand.replaceAll("('.*?')", "E$1");
+            newCommand = newCommand.replaceAll("\"\"", "''");
 
             newCommands[i] = newCommand;
             i++;
