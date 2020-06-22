@@ -15,7 +15,12 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
@@ -24,11 +29,9 @@ import javax.cache.configuration.Configuration;
 import javax.cache.integration.CompletionListener;
 import javax.cache.processor.EntryProcessor;
 import javax.cache.processor.EntryProcessorException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
-public class DummyCache implements Cache {
+public class NoOpCache implements Cache {
+
     @Override
     public Object get(Object o) {
         return null;

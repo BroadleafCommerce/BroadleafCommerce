@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.extensibility.jpa;
 
 import org.broadleafcommerce.common.extensibility.cache.DefaultJCacheUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor;
 
@@ -25,9 +26,16 @@ import java.util.Properties;
 
 public class JCachePersistenceUnitPostProcessor implements PersistenceUnitPostProcessor {
 
+    @Value("${jcache.disable.cache:false}")
+    protected Boolean disableCache;
+
     @Override
     public void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo pui) {
         Properties properties = pui.getProperties();
+        if (disableCache) {
+            properties.setProperty("hibernate.cache.use_second_level_cache", "false");
+            properties.setProperty("hibernate.cache.use_query_cache", "false");
+        }
         properties.setProperty("hibernate.javax.cache.uri", DefaultJCacheUtil.JCACHE_MERGED_XML_RESOUCE_URI.toString());
     }
 

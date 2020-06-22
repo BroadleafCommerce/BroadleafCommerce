@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.extensibility.cache.jcache;
 
 import org.apache.commons.io.IOUtils;
 import org.broadleafcommerce.common.extensibility.cache.ehcache.DefaultEhCacheUtil;
-import org.broadleafcommerce.common.extensibility.cache.ehcache.DummyCacheManager;
+import org.broadleafcommerce.common.extensibility.cache.ehcache.NoOpCacheManager;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
 import org.springframework.beans.BeansException;
@@ -77,8 +77,8 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
     
     protected List<Resource> configLocations;
 
-    @Value("${use.dummy.cache:false}")
-    protected boolean useDummyCache;
+    @Value("${jcache.disable.cache:false}")
+    protected boolean disableCache;
     
     //We use EhCache as the default.  Provide the URI that referrs to a merged JCache (typically EhCache) XML file that will be created
     protected URI cacheManagerUri = DefaultEhCacheUtil.JCACHE_MERGED_XML_RESOUCE_URI;
@@ -90,8 +90,8 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
 
     @Override
     public void afterPropertiesSet() {
-        if(useDummyCache){
-            this.cacheManager = new DummyCacheManager();
+        if(disableCache){
+            this.cacheManager = new NoOpCacheManager();
             return;
         }
 

@@ -15,19 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.Properties;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 import javax.cache.spi.CachingProvider;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Properties;
 
-public class DummyCacheManager implements CacheManager {
+public class NoOpCacheManager implements CacheManager {
 
-    private DummyCache dummyCache = new DummyCache();
+    private NoOpCache noOpCache = new NoOpCache();
 
     @Override
     public CachingProvider getCachingProvider() {
@@ -51,17 +53,17 @@ public class DummyCacheManager implements CacheManager {
 
     @Override
     public <K, V, C extends Configuration<K, V>> Cache<K, V> createCache(String s, C c) throws IllegalArgumentException {
-        return dummyCache;
+        return noOpCache;
     }
 
     @Override
     public <K, V> Cache<K, V> getCache(String s, Class<K> aClass, Class<V> aClass1) {
-        return dummyCache;
+        return noOpCache;
     }
 
     @Override
     public <K, V> Cache<K, V> getCache(String s) {
-        return dummyCache;
+        return noOpCache;
     }
 
     @Override
