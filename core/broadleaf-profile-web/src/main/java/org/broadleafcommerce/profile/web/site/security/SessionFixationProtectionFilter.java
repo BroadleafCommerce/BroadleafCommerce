@@ -50,8 +50,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Andre Azzolini (apazzolini)
  *
- *
- * @deprecated use either {@link https://javadoc.io/doc/org.springframework.security/spring-security-web/latest/org/springframework/security/web/authentication/session/SessionFixationProtectionStrategy.html} instead
+ * @deprecated Use {@link org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy} instead
  */
 @Deprecated
 @Component("blSessionFixationProtectionFilter")
