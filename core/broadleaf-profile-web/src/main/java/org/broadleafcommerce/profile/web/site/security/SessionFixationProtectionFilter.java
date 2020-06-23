@@ -49,7 +49,10 @@ import javax.servlet.http.HttpSession;
  * user to "/" and remove his session cookie.
  *
  * @author Andre Azzolini (apazzolini)
+ *
+ * @deprecated Use {@link org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy} instead
  */
+@Deprecated
 @Component("blSessionFixationProtectionFilter")
 public class SessionFixationProtectionFilter extends GenericFilterBean {
 
