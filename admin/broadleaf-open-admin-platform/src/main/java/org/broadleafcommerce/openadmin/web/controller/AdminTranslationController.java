@@ -36,7 +36,9 @@ import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.service.FormBuilderExtensionManager;
 import org.broadleafcommerce.openadmin.web.service.TranslationFormAction;
 import org.broadleafcommerce.openadmin.web.service.TranslationFormBuilderService;
 import org.springframework.stereotype.Controller;
@@ -48,7 +50,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,6 +68,9 @@ public class AdminTranslationController extends AdminAbstractController {
     @Resource(name = "blTranslationFormBuilderService")
     protected TranslationFormBuilderService formService;
 
+    @Resource(name = "blFormBuilderExtensionManager")
+    protected FormBuilderExtensionManager formBuilderExtensionManager;
+    
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
 
@@ -242,19 +246,25 @@ public class AdminTranslationController extends AdminAbstractController {
 
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
 
-        Translation t = translationService.findTranslationById(form.getTranslationId());
-        form.setTranslatedValue(t.getTranslatedValue());
+        Entity entity = service.getRecord(ppr, form.getTranslationId().toString(), cmd, false).getDynamicResultSet().getRecords()[0];
 
+        form.setTranslatedValue(entity.findProperty("translatedValue").getValue());
+        
         EntityForm entityForm = formService.buildTranslationForm(cmd, form, TranslationFormAction.UPDATE);
-        entityForm.setId(String.valueOf(form.getTranslationId()));
+        entityForm.setId(entity.findProperty(service.getIdProperty(cmd)).getValue());
 
+        formBuilderExtensionManager.getProxy().modifyPopulatedEntityForm(entityForm, entity);
+        formBuilderExtensionManager.getProxy().addAdditionalFormActions(entityForm);        
+
+        modifyRevertButton(entityForm);
+        
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_TRANSLATION.getType());
         return "modules/modalContainer";
     }
-
+    
     /**
      * Updates the given translation id to the new locale code and translated value
      * 
@@ -355,4 +365,15 @@ public class AdminTranslationController extends AdminAbstractController {
         return Translation.class.getName();
     }
 
+    /**
+     * Changing the default button class to "translation-revert-button" so that the JQuery action will be correct
+     * @param entityForm - EntityForm where revert action will be modified
+     */
+    protected void modifyRevertButton(EntityForm entityForm) {
+        EntityFormAction action = entityForm.findActionById("REVERT");
+        if (action != null) {
+            action.setButtonClass("translation-revert-button");            
+        }
+    }
+    
 }

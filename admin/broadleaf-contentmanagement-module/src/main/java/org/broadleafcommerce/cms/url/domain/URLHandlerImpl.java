@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.url.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -215,5 +217,34 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
         cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
         cloned.setRegexHandler(isRegex==null?false:isRegex);
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || !getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        URLHandlerImpl rhs = (URLHandlerImpl) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.incomingURL, rhs.incomingURL)
+                .append(this.newURL, rhs.newURL)
+                .append(this.urlRedirectType, rhs.urlRedirectType)
+                .append(this.isRegex, rhs.isRegex)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(incomingURL)
+                .append(newURL)
+                .append(urlRedirectType)
+                .append(isRegex)
+                .toHashCode();
     }
 }

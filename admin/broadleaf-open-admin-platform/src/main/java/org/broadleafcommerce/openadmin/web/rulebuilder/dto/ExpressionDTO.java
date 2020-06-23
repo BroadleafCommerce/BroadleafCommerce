@@ -18,6 +18,8 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -68,5 +70,15 @@ public class ExpressionDTO extends DataDTO implements Serializable {
                 .build();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(id)
+                .append(operator)
+                .append(value)
+                .toHashCode();
     }
 }

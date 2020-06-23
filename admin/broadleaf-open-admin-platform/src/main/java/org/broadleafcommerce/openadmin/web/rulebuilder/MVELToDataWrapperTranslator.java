@@ -120,6 +120,9 @@ public class MVELToDataWrapperTranslator {
 
     protected Boolean checkForInvalidSubGroup(DataDTO dataDTO) {
         for (DataDTO rules : dataDTO.getRules()) {
+            if(!rules.isCreatedFromSubGroup()){
+                continue;
+            }
             ArrayList<DataDTO> subRules = rules.getRules();
 
             if (CollectionUtils.size(subRules) == 2 && isExpressionDTO(subRules.get(0)) && isExpressionDTO(subRules.get(1))) {
@@ -153,11 +156,17 @@ public class MVELToDataWrapperTranslator {
         if (group.getOperatorType() == null) {
             group.setOperatorType(BLCOperator.AND);
         }
+        if(parentDTO == null){
+            data.setCreatedFromSubGroup(false);
+        }else{
+            data.setCreatedFromSubGroup(true);
+        }
         BLCOperator operator = group.getOperatorType();
         data.setCondition(operator.name());
         List<ExpressionDTO> myCriteriaList = new ArrayList<ExpressionDTO>();
         if (BLCOperator.NOT.equals(group.getOperatorType()) && group.getIsTopGroup()) {
             group = group.getSubGroups().get(0);
+            data.setCreatedFromSubGroup(true);
             group.setOperatorType(operator);
         }
         for (String phrase : group.getPhrases()) {
@@ -165,6 +174,11 @@ public class MVELToDataWrapperTranslator {
         }
         if (!myCriteriaList.isEmpty()) {
             data.getRules().addAll(myCriteriaList);
+        }
+        if(data.isCreatedFromSubGroup()){
+            for (DataDTO rule : data.getRules()) {
+                rule.setCreatedFromSubGroup(true);
+            }
         }
         for (Group subgroup : group.getSubGroups()) {
             DataDTO subCriteria = createRuleDataDTO(data, subgroup, fieldService);
@@ -190,7 +204,9 @@ public class MVELToDataWrapperTranslator {
         }
         SupportedFieldType type = fieldService.getSupportedFieldType(expression.getField());
         ExpressionDTO expressionDTO = createExpressionDTO(expression);
-
+        if(parentDTO!=null){
+            expressionDTO.setCreatedFromSubGroup(true);
+        }
         postProcessCriteria(parentDTO, myCriteriaList, expressionDTO, type);
     }
 
