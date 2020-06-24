@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.security.util.CookieUtils;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -68,44 +69,49 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
     @Qualifier("blCookieUtils")
     protected CookieUtils cookieUtils;
 
+    @Value("${filter.sessionFixationProtection.legacy.enabled:true}")
+    protected Boolean enabled;
+
     @Override
     public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) sRequest;
         HttpServletResponse response = (HttpServletResponse) sResponse;
         HttpSession session = request.getSession(false);
 
-        if (SecurityContextHolder.getContext() == null) {
-            chain.doFilter(request, response);
-        }
-
-        String activeIdSessionValue = (session == null) ? null : (String) session.getAttribute(SESSION_ATTR);
-
-        if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
-            // The request is secure and and we've set a session fixation protection cookie
-
-            String activeIdCookieValue = cookieUtils.getCookieValue(request, SessionFixationProtectionCookie.COOKIE_NAME);
-            String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
-
-            if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
-                abortUser(request, response);
-                LOG.info("Session has been terminated. ActiveID did not match expected value.");
-                return;
-            }
-        } else if (request.isSecure() && session != null) {
-            // If there is no session (session == null) then there isn't anything to worry about
-
-            // The request is secure, but we haven't set a session fixation protection cookie yet
-            String token;
-            try {
-                token = RandomGenerator.generateRandomId("SHA1PRNG", 32);
-            } catch (NoSuchAlgorithmException e) {
-                throw new ServletException(e);
+        if (enabled) {
+            if (SecurityContextHolder.getContext() == null) {
+                chain.doFilter(request, response);
             }
 
-            String encryptedActiveIdValue = encryptionModule.encrypt(token);
+            String activeIdSessionValue = (session == null) ? null : (String) session.getAttribute(SESSION_ATTR);
 
-            session.setAttribute(SESSION_ATTR, token);
-            cookieUtils.setCookieValue(response, SessionFixationProtectionCookie.COOKIE_NAME, encryptedActiveIdValue, "/", -1, true);
+            if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
+                // The request is secure and and we've set a session fixation protection cookie
+
+                String activeIdCookieValue = cookieUtils.getCookieValue(request, SessionFixationProtectionCookie.COOKIE_NAME);
+                String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
+
+                if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
+                    abortUser(request, response);
+                    LOG.info("Session has been terminated. ActiveID did not match expected value.");
+                    return;
+                }
+            } else if (request.isSecure() && session != null) {
+                // If there is no session (session == null) then there isn't anything to worry about
+
+                // The request is secure, but we haven't set a session fixation protection cookie yet
+                String token;
+                try {
+                    token = RandomGenerator.generateRandomId("SHA1PRNG", 32);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new ServletException(e);
+                }
+
+                String encryptedActiveIdValue = encryptionModule.encrypt(token);
+
+                session.setAttribute(SESSION_ATTR, token);
+                cookieUtils.setCookieValue(response, SessionFixationProtectionCookie.COOKIE_NAME, encryptedActiveIdValue, "/", -1, true);
+            }
         }
 
         chain.doFilter(request, response);
