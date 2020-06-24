@@ -82,7 +82,7 @@
             
             // Reassemble the new url
             var newUrl = baseUrl + '?';
-            for (i in paramObj) {
+            for (var i in paramObj) {
                 if (paramObj[i] != null) {
                     newUrl += i + '=' + paramObj[i] + '&';
                 }

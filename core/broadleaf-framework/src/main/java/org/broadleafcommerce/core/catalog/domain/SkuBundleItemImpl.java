@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -279,5 +281,42 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
             cloned.setBundle((ProductBundle) bundle.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || !getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        SkuBundleItemImpl rhs = (SkuBundleItemImpl) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.quantity, rhs.quantity)
+                .append(this.itemSalePrice, rhs.itemSalePrice)
+                .append(this.bundle, rhs.bundle)
+                .append(this.sku, rhs.sku)
+                .append(this.sequence, rhs.sequence)
+                .append(this.dynamicPrices, rhs.dynamicPrices)
+                .append(this.deproxiedSku, rhs.deproxiedSku)
+                .append(this.deproxiedBundle, rhs.deproxiedBundle)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(quantity)
+                .append(itemSalePrice)
+                .append(bundle)
+                .append(sku)
+                .append(sequence)
+                .append(dynamicPrices)
+                .append(deproxiedSku)
+                .append(deproxiedBundle)
+                .toHashCode();
     }
 }

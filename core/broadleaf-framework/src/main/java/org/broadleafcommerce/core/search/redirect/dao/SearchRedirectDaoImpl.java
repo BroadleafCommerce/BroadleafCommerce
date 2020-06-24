@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +38,6 @@ import javax.persistence.criteria.Root;
 /**
  * Created by ppatel.
  */
-@Repository("blSearchRedirectDao")
 public class SearchRedirectDaoImpl implements SearchRedirectDao {
 
     @PersistenceContext(unitName = "blPU")
@@ -48,7 +46,7 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
     @Value("${searchRedirect.is.null.activeStartDate.active:false}")
     protected boolean isNullActiveStartDateActive;
 
-    protected Long currentDateResolution = 10000L;
+    protected Long currentDateResolution;
     protected Date cachedDate = SystemTime.asDate();
 
     protected Date getCurrentDateAfterFactoringInDateResolution() {

@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,11 +30,14 @@ import org.broadleafcommerce.core.order.service.exception.ProductOptionValidatio
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
+import org.owasp.esapi.ESAPI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import javax.annotation.Resource;
 
 @Service("blProductOptionValidationService")
@@ -47,6 +49,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
 
     @Resource
     protected ProductOptionDao productOptionDao;
+
+    @Autowired
+    protected Environment environment;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.order.service.ProductOptionValidationService#validate(org.broadleafcommerce.core.catalog.domain.ProductOption, java.lang.String)
@@ -62,7 +67,7 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
             throw new RequiredAttributeNotProvidedException(message, attributeName);
         } else {
             String validationString = productOption.getValidationString();
-
+            value = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false")) ? ESAPI.encoder().decodeForHTML(value) : value;
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
                 String errorMessage = productOption.getErrorMessage();
                 String message = StringUtil.sanitize(errorMessage) + ". Value [" + StringUtil.sanitize(value)

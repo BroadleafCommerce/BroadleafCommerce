@@ -34,6 +34,9 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -62,10 +65,10 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
-        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO){
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO) {
             return context;
         }
-        
+
         Sku sku;
         Long orderItemId = request.getItemRequest().getOrderItemId();
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
@@ -80,7 +83,22 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
 
         Order order = context.getSeedData().getOrder();
         Integer requestedQuantity = request.getItemRequest().getQuantity();
-        checkSkuAvailability(order, sku, requestedQuantity);
+        Map<Sku, Integer> skuItems = new HashMap<>();
+        for (OrderItem orderItemFromOrder : order.getOrderItems()) {
+            Sku skuFromOrder = null;
+            if (orderItemFromOrder instanceof DiscreteOrderItem) {
+                skuFromOrder = ((DiscreteOrderItem) orderItemFromOrder).getSku();
+            } else if (orderItemFromOrder instanceof BundleOrderItem) {
+                skuFromOrder = ((BundleOrderItem) orderItemFromOrder).getSku();
+            }
+            if (skuFromOrder != null && skuFromOrder.equals(sku) && !orderItemFromOrder.equals(orderItem)) {
+                skuItems.merge(sku, orderItemFromOrder.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
+            }
+        }
+        skuItems.merge(sku, requestedQuantity, (oldVal, newVal) -> oldVal + newVal);
+        for (Map.Entry<Sku, Integer> entry : skuItems.entrySet()) {
+            checkSkuAvailability(order, entry.getKey(), entry.getValue());
+        }
 
         Integer previousQty = orderItem.getQuantity();
         for (OrderItem child : orderItem.getChildOrderItems()) {

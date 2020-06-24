@@ -75,11 +75,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     
     @Column(name = "TITLE")
     @Index(name="MEDIA_TITLE_INDEX", columnNames={"TITLE"})
-    @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order = 2, gridOrder = 2, prominent = true)
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order = 2, gridOrder = 2, prominent = true, translatable = true)
     protected String title;
     
     @Column(name = "ALT_TEXT")
-    @AdminPresentation(friendlyName = "MediaImpl_Media_Alt_Text", order = 3, gridOrder = 3, prominent = true)
+    @AdminPresentation(friendlyName = "MediaImpl_Media_Alt_Text", order = 3, gridOrder = 3, prominent = true, translatable = true)
     protected String altText;
     
     @Column(name = "TAGS")
@@ -109,7 +109,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     @Override
     public String getTitle() {
         if (TranslatedEntity.getInstance(Media.class.getName()) != null) {
-            return DynamicTranslationProvider.getValue(this, "title", this.title);
+            return DynamicTranslationProvider.getValue(this, "media__title", this.title);
         } else {
             return this.title;
         }
@@ -123,7 +123,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     @Override
     public String getAltText() {
         if (TranslatedEntity.getInstance(Media.class.getName()) != null) {
-            return DynamicTranslationProvider.getValue(this, "altText", this.altText);
+            return DynamicTranslationProvider.getValue(this, "media__altText", this.altText);
         } else {
             return this.altText;
         }
