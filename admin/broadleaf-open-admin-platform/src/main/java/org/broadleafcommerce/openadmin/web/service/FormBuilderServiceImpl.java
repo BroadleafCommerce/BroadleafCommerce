@@ -102,9 +102,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -121,6 +123,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -1064,7 +1067,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                      .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup())
                      .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity())
                      .withAssociatedFieldName(fmd.getAssociatedFieldName());
-
+                    if (f.getValue() == null || f.getValue().isEmpty()) {
+                        f.setValue(property.getValue());
+                        f.setDisplayValue(property.getValue());
+                    }
                     String defaultValue = fmd.getDefaultValue();
                     if (defaultValue != null) {
                         defaultValue = extractDefaultValueFromFieldData(fieldType, fmd);

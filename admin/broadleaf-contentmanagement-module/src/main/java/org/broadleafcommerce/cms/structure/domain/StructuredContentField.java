@@ -96,17 +96,5 @@ public interface StructuredContentField extends Serializable, Cloneable,MultiTen
      */
     public StructuredContentField clone();
 
-    /**
-     * Sets the default value of this custom field.
-     * @return
-     */
-    @Nonnull
-    public String getDefaultValue();
 
-    /**
-     * Sets the default value of this custom field.
-     * @return
-     */
-    @Nonnull
-    public void setDefaultValue(@Nonnull String value);
 }
