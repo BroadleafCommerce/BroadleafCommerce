@@ -54,6 +54,7 @@ public class DynamicFieldPersistenceHandlerHelper {
         property.setName(definition.getName());
         BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
         property.setMetadata(fieldMetadata);
+        property.setValue(definition.getDefaultValue());
         fieldMetadata.setFieldType(definition.getFieldType());
 
         fieldMetadata.setMutable(true);
@@ -194,6 +195,7 @@ public class DynamicFieldPersistenceHandlerHelper {
             fieldMetadata.setGroup(group.getName());
             fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
             fieldMetadata.setGroupOrder(groupOrder.intValue());
+
             propertiesList.add(property);
         }
     }

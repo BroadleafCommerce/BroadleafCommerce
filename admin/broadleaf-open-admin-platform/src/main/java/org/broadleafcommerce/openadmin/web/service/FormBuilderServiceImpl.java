@@ -1076,7 +1076,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                      .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup())
                      .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity())
                      .withAssociatedFieldName(fmd.getAssociatedFieldName());
-
+                    if (f.getValue() == null || f.getValue().isEmpty()) {
+                        f.setValue(property.getValue());
+                        f.setDisplayValue(property.getValue());
+                    }
                     String defaultValue = fmd.getDefaultValue();
                     if (defaultValue != null) {
                         defaultValue = extractDefaultValueFromFieldData(fieldType, fmd);

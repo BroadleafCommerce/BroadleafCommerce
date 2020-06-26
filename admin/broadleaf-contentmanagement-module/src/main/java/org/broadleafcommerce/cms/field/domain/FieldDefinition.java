@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 import java.io.Serializable;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by bpolster.
  */
@@ -112,4 +114,17 @@ public interface FieldDefinition extends Serializable, MultiTenantCloneable<Fiel
 
     public void setAdditionalForeignKeyClass(String className);
 
+    /**
+     * Sets the default value of this custom field.
+     * @return
+     */
+    @Nonnull
+    public String getDefaultValue();
+
+    /**
+     * Sets the default value of this custom field.
+     * @return
+     */
+    @Nonnull
+    public void setDefaultValue(@Nonnull String value);
 }

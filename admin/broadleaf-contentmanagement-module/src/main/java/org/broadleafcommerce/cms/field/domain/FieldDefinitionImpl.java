@@ -126,6 +126,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     @JoinColumn(name = "FLD_GROUP_ID")
     protected FieldGroup fieldGroup;
 
+
     @Column(name="FLD_ORDER")
     @AdminPresentation(friendlyName = "FieldDefinitionImpl_fieldOrder", order = 3000)
     protected Integer fieldOrder = 0;
@@ -138,6 +139,10 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
 
     @Column (name = "HINT")
     protected String hint;
+
+    @AdminPresentation
+    @Column (name = "DEFAULT_VALUE")
+    protected String defaultValue;
 
     @Override
     public Long getId() {
@@ -193,6 +198,17 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         }
         
         this.fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|' + className;
+    }
+
+    @Override
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+
+    @Override
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override
