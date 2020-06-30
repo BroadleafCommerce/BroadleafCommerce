@@ -17,11 +17,17 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.core.dao.CountrySubdivisionDao;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.Resource;
 
 /**
@@ -29,6 +35,10 @@ import javax.annotation.Resource;
  */
 @Service("blCountrySubdivisionService")
 public class CountrySubdivisionServiceImpl implements CountrySubdivisionService {
+
+    private static final Log LOG = LogFactory.getLog(CountrySubdivisionServiceImpl.class);
+
+    protected Map<String, Long> missCache = new ConcurrentHashMap<>();
 
     @Resource(name="blCountrySubdivisionDao")
     protected CountrySubdivisionDao countrySubdivisionDao;
@@ -55,7 +65,20 @@ public class CountrySubdivisionServiceImpl implements CountrySubdivisionService 
 
     @Override
     public CountrySubdivision findSubdivisionByCountryAndAltAbbreviation(String countryAbbreviation, String altAbbreviation) {
-        return countrySubdivisionDao.findSubdivisionByCountryAndAltAbbreviation(countryAbbreviation, altAbbreviation);
+        String cacheKey = getMissCacheKey(countryAbbreviation, altAbbreviation);
+        Long numMisses = missCache.get(cacheKey);
+        if (numMisses != null) {
+            missCache.put(cacheKey, ++numMisses);
+            if (numMisses % 10 == 0) {
+                LOG.error(String.format("No CountrySubdivision record for abbreviation = %s and alt abbreviation = %s. Missed " + numMisses + " times", countryAbbreviation, altAbbreviation));
+            }
+            return null;
+        }
+        CountrySubdivision retVal = countrySubdivisionDao.findSubdivisionByCountryAndAltAbbreviation(countryAbbreviation, altAbbreviation);
+        if (retVal == null) {
+            missCache.put(cacheKey, 1L);
+        }
+        return retVal;
     }
 
     @Override
@@ -67,5 +90,13 @@ public class CountrySubdivisionServiceImpl implements CountrySubdivisionService 
     @Transactional("blTransactionManager")
     public CountrySubdivision save(CountrySubdivision subdivision) {
         return countrySubdivisionDao.save(subdivision);
+    }
+
+    protected String getMissCacheKey(String... keys) {
+        StringBuilder sb = new StringBuilder();
+        for (String key : keys) {
+            sb.append(key);
+        }
+        return sb.toString();
     }
 }
