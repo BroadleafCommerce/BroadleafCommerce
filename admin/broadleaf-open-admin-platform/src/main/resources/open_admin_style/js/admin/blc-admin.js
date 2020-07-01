@@ -42,7 +42,12 @@ var BLCAdmin = (function($) {
                          '.asset-selector-container .media-image, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
                          'textarea:not(.redactor-box textarea), div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
-    
+
+    function checkFormFound() {
+        return BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0 &&
+            BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-add-entity-form').length === 0;
+    }
+
     function showModal($data, onModalHide, onModalHideArgs) {
         // If we already have an active modal, we don't need another backdrop on subsequent modals
         $data.modal({
@@ -96,7 +101,7 @@ var BLCAdmin = (function($) {
 
         // Only initialize all fields if NOT a normal EntityForm in modal
         // Should initialize for lookups
-        if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
+        if (checkFormFound()) {
             BLCAdmin.initializeFields(BLCAdmin.currentModal());
         } else {
             BLCAdmin.initializeModalTabs($data);
@@ -399,7 +404,7 @@ var BLCAdmin = (function($) {
 
                     // Only initialize all fields if NOT a normal EntityForm in modal
                     // Should initialize for lookups
-                    if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
+                    if (checkFormFound()) {
                         BLCAdmin.initializeFields(BLCAdmin.currentModal());
                     } else {
                         BLCAdmin.initializeModalTabs($data);
