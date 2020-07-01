@@ -18,16 +18,14 @@
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
 import org.broadleafcommerce.common.extensibility.cache.DefaultJCacheUtil;
-import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.ExpiryPolicy;
-import org.ehcache.jsr107.Eh107Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+import javax.cache.configuration.Configuration;
 
 /**
  * Allows an encapsulated way to create caches programmatically from an EhCache {@link CacheManager}.  
@@ -36,16 +34,15 @@ import javax.cache.CacheManager;
  * @author Kelly Tisdell
  *
  */
+@Component("blJCacheUtil")
+@ConditionalOnEhCache
 public class DefaultEhCacheUtil extends DefaultJCacheUtil {
-    
-    public DefaultEhCacheUtil() {
-        super();
-    }
     
     public DefaultEhCacheUtil(String uri) {
         super(uri);
     }
     
+    @Autowired
     public DefaultEhCacheUtil(CacheManager cacheManager) {
         super(cacheManager);
     }
@@ -66,21 +63,11 @@ public class DefaultEhCacheUtil extends DefaultJCacheUtil {
 
     @Override
     public synchronized <K, V> Cache<K, V> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value) {
-        ExpiryPolicy<Object, Object> expiryPolicy = determineExpiryPolicy(cacheName, ttlSeconds);
-        
-        CacheConfiguration<K, V> config = CacheConfigurationBuilder.
-                newCacheConfigurationBuilder(key, value, ResourcePoolsBuilder.heap((long)maxElementsInMemory))
-                .withExpiry(expiryPolicy)
-                .build();
-        
-        Cache<K,V> cache = getCacheManager().createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(config));
+        Configuration<K, V> configuration = builder.buildConfiguration(ttlSeconds, maxElementsInMemory, key, value);
+        Cache<K, V> cache = getCacheManager().createCache(cacheName, configuration);
         enableManagement(cache);
         enableStatistics(cache);
         return cache;
-    }
-    
-    protected ExpiryPolicy<Object, Object> determineExpiryPolicy(String cacheName, int defaultTTLSeconds) {
-        return new DefaultExpiryPolicy(defaultTTLSeconds);
     }
     
 }

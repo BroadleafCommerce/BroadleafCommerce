@@ -17,38 +17,24 @@
  */
 package org.broadleafcommerce.common.extensibility.cache.jcache;
 
-import org.apache.commons.io.IOUtils;
-import org.broadleafcommerce.common.extensibility.cache.ehcache.DefaultEhCacheUtil;
+import org.apache.commons.collections4.CollectionUtils;
+import org.broadleafcommerce.common.extensibility.cache.JCacheConfigurationBuilder;
+import org.broadleafcommerce.common.extensibility.cache.JCacheRegionConfiguration;
 import org.broadleafcommerce.common.extensibility.cache.ehcache.NoOpCacheManager;
-import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
-import org.broadleafcommerce.common.extensibility.context.merge.ResourceInputStream;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.Resource;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.cache.CacheManager;
 import javax.cache.Caching;
+import javax.cache.configuration.Configuration;
 import javax.cache.spi.CachingProvider;
 
 /**
@@ -59,7 +45,7 @@ import javax.cache.spi.CachingProvider;
  * @author Kelly Tisdell
  *
  */
-public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>, BeanClassLoaderAware, InitializingBean, DisposableBean, ApplicationContextAware {
+public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>, BeanClassLoaderAware, InitializingBean, DisposableBean {
     
     @Nullable
     private Properties cacheManagerProperties;
@@ -70,23 +56,23 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
     @Nullable
     private CacheManager cacheManager;
 
-    private ApplicationContext applicationContext;
-    
-    @javax.annotation.Resource(name="blMergedCacheConfigLocations")
-    protected Set<String> mergedCacheConfigLocations;
-    
-    protected List<Resource> configLocations;
-
     @Value("${jcache.disable.cache:false}")
     protected boolean disableCache;
     
-    //We use EhCache as the default.  Provide the URI that referrs to a merged JCache (typically EhCache) XML file that will be created
-    protected URI cacheManagerUri = DefaultEhCacheUtil.JCACHE_MERGED_XML_RESOUCE_URI;
-    
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+    @Autowired
+    protected JCacheUriProvider uriProvider;
+
+    @Autowired
+    protected JCacheConfigurationBuilder configBuilder;
+
+    @Autowired(required = false)
+    protected List<JCacheRegionConfiguration> cacheConfiguration;
+
+    @Value("${jcache.create.cache.ifMissing:true}")
+    protected boolean createIfMissing;
+
+    @Value("${jcache.create.cache.forceJavaConfig:false}")
+    protected boolean overrideWithJavaConfig;
 
     @Override
     public void afterPropertiesSet() {
@@ -95,47 +81,25 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
             return;
         }
 
-        if (getObject() != null && !getObject().isClosed() && getObject().getURI().equals(cacheManagerUri)) {
+        if (getObject() != null && !getObject().isClosed() && getObject().getURI().equals(uriProvider.getJCacheUri())) {
             return;
         }
         
         Caching.setDefaultClassLoader(getDefaultClassLoaderForProvider());
         CachingProvider provider = Caching.getCachingProvider();
         
-        List<Resource> resources = new ArrayList<>();
-        if (mergedCacheConfigLocations != null && !mergedCacheConfigLocations.isEmpty()) {
-            for (String location : mergedCacheConfigLocations) {
-                resources.add(applicationContext.getResource(location));
+        //The ClassLoader needs to be the same as what Hibernate expects (see org.hibernate.cache.jcache.internal.JCacheRegionFactory).
+        this.cacheManager = provider.getCacheManager(uriProvider.getJCacheUri(), 
+                provider.getDefaultClassLoader(), cacheManagerProperties);
+
+        if (createIfMissing) {
+            for (JCacheRegionConfiguration config : CollectionUtils.emptyIfNull(cacheConfiguration)) {
+                createCacheIfNotExists(config);
             }
         }
-        if (configLocations != null && !configLocations.isEmpty()) {
-            resources.addAll(configLocations);
-        }
-        try {
-            MergeXmlConfigResource merge = new MergeXmlConfigResource();
-            ResourceInputStream[] sources = new ResourceInputStream[resources.size()];
-            int j = 0;
-            for (Resource resource : resources) {
-                sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
-                j++;
-            }
 
-            Resource mergeResource = merge.getMergedConfigResource(sources);
-            createTemporaryMergeXml(mergeResource);
-            
-            //The ClassLoader needs to be the same as what Hibernate expects (see org.hibernate.cache.jcache.internal.JCacheRegionFactory).
-            this.cacheManager = provider.getCacheManager(cacheManagerUri,  
-                    provider.getDefaultClassLoader(), cacheManagerProperties);
-
-        } catch (Exception e) {
-            throw new FatalBeanException("Unable to merge cache locations", e);
-        }
     }
 
-    public void setConfigLocations(List<Resource> configLocations) throws BeansException {
-        this.configLocations = configLocations;
-    }
-    
     @Override
     @Nullable
     public CacheManager getObject() {
@@ -168,11 +132,6 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
         this.cacheManagerProperties = cacheManagerProperties;
     }
     
-    public void setCacheManagerUri(@NonNull URI cacheManagerUri) {
-        Assert.notNull(cacheManagerUri, "The CacheManager URI cannot be null.");
-        this.cacheManagerUri = cacheManagerUri;
-    }
-    
     protected ClassLoader getDefaultClassLoaderForProvider() {
         if (beanClassLoader != null) {
             return beanClassLoader;
@@ -180,16 +139,22 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
         return getClass().getClassLoader();
     }
     
-    protected File createTemporaryMergeXml(Resource mergedJcacheResource) throws FileNotFoundException, IOException {
-        File file = new File(cacheManagerUri);
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
+    protected void createCacheIfNotExists(JCacheRegionConfiguration config) {
+        boolean cacheMissing = cacheManager.getCache(config.getCacheName()) == null;
+        if (cacheMissing || overrideWithJavaConfig) {
+            if (!cacheMissing) {
+                cacheManager.destroyCache(config.getCacheName());
+            }
+            Configuration configuration = config.getConfiguration() != null ? config.getConfiguration() : configBuilder.buildConfiguration(config);
+            cacheManager.createCache(config.getCacheName(), configuration);
+            if (config.getEnableManagement() != null) {
+                cacheManager.enableManagement(config.getCacheName(), config.getEnableManagement());
+            }
+            if (config.getEnableStatistics() != null) {
+                cacheManager.enableStatistics(config.getCacheName(), config.getEnableStatistics());
+            }
         }
-        try (OutputStream outputStream = new FileOutputStream(file)) {
-            IOUtils.copy(mergedJcacheResource.getInputStream(), outputStream);
-        }
-        return file;
     }
+
 
 }
