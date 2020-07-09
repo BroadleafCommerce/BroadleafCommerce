@@ -425,7 +425,7 @@ public class DataDTOToMVELTranslator {
     }
 
     protected String buildFieldName(String entityKey, String fieldName) {
-        String response = entityKey + "." + fieldName;
+        String response = "?"+entityKey + "." + fieldName;
         response = response.replaceAll("\\.", ".?");
         return response;
     }
