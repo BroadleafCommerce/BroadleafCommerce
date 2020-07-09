@@ -31,12 +31,18 @@ import org.broadleafcommerce.core.util.service.type.PurgeCartVariableNames;
 import org.broadleafcommerce.core.util.service.type.PurgeCustomerVariableNames;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -153,7 +159,6 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
 
 
     @Override
-    @Transactional
     public void purgeHistory(Class<?> rootType, String rootTypeIdValue) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purging history");
@@ -168,21 +173,34 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             Date endDate = formatter.parse(dateEnd);
 
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
-            Map<String, String> deleteStatement;
+            Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?");
             for (Order order : ordersByDateRange) {
-                deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, order.getId().toString());
-
-                for (String key : deleteStatement.keySet()) {
-                    String sql = deleteStatement.get(key);
-                    Query batchUpdate = em.createNativeQuery(sql);
-                    batchUpdate.executeUpdate();
+                TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
+                        TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
+                try {
+                    em.unwrap(Session.class).doWork(new Work() {
+                        @Override
+                        public void execute(Connection connection) throws SQLException {
+                            Statement statement = connection.createStatement();
+                            for (String value : deleteStatement.values()) {
+                                String sql = value.replace("?", String.valueOf(order.getId()));
+                                statement.addBatch(sql);
+                            }
+                            statement.executeBatch();
+                        }
+                    });
+                    TransactionUtils.finalizeTransaction(status, transactionManager, false);
+                } catch (Exception e) {
+                    if (!status.isCompleted()) {
+                        TransactionUtils.finalizeTransaction(status, transactionManager, true);
+                    }
+                    LOG.error(String.format("Not able to purge Cart ID: %d", order.getId()), e);
                 }
             }
 
         } catch (ParseException e) {
             LOG.debug("Wrong date format");
         }
-
     }
 
 
