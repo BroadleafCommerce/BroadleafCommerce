@@ -39,4 +39,7 @@ public interface ResourcePurgeService {
 
     void purgeCustomers(final Map<String, String> config);
 
+
+    void purgeHistory(Class<?> rootType, String rootTypeIdValue);
+
 }
