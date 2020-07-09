@@ -71,8 +71,6 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    private final String mergeCartResponseKey = "bl_merge_cart_response";
-
     @Resource(name = "blCartStateRequestProcessorExtensionManager")
     protected CartStateRequestProcessorExtensionManager extensionManager;
 
@@ -208,8 +206,6 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
                     WebRequest.SCOPE_SESSION);
             request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName(),
                     WebRequest.SCOPE_SESSION);
-
-            request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_SESSION);
         }
         return mergeCartResponse.getOrder();
     }

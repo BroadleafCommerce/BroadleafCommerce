@@ -181,6 +181,9 @@
     float: left;
     margin: 10px 10px;
 }
+.modal .modal-footer .entity-form-actions .button {
+    margin-left: 10px;
+}
 
 /****************************************
  ADMIN CUSTOMIZED MODAL STYLES

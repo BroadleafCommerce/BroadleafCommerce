@@ -20,11 +20,13 @@ package org.broadleafcommerce.openadmin.web.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -47,6 +49,7 @@ import javax.annotation.Resource;
 @Service("blTranslationFormBuilderService")
 public class TranslationFormBuilderServiceImpl implements TranslationFormBuilderService {
 
+   
     @Resource(name = "blFormBuilderService")
     protected FormBuilderService formBuilderService;
 
@@ -161,6 +164,9 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
                 .withName("isRte")
                 .withValue(String.valueOf(formProperties.getIsRte())));
 
+        ef.setCeilingEntityClassname(cmd.getCeilingType());
+        ef.setEntityType(TranslationImpl.class.getName());
+        
         return ef;
     }
 

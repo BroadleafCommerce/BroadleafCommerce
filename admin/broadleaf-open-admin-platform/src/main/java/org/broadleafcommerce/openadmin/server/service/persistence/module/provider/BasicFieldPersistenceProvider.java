@@ -421,7 +421,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             if (extractValueRequest.getRequestedValue() != null) {
                 String val = null;
 
-                DateFormat dataFormat = getDateFormatToExtractValue(extractValueRequest);
+                DateFormat dateFormat = getDateFormatToExtractValue(extractValueRequest);
 
                 if (extractValueRequest.getMetadata().getForeignKeyCollection()) {
                     ((BasicFieldMetadata) property.getMetadata()).setFieldType(extractValueRequest.getMetadata()
@@ -430,11 +430,11 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         extractValueRequest.getRequestedValue() instanceof Character) {
                     val = (extractValueRequest.getRequestedValue().equals('Y')) ? "true" : "false";
                 } else if (Date.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = dataFormat.format((Date) extractValueRequest.getRequestedValue());
+                    val = dateFormat.format((Date) extractValueRequest.getRequestedValue());
                 } else if (Timestamp.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = dataFormat.format(new Date(((Timestamp) extractValueRequest.getRequestedValue()).getTime()));
+                    val = dateFormat.format(new Date(((Timestamp) extractValueRequest.getRequestedValue()).getTime()));
                 } else if (Calendar.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = dataFormat.format(((Calendar) extractValueRequest.getRequestedValue()).getTime());
+                    val = dateFormat.format(((Calendar) extractValueRequest.getRequestedValue()).getTime());
                 } else if (Double.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
                     val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format
                             (extractValueRequest.getRequestedValue());

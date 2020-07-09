@@ -120,19 +120,19 @@ $(document).ready(function() {
         $('div.asset-selector-container').trigger('assetInfoSelected', json);
         $('textarea.redactor').trigger('assetInfoSelected', json);
     });
-            
+
     /**
      * This handler will fire when the choose image button is clicked
-     * 
+     *
      * It is responsible for binding a assetInfoSelected handler for this field as well as launching
      * a image selection modal that will be used to select the image / media item.
      */
     $('body').on('click', 'button.show-asset-selector', function(event) {
         var $container = $(this).closest('div.asset-selector-container');
-        
+
         $container.on('assetInfoSelected', function(event, fields) {
             var $this = $(this);
-                           
+
             $this.find('img.thumbnail').attr("src", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').data("fullurl", fields['adminDisplayAssetUrl']);
             $this.find('img.thumbnail').parent().attr("href", fields['adminDisplayAssetUrl']);
@@ -157,31 +157,48 @@ $(document).ready(function() {
 
             BLCAdmin.hideCurrentModal();
         });
-        
+
         BLCAdmin.showLinkAsModal($(this).data('select-url'), function() {
             $('div.asset-selector-container').unbind('assetInfoSelected');
         });
-        
+
         return false;
     });
 
+
+
     $('body').on('click', 'button.edit-asset-selector', function() {
+
         var $modal = BLCAdmin.getModalSkeleton();
+        var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
+        var primaryDatum = primaryData['id'];
+        var linkTitleTranslations ="<a class=\"show-translations\" href=\"/admin/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=title&isRte=false\">"+
+            "<i class=\"blc-icon-globe\" style=\"color: #94AF39; \">"+"</i>"+
+            "<span>"+" Translations"+"</span>"+"</a>";
+
+        var linkAltTextTranslations ="<a class=\"show-translations\" href=\"/admin/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=altText&isRte=false\">"+
+            "<i class=\"blc-icon-globe\" style=\"color: #94AF39; \">"+"</i>"+
+            "<span>"+" Translations"+"</span>"+"</a>";
+
         $modal.addClass('primary-media-attrs-modal');
         $modal.find('.modal-header h3').text(BLCAdmin.messages.primaryMediaAttrsFormTitle);
         $modal.find('.modal-body').append(
             "<form id='primary-media-attrs-form'>" +
                 "<div class='field-group'>" +
                     "<label for='primary-media-title'>" +
-                         "<span>" + BLCAdmin.messages.primaryMediaAttrsTitle + "</span>" +
-                    "</label>" +
+            "</label>" +
+                         "<span>" + BLCAdmin.messages.primaryMediaAttrsTitle +" "+"</span>" +
+                    "</label>"  +
+            linkTitleTranslations+
                     "<div><input id='primary-media-title' type='text'></div>" +
                 "</div>" +
                 "<div class='field-group'>" +
                     "<label for='primary-media-altText'>" +
-                        "<span>" + BLCAdmin.messages.primaryMediaAttrsAltText + "</span>" +
-                    "</label>" +
-                    "<div><input id='primary-media-altText' type='text'></div>" +
+                        "<span>" + BLCAdmin.messages.primaryMediaAttrsAltText +" "+ "</span>" +
+            linkAltTextTranslations+
+                "</label>" +
+            "<div><input id='primary-media-altText' type='text'></div>" +
+
                 "</div>" +
                 "<div class='field-group'>" +
                     "<label for='primary-media-tags'>" +
@@ -200,7 +217,6 @@ $(document).ready(function() {
         BLCAdmin.showElementAsModal($modal);
 
 
-        var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
 
         var $form = $('#primary-media-attrs-form');
         $form.find('#primary-media-title').val(primaryData['title']);

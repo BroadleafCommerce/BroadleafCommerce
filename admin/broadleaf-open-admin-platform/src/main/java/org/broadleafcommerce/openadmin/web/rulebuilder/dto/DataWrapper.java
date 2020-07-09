@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -109,5 +110,15 @@ public class DataWrapper implements Serializable {
                 .build();
         }
         return false;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(data)
+                .append(error)
+                .append(rawMvel)
+                .toHashCode();
     }
 }

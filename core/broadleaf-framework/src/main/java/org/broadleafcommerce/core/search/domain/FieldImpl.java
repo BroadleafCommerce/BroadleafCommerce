@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -206,23 +207,6 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        Field other = (Field) obj;
-        
-        return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
-                
-    }
-
-    @Override
     public String getMainEntityName() {
         return getFriendlyName();
     }
@@ -241,5 +225,35 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
         cloned.setTranslatable(translatable);
         cloned.setEntityType(getEntityType());
         return createResponse;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        Field other = (Field) obj;
+
+        return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(entityType)
+                .append(friendlyName)
+                .append(propertyName)
+                .append(overrideGeneratedPropertyName)
+                .append(abbreviation)
+                .append(translatable)
+                .toHashCode();
     }
 }

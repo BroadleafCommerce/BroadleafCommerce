@@ -469,7 +469,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 							$this.data({"bindEvent_buttonsPixels_y":true});
 						}
 					}
-					function PixelsScrollTo(to){
+					var PixelsScrollTo =function(to){
 						if(!mCSB_dragger.data("preventAction")){
 							mCSB_dragger.data("preventAction",true);
 							$this.mCustomScrollbar("scrollTo",to,{trigger:"internal"});
@@ -537,7 +537,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 							$this.data({"bindEvent_buttonsContinuous_y":true});
 						}
 					}
-					function ScrollButtonsSpeed(){
+					var ScrollButtonsSpeed = function (){
 						var speed=$this.data("scrollButtons_scrollSpeed");
 						if($this.data("scrollButtons_scrollSpeed")==="auto"){
 							speed=Math.round(($this.data("scrollInertia")+100)/40);
@@ -584,6 +584,9 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 			}
 		},
 		scrollTo:function(scrollTo,options){
+			/*change start*/
+			var draggerSpeed;
+			/*change end*/
 			var $this=$(this),
 				defaults={
 					moveDragger:false,
@@ -730,7 +733,8 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 			}
 			/*callbacks*/
 			function callbacks(cb){
-				this.mcs={
+				/*change start*/
+				$(this).mCustomScrollbar={
 					top:mCSB_container.position().top,left:mCSB_container.position().left,
 					draggerTop:mCSB_dragger.position().top,draggerLeft:mCSB_dragger.position().left,
 					topPct:Math.round((100*Math.abs(mCSB_container.position().top))/Math.abs(mCSB_container.outerHeight()-mCustomScrollBox.height())),
@@ -739,22 +743,23 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 				switch(cb){
 					/*start scrolling callback*/
 					case "onScrollStart":
-						$this.data("mCS_tweenRunning",true).data("onScrollStart_Callback").call($this,this.mcs);
+						$this.data("mCS_tweenRunning",true).data("onScrollStart_Callback").call($this,$(this).mCustomScrollbar);
 						break;
 					case "whileScrolling":
-						$this.data("whileScrolling_Callback").call($this,this.mcs);
+						$this.data("whileScrolling_Callback").call($this,$(this).mCustomScrollbar);
 						break;
 					case "onScroll":
-						$this.data("onScroll_Callback").call($this,this.mcs);
+						$this.data("onScroll_Callback").call($this,$(this).mCustomScrollbar);
 						break;
 					case "onTotalScrollBack":
-						$this.data("onTotalScrollBack_Callback").call($this,this.mcs);
+						$this.data("onTotalScrollBack_Callback").call($this,$(this).mCustomScrollbar);
 						break;
 					case "onTotalScroll":
-						$this.data("onTotalScroll_Callback").call($this,this.mcs);
+						$this.data("onTotalScroll_Callback").call($this,$(this).mCustomScrollbar);
 						break;
 				}
 			}
+			/*change end*/
 		},
 		stop:function(){
 			var $this=$(this),
@@ -825,7 +830,9 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 					el._time=(progress>el._time) ? progress+_delay-(progress- el._time) : progress+_delay-1;
 					if(el._time<progress+1){el._time=progress+1;}
 				}
-				if(el._time<duration){el._id=_request(_step);}else{onComplete.call();}
+				/*change start*/
+				if(el._time<duration){el._id= function _request(_step){};}else{onComplete.call();}
+				/*change end*/
 			}
 			function _tween(){
 				if(duration>0){
@@ -837,9 +844,12 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 				onUpdate.call();
 			}
 			function _startTween(){
+
 				_delay=1000/60;
 				el._time=progress+_delay;
-				_request=(!window.requestAnimationFrame) ? function(f){_tween(); return setTimeout(f,0.01);} : window.requestAnimationFrame;
+				/*start change*/
+				var _request=(!window.requestAnimationFrame) ? function(f){_tween(); return setTimeout(f,0.01);} : window.requestAnimationFrame;
+				/*change end*/
 				el._id=_request(_step);
 			}
 			function _cancelTween(){
