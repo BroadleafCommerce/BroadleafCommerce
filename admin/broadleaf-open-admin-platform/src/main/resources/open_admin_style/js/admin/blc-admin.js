@@ -1631,7 +1631,7 @@ $('body').on('input', 'input.resize-as-needed', function () {
     $(this).attr('size', newSize);
 });
 
-$("add-url-param-click").on('click', function () {
+$("a.add-url-param-click").on('click', function () {
     var param = $(this).attr('data-param');
     var prop = $(this).attr('data-prop');
     BLC.addUrlParam(document.location.search, prop, param);
