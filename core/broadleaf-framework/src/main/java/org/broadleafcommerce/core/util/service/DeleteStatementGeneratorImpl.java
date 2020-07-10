@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.util.service;
 
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,22 +26,9 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * The idea of this class if to iterate over props of the passed class and if found prop with annotation @OneToMany
@@ -74,14 +62,36 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         LOG.info("Start generating SQL delete statements for type:"+rootType.getSimpleName());
         Stack<PathElement> stack = new Stack<>();
         Set<Class<?>> processedClasses = new HashSet<>();
-        LinkedHashMap<String, Stack<PathElement>> result = new LinkedHashMap<>();
+        LinkedHashMap<String, OperationStackHolder> result = new LinkedHashMap<>();
         diveDeep(rootType, null, null, stack, processedClasses, result);
+
+        Object[] objects = result.entrySet().toArray();
+        Arrays.sort(objects, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                OperationStackHolder val2 = ((Map.Entry<String, OperationStackHolder>) o2).getValue();
+                OperationStackHolder val1 = ((Map.Entry<String, OperationStackHolder>) o1).getValue();
+                if(val2.isUpdate() && !val1.isUpdate()){
+                    return 1;
+                }else if(val1.isUpdate() && !val2.isUpdate()){
+                    return -1;
+                }else {
+                    return val2.getStack().size() - val1.getStack().size();
+                }
+            }
+        });
         LinkedHashMap<String, String> sqls = new LinkedHashMap<>();
-        for (Map.Entry<String, Stack<PathElement>> entry : result.entrySet()) {
-            Stack<PathElement> value = entry.getValue();
+        for (Object entryObject : objects) {
+            Map.Entry<String, OperationStackHolder> entry = (Map.Entry<String, OperationStackHolder>) entryObject;
+            OperationStackHolder operationStackHolder = entry.getValue();
+            Stack<PathElement> value = operationStackHolder.getStack();
             StringBuilder builder = new StringBuilder();
             PathElement prevTable = value.pop();
-            builder.append("delete T FROM ").append(prevTable.getName()).append(" T");
+            if(operationStackHolder.isUpdate()){
+                builder.append("update ").append(prevTable.getName()).append(" T");
+            }else {
+                builder.append("delete T FROM ").append(prevTable.getName()).append(" T");
+            }
             int index = 0;
             String prevTableAlias = "T";
             while (!value.empty()) {
@@ -94,6 +104,9 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                 prevTableAlias = nextTableAlias;
                 index++;
             }
+            if(operationStackHolder.isUpdate()){
+                builder.append(" SET T.").append(operationStackHolder.getColumnToUpdate()).append("=NULL");
+            }
             builder.append(" WHERE ").append(prevTableAlias).append(".").append(prevTable.getIdField()).append("=").append(rootTypeIdValue);
             String x = builder.toString();
             LOG.debug(x);
@@ -103,7 +116,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         return sqls;
     }
 
-    private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, Stack<PathElement>> result) {
+    private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result) {
         Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(classToProcess,false,true);
         if (processedClasses.contains(classToProcess)) {
             return;
@@ -140,13 +153,27 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                 for (Field decl : type.getDeclaredFields()) {
                     processField(stack, processedClasses, result, decl);
                 }
+            }else if(declaredField.getAnnotation(CollectionTable.class) != null){
+                CollectionTable collectionTable = declaredField.getAnnotation(CollectionTable.class);
+                JoinColumn collectionJoinColumn = collectionTable.joinColumns()[0];
+                String collectionTableName = collectionTable.name();
+                PathElement p = new PathElement(collectionTableName, collectionJoinColumn.name(),collectionJoinColumn.name());
+                stack.push(p);
+                result.put(collectionTableName, new OperationStackHolder((Stack<PathElement>) stack.clone()));
+                stack.pop();
+            }else if(declaredField.getAnnotation(ManyToOne.class)!=null){
+                ManyToOne manyToOne = declaredField.getAnnotation(ManyToOne.class);
+                if(manyToOne.targetEntity().equals(classToProcess)){
+                    JoinColumn selfJoinColumn = declaredField.getAnnotation(JoinColumn.class);
+                    result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder((Stack<PathElement>) stack.clone(), true, selfJoinColumn.name()));
+                }
             }
         }
-        result.put(tableAnnotation.name(), (Stack<PathElement>) stack.clone());
+        result.put(tableAnnotation.name(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
         stack.pop();
     }
 
-    private void processField(Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, Stack<PathElement>> result, Field decl) {
+    private void processField(Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Field decl) {
         OneToMany oneToManyAnnot = decl.getAnnotation(OneToMany.class);
         if (oneToManyAnnot != null) {
             Class<?> aClass = oneToManyAnnot.targetEntity();
@@ -164,7 +191,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             }
             diveDeep(aClass, joinColumnFromJoinTable, mappedByAnnotation, stack, processedClasses, result);
             if (StringUtils.isNotEmpty(joinTableNameFromJoinTable)) {
-                result.put(joinTableNameFromJoinTable, (Stack<PathElement>) stack.clone());
+                result.put(joinTableNameFromJoinTable, new OperationStackHolder((Stack<PathElement>) stack.clone()));
                 stack.pop();
             }
         }
@@ -211,6 +238,33 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
 
         public String getJoinColumn() {
             return joinColumn;
+        }
+    }
+
+    public static class OperationStackHolder {
+        private Stack<PathElement> stack;
+        private boolean isUpdate;
+        private String columnToUpdate;
+
+        public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate) {
+            this.stack = stack;
+            this.isUpdate = isUpdate;
+            this.columnToUpdate = columnToUpdate;
+        }
+        public OperationStackHolder(Stack<PathElement> stack) {
+            this(stack, false, null);
+        }
+
+        public Stack<PathElement> getStack() {
+            return stack;
+        }
+
+        public boolean isUpdate() {
+            return isUpdate;
+        }
+
+        public String getColumnToUpdate() {
+            return columnToUpdate;
         }
     }
 
