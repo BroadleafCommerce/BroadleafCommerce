@@ -17,8 +17,12 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.SkuDaoDataProvider;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -44,6 +48,7 @@ import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -87,6 +92,9 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku.setName("test1");
+        Date today = new Date();
+        sku.setActiveStartDate(today);
+        sku.setActiveEndDate(DateUtils.addDays(today, 5));
         assert sku.getId() == null;
         sku = catalogService.saveSku(sku);
         assert sku.getId() != null;
@@ -106,7 +114,7 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         offer.setMinimumDaysPerUsage(1L);
 
         OfferCode offerCode = offerUtil.createOfferCode("10 Percent Off All Item Offer Code", offer);
-
+        offerCode.setMaxUses(1);
 
         Calendar currentDate = Calendar.getInstance();
         currentDate.add(Calendar.MINUTE, -5);
@@ -114,11 +122,21 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         Customer customer = createCustomer();
 
         OfferAudit offerAudit = offerAuditDao.create();
-        
+
+        Order order = orderService.createNewCartForCustomer(customer);
+        FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
+        option.setPrice(new Money(0));
+        orderService.save(order, false);
+
+        order = orderService.createNewCartForCustomer(customer);
+        option = new FixedPriceFulfillmentOptionImpl();
+        option.setPrice(new Money(0));
+        orderService.save(order, false);
+
         offerAudit.setId(1L);
         offerAudit.setCustomerId(customer.getId());
         offerAudit.setOfferId(offer.getId());
-        offerAudit.setOrderId(-10L);
+        offerAudit.setOrderId(order.getId());
         offerAudit.setRedeemedDate(currentDate.getTime());
         
         offerAuditDao.save(offerAudit);
@@ -128,14 +146,14 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         offerAudit2.setId(2L);
         offerAudit2.setCustomerId(customer.getId());
         offerAudit2.setOfferId(offer.getId());
-        offerAudit2.setOrderId(-11L);
+        offerAudit2.setOrderId(order.getId());
         offerAudit2.setRedeemedDate(currentDate.getTime());
-        
+
         offerAuditDao.save(offerAudit2);
 
 
-        Order order = orderService.createNewCartForCustomer(customer);
-        FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
+        order = orderService.createNewCartForCustomer(customer);
+        option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money(0));
         orderService.save(order, false);
 
