@@ -84,37 +84,61 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         for (Object entryObject : objects) {
             Map.Entry<String, OperationStackHolder> entry = (Map.Entry<String, OperationStackHolder>) entryObject;
             OperationStackHolder operationStackHolder = entry.getValue();
-            Stack<PathElement> value = operationStackHolder.getStack();
-            StringBuilder builder = new StringBuilder();
-            PathElement prevTable = value.pop();
-            if(operationStackHolder.isUpdate()){
-                builder.append("update ").append(prevTable.getName()).append(" T");
-            }else {
-                builder.append("delete T FROM ").append(prevTable.getName()).append(" T");
-            }
-            int index = 0;
-            String prevTableAlias = "T";
-            while (!value.empty()) {
-                String nextTableAlias = "a" + index;
-                PathElement next = value.pop();
-                builder.append(" inner join ").append(next.getName()).append(" ").append(nextTableAlias).append(" on ")
-                        .append(prevTableAlias).append(".").append(prevTable.getJoinColumn()).append("=")
-                        .append(nextTableAlias).append(".").append(next.getIdField());
-                prevTable = next;
-                prevTableAlias = nextTableAlias;
-                index++;
-            }
-            if(operationStackHolder.isUpdate()){
-                builder.append(" SET T.").append(operationStackHolder.getColumnToUpdate()).append("=NULL");
-            }
-            builder.append(" WHERE ").append(prevTableAlias).append(".").append(prevTable.getIdField()).append("=").append(rootTypeIdValue);
-            String x = builder.toString();
-            LOG.debug(x);
+            String x = getSqls(rootTypeIdValue, operationStackHolder);
             sqls.put(entry.getKey(), x);
         }
         LOG.info("End generating SQL delete statements for type:"+rootType.getSimpleName()+". Generated "+sqls.size()+" statements");
         return sqls;
     }
+
+    protected String getSqls(String rootTypeIdValue, OperationStackHolder operationStackHolder) {
+        StringBuilder builder = new StringBuilder();
+        Stack<PathElement> value = operationStackHolder.getStack();
+        PathElement prevTable = value.pop();
+        boolean shouldAppendWhere = true;
+        boolean shouldCloseParantheses = false;
+        if (operationStackHolder.isUpdate()) {
+            builder.append("update ").append(prevTable.getName()).append(" SET ")
+                    .append(operationStackHolder.getColumnToUpdate()).append("=NULL");
+        } else {
+            builder.append("delete FROM ").append(prevTable.getName());
+        }
+        if (value.size() == 1) {
+            shouldAppendWhere = false;
+            value.pop();
+            builder.append(" WHERE ").append(prevTable.getJoinColumn()).append("=").append(rootTypeIdValue);
+        } else if (value.size() > 0) {
+            shouldCloseParantheses = true;
+            builder.append(" WHERE ").append(prevTable.getJoinColumn()).append(" IN (SELECT ");
+            PathElement next = value.pop();
+            builder.append("b").append(".").append(next.getIdField()).append(" FROM ")
+                    .append(next.getName()).append(" b");
+            prevTable = next;
+        }
+        int index = 0;
+        String prevTableAlias = "b";
+        while (!value.empty()) {
+            String nextTableAlias = "a" + index;
+            PathElement next = value.pop();
+            builder.append(" inner join ").append(next.getName()).append(" ").append(nextTableAlias).append(" on ")
+                    .append(prevTableAlias).append(".").append(prevTable.getJoinColumn()).append("=")
+                    .append(nextTableAlias).append(".").append(next.getIdField());
+            prevTable = next;
+            prevTableAlias = nextTableAlias;
+            index++;
+        }
+        if (shouldAppendWhere) {
+            builder.append(" WHERE ").append(prevTableAlias).append(".")
+                    .append(prevTable.getIdField()).append("=").append(rootTypeIdValue);
+        }
+        if (shouldCloseParantheses) {
+            builder.append(")");
+        }
+        String x = builder.toString();
+        LOG.debug(x);
+        return x;
+    }
+
 
     private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result) {
         Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(classToProcess,false,true);
