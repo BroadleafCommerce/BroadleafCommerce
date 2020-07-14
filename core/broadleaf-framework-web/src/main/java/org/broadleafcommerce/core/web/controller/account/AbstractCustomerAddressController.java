@@ -17,18 +17,15 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
 import org.broadleafcommerce.core.web.service.InitBinderService;
 import org.broadleafcommerce.profile.core.domain.Country;
-import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -48,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class AbstractCustomerAddressController extends BroadleafAbstractController {
 
-    private static final Log LOG = LogFactory.getLog(AbstractCustomerAddressController.class);
 
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";
@@ -67,9 +63,6 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
 
     @Resource(name = "blStateService")
     protected StateService stateService;
-
-    @Resource(name = "blCountrySubdivisionService")
-    protected CountrySubdivisionService countrySubdivisionService;
 
     @Resource(name = "blISOService")
     protected ISOService isoService;
@@ -91,8 +84,8 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
         initBinderService.configAddressInitBinder(binder);
     }
 
-    protected List<CountrySubdivision> populateStates() {
-        return countrySubdivisionService.findSubdivisions();
+    protected List<State> populateStates() {
+        return stateService.findStates();
     }
 
     protected List<Country> populateCountries() {
