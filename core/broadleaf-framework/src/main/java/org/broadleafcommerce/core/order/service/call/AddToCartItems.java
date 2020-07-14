@@ -29,8 +29,8 @@ public class AddToCartItems {
 
     //TOOD: this should probably be refactored to be called "rows" like in other model objects
     private List<OrderItemRequestDTO > addToCartItems =   LazyList.decorate(
-            new ArrayList<ConfigurableOrderItemRequest>(),
-            FactoryUtils.instantiateFactory(ConfigurableOrderItemRequest.class));
+            new ArrayList<OrderItemRequestDTO>(),
+            FactoryUtils.instantiateFactory(OrderItemRequestDTO.class));
 
     private long productId;
     private long categoryId;
