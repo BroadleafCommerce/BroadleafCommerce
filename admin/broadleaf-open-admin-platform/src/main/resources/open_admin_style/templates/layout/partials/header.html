@@ -36,9 +36,8 @@
         </div>
         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="languagedrop">
             <li th:each="locale : ${@blLocaleService.findAllLocales()}">
-                <a href="javascript:;" 
-                th:attr="onclick=${'BLC.addUrlParam(document.location.search, ''blLocaleCode'', ''' + locale.localeCode + ''')'}"
-                th:text="#{${locale.friendlyName}}"></a>
+                <a class="add-url-param-click" th:attr="data-param=${locale.localeCode},data-prop=blLocaleCode" href="#"
+                   th:text="#{${locale.friendlyName}}"></a>
             </li>
         </ul>
     </div>
@@ -49,8 +48,7 @@
         </div>
         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="timezonedrop">
             <li th:each="timezone : ${@environment.getProperty('admin.available.timezone.codes', T(java.util.List))}">
-                <a href="javascript:;"
-                   th:attr="onclick=${'BLC.addUrlParam(document.location.search, ''blTimeZoneCode'', ''' + timezone + ''')'}"
+                <a class="add-url-param-click" th:attr="data-param=${timezone},data-prop=blTimeZoneCode" href="#"
                    th:text="#{${timezone}}"></a>
             </li>
         </ul>
