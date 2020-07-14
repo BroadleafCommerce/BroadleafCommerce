@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
-import org.broadleafcommerce.common.security.service.StaleStateServiceException;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.service.SiteService;
@@ -131,12 +130,12 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
 
-        if (brc.getNonPersistentSite() == null) {
+        if (brc.getSite() == null) {
             Site site = siteResolver.resolveSite(request);
             brc.setSite(site);
         }
         brc.setWebRequest(request);
-        brc.setIgnoreSite(brc.getNonPersistentSite() == null);
+        brc.setIgnoreSite(brc.getSite() == null);
         brc.setAdmin(true);
 
         if (adminStrictValidateProductionChanges) {
