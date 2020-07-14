@@ -37,6 +37,7 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServ
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -58,11 +59,8 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
     
-    protected final Environment environment;
-
-    public AdminUserCustomPersistenceHandler(Environment environment) {
-        this.environment = environment;
-    }
+    @Autowired
+    protected Environment environment;
 
     protected boolean getRequireUniqueEmailAddress() {
         Boolean property = environment.getProperty("admin.user.requireUniqueEmailAddress", Boolean.class);
