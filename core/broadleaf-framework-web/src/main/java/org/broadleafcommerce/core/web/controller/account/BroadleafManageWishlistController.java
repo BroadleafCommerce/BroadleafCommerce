@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.call.AddToCartItem;
-import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
@@ -49,7 +47,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     protected static String accountWishlistRedirect = "redirect:/account/wishlist";
 
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-                      ConfigurableOrderItemRequest itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
+                      OrderItemRequestDTO  itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
         Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
 
         if (wishlist == null) {
