@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -38,6 +37,7 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServ
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -57,9 +57,16 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+    
+    protected final Environment environment;
+
+    public AdminUserCustomPersistenceHandler(Environment environment) {
+        this.environment = environment;
+    }
 
     protected boolean getRequireUniqueEmailAddress() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("admin.user.requireUniqueEmailAddress");
+        Boolean property = environment.getProperty("admin.user.requireUniqueEmailAddress", Boolean.class);
+        return property != null ? property : false;
     }
 
     @Override

@@ -28,32 +28,32 @@ public class AddToCartItems {
     @SuppressWarnings("unchecked")
 
     //TOOD: this should probably be refactored to be called "rows" like in other model objects
-    private List<AddToCartItem> addToCartItems =   LazyList.decorate(
-            new ArrayList<AddToCartItem>(),
-            FactoryUtils.instantiateFactory(AddToCartItem.class));
+    private List<OrderItemRequestDTO > addToCartItems =   LazyList.decorate(
+            new ArrayList<OrderItemRequestDTO>(),
+            FactoryUtils.instantiateFactory(OrderItemRequestDTO.class));
 
     private long productId;
     private long categoryId;
 
     public void setProductId(long productId) {
         this.productId = productId;
-        for(AddToCartItem addToCartItem : addToCartItems) {
+        for(OrderItemRequestDTO  addToCartItem : addToCartItems) {
             addToCartItem.setProductId(productId);
         }
     }
 
     public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
-        for(AddToCartItem addToCartItem : addToCartItems) {
+        for(OrderItemRequestDTO  addToCartItem : addToCartItems) {
             addToCartItem.setCategoryId(categoryId);
         }
     }
 
-    public List<AddToCartItem> getAddToCartItems() {
+    public List<OrderItemRequestDTO > getAddToCartItems() {
         return addToCartItems;
     }
 
-    public void setAddToCartItem(List<AddToCartItem> addToCartItems) {
+    public void setAddToCartItem(List<OrderItemRequestDTO> addToCartItems) {
         this.addToCartItems = addToCartItems;
     }
 

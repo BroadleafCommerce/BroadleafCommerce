@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
@@ -47,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class AbstractCustomerAddressController extends BroadleafAbstractController {
 
-    private static final Log LOG = LogFactory.getLog(AbstractCustomerAddressController.class);
 
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";

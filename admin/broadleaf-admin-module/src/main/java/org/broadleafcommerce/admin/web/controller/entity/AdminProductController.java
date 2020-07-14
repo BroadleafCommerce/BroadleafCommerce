@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -347,7 +348,7 @@ public class AdminProductController extends AdminBasicEntityController {
 
         // When we're dealing with product bundles, we don't want to render the product options and additional skus
         // list grids. Remove them from the form.
-        if (ProductBundle.class.isAssignableFrom(Class.forName(form.getEntityType()))) {
+        if (ProductType.class.isAssignableFrom(Class.forName(form.getEntityType()))) {
             form.removeListGrid("additionalSkus");
             form.removeListGrid("productOptions");
             form.removeField("canSellWithoutOptions");
