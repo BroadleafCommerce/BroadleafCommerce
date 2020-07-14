@@ -103,6 +103,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         } else {
             builder.append("delete FROM ").append(prevTable.getName());
         }
+        String prevTableAlias="";
         if (value.size() == 1) {
             shouldAppendWhere = false;
             value.pop();
@@ -114,9 +115,10 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             builder.append("b").append(".").append(next.getIdField()).append(" FROM ")
                     .append(next.getName()).append(" b");
             prevTable = next;
+            prevTableAlias = "b";
         }
         int index = 0;
-        String prevTableAlias = "b";
+
         while (!value.empty()) {
             String nextTableAlias = "a" + index;
             PathElement next = value.pop();
@@ -128,8 +130,11 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             index++;
         }
         if (shouldAppendWhere) {
-            builder.append(" WHERE ").append(prevTableAlias).append(".")
-                    .append(prevTable.getIdField()).append("=").append(rootTypeIdValue);
+            builder.append(" WHERE ");
+            if(StringUtils.isNotEmpty(prevTableAlias)){
+                builder.append(prevTableAlias).append(".");
+            }
+            builder.append(prevTable.getIdField()).append("=").append(rootTypeIdValue);
         }
         if (shouldCloseParantheses) {
             builder.append(")");
