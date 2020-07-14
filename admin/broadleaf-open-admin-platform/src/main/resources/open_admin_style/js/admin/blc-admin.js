@@ -981,6 +981,9 @@ var BLCAdmin = (function($) {
                         if (typeof showIfValue == "function") {
                             shouldShow = showIfValue(parentValue, event.data.$container);
                         } else {
+                            if(typeof parentValue == "string"  && typeof showIfValue == "boolean"){
+                                showIfValue=showIfValue.toString();
+                            }
                             shouldShow = (parentValue == showIfValue);
                         }
 
