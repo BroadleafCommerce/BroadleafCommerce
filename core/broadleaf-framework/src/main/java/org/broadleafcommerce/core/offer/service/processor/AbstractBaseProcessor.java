@@ -57,6 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -270,6 +272,36 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         expression = usePriceBeforeAdjustments(expression);
         contextImports.put("OfferType", OfferType.class);
         contextImports.put("FulfillmentType", FulfillmentType.class);
+
+        Pattern compile = Pattern.compile("\\[(.*?)\\]");
+        Matcher matcher = compile.matcher(expression);
+
+        int varCount=1;
+        while (matcher.find()){
+            String group = matcher.group(1);
+            String[] split = group.split("\",\"");
+            String suffix;
+            String prefix;
+            for (int i = 0; i < split.length; i++) {
+                if (i > 0) {
+                    prefix = "\"";
+                } else {
+                    prefix = "";
+                }
+                if (i < split.length - 1) {
+                    suffix = "\"";
+                } else {
+                    suffix = "";
+                }
+                String target = prefix + split[i] + suffix;
+                String var = "var" + varCount++;
+                expression = expression.replace(target, var);
+                target = target.substring(1, target.length()-1);
+                target = target.replace("\\\"","\"");
+                vars.put(var,target);
+            }
+        }
+
         return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
 
     }
