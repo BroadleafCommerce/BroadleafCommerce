@@ -359,7 +359,7 @@ public class DataDTOToMVELTranslator {
 
     protected String escapeInternalQuotes(String processedValue) {
         String regex = "(?<!^)(?<!^\\s)\\\"(?!\\s$)(?!$)";
-        return processedValue.replaceAll(regex, "\\\\\"");
+        return processedValue.replaceAll(regex, "\\\\u0022");
     }
 
     public boolean isProjection(Object value) {

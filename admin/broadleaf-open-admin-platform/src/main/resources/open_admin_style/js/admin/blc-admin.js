@@ -1146,14 +1146,9 @@ var BLCAdmin = (function($) {
             delimiter = typeof delimiter !== 'undefined' ? delimiter : ',';
             var dataArray = [];
             $.each(data.split(delimiter), function(index, item) {
-                var itm="";
-                if(delimiter == "\",\""){
-                    itm= item.replace(/(^\[")|("\]$)/g, '');
-                }else{
-                    itm = item.replace(/(^\[")|("$)|(^")|("\]$)/g, '');
-                }
-                itm = BLCAdmin.unescapeString(itm);
-                dataArray.push(itm);
+                var item = item.replace(/(^\[")|("$)|(^")|("\]$)/g, '');
+                item = BLCAdmin.unescapeString(item);
+                dataArray.push(item);
             });
             return dataArray;
         },
