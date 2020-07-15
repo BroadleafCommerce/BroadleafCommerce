@@ -122,7 +122,7 @@
             th:attr="data-hiddenid=${field.jsonFieldName},
                      data-containerid=${field.name},
                      data-fields=${fieldWrapper.serialize()},
-                     data-data=${field.dataWrapper.serialize()},
+                     data-data=${#strings.replace(field.dataWrapper.serialize(), '\u0022', '&quot;')},
                      data-modal=${field.displayType != null AND field.displayType == 'MODAL'},
                      data-ruletype=${field.ruleType}"></div>
     
