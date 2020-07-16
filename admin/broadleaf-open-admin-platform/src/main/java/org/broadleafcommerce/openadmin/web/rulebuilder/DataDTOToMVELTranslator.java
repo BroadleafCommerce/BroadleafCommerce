@@ -345,8 +345,13 @@ public class DataDTOToMVELTranslator {
                     end = stringValue.length() - 1;
                 }
                 String processedValue = stringValue.substring(initial, end);
-                processedValue = escapeInternalQuotes(processedValue);
 
+                 int miltyQuoteNum = 4;
+                if (stringValue.contains(",") && StringUtils.countMatches(processedValue, "\"") >= miltyQuoteNum) {
+                    processedValue = escapeInternalMiltyQuotes(processedValue);
+                } else {
+                    processedValue = escapeInternalQuotes(processedValue);
+                }
                 temp.add(processedValue);
                 initial = end + 1;
             }
@@ -358,8 +363,20 @@ public class DataDTOToMVELTranslator {
     }
 
     protected String escapeInternalQuotes(String processedValue) {
-        String regex = "(?<!^)(?<!^\\s)\\\"(?!\\s$)(?!$)";
+        String regex = "(?<!^)(?<!^\\s)\"(?!\\s$)(?!$)";
+        int singleQuoteNum = 3;
+        if (StringUtils.countMatches(processedValue, "\"")>= singleQuoteNum){
+            String cutQuote = processedValue.substring(1, processedValue.length() - 1).replaceAll("\"","\\\\u0022");
+            processedValue= "\""+cutQuote+ "\"";
+
+        }
+
         return processedValue.replaceAll(regex, "\\\\\"");
+    }
+
+    protected String escapeInternalMiltyQuotes(String processedValue) {
+        String regex = "(?<!^)(?<!^\\s)\"(?!\\s$)(?!$)";
+        return processedValue.replaceAll(regex, "\\\\" + "\\u0022");
     }
 
     public boolean isProjection(Object value) {
