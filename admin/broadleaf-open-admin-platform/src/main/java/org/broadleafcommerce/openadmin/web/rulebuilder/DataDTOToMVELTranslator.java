@@ -346,7 +346,8 @@ public class DataDTOToMVELTranslator {
                 }
                 String processedValue = stringValue.substring(initial, end);
 
-                if (stringValue.contains(",") && StringUtils.countMatches(processedValue, "\"") >= 4) {
+                 int miltyQuoteNum = 4;
+                if (stringValue.contains(",") && StringUtils.countMatches(processedValue, "\"") >= miltyQuoteNum) {
                     processedValue = escapeInternalMiltyQuotes(processedValue);
                 } else {
                     processedValue = escapeInternalQuotes(processedValue);
@@ -363,7 +364,8 @@ public class DataDTOToMVELTranslator {
 
     protected String escapeInternalQuotes(String processedValue) {
         String regex = "(?<!^)(?<!^\\s)\"(?!\\s$)(?!$)";
-        if (StringUtils.countMatches(processedValue, "\"")>=3){
+        int singleQuoteNum = 3;
+        if (StringUtils.countMatches(processedValue, "\"")>= singleQuoteNum){
             String cutQuote = processedValue.substring(1, processedValue.length() - 1).replaceAll("\"","\\\\u0022");
             processedValue= "\""+cutQuote+ "\"";
 
