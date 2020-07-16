@@ -118,14 +118,16 @@
         </div>
 
         <!--/* For: All display types - raw data needed to construct the query builder */-->
-        <div class="rule-builder-data" 
+
+        <div class="rule-builder-data"
             th:attr="data-hiddenid=${field.jsonFieldName},
                      data-containerid=${field.name},
                      data-fields=${fieldWrapper.serialize()},
-                     data-data=${#strings.replace(field.dataWrapper.serialize(), '\u0022', '&quot;')},
+                     data-data=${#strings.replace(field.dataWrapper.serialize(), '\u0022', '\\&quot;\\')},
                      data-modal=${field.displayType != null AND field.displayType == 'MODAL'},
-                     data-ruletype=${field.ruleType}"></div>
-    
+                     data-ruletype=${field.ruleType}">
+    </div>
+
     </div>
 
     <span class="error" th:errors="*{fields['__${field.name}__'].value}"></span>
