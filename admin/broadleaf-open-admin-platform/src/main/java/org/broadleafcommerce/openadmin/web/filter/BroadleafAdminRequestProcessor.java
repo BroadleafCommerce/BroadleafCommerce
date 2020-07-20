@@ -248,6 +248,13 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                 staleStateProtectionService.compareToken(token);
                 staleStateProtectionService.invalidateState(true);
+            }else if(StringUtils.isNotBlank(request.getParameter("catalogEntityCatalogDiscriminatorId"))){
+                Long catalogId = Long.parseLong(request.getParameter("catalogEntityCatalogDiscriminatorId"));
+                catalog = siteService.findCatalogById(catalogId);
+                if (catalog == null) {
+                    throw new IllegalArgumentException(String.format("Unable to find the requested catalog: %s", catalogId));
+                }
+
             }
 
             if (catalog == null) {

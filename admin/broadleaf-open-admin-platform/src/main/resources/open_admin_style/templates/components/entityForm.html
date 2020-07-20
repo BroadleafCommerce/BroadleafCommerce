@@ -57,6 +57,8 @@
                 <input type="hidden" th:field="*{id}" />
                 <input type="hidden" th:field="*{sectionCrumbs}"  />
                 <input type="hidden" th:field="*{mainEntityName}" />
+
+                <input type="hidden" th:if="${catalogEntityCatalogDiscriminatorId!=null}" name="catalogEntityCatalogDiscriminatorId" th:value="${catalogEntityCatalogDiscriminatorId}">
                 <input type="hidden" name="preventSubmit" th:value="*{preventSubmit}" />
                 <input type="hidden" name="jsErrorMapString" th:value="*{jsErrorMap}" />
 
