@@ -100,8 +100,7 @@
             var seperator = rangeDescription.indexOf('-');
             var lo = Math.max(rangeDescription.substring(0, seperator), 0);
             var hi = Math.max(rangeDescription.substring(seperator + 1), 0);
-            rangeObj = {lo : parseInt(lo), hi : parseInt(hi)};
-            return rangeObj;
+            return {lo: parseInt(lo), hi: parseInt(hi)};
         },
         
         getLoadedRecordRanges : function($tbody) {
@@ -496,7 +495,7 @@
                     var topIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, topIndex);
                     var botIndex = BLCAdmin.listGrid.paginate.getBottomVisibleIndex($tbody);
                     var botIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, botIndex);
-                    if (!botIndexLoaded || !topIndexLoaded) {
+                    if ((!botIndexLoaded || !topIndexLoaded)&&(!$tbody.is(':visible'))) {
                         BLCAdmin.listGrid.paginate.loadRecords($tbody, baseUrl);
                     } else {
                         BLCAdmin.listGrid.hideLoadingSpinner($tbody);
@@ -557,7 +556,7 @@
 
             var scrollOffset = 0;
 
-            if ($tbody.closest('.mCSB_container').position() != undefined) {
+            if ($tbody.closest('.mCSB_container').position() !== undefined) {
                 scrollOffset = $tbody.closest('.mCSB_container').position().top * -1;
             }
 
@@ -832,7 +831,7 @@
                     maxHeight -= 5;
                 }
 
-                closestListgridContainer = $wrapper.closest('.listgrid-container').find('.listgrid-toolbar');
+               var closestListgridContainer = $wrapper.closest('.listgrid-container').find('.listgrid-toolbar');
 
                 if (closestListgridContainer.length > 0 && closestListgridContainer.outerHeight(true) !== undefined) {
                     maxHeight -= closestListgridContainer.outerHeight(true);

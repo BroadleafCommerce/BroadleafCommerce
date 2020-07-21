@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class DataDTO implements Serializable {
     protected Long previousContainedPk;
     protected Integer quantity;
     protected String condition;
+    protected boolean createdFromSubGroup=false;
     protected ArrayList<DataDTO> rules = new ArrayList<DataDTO>();
 
     public Long getPk() {
@@ -93,6 +95,14 @@ public class DataDTO implements Serializable {
         this.previousContainedPk = previousContainedPk;
     }
 
+    public boolean isCreatedFromSubGroup() {
+        return createdFromSubGroup;
+    }
+
+    public void setCreatedFromSubGroup(boolean createdFromSubGroup) {
+        this.createdFromSubGroup = createdFromSubGroup;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
@@ -105,5 +115,20 @@ public class DataDTO implements Serializable {
                 .build();
         }
         return false;
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(pk)
+                .append(containedPk)
+                .append(previousPk)
+                .append(previousContainedPk)
+                .append(quantity)
+                .append(condition)
+                .append(rules)
+                .toHashCode();
     }
 }

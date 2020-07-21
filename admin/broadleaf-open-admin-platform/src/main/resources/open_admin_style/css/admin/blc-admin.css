@@ -472,33 +472,44 @@ body.login .account-actions ul li a {
 
 .app-content .content .site-bar .account-info {
     display: inline-block;
-    float: right
+    float: right;
 }
 
-.app-content .content .site-bar .language-selector {
+.app-content .content .site-bar .language-selector,
+.app-content .content .site-bar .timezone-selector {
     padding-right: 30px;
+    display: inline-block;
+    float: right;
 }
 
-.app-content .content .site-bar .account-info .dropdown-toggle {
+.app-content .content .site-bar .account-info .dropdown-toggle,
+.app-content .content .site-bar .language-selector .dropdown-toggle,
+.app-content .content .site-bar .timezone-selector .dropdown-toggle {
     line-height: 50px;
     font-weight: 300;
     cursor: pointer;
     font-size: 12px
 }
 
-.app-content .content .site-bar .account-info .dropdown-menu {
+.app-content .content .site-bar .account-info .dropdown-menu,
+.app-content .content .site-bar .language-selector .dropdown-menu,
+.app-content .content .site-bar .timezone-selector .dropdown-menu {
     background-color: #2a2a2a;
     margin-top: -1px
 }
 
-.app-content .content .site-bar .account-info .dropdown-menu li a {
+.app-content .content .site-bar .account-info .dropdown-menu li a,
+.app-content .content .site-bar .language-selector .dropdown-menu li a,
+.app-content .content .site-bar .timezone-selector .dropdown-menu li a {
     line-height: 40px;
     font-size: 12px;
     font-weight: 300;
     color: white
 }
 
-.app-content .content .site-bar .account-info .dropdown-menu li a:hover {
+.app-content .content .site-bar .account-info .dropdown-menu li a:hover,
+.app-content .content .site-bar .language-selector .dropdown-menu li a:hover,
+.app-content .content .site-bar .timezone-selector .dropdown-menu li a:hover {
     background-color: black
 }
 

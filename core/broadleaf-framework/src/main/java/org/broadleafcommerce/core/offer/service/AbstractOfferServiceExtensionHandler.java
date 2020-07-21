@@ -91,4 +91,7 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     public ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+
+
 }

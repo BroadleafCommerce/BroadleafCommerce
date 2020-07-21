@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.common.weave;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -29,6 +32,7 @@ import java.io.Serializable;
  */
 public class ConditionalDirectCopyTransformMemberDto implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     protected String[] templateTokens;
     protected boolean renameMethodOverlaps = false;
 
@@ -43,21 +47,6 @@ public class ConditionalDirectCopyTransformMemberDto implements Serializable {
     protected boolean skipOverlaps = false;
     protected String conditionalProperty;
     protected Boolean conditionalValue;
-
-    /**
-     * The name that should be used when dynamically generating index names instead of the table name. This is needed
-     * when two entities have table names that create the same dynamic index names. Generally the strategy used to create
-     * the table name part of the index is to use the first two characters of each word in the table name split on the underscores.
-     * 
-     * i.e.
-     * BLC_APPLE_CARROT -> BLAPCA
-     * BLC_APPLY_CAR    -> BLAPCA
-     * 
-     * Since both tables have a collision, BLC_APPLY_CAR can set this property to "BLAPPCA" to avoid collisions
-     * 
-     * @return
-     */
-    protected String overrideIndexNameKey;
 
     public String[] getTemplateTokens() {
         return templateTokens;
@@ -99,11 +88,32 @@ public class ConditionalDirectCopyTransformMemberDto implements Serializable {
         this.conditionalValue = conditionalValue;
     }
 
-    public String getOverrideIndexNameKey() {
-        return overrideIndexNameKey;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || !getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        ConditionalDirectCopyTransformMemberDto rhs = (ConditionalDirectCopyTransformMemberDto) obj;
+        return new EqualsBuilder()
+                .append(this.templateTokens, rhs.templateTokens)
+                .append(this.renameMethodOverlaps, rhs.renameMethodOverlaps)
+                .append(this.skipOverlaps, rhs.skipOverlaps)
+                .append(this.conditionalProperty, rhs.conditionalProperty)
+                .append(this.conditionalValue, rhs.conditionalValue)
+                .isEquals();
     }
 
-    public void setOverrideIndexNameKey(String overrideIndexNameKey) {
-        this.overrideIndexNameKey = overrideIndexNameKey;
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(templateTokens)
+                .append(renameMethodOverlaps)
+                .append(skipOverlaps)
+                .append(conditionalProperty)
+                .append(conditionalValue)
+                .toHashCode();
     }
 }

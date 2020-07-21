@@ -32,6 +32,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
 
+    private static final long serialVersionUID = 1L;
+
     @Column(name = "ARCHIVED")
     @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStatus")
     protected Character archived = 'N';

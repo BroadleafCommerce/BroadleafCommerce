@@ -30,15 +30,26 @@
         </ul>
     </div>
     
-    <div class="language-selector account-info dropdown">
-        <div class="dropdown-toggle" id="accountdrop" data-toggle="dropdown" aria-expanded="true">
+    <div class="language-selector dropdown">
+        <div class="dropdown-toggle" id="languagedrop" data-toggle="dropdown" aria-expanded="true">
             <span th:text="${session.blLocale.friendlyName}"></span>
         </div>
-        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="accountdrop">
+        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="languagedrop">
             <li th:each="locale : ${@blLocaleService.findAllLocales()}">
-                <a href="javascript:;" 
-                th:attr="onclick=${'BLC.addUrlParam(document.location.search, ''blLocaleCode'', ''' + locale.localeCode + ''')'}"
-                th:text="#{${locale.friendlyName}}"></a>
+                <a class="add-url-param-click" th:attr="data-param=${locale.localeCode},data-prop=blLocaleCode" href="#"
+                   th:text="#{${locale.friendlyName}}"></a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="timezone-selector dropdown">
+        <div class="dropdown-toggle" id="timezonedrop" data-toggle="dropdown" aria-expanded="true">
+            <span th:text="${session.blTimeZone.displayName} + ' (' + ${T(java.time.format.DateTimeFormatter).ofPattern('OOOO').format(T(java.time.ZonedDateTime).now(session.blTimeZone.toZoneId()))} + ')'"></span>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="timezonedrop">
+            <li th:each="timezone : ${@environment.getProperty('admin.available.timezone.codes', T(java.util.List))}">
+                <a class="add-url-param-click" th:attr="data-param=${timezone},data-prop=blTimeZoneCode" href="#"
+                   th:text="#{${timezone}}"></a>
             </li>
         </ul>
     </div>

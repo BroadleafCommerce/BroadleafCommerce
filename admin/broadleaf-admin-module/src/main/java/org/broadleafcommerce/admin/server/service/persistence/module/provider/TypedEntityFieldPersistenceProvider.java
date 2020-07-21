@@ -19,7 +19,9 @@ package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
 import org.broadleafcommerce.common.admin.domain.TypedEntity;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.DefaultFieldPersistenceProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
@@ -48,14 +50,9 @@ public class TypedEntityFieldPersistenceProvider extends DefaultFieldPersistence
         return MetadataProviderResponse.HANDLED_BREAK;
     }
 
-    protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
-        Property property = populateValueRequest.getProperty();
-        if (TypedEntity.class.isAssignableFrom(instance.getClass())) {
-            String typeFieldName = ((TypedEntity) instance).getTypeFieldName();
-            return Objects.equals(property.getName(), typeFieldName);
-        }
-
-        return false;
+    @Override
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
@@ -67,4 +64,15 @@ public class TypedEntityFieldPersistenceProvider extends DefaultFieldPersistence
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE - 1000;
     }
+
+    protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
+        Property property = populateValueRequest.getProperty();
+        if (TypedEntity.class.isAssignableFrom(instance.getClass())) {
+            String typeFieldName = ((TypedEntity) instance).getTypeFieldName();
+            return Objects.equals(property.getName(), typeFieldName);
+        }
+
+        return false;
+    }
+
 }
