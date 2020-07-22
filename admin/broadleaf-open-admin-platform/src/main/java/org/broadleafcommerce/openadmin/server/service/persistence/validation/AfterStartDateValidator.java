@@ -18,9 +18,11 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
@@ -28,6 +30,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNo
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
@@ -70,6 +73,18 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
             message = e.getMessage();
         }
         
+        // Validate against the entity only if the instance doesn't have that field
+        if (!valid && entity.getPMap().get(otherField) != null && entity.getPMap().get(propertyName) != null) {
+            try {
+                startDate = getDateFromEntity(entity, otherField);
+                endDate = getDateFromEntity(entity, propertyName);
+                valid = true;
+                message = "";
+            } catch (ParseException e) {
+                message = e.getMessage();
+            }
+        }
+
         if (valid && endDate != null && startDate != null && endDate.before(startDate)) {
             valid = false;
             message = END_DATE_BEFORE_START;
@@ -79,9 +94,21 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
     }
 
     protected FieldManager getFieldManager(BasicFieldMetadata propertyMetadata) {
-        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(propertyMetadata.getTargetClass());
+        PersistenceManager persistenceManager;
+        if (propertyMetadata.getTargetClass() != null) {
+            persistenceManager = PersistenceManagerFactory.getPersistenceManager(propertyMetadata.getTargetClass());
+        } else {
+            persistenceManager = PersistenceManagerFactory.getPersistenceManager();
+        }
         return persistenceManager.getDynamicEntityDao().getFieldManager();
     }
 
+    private Date getDateFromEntity(Entity entity, String propertyName) throws ParseException {
+        Property prop = entity.getPMap().get(propertyName);
+        if (StringUtils.isEmpty(prop.getValue())) {
+            return null;
+        }
+        return FormatUtil.getDateFormat().parse(prop.getValue());
+    }
 
 }
