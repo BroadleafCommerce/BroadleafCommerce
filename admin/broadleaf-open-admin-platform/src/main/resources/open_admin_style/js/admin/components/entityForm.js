@@ -80,7 +80,9 @@
         showErrors : function (data, alertMessage) {
             $.each( data.errors , function( idx, error ){
                 if (error.errorType == "field") {
-                    var fieldGroup = $("#field-" + error.field);
+                    // escape the | character from dynamic form fields for jquery to be able to process
+                    // replace all '|' and ' ' characters with '-'
+                    var fieldGroup = $("#field-" + (error.field).replace(/\|/g, "-").replace(/ /g, "-"));
                     if (BLCAdmin.currentModal() !== undefined) {
                         fieldGroup = BLCAdmin.currentModal().find("#field-" + error.field);
                     }
@@ -312,33 +314,33 @@ $(document).ready(function() {
         var currentAction = $form.attr('action');
         var tabUrl = encodeURI(currentAction + '/1/' + tabKey);
 
-     	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
-     		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
-     	} else if (tabs_action && tabs_action.indexOf(tabUrl) == -1) {
-     		tabs_action += ' / ' + tabUrl;
-     	} else if (tabs_action == null) {
-     		tabs_action = tabUrl;
-     	}
+        if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
+            tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
+        } else if (tabs_action && tabs_action.indexOf(tabUrl) == -1) {
+            tabs_action += ' / ' + tabUrl;
+        } else if (tabs_action == null) {
+            tabs_action = tabUrl;
+        }
 
-     	if (tabs_action.indexOf(tabUrl + '++') == -1 && !$tab.hasClass('first-tab')) {
+        if (tabs_action.indexOf(tabUrl + '++') == -1 && !$tab.hasClass('first-tab')) {
             showTabSpinner($tab, $tabBody);
 
-     		BLC.ajax({
-     			url: tabUrl,
-     			type: "POST",
-     			data: $form.serializeArray()
-     		}, function(data) {
-     			$('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
-     				var tableId = $(this).attr('id').replace('-header', '');
+            BLC.ajax({
+                url: tabUrl,
+                type: "POST",
+                data: $form.serializeArray()
+            }, function(data) {
+                $('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
+                    var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('.listgrid-header-wrapper:has(table#' + tableId + ')');
-     				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
+                    BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
-     			});
-     			$('div.' + href + 'Tab .selectize-wrapper').each(function() {
-     				var tableId = $(this).attr('id');
+                });
+                $('div.' + href + 'Tab .selectize-wrapper').each(function() {
+                    var tableId = $(this).attr('id');
                     var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
-     				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
-     			});
+                    BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
+                });
                 $('div.' + href + 'Tab .media-container').each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
@@ -352,11 +354,11 @@ $(document).ready(function() {
                 });
 
                 hideTabSpinner($tab, $tabBody);
-     		});
+            });
 
-     		event.preventDefault();
+            event.preventDefault();
 
-     	}
+        }
      });
 
 
