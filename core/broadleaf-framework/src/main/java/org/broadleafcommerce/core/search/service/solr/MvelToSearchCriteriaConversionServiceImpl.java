@@ -20,6 +20,9 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
@@ -27,6 +30,7 @@ import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -44,12 +48,16 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
     public static final String CATEGORY_FORMAT_REGEX = "^CollectionUtils\\.intersection\\(product\\.\\?allParentCategoryIds,\\[\\\"([0-9]+)\\\"\\]\\)\\.size\\(\\)>0$";
     public static final String CUSTOM_FIELD_EQUALS_FORMAT_REGEX = "^product\\.\\?getProductAttributes\\(\\)\\[\\\"([a-zA-Z0-9_]+)\\\"\\]\\=\\=\\\"([a-zA-Z0-9\\s]+)\\\"$";
     public static final String CUSTOM_FIELD_CONTAINS_FORMAT_REGEX = "^MvelHelper\\.toUpperCase\\(product\\.\\?getProductAttributes\\(\\)\\[\\\"([a-zA-Z0-9_]+)\\\"\\]\\)\\.contains\\(MvelHelper\\.toUpperCase\\(\\\"([a-zA-Z0-9\\s]+)\\\"\\)\\)$";
+    public static final String SKU_NAME_CONTAINS = "^org\\.apache\\.commons\\.lang3\\.StringUtils\\.contains\\(MvelHelper\\.toUpperCase\\(product\\.\\?defaultSku\\.\\?name\\),MvelHelper\\.toUpperCase\\(\\\"([a-zA-Z0-9\\s]+)\\\"\\)\\)$";
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
+
+    @Resource(name = "blLocaleService")
+    protected LocaleService localeService;
 
     @Override
     public SearchCriteria convert(String mvelRule) {
@@ -63,12 +71,26 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
             Long categoryId = getCategoryId(mvelRule);
             Category category = catalogService.findCategoryById(categoryId);
             criteria.setCategory(category);
-        } else {
+        } else if(isSkuNameContains(mvelRule)){
+            String query = buildSkuNameQuery(mvelRule);
+            criteria.setQuery(query);
+        }else {
             throw new UnsupportedOperationException("The provided MVEL rule format is not currently supported " +
                     "for MVEL to Solr Search Criteria conversion.");
         }
 
         return criteria;
+    }
+
+    protected String buildSkuNameQuery(String mvelRule) {
+        int startIndex = mvelRule.lastIndexOf("MvelHelper.toUpperCase(\"")+"MvelHelper.toUpperCase(\"".length();
+        int endIndex = mvelRule.lastIndexOf("\")");
+        String propertyValue = mvelRule.substring(startIndex, endIndex);
+        return buildCustomFieldQuery("name", propertyValue);
+    }
+
+    protected boolean isSkuNameContains(String mvelRule) {
+        return mvelRule.matches(SKU_NAME_CONTAINS);
     }
 
     protected String buildCustomFieldQuery(String mvelRule) {
@@ -115,16 +137,28 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         List<IndexFieldType> indexFieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviationOrPropertyName(customFieldPropertyName);
         if (isCustomFieldIndexed(indexFieldTypes)) {
             customFieldQuery = "*:*&fq=(";
-            for (IndexFieldType indexFieldType : indexFieldTypes) {
-                String type = indexFieldType.getFieldType().getType();
-                String indexFieldName = customFieldPropertyName + "_" + type;
-                String indexFieldValue = "\"" + customFieldValue + "\"";
+            Boolean translatable = indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
+            List<Locale> allLocales;
+            if(translatable !=null && !translatable){
+                allLocales = new ArrayList<>();
+                LocaleImpl e = new LocaleImpl();
+                e.setLocaleCode("");
+                allLocales.add(e);
+            }else{
+                allLocales = localeService.findAllLocales();
+            }
+            for (Locale locale : allLocales) {
+                for (IndexFieldType indexFieldType : indexFieldTypes) {
+                    String type = indexFieldType.getFieldType().getType();
+                    String indexFieldName = locale.getLocaleCode() + "_" + customFieldPropertyName + "_" + type;
+                    String indexFieldValue = "\"" + customFieldValue + "\"";
 
-                if (!isFirstItem(customFieldQuery)) {
-                    customFieldQuery += " OR ";
+                    if (!isFirstItem(customFieldQuery)) {
+                        customFieldQuery += " OR ";
+                    }
+
+                    customFieldQuery += indexFieldName + ":" + indexFieldValue;
                 }
-
-                customFieldQuery += indexFieldName + ":" + indexFieldValue;
             }
             customFieldQuery += ")";
         } else {
