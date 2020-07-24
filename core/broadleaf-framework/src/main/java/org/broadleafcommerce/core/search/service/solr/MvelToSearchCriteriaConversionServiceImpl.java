@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -150,7 +151,13 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
             for (Locale locale : allLocales) {
                 for (IndexFieldType indexFieldType : indexFieldTypes) {
                     String type = indexFieldType.getFieldType().getType();
-                    String indexFieldName = locale.getLocaleCode() + "_" + customFieldPropertyName + "_" + type;
+                    String prefix;
+                    if(StringUtils.isNotEmpty(locale.getLocaleCode())) {
+                        prefix = locale.getLocaleCode() + "_";
+                    }else{
+                        prefix = "";
+                    }
+                    String indexFieldName = prefix + customFieldPropertyName + "_" + type;
                     String indexFieldValue = "\"" + customFieldValue + "\"";
 
                     if (!isFirstItem(customFieldQuery)) {
