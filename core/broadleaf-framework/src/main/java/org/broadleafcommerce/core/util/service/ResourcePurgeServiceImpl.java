@@ -33,14 +33,14 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -56,7 +56,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 /**
  * Service capable of deleting old or defunct entities from the persistence layer (e.g. Carts and anonymous Customers).
@@ -120,6 +119,12 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     @Resource(name = "blcDeleteStatementGenerator")
     protected DeleteStatementGenerator deleteStatementGenerator;
 
+    @Autowired
+    protected Environment env;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+
     @Override
     public void purgeCarts(final Map<String, String> config) {
         if (LOG.isDebugEnabled()) {
@@ -154,19 +159,23 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         LOG.info(String.format("Cart purge batch processed.  Purged %d from total batch size of %d, %d failures cached", processedCount, batchCount, cartPurgeErrors.size()));
     }
 
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
-
-
     @Override
     public void purgeHistory(Class<?> rootType, String rootTypeIdValue) {
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purging history");
         }
 
+        String enablePurge = env.getProperty("enable.purge");
+
+        if (!Boolean.parseBoolean(enablePurge)) {
+            LOG.info("Save protection. Purging history is off. Please set property enable.purge to true.");
+            return;
+        }
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.dd.MM");
-        String dateEnd = "2020.09.09";
-        String dateStr = "2011.11.19";
+        String dateStr = env.getProperty("date.str");
+        String dateEnd = env.getProperty("date.end");
 
         try {
             Date startDate = formatter.parse(dateStr);
