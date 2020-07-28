@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.util.service;
 
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,7 +54,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
      * This map is the LinkedHashMap so order of keys is important. You should exec sql from the beginning.
      *
      */
-    public Map<String, String> generateDeleteStatementsForType(Class<?> rootType, String rootTypeIdValue) {
+    public Map<String, String> generateDeleteStatementsForType(Class<?> rootType, String rootTypeIdValue, Map<String, PathElement> dependencies) {
         if(StringUtils.isEmpty(rootTypeIdValue)){
             rootTypeIdValue="XX";
         }
@@ -63,7 +62,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         Stack<PathElement> stack = new Stack<>();
         Set<Class<?>> processedClasses = new HashSet<>();
         LinkedHashMap<String, OperationStackHolder> result = new LinkedHashMap<>();
-        diveDeep(rootType, null, null, stack, processedClasses, result);
+        diveDeep(rootType, null, null, stack, processedClasses, result, dependencies);
 
         Object[] objects = result.entrySet().toArray();
         Arrays.sort(objects, new Comparator<Object>() {
@@ -71,9 +70,9 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             public int compare(Object o1, Object o2) {
                 OperationStackHolder val2 = ((Map.Entry<String, OperationStackHolder>) o2).getValue();
                 OperationStackHolder val1 = ((Map.Entry<String, OperationStackHolder>) o1).getValue();
-                if(val2.isUpdate() && !val1.isUpdate()){
+                if((val2.isUpdate() && !val1.isUpdate()) || (val2.isXref() && !val1.isXref())){
                     return 1;
-                }else if(val1.isUpdate() && !val2.isUpdate()){
+                }else if(val1.isUpdate() && !val2.isUpdate() || (val1.isXref() && !val2.isXref())){
                     return -1;
                 }else {
                     return val2.getStack().size() - val1.getStack().size();
@@ -145,7 +144,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
     }
 
 
-    private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result) {
+    private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Map<String, PathElement> dependencies) {
         Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(classToProcess,false,true);
         if (processedClasses.contains(classToProcess)) {
             return;
@@ -167,7 +166,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         stack.push(el);
         for (Class<?> aClass : classes) {
             if (!aClass.equals(classToProcess)) {
-                diveDeep(aClass, idField, null, stack, processedClasses, result);
+                diveDeep(aClass, idField, null, stack, processedClasses, result, dependencies);
             }
         }
         for (Field declaredField : declaredFields) {
@@ -176,11 +175,11 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             }
             OneToMany annotation = declaredField.getAnnotation(OneToMany.class);
             if (annotation != null) {
-                processField(stack, processedClasses, result, declaredField);
+                processField(stack, processedClasses, result, declaredField,dependencies);
             } else if (declaredField.getAnnotation(Embedded.class) != null) {
                 Class<?> type = declaredField.getType();
                 for (Field decl : type.getDeclaredFields()) {
-                    processField(stack, processedClasses, result, decl);
+                    processField(stack, processedClasses, result, decl,dependencies);
                 }
             }else if(declaredField.getAnnotation(CollectionTable.class) != null){
                 CollectionTable collectionTable = declaredField.getAnnotation(CollectionTable.class);
@@ -196,13 +195,25 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                     JoinColumn selfJoinColumn = declaredField.getAnnotation(JoinColumn.class);
                     result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder((Stack<PathElement>) stack.clone(), true, selfJoinColumn.name()));
                 }
+            }else if(declaredField.getAnnotation(ManyToMany.class)!=null){
+                JoinTable joinTable = declaredField.getAnnotation(JoinTable.class);
+                JoinColumn[] joinColumns = joinTable.joinColumns();
+                stack.push(new PathElement(joinTable.name(),joinColumns[0].referencedColumnName(),joinColumns[0].name()));
+                result.put(joinTable.name(), new OperationStackHolder((Stack<PathElement>) stack.clone(),true));
+                stack.pop();
             }
+        }
+        PathElement pathElement = dependencies.get(tableAnnotation.name());
+        if(pathElement!=null){
+            stack.push(pathElement);
+            result.put(pathElement.getName(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
+            stack.pop();
         }
         result.put(tableAnnotation.name(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
         stack.pop();
     }
 
-    private void processField(Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Field decl) {
+    private void processField(Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Field decl,  Map<String, PathElement> dependencies) {
         OneToMany oneToManyAnnot = decl.getAnnotation(OneToMany.class);
         if (oneToManyAnnot != null) {
             Class<?> aClass = oneToManyAnnot.targetEntity();
@@ -217,10 +228,13 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                 PathElement pathElement = new PathElement(joinTable.name(), inverseJoinColumn.name(), jnColumn.name());
                 stack.push(pathElement);
                 joinColumnFromJoinTable = inverseJoinColumn.name();
+                result.put(joinTableNameFromJoinTable, new OperationStackHolder((Stack<PathElement>) stack.clone(), true));
             }
-            diveDeep(aClass, joinColumnFromJoinTable, mappedByAnnotation, stack, processedClasses, result);
+            diveDeep(aClass, joinColumnFromJoinTable, mappedByAnnotation, stack, processedClasses, result,dependencies);
             if (StringUtils.isNotEmpty(joinTableNameFromJoinTable)) {
-                result.put(joinTableNameFromJoinTable, new OperationStackHolder((Stack<PathElement>) stack.clone()));
+                if(!result.containsKey(joinTableNameFromJoinTable)) {
+                    result.put(joinTableNameFromJoinTable, new OperationStackHolder((Stack<PathElement>) stack.clone()));
+                }
                 stack.pop();
             }
         }
@@ -274,6 +288,8 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         private Stack<PathElement> stack;
         private boolean isUpdate;
         private String columnToUpdate;
+        private boolean xref;
+
 
         public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate) {
             this.stack = stack;
@@ -282,6 +298,11 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         }
         public OperationStackHolder(Stack<PathElement> stack) {
             this(stack, false, null);
+        }
+
+        public OperationStackHolder(Stack<PathElement> stack, boolean isXref) {
+            this(stack, false, null);
+            this.xref = isXref;
         }
 
         public Stack<PathElement> getStack() {
@@ -294,6 +315,10 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
 
         public String getColumnToUpdate() {
             return columnToUpdate;
+        }
+
+        public boolean isXref() {
+            return xref;
         }
     }
 

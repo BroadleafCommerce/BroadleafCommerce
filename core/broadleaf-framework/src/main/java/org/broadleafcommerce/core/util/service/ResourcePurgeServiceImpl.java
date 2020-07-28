@@ -182,7 +182,9 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             Date endDate = formatter.parse(dateEnd);
 
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
-            Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?");
+            Map<String, DeleteStatementGeneratorImpl.PathElement> dependencies = new HashMap<>();
+            dependencies.put("BLC_FULFILLMENT_ORDER", new DeleteStatementGeneratorImpl.PathElement("BLC_FULFILL_PAYMENT_LOG","FULFILLMENT_ORDER_ID","FULFILLMENT_ORDER_ID"));
+            Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies);
             for (Order order : ordersByDateRange) {
                 TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
                         TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
