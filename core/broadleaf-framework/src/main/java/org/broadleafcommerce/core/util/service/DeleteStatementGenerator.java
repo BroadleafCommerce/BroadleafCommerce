@@ -18,7 +18,8 @@
 package org.broadleafcommerce.core.util.service;
 
 import java.util.Map;
+import java.util.Set;
 
 public interface DeleteStatementGenerator {
-    public Map<String, String> generateDeleteStatementsForType(Class<?> rootType, String rootTypeIdValue,  Map<String, DeleteStatementGeneratorImpl.PathElement> dependencies);
+    public Map<String, String> generateDeleteStatementsForType(Class<?> rootType, String rootTypeIdValue,  Map<String, DeleteStatementGeneratorImpl.PathElement> dependencies, Set<String> exclusions);
 }

@@ -45,13 +45,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -160,7 +154,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     }
 
     @Override
-    public void purgeHistory(Class<?> rootType, String rootTypeIdValue) {
+    public void purgeHistory(Class<?> rootType, String rootTypeIdValue, Map<String, DeleteStatementGeneratorImpl.PathElement> depends) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purging history");
@@ -182,9 +176,17 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             Date endDate = formatter.parse(dateEnd);
 
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
-            Map<String, DeleteStatementGeneratorImpl.PathElement> dependencies = new HashMap<>();
+            Map<String, DeleteStatementGeneratorImpl.PathElement> dependencies = new HashMap<>(depends);
             dependencies.put("BLC_FULFILLMENT_ORDER", new DeleteStatementGeneratorImpl.PathElement("BLC_FULFILL_PAYMENT_LOG","FULFILLMENT_ORDER_ID","FULFILLMENT_ORDER_ID"));
-            Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies);
+            dependencies.put("BLC_ORDER", new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_ADMIN_ASSIGNMENT","ORDER_ID","ORDER_ID"));
+            dependencies.put("BLC_ORDER_PAYMENT_TRANSACTION", new DeleteStatementGeneratorImpl.PathElement("BLC_REFUND_PAYMENT_LOG","PAYMENT_TRANSACTION_ID","PAYMENT_TRANSACTION_ID"));
+            Set<String> exclusions = new HashSet<>();
+            exclusions.add("BLC_PRICE_LIST");
+            exclusions.add("BLC_ACCOUNT");
+            exclusions.add("BLC_ACCOUNT_MEMBER");
+            exclusions.add("BLC_VENDOR_ADDRESS");
+            exclusions.add("BLC_VENDOR");
+            Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies, exclusions);
             for (Order order : ordersByDateRange) {
                 TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
                         TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);

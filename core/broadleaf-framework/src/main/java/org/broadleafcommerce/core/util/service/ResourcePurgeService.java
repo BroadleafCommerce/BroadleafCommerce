@@ -39,6 +39,16 @@ public interface ResourcePurgeService {
 
     void purgeCustomers(final Map<String, String> config);
 
-    void purgeHistory(Class<?> rootType, String rootTypeIdValue);
+    /**
+     * Generates delete statement and executes them
+     * Originally was designed to purge orders and its dependencies
+     * @param rootType - entity type to start from to find all dependent entities
+     * @param rootTypeIdValue - id value to use, can be any string like '?' that you will want to replace with concrete id, or id itself
+     * @param depends - a map representing dependent tables that can't be navigated from a root type,
+     *               where key is a table name to depend on, value is structure representing a depending table name,
+     *                join column name(FK column that is in depending table) and id field name in table to depend on.
+     *
+     */
+    void purgeHistory(Class<?> rootType, String rootTypeIdValue, Map<String, DeleteStatementGeneratorImpl.PathElement> depends);
 
 }
