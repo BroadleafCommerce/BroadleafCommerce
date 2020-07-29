@@ -70,11 +70,15 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             public int compare(Object o1, Object o2) {
                 OperationStackHolder val2 = ((Map.Entry<String, OperationStackHolder>) o2).getValue();
                 OperationStackHolder val1 = ((Map.Entry<String, OperationStackHolder>) o1).getValue();
-                if((val2.isUpdate() && !val1.isUpdate()) || (val2.isXref() && !val1.isXref())){
+                if(((val2.isUpdate() && !val2.isRelationshipUpdate()) && !val1.isUpdate()) || (val2.isXref() && !val1.isXref())){
                     return 1;
-                }else if(val1.isUpdate() && !val2.isUpdate() || (val1.isXref() && !val2.isXref())){
+                }else if((val1.isUpdate() && !val1.isRelationshipUpdate()) && !val2.isUpdate() || (val1.isXref() && !val2.isXref())){
                     return -1;
-                }else {
+                }else if(val1.isRelationshipUpdate() && !val2.isRelationshipUpdate() && val1.getStack().size()+1==val2.getStack().size()){
+                    return -1;
+                }else if(val2.isRelationshipUpdate() && !val1.isRelationshipUpdate() && val2.getStack().size()+1==val1.getStack().size()){
+                    return 1;
+                }else{
                     return val2.getStack().size() - val1.getStack().size();
                 }
             }
@@ -107,9 +111,8 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             shouldAppendWhere = false;
             PathElement pop = value.pop();
             if(prevTable.isFromManyToOne()){
-                builder.append(" WHERE ").append(prevTable.getIdField()).append(" IN (SELECT a.")
-                        .append(prevTable.getJoinColumn()).append(" FROM ").append(pop.getName()).append(" a WHERE a.")
-                        .append(pop.getIdField()).append("=").append(rootTypeIdValue).append(")");
+                builder.append(" WHERE ")
+                        .append(pop.getIdField()).append("=").append(rootTypeIdValue);
             }else {
                 builder.append(" WHERE ").append(prevTable.getJoinColumn()).append("=").append(rootTypeIdValue);
             }
@@ -213,8 +216,9 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                     result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder((Stack<PathElement>) stack.clone(), true, selfJoinColumn.name()));
                 }else if(manyToOne.targetEntity().equals(prevProcessedClass) && fromManyToOne){
                     //ManyToMany without 3rd table
-                    JoinColumn selfJoinColumn = declaredField.getAnnotation(JoinColumn.class);
-                    result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder((Stack<PathElement>) stack.clone(), true, selfJoinColumn.name()));
+                    Stack<PathElement> clone = (Stack<PathElement>) stack.clone();
+                    PathElement pop = clone.pop();
+                    result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder(clone, true, pop.getJoinColumn(), true));
                 }
             }else if(declaredField.getAnnotation(ManyToMany.class)!=null){
                 JoinTable joinTable = declaredField.getAnnotation(JoinTable.class);
@@ -336,7 +340,14 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         private boolean isUpdate;
         private String columnToUpdate;
         private boolean xref;
+        private boolean relationshipUpdate;
 
+        public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate,boolean relationshipUpdate) {
+            this.stack = stack;
+            this.isUpdate = isUpdate;
+            this.columnToUpdate = columnToUpdate;
+            this.relationshipUpdate = relationshipUpdate;
+        }
 
         public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate) {
             this.stack = stack;
@@ -366,6 +377,10 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
 
         public boolean isXref() {
             return xref;
+        }
+
+        public boolean isRelationshipUpdate() {
+            return relationshipUpdate;
         }
     }
 
