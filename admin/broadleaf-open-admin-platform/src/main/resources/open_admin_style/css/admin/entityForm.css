@@ -361,6 +361,11 @@ span.alert-box.error-alert {
     font-size: 12px;
     display: block;
 }
+span.error {
+    color: #D20A33;
+    font-size: 12px;
+    display: block;
+}
 /****************************************
  ADMIN FIELD RELATED STYLES
 ****************************************/
