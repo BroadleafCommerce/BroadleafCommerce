@@ -155,7 +155,6 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             builder.append(")");
         }
         String x = builder.toString();
-        System.out.println(x);
         LOG.debug(x);
         return x;
     }
@@ -277,7 +276,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             Class aClass = manyToOne.targetEntity();
             if (!processedClasses.contains(aClass)) {
                 String joinColumnName = decl.getAnnotation(JoinColumn.class).name();
-                diveDeep(aClass,joinColumnName, null, stack, processedClasses, result, dependencies, exclustions, false, prevClassToProcess);
+                diveDeep(aClass,joinColumnName, null, stack, processedClasses, result, dependencies, exclustions, fromEmbedded, prevClassToProcess);
             }
         }
     }
