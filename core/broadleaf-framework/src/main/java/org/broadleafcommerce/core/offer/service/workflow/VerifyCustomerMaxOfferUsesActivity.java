@@ -76,7 +76,7 @@ public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<ProcessCont
                 Long currentCodeUses = offerAuditService.countOfferCodeUses(order, code.getId());
                 if (currentCodeUses >= code.getMaxUses()) {
                     throw new OfferMaxUseExceededException("Offer code " + code.getOfferCode() + " with id " + code.getId()
-                            + " has been than the maximum allowed number of times.");
+                            + " has been used more than the maximum allowed number of times.");
                 }
             }
         }
