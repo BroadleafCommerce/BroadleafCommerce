@@ -50,6 +50,9 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
      *
      * @param rootType type to start build sql dependency list
      * @param rootTypeIdValue value of id column of the rootType to be passed in where clause
+     * @param dependencies - map of additional dependecies that can't be discovered during ineration from root type,
+     *                     key is table name to depend on like blc_order->some other table, value is structure representing dependant table, its PK, and FK to join with/
+     * @param exclustions - Set with table name to exclude from list, like price_list, etc
      * @return a Map which key is a table name, and value is string with sql delete statement.
      * This map is the LinkedHashMap so order of keys is important. You should exec sql from the beginning.
      *

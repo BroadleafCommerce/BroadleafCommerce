@@ -178,7 +178,6 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
             Map<String, DeleteStatementGeneratorImpl.PathElement> dependencies = new HashMap<>(depends);
             dependencies.put("BLC_FULFILLMENT_ORDER", new DeleteStatementGeneratorImpl.PathElement("BLC_FULFILL_PAYMENT_LOG","FULFILLMENT_ORDER_ID","FULFILLMENT_ORDER_ID"));
-//            dependencies.put("BLC_ORDER", new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_ADMIN_ASSIGNMENT","ORDER_ID","ORDER_ID"));
             dependencies.put("BLC_ORDER_PAYMENT_TRANSACTION", new DeleteStatementGeneratorImpl.PathElement("BLC_REFUND_PAYMENT_LOG","PAYMENT_TRANSACTION_ID","PAYMENT_TRANSACTION_ID"));
             Set<String> exclusions = new HashSet<>();
             exclusions.add("BLC_PRICE_LIST");
