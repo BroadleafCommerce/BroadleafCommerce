@@ -76,8 +76,9 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
             String query = buildSkuNameQuery(mvelRule);
             criteria.setQuery(query);
         }else {
-            throw new UnsupportedOperationException("The provided MVEL rule format is not currently supported " +
-                    "for MVEL to Solr Search Criteria conversion.");
+            throw new UnsupportedOperationException("The selected Add-On Product Group is defined using Rules " +
+                    "(Conditional Rules) and selected rule can't be translated to solr criteria and so " +
+                    "does not support selection of a Default Product. See Tooltip for supported rule details");
         }
 
         return criteria;
