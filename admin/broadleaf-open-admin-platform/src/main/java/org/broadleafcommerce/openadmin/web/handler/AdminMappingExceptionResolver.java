@@ -59,7 +59,7 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             return mav;
         } else {
             // If the exception is "Entity not found" redirect to main listgrid view
-            if (ex.getClass().equals(EntityNotFoundException.class)) {
+            if (ex instanceof EntityNotFoundException) {
                 String originatingUri = new UrlPathHelper().getOriginatingRequestUri(request);
                 int startIndex = request.getContextPath().length();
 
