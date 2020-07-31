@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.util.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +50,6 @@ public interface ResourcePurgeService {
      *                join column name(FK column that is in depending table) and id field name in table to depend on.
      *
      */
-    void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, DeleteStatementGeneratorImpl.PathElement> depends);
+    void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends);
 
 }

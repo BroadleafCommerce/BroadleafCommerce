@@ -57,7 +57,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
      * This map is the LinkedHashMap so order of keys is important. You should exec sql from the beginning.
      *
      */
-    public Map<String, String> generateDeleteStatementsForType(Class<?> rootType, String rootTypeIdValue, Map<String, PathElement> dependencies, Set<String> exclustions) {
+    public Map<String, String> generateDeleteStatementsForType(Class<?> rootType, String rootTypeIdValue, Map<String, List<PathElement>> dependencies, Set<String> exclustions) {
         if(StringUtils.isEmpty(rootTypeIdValue)){
             rootTypeIdValue="XX";
         }
@@ -163,7 +163,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
     }
 
 
-    private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Map<String, PathElement> dependencies, Set<String> exclusions, boolean fromManyToOne, Class prevProcessedClass) {
+    private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Map<String, List<PathElement>> dependencies, Set<String> exclusions, boolean fromManyToOne, Class prevProcessedClass) {
         Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(classToProcess,false,true);
         if (processedClasses.contains(classToProcess)) {
             return;
@@ -221,26 +221,42 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                     Stack<PathElement> clone = (Stack<PathElement>) stack.clone();
                     PathElement pop = clone.pop();
                     result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder(clone, true, pop.getJoinColumn(), true));
-                }
+                }/*else{
+                    JoinColumn jnColumn = declaredField.getAnnotation(JoinColumn.class);
+                    diveDeep(manyToOne.targetEntity(), jnColumn.name(), null, stack, processedClasses, result, dependencies, exclusions, true, classToProcess);
+                }*/
             }else if(declaredField.getAnnotation(ManyToMany.class)!=null){
                 JoinTable joinTable = declaredField.getAnnotation(JoinTable.class);
                 JoinColumn[] joinColumns = joinTable.joinColumns();
                 stack.push(new PathElement(joinTable.name(),joinColumns[0].referencedColumnName(),joinColumns[0].name()));
                 result.put(joinTable.name(), new OperationStackHolder((Stack<PathElement>) stack.clone(),true));
                 stack.pop();
-            }
+            }/*else if(declaredField.getAnnotation(OneToOne.class)!=null){
+                JoinColumn jnColumn = declaredField.getAnnotation(JoinColumn.class);
+                diveDeep(declaredField.getAnnotation(OneToOne.class).targetEntity(), jnColumn.name(), null, stack, processedClasses, result, dependencies, exclusions, true, classToProcess);
+            }*/
         }
-        PathElement pathElement = dependencies.get(tableAnnotation.name());
-        if(pathElement!=null){
-            stack.push(pathElement);
-            result.put(pathElement.getName(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
-            stack.pop();
-        }
+        processManualDefinedDependencies(stack, result, dependencies, tableAnnotation.name());
         result.put(tableAnnotation.name(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
         stack.pop();
     }
 
-    private void processField(Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Field decl,  Map<String, PathElement> dependencies, Set<String> exclustions, boolean fromEmbedded, Class prevClassToProcess) {
+    private void processManualDefinedDependencies(Stack<PathElement> stack, HashMap<String, OperationStackHolder> result, Map<String, List<PathElement>> dependencies, String tableName) {
+        List<PathElement> pathElement = dependencies.get(tableName);
+        if (pathElement != null) {
+            for(PathElement p: pathElement) {
+                stack.push(p);
+                if(dependencies.get(p.getName())!=null){
+                    processManualDefinedDependencies(stack, result, dependencies, p.getName());
+                }else {
+                    result.put(p.getName(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
+                }
+                stack.pop();
+            }
+        }
+    }
+
+    private void processField(Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Field decl,  Map<String, List<PathElement>> dependencies, Set<String> exclustions, boolean fromEmbedded, Class prevClassToProcess) {
         OneToMany oneToManyAnnot = decl.getAnnotation(OneToMany.class);
         if (oneToManyAnnot != null) {
             Class<?> aClass = oneToManyAnnot.targetEntity();
@@ -310,6 +326,14 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         private final String name;
         private final boolean fromManyToOne;
 
+        /**
+         *
+         * @param name table name
+         * @param idField id field name
+         * @param joinColumn fk column name in this table to join with "parent table", like blc_order->order_item, fk is ORDER_ID
+         * @param fromManyToOne is this path came from @ManyToOne - ManyToMany case without 3rd table
+         *                     (or exceptional case @OneToOne biderectional with one site @ManyToOne)
+         */
         public PathElement(String name, String idField, String joinColumn, boolean fromManyToOne) {
             this.name = name;
             this.idField = idField;

@@ -154,7 +154,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     }
 
     @Override
-    public void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, DeleteStatementGeneratorImpl.PathElement> depends) {
+    public void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purging history");
@@ -176,15 +176,26 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             Date endDate = formatter.parse(dateEnd);
 
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
-            Map<String, DeleteStatementGeneratorImpl.PathElement> dependencies = new HashMap<>(depends);
-            dependencies.put("BLC_FULFILLMENT_ORDER", new DeleteStatementGeneratorImpl.PathElement("BLC_FULFILL_PAYMENT_LOG","FULFILLMENT_ORDER_ID","FULFILLMENT_ORDER_ID"));
-            dependencies.put("BLC_ORDER_PAYMENT_TRANSACTION", new DeleteStatementGeneratorImpl.PathElement("BLC_REFUND_PAYMENT_LOG","PAYMENT_TRANSACTION_ID","PAYMENT_TRANSACTION_ID"));
+            Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
+            List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();
+            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_OMS_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
+            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
+            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_TRACKING_HISTORY", "ORDER_ID", "ORDER_ID"));
+            dependencies.put("BLC_ORDER", orderDependencies);
+            dependencies.put("BLC_ORDER_PAYMENT_TRANSACTION", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_REFUND_PAYMENT_LOG", "PAYMENT_TRANSACTION_ID", "PAYMENT_TRANSACTION_ID")));
+            List<DeleteStatementGeneratorImpl.PathElement> foDependencies = new ArrayList<>();
+            foDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_FO_ADMIN_ASSIGNMENT", "FO_ADMIN_ASSIGNMENT_ID", "FULFILLMENT_ORDER_ID"));
+            foDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_FULFILL_PAYMENT_LOG", "FULFILLMENT_ORDER_ID", "FULFILLMENT_ORDER_ID"));
+            dependencies.put("BLC_FULFILLMENT_ORDER", foDependencies);
+            dependencies.put("BLC_ORDER_ITEM", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID")));
+            dependencies.put("BLC_ORDER_PAYMENT", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_PAYMENT_LOG", "ORDER_PAYMENT_ID", "ORDER_PAYMENT_ID")));
             Set<String> exclusions = new HashSet<>();
             exclusions.add("BLC_PRICE_LIST");
             exclusions.add("BLC_ACCOUNT");
             exclusions.add("BLC_ACCOUNT_MEMBER");
             exclusions.add("BLC_VENDOR_ADDRESS");
             exclusions.add("BLC_VENDOR");
+            exclusions.add("BLC_ADMIN_USER");
             Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies, exclusions);
             for (Order order : ordersByDateRange) {
                 TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
@@ -198,6 +209,13 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                                 String sql = value.replace("?", String.valueOf(order.getId()));
                                 statement.addBatch(sql);
                             }
+                            statement.addBatch("delete from blc_quote_note where quote_chain_id in " +
+                                    "(select a.quote_chain_id " +
+                                    "from blc_quote_chain a left join blc_quote b on b.quote_chain_id=a.quote_chain_id " +
+                                    "where b.quote_chain_id is NULL " +
+                                    ")");
+                            statement.addBatch("delete from blc_quote_chain where quote_chain_id not in (select t.quote_chain_id from blc_quote t)");
+                            statement.addBatch("delete from blc_return_auth_group where return_auth_group_id not in (select t.return_auth_group_id from blc_return_authorization t)");
                             statement.executeBatch();
                         }
                     });
