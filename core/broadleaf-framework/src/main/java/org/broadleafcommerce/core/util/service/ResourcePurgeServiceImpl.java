@@ -110,7 +110,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
-    @Resource(name = "blcDeleteStatementGenerator")
+    @Resource(name = "blDeleteStatementGenerator")
     protected DeleteStatementGenerator deleteStatementGenerator;
 
     @Autowired
@@ -154,16 +154,16 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     }
 
     @Override
-    public void purgeHistory(Class<?> rootType, String rootTypeIdValue, Map<String, DeleteStatementGeneratorImpl.PathElement> depends) {
+    public void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, DeleteStatementGeneratorImpl.PathElement> depends) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purging history");
         }
 
-        String enablePurge = env.getProperty("enable.purge");
+        String enablePurge = env.getProperty("enable.purge.order.history");
 
         if (!Boolean.parseBoolean(enablePurge)) {
-            LOG.info("Save protection. Purging history is off. Please set property enable.purge to true.");
+            LOG.info("Save protection. Purging history is off. Please set property enable.purge.order.history to true.");
             return;
         }
 

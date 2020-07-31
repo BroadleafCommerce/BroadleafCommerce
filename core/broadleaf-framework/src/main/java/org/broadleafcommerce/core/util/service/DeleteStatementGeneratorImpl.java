@@ -36,7 +36,7 @@ import javax.persistence.*;
  * table name and path to that tabe from the root table, so we can build sql to delete dependencies in the right order.
  * It knows how to deal with @Embedded, bidirectional @OneToMany, @OneToMany through @JoinTable
  */
-@Service("blcDeleteStatementGenerator")
+@Service("blDeleteStatementGenerator")
 public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
 
     protected static final Log LOG = LogFactory.getLog(DeleteStatementGeneratorImpl.class);
