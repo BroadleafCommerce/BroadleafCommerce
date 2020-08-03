@@ -157,7 +157,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     public void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends) {
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Purging history");
+            LOG.debug("Purging historical orders");
         }
 
         String enablePurge = env.getProperty("enable.purge.order.history");
@@ -168,11 +168,11 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.dd.MM");
-        String dateStr = env.getProperty("date.str");
-        String dateEnd = env.getProperty("date.end");
+        String dateStart = env.getProperty("purge.order.history.date.start");
+        String dateEnd = env.getProperty("purge.order.history.date.end");
 
         try {
-            Date startDate = formatter.parse(dateStr);
+            Date startDate = formatter.parse(dateStart);
             Date endDate = formatter.parse(dateEnd);
 
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
