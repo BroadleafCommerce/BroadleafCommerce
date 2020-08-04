@@ -24,11 +24,8 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentConstants;
-import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
-import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
@@ -226,10 +223,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         if (cart != null && !(cart instanceof NullOrderImpl)) {
             try {
-                Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(OfferServiceImpl.OFFERS_EXPIRED);
-                if(o!=null && (Boolean) o){
-                    throw new OfferExpiredException("Offer or offer code was expired and removed, order price was re-calculated, check order total and try again");
-                }
                 String orderNumber = initiateCheckout(cart.getId());
                 return getConfirmationViewRedirect(orderNumber);
             } catch (Exception e) {
@@ -255,10 +248,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         if (cause!= null && cause.getCause() instanceof RequiredAttributeNotProvidedException) {
             redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
                     PaymentGatewayAbstractController.getCartReqAttributeNotProvidedMessage());
-        }else if(cause !=null && cause.getCause() instanceof OfferExpiredException || e instanceof OfferExpiredException) {
-            String message = (cause != null && cause.getCause() != null) ? cause.getCause().getMessage() : e.getMessage();
-            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
-                    message);
         } else {
             redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
                     PaymentGatewayAbstractController.getProcessingErrorMessage());
