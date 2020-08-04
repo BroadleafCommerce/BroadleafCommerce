@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -73,6 +74,19 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             public int compare(Object o1, Object o2) {
                 OperationStackHolder val2 = ((Map.Entry<String, OperationStackHolder>) o2).getValue();
                 OperationStackHolder val1 = ((Map.Entry<String, OperationStackHolder>) o1).getValue();
+                if(rootType.equals(OrderImpl.class)){
+                    String key2 = ((Map.Entry<String, OperationStackHolder>) o2).getKey();
+                    String key1 = ((Map.Entry<String, OperationStackHolder>) o1).getKey();
+                    if(key2.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                        return 1;
+                    }else if(key1.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                        return -1;
+                    }else if(key2.equalsIgnoreCase("BLC_RETURN_AUTHORIZATION_ITEM") && !key1.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                        return 1;
+                    }else if(key1.equalsIgnoreCase("BLC_RETURN_AUTHORIZATION_ITEM") && !key2.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                        return -1;
+                    }
+                }
                 if(((val2.isUpdate() && !val2.isRelationshipUpdate()) && !val1.isUpdate()) || (val2.isXref() && !val1.isXref())){
                     return 1;
                 }else if((val1.isUpdate() && !val1.isRelationshipUpdate()) && !val2.isUpdate() || (val1.isXref() && !val2.isXref())){
