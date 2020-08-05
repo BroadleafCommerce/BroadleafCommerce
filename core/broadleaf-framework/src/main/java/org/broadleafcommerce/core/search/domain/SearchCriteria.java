@@ -20,8 +20,7 @@ package org.broadleafcommerce.core.search.domain;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -43,6 +42,7 @@ public class SearchCriteria {
     protected String sortQuery;
     protected String requestHandler;
     protected Map<String, String[]> filterCriteria = new HashMap<>();
+    protected Collection<String> filterQueries = new ArrayList<>();
     /**
      * The category that the user searched on
      */
@@ -129,5 +129,17 @@ public class SearchCriteria {
 
     public void setRequestHandler(String requestHandler) {
         this.requestHandler = requestHandler;
+    }
+
+    public Collection<String> getFilterQueries() {
+        return filterQueries;
+    }
+
+    public void setFilterQueries(Collection<String> filterQueries) {
+        this.filterQueries = filterQueries;
+    }
+
+    public void addFilterQuery(String query){
+        filterQueries.add(query);
     }
 }
