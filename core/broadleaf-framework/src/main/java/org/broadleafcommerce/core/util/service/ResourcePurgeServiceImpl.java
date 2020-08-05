@@ -224,13 +224,14 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                     if (!status.isCompleted()) {
                         TransactionUtils.finalizeTransaction(status, transactionManager, true);
                     }
-                    LOG.error(String.format("Not able to purge Cart ID: %d", order.getId()), e);
+                    LOG.error(String.format("Not able to purge Order ID: %d", order.getId()), e);
                 }
             }
 
         } catch (ParseException e) {
             LOG.debug("Wrong date format");
         }
+        LOG.info("Finished purging historical orders.");
     }
 
 
