@@ -69,7 +69,7 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return false;
+        return classMatches(persistencePackage);
     }
 
     @Override
@@ -87,10 +87,12 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
                 Translation res = translationService.getTranslation(adminInstance.getEntityType(), adminInstance.getEntityId(), adminInstance.getFieldName(), adminInstance.getLocaleCode());
                 if (res != null) {
                     Entity errorEntity = new Entity();
+                    errorEntity.setType(new String[] { res.getClass().getName() });
                     errorEntity.addValidationError("localeCode", "translation.record.exists.for.locale");
                     return errorEntity;
                 }
             }
+            persistencePackage.setRequestingEntityName(adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName() + "|" + adminInstance.getLocaleCode());
             adminInstance = dynamicEntityDao.merge(adminInstance);
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
@@ -98,4 +100,22 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
         }
     }
 
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            // Get an instance of SystemProperty with the updated values from the form
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Translation adminInstance = (Translation) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Translation.class.getName(), persistencePerspective);
+            adminInstance = (Translation) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+            persistencePackage.setRequestingEntityName(adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName() + "|" + adminInstance.getLocaleCode());
+            adminInstance = dynamicEntityDao.merge(adminInstance);
+            return helper.getRecord(adminProperties, adminInstance, null, null);
+        } catch (Exception e) {
+            throw new ServiceException("Unable to perform add for entity: " + Translation.class.getName(), e);
+        }
+    }
+    
 }
