@@ -172,6 +172,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             builder.append(")");
         }
         String x = builder.toString();
+        System.out.println(x);
         LOG.debug(x);
         return x;
     }
@@ -262,9 +263,12 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                 stack.push(p);
                 if(dependencies.get(p.getName())!=null){
                     processManualDefinedDependencies(stack, result, dependencies, p.getName());
-                }else {
-                    result.put(p.getName(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
                 }
+                String name = p.getName();
+                if (result.get(p.getName()) != null) {
+                    name+="_DUPLICATE";
+                }
+                result.put(name, new OperationStackHolder((Stack<PathElement>) stack.clone()));
                 stack.pop();
             }
         }

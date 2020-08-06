@@ -177,18 +177,28 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
 
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
             Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
+            List<DeleteStatementGeneratorImpl.PathElement> creditAccountEventDependencies = new ArrayList<>();
+            creditAccountEventDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_CREDIT_ACCOUNT_EVENT_DTL", "CREDIT_ACCOUNT_EVENT_ID", "CREDIT_ACCOUNT_EVENT_ID"));
+            creditAccountEventDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_CREDIT_ACCOUNT_EVENT_DTL", "CREDIT_ACCOUNT_EVENT_ID", "DEBIT_ACCOUNT_EVENT_ID"));
+
+            dependencies.put("BLC_CREDIT_ACCOUNT_EVENT", creditAccountEventDependencies);
             List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_OMS_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_TRACKING_HISTORY", "ORDER_ID", "ORDER_ID"));
+            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_CREDIT_ACCOUNT_EVENT", "CREDIT_ACCOUNT_EVENT_ID", "ORDER_ID"));
             dependencies.put("BLC_ORDER", orderDependencies);
             dependencies.put("BLC_ORDER_PAYMENT_TRANSACTION", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_REFUND_PAYMENT_LOG", "PAYMENT_TRANSACTION_ID", "PAYMENT_TRANSACTION_ID")));
             List<DeleteStatementGeneratorImpl.PathElement> foDependencies = new ArrayList<>();
             foDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_FO_ADMIN_ASSIGNMENT", "FO_ADMIN_ASSIGNMENT_ID", "FULFILLMENT_ORDER_ID"));
             foDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_FULFILL_PAYMENT_LOG", "FULFILLMENT_ORDER_ID", "FULFILLMENT_ORDER_ID"));
             dependencies.put("BLC_FULFILLMENT_ORDER", foDependencies);
-            dependencies.put("BLC_ORDER_ITEM", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID")));
+            ArrayList<DeleteStatementGeneratorImpl.PathElement> orderItemDependencies = new ArrayList<>();
+            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID"));
+            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_GIFTWRAP_ORDER_ITEM", "ORDER_ITEM_ID", "ORDER_ITEM_ID"));
+            dependencies.put("BLC_ORDER_ITEM", orderItemDependencies);
             dependencies.put("BLC_ORDER_PAYMENT", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_PAYMENT_LOG", "ORDER_PAYMENT_ID", "ORDER_PAYMENT_ID")));
+
             Set<String> exclusions = new HashSet<>();
             exclusions.add("BLC_PRICE_LIST");
             exclusions.add("BLC_ACCOUNT");
@@ -216,6 +226,15 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                                     ")");
                             statement.addBatch("delete from blc_quote_chain where quote_chain_id not in (select t.quote_chain_id from blc_quote t)");
                             statement.addBatch("delete from blc_return_auth_group where return_auth_group_id not in (select t.return_auth_group_id from blc_return_authorization t)");
+
+
+                            statement.addBatch("delete from BLC_GIFT_CARD_ACCOUNT where CREDIT_ACCOUNT_ID in " +
+                                    "(select a.CREDIT_ACCOUNT_ID " +
+                                    "from blc_credit_account a left join blc_credit_account_event b on b.CREDIT_ACCOUNT=a.CREDIT_ACCOUNT_ID " +
+                                    "where b.CREDIT_ACCOUNT is NULL " +
+                                    ")");
+                            statement.addBatch("delete from blc_credit_account where CREDIT_ACCOUNT_ID not in (select t.CREDIT_ACCOUNT from blc_credit_account_event t)");
+
                             statement.executeBatch();
                         }
                     });
