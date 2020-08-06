@@ -245,16 +245,12 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                 int endIndex = mvelRule.indexOf(",");
                 mvelRule = mvelRule.substring(startIndex + 1, endIndex);
             }
-            mvelRule = doMagic(mvelRule);
+            mvelRule = getRuleOrPropertyFromFunction(mvelRule);
             return mvelRule;
         }
     }
 
-    protected String doMagic(String mvelRule) {
-        //most probably this is operation: equals, not equals, etc
-
-        //equals or not equals or isBlank
-        //product.?defaultSku.?name!="wewe"
+    protected String getRuleOrPropertyFromFunction(String mvelRule) {
         int i = mvelRule.indexOf('(');
         int j = mvelRule.indexOf(')', i);
 
