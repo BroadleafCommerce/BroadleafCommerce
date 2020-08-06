@@ -172,7 +172,6 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             builder.append(")");
         }
         String x = builder.toString();
-        System.out.println(x);
         LOG.debug(x);
         return x;
     }
