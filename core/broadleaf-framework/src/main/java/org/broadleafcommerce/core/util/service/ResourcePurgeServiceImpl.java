@@ -119,6 +119,9 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
+    @Resource(name = "blResourcePurgeExtensionManager")
+    protected ResourcePurgeExtensionManager extensionManager;
+
     @Override
     public void purgeCarts(final Map<String, String> config) {
         if (LOG.isDebugEnabled()) {
@@ -219,22 +222,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                                 String sql = value.replace("?", String.valueOf(order.getId()));
                                 statement.addBatch(sql);
                             }
-                            statement.addBatch("delete from blc_quote_note where quote_chain_id in " +
-                                    "(select a.quote_chain_id " +
-                                    "from blc_quote_chain a left join blc_quote b on b.quote_chain_id=a.quote_chain_id " +
-                                    "where b.quote_chain_id is NULL " +
-                                    ")");
-                            statement.addBatch("delete from blc_quote_chain where quote_chain_id not in (select t.quote_chain_id from blc_quote t)");
-                            statement.addBatch("delete from blc_return_auth_group where return_auth_group_id not in (select t.return_auth_group_id from blc_return_authorization t)");
-
-
-                            statement.addBatch("delete from BLC_GIFT_CARD_ACCOUNT where CREDIT_ACCOUNT_ID in " +
-                                    "(select a.CREDIT_ACCOUNT_ID " +
-                                    "from blc_credit_account a left join blc_credit_account_event b on b.CREDIT_ACCOUNT=a.CREDIT_ACCOUNT_ID " +
-                                    "where b.CREDIT_ACCOUNT is NULL " +
-                                    ")");
-                            statement.addBatch("delete from blc_credit_account where CREDIT_ACCOUNT_ID not in (select t.CREDIT_ACCOUNT from blc_credit_account_event t)");
-
+                            extensionManager.getProxy().addPurgeStatements(statement, rootTypeIdValue);
                             statement.executeBatch();
                         }
                     });
