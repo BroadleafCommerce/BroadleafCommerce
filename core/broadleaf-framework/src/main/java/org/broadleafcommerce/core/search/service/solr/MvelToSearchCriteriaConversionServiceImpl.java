@@ -51,7 +51,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
 
     private static final Log LOG = LogFactory.getLog(MvelToSearchCriteriaConversionServiceImpl.class);
 
-    public static final String CATEGORY_FORMAT_REGEX = "^CollectionUtils\\.intersection\\(product\\.\\?allParentCategoryIds,\\[\\\"([0-9]+)\\\"\\]\\)\\.size\\(\\)>0$";
+    public static final String CATEGORY_FORMAT_REGEX = "^CollectionUtils\\.intersection\\(product\\.\\?allParentCategoryIds,\\[\\\"([0-9]+)(,\\\"[0-9]+\\\")*\\\"\\]\\)\\.size\\(\\)>0$";
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -62,17 +62,16 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
+    @Resource(name="blSolrHelperService")
+    protected SolrHelperService solrHelperService;
+
     @Override
     public SearchCriteria convert(String mvelRule) {
         SearchCriteria criteria = new SearchCriteria();
         criteria.setPageSize(Integer.MAX_VALUE);
 
-        if (isCategoryTargetingRule(mvelRule)) {
-            Long categoryId = getCategoryId(mvelRule);
-            Category category = catalogService.findCategoryById(categoryId);
-            criteria.setCategory(category);
-        } else if(isProductRule(mvelRule)){
-            Collection<String> strings = convertProductRuleToFilters(mvelRule);
+        if (isProductRule(mvelRule) || isCategoryTargetingRule(mvelRule)) {
+            Collection<String> strings = convertRuleToFilters(mvelRule);
             criteria.setFilterQueries(strings);
         }else {
             throw new UnsupportedOperationException("The selected Add-On Product Group is defined using Rules " +
@@ -96,18 +95,29 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         return mvelRule.matches(CATEGORY_FORMAT_REGEX);
     }
 
-    // Expected Category Rule Format - CollectionUtils.intersection(product.?allParentCategoryIds,["2002"]).size()>0
-    protected Long getCategoryId(String mvelRule) {
+    // Expected Category Rule Format - CollectionUtils.intersection(product.?allParentCategoryIds,["2002",...]).size()>0
+    protected Long[] getCategoryIds(String mvelRule) {
         int startIndex = mvelRule.indexOf("[\"") + 2;
         int endIndex = mvelRule.indexOf("\"]");
         String categoryId = mvelRule.substring(startIndex, endIndex);
-        return categoryId == null ? null : Long.parseLong(categoryId);
+        //how about multivalue ?
+        String[] split = categoryId.split(",");
+        Long[] result = null;
+        int length = split.length;
+        if (length > 0) {
+            result = new Long[length];
+            for (int i = 0; i < length; i++) {
+                result[i] = Long.parseLong(split[i].replace("\"",""));
+            }
+        }
+        return result;
     }
 
     // Expected Custom Field Rule Formats
     // Equals - product.?getProductAttributes()["custom_field_name"]=="custom field value"
     // Contains - MvelHelper.toUpperCase(product.?getProductAttributes()["custom_field_name"]).contains(MvelHelper.toUpperCase("custom field value"))
-    protected Collection<String> convertProductRuleToFilters(String matchRule) {
+    // Also supports string property contains, not contains, starts with, ends with etc.
+    protected Collection<String> convertRuleToFilters(String matchRule) {
         List<String> filters = new ArrayList<>();
 
         boolean allRulesMustBeTrue = !matchRule.contains("||");
@@ -119,82 +129,100 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         }
 
         for (String fragment : fragments) {
-            String fieldName = getCustomFieldPropertyName(fragment);
-            String fieldValue = getCustomFieldValue(fragment);
-            boolean exclude = fragment.contains("!=") || fragment.startsWith("!");
-            boolean isWildCardSearch = isWildCardSearch(fieldValue);
-            fieldName = convertFieldName(fieldName);
-            List<IndexFieldType> indexFieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviationOrPropertyName(fieldName);
-            if (indexFieldTypes.size() > 0) {
-                Boolean translatable = indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
-                List<Locale> allLocales;
-                if (translatable != null && !translatable) {
-                    allLocales = new ArrayList<>();
-                    LocaleImpl e = new LocaleImpl();
-                    e.setLocaleCode("");
-                    allLocales.add(e);
-                } else {
-                    allLocales = localeService.findAllLocales();
-                }
-                List<String> tmpFilters = new ArrayList<>();
-                String abbreviation = indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
-                for (Locale locale : allLocales) {
-                    for (IndexFieldType indexFieldType : indexFieldTypes) {
-                        String type = indexFieldType.getFieldType().getType();
-                        if (!isWildCardSearch || FieldType.STRING.getType().equals(type)) {
-                            String prefix;
-                            if (StringUtils.isNotEmpty(locale.getLocaleCode())) {
-                                prefix = locale.getLocaleCode() + "_";
-                            } else {
-                                prefix = "";
-                            }
-                            String indexFieldName = prefix + abbreviation + "_" + type;
-
-                            // if this is a wildcard search then we do not want to surround the value with quotes
-                            String indexFieldValue = fieldValue;
-                            if (!isWildCardSearch && !fieldValue.equals("null")) {
-                                indexFieldValue = "\"" + fieldValue + "\"";
-                            }
-
-                            String filter;
-                            if (indexFieldValue.equals("null")) {
-                                // this is for checking if null or non-existent fields
-                                filter = "(*:* AND -" + indexFieldName + ":[* TO *])";
-                            } else {
-                                filter = indexFieldName + ":" + indexFieldValue;
-                            }
-
-                            if (exclude) {
-                                filter = "NOT " + filter;
-                            }
-
-                            tmpFilters.add(filter);
+            if (isCategoryTargetingRule(fragment)) {
+                Long[] categoryIds = getCategoryIds(fragment);
+                if (categoryIds != null) {
+                    String explicitCategoryFieldName = solrHelperService.getExplicitCategoryFieldName();
+                    StringBuilder categoryFilter = new StringBuilder(explicitCategoryFieldName + ":(\"");
+                    for (int i = 0; i < categoryIds.length; i++) {
+                        Long catId = solrHelperService.getCategoryId(categoryIds[i]);
+                        categoryFilter.append(catId);
+                        if (i + 1 < categoryIds.length) {
+                            categoryFilter.append(",");
                         }
                     }
-                }
+                    categoryFilter.append("\")");
+                    filters.add(categoryFilter.toString());
 
-                if(!exclude){
-                    //any of translation and type fields like en_name_tsy, en_name_s etc can match, so concatinate with OR
-                    String s = tmpFilters.get(0);
-                    s="("+s;
-                    tmpFilters.add(0,s);
-                    int size = tmpFilters.size() - 1;
-                    String s1 = tmpFilters.get(size);
-                    s1=s1+")";
-                    tmpFilters.add(size,s1);
-                    filters.add(StringUtils.join(tmpFilters, " OR "));
-                }else {
-                    //if we exclude we don't want to see if at all so "AND" is ok
-                    filters.addAll(tmpFilters);
                 }
-                if (org.apache.commons.collections4.CollectionUtils.isEmpty(indexFieldTypes)) {
-                    if (fieldName.contains("catalogDiscriminator")) {
-                        String substring = fieldValue.substring(1, fieldValue.length() - 1);
-                        filters.add("catalog_s:(" + substring + ")");
+            } else {
+                String fieldName = getCustomFieldPropertyName(fragment);
+                String fieldValue = getCustomFieldValue(fragment);
+                boolean exclude = fragment.contains("!=") || fragment.startsWith("!");
+                boolean isWildCardSearch = isWildCardSearch(fieldValue);
+                fieldName = convertFieldName(fieldName);
+                List<IndexFieldType> indexFieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviationOrPropertyName(fieldName);
+                if (indexFieldTypes.size() > 0) {
+                    Boolean translatable = indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
+                    List<Locale> allLocales;
+                    if (translatable != null && !translatable) {
+                        allLocales = new ArrayList<>();
+                        LocaleImpl e = new LocaleImpl();
+                        e.setLocaleCode("");
+                        allLocales.add(e);
+                    } else {
+                        allLocales = localeService.findAllLocales();
                     }
+                    List<String> tmpFilters = new ArrayList<>();
+                    String abbreviation = indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
+                    for (Locale locale : allLocales) {
+                        for (IndexFieldType indexFieldType : indexFieldTypes) {
+                            String type = indexFieldType.getFieldType().getType();
+                            if (!isWildCardSearch || FieldType.STRING.getType().equals(type)) {
+                                String prefix;
+                                if (StringUtils.isNotEmpty(locale.getLocaleCode())) {
+                                    prefix = locale.getLocaleCode() + "_";
+                                } else {
+                                    prefix = "";
+                                }
+                                String indexFieldName = prefix + abbreviation + "_" + type;
+
+                                // if this is a wildcard search then we do not want to surround the value with quotes
+                                String indexFieldValue = fieldValue;
+                                if (!isWildCardSearch && !fieldValue.equals("null")) {
+                                    indexFieldValue = "\"" + fieldValue + "\"";
+                                }
+
+                                String filter;
+                                if (indexFieldValue.equals("null")) {
+                                    // this is for checking if null or non-existent fields
+                                    filter = "(*:* AND -" + indexFieldName + ":[* TO *])";
+                                } else {
+                                    filter = indexFieldName + ":" + indexFieldValue;
+                                }
+
+                                if (exclude) {
+                                    filter = "NOT " + filter;
+                                }
+
+                                tmpFilters.add(filter);
+                            }
+                        }
+                    }
+
+                    if (!exclude) {
+                        //any of translation and type fields like en_name_tsy, en_name_s etc can match, so concatinate with OR
+                        String s = tmpFilters.get(0);
+                        s = "(" + s;
+                        tmpFilters.add(0, s);
+                        int size = tmpFilters.size() - 1;
+                        String s1 = tmpFilters.get(size);
+                        s1 = s1 + ")";
+                        tmpFilters.add(size, s1);
+                        filters.add(StringUtils.join(tmpFilters, " OR "));
+                    } else {
+                        //if we exclude we don't want to see if at all so "AND" is ok
+                        filters.addAll(tmpFilters);
+                    }
+                    if (org.apache.commons.collections4.CollectionUtils.isEmpty(indexFieldTypes)) {
+                        if (fieldName.contains("catalogDiscriminator")) {
+                            String substring = fieldValue.substring(1, fieldValue.length() - 1);
+                            filters.add("catalog_s:(" + substring + ")");
+                        }
+                    }
+                } else {
+                    return Collections.emptyList();
                 }
-            }else{
-                return Collections.emptyList();
             }
         }
         if (allRulesMustBeTrue) {
