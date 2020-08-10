@@ -1229,8 +1229,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         service.clearEntityManager();
 
-//        multipleCatalogExtensionManager.getProxy().setCurrentCatalog(entity);
-
         // First, we must save the collection entity
         PersistenceResponse persistenceResponse = service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, sectionCrumbs);
         Entity savedEntity = persistenceResponse.getEntity();
