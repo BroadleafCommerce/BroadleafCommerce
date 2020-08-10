@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.util.service;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 import java.sql.Statement;
@@ -25,11 +25,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface ResourcePurgeExtensionHandler extends ExtensionHandler {
+public class AbstractResourcePurgeExtensionHandler extends AbstractExtensionHandler implements ResourcePurgeExtensionHandler{
+    @Override
+    public ExtensionResultStatusType addPurgeStatements(Statement statement, String id) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 
-    ExtensionResultStatusType addPurgeStatements(Statement statement, String id);
+    @Override
+    public ExtensionResultStatusType addPurgeDependencies(Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 
-    ExtensionResultStatusType addPurgeDependencies(Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies);
-
-    ExtensionResultStatusType addPurgeExclusions(Set<String> exclusions);
+    @Override
+    public ExtensionResultStatusType addPurgeExclusions(Set<String> exclusions) {
+        return null;
+    }
 }

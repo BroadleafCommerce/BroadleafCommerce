@@ -180,28 +180,21 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
 
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
             Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
-            List<DeleteStatementGeneratorImpl.PathElement> creditAccountEventDependencies = new ArrayList<>();
-            creditAccountEventDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_CREDIT_ACCOUNT_EVENT_DTL", "CREDIT_ACCOUNT_EVENT_ID", "CREDIT_ACCOUNT_EVENT_ID"));
-            creditAccountEventDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_CREDIT_ACCOUNT_EVENT_DTL", "CREDIT_ACCOUNT_EVENT_ID", "DEBIT_ACCOUNT_EVENT_ID"));
 
-            dependencies.put("BLC_CREDIT_ACCOUNT_EVENT", creditAccountEventDependencies);
+
             List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();
-            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_OMS_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
+
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
-            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_TRACKING_HISTORY", "ORDER_ID", "ORDER_ID"));
-            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_CREDIT_ACCOUNT_EVENT", "CREDIT_ACCOUNT_EVENT_ID", "ORDER_ID"));
+
             dependencies.put("BLC_ORDER", orderDependencies);
             dependencies.put("BLC_ORDER_PAYMENT_TRANSACTION", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_REFUND_PAYMENT_LOG", "PAYMENT_TRANSACTION_ID", "PAYMENT_TRANSACTION_ID")));
-            List<DeleteStatementGeneratorImpl.PathElement> foDependencies = new ArrayList<>();
-            foDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_FO_ADMIN_ASSIGNMENT", "FO_ADMIN_ASSIGNMENT_ID", "FULFILLMENT_ORDER_ID"));
-            foDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_FULFILL_PAYMENT_LOG", "FULFILLMENT_ORDER_ID", "FULFILLMENT_ORDER_ID"));
-            dependencies.put("BLC_FULFILLMENT_ORDER", foDependencies);
+
             ArrayList<DeleteStatementGeneratorImpl.PathElement> orderItemDependencies = new ArrayList<>();
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID"));
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_GIFTWRAP_ORDER_ITEM", "ORDER_ITEM_ID", "ORDER_ITEM_ID"));
             dependencies.put("BLC_ORDER_ITEM", orderItemDependencies);
             dependencies.put("BLC_ORDER_PAYMENT", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_PAYMENT_LOG", "ORDER_PAYMENT_ID", "ORDER_PAYMENT_ID")));
-
+            extensionManager.getProxy().addPurgeDependencies(dependencies);
             Set<String> exclusions = new HashSet<>();
             exclusions.add("BLC_PRICE_LIST");
             exclusions.add("BLC_ACCOUNT");
@@ -209,6 +202,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             exclusions.add("BLC_VENDOR_ADDRESS");
             exclusions.add("BLC_VENDOR");
             exclusions.add("BLC_ADMIN_USER");
+            extensionManager.getProxy().addPurgeExclusions(exclusions);
             Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies, exclusions);
             for (Order order : ordersByDateRange) {
                 TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
