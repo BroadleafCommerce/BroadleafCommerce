@@ -196,11 +196,6 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             dependencies.put("BLC_ORDER_PAYMENT", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_PAYMENT_LOG", "ORDER_PAYMENT_ID", "ORDER_PAYMENT_ID")));
             extensionManager.getProxy().addPurgeDependencies(dependencies);
             Set<String> exclusions = new HashSet<>();
-            exclusions.add("BLC_PRICE_LIST");
-            exclusions.add("BLC_ACCOUNT");
-            exclusions.add("BLC_ACCOUNT_MEMBER");
-            exclusions.add("BLC_VENDOR_ADDRESS");
-            exclusions.add("BLC_VENDOR");
             exclusions.add("BLC_ADMIN_USER");
             extensionManager.getProxy().addPurgeExclusions(exclusions);
             Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies, exclusions);
