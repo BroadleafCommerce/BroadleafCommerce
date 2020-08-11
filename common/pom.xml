@@ -424,8 +424,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.htmlcompressor</groupId>
-            <artifactId>htmlcompressor</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
         </dependency>
     </dependencies>
 </project>
