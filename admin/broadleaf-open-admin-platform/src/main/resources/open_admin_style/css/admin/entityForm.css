@@ -356,7 +356,7 @@ span.alert-box.error-alert {
 .has-error input, .has-error textarea{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}
 .has-error input:focus, .has-error textarea:focus{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33;box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33}
 .has-error span.display-value{border: 1px solid #D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}
-.has-error .error {
+.has-error .error, span.error {
     color: #D20A33;
     font-size: 12px;
     display: block;
