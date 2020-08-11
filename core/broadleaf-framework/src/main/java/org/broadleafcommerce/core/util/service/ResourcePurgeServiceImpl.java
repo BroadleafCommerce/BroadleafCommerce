@@ -181,13 +181,11 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
             Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
 
-
             List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();
 
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
 
             dependencies.put("BLC_ORDER", orderDependencies);
-            dependencies.put("BLC_ORDER_PAYMENT_TRANSACTION", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_REFUND_PAYMENT_LOG", "PAYMENT_TRANSACTION_ID", "PAYMENT_TRANSACTION_ID")));
 
             ArrayList<DeleteStatementGeneratorImpl.PathElement> orderItemDependencies = new ArrayList<>();
             orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID"));
