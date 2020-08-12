@@ -7,7 +7,7 @@
     <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
     <blc:form id="js-error-handling" method="POST" ></blc:form>
 
-    <input th:if="${#lists.isEmpty(adminUser.flatAdditionalFields)}" type="hidden" th:with="adminUser=${adminUser}" id="adminUser" name="adminUser" value="${adminUser.flatAdditionalFields}">
+    <input type="hidden" th:with="adminUser=${adminUser}" id="adminUser" name="adminUser" value="${adminUser.flatAdditionalFields}">
 
     <blc:bundle name="adminlib.js"
                 mapping-prefix="/js/"
