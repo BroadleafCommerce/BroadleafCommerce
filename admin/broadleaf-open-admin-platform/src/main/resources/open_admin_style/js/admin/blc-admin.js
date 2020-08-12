@@ -1630,10 +1630,3 @@ $('body').on('input', 'input.resize-as-needed', function () {
     newSize = Math.min(maxSize, newSize);
     $(this).attr('size', newSize);
 });
-
-$("a.add-url-param-click").on('click', function () {
-    var param = $(this).attr('data-param');
-    var prop = $(this).attr('data-prop');
-    BLC.addUrlParam(document.location.search, prop, param);
-    return false;
-});
