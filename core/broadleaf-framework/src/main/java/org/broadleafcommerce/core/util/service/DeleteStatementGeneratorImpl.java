@@ -128,8 +128,14 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             shouldAppendWhere = false;
             PathElement pop = value.pop();
             if(prevTable.isFromManyToOne()){
-                builder.append(" WHERE ")
-                        .append(pop.getIdField()).append("=").append(rootTypeIdValue);
+                if(pop.getIdField().equals(prevTable.getJoinColumn()) || operationStackHolder.isRelationshipUpdate()) {
+                    builder.append(" WHERE ")
+                            .append(pop.getIdField()).append("=").append(rootTypeIdValue);
+                }else{
+                    builder.append(" WHERE ").append(prevTable.getIdField()).append(" IN (SELECT ")
+                            .append("t.").append(prevTable.getJoinColumn()).append(" FROM ").append(pop.getName())
+                            .append(" t WHERE ").append("t.").append(pop.getIdField()).append("=").append(rootTypeIdValue).append(")");
+                }
             }else {
                 builder.append(" WHERE ").append(prevTable.getJoinColumn()).append("=").append(rootTypeIdValue);
             }
@@ -251,7 +257,14 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             }*/
         }
         processManualDefinedDependencies(stack, result, dependencies, tableAnnotation.name());
-        result.put(tableAnnotation.name(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
+        OperationStackHolder operationStackHolder = result.get(tableAnnotation.name() + "_UPDATE");
+        //so this is biderectional and we will update one side to set null, to to delete we need to use another side of relationship
+        //mostly for order->blc_quote->order relationship case.
+        if(operationStackHolder!=null && operationStackHolder.isRelationshipUpdate()){
+            result.put(tableAnnotation.name(),new OperationStackHolder((Stack<PathElement>) stack.clone(), false, "",true));
+        }else {
+            result.put(tableAnnotation.name(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
+        }
         stack.pop();
     }
 
