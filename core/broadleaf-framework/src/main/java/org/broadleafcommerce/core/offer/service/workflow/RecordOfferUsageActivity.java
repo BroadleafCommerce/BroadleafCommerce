@@ -98,6 +98,7 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
         for (Offer offer : offers) {
             OfferAudit audit = offerAuditService.create();
             audit.setCustomerId(order.getCustomer().getId());
+            audit.setAccountId(order.getBroadleafAccountId());
             audit.setOfferId(offer.getId());
             audit.setOrderId(order.getId());
             

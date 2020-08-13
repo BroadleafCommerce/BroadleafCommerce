@@ -29,9 +29,7 @@ import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import sun.util.calendar.ZoneInfo;
 
 import javax.servlet.http.HttpSession;
 import java.util.Calendar;

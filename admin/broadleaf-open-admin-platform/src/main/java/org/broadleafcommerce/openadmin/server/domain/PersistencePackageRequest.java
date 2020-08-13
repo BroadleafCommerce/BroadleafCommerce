@@ -60,6 +60,8 @@ public class PersistencePackageRequest {
     protected boolean isUpdateLookupType = false;
     protected boolean isTreeCollection = false;
     protected boolean isAddOperationInspect = false;
+    protected boolean isFolderedLookup = false;
+    protected Long folderId;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -308,6 +310,16 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest withIsUpdateLookupType(boolean isUpdateLookupType) {
         setUpdateLookupType(isUpdateLookupType);
+        return this;
+    }
+
+    public PersistencePackageRequest withIsFolderedLookup(boolean isFolderedLookup) {
+        this.isFolderedLookup = isFolderedLookup;
+        return this;
+    }
+
+    public PersistencePackageRequest withFolderId(Long folderId) {
+        this.folderId = folderId;
         return this;
     }
 
@@ -702,6 +714,26 @@ public class PersistencePackageRequest {
 
     public void setPresentationFetch(Boolean presentationFetch) {
         this.presentationFetch = presentationFetch;
+    }
+
+    /**
+     * Tells if this {@code PersistentPackageRequest} is a lookup that will end up foldered
+     * @return true if this is a foldered lookup, false otherwise
+     */
+    public boolean isFolderedLookup() {
+        return isFolderedLookup;
+    }
+
+    public void setFolderedLookup(boolean isFolderedLookup) {
+        this.isFolderedLookup = isFolderedLookup;
+    }
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
     }
 }
 

@@ -25,11 +25,16 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -48,6 +53,9 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
 
     @Resource(name = "blMultiTenantCopierExtensionManager")
     protected MultiTenantCopierExtensionManager mtCopierExtensionManager;
+    
+    @Resource(name = "blEntityDuplicationHelpers")
+    protected Collection<EntityDuplicationHelper> entityDuplicationHelpers;
 
     @Override
     public void copyEntities(final MultiTenantCopyContext context) throws Exception {
@@ -55,110 +63,205 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
     }
 
     @Override
-    public boolean validate(Class<?> entityClass, Long id) {
+    public boolean validate(final Class<?> entityClass, final Long id) {
         if (!isActive) {
             return false;
         }
-        Object entity = genericEntityService.readGenericEntity(entityClass, id);
+        
+        final Object entity = genericEntityService.readGenericEntity(entityClass, id);
+        
         return validate(entity);
     }
 
     @Override
-    public boolean validate(Object entity) {
+    public boolean validate(final Object entity) {
         if (!isActive) {
             return false;
         }
-        ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<Boolean>();
+        
+        if (!(entity instanceof MultiTenantCloneable)) {
+            return false;
+        }
+
+        final Set<EntityDuplicationHelper> helpers = 
+                filterDuplicationHelpers((MultiTenantCloneable<?>) entity);
+        
+        if (helpers.isEmpty()) {
+            return false;
+        }
+        
+        ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<>();
         response.setResult(true);
+        
         if (extensionManager != null) {
             extensionManager.validateDuplicate(entity, response);
         }
+        
         return response.getResult();
     }
+    
+    /**
+     * Instead of passing in {@link EntityDuplicateModifier}s, add the beans to
+     * {@code EntityDuplicationHelpers}. Additionally, add copy hints to the helpers.
+     * Also, note that you should implement {@link AbstractEntityDuplicationHelper} now instead as
+     * {@link EntityDuplicateModifier} is deprecated.
+     */
+    @Deprecated
+    @Override 
+    public <T> T copy(final Class<T> entityClass,
+            final Long id,
+            final Map<String, String> copyHints,
+            final EntityDuplicateModifier... modifiers) {
+        return copy(entityClass, id, copyHints);
+    }
+     
+    /**
+     * Instead of passing in {@link EntityDuplicateModifier}s, add the beans to
+     * {@code EntityDuplicationHelpers}. Additionally, add copy hints to the helpers.
+     * Also, note that you should implement {@link AbstractEntityDuplicationHelper} now instead as
+     * {@link EntityDuplicateModifier} is deprecated.
+     */
+    @Deprecated
+    @Override 
+    public <T> T copy(final MultiTenantCopyContext context,
+            final MultiTenantCloneable<T> entity,
+            final Map<String, String> copyHints,
+            final EntityDuplicateModifier... modifiers) {
+        return copy(context, entity, copyHints);
+    }
 
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     @Override
-    public <T> T copy(Class<T> entityClass, Long id, Map<String, String> copyHints, EntityDuplicateModifier... modifiers) {
+    public <T> T copy(final Class<T> entityClass, final Long id) {
         genericEntityService.flush();
         genericEntityService.clear();
-        Object entity = genericEntityService.readGenericEntity(entityClass, id);
-        if (!(entity instanceof MultiTenantCloneable)) {
-            IllegalArgumentException e = new IllegalArgumentException("Copying is only supported for classes implementing MultiTenantCloneable");
-            LOG.error(String.format("Unable to duplicate entity %s:%s", entityClass.getName(), id), e);
-            throw e;
+        
+        final Object entity = genericEntityService.readGenericEntity(entityClass, id);
+        
+        if (!validate(entity)) {
+            throw new IllegalArgumentException(
+                    String.format("Entity not valid for duplication - %s:%s", 
+                            entityClass.getName(), id));
         }
-        boolean isValid = validate(entity);
-        T dup;
-        if (isValid) {
-            try {
-                Site currentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
-                MultiTenantCopyContext context = new MultiTenantCopyContext(null, null, currentSite, currentSite, genericEntityService, mtCopierExtensionManager);
-                if (extensionManager != null) {
-                    ExtensionResultHolder<MultiTenantCopyContext> contextResponse = new ExtensionResultHolder<MultiTenantCopyContext>();
-                    extensionManager.setupDuplicate(entity, contextResponse);
-                    if (contextResponse.getResult() != null) {
-                        context = contextResponse.getResult();
-                    }
-                }
-                dup = performCopy(context, (MultiTenantCloneable<T>) entity, copyHints, modifiers);
-            } catch (Exception e) {
-                LOG.error(String.format("Unable to duplicate entity %s:%s", entityClass.getName(), id), e);
-                throw ExceptionHelper.refineException(e);
-            } finally {
-                if (extensionManager != null) {
-                    extensionManager.tearDownDuplicate();
+        
+        final T dup;
+        
+        try {
+            final Site currentSite = 
+                    BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            MultiTenantCopyContext context = new MultiTenantCopyContext(null, null, 
+                    currentSite, currentSite, genericEntityService, mtCopierExtensionManager);
+            
+            if (extensionManager != null) {
+                final ExtensionResultHolder<MultiTenantCopyContext> contextResponse = 
+                        new ExtensionResultHolder<>();
+                extensionManager.setupDuplicate(entity, contextResponse);
+                
+                if (contextResponse.getResult() != null) {
+                    context = contextResponse.getResult();
                 }
             }
-        } else {
-            LOG.error(String.format("Entity not valid for duplication - %s:%s", entityClass.getName(), id));
-            throw new IllegalArgumentException(String.format("Entity not valid for duplication - %s:%s", entityClass.getName(), id));
+            
+            dup = performCopy(context, (MultiTenantCloneable<T>) entity);
+        } catch (Exception e) {
+            throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class,
+                    String.format("Unable to duplicate entity %s:%s", entityClass.getName(), id), 
+                    e);
+        } finally {
+            if (extensionManager != null) {
+                extensionManager.tearDownDuplicate();
+            }
         }
+        
         return dup;
     }
 
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     @Override
-    public <T> T copy(final MultiTenantCopyContext context, final MultiTenantCloneable<T> entity, Map<String, String> copyHints, final EntityDuplicateModifier... modifiers) {
-        if (!(entity instanceof MultiTenantCloneable)) {
-            IllegalArgumentException e = new IllegalArgumentException("Copying is only supported for classes implementing MultiTenantCloneable");
-            LOG.error(String.format("Unable to duplicate entity %s:%s", entity.getClass().getName(), genericEntityService.getIdentifier(entity)), e);
-            throw e;
+    public <T> T copy(final MultiTenantCopyContext context, final MultiTenantCloneable<T> entity) {
+        if (!validate(entity)) {
+            throw new IllegalArgumentException(
+                    String.format("Entity not valid for duplication - %s:%s",
+                            entity.getClass().getName(),
+                            genericEntityService.getIdentifier(entity)));
         }
-        boolean isValid = validate(entity);
-        T dup;
-        if (isValid) {
-            try {
-                if (extensionManager != null) {
-                    ExtensionResultHolder<MultiTenantCopyContext> contextResponse = new ExtensionResultHolder<MultiTenantCopyContext>();
-                    extensionManager.setupDuplicate(entity, contextResponse);
-                }
-                dup = performCopy(context, entity, copyHints, modifiers);
-            } catch (Exception e) {
-                LOG.error(String.format("Unable to duplicate entity %s:%s", entity.getClass().getName(), genericEntityService.getIdentifier(entity)), e);
-                throw ExceptionHelper.refineException(e);
-            } finally {
-                if (extensionManager != null) {
-                    extensionManager.tearDownDuplicate();
-                }
+        
+        final T dup;
+        
+        try {
+            if (extensionManager != null) {
+                ExtensionResultHolder<MultiTenantCopyContext> contextResponse = 
+                        new ExtensionResultHolder<>();
+                extensionManager.setupDuplicate(entity, contextResponse);
             }
-        } else {
-            LOG.error(String.format("Entity not valid for duplication - %s:%s", entity.getClass().getName(), genericEntityService.getIdentifier(entity)));
-            throw new IllegalArgumentException(String.format("Entity not valid for duplication - %s:%s", entity.getClass().getName(), genericEntityService.getIdentifier(entity)));
+            
+            dup = performCopy(context, entity);
+        } catch (Exception e) {
+            throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class,
+                    String.format("Unable to duplicate entity %s:%s", entity.getClass().getName(),
+                            genericEntityService.getIdentifier(entity)), e);
+        } finally {
+            if (extensionManager != null) {
+                extensionManager.tearDownDuplicate();
+            }
         }
+        
         return dup;
     }
 
-    protected <T> T performCopy(final MultiTenantCopyContext context, final MultiTenantCloneable<T> entity, Map<String, String> copyHints, final EntityDuplicateModifier... modifiers) throws Exception {
-        context.getCopyHints().putAll(copyHints);
+    /**
+     * Instead of passing in {@link EntityDuplicateModifier}s, add the beans to 
+     * {@code EntityDuplicationHelpers}. Additionally, add copy hints to the helpers.
+     * Also, note that you should implement {@link AbstractEntityDuplicationHelper} now instead as 
+     * {@link EntityDuplicateModifier} is deprecated.
+     */
+    @Deprecated
+    protected <T> T performCopy(final MultiTenantCopyContext context,
+            final MultiTenantCloneable<T> entity,
+            Map<String, String> copyHints,
+            final EntityDuplicateModifier... modifiers) throws Exception {
+        return performCopy(context, entity, copyHints);
+    }
+    
+    protected <T> T performCopy(final MultiTenantCopyContext context, 
+            final MultiTenantCloneable<T> entity) throws Exception {
+        final Set<EntityDuplicationHelper> helpers = filterDuplicationHelpers(entity);
+        putAllCopyHints(context, helpers);
         context.setForDuplicate(true);
+        
         persistCopyObjectTree(new CopyOperation<T, CloneNotSupportedException>() {
             @Override
             public T execute(T original) throws CloneNotSupportedException {
                 T response = entity.createOrRetrieveCopyInstance(context).getClone();
-                for (EntityDuplicateModifier modifier : modifiers) {
-                    modifier.modifyInitialDuplicateState(response);
+                for (final EntityDuplicationHelper helper : helpers) {
+                    helper.modifyInitialDuplicateState(response);
                 }
                 return response;
             }
         }, (Class<T>) entity.getClass(), (T) entity, context);
-        return context.getClonedVersion((Class<T>) entity.getClass(), genericEntityService.getIdentifier(entity));
+        
+        return context.getClonedVersion((Class<T>) entity.getClass(), 
+                genericEntityService.getIdentifier(entity));
+    }
+    
+    protected Set<EntityDuplicationHelper> filterDuplicationHelpers(
+            final MultiTenantCloneable entity) {
+        final Set<EntityDuplicationHelper> filteredHelpers = new HashSet<>();
+        
+        for (final EntityDuplicationHelper helper : entityDuplicationHelpers) {
+            if (helper.canHandle(entity)) {
+                filteredHelpers.add(helper);
+            }
+        }
+        
+        return filteredHelpers;
+    }
+    
+    protected void putAllCopyHints(final MultiTenantCopyContext context, 
+            final Set<EntityDuplicationHelper> helpers) {
+        final Map<String, String> hints = context.getCopyHints();
+        for (final EntityDuplicationHelper helper : helpers) {
+            hints.putAll(helper.getCopyHints());
+        }
     }
 }

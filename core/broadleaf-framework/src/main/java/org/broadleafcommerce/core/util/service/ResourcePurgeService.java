@@ -37,6 +37,8 @@ public interface ResourcePurgeService {
      */
     void purgeCarts(Map<String, String> config);
 
+    void notifyCarts(Map<String, String> config);
+
     void purgeCustomers(final Map<String, String> config);
 
 }

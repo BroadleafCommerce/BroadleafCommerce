@@ -31,10 +31,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import javax.annotation.Resource;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  * Support for any class that wishes to utilize a query miss cache. This cache is capable of caching a query miss
@@ -45,12 +44,13 @@ import net.sf.ehcache.Element;
  *
  * @author Jeff Fischer
  */
-public abstract class AbstractCacheMissAware {
+public abstract class AbstractCacheMissAware<T> {
     
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
-
-    protected Cache cache;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     private Object nullObject = null;
 
@@ -86,12 +86,8 @@ public abstract class AbstractCacheMissAware {
      * @param <T> the type of the cache item
      * @return the cache item instance
      */
-    protected <T> T getObjectFromCache(String key, String cacheName) {
-        Element cacheElement = getCache(cacheName).get(key);
-        if (cacheElement != null) {
-            return (T) cacheElement.getValue();
-        }
-        return null;
+    protected T getObjectFromCache(String key, String cacheName) {
+        return getCache(cacheName).get(key);
     }
 
     /**
@@ -101,11 +97,8 @@ public abstract class AbstractCacheMissAware {
      * @param cacheName the name of the cache - the ehcache region name
      * @return the underlying cache
      */
-    protected Cache getCache(String cacheName) {
-        if (cache == null) {
-            cache = CacheManager.getInstance().getCache(cacheName);
-        }
-        return cache;
+    protected Cache<String, T> getCache(String cacheName) {
+        return cacheManager.getCache(cacheName);
     }
 
     /**
@@ -143,7 +136,7 @@ public abstract class AbstractCacheMissAware {
      * @param <T> the type of the cache item
      * @return the null representation for the cache item
      */
-    protected synchronized <T> T getNullObject(final Class<T> responseClass) {
+    protected synchronized T getNullObject(final Class<T> responseClass) {
         if (nullObject == null) {
             Class<?>[] interfaces = (Class<?>[]) ArrayUtils.add(ClassUtils.getAllInterfacesForClass(responseClass), Serializable.class);
             nullObject = Proxy.newProxyInstance(getClass().getClassLoader(), interfaces, new InvocationHandler() {
@@ -175,7 +168,7 @@ public abstract class AbstractCacheMissAware {
      * @param <T> the type of the cache item
      * @return The object retrieved from the executiom of the PersistentRetrieval, or null if a cache miss was found in this cache
      */
-    protected <T> T getCachedObject(Class<T> responseClass, String cacheName, String statisticsName, PersistentRetrieval<T> retrieval, String... params) {
+    protected T getCachedObject(Class<T> responseClass, String cacheName, String statisticsName, PersistentRetrieval<T> retrieval, String... params) {
         T nullResponse = getNullObject(responseClass);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         String key = buildKey(params);
@@ -197,7 +190,7 @@ public abstract class AbstractCacheMissAware {
             //only handle null, non-hits. Otherwise, let level 2 cache handle it
             if (allowL2Cache && response.equals(nullResponse)) {
                 statisticsService.addCacheStat(statisticsName, false);
-                getCache(cacheName).put(new Element(key, response));
+                getCache(cacheName).put(key, response);
                 if (getLogger().isTraceEnabled()) {
                     getLogger().trace("Caching [" + key + "] as null in the [" + cacheName + "] cache.");
                 }

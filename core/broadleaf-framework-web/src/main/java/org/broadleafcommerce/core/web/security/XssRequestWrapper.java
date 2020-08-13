@@ -17,14 +17,14 @@
  */
 package org.broadleafcommerce.core.web.security;
 
+import org.broadleafcommerce.common.util.StringUtil;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.core.env.Environment;
 
-import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.regex.Pattern;
 
 public class XssRequestWrapper extends HttpServletRequestWrapper {
 

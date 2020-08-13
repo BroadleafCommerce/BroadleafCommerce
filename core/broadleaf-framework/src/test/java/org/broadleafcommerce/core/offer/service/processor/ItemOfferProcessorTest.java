@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
+import junit.framework.TestCase;
+
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -36,6 +38,8 @@ import org.broadleafcommerce.core.offer.service.OfferServiceUtilitiesImpl;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtilityImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -55,12 +59,9 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -79,6 +80,7 @@ public class ItemOfferProcessorTest extends TestCase {
     protected FulfillmentGroupService fgServiceMock;
     protected OrderMultishipOptionService multishipOptionServiceMock;
     protected OfferTimeZoneProcessor offerTimeZoneProcessorMock;
+    protected PromotableOfferUtility promotableOfferUtility;
 
     protected ItemOfferProcessorImpl itemProcessor;
 
@@ -95,23 +97,25 @@ public class ItemOfferProcessorTest extends TestCase {
         fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
+        promotableOfferUtility = new PromotableOfferUtilityImpl();
 
-        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
+
+        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl(promotableOfferUtility);
         offerServiceUtilities.setOfferDao(offerDaoMock);
-        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
 
-        itemProcessor = new ItemOfferProcessorImpl();
+        itemProcessor = new ItemOfferProcessorImpl(promotableOfferUtility);
         itemProcessor.setOfferDao(offerDaoMock);
         itemProcessor.setOrderItemDao(orderItemDaoMock);
         itemProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
-        itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
         itemProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
         offerService = new OfferServiceImpl();
 
-        OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
+        OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl(promotableOfferUtility);
         orderProcessor.setOfferDao(offerDaoMock);
-        orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
         orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
         orderProcessor.setOfferServiceUtilities(offerServiceUtilities);
@@ -121,7 +125,7 @@ public class ItemOfferProcessorTest extends TestCase {
         offerService.setOfferDao(offerDaoMock);
         offerService.setOrderOfferProcessor(orderProcessor);
         offerService.setItemOfferProcessor(itemProcessor);
-        offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerService.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
         offerService.setOrderService(orderServiceMock);
     }
 
@@ -187,7 +191,7 @@ public class ItemOfferProcessorTest extends TestCase {
             null
         );
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
 
         //test that the valid order item offer is included - legacy format - no qualifier
@@ -262,7 +266,7 @@ public class ItemOfferProcessorTest extends TestCase {
     public void testCouldOfferApplyToOrder() throws Exception {
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",
             OfferDiscountType.PERCENT_OFF,
@@ -290,7 +294,7 @@ public class ItemOfferProcessorTest extends TestCase {
     public void testCouldOrderItemMeetOfferRequirement() throws Exception {
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",
             OfferDiscountType.PERCENT_OFF,
@@ -320,7 +324,7 @@ public class ItemOfferProcessorTest extends TestCase {
     public void testCouldOfferApplyToOrderItems() throws Exception {
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",
             OfferDiscountType.PERCENT_OFF,
@@ -565,7 +569,7 @@ public class ItemOfferProcessorTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         ).get(0);
 
-        PromotableOrder promotableOrder = dataProvider.createBasicPromotableOrder();
+        PromotableOrder promotableOrder = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         itemProcessor.filterItemLevelOffer(promotableOrder, qualifiedOffers, offer1);
         assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offer1) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
 

@@ -42,7 +42,8 @@ var blcOperators = [
     {type: "LESS_THAN", nb_inputs: 1, multiple: false, apply_to: ['number','datetime']},
     {type: "LESS_OR_EQUAL", nb_inputs: 1, multiple: false, apply_to: ['number','datetime']},
     {type: "BETWEEN", nb_inputs: 2, multiple: false, apply_to: ['number','datetime']},
-    {type: "BETWEEN_INCLUSIVE", nb_inputs: 2, multiple: false, apply_to: ['number','datetime']}
+    {type: "BETWEEN_INCLUSIVE", nb_inputs: 2, multiple: false, apply_to: ['number','datetime']},
+    {type: "WITHIN_DAYS", nb_inputs: 1, multiple: false, apply_to: ['number']}
 ];
 
 var blcOperators_Boolean = [
@@ -63,7 +64,8 @@ var blcOperators_Date = [
     "LESS_THAN",
     "LESS_OR_EQUAL",
     "BETWEEN",
-    "BETWEEN_INCLUSIVE"
+    "BETWEEN_INCLUSIVE",
+    "WITHIN_DAYS"
 ];
 
 var blcOperators_Numeric = [

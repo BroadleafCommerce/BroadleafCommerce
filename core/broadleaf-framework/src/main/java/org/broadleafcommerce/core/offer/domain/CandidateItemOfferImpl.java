@@ -52,7 +52,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     public static final Log LOG = LogFactory.getLog(CandidateItemOfferImpl.class);

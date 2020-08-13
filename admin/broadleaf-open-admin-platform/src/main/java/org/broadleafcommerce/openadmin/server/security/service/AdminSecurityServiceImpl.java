@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -41,8 +42,12 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotPasswordEvent;
+import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
 import org.broadleafcommerce.openadmin.server.security.extension.AdminSecurityServiceExtensionManager;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,14 +57,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  *
@@ -74,6 +77,10 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     private static int TEMP_PASSWORD_LENGTH = 12;
     private static final int FULL_PASSWORD_LENGTH = 16;
 
+    @Autowired
+    @Qualifier("blApplicationEventPublisher")
+    protected BroadleafApplicationEventPublisher eventPublisher;
+
     @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;
 
@@ -85,10 +92,14 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Resource(name = "blAdminPermissionDao")
     protected AdminPermissionDao adminPermissionDao;
+    
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
     protected static String CACHE_NAME = "blSecurityElements";
     protected static String CACHE_KEY_PREFIX = "security:";
-    protected Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
+
+    protected Cache<String, Boolean> cache;;
 
     /**
      * <p>This is simply a placeholder to be used by {@link #setupPasswordEncoder()} to determine if we're using the
@@ -120,6 +131,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     @Transactional("blTransactionManager")
     public void deleteAdminPermission(AdminPermission permission) {
+
         adminPermissionDao.deleteAdminPermission(permission);
         clearAdminSecurityCache();
     }
@@ -201,7 +213,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Admin Security Cache DELETE");
         }
-        cache.removeAll();
+        getCache().removeAll();
     }
 
     protected String generateSecurePassword() {
@@ -225,10 +237,10 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         Boolean response = null;
         String cacheKey = buildCacheKey(adminUser, permissionType, ceilingEntityFullyQualifiedName);
-        Element cacheElement = cache.get(cacheKey);
+        Object objectValue = getCache().get(cacheKey);
 
-        if (cacheElement != null) {
-            response = (Boolean) cacheElement.getObjectValue();
+        if (objectValue != null) {
+            response = (Boolean) objectValue;
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Admin Security Cache GET For: \"" + cacheKey + "\" = " + response);
@@ -252,8 +264,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                 }
             }
 
-            cacheElement = new Element(cacheKey, response);
-            cache.put(cacheElement);
+            getCache().put(cacheKey, response);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Admin Security Cache PUT For: \"" + cacheKey + "\" = " + response);
@@ -319,9 +330,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             }
 
             if (activeUsernames.size() > 0) {
-                HashMap<String, Object> vars = new HashMap<String, Object>();
-                vars.put("accountNames", activeUsernames);
-                emailService.sendTemplateEmail(emailAddress, getSendUsernameEmailInfo(), vars);
+                eventPublisher.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, null, activeUsernames));
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -352,8 +361,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             fpst.setCreateDate(SystemTime.asDate());
             forgotPasswordSecurityTokenDao.saveToken(fpst);
 
-            HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("token", token);
             String resetPasswordUrl = getResetPasswordURL();
             if (!StringUtils.isEmpty(resetPasswordUrl)) {
                 if (resetPasswordUrl.contains("?")) {
@@ -362,9 +369,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                     resetPasswordUrl=resetPasswordUrl+"?token="+token;
                 }
             }
-            vars.put("resetPasswordUrl", resetPasswordUrl);
-            emailService.sendTemplateEmail(user.getEmail(), getResetPasswordEmailInfo(), vars);
 
+            eventPublisher.publishEvent(new AdminForgotPasswordEvent(this, user.getId(), token, resetPasswordUrl));
         }
         return response;
     }
@@ -536,5 +542,16 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
      */
     protected String encodePassword(String rawPassword) {
         return passwordEncoderBean.encode(rawPassword);
+    }
+    
+    protected Cache<String, Boolean> getCache() {
+        if (cache == null) {
+            synchronized (this) {
+                if (cache == null) {
+                    cache = cacheManager.getCache(CACHE_NAME);
+                }
+            }
+        }
+        return cache;
     }
 }

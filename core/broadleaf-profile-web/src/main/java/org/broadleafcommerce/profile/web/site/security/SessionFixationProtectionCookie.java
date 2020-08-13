@@ -26,7 +26,10 @@ import org.apache.commons.logging.LogFactory;
  * @see SessionFixationProtectionFilter
  * 
  * @author Andre Azzolini (apazzolini)
+ *
+ * @deprecated Use {@link org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy} instead
  */
+@Deprecated
 public class SessionFixationProtectionCookie {
     protected final Log logger = LogFactory.getLog(getClass());
 

@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.spec.checkout.service.workflow
 
 import org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity
 import org.broadleafcommerce.core.order.service.type.OrderStatus
-import org.springframework.context.ApplicationContext
-
 /**
  * @author Elbert Bautista (elbertbautista)
  */
@@ -28,7 +26,6 @@ class CompleteOrderActivitySpec extends BaseCheckoutActivitySpec {
 
     def setup() {
         activity = new CompleteOrderActivity().with {
-            applicationContext = Mock(ApplicationContext)
             it
         }
     }

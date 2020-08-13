@@ -24,9 +24,16 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -38,15 +45,17 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "giftWrapOrderItem", targetEntity = OrderItemImpl.class,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderItemImpl_Price_Details",
                 tab = OrderItemImpl.Presentation.Tab.Name.Advanced, tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
     protected List<OrderItem> wrappedItems = new ArrayList<OrderItem>();
 
+    @Override
     public List<OrderItem> getWrappedItems() {
         return wrappedItems;
     }
 
+    @Override
     public void setWrappedItems(List<OrderItem> wrappedItems) {
         this.wrappedItems = wrappedItems;
     }

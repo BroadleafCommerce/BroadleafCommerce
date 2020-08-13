@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.i18n.domain.Translation;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.ehcache.Cache;
+import javax.cache.Cache;
 
 public interface TranslationService {
 
@@ -136,7 +136,7 @@ public interface TranslationService {
      *
      * @return the translation specific cache
      */
-    Cache getCache();
+    Cache<String, Object> getCache();
 
     /**
      * Intended for use with the {@link DynamicTranslationProvider} to determine the default value when a 

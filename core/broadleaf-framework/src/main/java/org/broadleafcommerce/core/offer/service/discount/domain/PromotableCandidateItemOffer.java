@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.MinimumTargetsRequired;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 
 import java.io.Serializable;
@@ -28,7 +29,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public interface PromotableCandidateItemOffer extends Serializable {
+public interface PromotableCandidateItemOffer extends PromotionRounding, Serializable {
 
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 
@@ -48,16 +49,21 @@ public interface PromotableCandidateItemOffer extends Serializable {
 
     public boolean hasQualifyingItemCriteria();
 
-    /**
-     * Public only for unit testing - not intended to be called
-     */
-    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings);
-
     public int calculateMaximumNumberOfUses();
     
     /**
      * Returns the number of item quantities that qualified as targets for 
      * this promotion.
+     * 
+     * Uses {@link PromotableCandidateItemOffer#isUseQtyOnlyTierCalculation()} to determine how to calculate.
+     * If set to true, this method will use only the quantity in cart for determining which tier level to apply for 
+     * a group of qualifying items. This is old and likely undesired behavior, and is disabled by default. To turn
+     * it back on, use `use.quantity.only.tier.calculation=true` in your `common-shared.properties`.
+     *
+     * Otherwise, the default behavior is to factor in the number of iterations that the qualifying items have been
+     * applied.
+     *
+     * @return
      */
     public int calculateTargetQuantityForTieredOffer();
 
@@ -71,7 +77,11 @@ public interface PromotableCandidateItemOffer extends Serializable {
      * @return
      */
     public int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion);
-    
+
+    HashMap<OfferPriceData, List<PromotableOrderItem>> getCandidateFixedTargetsMap();
+
+    void setCandidateFixedTargetsMap(HashMap<OfferPriceData, List<PromotableOrderItem>> candidateFixedTargetsMap);
+
     public int getPriority();
     
     public Offer getOffer();
@@ -113,4 +123,33 @@ public interface PromotableCandidateItemOffer extends Serializable {
      */
     public int getMinimumRequiredTargetQuantity();
 
+    /**
+     * Returns whether to use quantity only tier calculation.
+     * If set to true, {@link PromotableCandidateItemOffer#calculateTargetQuantityForTieredOffer()} will use only the 
+     * quantity in cart for determining which tier level to apply for a group of qualifying items. This mode 
+     * is disabled by default. To turn it back on, use
+     * `use.quantity.only.tier.calculation=true` in your `common-shared.properties`.
+     * 
+     * Otherwise, the default behavior is to factor in the number of iterations that the qualifying items have been
+     * applied.
+     * 
+     * @return
+     * @see {@link PromotableCandidateItemOffer#calculateTargetQuantityForTieredOffer()}
+     */
+    boolean isUseQtyOnlyTierCalculation();
+
+    /**
+     * Sets whether to use quantity only tier calculation.
+     * If set to true, {@link PromotableCandidateItemOffer#calculateTargetQuantityForTieredOffer()} will use only the 
+     * quantity in cart for determining which tier level to apply for a group of qualifying items. This mode 
+     * is disabled by default. To turn it back on, use
+     * `use.quantity.only.tier.calculation=true` in your `common-shared.properties`.
+     *
+     * Otherwise, the default behavior is to factor in the number of iterations that the qualifying items have been
+     * applied.
+     *
+     * @param useQtyOnlyTierCalculation 
+     * @see {@link PromotableCandidateItemOffer#calculateTargetQuantityForTieredOffer()}
+     */
+    void setUseQtyOnlyTierCalculation(boolean useQtyOnlyTierCalculation);
 }

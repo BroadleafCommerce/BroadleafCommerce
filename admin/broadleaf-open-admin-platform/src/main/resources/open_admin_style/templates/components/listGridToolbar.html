@@ -103,3 +103,8 @@
         <div class="query-builder-filters-container" th:id="${listGrid.friendlyName}" style="display: none;"></div>
     </div>
 </div>
+<div th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}"
+     class="selectize-control multi filter-pillow-wrapper">
+
+    <div th:id="${'filter-pillow-container-' + listGrid.jsonFieldName}" class="selectize-input filter-pillow-container"></div>
+</div>

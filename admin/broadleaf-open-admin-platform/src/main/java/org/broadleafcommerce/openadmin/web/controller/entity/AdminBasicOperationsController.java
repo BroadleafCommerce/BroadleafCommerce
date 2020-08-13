@@ -160,7 +160,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         model.addAttribute("collectionProperty", collectionProperty);
         model.addAttribute("sectionCrumbs", request.getParameter("sectionCrumbs"));
         setModelAttributes(model, owningClass);
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
 
     @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/typeahead", method = RequestMethod.GET)

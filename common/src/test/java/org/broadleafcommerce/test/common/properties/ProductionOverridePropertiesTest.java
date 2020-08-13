@@ -21,6 +21,7 @@
 package org.broadleafcommerce.test.common.properties;
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,6 @@ public class ProductionOverridePropertiesTest {
     @Test
     public void testOverriddenProductionSharedProperty() {
         Assert.assertEquals("productionsharedvalue", env.getProperty("shared.override.test"));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfiguringApplicationListener.PROFILE_AWARE_SOURCES_NAME));
+        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfigurer.PROFILE_AWARE_SOURCES_NAME));
     }
 }

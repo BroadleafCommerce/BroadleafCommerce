@@ -3,4 +3,4 @@ org.broadleafcommerce.common.config.BroadleafSharedOverrideProfileAwarePropertyS
 org.broadleafcommerce.common.config.FrameworkCommonClasspathPropertySource=org.broadleafcommerce.common.config.BroadleafCommonPropertySource
 
 # Ensure that our ApplicationContextInitializer gets invoked automatically with Spring Boot
-org.springframework.context.ApplicationContextInitializer=org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener
+org.springframework.boot.env.EnvironmentPostProcessor=org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringPostProcessor

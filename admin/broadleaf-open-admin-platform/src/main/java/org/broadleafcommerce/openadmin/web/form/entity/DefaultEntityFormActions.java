@@ -33,5 +33,9 @@ public class DefaultEntityFormActions {
     public static final EntityFormAction PREVIEW = new EntityFormAction(EntityFormAction.PREVIEW)
         .withButtonClass("preview-button")
         .withDisplayText("Preview");
+    
+    public static final EntityFormAction DUPLICATE = new EntityFormAction(EntityFormAction.DUPLICATE)
+            .withButtonClass("duplicate-button")
+            .withDisplayText("Duplicate");
 
 }

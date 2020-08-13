@@ -26,7 +26,8 @@ import org.broadleafcommerce.common.page.dto.PageDTO;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.ehcache.Cache;
+import javax.cache.Cache;
+
 
 /**
  * Created by bpolster.

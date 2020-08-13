@@ -62,8 +62,12 @@ public class OfferAuditImpl implements OfferAudit {
     protected Long offerId;
 
     @Column(name = "CUSTOMER_ID")
-    @Index(name="OFFERAUDIT_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
+    @Index(name = "OFFERAUDIT_CUSTOMER_INDEX", columnNames = { "CUSTOMER_ID, OFFER_ID" })
     protected Long customerId;
+
+    @Column(name = "ACCOUNT_ID")
+    @Index(name = "OFFERAUDIT_ACCOUNT_INDEX", columnNames = { "ACCOUNT_ID, OFFER_ID" })
+    protected Long accountId;
 
     @Column(name = "ORDER_ID")
     @Index(name="OFFERAUDIT_ORDER_INDEX", columnNames={"ORDER_ID"})
@@ -117,6 +121,16 @@ public class OfferAuditImpl implements OfferAudit {
     }
 
     @Override
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    @Override
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    @Override
     public Long getOrderId() {
         return orderId;
     }
@@ -155,6 +169,7 @@ public class OfferAuditImpl implements OfferAudit {
             return new EqualsBuilder()
                 .append(this.id, that.id)
                 .append(this.customerId, that.customerId)
+                    .append(this.accountId, that.accountId)
                 .append(this.offerId, that.offerId)
                 .append(this.offerCodeId, that.offerCodeId)
                 .append(this.redeemedDate, that.redeemedDate)

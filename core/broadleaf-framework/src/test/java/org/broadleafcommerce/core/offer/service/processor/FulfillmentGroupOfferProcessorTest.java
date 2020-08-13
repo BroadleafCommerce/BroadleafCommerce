@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
+import junit.framework.TestCase;
+
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -39,6 +41,8 @@ import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtilityImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -59,14 +63,11 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -86,6 +87,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
     protected OrderMultishipOptionService multishipOptionServiceMock;
     protected OfferTimeZoneProcessor offerTimeZoneProcessorMock;
     protected OfferServiceUtilities offerServiceUtilitiesMock;
+    protected PromotableOfferUtility promotableOfferUtility;
 
     protected FulfillmentGroupOfferProcessorImpl fgProcessor;
 
@@ -96,6 +98,10 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
      * @author Phillip Verheyden (phillipuniverse)
      */
     protected static class TestableFulfillmentGroupOfferProcessor extends FulfillmentGroupOfferProcessorImpl {
+        public TestableFulfillmentGroupOfferProcessor(PromotableOfferUtility promotableOfferUtility) {
+            super(promotableOfferUtility);
+        }
+
         @Override
         protected boolean getQualifyGroupAcrossAllOrderItems(PromotableFulfillmentGroup fg) {
             return false;
@@ -117,28 +123,29 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
         offerServiceUtilitiesMock = EasyMock.createMock(OfferServiceUtilities.class);
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
+        promotableOfferUtility = new PromotableOfferUtilityImpl();
 
-        fgProcessor = new TestableFulfillmentGroupOfferProcessor();
+        fgProcessor = new TestableFulfillmentGroupOfferProcessor(promotableOfferUtility);
         fgProcessor.setOfferDao(offerDaoMock);
         fgProcessor.setOrderItemDao(orderItemDaoMock);
-        fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
         fgProcessor.setOfferServiceUtilities(offerServiceUtilitiesMock);
 
-        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
+        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl(promotableOfferUtility);
         offerServiceUtilities.setOfferDao(offerDaoMock);
-        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
 
-        OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
+        OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl(promotableOfferUtility);
         orderProcessor.setOfferDao(offerDaoMock);
-        orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
         orderProcessor.setOfferServiceUtilities(offerServiceUtilitiesMock);
         orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
         orderProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
-        ItemOfferProcessorImpl itemProcessor = new ItemOfferProcessorImpl();
+        ItemOfferProcessorImpl itemProcessor = new ItemOfferProcessorImpl(promotableOfferUtility);
         itemProcessor.setOfferDao(offerDaoMock);
-        itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
         itemProcessor.setOrderItemDao(orderItemDaoMock);
         itemProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
@@ -148,7 +155,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         offerService.setOrderOfferProcessor(orderProcessor);
         offerService.setItemOfferProcessor(itemProcessor);
         offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
-        offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerService.setPromotableItemFactory(new PromotableItemFactoryImpl(promotableOfferUtility));
         offerService.setOrderService(orderServiceMock);
     }
     
@@ -209,7 +216,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
             @Override
             public List<OrderMultishipOption> answer() throws Throwable {
                 List<OrderMultishipOption> options = new ArrayList<OrderMultishipOption>();
-                PromotableOrder order = dataProvider.createBasicPromotableOrder();
+                PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
                 for (FulfillmentGroup fg : order.getOrder().getFulfillmentGroups()) {
                     Address address = fg.getAddress();
                     for (FulfillmentGroupItem fgItem : fg.getFulfillmentGroupItems()) {
@@ -247,7 +254,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
         replay();
 
-        PromotableOrder promotableOrder = dataProvider.createBasicPromotableOrder();
+        PromotableOrder promotableOrder = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         Order order = promotableOrder.getOrder();
         myOrder.set(promotableOrder.getOrder());
         List<PromotableCandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
@@ -275,7 +282,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         //However, the second combinable fg offer is allowed to be applied.
         assertTrue(fgAdjustmentCount == 1);
 
-        promotableOrder = dataProvider.createBasicPromotableOrder();
+        promotableOrder = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         myOrder.set(promotableOrder.getOrder());
         offers.get(2).setValue(new BigDecimal("1"));
 
@@ -309,7 +316,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         EasyMock.expect(offerServiceUtilitiesMock.orderMeetsSubtotalRequirements(EasyMock.isA(PromotableOrder.class), EasyMock.isA(Offer.class))).andReturn(true).anyTimes();
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
 
         List<PromotableCandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
         List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
@@ -319,7 +326,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
         assertTrue(offerApplied);
 
-        order = dataProvider.createBasicPromotableOrder();
+        order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
 
         qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
         offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
@@ -344,7 +351,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
     public void testFilterFulfillmentGroupLevelOffer() {
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
 
         List<PromotableCandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
         List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
@@ -382,7 +389,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
     public void testCouldOfferApplyToFulfillmentGroup() {
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
         boolean couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), order.getFulfillmentGroups().get(0));
         //test that the valid fg offer is included
@@ -399,7 +406,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
     public void testCouldOrderItemMeetOfferRequirement() {
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
         List<Offer> offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
         OfferQualifyingCriteriaXref xref = offers.get(0).getQualifyingItemCriteriaXref().iterator().next();
         boolean couldApply = fgProcessor.couldOrderItemMeetOfferRequirement(xref.getOfferItemCriteria(), order.getDiscountableOrderItems().get(0));
@@ -418,7 +425,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
     public void testCouldOfferApplyToOrderItems() {
         replay();
 
-        PromotableOrder order = dataProvider.createBasicPromotableOrder();
+        PromotableOrder order = dataProvider.createBasicPromotableOrder(promotableOfferUtility);
 
         List<PromotableOrderItem> orderItems = new ArrayList<PromotableOrderItem>();
         for (PromotableOrderItem orderItem : order.getDiscountableOrderItems()) {

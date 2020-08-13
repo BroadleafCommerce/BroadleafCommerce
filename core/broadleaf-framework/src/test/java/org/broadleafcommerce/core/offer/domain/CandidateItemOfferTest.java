@@ -32,6 +32,8 @@ import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtilityImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
@@ -62,9 +64,11 @@ public class CandidateItemOfferTest extends TestCase {
     private PromotableOrderItem promotableOrderItem;
     private PromotableOrder promotableOrder;
     private PromotableOrderItemPriceDetail priceDetail;
+    private PromotableOfferUtility promotableOfferUtility;
 
     @Override
     protected void setUp() throws Exception {
+        promotableOfferUtility = new PromotableOfferUtilityImpl();
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();
         
         CandidateItemOfferImpl candidate = new CandidateItemOfferImpl();
@@ -116,7 +120,7 @@ public class CandidateItemOfferTest extends TestCase {
         Order order = new OrderImpl();
         orderItem1.setOrder(order);
         
-        promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
+        promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(promotableOfferUtility), false);
         offer = dataProvider.createItemBasedOfferWithItemCriteria(
                 "order.subTotal.getAmount()>20",
                 OfferDiscountType.PERCENT_OFF,
@@ -125,7 +129,7 @@ public class CandidateItemOfferTest extends TestCase {
                 ).get(0);
         candidateOffer = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
         
-        promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null, new PromotableItemFactoryImpl(), false);
+        promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null, new PromotableItemFactoryImpl(promotableOfferUtility), false);
         OrderItemPriceDetail pdetail = new OrderItemPriceDetailImpl();
         pdetail.setOrderItem(orderItem1);
         pdetail.setQuantity(2);
@@ -141,15 +145,15 @@ public class CandidateItemOfferTest extends TestCase {
     }
     
     public void testCalculateSavingsForOrderItem() throws Exception {
-        Money savings = promotableCandidate.calculateSavingsForOrderItem(promotableOrderItem, 1);
+        Money savings = promotableOfferUtility.calculateSavingsForOrderItem(promotableCandidate, promotableOrderItem, 1);
         assertTrue(savings.equals(new Money(2D)));
         
         offer.setDiscountType(OfferDiscountType.AMOUNT_OFF);
-        savings = promotableCandidate.calculateSavingsForOrderItem(promotableOrderItem, 1);
+        savings = promotableOfferUtility.calculateSavingsForOrderItem(promotableCandidate, promotableOrderItem, 1);
         assertTrue(savings.equals(new Money(10D)));
         
         offer.setDiscountType(OfferDiscountType.FIX_PRICE);
-        savings = promotableCandidate.calculateSavingsForOrderItem(promotableOrderItem, 1);
+        savings = promotableOfferUtility.calculateSavingsForOrderItem(promotableCandidate, promotableOrderItem, 1);
         assertTrue(savings.equals(new Money(19.99D - 10D)));
     }
     

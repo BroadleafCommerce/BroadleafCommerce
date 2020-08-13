@@ -59,6 +59,8 @@
                             <value>javassist.*</value>
                             <value>javax.*</value>
                             <value>org.broadleafcommerce.openadmin.web.compatibility.JSCompatibilityRequestWrapper</value>
+                            <value>org\.hibernate.*</value>
+                            <value>org\.quartz.*</value>
                         </array>
                     </property>
                 </bean>
@@ -157,7 +159,7 @@
         </property>
     </bean>
     
-    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+    <bean id="blSpringCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
         <property name="cacheManager" ref="blCacheManager"/>
     </bean>    
     

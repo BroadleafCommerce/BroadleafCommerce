@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2018 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,26 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.cache.engine;
+package org.broadleafcommerce.openadmin.server.security.extension;
 
-import java.io.Serializable;
-import java.util.Hashtable;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Component;
 
 /**
- * 
- * @author jfischer
- *
+ * @author Jacob Mitash
  */
-@Deprecated
-public class HydratedCacheElement extends Hashtable<String, Object> {
+@Component("blAdminSecurityCheckExtensionManager")
+public class AdminSecurityCheckExtensionManager extends ExtensionManager<AdminSecurityCheckExtensionHandler> {
 
-    private static final long serialVersionUID = 1L;
-
-    public Object getCacheElementItem(String elementItemName, Serializable parentKey) {
-        return get(elementItemName + "_" + parentKey);
-    }
-    
-    public Object putCacheElementItem(String elementItemName, Serializable parentKey, Object value) {
-        return put(elementItemName +"_"+parentKey, value);
+    public AdminSecurityCheckExtensionManager() {
+        super(AdminSecurityCheckExtensionHandler.class);
     }
 }

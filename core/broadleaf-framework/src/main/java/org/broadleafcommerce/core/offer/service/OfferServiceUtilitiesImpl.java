@@ -24,11 +24,13 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
@@ -42,7 +44,6 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.dto.OrderItemHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,7 +51,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 /**
@@ -70,6 +70,12 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager extensionManager;
+
+    protected final PromotableOfferUtility promotableOfferUtility;
+
+    public OfferServiceUtilitiesImpl(PromotableOfferUtility promotableOfferUtility) {
+        this.promotableOfferUtility = promotableOfferUtility;
+    }
 
     @Override
     public void sortTargetItemDetails(List<PromotableOrderItemPriceDetail> itemPriceDetails, boolean applyToSalePrice) {
@@ -188,6 +194,44 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
+    public boolean markTargetsForOfferPriceData(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier,
+                                                boolean checkOnly, Offer promotion, OrderItem relatedQualifierRoot, OfferPriceData offerPriceData,
+                                                List<PromotableOrderItemPriceDetail> priceDetails) {
+        int targetQtyNeeded = offerPriceData.getQuantity();
+        int minRequiredTargetQuantity = itemOffer.getMinimumRequiredTargetQuantity();
+        if (minRequiredTargetQuantity > 1 && minRequiredTargetQuantity > targetQtyNeeded) {
+            targetQtyNeeded = minRequiredTargetQuantity;
+        }
+
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            if (relatedQualifier != null) {
+                // We need to make sure that this item is either a parent, child, or the same as the qualifier root
+                OrderItem thisItem = priceDetail.getPromotableOrderItem().getOrderItem();
+                if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot) &&
+                        !thisItem.equals(relatedQualifierRoot)) {
+                    continue;
+                }
+            }
+
+            int itemQtyAvailableToBeUsedAsTarget = priceDetail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
+            if (itemQtyAvailableToBeUsedAsTarget > 0) {
+                if (promotion.isUnlimitedUsePerOrder() || (itemOffer.getUses() < promotion.getMaxUsesPerOrder())) {
+                    int qtyToMarkAsTarget = Math.min(targetQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
+                    targetQtyNeeded -= qtyToMarkAsTarget;
+                    if (!checkOnly) {
+                        priceDetail.addPromotionDiscount(itemOffer, null, qtyToMarkAsTarget);
+                    }
+                }
+            }
+
+            if (targetQtyNeeded == 0) {
+                break;
+            }
+        }
+        return targetQtyNeeded == 0;
+    }
+
+    @Override
     public int markRelatedQualifiersAndTargetsForItemCriteria(PromotableCandidateItemOffer itemOffer, PromotableOrder order,
             OrderItemHolder orderItemHolder, OfferItemCriteria itemCriteria,
             List<PromotableOrderItemPriceDetail> priceDetails, ItemOfferMarkTargets itemOfferMarkTargets) {
@@ -297,7 +341,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         if (!itemOffer.getOffer().getApplyDiscountToSalePrice()) {
             Money salePrice = detail.getPromotableOrderItem().getSalePriceBeforeAdjustments();
             Money retailPrice = detail.getPromotableOrderItem().getRetailPriceBeforeAdjustments();
-            Money savings = itemOffer.calculateSavingsForOrderItem(detail.getPromotableOrderItem(), 1);
+            Money savings = promotableOfferUtility.calculateSavingsForOrderItem(itemOffer, detail.getPromotableOrderItem(), 1);
             if (salePrice != null) {
                 if (salePrice.lessThan(retailPrice.subtract(savings))) {
                     // Not good enough

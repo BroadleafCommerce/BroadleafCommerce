@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.checkout.service;
 
+import org.broadleafcommerce.common.event.BroadleafApplicationEventPublisher;
+import org.broadleafcommerce.common.event.OrderSubmittedEvent;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
@@ -29,12 +31,12 @@ import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import javax.annotation.Resource;
 
 @Service("blCheckoutService")
@@ -42,6 +44,10 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Resource(name="blCheckoutWorkflow")
     protected Processor<CheckoutSeed, CheckoutSeed> checkoutWorkflow;
+
+    @Autowired
+    @Qualifier("blApplicationEventPublisher")
+    protected BroadleafApplicationEventPublisher eventPublisher;
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
@@ -77,6 +83,9 @@ public class CheckoutServiceImpl implements CheckoutService {
             order = orderService.save(seed.getOrder(), false);
             order.getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
             seed.setOrder(order);
+
+            OrderSubmittedEvent event = new OrderSubmittedEvent(this, seed.getOrder().getId(), seed.getOrder().getOrderNumber());
+            eventPublisher.publishEvent(event);
 
             return seed;
         } catch (PricingException e) {

@@ -17,10 +17,6 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +32,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 
 /**
  * An abstract GeneratedResourceHandler that is capable of responding to a single specified filename and generate
@@ -50,6 +48,8 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(AbstractGeneratedResourceHandler.class);
 
+    private static final String GENERATED_RESOURCE_CACHE_NAME = "generatedResourceCache";
+
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
@@ -58,8 +58,11 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
 
     @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
     protected ResourceRequestExtensionManager extensionManager;
+    
+    @javax.annotation.Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
 
-    protected Cache generatedResourceCache;
+    protected Cache<String, Resource> generatedResourceCache;
     
     /**
      * @param path
@@ -91,27 +94,22 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
      * @return the generated resource
      */
     public Resource getResource(final String path, final List<Resource> locations) {
-        Element e = getGeneratedResourceCache().get(path);
-        Resource r = null;
-        if (e == null) {
+        Resource r = getGeneratedResourceCache().get(path);
+        if (r == null) {
             statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), false);
         } else {
             statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), true);
         }
         boolean shouldGenerate = false;
-        if (e == null || e.getObjectValue() == null) {
+        if (r == null) {
             shouldGenerate = true;
-        } else if (e.getObjectValue() instanceof GeneratedResource
-                && isCachedResourceExpired((GeneratedResource) e.getObjectValue(), path, locations)) {
+        } else if (r instanceof GeneratedResource && isCachedResourceExpired((GeneratedResource) r, path, locations)) {
             shouldGenerate = true;
-        } else {
-            r = (Resource) e.getObjectValue();
         }
 
         if (shouldGenerate) {
             r = getFileContents(path, locations);
-            e = new Element(path,  r);
-            getGeneratedResourceCache().put(e);
+            getGeneratedResourceCache().put(path, r);
         }
         return r;
     }
@@ -162,11 +160,19 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
 	    }
 	}
     
-    protected Cache getGeneratedResourceCache() {
+    protected Cache<String, Resource> getGeneratedResourceCache() {
         if (generatedResourceCache == null) {
-            generatedResourceCache = CacheManager.getInstance().getCache("generatedResourceCache");
+            synchronized (this) {
+                if (generatedResourceCache == null) {
+                    generatedResourceCache = cacheManager.getCache(getCacheName());
+                }
+            }
         }
         return generatedResourceCache;
+    }
+
+    protected String getCacheName() {
+        return GENERATED_RESOURCE_CACHE_NAME;
     }
 
     @Override

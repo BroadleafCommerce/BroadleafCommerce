@@ -23,18 +23,17 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferServiceUtilities;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
@@ -78,6 +77,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     @Resource(name = "blOfferServiceUtilities")
     protected OfferServiceUtilities offerServiceUtilities;
+
+    public OrderOfferProcessorImpl(PromotableOfferUtility promotableOfferUtility) {
+        super(promotableOfferUtility);
+    }
 
     @Override
     public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
@@ -314,13 +317,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 Long offerId = adjustment.getOffer().getId();
                 PromotableOrderAdjustment promotableAdjustment = newAdjustmentsMap.remove(offerId);
                 if (promotableAdjustment != null) {
-                    if (!adjustment.getValue().equals(promotableAdjustment.getAdjustmentValue())) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Updating value for order adjustment with offer Id " + offerId + " to " +
-                                    promotableAdjustment.getAdjustmentValue());
-                        }
-                        adjustment.setValue(promotableAdjustment.getAdjustmentValue());
-                    }
+                    updateAdjustmentIfChangesDetected(adjustment, promotableAdjustment);
                 } else {
                     // No longer using this order adjustment, remove it.
                     orderAdjIterator.remove();
@@ -338,7 +335,23 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
-
+    protected void updateAdjustmentIfChangesDetected(OrderAdjustment adjustment, PromotableOrderAdjustment promotableAdjustment) {
+        Long offerId = adjustment.getOffer().getId();
+        if (!adjustment.getValue().equals(promotableAdjustment.getAdjustmentValue())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Updating value for order adjustment with offer Id " + offerId + " to " +
+                        promotableAdjustment.getAdjustmentValue());
+            }
+            adjustment.setValue(promotableAdjustment.getAdjustmentValue());
+        }
+        if (!adjustment.isFutureCredit().equals(promotableAdjustment.getOffer().isFutureCredit())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Updating isFutureCredit for order adjustment with offer Id " + offerId + " to " +
+                        promotableAdjustment.isFutureCredit());
+            }
+            adjustment.setFutureCredit(promotableAdjustment.isFutureCredit());
+        }
+    }
 
     protected void synchronizeOrderItems(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getOrder();
@@ -491,10 +504,38 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     protected void synchronizeFulfillmentGroups(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getOrder();
         Map<Long, PromotableFulfillmentGroup> fgMap = buildPromotableFulfillmentGroupMap(promotableOrder);
+        
+        boolean syncNeededOnTotal = false;
 
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             synchronizeFulfillmentGroupAdjustments(fg, fgMap.get(fg.getId()));
+            boolean syncNeeded = fgContainsFutureCreditAdjustment(fg);
+            if (syncNeeded) {
+                syncFulfillmentPrice(fg);
+                syncNeededOnTotal = true;
+            }
         }
+        
+        if (syncNeededOnTotal) {
+            Money syncFulfillmentPrice = Money.ZERO;
+
+            for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                syncFulfillmentPrice = syncFulfillmentPrice.add(fg.getFulfillmentPrice());
+            }
+            order.setTotalFulfillmentCharges(syncFulfillmentPrice);
+        }
+    }
+
+    protected boolean fgContainsFutureCreditAdjustment(FulfillmentGroup fg) {
+        return !fg.getFutureCreditFulfillmentGroupAdjustmentsValue().equals(Money.ZERO);
+    }
+
+    protected void syncFulfillmentPrice(FulfillmentGroup fg) {
+        Money retailPrice = fg.getRetailFulfillmentPrice();
+        Money orderDiscountFulfillmentGroupAdjustmentsValue = fg.getFulfillmentGroupAdjustmentsValue();
+        Money fulfillmentPrice = retailPrice.subtract(orderDiscountFulfillmentGroupAdjustmentsValue);
+
+        fg.setFulfillmentPrice(fulfillmentPrice);
     }
 
     protected Map<Long, PromotableFulfillmentGroup> buildPromotableFulfillmentGroupMap(PromotableOrder order) {

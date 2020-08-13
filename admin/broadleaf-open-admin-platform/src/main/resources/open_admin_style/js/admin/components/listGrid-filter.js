@@ -306,6 +306,10 @@ $(document).ready(function() {
 
         url = getFilteredParams($(this), url);
 
+        const urlEvent = $.Event('listGrid-filter-lazy-load-url');
+        $('body').trigger(urlEvent, [url, $tbody]);
+        url = urlEvent.resultUrl || url;
+
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
             url: url,

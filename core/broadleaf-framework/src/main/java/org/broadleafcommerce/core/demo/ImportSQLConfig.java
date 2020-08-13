@@ -55,7 +55,7 @@ public class ImportSQLConfig {
     @Conditional(DemoCondition.class)
     public AutoImportSql blFrameworkPreBasicData() {
         return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_catalog_data.sql,config/bc/sql/demo/load_catalog_i18n_data_ES.sql," +
-                "config/bc/sql/demo/load_catalog_i18n_data_FR.sql", AutoImportStage.PRIMARY_PRE_BASIC_DATA);
+                "config/bc/sql/demo/load_catalog_i18n_data_FR.sql,config/bc/sql/demo/load_catalog_i18n_data_zh_CN.sql", AutoImportStage.PRIMARY_PRE_BASIC_DATA);
     }
 
     @Bean

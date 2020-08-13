@@ -62,12 +62,12 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 
         criteria.select(facet);
 
-        Path<Character> archived = facet.get("archiveStatus").get("archived");
+//        Path<Character> archived = facet.get("archiveStatus").get("archived");
 
         criteria.where(
                 builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
-                builder.or(builder.isNull(archived.as(String.class)),
-                           builder.notEqual(archived.as(Character.class), 'Y')),
+//                builder.or(builder.isNull(archived.as(String.class)),
+//                           builder.notEqual(archived.as(Character.class), 'Y')),
                 facet.join("fieldType")
                         .join("indexField")
                         .join("field")

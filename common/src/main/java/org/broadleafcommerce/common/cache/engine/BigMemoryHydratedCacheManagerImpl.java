@@ -19,6 +19,8 @@ package org.broadleafcommerce.common.cache.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.cache.JCacheUtil;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,12 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
+import javax.cache.Cache;
+import javax.cache.configuration.Configuration;
+import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.EternalExpiryPolicy;
 
 /**
  * 
@@ -41,8 +41,11 @@ import net.sf.ehcache.config.CacheConfiguration;
  */
 public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheManager {
 
+    private static final long serialVersionUID = 1L;
+    
     private static final Log LOG = LogFactory.getLog(BigMemoryHydratedCacheManagerImpl.class);
     private static final BigMemoryHydratedCacheManagerImpl MANAGER = new BigMemoryHydratedCacheManagerImpl();
+    private static final String BIG_MEMORY_HYDRATED_CACHE_NAME = "hydrated-offheap-cache";
 
     public static BigMemoryHydratedCacheManagerImpl getInstance() {
         return MANAGER;
@@ -50,47 +53,47 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
 
     private Map<String, List<String>> cacheMemberNamesByEntity = Collections.synchronizedMap(new HashMap<String, List<String>>(100));
     private List<String> removeKeys = Collections.synchronizedList(new ArrayList<String>(100));
-    private Cache offHeap = null;
+    private Cache<String, Object> offHeap = null;
 
-    private BigMemoryHydratedCacheManagerImpl()  {
-        //CacheManager.getInstance() and CacheManager.create() cannot be called in this constructor because it will create two cache manager instances
-    }
-    
-    private synchronized Cache getHeap() {
+    private synchronized Cache<String, Object> getHeap() {
         if (offHeap == null) {
-            if (CacheManager.getInstance().cacheExists("hydrated-offheap-cache")) {
-                offHeap = CacheManager.getInstance().getCache("hydrated-offheap-cache");
-            } else {
-                CacheConfiguration config = new CacheConfiguration("hydrated-offheap-cache", 500).eternal(true).overflowToOffHeap(true).maxMemoryOffHeap("1400M");
-                Cache cache = new Cache(config);
-                CacheManager.create().addCache(cache);
+            JCacheUtil util = ApplicationContextHolder.getApplicationContext().getBean("blJCacheUtil", JCacheUtil.class);
+            Cache<String, Object> cache = util.getCache(getBigMemoryHydratedCacheName());
+            if (cache != null) {
                 offHeap = cache;
+            } else {
+                Configuration<String, Object> config = getBigMemoryHydratedCacheConfiguration();
+                offHeap = util.getCacheManager().createCache(getBigMemoryHydratedCacheName(), config);
             }
         }
         return offHeap;
     }
 
+    protected String getBigMemoryHydratedCacheName() {
+        return BIG_MEMORY_HYDRATED_CACHE_NAME;
+    }
+
+    protected Configuration<String, Object> getBigMemoryHydratedCacheConfiguration() {
+        // TODO 6.1 ehcache 3 Not able to configure this with enough complexity
+        MutableConfiguration<String, Object> config = new MutableConfiguration<>();
+        config.setExpiryPolicyFactory(EternalExpiryPolicy.factoryOf());
+        return config;
+    }
+
     @Override
     public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
-        Element element;
-        String myKey = cacheRegion + '_' + cacheName + '_' + elementItemName + '_' + elementKey;
+        String myKey = createHeapKey(cacheRegion, cacheName, elementItemName, elementKey);
         if (removeKeys.contains(myKey)) {
             return null;
         }
-        Object response = null;
-        element = getHeap().get(myKey);
-        if (element != null) {
-            response = element.getObjectValue();
-        }
-        return response;
+        return getHeap().get(myKey);
     }
 
     @Override
     public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
-        String heapKey = cacheRegion + '_' + cacheName + '_' + elementItemName + '_' + elementKey;
-        String nameKey = cacheRegion + '_' + cacheName + '_' + elementKey;
+        String heapKey = createHeapKey(cacheRegion, cacheName, elementItemName, elementKey);
+        String nameKey = createNameKey(cacheRegion, cacheName, elementKey);
         removeKeys.remove(nameKey);
-        Element element = new Element(heapKey, elementValue);
         if (!cacheMemberNamesByEntity.containsKey(nameKey)) {
             List<String> myMembers = new ArrayList<String>(50);
             myMembers.add(elementItemName);
@@ -99,11 +102,16 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
             List<String> myMembers = cacheMemberNamesByEntity.get(nameKey);
             myMembers.add(elementItemName);
         }
-        getHeap().put(element);
+        getHeap().put(heapKey, elementValue);
+    }
+
+    protected void removeCache(Serializable key) {
+        removeCache("", key);
     }
 
     protected void removeCache(String cacheRegion, Serializable key) {
         String cacheName = cacheRegion;
+        // TODO 6.1 ehcache 3 Make sure this is adding correctly
         if (key.getClass().getName().equals("org.hibernate.cache.internal.CacheKeyImplementation")) {
             // Since CacheKeyImplementation is a protected Class we can't cast it nor can we access the entityOrRoleName property
             // therefore, to match how this worked in pre Hibernate 5, we split the toString since it's comprised of the fields we need
@@ -111,50 +119,25 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
             cacheName = keyPieces[0];
             key = keyPieces[1];
         }
-        String nameKey = cacheRegion + '_' + cacheName + '_' + key;
+        String nameKey = createNameKey(cacheRegion, cacheName, key);
         if (cacheMemberNamesByEntity.containsKey(nameKey)) {
             String[] members = new String[cacheMemberNamesByEntity.get(nameKey).size()];
             members = cacheMemberNamesByEntity.get(nameKey).toArray(members);
             for (String myMember : members) {
-                String itemKey = cacheRegion + '_' + myMember + '_' + key;
+                String itemKey = createItemKey(cacheRegion, myMember, nameKey);
                 removeKeys.add(itemKey);
             }
             cacheMemberNamesByEntity.remove(nameKey);
         }
     }
     
-    protected void removeAll(String cacheName) {
-        //do nothing
-    }
-
-    @Override
-    public void notifyElementEvicted(Ehcache arg0, Element arg1) {
-        removeCache(arg0.getName(), arg1.getKey());
-    }
-
-    @Override
-    public void notifyElementExpired(Ehcache arg0, Element arg1) {
-        removeCache(arg0.getName(), arg1.getKey());
-    }
-
-    @Override
-    public void notifyElementPut(Ehcache arg0, Element arg1) throws CacheException {
-        //do nothing
-    }
-
-    @Override
-    public void notifyElementRemoved(Ehcache arg0, Element arg1) throws CacheException {
-        removeCache(arg0.getName(), arg1.getKey());
-    }
-
-    @Override
-    public void notifyElementUpdated(Ehcache arg0, Element arg1) throws CacheException {
-        removeCache(arg0.getName(), arg1.getKey());
-    }
-
-    @Override
-    public void notifyRemoveAll(Ehcache arg0) {
-        removeAll(arg0.getName());
+    private String createItemKey(String cacheRegion, String myMember, Serializable key) {
+        String itemKey = "";
+        if (useCacheRegionInKey()) {
+            itemKey += cacheRegion + '_';
+        }
+        itemKey += myMember + '_' + key;
+        return itemKey;
     }
 
 }

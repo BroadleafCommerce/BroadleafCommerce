@@ -147,6 +147,10 @@ public class NodeReplaceInsert extends BaseHandler {
         if (replaceNode(primaryNodes, node, "name", usedNodes)) {
             return true;
         }
+        //find matching nodes based on alias (required for EhCache 3 cache definitions)
+        if (replaceNode(primaryNodes, node, "alias", usedNodes)) {
+            return true;
+        }
         //check if this same node already exists
         if (exactNodeExists(primaryNodes, node, usedNodes)) {
             return true;

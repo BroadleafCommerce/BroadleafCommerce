@@ -90,6 +90,18 @@ public interface OfferAudit extends Serializable {
     public void setCustomerId(Long customerId);
 
     /**
+     * The id of the associated account.
+     * @return
+     */
+    Long getAccountId();
+
+    /**
+     * Sets the associated account id.
+     * @param accountId
+     */
+    void setAccountId(Long customerId);
+
+    /**
      * The date the offer was applied to the order.
      * @return
      */

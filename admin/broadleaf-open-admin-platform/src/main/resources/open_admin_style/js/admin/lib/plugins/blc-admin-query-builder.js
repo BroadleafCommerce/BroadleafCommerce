@@ -50,6 +50,32 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
                     $this.wrap("<div style='display:inline-block;width:" + dynamicWidth + "px;'></div>");
             });
         }
+
+        if (rule.filter.type == "date") {
+            var withinDaysElement = rule.$el.find('.rule-value-container input #within-days');
+
+            var dateElement = rule.$el.find('.rule-value-container input #date-only');
+            if (rule.operator.type == "WITHIN_DAYS") {
+
+                if (withinDaysElement.length == 0) {
+
+                    dateElement = rule.$el.find('.rule-value-container input');
+                    withinDaysElement = dateElement.clone().attr('id', 'within-days');
+
+                    dateElement.attr('id', 'date-only');
+
+                    withinDaysElement.insertAfter(dateElement);
+                }
+                dateElement.removeAttr("name");
+                dateElement.hide();
+                withinDaysElement.show();
+            } else {
+                withinDaysElement.hide();
+                dateElement.show();
+            }
+
+        }
+
         rule.$el.append('<div style="clear: both"></div>')
 
     });

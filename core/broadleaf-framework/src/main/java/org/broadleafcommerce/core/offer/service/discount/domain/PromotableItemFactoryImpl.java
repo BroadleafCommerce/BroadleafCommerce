@@ -22,11 +22,21 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service("blPromotableItemFactory")
 public class PromotableItemFactoryImpl implements PromotableItemFactory {
 
+    @Value("${use.quantity.only.tier.calculation:false}")
+    protected boolean useQtyOnlyTierCalculation = false;
+
+    protected final PromotableOfferUtility promotableOfferUtility;
+
+    public PromotableItemFactoryImpl(PromotableOfferUtility promotableOfferUtility) {
+        this.promotableOfferUtility = promotableOfferUtility;
+    }
+    
     public PromotableOrder createPromotableOrder(Order order, boolean includeOrderAndItemAdjustments) {
         return new PromotableOrderImpl(order, this, includeOrderAndItemAdjustments);
     }
@@ -69,14 +79,16 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
 
     @Override
     public PromotableCandidateItemOffer createPromotableCandidateItemOffer(PromotableOrder promotableOrder, Offer offer) {
-        return new PromotableCandidateItemOfferImpl(promotableOrder, offer);
+        return new PromotableCandidateItemOfferImpl(promotableOrder, offer, useQtyOnlyTierCalculation);
     }
     
     @Override
     public PromotableOrderItemPriceDetailAdjustment createPromotableOrderItemPriceDetailAdjustment(
             PromotableCandidateItemOffer promotableCandidateItemOffer,
             PromotableOrderItemPriceDetail orderItemPriceDetail) {
-        return new PromotableOrderItemPriceDetailAdjustmentImpl(promotableCandidateItemOffer, orderItemPriceDetail);
+        return new PromotableOrderItemPriceDetailAdjustmentImpl(promotableCandidateItemOffer, orderItemPriceDetail,
+                promotableOfferUtility.computeRetailAdjustmentValue(promotableCandidateItemOffer, orderItemPriceDetail),
+                promotableOfferUtility.computeSalesAdjustmentValue(promotableCandidateItemOffer, orderItemPriceDetail));
     }
     
     @Override
@@ -96,6 +108,8 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
     public PromotableFulfillmentGroupAdjustment createPromotableFulfillmentGroupAdjustment(
             PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
             PromotableFulfillmentGroup fulfillmentGroup) {
-        return new PromotableFulfillmentGroupAdjustmentImpl(promotableCandidateFulfillmentGroupOffer, fulfillmentGroup);
+        return new PromotableFulfillmentGroupAdjustmentImpl(promotableCandidateFulfillmentGroupOffer, fulfillmentGroup,
+                promotableOfferUtility.computeRetailAdjustmentValue(promotableCandidateFulfillmentGroupOffer, fulfillmentGroup),
+                promotableOfferUtility.computeSalesAdjustmentValue(promotableCandidateFulfillmentGroupOffer, fulfillmentGroup));
     }
 }

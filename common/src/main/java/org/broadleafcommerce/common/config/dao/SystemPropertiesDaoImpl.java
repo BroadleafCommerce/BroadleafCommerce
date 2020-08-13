@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.AbstractCacheMissAware;
 import org.broadleafcommerce.common.cache.PersistentRetrieval;
+import org.broadleafcommerce.common.config.domain.NullSystemProperty;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.domain.SystemPropertyImpl;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
@@ -52,7 +53,7 @@ import javax.persistence.criteria.Root;
  * Date: 6/20/12
  */
 @Repository("blSystemPropertiesDao")
-public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements SystemPropertiesDao {
+public class SystemPropertiesDaoImpl extends AbstractCacheMissAware<SystemProperty> implements SystemPropertiesDao {
 
     protected static final Log LOG = LogFactory.getLog(SystemPropertiesDaoImpl.class);
 
@@ -64,6 +65,8 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
 
     @Resource(name = "blSystemPropertyDaoQueryExtensionManager")
     protected SystemPropertyDaoQueryExtensionManager queryExtensionManager;
+
+    private SystemProperty nullObject;
 
     @Override
     public SystemProperty readById(Long id) {
@@ -188,4 +191,13 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware implements S
         }
         return site;
     }
+
+    @Override
+    protected synchronized SystemProperty getNullObject(final Class<SystemProperty> responseClass) {
+        if (nullObject == null) {
+            nullObject = new NullSystemProperty();
+        }
+        return nullObject;
+    }
+
 }

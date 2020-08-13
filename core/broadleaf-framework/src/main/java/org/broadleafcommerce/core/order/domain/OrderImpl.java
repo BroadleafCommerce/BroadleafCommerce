@@ -45,6 +45,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -101,7 +102,7 @@ import javax.persistence.Transient;
 @EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "", mergeEntries =
@@ -203,20 +204,20 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     protected String emailAddress;
 
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Order_Items",
             tab = TabName.General)
     protected List<OrderItem> orderItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Fulfillment_Groups",
                 tab = TabName.FulfillmentGroups)
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<>();
 
     @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Adjustments",
                 group = GroupName.Advanced,
                 order = FieldOrder.ADJUSTMENTS)
@@ -226,7 +227,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID",
             referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID",
             referencedColumnName = "OFFER_CODE_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Offer_Codes",
                 group = GroupName.Advanced,
                 manyToField = "orders", order = FieldOrder.OFFERCODES)
@@ -234,11 +235,11 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<>();
 
     @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Payments",
                 tab = TabName.Payment)
     protected List<OrderPayment> payments = new ArrayList<>();
@@ -250,13 +251,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @MapKeyJoinColumn(name = "OFFER_ID")
     @MapKeyClass(OfferImpl.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @BatchSize(size = 50)
     protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<>();
 
     @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @MapKey(name="name")
     @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
         forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name",
@@ -496,7 +497,35 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Override
     public List<OrderAdjustment> getOrderAdjustments() {
-        return this.orderAdjustments;
+        return orderAdjustments;
+    }
+
+    @Override
+    public List<OrderAdjustment> getFutureCreditOrderAdjustments() {
+        List<OrderAdjustment> futureCreditAdjustments = new ArrayList<>();
+        for (OrderAdjustment adjustment : orderAdjustments) {
+            if (adjustment.isFutureCredit()) {
+                futureCreditAdjustments.add(adjustment);
+            }
+        }
+        return futureCreditAdjustments;
+    }
+
+    @Override
+    public List<Adjustment> getAllFutureCreditAdjustments() {
+        List<Adjustment> adjustments = new ArrayList<>();
+        
+        adjustments.addAll(getFutureCreditOrderAdjustments());
+        
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            adjustments.addAll(fulfillmentGroup.getFutureCreditFulfillmentGroupAdjustments());
+        }
+        for (OrderItem orderItem : orderItems) {
+            for (OrderItemPriceDetail oiPriceDetail : orderItem.getOrderItemPriceDetails()) {
+                adjustments.addAll(oiPriceDetail.getFutureCreditOrderItemPriceDetailAdjustments());
+            }
+        }
+        return adjustments;
     }
 
     protected void setOrderAdjustments(List<OrderAdjustment> orderAdjustments) {
@@ -598,6 +627,15 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         }
         return itemAdjustmentsValue;
     }
+
+    @Override
+    public Money getFutureCreditItemAdjustmentsValue() {
+        Money itemAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (OrderItem orderItem : orderItems) {
+            itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getFutureCreditTotalAdjustmentValue());
+        }
+        return itemAdjustmentsValue;
+    }
     
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
@@ -609,10 +647,32 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
+    public Money getFutureCreditFulfillmentGroupAdjustmentsValue() {
+        Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFutureCreditFulfillmentGroupAdjustmentsValue());
+        }
+        return adjustmentValue;
+    }
+
+    @Override
     public Money getOrderAdjustmentsValue() {
         Money orderAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderAdjustment orderAdjustment : orderAdjustments) {
-            orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
+            if (!orderAdjustment.isFutureCredit()) {
+                orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
+            }
+        }
+        return orderAdjustmentsValue;
+    }
+
+    @Override
+    public Money getFutureCreditOrderAdjustmentsValue() {
+        Money orderAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (OrderAdjustment orderAdjustment : orderAdjustments) {
+            if (orderAdjustment.isFutureCredit()) {
+                orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
+            }
         }
         return orderAdjustmentsValue;
     }
@@ -622,6 +682,14 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Money totalAdjustmentsValue = getItemAdjustmentsValue();
         totalAdjustmentsValue = totalAdjustmentsValue.add(getOrderAdjustmentsValue());
         totalAdjustmentsValue = totalAdjustmentsValue.add(getFulfillmentGroupAdjustmentsValue());
+        return totalAdjustmentsValue;
+    }
+
+    @Override
+    public Money getTotalFutureCreditAdjustmentsValue() {
+        Money totalAdjustmentsValue = getFutureCreditItemAdjustmentsValue();
+        totalAdjustmentsValue = totalAdjustmentsValue.add(getFutureCreditOrderAdjustmentsValue());
+        totalAdjustmentsValue = totalAdjustmentsValue.add(getFutureCreditFulfillmentGroupAdjustmentsValue());
         return totalAdjustmentsValue;
     }
 
@@ -861,5 +929,10 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         return  createResponse;
     }
 
+    @Override
+    public Long getBroadleafAccountId() {
+        // This method has an implementation weaved in when using the Broadleaf Account module.
+        return null;
+    }
 
 }

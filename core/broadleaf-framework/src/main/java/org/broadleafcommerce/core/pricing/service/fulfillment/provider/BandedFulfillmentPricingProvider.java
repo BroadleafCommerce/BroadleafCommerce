@@ -68,9 +68,9 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException {
         if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
             LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
-            fulfillmentGroup.setShippingPrice(Money.ZERO);
-            fulfillmentGroup.setSaleShippingPrice(Money.ZERO);
-            fulfillmentGroup.setRetailShippingPrice(Money.ZERO);
+            fulfillmentGroup.setRetailFulfillmentPrice(Money.ZERO);
+            fulfillmentGroup.setSaleFulfillmentPrice(Money.ZERO);
+            fulfillmentGroup.setRetailFulfillmentPrice(Money.ZERO);
             return fulfillmentGroup;
         }
 
@@ -79,9 +79,9 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
             HashSet<FulfillmentOption> options = new HashSet<FulfillmentOption>();
             options.add(fulfillmentGroup.getFulfillmentOption());
             FulfillmentEstimationResponse response = estimateCostForFulfillmentGroup(fulfillmentGroup, options);
-            fulfillmentGroup.setSaleShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
-            fulfillmentGroup.setRetailShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
-            fulfillmentGroup.setShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setSaleFulfillmentPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setRetailFulfillmentPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setRetailFulfillmentPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
 
             return fulfillmentGroup;
         }

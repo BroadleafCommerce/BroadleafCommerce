@@ -21,9 +21,9 @@ package org.broadleafcommerce.profile.core.domain;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.audit.AuditExcludeFieldValue;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.audit.AuditExcludeFieldValue;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -75,7 +75,7 @@ import javax.persistence.Transient;
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "auditable.dateCreated", mergeEntries =
@@ -197,7 +197,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     protected Locale customerLocale;
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",

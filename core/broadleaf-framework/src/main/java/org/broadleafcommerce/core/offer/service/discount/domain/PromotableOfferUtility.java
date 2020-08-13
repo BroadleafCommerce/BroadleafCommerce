@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2018 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,99 +17,26 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.apache.commons.beanutils.BeanComparator;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.offer.domain.AdvancedOffer;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferTier;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.List;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 
 /**
- * Provides shared code for the default implementations of PromotableOrderItemPriceDetailAdjustmentImpl and
- * PromotableCandidateItemOfferImpl
- * @author bpolster
- *
+ * @author Nick Crum ncrum
  */
-public class PromotableOfferUtility {
-    
-    public static Money computeAdjustmentValue(Money currentPriceDetailValue, BigDecimal offerUnitValue, OfferHolder offerHolder, PromotionRounding rounding) {
-        Offer offer = offerHolder.getOffer();
-        BroadleafCurrency currency = offerHolder.getCurrency();
+public interface PromotableOfferUtility {
+    boolean itemMatchesOfferPriceData(OfferPriceData offerPriceData, PromotableOrderItem promotableOrderItem);
 
-        OfferDiscountType discountType = offer.getDiscountType();
-        Money adjustmentValue;
-        if (currency != null) {
-            adjustmentValue = new Money(currency);
-        } else {
-            adjustmentValue = new Money();
-        }
-        
-        if (OfferDiscountType.AMOUNT_OFF.equals(discountType)) {
-            adjustmentValue = new Money(offerUnitValue, currency);
-        }
-        
-        if (OfferDiscountType.FIX_PRICE.equals(discountType)) {
-            adjustmentValue = currentPriceDetailValue.subtract(new Money(offerUnitValue, currency));
-        }
-        
-        if (OfferDiscountType.PERCENT_OFF.equals(discountType)) {
-            BigDecimal offerValue = currentPriceDetailValue.getAmount().multiply(offerUnitValue.divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-            
-            if (rounding.isRoundOfferValues()) {
-                offerValue = offerValue.setScale(rounding.getRoundingScale(), rounding.getRoundingMode());
-            }
-            adjustmentValue = new Money(offerValue, currency);
-        }
+    Money computeRetailAdjustmentValue(PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup);
 
-        if (currentPriceDetailValue.lessThan(adjustmentValue)) {
-            adjustmentValue = currentPriceDetailValue;
-        }
-        return adjustmentValue;
-    }
+    Money computeSalesAdjustmentValue(PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup);
 
+    Money computeAdjustmentValue(PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup, boolean allowSalePrice);
 
-    
-    @SuppressWarnings("unchecked")
-    public static BigDecimal determineOfferUnitValue(Offer offer, PromotableCandidateItemOffer promotableCandidateItemOffer) {
-        if (offer instanceof AdvancedOffer) {
-            AdvancedOffer advancedOffer = (AdvancedOffer) offer;
-            if (advancedOffer.isTieredOffer()) {
-                int quantity = promotableCandidateItemOffer.calculateTargetQuantityForTieredOffer();
-                List<OfferTier> offerTiers = advancedOffer.getOfferTiers();
+    Money computeRetailAdjustmentValue(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItemPriceDetail orderItemPriceDetail);
 
-                Collections.sort(offerTiers, new BeanComparator("minQuantity"));
+    Money computeSalesAdjustmentValue(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItemPriceDetail orderItemPriceDetail);
 
-                OfferTier maxTier = null;
-                //assuming that promotableOffer.getOffer()).getOfferTiers() is sorted already
-                for (OfferTier currentTier : offerTiers) {
+    Money computeAdjustmentValue(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItemPriceDetail orderItemPriceDetail, boolean allowSalePrice);
 
-                    if (quantity >= currentTier.getMinQuantity()) {
-                        maxTier = currentTier;
-                    } else {
-                        break;
-                    }
-                }
-
-                if (maxTier != null) {
-                    return maxTier.getAmount();
-                }
-
-                if (OfferDiscountType.FIX_PRICE.equals(offer.getDiscountType())) {
-                    // Choosing an arbitrary large value.    The retail / sale price will be less than this, 
-                    // so the offer will not get selected.
-                    return BigDecimal.valueOf(Integer.MAX_VALUE);
-                } else {
-                    return BigDecimal.ZERO;
-                }
-            }
-        }
-        return offer.getValue();
-    }
-
+    Money calculateSavingsForOrderItem(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItem orderItem, int qtyToReceiveSavings);
 }

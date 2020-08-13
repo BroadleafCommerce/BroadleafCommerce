@@ -849,6 +849,10 @@ QueryBuilder.prototype.updateRuleOperator = function(rule, previousOperator) {
         if ($valueContainer.is(':empty') || rule.operator.nb_inputs !== previousOperator.nb_inputs) {
             this.createRuleInput(rule);
         }
+
+        if (rule.filter.type == "date") {
+            this.createRuleInput(rule);
+        }
     }
 
     if (rule.operator) {
@@ -1048,6 +1052,10 @@ QueryBuilder.prototype.validate = function() {
             }
 
             if (rule.operator.nb_inputs !== 0) {
+                var withinDays = rule.$el.find('#within-days');
+                if (withinDays.length != 0) {
+                    rule.value = withinDays.val();
+                }
                 var valid = that.validateValue(rule, rule.value);
 
                 if (valid !== true) {
@@ -1182,6 +1190,63 @@ QueryBuilder.prototype.setRules = function(data) {
                 var expression2 = subRules[1];
 
                 var isBetweenDetected = false;
+                var operator;
+                var value;
+
+                var value2;
+
+                if (expression1.operator == "GREATER_THAN" && expression2.operator == "LESS_THAN") {
+                    isBetweenDetected = true;
+                    var withinDaysDetector = 'subtractFromCurrentTime(';
+                    var expressionValue = expression1.value;
+                    var indexOfWithinDays = expressionValue.indexOf(withinDaysDetector);
+
+                    if (indexOfWithinDays !== -1) {
+
+                        var substr = expressionValue.substr(indexOfWithinDays + withinDaysDetector.length);
+
+                        var indexOfEndVal = substr.indexOf(")");
+
+                        operator = "WITHIN_DAYS";
+                        value = substr.substr(0, indexOfEndVal);
+
+                    } else {
+                        operator = "BETWEEN";
+                        value = expression1.value;
+                        value2 = expression2.value;
+                    }
+                }
+
+                if (expression1.operator == "GREATER_OR_EQUAL" && expression2.operator == "LESS_OR_EQUAL") {
+                    isBetweenDetected = true;
+                    operator = "BETWEEN_INCLUSIVE";
+                    value = expression1.value;
+                    value2 = expression2.value;
+                }
+
+                if (isBetweenDetected || isBetweenInclusiveDetected) {
+                    item.condition = null;
+                    item.id = expression1.id;
+                    item.operator = operator;
+                    item.value = value;
+
+                    if (value2 != null) {
+                        item.value2 = value2;
+                    }
+
+                    item.rules.splice(1, 1);
+                    item.rules.splice(0, 1);
+                }
+
+            }
+
+            var subRules = item.rules;
+
+            if (subRules && subRules.length === 2) {
+                var expression1 = subRules[0];
+                var expression2 = subRules[1];
+
+                var isBetweenDetected = false;
                 var isBetweenInclusiveDetected = false;
                 var operator;
 
@@ -1240,7 +1305,7 @@ QueryBuilder.prototype.setRules = function(data) {
                 if (model.operator.nb_inputs !== 0 && item.value !== undefined) {
                     if (item.value2 != null) {
                         var valueArray = [item.value, item.value2];
-                        
+
                         model.value = valueArray;
                     } else {
                         model.value = item.value;

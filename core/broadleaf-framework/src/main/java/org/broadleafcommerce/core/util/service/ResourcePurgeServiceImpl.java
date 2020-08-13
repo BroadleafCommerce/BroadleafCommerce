@@ -30,6 +30,10 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.notification.service.NotificationDispatcher;
+import org.broadleafcommerce.common.notification.service.type.EmailNotification;
+import org.broadleafcommerce.common.notification.service.type.NotificationEventType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -40,6 +44,8 @@ import org.broadleafcommerce.core.util.service.type.PurgeCartVariableNames;
 import org.broadleafcommerce.core.util.service.type.PurgeCustomerVariableNames;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -102,6 +108,10 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
+    @Autowired
+    @Qualifier("blNotificationDispatcher")
+    protected NotificationDispatcher notificationDispatcher;
+
     @Override
     public void purgeCarts(final Map<String, String> config) {
         if (LOG.isDebugEnabled()) {
@@ -134,6 +144,25 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             }
         }
         LOG.info(String.format("Cart purge batch processed.  Purged %d from total batch size of %d, %d failures cached", processedCount, batchCount, cartPurgeErrors.size()));
+    }
+
+    @Override
+    public void notifyCarts(final Map<String, String> config) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Notifying carts of purge");
+        }
+        if (MapUtils.isEmpty(config)) {
+            throw new IllegalArgumentException("Cannot notify carts of purge since there was no configuration provided. " +
+                    "In the absence of config params, all carts would be candidates for deletion.");
+        }
+        CartPurgeParams purgeParams = new CartPurgeParams(config).invoke();
+        int batchCount = 0;
+        Set<Long> failedCartIds = getCartsInErrorToIgnore(purgeParams);
+        batchCount = getCartsToPurgeLength(purgeParams, new ArrayList<>(failedCartIds)).intValue();
+        List<Order> carts = getCartsToPurge(purgeParams, 0, batchCount, new ArrayList<>(failedCartIds));
+        for (Order cart : carts) {
+            notifyCart(cart);
+        }
     }
 
     @Override
@@ -216,6 +245,41 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         Long orderCount = resourcePurgeDao.findCartsCount(nameArray, statusArray, dateCreatedMinThreshold, isPreview, cartsInError);
         //return the lesser of the parameter batch size of the count of the orders to purge
         return cartBatchSize != null && cartBatchSize < orderCount ? cartBatchSize : orderCount; 
+    }
+
+    /**
+     * Notify the cart's owner of a pending purge of their cart.
+     *
+     * @param cart the cart
+     */
+    protected void notifyCart(Order cart) {
+        String emailAddress = getEmailForCart(cart);
+        if (emailAddress != null) {
+            Map<String, Object> context = new HashMap<>();
+            context.put("cart", cart);
+            context.put("customer", cart.getCustomer());
+            context.put("emailAddress", emailAddress);
+
+            try {
+                notificationDispatcher.dispatchNotification(new EmailNotification(emailAddress, NotificationEventType.NOTIFY_ABANDONED_CART, context));
+            } catch (ServiceException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failure to send email notification", e);
+                }
+            }
+        }
+    }
+
+    protected String getEmailForCart(Order cart) {
+        if (cart.getEmailAddress() != null) {
+            return cart.getEmailAddress();
+        }
+
+        if (cart.getCustomer() != null && cart.getCustomer().getEmailAddress() != null) {
+            return cart.getCustomer().getEmailAddress();
+        }
+
+        return null;
     }
 
     /**

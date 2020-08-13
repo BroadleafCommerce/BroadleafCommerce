@@ -27,7 +27,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableCandidateFulfillmentGroupOffer {
+public class PromotableCandidateFulfillmentGroupOfferImpl extends AbstractPromotionRounding implements PromotableCandidateFulfillmentGroupOffer {
 
     private static final long serialVersionUID = 1L;
     

@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.ItemOfferComparator;
@@ -34,6 +35,7 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferUtility;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
@@ -43,7 +45,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.dto.OrderItemHolder;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +68,10 @@ import java.util.Set;
 public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements ItemOfferProcessor, ItemOfferMarkTargets {
     
     protected static final Log LOG = LogFactory.getLog(ItemOfferProcessorImpl.class);
+
+    public ItemOfferProcessorImpl(PromotableOfferUtility promotableOfferUtility) {
+        super(promotableOfferUtility);
+    }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
@@ -126,6 +131,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 }
 
                 candidateOffer.getCandidateTargetsMap().putAll(candidates.getCandidateTargetsMap());
+                candidateOffer.getCandidateFixedTargetsMap().putAll(candidates.getCandidateFixedTargetsMap());
             }
         }
     }
@@ -310,11 +316,31 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             boolean checkOnly) {
         Offer promotion = itemOffer.getOffer();
 
-        if (itemOffer.getCandidateTargetsMap().keySet().isEmpty()) {
+        if (itemOffer.getCandidateTargetsMap().keySet().isEmpty() && itemOffer.getCandidateFixedTargetsMap().keySet().isEmpty()) {
             return false;
         }
-        
+
         OrderItem relatedQualifierRoot = offerServiceUtilities.findRelatedQualifierRoot(relatedQualifier);
+
+        if (!itemOffer.getCandidateFixedTargetsMap().keySet().isEmpty()) {
+            boolean targetFound = false;
+            for (OfferPriceData offerPriceData : itemOffer.getCandidateFixedTargetsMap().keySet()) {
+                List<PromotableOrderItem> promotableItems = itemOffer.getCandidateFixedTargetsMap().get(offerPriceData);
+
+                List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
+                offerServiceUtilities.sortTargetItemDetails(priceDetails, itemOffer.getOffer().getApplyDiscountToSalePrice());
+
+                if(offerServiceUtilities.markTargetsForOfferPriceData(itemOffer, relatedQualifier, checkOnly, promotion, relatedQualifierRoot, offerPriceData, priceDetails)) {
+                    targetFound = true;
+                }
+            }
+
+            if (!checkOnly && targetFound) {
+                itemOffer.addUse();
+            }
+
+            return targetFound;
+        }
 
         for (OfferItemCriteria itemCriteria : itemOffer.getCandidateTargetsMap().keySet()) {
             List<PromotableOrderItem> promotableItems = itemOffer.getCandidateTargetsMap().get(itemCriteria);
@@ -341,6 +367,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         if (!checkOnly) {
             itemOffer.addUse();
         }
+
         return true;
     }
 
@@ -418,7 +445,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         if (isAddOnOrderItem && !offerCanApplyToChildOrderItems) {
             return Money.ZERO;
         } else {
-            return itemOffer.calculateSavingsForOrderItem(item, quantity);
+            return promotableOfferUtility.calculateSavingsForOrderItem(itemOffer, item, quantity);
         }
     }
 
@@ -474,7 +501,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     }
 
     protected BigDecimal calculateWeightedPercent(PromotionDiscount discount, PromotableOrderItem item, Money itemSavings) {
-        Money effectedItemsSubtotal = discount.getCandidateItemOffer().getOriginalPrice();
+        Money effectedItemsSubtotal = item.getPriceBeforeAdjustments(discount.getPromotion().getApplyDiscountToSalePrice());
         for (PromotableOrderItemPriceDetail itemPriceDetail : item.getPromotableOrderItemPriceDetails()) {
             for (PromotionQualifier qualifierDetail : itemPriceDetail.getPromotionQualifiers()) {
                 Integer qualifierQuantity = qualifierDetail.getFinalizedQuantity();
