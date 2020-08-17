@@ -257,13 +257,11 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
      */
     protected String parseMethod(String fieldName) {
         String[] segments = fieldName.split("\\.");
+        //parse the last segment removing the method prefix (e.g. get)
         String methodSegment = segments[segments.length-1].replaceFirst("(^get)", "");
         //lowercase first char and remove the ()
         segments[segments.length - 1] = Character.toLowerCase(methodSegment.charAt(0)) + methodSegment.substring(1, methodSegment.length() - 2);
         return String.join(".", segments);
-//        String result = fieldName.substring(0, fieldName.lastIndexOf(".") + 1); //keep the period 
-//        result = result + Character.toLowerCase(replaceValue.charAt(0)) + replaceValue.substring(1, replaceValue.length() - 2); //append the attr while removing the "()"
-//        return result;
     }
     
     /**
