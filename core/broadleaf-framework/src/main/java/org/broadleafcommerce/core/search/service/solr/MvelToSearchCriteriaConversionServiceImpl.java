@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.locale.service.LocaleService;
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -243,12 +242,30 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
             result = fieldName.substring("product.".length());
         }
         if (result.endsWith("()")) {
-            result = result.substring(0, result.lastIndexOf("."));
+            result = parseMethod(result);
         }
         result = result.replaceAll("\\?", "");
         return result;
     }
 
+    /**
+     * Takes in a fieldName that contains a method (indicated with "()") and converts the method to an attribute.
+     * Currently supports getX() methods
+     * For example, getType() -> type
+     * @param fieldName
+     * @return 
+     */
+    protected String parseMethod(String fieldName) {
+        String[] segments = fieldName.split("\\.");
+        String methodSegment = segments[segments.length-1].replaceFirst("(^get)", "");
+        //lowercase first char and remove the ()
+        segments[segments.length - 1] = Character.toLowerCase(methodSegment.charAt(0)) + methodSegment.substring(1, methodSegment.length() - 2);
+        return String.join(".", segments);
+//        String result = fieldName.substring(0, fieldName.lastIndexOf(".") + 1); //keep the period 
+//        result = result + Character.toLowerCase(replaceValue.charAt(0)) + replaceValue.substring(1, replaceValue.length() - 2); //append the attr while removing the "()"
+//        return result;
+    }
+    
     /**
      * Determines if the given field value string represents a wild card search. In Solr a wild card search either
      * starts or ends with an asterisk.
