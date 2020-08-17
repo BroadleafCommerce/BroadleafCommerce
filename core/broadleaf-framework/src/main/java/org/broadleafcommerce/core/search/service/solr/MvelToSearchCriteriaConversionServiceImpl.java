@@ -155,7 +155,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                 if (indexFieldTypes.size() > 0) {
                     Boolean translatable = indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
                     List<Locale> allLocales;
-                    if (translatable != null && !translatable) {
+                    if (translatable==null || !translatable) {
                         allLocales = new ArrayList<>();
                         LocaleImpl e = new LocaleImpl();
                         e.setLocaleCode("");
@@ -180,7 +180,11 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                                 // if this is a wildcard search then we do not want to surround the value with quotes
                                 String indexFieldValue = fieldValue;
                                 if (!isWildCardSearch && !fieldValue.equals("null")) {
-                                    indexFieldValue = "\"" + fieldValue + "\"";
+                                    if(fieldValue.contains("\",\"")){
+                                        indexFieldValue = "(\"" + fieldValue + "\")";
+                                    }else {
+                                        indexFieldValue = "\"" + fieldValue + "\"";
+                                    }
                                 }
 
                                 String filter;
@@ -202,13 +206,14 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
 
                     if (!exclude) {
                         //any of translation and type fields like en_name_tsy, en_name_s etc can match, so concatinate with OR
+
                         String s = tmpFilters.get(0);
                         s = "(" + s;
-                        tmpFilters.add(0, s);
+                        tmpFilters.set(0, s);
                         int size = tmpFilters.size() - 1;
                         String s1 = tmpFilters.get(size);
                         s1 = s1 + ")";
-                        tmpFilters.add(size, s1);
+                        tmpFilters.set(size, s1);
                         filters.add(StringUtils.join(tmpFilters, " OR "));
                     } else {
                         //if we exclude we don't want to see if at all so "AND" is ok
@@ -361,7 +366,13 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
             int endIndex = mvelRule.indexOf(")", startIndex);
             customFieldValue = mvelRule.substring(startIndex + 1, endIndex);
         }
-
+        //maybe it is something like [x,x1,x2]? -> (x,x1,x2), or [x1]->x1
+        if (customFieldValue.startsWith("[") && customFieldValue.endsWith("]")) {
+                customFieldValue = customFieldValue.substring(1, customFieldValue.length() - 1);
+                if(customFieldValue.startsWith("\"") && customFieldValue.endsWith("\"")){
+                    customFieldValue = customFieldValue.substring(1, customFieldValue.length() - 1);
+                }
+        }
         return customFieldValue;
     }
 
