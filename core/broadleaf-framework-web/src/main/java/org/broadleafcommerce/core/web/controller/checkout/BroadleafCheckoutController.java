@@ -38,6 +38,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -237,7 +238,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             }
         }
 
-        return getCheckoutPageRedirect();
+        return getCheckoutPageRedirect() + (CustomerState.getCustomer().isAnonymous() ? "?guest-checkout=true" : "");
     }
 
     public String initiateCheckout(Long orderId) throws Exception{
