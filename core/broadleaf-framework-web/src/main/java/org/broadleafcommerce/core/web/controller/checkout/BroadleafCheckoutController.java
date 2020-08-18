@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstrac
 import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentConstants;
 import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
@@ -224,7 +225,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String processCompleteCheckoutOrderFinalized(final RedirectAttributes redirectAttributes) throws PaymentException {
         Order cart = CartState.getCart();
-
+        String param = "";
         if (cart != null && !(cart instanceof NullOrderImpl)) {
             try {
                 Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(OfferServiceImpl.OFFERS_EXPIRED);
@@ -235,10 +236,13 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 return getConfirmationViewRedirect(orderNumber);
             } catch (Exception e) {
                 handleProcessingException(e, redirectAttributes);
+                if(CustomerState.getCustomer().isAnonymous()){
+                    param="?guest-checkout=true";
+                }
             }
         }
 
-        return getCheckoutPageRedirect() + (CustomerState.getCustomer().isAnonymous() ? "?guest-checkout=true" : "");
+        return getCheckoutPageRedirect()+param;
     }
 
     public String initiateCheckout(Long orderId) throws Exception{
@@ -260,6 +264,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             String message = (cause != null && cause.getCause() != null) ? cause.getCause().getMessage() : e.getMessage();
             redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
                     message);
+        } else if(cause !=null && cause.getCause() instanceof OfferMaxUseExceededException) {
+            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    "There was an error during checkout:"+cause.getCause().getMessage());
         } else {
             redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
                     PaymentGatewayAbstractController.getProcessingErrorMessage());
