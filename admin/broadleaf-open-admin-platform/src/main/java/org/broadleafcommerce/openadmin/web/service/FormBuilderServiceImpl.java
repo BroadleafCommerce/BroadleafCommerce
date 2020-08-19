@@ -40,6 +40,7 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -172,6 +173,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Value("${use.translation.search:false}")
     protected boolean useTranslationSearch;
+
+    @Resource(name = "blExploitProtectionService")
+    ExploitProtectionService exploitProtectionService;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN
@@ -1382,7 +1386,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         Property p = entity.findProperty(BasicPersistenceModule.MAIN_ENTITY_NAME_PROPERTY);
         if (p != null) {
-            ef.setMainEntityName(p.getValue());
+            ef.setMainEntityName(exploitProtectionService.htmlDecode(p.getValue()));
         }
         
         extensionManager.getProxy().modifyPopulatedEntityForm(ef, entity);
@@ -1461,13 +1465,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             }
                         } 
                         if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
-                            field.setValue(entityProp.getValue());
+                            field.setValue(exploitProtectionService.htmlDecode(entityProp.getValue()));
                             field.setDisplayValue(entityProp.getDisplayValue());
                             MediaField mf = (MediaField) field;
                             Class<MediaDto> type = entityConfiguration.lookupEntityClass(MediaDto.class.getName(), MediaDto.class);
                             mf.setMedia(mediaBuilderService.convertJsonToMedia(entityProp.getUnHtmlEncodedValue(), type));
                         } else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())) {
-                            field.setValue(entityProp.getValue());
+                            field.setValue(basicFM.isLargeEntry() ? entityProp.getValue() : exploitProtectionService.htmlDecode(entityProp.getValue()));
                             field.setDisplayValue(entityProp.getDisplayValue());
                         }
                     }
