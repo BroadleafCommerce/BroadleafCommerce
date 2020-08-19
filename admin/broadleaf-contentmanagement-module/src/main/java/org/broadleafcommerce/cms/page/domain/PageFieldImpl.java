@@ -119,7 +119,7 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     @Override
     public void setValue(String value) {
         if (value != null) {
-            if (value.length() <= 256) {
+            if (value.length() < 256) {
                 stringValue = value;
                 lobValue = null;
             } else {
