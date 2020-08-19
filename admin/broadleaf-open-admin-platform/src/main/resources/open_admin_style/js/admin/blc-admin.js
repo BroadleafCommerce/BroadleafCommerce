@@ -10,14 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 /* Utility methods provided by Broadleaf Commerce for admin */
 var BLCAdmin = (function($) {
-    
+
     // This will keep track of our current active modals so that we are able to overlay them
     var modals = [];
     var preValidationFormSubmitHandlers = [];
@@ -43,7 +43,7 @@ var BLCAdmin = (function($) {
                          '.asset-selector-container .media-image, >div>select, div.custom-checkbox, div.small-enum-container, .ace-editor, ' +
                          'textarea:not(.redactor-box textarea), div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
-    
+
     function showModal($data, onModalHide, onModalHideArgs) {
         // If we already have an active modal, we don't need another backdrop on subsequent modals
         $data.modal({
@@ -137,18 +137,18 @@ var BLCAdmin = (function($) {
         addValidationSubmitHandler : function(fn) {
             validationFormSubmitHandlers.push(fn);
         },
-        
+
         /**
          * Handlers designed to execute after validation has taken place but before the form has been submitted to the server
          */
         addPostValidationSubmitHandler : function(fn) {
             postValidationFormSubmitHandlers.push(fn);
         },
-        
+
         /**
          * Add a form submission handler that runs after the form has been submitted via AJAX. These are designed to execute
          * after errors have already been calculated.
-         * 
+         *
          * Method signatures should take in 2 arguments:
          *  $form - the JQuery form object that was submitted
          *  data - the data that came back from the server
@@ -205,13 +205,13 @@ var BLCAdmin = (function($) {
             }
             return pass;
         },
-        
+
         runPostValidationSubmitHandlers : function($form) {
             for (var i = 0; i < postValidationFormSubmitHandlers.length; i++) {
                 postValidationFormSubmitHandlers[i]($form);
             }
         },
-        
+
         /**
          * Intended to run after
          */
@@ -220,7 +220,7 @@ var BLCAdmin = (function($) {
                 postFormSubmitHandlers[i]($form, data);
             }
         },
-        
+
         /**
          * Convenience method to submit all pre-validation, validation and post-validation handlers for the form. This will
          * return the result of invoking 'runValidationSubmitHandlers' to denote whether or not the form should actually
@@ -365,7 +365,7 @@ var BLCAdmin = (function($) {
             $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px').css('padding-bottom', '15px');
 
             BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
-            
+
             // Then replace it with the actual requested link
             BLCAdmin.modalNavigateTo(link);
         },
@@ -892,7 +892,7 @@ var BLCAdmin = (function($) {
             }
             return modalsCopy;
         },
- 
+
         getForm : function($element) {
             var $form;
 
@@ -901,7 +901,7 @@ var BLCAdmin = (function($) {
             } else {
                 $form = $element.closest('form')
             }
-    
+
             if (!$form.length) {
                 $form = $('.entity-edit form');
             }
@@ -949,7 +949,7 @@ var BLCAdmin = (function($) {
             if (!$field.find('.additional-foreign-key-container').length) {
                 $field.find('input[type="text"]').val(value);
             }
-            
+
             if (value == null && $field.find('button.clear-foreign-key').length) {
                 $field.find('button.clear-foreign-key').click();
             }
@@ -959,7 +959,7 @@ var BLCAdmin = (function($) {
         /**
          * Adds an initialization handler that is responsible for toggling the visiblity of a child field based on the
          * current value of the associated parent field.
-         * 
+         *
          * @param className - The class name that this handler should be bound to
          * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
          * @param childFieldSelector - A jQuery selector to use to find the div.field-box for the child field
@@ -970,10 +970,10 @@ var BLCAdmin = (function($) {
          *     value becomes null
          *   - additionalChangeAction (fn) - A function to execute when the value of the parent field changes. The args
          *     passed to the function will be [$parentField, $childField, shouldShow, parentValue]
-         *   - additionalChangeAction-runOnInitialization (boolean) - If set to true, will invoke the 
+         *   - additionalChangeAction-runOnInitialization (boolean) - If set to true, will invoke the
          *     additionalChangeAction on initialization
          */
-        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
+        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector,
                 showIfValue, options) {
             BLCAdmin.addInitializationHandler(function($container) {
                 var $form = $container.find('form').length ? $container.find('form') : $container.closest('form');
@@ -988,7 +988,7 @@ var BLCAdmin = (function($) {
                         var $childField = $containerParent.find(event.data.childFieldSelector);
                         var options = event.data.options;
                         var parentValue = BLCAdmin.extractFieldValue($parentField);
-                        
+
                         // Either match the string or execute a function to figure out if the child field should be shown
                         var shouldShow = false;
                         if (typeof showIfValue === "function") {
@@ -1003,23 +1003,23 @@ var BLCAdmin = (function($) {
                         }
 
                         BLCAdmin.entityForm.toggleFieldVisibility($childField, shouldShow);
-                        
+
                         if (!$.isEmptyObject(options)
-                                && options['additionalChangeAction'] 
+                                && options['additionalChangeAction']
                                 && (options['additionalChangeAction-runOnInitialization'] || !event.initialization)) {
                             options['additionalChangeAction']($parentField, $childField, shouldShow, parentValue);
                         }
                     };
-                    
+
                     var $parentField = $container.find(parentFieldSelector);
-                    
+
                     var data = {
                         '$container' : $container,
                         'parentFieldSelector' : parentFieldSelector,
                         'childFieldSelector' : childFieldSelector,
                         'options' : options
                     };
-                    
+
                     // Bind the change event for the parent field
                     $parentField.on('change', data, toggleFunction);
 
@@ -1031,7 +1031,7 @@ var BLCAdmin = (function($) {
 
         /**
          * Adds a dependent field filter handler that will restrict child lookups based on the value of the parent field.
-         * 
+         *
          * @param className - The class name that this handler should be bound to
          * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
          * @param childFieldName - The name of this field (the id value in the containing div.field-box)
@@ -1039,24 +1039,24 @@ var BLCAdmin = (function($) {
          * @param options - Additional options:
          *   parentFieldRequired (boolean) - whether or not to disable the child lookup if the parent field is null
          */
-        addDependentFieldFilterHandler : function addDependentFieldFilterHandler(className, parentFieldSelector, 
+        addDependentFieldFilterHandler : function addDependentFieldFilterHandler(className, parentFieldSelector,
                 childFieldName, childFieldPropertyName, options) {
             // Register the handler so that the lookup knows how to filter itself
             dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)] = {
                 parentFieldSelector : parentFieldSelector,
                 childFieldPropertyName : childFieldPropertyName
             };
-            
+
             // If the parentFieldRequired option is turned on, we need to toggle the behavior of the child field accordingly
             if (options != null && options['parentFieldRequired']) {
                 BLCAdmin.addDependentFieldHandler(className, parentFieldSelector, '#' + childFieldName, function(val) {
                     return val != null && val != "";
-                }, { 
+                }, {
                     clearChildData : true
                 });
             }
         },
-        
+
         getDependentFieldFilterHandler : function getDependentFieldFilterHandler(className, childFieldName) {
             return dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)];
         },
@@ -1137,7 +1137,7 @@ var BLCAdmin = (function($) {
             var serializedForm = $form.serializeArray();
             $disabledFields.attr('disabled', true);
 
-            return serializedForm;
+            return serializedForm.filter(field => field.name !== 'id');
         },
 
         /**
@@ -1353,13 +1353,13 @@ BLC.defaultErrorHandler = function(data) {
 		BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.staleContent);
     } else {
         var $data;
-        
+
         if (data.responseText.trim) {
             $data = $(data.responseText.trim());
         } else {
             $data = $(data.responseText);
         }
-    
+
         if ($data.length == 1) {
             BLCAdmin.showElementAsModal($data);
         } else {
@@ -1373,11 +1373,11 @@ BLC.addPreAjaxCallbackHandler(function($data) {
     if (!($data instanceof jQuery)) {
         return true;
     }
-    
+
     var $loginForm = $data.find('form').filter(function() {
         return $(this).attr('action') === undefined ? false : $(this).attr('action').indexOf('login_admin_post') >= 0;
     });
-    
+
     if ($loginForm.length > 0) {
         var currentPath = window.location.href;
         if (currentPath.indexOf('?') >= 0) {
@@ -1386,12 +1386,12 @@ BLC.addPreAjaxCallbackHandler(function($data) {
             currentPath += '?'
         }
         currentPath += 'sessionTimeout=true';
-        
+
         window.location = currentPath;
         window.location.reload();
         return false;
     }
-    
+
     return true;
 });
 
@@ -1429,11 +1429,11 @@ $(document).ready(function() {
     BLC.readyEventTriggered = true;
     finalPageLoadIfReady();
 
-    //moved show-translations to an initializationHandler so it gets fired for modals as well 
+    //moved show-translations to an initializationHandler so it gets fired for modals as well
     BLCAdmin.addInitializationHandler(function($container) {
         $('a.show-translations:not(.always-disabled)').removeClass('disabled');
      });
-    
+
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {
             if (BLCAdmin.currentModal() != null) {
@@ -1458,7 +1458,7 @@ $('body').on('click', '.disabled', function(e) {
     e.stopPropagation();
     return false;
 });
-        
+
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-group').find('input.color-picker').spectrum('set', $this.val());
@@ -1524,7 +1524,7 @@ $('body').on('click', 'a.change-password', function(event) {
         })
         */
     });
-    
+
 });
 
 $('body').on('click', 'button.change-password-confirm', function(event) {
@@ -1578,21 +1578,21 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
                     .show();
 
             $this.closest('.action-popup').find('img.ajax-loader').hide();
-            
+
             setTimeout(function() {
                 $this.closest('.modal').find('.close').click();
             }, 2000);
-            
+
             /*
             $ef.find('input[name="fields[\'name\'].value"]').val($form.find('input[name="name"]').val());
             $ef.find('input[name="fields[\'path\'].value"]').val($form.find('input[name="path"]').val());
             $ef.find('input[name="fields[\'overrideGeneratedPath\'].value"]').val($form.find('input[name="overrideGeneratedPath"]').val());
             $ef.append($('<input type="hidden" name="fields[\'saveAsNew\'].value" value="true" />'));
             */
-            
+
             $this.closest('');
             $this.closest('.actions').hide();
-            
+
             //$ef.submit();
         }
     });
