@@ -119,7 +119,7 @@ public class NoOpCache implements Cache {
 
     @Override
     public String getName() {
-        return null;
+        return "NoOpCache";
     }
 
     @Override
