@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 
 
@@ -64,7 +64,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     protected RowLevelSecurityService securityService;
     
     @Override
-    public void validate(Entity submittedEntity, @Nullable Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
+    public void validate(Entity submittedEntity, @Nonnull Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
             RecordHelper recordHelper, boolean validateUnsubmittedProperties) {
         Object idValue = null;
         if (instance != null) {

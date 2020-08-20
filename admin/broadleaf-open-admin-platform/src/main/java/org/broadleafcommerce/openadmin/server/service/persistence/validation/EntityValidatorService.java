@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 
 /**
@@ -53,7 +53,7 @@ public interface EntityValidatorService {
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    public void validate(Entity submittedEntity, @Nullable Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
+    public void validate(Entity submittedEntity, @Nonnull Serializable instance, Map<String, FieldMetadata> propertiesMetadata,  
             RecordHelper recordHelper, boolean validateUnsubmittedProperties);
     /**
      * @return the global validators that will be executed for every {@link Entity}
