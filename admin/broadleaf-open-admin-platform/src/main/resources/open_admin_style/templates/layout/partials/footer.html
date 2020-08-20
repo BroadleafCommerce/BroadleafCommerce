@@ -2,7 +2,9 @@
 
     <div th:replace="layout/partials/preFooterContent" ></div>
 
-    <script src="/admin/js/admin/vendor/jquery-3.5.1.js" type="text/javascript"></script>
+    <script th:inline="text">
+        window.jQuery || document.write('<script src="[[@{/js/admin/vendor/jquery-3.5.1.js}]]"><\/script>');
+    </script>
 
     <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
     <blc:form id="js-error-handling" method="POST" ></blc:form>

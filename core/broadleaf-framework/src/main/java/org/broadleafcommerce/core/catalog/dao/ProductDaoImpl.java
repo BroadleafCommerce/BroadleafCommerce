@@ -39,6 +39,8 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.hibernate.jpa.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -67,6 +69,8 @@ import javax.persistence.criteria.Root;
  * @author Jeff Fischer
  * @author Andre Azzolini (apazzolini)
  */
+
+@Repository("blProductDao")
 public class ProductDaoImpl implements ProductDao {
 
     private static final SupportLogger logger = SupportLogManager.getLogger("Enterprise", ProductDaoImpl.class);
@@ -83,7 +87,9 @@ public class ProductDaoImpl implements ProductDao {
     @Resource(name = "blProductDaoExtensionManager")
     protected ProductDaoExtensionManager extensionManager;
 
+    @Value("${query.dateResolution.product:10000}")
     protected Long currentDateResolution;
+
     protected Date cachedDate = SystemTime.asDate();
 
     @Override
