@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.persistence.EntityDuplicator;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -70,6 +71,9 @@ import javax.persistence.PersistenceContext;
 public class OfferServiceImpl implements OfferService {
     
     private static final Log LOG = LogFactory.getLog(OfferServiceImpl.class);
+    public static final String FINALIZE_CHECKOUT = "FINALIZE_CHECKOUT";
+    public static final String OFFERS_EXPIRED = "OFFERS_EXPIRED";
+
 
     // should be called outside of Offer service after Offer service is executed
     @Resource(name="blCustomerOfferDao")
