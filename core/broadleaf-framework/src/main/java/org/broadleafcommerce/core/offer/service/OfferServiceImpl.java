@@ -197,7 +197,8 @@ public class OfferServiceImpl implements OfferService {
             }
         }
         List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
-        
+        orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
+
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
                 offers.add(orderOfferCode.getOffer());
@@ -304,21 +305,6 @@ public class OfferServiceImpl implements OfferService {
         return offerCodes;
     }
 
-    protected List<OfferCode> removeOutOfDateOfferCodesAndOffers(List<OfferCode> offerCodes, List<Offer> offers){
-        List<OfferCode> offerCodesToRemove = new ArrayList<OfferCode>();
-        for (OfferCode offerCode : offerCodes) {
-            if (!offerCode.isActive()){
-                offerCodesToRemove.add(offerCode);
-            }
-        }
-        // remove all offers in the offersToRemove list from original offers list
-        for (OfferCode offerCode : offerCodesToRemove) {
-            offerCodes.remove(offerCode);
-            offers.remove(offerCode.getOffer());
-        }
-        return offerCodes;
-    }
-
     /**
      * For enterprise installations, this will refresh any OfferCodes found to be out-of-date with
      * current sandbox status.
@@ -404,8 +390,6 @@ public class OfferServiceImpl implements OfferService {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
-            List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
-            removeOutOfDateOfferCodesAndOffers(orderOfferCodes, offers);
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 if (LOG.isTraceEnabled()) {
