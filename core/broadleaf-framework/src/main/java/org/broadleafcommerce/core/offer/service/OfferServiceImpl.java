@@ -30,12 +30,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
-import org.broadleafcommerce.core.offer.domain.Adjustment;
-import org.broadleafcommerce.core.offer.domain.CustomerOffer;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferCode;
-import org.broadleafcommerce.core.offer.domain.OfferImpl;
-import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.domain.*;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -201,13 +196,13 @@ public class OfferServiceImpl implements OfferService {
             }
         }
         List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
-        int before = orderOfferCodes.size();
-        orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
-        int after = orderOfferCodes.size();
+//        int before = orderOfferCodes.size();
+//        orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
+/*        int after = orderOfferCodes.size();
         Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(FINALIZE_CHECKOUT);
         if(o !=null && (Boolean)o && before!=after){
             BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(OfferServiceImpl.OFFERS_EXPIRED, Boolean.TRUE);
-        }
+        }*/
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
                 offers.add(orderOfferCode.getOffer());
@@ -314,6 +309,21 @@ public class OfferServiceImpl implements OfferService {
         return offerCodes;
     }
 
+    protected List<OfferCode> removeOutOfDateOfferCodesAndOffers(List<OfferCode> offerCodes, List<Offer> offers){
+        List<OfferCode> offerCodesToRemove = new ArrayList<OfferCode>();
+        for (OfferCode offerCode : offerCodes) {
+            if (!offerCode.isActive()){
+                offerCodesToRemove.add(offerCode);
+            }
+        }
+        // remove all offers in the offersToRemove list from original offers list
+        for (OfferCode offerCode : offerCodesToRemove) {
+            offerCodes.remove(offerCode);
+            offers.remove(offerCode.getOffer());
+        }
+        return offerCodes;
+    }
+
     /**
      * For enterprise installations, this will refresh any OfferCodes found to be out-of-date with
      * current sandbox status.
@@ -385,9 +395,22 @@ public class OfferServiceImpl implements OfferService {
         the pricing boolean, but would also include a list of activities to include or exclude in the
         call - see http://jira.broadleafcommerce.org/browse/BLC-664
          */
+        Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(FINALIZE_CHECKOUT);
+        int offerCount = 0;
+        if(o!=null && (Boolean)o){
+            if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(order.getOrderAdjustments())){
+                for (OrderAdjustment orderAdjustment : order.getOrderAdjustments()) {
+                    if(orderAdjustment.getOffer()!=null){
+                        offerCount++;
+                    }
+                }
+            }
+        }
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
+            List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
+            removeOutOfDateOfferCodesAndOffers(orderOfferCodes, offers);
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 if (LOG.isTraceEnabled()) {
@@ -419,6 +442,19 @@ public class OfferServiceImpl implements OfferService {
             boolean madeChange = verifyAdjustments(order, false);
             if (madeChange) {
                 order = orderService.save(order, false);
+            }
+            int offerCountAfter=0;
+            if(o!=null && (Boolean)o){
+                if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(order.getOrderAdjustments())){
+                    for (OrderAdjustment orderAdjustment : order.getOrderAdjustments()) {
+                        if(orderAdjustment.getOffer()!=null){
+                            offerCountAfter++;
+                        }
+                    }
+                }
+                if(offerCountAfter!=offerCount){
+                    BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(OfferServiceImpl.OFFERS_EXPIRED, Boolean.TRUE);
+                }
             }
         }
 
