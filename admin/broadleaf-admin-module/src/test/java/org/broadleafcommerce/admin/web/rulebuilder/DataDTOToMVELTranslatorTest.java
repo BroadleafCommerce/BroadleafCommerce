@@ -310,9 +310,9 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
 
         String d1Translated = translator.createMVEL("customer", d1, customerFieldService);
         
-        String d1Mvel = "(MvelHelper.convertField(\"DATE\",customer.?getCustomerAttributes()[\"invoice_date\"])" +
+        String d1Mvel = "(MvelHelper.convertField(\"DATE\",?customer.?getCustomerAttributes()[\"invoice_date\"])" +
                 ">MvelHelper.convertField(\"DATE\",MvelHelper.subtractFromCurrentTime(12))" +
-                "&&MvelHelper.convertField(\"DATE\",customer.?getCustomerAttributes()[\"invoice_date\"])" +
+                "&&MvelHelper.convertField(\"DATE\",?customer.?getCustomerAttributes()[\"invoice_date\"])" +
                 "<MvelHelper.convertField(\"DATE\",MvelHelper.currentTime()))";
 
         customerFieldService.init();
