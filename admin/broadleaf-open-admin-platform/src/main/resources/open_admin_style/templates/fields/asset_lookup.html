@@ -7,6 +7,7 @@
 
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <a class="show-asset-freeform-url" href="#" th:text="'(' + #{Freeform_URL} + ')'" />
+    <div th:replace="components/fieldTranslation"></div>
     <br/>
 
     <input type="hidden" class="mediaUrl mediaItem twelve" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />

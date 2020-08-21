@@ -18,7 +18,10 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -50,6 +53,8 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
     @Resource(name = "blFormBuilderService")
     protected FormBuilderService formBuilderService;
 
+    protected static final Log LOG = LogFactory.getLog(TranslationFormBuilderServiceImpl.class);
+    
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
@@ -133,7 +138,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
 
         Field translatedValueValueField = new Field()
                 .withName("translatedValue")
-                .withFieldType(formProperties.getIsRte() ? "html" : "string")
+                .withFieldType(getFormFieldType(formProperties))
                 .withFriendlyName("Translation_translatedValue")
                 .withValue(formProperties.getTranslatedValue())
                 .withOrder(10);
@@ -160,9 +165,48 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
                 .withName("isRte")
                 .withValue(String.valueOf(formProperties.getIsRte())));
 
+        ef.addHiddenField(cmd, new Field()
+                .withName("fieldType")
+                .withValue(formProperties.getFieldType()));
+        
         return ef;
     }
 
+    /**
+     * Determines the value to use for the {@link Field#getFieldType()}. This matches up with the
+     * name of an HTML template.
+     *
+     * @param formProperties The {@link TranslationForm} submitted containing the properties
+     *        necessary for translating a single entity property
+     *
+     * @return The value to use for the {@link Field#getFieldType()}.
+     */
+    protected String getFormFieldType(TranslationForm formProperties) {
+        String fieldType = formProperties.getFieldType();
+
+        if (BooleanUtils.isTrue(formProperties.getIsRte())) {
+            LOG.debug(String.format("Using 'html' for %s#%s (id %s)",
+                    formProperties.getCeilingEntity(),
+                    formProperties.getPropertyName(),
+                    formProperties.getEntityId()));
+            return "html";
+        }
+
+        if (SupportedFieldType.ASSET_LOOKUP.name().equals(fieldType)) {
+            LOG.debug(String.format("Using 'asset_lookup' for %s#%s (id %s)",
+                    formProperties.getCeilingEntity(),
+                    formProperties.getPropertyName(),
+                    formProperties.getEntityId()));
+            return "asset_lookup";
+        }
+
+        LOG.debug(String.format("Using 'string' for %s#%s (id %s)",
+                formProperties.getCeilingEntity(),
+                formProperties.getPropertyName(),
+                formProperties.getEntityId()));
+        return "string";
+    }
+    
     protected ComboField getLocaleField(String value) {
         ComboField f = new ComboField();
         f.setName("localeCode");
