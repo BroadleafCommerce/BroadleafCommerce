@@ -344,6 +344,7 @@ public class AdminTranslationController extends AdminAbstractController {
         form.setPropertyName(entityForm.findField("propertyName").getValue());
         form.setTranslatedValue(entityForm.findField("translatedValue").getValue());
         form.setIsRte(Boolean.valueOf(entityForm.findField("isRte").getValue()));
+        form.setFieldType(entityForm.findField("fieldType").getValue());
         if (StringUtils.isNotBlank(entityForm.getId())) {
             form.setTranslationId(Long.parseLong(entityForm.getId()));
         }

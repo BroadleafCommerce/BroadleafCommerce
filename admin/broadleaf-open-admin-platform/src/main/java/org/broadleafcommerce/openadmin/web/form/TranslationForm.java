@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.openadmin.web.form;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+
 public class TranslationForm {
 
     protected String ceilingEntity;
@@ -25,8 +28,25 @@ public class TranslationForm {
     protected String localeCode;
     protected String translatedValue;
     protected Long translationId;
+
+    /**
+     * Whether the field to translate is rich text
+     *
+     * @deprecated Prefer using {@link #fieldType} to explicitly specify the field type for more
+     *             advanced logic. Note that {@link #getIsRte()} will remain as a shorthand way of
+     *             determining if the field type should be rendered as HTML/rich-text
+     */
+    @Deprecated    
     protected Boolean isRte;
 
+    /**
+     * The type of field that the translatable property is. By default this should be one of
+     * {@link SupportedFieldType SupportedFieldType's} values.
+     * <p>
+     * Prefer using this field over {@link #isRte}.
+     */
+    protected String fieldType;
+    
     public String getCeilingEntity() {
         return ceilingEntity;
     }
@@ -75,12 +95,36 @@ public class TranslationForm {
         this.translationId = translationId;
     }
     
+    /**
+     * Determines whether the translatable property is rich-text. This method has been updated to
+     * check whether {@link #fieldType} matches such values as {@link SupportedFieldType#HTML} or
+     * {@link SupportedFieldType#HTML_BASIC} and thus is rich-text. For backwards compatibility,
+     * this will also check the now deprecated {@link #isRte}.
+     *
+     * @return Whether the translatable property is rich-text.
+     */
     public Boolean getIsRte() {
-        return isRte == null ? false : isRte;
+        if (SupportedFieldType.HTML.name().equals(fieldType) ||
+                SupportedFieldType.HTML_BASIC.name().equals(fieldType)) {
+            return true;
+        }
+
+        return BooleanUtils.isTrue(isRte);
     }
 
+    /**
+     * @deprecated use {@link #fieldType} instead
+     */
+    @Deprecated
     public void setIsRte(Boolean isRte) {
         this.isRte = isRte;
     }
 
+    public String getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
+    }
 }
