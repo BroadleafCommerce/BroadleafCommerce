@@ -29,7 +29,7 @@ import javax.cache.spi.CachingProvider;
 
 public class NoOpCacheManager implements CacheManager {
 
-    private NoOpCache noOpCache = new NoOpCache();
+    private NoOpCache noOpCache = new NoOpCache(this);
 
     @Override
     public CachingProvider getCachingProvider() {
@@ -38,7 +38,7 @@ public class NoOpCacheManager implements CacheManager {
 
     @Override
     public URI getURI() {
-        return null;
+        return URI.create("noop:cachemanager");
     }
 
     @Override

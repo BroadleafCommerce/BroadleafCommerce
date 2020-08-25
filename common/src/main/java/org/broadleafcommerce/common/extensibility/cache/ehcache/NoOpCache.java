@@ -32,6 +32,15 @@ import javax.cache.processor.EntryProcessorException;
 
 public class NoOpCache implements Cache {
 
+    private NoOpCacheManager noOpCacheManager;
+
+    public NoOpCache(){
+    }
+
+    public NoOpCache(NoOpCacheManager noOpCacheManager) {
+        this.noOpCacheManager = noOpCacheManager;
+    }
+
     @Override
     public Object get(Object o) {
         return null;
@@ -124,7 +133,7 @@ public class NoOpCache implements Cache {
 
     @Override
     public CacheManager getCacheManager() {
-        return null;
+        return noOpCacheManager;
     }
 
     @Override
