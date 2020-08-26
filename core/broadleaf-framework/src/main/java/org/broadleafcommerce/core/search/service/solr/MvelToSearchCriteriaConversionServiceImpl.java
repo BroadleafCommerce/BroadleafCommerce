@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
+import org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
@@ -151,8 +152,15 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                 boolean isWildCardSearch = isWildCardSearch(fieldValue);
                 fieldName = convertFieldName(fieldName);
                 List<IndexFieldType> indexFieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviationOrPropertyName(fieldName);
+                boolean isCatalog = false;
+                if("embeddableCatalogTenantDiscriminator.catalogDiscriminator".equals(fieldName)){
+                    fieldName = solrHelperService.getCatalogFieldName();
+                    isCatalog = true;
+                    indexFieldTypes = new ArrayList<>();
+                    indexFieldTypes.add(new IndexFieldTypeImpl());
+                }
                 if (indexFieldTypes.size() > 0) {
-                    Boolean translatable = indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
+                    Boolean translatable = !isCatalog && indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
                     List<Locale> allLocales;
                     if (translatable==null || !translatable) {
                         allLocales = new ArrayList<>();
@@ -163,18 +171,19 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                         allLocales = localeService.findAllLocales();
                     }
                     List<String> tmpFilters = new ArrayList<>();
-                    String abbreviation = indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
+                    String abbreviation = isCatalog ? "": indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
                     for (Locale locale : allLocales) {
                         for (IndexFieldType indexFieldType : indexFieldTypes) {
-                            String type = indexFieldType.getFieldType().getType();
-                            if (!isWildCardSearch || FieldType.STRING.getType().equals(type)) {
+                            String type = isCatalog ? "" :indexFieldType.getFieldType().getType();
+                            if (!isWildCardSearch || FieldType.STRING.getType().equals(type) || isCatalog) {
                                 String prefix;
                                 if (StringUtils.isNotEmpty(locale.getLocaleCode())) {
                                     prefix = locale.getLocaleCode() + "_";
                                 } else {
                                     prefix = "";
                                 }
-                                String indexFieldName = prefix + abbreviation + "_" + type;
+
+                                String indexFieldName = isCatalog ? fieldName : (prefix + abbreviation + "_" + type);
 
                                 // if this is a wildcard search then we do not want to surround the value with quotes
                                 String indexFieldValue = fieldValue;
