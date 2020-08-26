@@ -77,7 +77,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         expressionDTO.setValue("merchandise");
 
         String translated = translator.createMVEL("discreteOrderItem", expressionDTO, orderItemFieldService);
-        String mvel = "MvelHelper.toUpperCase(discreteOrderItem.?category.?name)==MvelHelper.toUpperCase(\"merchandise\")";
+        String mvel = "MvelHelper.toUpperCase(?discreteOrderItem.?category.?name)==MvelHelper.toUpperCase(\"merchandise\")";
         assert(mvel.equals(translated));
     }
 
@@ -153,7 +153,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.getRules().add(expressionDTO);
 
         String translated = translator.createMVEL("order", dataDTO, orderFieldService);
-        String mvel = "order.?subTotal.getAmount()>=100";
+        String mvel = "?order.?subTotal.getAmount()>=100";
         assert (mvel.equals(translated));
     }
 
@@ -200,7 +200,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         d1.getRules().add(d1e1);
 
         String d1Translated = translator.createMVEL("discreteOrderItem", d1, orderItemFieldService);
-        String d1Mvel = "discreteOrderItem.?category.?name==\"test category\"";
+        String d1Mvel = "?discreteOrderItem.?category.?name==\"test category\"";
         assert(d1Mvel.equals(d1Translated));
 
         DataDTO d2 = new DataDTO();
@@ -213,7 +213,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         d2.getRules().add(d2e1);
 
         String d2Translated = translator.createMVEL("discreteOrderItem", d2, orderItemFieldService);
-        String d2Mvel = "!(discreteOrderItem.?product.?manufacturer==\"test manufacturer\")";
+        String d2Mvel = "!(?discreteOrderItem.?product.?manufacturer==\"test manufacturer\")";
         assert (d2Mvel.equals(d2Translated));
 
     }
@@ -261,7 +261,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.getRules().add(e2);
 
         String translated = translator.createMVEL("fulfillmentGroup", dataDTO, fulfillmentGroupFieldService);
-        String mvel = "fulfillmentGroup.?address.?state.?name==\"Texas\"&&(fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199)";
+        String mvel = "?fulfillmentGroup.?address.?state.?name==\"Texas\"&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&?fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199)";
         assert (mvel.equals(translated));
     }
 
@@ -278,7 +278,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         d1.getRules().add(d1e1);
 
         String d1Translated = translator.createMVEL("discreteOrderItem", d1, orderItemFieldService);
-        String d1Mvel = "CollectionUtils.intersection(discreteOrderItem.?category.?name,[\"test category\", \"test category 2\"]).size()>0";
+        String d1Mvel = "CollectionUtils.intersection(?discreteOrderItem.?category.?name,[\"test category\", \"test category 2\"]).size()>0";
         assert(d1Mvel.equals(d1Translated));
 
     }

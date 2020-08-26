@@ -262,7 +262,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
      * Currently supports getX() methods
      * For example, getType() -> type
      * @param fieldName
-     * @return 
+     * @return
      */
     protected String parseMethod(String fieldName) {
         String[] segments = fieldName.split("\\.");
@@ -272,7 +272,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         segments[segments.length - 1] = Character.toLowerCase(methodSegment.charAt(0)) + methodSegment.substring(1, methodSegment.length() - 2);
         return String.join(".", segments);
     }
-    
+
     /**
      * Determines if the given field value string represents a wild card search. In Solr a wild card search either
      * starts or ends with an asterisk.
