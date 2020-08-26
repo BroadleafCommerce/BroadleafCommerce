@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,11 +40,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-
 /**
  * Convenience methods for converting simple MVEL rules to Solr SearchCriteria
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 @Service("blMvelToSearchCriteriaConversionService")
@@ -62,7 +61,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
-    @Resource(name="blSolrHelperService")
+    @Resource(name = "blSolrHelperService")
     protected SolrHelperService solrHelperService;
 
     @Override
@@ -73,7 +72,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         if (isProductRule(mvelRule) || isCategoryTargetingRule(mvelRule)) {
             Collection<String> strings = convertRuleToFilters(mvelRule);
             criteria.setFilterQueries(strings);
-        }else {
+        } else {
             throw new UnsupportedOperationException("The selected Add-On Product Group is defined using Rules " +
                     "(Conditional Rules) and selected rule can't be translated to solr criteria and so " +
                     "does not support selection of a Default Product. See Tooltip for supported rule details");
@@ -82,7 +81,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         return criteria;
     }
 
-    protected boolean isProductRule(String rule){
+    protected boolean isProductRule(String rule) {
         return rule.contains("product.");
     }
 
@@ -107,7 +106,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         if (length > 0) {
             result = new Long[length];
             for (int i = 0; i < length; i++) {
-                result[i] = Long.parseLong(split[i].replace("\"",""));
+                result[i] = Long.parseLong(split[i].replace("\"", ""));
             }
         }
         return result;
@@ -153,16 +152,16 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                 fieldName = convertFieldName(fieldName);
                 List<IndexFieldType> indexFieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviationOrPropertyName(fieldName);
                 boolean isCatalog = false;
-                if("embeddableCatalogTenantDiscriminator.catalogDiscriminator".equals(fieldName)){
+                if ("embeddableCatalogTenantDiscriminator.catalogDiscriminator".equals(fieldName)) {
                     fieldName = solrHelperService.getCatalogFieldName();
                     isCatalog = true;
                     indexFieldTypes = new ArrayList<>();
                     indexFieldTypes.add(new IndexFieldTypeImpl());
                 }
                 if (indexFieldTypes.size() > 0) {
-                    Boolean translatable = !isCatalog && indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
+                    Boolean translatable = isCatalog ? Boolean.FALSE : indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
                     List<Locale> allLocales;
-                    if (translatable==null || !translatable) {
+                    if (translatable == null || !translatable) {
                         allLocales = new ArrayList<>();
                         LocaleImpl e = new LocaleImpl();
                         e.setLocaleCode("");
@@ -171,10 +170,10 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                         allLocales = localeService.findAllLocales();
                     }
                     List<String> tmpFilters = new ArrayList<>();
-                    String abbreviation = isCatalog ? "": indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
+                    String abbreviation = isCatalog ? "" : indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
                     for (Locale locale : allLocales) {
                         for (IndexFieldType indexFieldType : indexFieldTypes) {
-                            String type = isCatalog ? "" :indexFieldType.getFieldType().getType();
+                            String type = isCatalog ? "" : indexFieldType.getFieldType().getType();
                             if (!isWildCardSearch || FieldType.STRING.getType().equals(type) || isCatalog) {
                                 String prefix;
                                 if (StringUtils.isNotEmpty(locale.getLocaleCode())) {
@@ -188,9 +187,9 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                                 // if this is a wildcard search then we do not want to surround the value with quotes
                                 String indexFieldValue = fieldValue;
                                 if (!isWildCardSearch && !fieldValue.equals("null")) {
-                                    if(fieldValue.contains("\",\"")){
+                                    if (fieldValue.contains("\",\"")) {
                                         indexFieldValue = "(\"" + fieldValue + "\")";
-                                    }else {
+                                    } else {
                                         indexFieldValue = "\"" + fieldValue + "\"";
                                     }
                                 }
@@ -261,13 +260,14 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
      * Takes in a fieldName that contains a method (indicated with "()") and converts the method to an attribute.
      * Currently supports getX() methods
      * For example, getType() -> type
+     *
      * @param fieldName
      * @return
      */
     protected String parseMethod(String fieldName) {
         String[] segments = fieldName.split("\\.");
         //parse the last segment removing the method prefix (e.g. get)
-        String methodSegment = segments[segments.length-1].replaceFirst("(^get)", "");
+        String methodSegment = segments[segments.length - 1].replaceFirst("(^get)", "");
         //lowercase first char and remove the ()
         segments[segments.length - 1] = Character.toLowerCase(methodSegment.charAt(0)) + methodSegment.substring(1, methodSegment.length() - 2);
         return String.join(".", segments);
@@ -392,10 +392,10 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         }
         //maybe it is something like [x,x1,x2]? -> (x,x1,x2), or [x1]->x1
         if (customFieldValue.startsWith("[") && customFieldValue.endsWith("]")) {
+            customFieldValue = customFieldValue.substring(1, customFieldValue.length() - 1);
+            if (customFieldValue.startsWith("\"") && customFieldValue.endsWith("\"")) {
                 customFieldValue = customFieldValue.substring(1, customFieldValue.length() - 1);
-                if(customFieldValue.startsWith("\"") && customFieldValue.endsWith("\"")){
-                    customFieldValue = customFieldValue.substring(1, customFieldValue.length() - 1);
-                }
+            }
         }
         return customFieldValue;
     }
