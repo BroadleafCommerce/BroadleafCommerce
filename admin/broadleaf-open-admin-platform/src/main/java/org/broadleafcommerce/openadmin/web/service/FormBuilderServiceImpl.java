@@ -311,6 +311,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             fieldDTO.setInput("select");
             fieldDTO.setType("string");
             String[][] enumerationValues = fmd.getEnumerationValues ();
+
+            //not sure if we need to decode here or not...
+            for(int i=0; i< enumerationValues.length;i++){
+                enumerationValues[i][1] = exploitProtectionService.htmlDecode(enumerationValues[i][1]);
+            }
+
             Map<String, String> enumMap = new HashMap<>();
             for (int i = 0; i < enumerationValues.length; i++) {
                 enumMap.put(enumerationValues[i][0], enumerationValues[i][1]);
@@ -342,7 +348,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 fmd.getFieldType().equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION) ||
                 fmd.getFieldType().equals(SupportedFieldType.EMPTY_ENUMERATION)) {
             hf = new ComboField();
-            ((ComboField) hf).setOptions(fmd.getEnumerationValues());
+            String[][] enumerationValues = fmd.getEnumerationValues();
+            for(int i=0; i< enumerationValues.length;i++){
+                enumerationValues[i][1] = exploitProtectionService.htmlDecode(enumerationValues[i][1]);
+            }
+            ((ComboField) hf).setOptions(enumerationValues);
         } else {
             hf = new Field();
         }
@@ -994,7 +1004,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             || fieldType.equals(SupportedFieldType.EMPTY_ENUMERATION.toString())) {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
-                        ((ComboField) f).setOptions(fmd.getEnumerationValues());
+
+                        String[][] enumerationValues = fmd.getEnumerationValues();
+                        for(int i=0; i< enumerationValues.length;i++){
+                            enumerationValues[i][1] = exploitProtectionService.htmlDecode(enumerationValues[i][1]);
+                        }
+                        ((ComboField) f).setOptions(enumerationValues);
                         if (fmd.getHideEnumerationIfEmpty() != null && fmd.getHideEnumerationIfEmpty().booleanValue()
                                 && ((ComboField) f).getOptions().size() == 0) {
                             f.setIsVisible(false);
