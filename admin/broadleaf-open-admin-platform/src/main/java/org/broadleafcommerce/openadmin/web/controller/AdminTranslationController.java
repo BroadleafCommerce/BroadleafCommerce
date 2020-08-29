@@ -50,13 +50,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller("blAdminTranslationController")
 @RequestMapping("/translation")
@@ -70,7 +72,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     @Resource(name = "blFormBuilderExtensionManager")
     protected FormBuilderExtensionManager formBuilderExtensionManager;
-    
+
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
 
@@ -82,7 +84,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * Invoked when the translation button is clicked on a given translatable field
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -114,7 +116,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * Renders a modal dialog that has a list grid of translations for the specified field
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -144,11 +146,11 @@ public class AdminTranslationController extends AdminAbstractController {
     }
 
     /**
-     * Saves a new translation to the database. 
-     * 
+     * Saves a new translation to the database.
+     *
      * Note that if the ceiling entity, entity id, property name, and locale code match a previously existing translation,
      * this method will update that translation.
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -249,25 +251,25 @@ public class AdminTranslationController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, form.getTranslationId().toString(), cmd, false).getDynamicResultSet().getRecords()[0];
 
         form.setTranslatedValue(entity.findProperty("translatedValue").getValue());
-        
+
         EntityForm entityForm = formService.buildTranslationForm(cmd, form, TranslationFormAction.UPDATE);
         entityForm.setId(entity.findProperty(service.getIdProperty(cmd)).getValue());
 
         formBuilderExtensionManager.getProxy().modifyPopulatedEntityForm(entityForm, entity);
-        formBuilderExtensionManager.getProxy().addAdditionalFormActions(entityForm);        
+        formBuilderExtensionManager.getProxy().addAdditionalFormActions(entityForm);
 
         modifyRevertButton(entityForm);
-        
+
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_TRANSLATION.getType());
         return MODAL_CONTAINER_VIEW;
     }
-    
+
     /**
      * Updates the given translation id to the new locale code and translated value
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -301,7 +303,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * Deletes the translation specified by the translation id
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -342,7 +344,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * Converts an EntityForm into a TranslationForm
-     * 
+     *
      * @param entityForm
      * @return the converted translation form
      */
@@ -354,6 +356,7 @@ public class AdminTranslationController extends AdminAbstractController {
         form.setPropertyName(entityForm.findField("propertyName").getValue());
         form.setTranslatedValue(entityForm.findField("translatedValue").getValue());
         form.setIsRte(Boolean.valueOf(entityForm.findField("isRte").getValue()));
+        form.setFieldType(entityForm.findField("fieldType").getValue());
         if (StringUtils.isNotBlank(entityForm.getId())) {
             form.setTranslationId(Long.parseLong(entityForm.getId()));
         }
@@ -372,8 +375,8 @@ public class AdminTranslationController extends AdminAbstractController {
     protected void modifyRevertButton(EntityForm entityForm) {
         EntityFormAction action = entityForm.findActionById("REVERT");
         if (action != null) {
-            action.setButtonClass("translation-revert-button");            
+            action.setButtonClass("translation-revert-button");
         }
     }
-    
+
 }

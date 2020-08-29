@@ -66,7 +66,7 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Column(name = "FLD_GROUP_ID")
     protected Long id;
 
-    @Column (name = "NAME")
+    @Column (name = "NAME", unique = true)
     protected String name;
 
     @Column (name = "INIT_COLLAPSED_FLAG")

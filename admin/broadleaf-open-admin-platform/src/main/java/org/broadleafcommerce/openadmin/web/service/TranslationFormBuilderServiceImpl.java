@@ -18,7 +18,10 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -26,7 +29,6 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -48,8 +50,8 @@ import javax.annotation.Resource;
 
 @Service("blTranslationFormBuilderService")
 public class TranslationFormBuilderServiceImpl implements TranslationFormBuilderService {
+    protected static final Log LOG = LogFactory.getLog(TranslationFormBuilderServiceImpl.class);
 
-   
     @Resource(name = "blFormBuilderService")
     protected FormBuilderService formBuilderService;
 
@@ -89,7 +91,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         listGrid.addRowAction(updateAction);
         listGrid.addRowAction(removeAction);
 
-        //TODO rework code elsewhere so these don't have to be added
+        // TODO rework code elsewhere so these don't have to be added
         listGrid.setSectionKey(Translation.class.getCanonicalName());
         listGrid.setSubCollectionFieldName("translation");
 
@@ -125,7 +127,9 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
     }
 
     @Override
-    public EntityForm buildTranslationForm(ClassMetadata cmd, TranslationForm formProperties, TranslationFormAction action) {
+    public EntityForm buildTranslationForm(ClassMetadata cmd,
+            TranslationForm formProperties,
+            TranslationFormAction action) {
         EntityForm ef = new EntityForm();
 
         EntityFormAction saveAction = DefaultEntityFormActions.SAVE.clone();
@@ -137,7 +141,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
 
         Field translatedValueValueField = new Field()
                 .withName("translatedValue")
-                .withFieldType(formProperties.getIsRte() ? "html" : "string")
+                .withFieldType(getFormFieldType(formProperties))
                 .withFriendlyName("Translation_translatedValue")
                 .withValue(formProperties.getTranslatedValue())
                 .withOrder(10);
@@ -164,10 +168,49 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
                 .withName("isRte")
                 .withValue(String.valueOf(formProperties.getIsRte())));
 
+        ef.addHiddenField(cmd, new Field()
+                .withName("fieldType")
+                .withValue(formProperties.getFieldType()));
+
         ef.setCeilingEntityClassname(cmd.getCeilingType());
         ef.setEntityType(TranslationImpl.class.getName());
-        
+
         return ef;
+    }
+
+    /**
+     * Determines the value to use for the {@link Field#getFieldType()}. This matches up with the
+     * name of an HTML template.
+     *
+     * @param formProperties The {@link TranslationForm} submitted containing the properties
+     *        necessary for translating a single entity property
+     *
+     * @return The value to use for the {@link Field#getFieldType()}.
+     */
+    protected String getFormFieldType(TranslationForm formProperties) {
+        String fieldType = formProperties.getFieldType();
+
+        if (BooleanUtils.isTrue(formProperties.getIsRte())) {
+            LOG.debug(String.format("Using 'html' for %s#%s (id %s)",
+                    formProperties.getCeilingEntity(),
+                    formProperties.getPropertyName(),
+                    formProperties.getEntityId()));
+            return "html";
+        }
+
+        if (SupportedFieldType.ASSET_LOOKUP.name().equals(fieldType)) {
+            LOG.debug(String.format("Using 'asset_lookup' for %s#%s (id %s)",
+                    formProperties.getCeilingEntity(),
+                    formProperties.getPropertyName(),
+                    formProperties.getEntityId()));
+            return "asset_lookup";
+        }
+
+        LOG.debug(String.format("Using 'string' for %s#%s (id %s)",
+                formProperties.getCeilingEntity(),
+                formProperties.getPropertyName(),
+                formProperties.getEntityId()));
+        return "string";
     }
 
     protected ComboField getLocaleField(String value) {
