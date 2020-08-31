@@ -734,6 +734,9 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 			/*callbacks*/
 			function callbacks(cb){
 				/*change start*/
+				//"mCustomScrollbar" should correspond with listGrid-paginate.js line 540
+				// if (typeof $tbody.mCustomScrollbar === 'undefined') {
+				// if you rename, don't forget to rename in that place also
 				$(this).mCustomScrollbar={
 					top:mCSB_container.position().top,left:mCSB_container.position().left,
 					draggerTop:mCSB_dragger.position().top,draggerLeft:mCSB_dragger.position().left,
