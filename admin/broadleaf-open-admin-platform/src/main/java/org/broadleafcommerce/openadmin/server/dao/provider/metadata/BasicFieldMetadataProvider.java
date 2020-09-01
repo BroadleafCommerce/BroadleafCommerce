@@ -860,6 +860,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getCanLinkToExternalEntity() != null) {
             metadata.setCanLinkToExternalEntity(basicFieldMetadata.getCanLinkToExternalEntity());
         }
+        if (basicFieldMetadata.getAllowNoValueEnumOption() != null) {
+            metadata.setAllowNoValueEnumOption(basicFieldMetadata.getAllowNoValueEnumOption());
+        }
 
         attributes.put(field.getName(), metadata);
     }
