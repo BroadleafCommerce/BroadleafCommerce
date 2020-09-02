@@ -604,7 +604,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean getAllowNoValueEnumOption() {
-        if (allowNoValueEnumOption == null) {
+        if (allowNoValueEnumOption==null || !allowNoValueEnumOption) {
             return StringUtils.isEmpty(getDefaultValue())
                     && (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
         }else{
