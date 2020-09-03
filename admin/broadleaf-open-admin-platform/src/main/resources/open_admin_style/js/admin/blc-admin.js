@@ -1225,6 +1225,7 @@ $.fn.blSelectize = function (settings_user) {
         if (settings_user === undefined) {
             settings_user = {};
         }
+
         // add default settings here
         settings_user['dropdownParent'] = settings_user['dropdownParent'] || 'body';
         settings_user['hideSelected'] = settings_user['hideSelected'] !== undefined ? settings_user['hideSelected'] : true;
@@ -1238,7 +1239,7 @@ $.fn.blSelectize = function (settings_user) {
                 this.$control.addClass('remove-caret');
             }
         };
-
+        settings_user['allowEmptyOption'] = settings_user['allowEmptyOption'] || $(el).hasClass("selectAllowNoValueEnumOption");
         var $select = $(el).selectize(settings_user);
         var selectize = $select[0].selectize;
 
