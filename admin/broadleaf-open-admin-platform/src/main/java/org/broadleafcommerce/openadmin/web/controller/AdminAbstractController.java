@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
-import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -61,6 +60,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -456,13 +457,19 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                     List<String> values = entry.getValue();
                     List<String> collapsedValues = new ArrayList<>();
                     for (String value : values) {
-                        if (value.contains(FILTER_VALUE_SEPARATOR)) {
-                            String[] vs = value.split(FILTER_VALUE_SEPARATOR_REGEX);
+                        String decoded = null;
+                        try {
+                            decoded = URLDecoder.decode(value, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            LOG.info("Could not decode value", e);
+                        }
+                        if (decoded.contains(FILTER_VALUE_SEPARATOR)) {
+                            String[] vs = decoded.split(FILTER_VALUE_SEPARATOR_REGEX);
                             for (String v : vs) {
                                 collapsedValues.add(v);
                             }
                         } else {
-                            collapsedValues.add(value);
+                            collapsedValues.add(decoded);
                         }
                     }
 
