@@ -26,11 +26,15 @@ import org.broadleafcommerce.common.persistence.EntityDuplicator;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
-import org.broadleafcommerce.core.offer.domain.*;
+import org.broadleafcommerce.core.offer.domain.Adjustment;
+import org.broadleafcommerce.core.offer.domain.CustomerOffer;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -71,9 +75,6 @@ import javax.persistence.PersistenceContext;
 public class OfferServiceImpl implements OfferService {
     
     private static final Log LOG = LogFactory.getLog(OfferServiceImpl.class);
-    public static final String FINALIZE_CHECKOUT = "FINALIZE_CHECKOUT";
-    public static final String OFFERS_EXPIRED = "OFFERS_EXPIRED";
-
 
     // should be called outside of Offer service after Offer service is executed
     @Resource(name="blCustomerOfferDao")
@@ -198,7 +199,6 @@ public class OfferServiceImpl implements OfferService {
         }
         List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
         orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
-
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
                 offers.add(orderOfferCode.getOffer());
@@ -376,17 +376,6 @@ public class OfferServiceImpl implements OfferService {
         the pricing boolean, but would also include a list of activities to include or exclude in the
         call - see http://jira.broadleafcommerce.org/browse/BLC-664
          */
-        Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(FINALIZE_CHECKOUT);
-        int offerCount = 0;
-        if(o!=null && (Boolean)o){
-            if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(order.getOrderAdjustments())){
-                for (OrderAdjustment orderAdjustment : order.getOrderAdjustments()) {
-                    if(orderAdjustment.getOffer()!=null){
-                        offerCount++;
-                    }
-                }
-            }
-        }
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
@@ -421,19 +410,6 @@ public class OfferServiceImpl implements OfferService {
             boolean madeChange = verifyAdjustments(order, false);
             if (madeChange) {
                 order = orderService.save(order, false);
-            }
-            int offerCountAfter=0;
-            if(o!=null && (Boolean)o){
-                if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(order.getOrderAdjustments())){
-                    for (OrderAdjustment orderAdjustment : order.getOrderAdjustments()) {
-                        if(orderAdjustment.getOffer()!=null){
-                            offerCountAfter++;
-                        }
-                    }
-                }
-                if(offerCountAfter!=offerCount){
-                    BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(OfferServiceImpl.OFFERS_EXPIRED, Boolean.TRUE);
-                }
             }
         }
 

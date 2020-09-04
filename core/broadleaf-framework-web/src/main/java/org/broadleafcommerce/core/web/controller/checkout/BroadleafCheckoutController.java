@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentConstants;
-import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
@@ -37,6 +36,7 @@ import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotPr
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.pricing.service.workflow.OfferActivity;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -228,7 +228,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         String param = "";
         if (cart != null && !(cart instanceof NullOrderImpl)) {
             try {
-                Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(OfferServiceImpl.OFFERS_EXPIRED);
+                Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(OfferActivity.OFFERS_EXPIRED);
                 if(o!=null && (Boolean) o){
                     throw new OfferExpiredException("Offer or offer code was expired and removed, order price was re-calculated, check order total and try again");
                 }
