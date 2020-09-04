@@ -3,6 +3,7 @@
     <span class="translation-id hidden" th:text="${form.entityId}" ></span>
     <span class="translation-property hidden" th:text="${form.propertyName}" ></span>
     <span class="translation-rte hidden" th:text="${form.isRte}" ></span>
+    <span class="translation-field-type hidden" th:text="${form.fieldType}"></span>
 
     <div class="fieldgroup-listgrid-wrapper-header titlebar" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden-body'">
         <div class="titlebar-title">
