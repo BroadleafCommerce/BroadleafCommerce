@@ -501,7 +501,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
         criteriaTransferObject.setCriteriaMap(fasMap);
         try {
-            filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
+            if(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getRequestURL().toString().contains("product:")) {
+                filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
+            }
         } catch (ServiceException e) {
             LOG.error("An error occurred when calling FilterProductTypePersistenceHandlerExtensionManager#manageAdditionalFilterMappings", e);
         }
