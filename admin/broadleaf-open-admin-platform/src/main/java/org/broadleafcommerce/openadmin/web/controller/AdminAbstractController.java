@@ -45,7 +45,6 @@ import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.AdminSectionCustomCriteriaService;
-import org.broadleafcommerce.openadmin.server.service.extension.FilterProductTypePersistenceHandlerExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
@@ -124,9 +123,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     @Resource(name="blClassNameRequestParamValidationService")
     protected ClassNameRequestParamValidationService validationService;
-
-    @Resource(name = "blFilterProductTypePersistenceHandlerExtensionManager")
-    protected FilterProductTypePersistenceHandlerExtensionManager filterProductTypeExtensionManager;
 
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -500,15 +496,13 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
         CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
         criteriaTransferObject.setCriteriaMap(fasMap);
-        try {
-            if(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getRequestURL().toString().contains("product:")) {
-                filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
-            }
-        } catch (ServiceException e) {
-            LOG.error("An error occurred when calling FilterProductTypePersistenceHandlerExtensionManager#manageAdditionalFilterMappings", e);
-        }
+        modifyCriteria(fasMap);
         result.addAll(criteriaTransferObject.getCriteriaMap().values());
         return result.toArray(new FilterAndSortCriteria[result.size()]);
+    }
+
+    protected void modifyCriteria( Map<String, FilterAndSortCriteria> fasMap){
+
     }
     
     /**
