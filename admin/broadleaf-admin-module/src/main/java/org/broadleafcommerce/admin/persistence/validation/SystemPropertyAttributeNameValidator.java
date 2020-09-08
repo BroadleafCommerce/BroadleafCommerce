@@ -61,7 +61,7 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
         String attributeName = entity.findProperty("name") == null ? null : entity.findProperty("name").getValue();
 
         if (attributeName != null) {
-            if (containsWhiteSpace(attributeName) || !containsOnlyLettersNumbersAndPeriods(attributeName)) {
+            if (containsWhiteSpace(attributeName) || !containsOnlyLettersNumbersPeriodsDashes(attributeName)) {
                 return createDisallowedCharactersValidationResult();
             }
 
@@ -79,8 +79,8 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
         return Pattern.compile("\\s").matcher(attributeName).find();
     }
 
-    private boolean containsOnlyLettersNumbersAndPeriods(String attributeName) {
-        return attributeName.replaceAll("\\.", "").matches("([a-zA-Z0-9])\\w+");
+    private boolean containsOnlyLettersNumbersPeriodsDashes(String attributeName) {
+        return attributeName.replaceAll("\\.", "").replaceAll("-", "").matches("([a-zA-Z0-9])\\w+");
     }
 
     private Set<String> retrieveContainedReservedKeywords(String attributeName) {
