@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -30,6 +31,7 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -37,6 +39,7 @@ import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
+import org.broadleafcommerce.openadmin.server.service.extension.FilterProductTypePersistenceHandlerExtensionManager;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -79,6 +82,9 @@ public class AdminProductController extends AdminBasicEntityController {
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "blFilterProductTypePersistenceHandlerExtensionManager")
+    protected FilterProductTypePersistenceHandlerExtensionManager filterProductTypeExtensionManager;
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
@@ -371,5 +377,19 @@ public class AdminProductController extends AdminBasicEntityController {
         form.removeListGrid("defaultSku.skuAttributes");
         
         return view;
+    }
+    
+    @Override
+    protected void modifyCriteria(Map<String, FilterAndSortCriteria> fasMap) {
+        super.modifyCriteria(fasMap);
+        if(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getRequestURL().toString().contains("product:")) {
+            CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
+            criteriaTransferObject.setCriteriaMap(fasMap);
+            try {
+                filterProductTypeExtensionManager.getProxy().manageAdditionalFilterMappings(criteriaTransferObject);
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
