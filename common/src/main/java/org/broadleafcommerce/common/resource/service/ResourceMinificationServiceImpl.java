@@ -115,7 +115,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         }
 
         if (isPreviouslyMinifiedFile(originalResource)) {
-            LOG.info("Minification has already be done for this resource: " + filename);
+            LOG.debug("Minification has already be done for this resource: " + filename);
             return originalResource;
         }
 
