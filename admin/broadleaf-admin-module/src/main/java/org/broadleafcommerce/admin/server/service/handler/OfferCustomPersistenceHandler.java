@@ -219,7 +219,6 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
         Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
         BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
         NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
-
         for (Entity entity : resultSet.getRecords()) {
             Property discountType = entity.findProperty("discountType");
             Property discountValue = entity.findProperty("value");
@@ -231,7 +230,14 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 value = !value.contains(".") ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
                 discountValue.setValue(value + "%");
             } else if (discountType.getValue().equals("AMOUNT_OFF")) {
-                discountValue.setValue(nf.format(new BigDecimal(value)));
+                try {
+                    //ok, because we construct NumberFormat.getCurrencyInstance we need to end on "Currency" to parse
+                    Number parsedValue = nf.parse(((DecimalFormat) nf).getPositivePrefix()+value + ((DecimalFormat) nf).getPositiveSuffix());
+                    discountValue.setValue(nf.format(parsedValue));
+                } catch (ParseException e) {
+                    LOG.error(e);
+                    discountValue.setValue(nf.format(new BigDecimal(value)));
+                }
             }
 
             Property timeRule = entity.findProperty("offerMatchRules---TIME");
