@@ -92,6 +92,10 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
+    public ExtensionResultStatusType removeOfferCodeFromOrder(OfferCode offerCode, Order order) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 
 
 }
