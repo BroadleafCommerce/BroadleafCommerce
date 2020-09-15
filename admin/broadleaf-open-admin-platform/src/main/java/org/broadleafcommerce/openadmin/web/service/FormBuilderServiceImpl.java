@@ -105,6 +105,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1208,8 +1210,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             return null;
         } else if (fieldType.equals(SupportedFieldType.INTEGER.toString())) {
             try {
-                Integer.parseInt(defaultValue);
+                DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getInstance(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
+                Number parse = numberFormat.parse(defaultValue);
             } catch (NumberFormatException  e) {
+                String msg = buildMsgForDefValException(SupportedFieldType.INTEGER.toString(), fmd, defaultValue);
+                LOG.debug(msg);
+                return null;
+            } catch (ParseException e) {
                 String msg = buildMsgForDefValException(SupportedFieldType.INTEGER.toString(), fmd, defaultValue);
                 LOG.debug(msg);
                 return null;
@@ -1217,8 +1224,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())
                 || fieldType.equals(SupportedFieldType.MONEY.toString())) {
             try {
-                BigDecimal val = new BigDecimal(defaultValue);
+                DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getInstance(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
+                numberFormat.setParseBigDecimal(true);
+                Number parse = numberFormat.parse(defaultValue);
             } catch (NumberFormatException  e) {
+                String msg = buildMsgForDefValException(fieldType.toString(), fmd, defaultValue);
+                LOG.debug(msg);
+                return null;
+            } catch (ParseException e) {
                 String msg = buildMsgForDefValException(fieldType.toString(), fmd, defaultValue);
                 LOG.debug(msg);
                 return null;

@@ -25,9 +25,12 @@ import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -394,6 +397,15 @@ public class FieldMetadataOverride extends MetadataOverride {
     }
 
     public void setDefaultValue(String defaultValue) {
+        if(getSecondaryType().equals(SupportedFieldType.DECIMAL) || getSecondaryType().equals(SupportedFieldType.INTEGER)
+        ||getFieldType().equals(SupportedFieldType.INTEGER) || getFieldType().equals(SupportedFieldType.DECIMAL)){
+            DecimalFormat instance = (DecimalFormat) NumberFormat.getInstance(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
+            if('.'!=instance.getDecimalFormatSymbols().getDecimalSeparator()){
+                if(defaultValue.contains(".")){
+                    defaultValue = defaultValue.replace('.', instance.getDecimalFormatSymbols().getDecimalSeparator());
+                }
+            }
+        }
         this.defaultValue = defaultValue;
     }
 
