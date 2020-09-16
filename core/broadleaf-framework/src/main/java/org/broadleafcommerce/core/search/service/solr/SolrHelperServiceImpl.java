@@ -143,7 +143,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
 
-    @Value(value = "${enable.solr.optimize:true}")
+    @Value(value = "${enable.solr.optimize:false}")
     private boolean optimizeEnabled;
 
 
