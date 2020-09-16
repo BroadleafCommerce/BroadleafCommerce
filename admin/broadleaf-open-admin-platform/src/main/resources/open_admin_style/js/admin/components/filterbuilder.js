@@ -1349,10 +1349,9 @@ $(document).ready(function() {
 
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
-                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong><span class='test'></span></strong>",
+                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
                 'class': "read-only"
         });
-            readonlySpan.find('.test').text(valueText)
             el.append($(readonlySpan));
 
             el.find('div.rule-filter-container > div > div.selectize-input').hide();
