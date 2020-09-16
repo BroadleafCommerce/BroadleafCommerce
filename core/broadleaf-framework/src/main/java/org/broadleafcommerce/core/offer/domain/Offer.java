@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -152,6 +153,26 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public void setMaxUsesPerCustomer(Long maxUses);
 
     /**
+     * Sets the minimum number of days that this offer can be used 
+     * by the same customer before resetting the number of uses dictated by {@link Offer#getMaxUsesPerCustomer()}. 
+     *
+     * 0 or null indicates that the offer will never reset usages.
+     *
+     * @return
+     */
+    Long getMinimumDaysPerUsage();
+
+    /**
+     * Sets the minimum number of days that this offer can be used 
+     * by the same customer before resetting the number of uses dictated by {@link Offer#getMaxUsesPerCustomer()}. 
+     *
+     * 0 or null indicates that the offer will never reset usages.
+     * 
+     * @param minimumDaysPerUsage
+     */
+    void setMinimumDaysPerUsage(Long minimumDaysPerUsage);
+
+    /**
      * Indicates that there is no limit to how many times a customer can use this offer. By default this is true if
      * {@link #getMaxUsesPerCustomer()} == 0
      */
@@ -249,4 +270,61 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
     public Boolean getRequiresRelatedTargetAndQualifiers();
 
     public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers);
+
+    /**
+     * This indicates how an Offer should be fulfilled to the customer, defaulting to order time discount.
+     * Currently, this enumeration can be ORDER_DISCOUNT or FUTURE_CREDIT. "Future credit" means that the associated 
+     * adjustment will be discounted at a later time to the customer via a credit. It is up to the implementor to 
+     * decide how to achieve this. The adjustment entities have a new "isFutureCredit" field used to determine if an 
+     * adjustment originated from an offer marked as FUTURE_CREDIT. Order, OrderItem and FulfillmentGroup have new 
+     * accessor methods for retrieving the future credit values when they are needed to be fulfilled. 
+     * 
+     * Out-of-box, this field is disabled from admin and must be manually enabled to view, since it is not a typical 
+     * requirement to most implementations. To enable, add the following to AdminConfig.java:
+     *
+     * @Merge("blAppConfigurationMap")
+     * public Map<String, String> adminOfferAdjustmentType() {
+     *     Map<String, String> appConfigMap = new HashMap<>();
+     *     appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
+     *     return appConfigMap;
+     * }
+     * 
+     * @return
+     */
+    OfferAdjustmentType getAdjustmentType();
+
+    /**
+     * This indicates how an Offer should be fulfilled to the customer, defaulting to order time discount.
+     * Currently, this enumeration can be ORDER_DISCOUNT or FUTURE_CREDIT. "Future credit" means that the associated 
+     * adjustment will be discounted at a later time to the customer via a credit. It is up to the implementor to 
+     * decide how to achieve this. The adjustment entities have a new "isFutureCredit" field used to determine if an 
+     * adjustment originated from an offer marked as FUTURE_CREDIT. Order, OrderItem and FulfillmentGroup have new 
+     * accessor methods for retrieving the future credit values when they are needed to be fulfilled. 
+     *
+     * Out-of-box, this field is disabled from admin and must be manually enabled to view, since it is not a typical 
+     * requirement to most implementations. To enable, add the following to AdminConfig.java:
+     *
+     * @Merge("blAppConfigurationMap")
+     * public Map<String, String> adminOfferAdjustmentType() {
+     *     Map<String, String> appConfigMap = new HashMap<>();
+     *     appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
+     *     return appConfigMap;
+     * }
+     * 
+     * @param adjustmentType
+     */
+    void setAdjustmentType(OfferAdjustmentType adjustmentType);
+
+    /**
+     * Future credit means that the associated adjustment will be discounted at a later time to the customer 
+     * via a credit. It is up to the implementor to decide how to achieve this. The adjustment entities have 
+     * a new "isFutureCredit" field used to determine if an adjustment originated from an offer marked as 
+     * FUTURE_CREDIT. Order, OrderItem and FulfillmentGroup have new accessor methods for retrieving the future 
+     * credit values when they are needed to be fulfilled.
+     * 
+     * See {@link Offer#getAdjustmentType()} for more info
+     * 
+     * @return
+     */
+    boolean isFutureCredit();
 }

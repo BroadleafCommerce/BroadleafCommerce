@@ -131,6 +131,15 @@
             '#field-applyToSalePrice',
             'ORDER_ITEM'
         );
+
+        BLCAdmin.addDependentFieldHandler(
+            clazz,
+            '#field-maxUsesPerCustomer',
+            '#field-maxUsesPerCustomerPeriod',
+            function showIfValue(parentValue) {
+                return (parentValue > 0);
+            }
+        );
         
     });
 

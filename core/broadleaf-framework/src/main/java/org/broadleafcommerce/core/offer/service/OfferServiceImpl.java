@@ -510,7 +510,7 @@ public class OfferServiceImpl implements OfferService {
         Customer customer = order.getCustomer();
         
         if (offer.isLimitedUsePerCustomer()) {
-            Long currentUses = offerAuditService.countUsesByCustomer(order, customer.getId(), offer.getId());
+            Long currentUses = offerAuditService.countUsesByCustomer(order, customer.getId(), offer.getId(), offer.getMinimumDaysPerUsage());
             
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
