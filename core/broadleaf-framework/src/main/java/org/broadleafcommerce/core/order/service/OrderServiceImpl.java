@@ -931,6 +931,29 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
+    public void removeCreditCardPaymentsFromOrder(Order order) {
+        List<OrderPayment> infos = new ArrayList<OrderPayment>();
+        for (OrderPayment paymentInfo : order.getPayments()) {
+            if (paymentInfo.getType().isCreditCardType()) {
+                infos.add(paymentInfo);
+            }
+        }
+        order.getPayments().removeAll(infos);
+        for (OrderPayment paymentInfo : infos) {
+            try {
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                // do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the OrderPayment", e);
+            }
+            order.getPayments().remove(paymentInfo);
+            paymentInfo = paymentDao.readPaymentById(paymentInfo.getId());
+            paymentDao.delete(paymentInfo);
+        }
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
     public void removePaymentFromOrder(Order order, OrderPayment payment){
         OrderPayment paymentToRemove = null;
         for (OrderPayment info : order.getPayments()){
