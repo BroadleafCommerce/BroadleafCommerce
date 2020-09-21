@@ -60,7 +60,7 @@ public class CartStateServiceImpl implements CartStateService {
 
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
         for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
-            boolean isCreditCardPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
+            boolean isCreditCardPayment = payment.getType().isCreditCardType();
             boolean paymentHasBillingAddress = (payment.getBillingAddress() != null);
 
             if (payment.isActive() && isCreditCardPayment && paymentHasBillingAddress) {
@@ -90,7 +90,7 @@ public class CartStateServiceImpl implements CartStateService {
 
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
         for (OrderPayment orderPayment : orderPayments) {
-            if (orderPayment.isActive() && PaymentType.CREDIT_CARD.equals(orderPayment.getType())) {
+            if (orderPayment.isActive() && orderPayment.getType().isCreditCardType()) {
                 List<PaymentTransaction> transactions = orderPayment.getTransactions();
                 for (PaymentTransaction transaction : transactions) {
                     String orderPaymentToken = transaction.getAdditionalFields().get(PaymentAdditionalFieldType.TOKEN.getType());
@@ -111,7 +111,7 @@ public class CartStateServiceImpl implements CartStateService {
 
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
         for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
-            boolean isCreditCartPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
+            boolean isCreditCartPayment = payment.getType().isCreditCardType();
             boolean isTemporaryPaymentGateway = PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType());
 
             if (payment.isActive() && isCreditCartPayment && isTemporaryPaymentGateway) {
@@ -127,7 +127,7 @@ public class CartStateServiceImpl implements CartStateService {
 
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
         for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
-            boolean isCreditCartPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
+            boolean isCreditCartPayment = payment.getType().isCreditCardType();
 
             if (payment.isActive() && isCreditCartPayment) {
                 return true;
@@ -160,7 +160,7 @@ public class CartStateServiceImpl implements CartStateService {
         Order cart = CartState.getCart();
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
         for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
-            boolean isCreditCartPayment = PaymentType.CREDIT_CARD.equals(payment.getType());
+            boolean isCreditCartPayment = payment.getType().isCreditCardType();
             boolean isTemporaryPaymentGateway = PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType());
 
             if (payment.isActive() && isCreditCartPayment && !isTemporaryPaymentGateway) {

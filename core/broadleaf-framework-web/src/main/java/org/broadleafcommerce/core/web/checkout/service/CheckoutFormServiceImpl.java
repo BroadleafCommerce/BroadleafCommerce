@@ -167,7 +167,7 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
 
         for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
-            boolean isCreditCardPaymentType = PaymentType.CREDIT_CARD.equals(payment.getType());
+            boolean isCreditCardPaymentType = payment.getType().isCreditCardType();
             boolean paymentHasBillingAddress = (payment.getBillingAddress() != null);
 
             if (payment.isActive() && isCreditCardPaymentType && paymentHasBillingAddress) {
