@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -104,15 +105,13 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         try {
-            // Get an instance of SystemProperty with the updated values from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Translation adminInstance = (Translation) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Translation.class.getName(), persistencePerspective);
             adminInstance = (Translation) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-
             persistencePackage.setRequestingEntityName(adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName() + "|" + adminInstance.getLocaleCode());
-            adminInstance = dynamicEntityDao.merge(adminInstance);
-            return helper.getRecord(adminProperties, adminInstance, null, null);
+            OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
+            return helper.getCompatibleModule(updateType).update(persistencePackage);
         } catch (Exception e) {
             throw new ServiceException("Unable to perform add for entity: " + Translation.class.getName(), e);
         }
