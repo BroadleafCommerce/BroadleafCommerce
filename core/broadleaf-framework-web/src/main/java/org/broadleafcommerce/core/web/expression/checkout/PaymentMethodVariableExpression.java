@@ -88,7 +88,17 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
     }
 
     public boolean orderContainsCreditCardPayment(Order order) {
-        return orderContainsPaymentOfType(order, PaymentType.CREDIT_CARD);
+        List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(order);
+
+        for (OrderPayment payment : orderPayments) {
+            boolean isActive = payment.isActive();
+            boolean isOfCorrectType = payment.getType().isCreditCardType();
+
+            if (isActive && isOfCorrectType) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean orderContainsThirdPartyPayment(Order order) {
@@ -146,7 +156,7 @@ public class PaymentMethodVariableExpression implements BroadleafVariableExpress
         Order cart = CartState.getCart();
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
         for (OrderPayment orderPayment : orderPayments) {
-            if (orderPayment.isActive() && PaymentType.CREDIT_CARD.equals(orderPayment.getType())) {
+            if (orderPayment.isActive() && orderPayment.getType().isCreditCardType()) {
                 List<PaymentTransaction> transactions = orderPayment.getTransactions();
                 for (PaymentTransaction transaction : transactions) {
                     return transaction.getAdditionalFields().get(propertyName);

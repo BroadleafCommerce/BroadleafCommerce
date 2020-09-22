@@ -297,7 +297,7 @@ public class OfferCodeImpl implements OfferCode {
         } else {
             datesActive = DateUtil.isActive(offerCodeStartDate, offerCodeEndDate, true);
         }
-        return datesActive && 'Y' != getArchived();
+        return datesActive && 'Y' != getArchived() && offer.isActive();
     }
 
     @Override

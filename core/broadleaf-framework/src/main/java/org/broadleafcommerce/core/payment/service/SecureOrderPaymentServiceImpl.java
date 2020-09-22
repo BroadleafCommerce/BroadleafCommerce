@@ -53,7 +53,7 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
 
     @Override
     public Referenced create(PaymentType paymentType) {
-        if (paymentType.equals(PaymentType.CREDIT_CARD)) {
+        if (paymentType.isCreditCardType()) {
             CreditCardPayment ccinfo = securePaymentInfoDao.createCreditCardPayment();
             return ccinfo;
         } else if (paymentType.equals(PaymentType.BANK_ACCOUNT)) {
@@ -69,7 +69,7 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
 
     @Override
     public Referenced findSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException {
-        if (paymentType == PaymentType.CREDIT_CARD) {
+        if (paymentType.isCreditCardType()) {
             CreditCardPayment ccinfo = findCreditCardInfo(referenceNumber);
             if (ccinfo == null) {
                 throw new WorkflowException("No credit card info associated with credit card payment type with reference number: " + referenceNumber);

@@ -39,6 +39,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -529,6 +530,9 @@ public interface OrderService {
      * @param paymentInfoType
      */
     public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType);
+
+    @Transactional("blTransactionManager")
+    void removeCreditCardPaymentsFromOrder(Order order);
 
     /**
      * Deletes the OrderPayment Info from the order.

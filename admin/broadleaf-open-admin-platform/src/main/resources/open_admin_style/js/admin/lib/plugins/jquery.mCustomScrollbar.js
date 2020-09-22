@@ -734,6 +734,9 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 			/*callbacks*/
 			function callbacks(cb){
 				/*change start*/
+				//"mCustomScrollbar" should correspond with listGrid-paginate.js line 540
+				// if (typeof $tbody.mCustomScrollbar === 'undefined') {
+				// if you rename, don't forget to rename in that place also
 				$(this).mCustomScrollbar={
 					top:mCSB_container.position().top,left:mCSB_container.position().left,
 					draggerTop:mCSB_dragger.position().top,draggerLeft:mCSB_dragger.position().left,
@@ -804,6 +807,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 		},
 		/*js animation tween*/
 		mTweenAxis:function(el,prop,to,duration,easing,callbacks){
+			var _request;
 			var callbacks=callbacks || {},
 				onStart=callbacks.onStart || function(){},onUpdate=callbacks.onUpdate || function(){},onComplete=callbacks.onComplete || function(){};
 			var startTime=_getTime(),_delay,progress=0,from=el.offsetTop,elStyle=el.style;
@@ -830,9 +834,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 					el._time=(progress>el._time) ? progress+_delay-(progress- el._time) : progress+_delay-1;
 					if(el._time<progress+1){el._time=progress+1;}
 				}
-				/*change start*/
-				if(el._time<duration){el._id= function _request(_step){};}else{onComplete.call();}
-				/*change end*/
+				if(el._time<duration){el._id=_request(_step)}else{onComplete.call();}
 			}
 			function _tween(){
 				if(duration>0){
@@ -848,7 +850,7 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 				_delay=1000/60;
 				el._time=progress+_delay;
 				/*start change*/
-				var _request=(!window.requestAnimationFrame) ? function(f){_tween(); return setTimeout(f,0.01);} : window.requestAnimationFrame;
+				_request=(!window.requestAnimationFrame) ? function(f){_tween(); return setTimeout(f,0.01);} : window.requestAnimationFrame;
 				/*change end*/
 				el._id=_request(_step);
 			}
