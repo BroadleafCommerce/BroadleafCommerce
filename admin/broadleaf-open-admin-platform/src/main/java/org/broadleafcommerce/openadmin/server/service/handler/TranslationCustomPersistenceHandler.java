@@ -18,6 +18,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
@@ -109,7 +110,9 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
             Translation adminInstance = (Translation) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Translation.class.getName(), persistencePerspective);
             adminInstance = (Translation) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            persistencePackage.setRequestingEntityName(adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName() + "|" + adminInstance.getLocaleCode());
+            if(StringUtils.isEmpty(persistencePackage.getRequestingEntityName())) {
+                persistencePackage.setRequestingEntityName(adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName() + "|" + adminInstance.getLocaleCode());
+            }
             OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
             return helper.getCompatibleModule(updateType).update(persistencePackage);
         } catch (Exception e) {
