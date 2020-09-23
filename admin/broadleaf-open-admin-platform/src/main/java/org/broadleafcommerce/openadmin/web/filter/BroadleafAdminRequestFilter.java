@@ -131,7 +131,11 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         String entityType = request.getParameter("entityType");
         Map<String, String> params = new HashMap<>(2);
         params.put("ceilingEntityClassname", ceilingEntityClassname);
-        params.put("entityType", entityType);
+        //hardcode :(, the issue is that if you have translations admin section, and want to filter on entityType
+        //field, you will not be able to do that, so if this is translations and param is entityType, skip this
+        if(!"/translations".equals(request.getServletPath())) {
+            params.put("entityType", entityType);
+        }
         params.put("ceilingEntity", ceilingEntity);
         params.put("ceilingEntityFullyQualifiedClassname", ceilingEntityFullyQualifiedClassname);
         params.put("__originalType", originalType);
