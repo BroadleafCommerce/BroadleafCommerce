@@ -861,11 +861,32 @@ $(document).ready(function () {
                         url = BLCAdmin.treeListGrid.updateSequenceUrl(ui, url);
                     }
 
+                    var newSequence = BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item);
+
+                    //allow for floating point inprecision
+                    if (Math.abs(Math.round(newSequence) - newSequence) < 0.05) {
+                        newSequence = Math.round(newSequence);
+                    }
+
+                    //Show an error if something went wrong
+                    if (!Number.isInteger(newSequence)) {
+                        var escapedPage = $('<span>').text($('html').html()).html();
+                        BLCAdmin.showMessageAsModal('Reordering Error - invalid sequence',
+                            'An error has occurred while reordering the item. Please forward this information to the ' +
+                            'development team: <br/>' +
+                            '<textarea rows="30" style="min-height: 1000px" disabled>' +
+                            'URL: ' + window.location.href + '\r\n' +
+                            'Browser: ' + navigator.userAgent + '\r\n' +
+                            'HTML: \r\n\r\n' + escapedPage + '</textarea>');
+                        BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+                        return;
+                    }
+
                     BLC.ajax({
                         url : url,
                         type : "POST",
                         data : {
-                            newSequence : BLCAdmin.listGrid.paginate.getActualRowIndex(ui.item),
+                            newSequence : newSequence,
                             parentId : parentId
                         }
                     }, function (data) {
