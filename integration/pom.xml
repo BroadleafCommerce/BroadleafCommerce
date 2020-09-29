@@ -271,7 +271,7 @@
         <dependency>
             <groupId>com.broadleafcommerce</groupId>
             <artifactId>broadleaf-boot-starter-hsql-database</artifactId>
-            <version>${database.starter.version}</version>
+            <version>${hsqldb.database.starter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
