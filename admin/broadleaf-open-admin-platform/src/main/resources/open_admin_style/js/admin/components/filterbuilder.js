@@ -699,6 +699,8 @@
                     var assetGrid = $filterButton.closest('.content-yield').find('.asset-grid').html($assetGrid.html());
                     var $assetListGrid = data.find('.asset-listgrid');
                     var assetListgrid = $filterButton.closest('.content-yield').find('.asset-listgrid').html($assetListGrid.html());
+                    var $assetFunctions = data.find('.asset-functions');
+                    var assetFunctions = $filterButton.closest('.content-yield').find('.asset-functions').html($assetFunctions.html());
 
                     var container = assetGrid.closest('.asset-listgrid-container');
 
