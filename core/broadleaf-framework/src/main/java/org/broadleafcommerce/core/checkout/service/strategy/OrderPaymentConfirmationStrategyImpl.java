@@ -187,6 +187,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
 
     protected void populateCreditCardOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) throws WorkflowException {
         if (payment.getReferenceNumber() != null) {
+            //maybe instead of PaymentType.CREDIT_CARD use payment.getType()?
             CreditCardPayment creditCardPayment = (CreditCardPayment) secureOrderPaymentService.findSecurePaymentInfo(payment.getReferenceNumber(), PaymentType.CREDIT_CARD);
             if (creditCardPayment != null) {
                 requestDTO.creditCard()

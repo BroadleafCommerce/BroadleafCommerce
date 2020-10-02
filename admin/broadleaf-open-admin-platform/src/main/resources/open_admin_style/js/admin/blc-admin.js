@@ -46,7 +46,7 @@ var BLCAdmin = (function($) {
 
     function checkFormFound() {
         return BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0 &&
-            BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-add-entity-form').length === 0;
+            BLCAdmin.currentModal().find('.modal-body>.content-yield>.row>.entity-form.modal-add-entity-form').length === 0;
     }
 
     function showModal($data, onModalHide, onModalHideArgs) {

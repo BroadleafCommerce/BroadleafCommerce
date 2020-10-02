@@ -1019,7 +1019,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         f = new ComboField();
 
                         String[][] enumerationValues = fmd.getEnumerationValues();
-                        for(int i=0; i< enumerationValues.length;i++){
+                        for(int i=0; enumerationValues!=null && i< enumerationValues.length;i++){
                             enumerationValues[i][1] = exploitProtectionService.htmlDecode(enumerationValues[i][1]);
                         }
                         ((ComboField) f).setOptions(enumerationValues);
