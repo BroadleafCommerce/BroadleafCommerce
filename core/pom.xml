@@ -4,16 +4,24 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.0.12-SNAPSHOT</version>
+        <version>6.0.11-SNAPSHOT</version>
     </parent>
     <artifactId>core</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce Core</name>
     <description>BroadleafCommerce Core Mid Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
+
+    <!-- =================================================================== -->
+    <!--                                                          PROPERTIES -->
+    <!-- =================================================================== -->
     <properties>
         <project.uri>${project.baseUri}/../</project.uri>
     </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                           LICENCIES -->
+    <!-- =================================================================== -->
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -28,6 +36,10 @@
             <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
         </license>
     </licenses>
+
+    <!-- =================================================================== -->
+    <!--                                                          DEVELOPERS -->
+    <!-- =================================================================== -->
     <developers>
         <developer>
             <id>architect</id>
@@ -37,6 +49,10 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+
+    <!-- =================================================================== -->
+    <!--                                                             MODULES -->
+    <!-- =================================================================== -->
     <modules>
         <module>broadleaf-profile</module>
         <module>broadleaf-profile-web</module>
