@@ -4,16 +4,17 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.0.12-SNAPSHOT</version>
+        <version>6.0.11-SNAPSHOT</version>
     </parent>
     <artifactId>admin</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce Admin</name>
     <description>BroadleafCommerce Admin Mid Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
-    <properties>
-        <project.uri>${project.baseUri}/../</project.uri>
-    </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                           LICENCIES -->
+    <!-- =================================================================== -->
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -28,6 +29,10 @@
             <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
         </license>
     </licenses>
+
+    <!-- =================================================================== -->
+    <!--                                                          DEVELOPERS -->
+    <!-- =================================================================== -->
     <developers>
         <developer>
             <id>architect</id>
@@ -37,6 +42,17 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+
+    <!-- =================================================================== -->
+    <!--                                                          PROPERTIES -->
+    <!-- =================================================================== -->
+    <properties>
+        <project.uri>${project.baseUri}/../</project.uri>
+    </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                             MODULES -->
+    <!-- =================================================================== -->
     <modules>
         <module>broadleaf-admin-module</module>
         <module>broadleaf-open-admin-platform</module>

@@ -4,16 +4,17 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.0.12-SNAPSHOT</version>
+        <version>6.0.11-SNAPSHOT</version>
     </parent>
     <artifactId>broadleaf-admin-module</artifactId>
     <packaging>jar</packaging>
     <name>BroadleafCommerce Admin Module</name>
     <description>BroadleafCommerce Admin Module</description>
     <url>http://www.broadleafcommerce.org</url>
-    <properties>
-        <project.uri>${project.baseUri}/../../</project.uri>
-    </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                           LICENCIES -->
+    <!-- =================================================================== -->
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -28,6 +29,10 @@
             <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
         </license>
     </licenses>
+
+    <!-- =================================================================== -->
+    <!--                                                          DEVELOPERS -->
+    <!-- =================================================================== -->
     <developers>
         <developer>
             <id>architect</id>
@@ -37,6 +42,17 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+
+    <!-- =================================================================== -->
+    <!--                                                          PROPERTIES -->
+    <!-- =================================================================== -->
+    <properties>
+        <project.uri>${project.baseUri}/../../</project.uri>
+    </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                               BUILD -->
+    <!-- =================================================================== -->
     <build>
         <resources>
             <resource>
@@ -59,7 +75,12 @@
             </resource>
         </resources>
     </build>
+
+    <!-- =================================================================== -->
+    <!--                                                            PROFILES -->
+    <!-- =================================================================== -->
     <profiles>
+        <!-- =============================================== blc-development -->
         <profile>
             <id>blc-development</id>
             <build>
@@ -82,6 +103,10 @@
             </build>
         </profile>
     </profiles>
+
+    <!-- =================================================================== -->
+    <!--                                                        DEPENDENCIES -->
+    <!-- =================================================================== -->
     <dependencies>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>

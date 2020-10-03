@@ -3,16 +3,17 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.0.12-SNAPSHOT</version>
+        <version>6.0.11-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>integration</artifactId>
     <name>BroadleafCommerce Integration</name>
     <description>BroadleafCommerce Integration</description>
     <url>http://www.broadleafcommerce.org</url>
-    <properties>
-        <project.uri>${project.baseUri}/../</project.uri>
-    </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                           LICENCIES -->
+    <!-- =================================================================== -->
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -27,6 +28,10 @@
             <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
         </license>
     </licenses>
+
+    <!-- =================================================================== -->
+    <!--                                                          DEVELOPERS -->
+    <!-- =================================================================== -->
     <developers>
         <developer>
             <id>architect</id>
@@ -36,6 +41,17 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+
+    <!-- =================================================================== -->
+    <!--                                                          PROPERTIES -->
+    <!-- =================================================================== -->
+    <properties>
+        <project.uri>${project.baseUri}/../</project.uri>
+    </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                               BUILD -->
+    <!-- =================================================================== -->
     <build>
         <plugins>
             <plugin>
@@ -72,6 +88,7 @@
             <plugin>
                 <!-- Only delete the contents of the target folder so that
                     it doesn't lose its "derived" status in Eclipse -->
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
                     <excludeDefaultDirectories>true</excludeDefaultDirectories>
@@ -84,11 +101,16 @@
                         </fileset>
                     </filesets>
                 </configuration>
-                <version>2.4.1</version>
+
             </plugin>
         </plugins>
     </build>
+
+    <!-- =================================================================== -->
+    <!--                                                            PROFILES -->
+    <!-- =================================================================== -->
     <profiles>
+        <!-- =============================================== blc-development -->
         <profile>
             <id>blc-development</id>
             <build>
@@ -146,6 +168,10 @@
             </build>
         </profile>
     </profiles>
+
+    <!-- =================================================================== -->
+    <!--                                                        DEPENDENCIES -->
+    <!-- =================================================================== -->
     <dependencies>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
@@ -271,7 +297,7 @@
         <dependency>
             <groupId>com.broadleafcommerce</groupId>
             <artifactId>broadleaf-boot-starter-hsql-database</artifactId>
-            <version>${hsqldb.database.starter.version}</version>
+            <version>${database.starter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -5,9 +5,13 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>6.0.12-SNAPSHOT</version>
+    <version>6.0.11-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
+
+    <!-- =================================================================== -->
+    <!--                                                           LICENCIES -->
+    <!-- =================================================================== -->
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -22,6 +26,10 @@
             <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
         </license>
     </licenses>
+
+    <!-- =================================================================== -->
+    <!--                                                          DEVELOPERS -->
+    <!-- =================================================================== -->
     <developers>
         <developer>
             <id>architect</id>
@@ -31,6 +39,10 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+
+    <!-- =================================================================== -->
+    <!--                                                        REPOSITORIES -->
+    <!-- =================================================================== -->
     <repositories>
         <repository>
             <id>releases</id>
@@ -46,64 +58,171 @@
             <id>spring-milestones</id>
             <url>https://repo.spring.io/milestone</url>
         </repository>
+        <repository>
+            <id>apache</id>
+            <url>https://repository.apache.org/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>redhat</id>
+            <url>https://maven.repository.redhat.com/ga/</url>
+        </repository>
     </repositories>
+
+    <!-- =================================================================== -->
+    <!--                                                          PROPERTIES -->
+    <!-- =================================================================== -->
     <properties>
+        <!-- ====================================================== GENERALS -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.0.16.RELEASE</spring.version>
-        <spring.security.version>5.0.17.RELEASE</spring.security.version>
+        <project.uri>${project.baseUri}</project.uri>
+        <java.version>1.8</java.version>
+
+        <!-- ===================================================== BROADLEAF -->
+        <broadleaf-presentation.version>1.1.0-GA</broadleaf-presentation.version>
+
+        <!-- ======================================================== APACHE -->
+        <apache.commons.collections4.version>4.1</apache.commons.collections4.version>
+        <apache.commons.dbcp2.version>2.2.0</apache.commons.dbcp2.version>
+        <apache.commons.lang3.version>3.7</apache.commons.lang3.version>
+        <apache.geronimo.specs.version>1.1.1</apache.geronimo.specs.version>
+        <apache.maven.clean.plugin.version>2.4.1</apache.maven.clean.plugin.version>
+        <apache.maven.javadoc.plugin.version>2.10.4</apache.maven.javadoc.plugin.version>
+        <apache.maven.gpg.plugin.version>1.6</apache.maven.gpg.plugin.version>
+        <apache.maven.source.plugin.version>3.2.1</apache.maven.source.plugin.version><!-- old 2.4 -->
+        <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
+        <apache.logging.log4j.version>2.11.1</apache.logging.log4j.version>
+        <apache.solr.version>7.3.1</apache.solr.version>
+        <apache.tika.version>1.22</apache.tika.version>
+        <apache.xmlbeans.version>2.4.0</apache.xmlbeans.version>
+
+        <!-- ======================================================= COMMONS -->
+        <commons.beanutils.version>1.9.4</commons.beanutils.version>
+        <commons.cli.version>1.1</commons.cli.version>
+        <commons.codec.version>1.11</commons.codec.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
+        <commons.fileupload.version>1.3.3</commons.fileupload.version>
+        <commons.io.version>2.6</commons.io.version>
+        <commons.logging.version>1.1.3</commons.logging.version>
+        <commons.pool.version>1.5.6</commons.pool.version>
+        <commons.validator.version>1.5.1</commons.validator.version>
+
+        <!-- ========================================================= JAVAX -->
+        <javax.annotation.version>1.3.2</javax.annotation.version>
+        <javax.jaxb.version>2.3.0</javax.jaxb.version>
+        <javax.jaxws.version>2.3.0</javax.jaxws.version>
+        <javax.mail.version>1.4.1</javax.mail.version>
+        <javax.servlet.version>3.1.0</javax.servlet.version>
+        <javax.validation.version>2.0.1.Final</javax.validation.version>
+
+        <!-- ========================================================= MAVEN -->
+        <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+        <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+        <maven.jar.plugin.version>2.3.2</maven.jar.plugin.version>
+        <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+        <maven.surefire.plugin.version>2.10</maven.surefire.plugin.version>
+        <maven.war.plugin.version>2.1.1</maven.war.plugin.version>
+
+        <!-- ======================================================== SPRING -->
         <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
         <spring.mobile.version>2.0.0.M3</spring.mobile.version>
-        <jackson.version>2.9.8</jackson.version>
-        <maven.source.plugin.version>2.4</maven.source.plugin.version>
-        <geb.version>1.0</geb.version>
-        <spock.core.version>1.1-groovy-2.4</spock.core.version>
-        <spock.spring.version>1.1-groovy-2.4</spock.spring.version>
-        <selenium.version>2.43.1</selenium.version>
-        <project.uri>${project.baseUri}</project.uri>
-        <groovy.version>2.4.15</groovy.version>
-        <gpg.plugin.version>1.6</gpg.plugin.version>
-        <broadleaf-presentation.version>1.1.2-GA</broadleaf-presentation.version>
-        <lombok.version>1.18.0</lombok.version>
-        <database.starter.version>2.0.3-GA</database.starter.version>
-        <hsqldb.database.starter.version>2.0.2-GA</hsqldb.database.starter.version>
+        <spring.security.version>5.0.17.RELEASE</spring.security.version>
+        <spring.social.web.version>1.1.6.RELEASE</spring.social.web.version>
+        <spring.version>5.0.16.RELEASE</spring.version>
+
+        <!-- ============================================ OTHER DEPENDENCIES -->
+        <asm.version>3.3</asm.version>
+        <aspectjweaver.version>1.8.13</aspectjweaver.version>
+        <byte.buddy.version>1.7.9</byte.buddy.version>
+        <build.helper.maven.plugin.version>1.7</build.helper.maven.plugin.version>
+        <cglib.nodep.version>2.1_3</cglib.nodep.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
+        <codehaus.gmavenplus.plugin.version>1.5</codehaus.gmavenplus.plugin.version>
+        <codehaus.groovy.version>2.4.15</codehaus.groovy.version>
+        <codehaus.jettison.version>1.1</codehaus.jettison.version>
+        <codehaus.mojo.animal.sniffer.maven.plugin.version>1.16</codehaus.mojo.animal.sniffer.maven.plugin.version>
+        <codehaus.mojo.license.maven.plugin.version>1.8</codehaus.mojo.license.maven.plugin.version>
+        <codehaus.mojo.signature.version>1.0</codehaus.mojo.signature.version>
+        <codehaus.woodstox.version>4.1.4</codehaus.woodstox.version>
+        <database.starter.version>2.0.0-GA</database.starter.version>
+        <eclipse.m2e.version>1.0.0</eclipse.m2e.version>
+        <ehcache.version>2.10.5</ehcache.version>
+        <google.guava.version>24.1.1-jre</google.guava.version>
         <hibernate.version>5.2.17.Final</hibernate.version>
-        <jaxb.version>2.3.0</jaxb.version>
-        <jaxws.version>2.3.0</jaxws.version>
-        <javax-annotation.version>1.3.2</javax-annotation.version>
+        <hibernate.validator.version>6.0.18.Final</hibernate.validator.version>
+        <htmlcompressor.version>1.5.2</htmlcompressor.version>
+        <imageio.jpeg.version>3.0-rc5</imageio.jpeg.version>
+        <jackson.version>2.9.8</jackson.version>
+        <jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>
+        <jakarta.regexp.version>1.4</jakarta.regexp.version>
+        <javassist.version>3.22.0-GA</javassist.version>
+        <jkeylockmanager.version>1.1.0</jkeylockmanager.version>
+        <joda.time.version>2.1</joda.time.version>
+        <jrebel.maven.plugin.version>1.1.5</jrebel.maven.plugin.version>
+        <jsr107cache.version>1.0</jsr107cache.version>
+        <jsr305.version>1.3.9</jsr305.version>
+        <log4j.version>1.2.17</log4j.version>
+        <lombok.version>1.18.12</lombok.version>
+        <mvel2.version>2.4.3.Final</mvel2.version>
+        <owasp.antisamy.version>1.5.7</owasp.antisamy.version>
+        <owasp.dependency.check.maven>6.0.2</owasp.dependency.check.maven> <!-- old 1.3.4 -->
+        <owasp.esapi.version>2.2.0.0</owasp.esapi.version>
+        <pngtastic.version>1.5</pngtastic.version>
+        <quartz.version>2.3.2</quartz.version>
+        <spock.spring.version>1.1-groovy-2.4</spock.spring.version>
+        <xalan.version>2.7.2</xalan.version>
+        <yuicompressor.version>2.4.8</yuicompressor.version>
+
+        <!-- ========================================== TESTING DEPENDENCIES -->
+        <easymock.version>2.5.1</easymock.version>
+        <easymockclassextension.version>2.4</easymockclassextension.version>
+        <geb.version>1.0</geb.version>
+        <hsqldb.version>2.4.0</hsqldb.version>
+        <junit.version>4.12</junit.version>
+        <greenmail.version>1.5.2</greenmail.version>
+        <selenium.version>2.43.1</selenium.version>
+        <spock.core.version>1.1-groovy-2.4</spock.core.version>
+
     </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                                 SCM -->
+    <!-- =================================================================== -->
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
         <tag>HEAD</tag>
     </scm>
+
+    <!-- =================================================================== -->
+    <!--                                                               BUILD -->
+    <!-- =================================================================== -->
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>${maven.compiler.plugin.version}</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.zeroturnaround</groupId>
                     <artifactId>jrebel-maven-plugin</artifactId>
-                    <version>1.1.5</version>
+                    <version>${jrebel.maven.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.7</version>
+                    <version>${build.helper.maven.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>${maven.surefire.plugin.version}</version>
                     <configuration>
                         <includes>
                             <include>**/Test*.java,**/*Test.java,**/*TestCase.java</include>
@@ -118,17 +237,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1.1</version>
+                    <version>${maven.war.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>${maven.jar.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${apache.maven.clean.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
+                    <version>${maven.deploy.plugin.version}</version>
                     <configuration>
                         <deployAtEnd>true</deployAtEnd>
                     </configuration>
@@ -136,7 +260,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>1.5</version>
+                    <version>${codehaus.gmavenplus.plugin.version}</version>
                     <configuration>
                         <targetBytecode>1.7</targetBytecode>
                     </configuration>
@@ -159,21 +283,15 @@
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
+                    <version>${eclipse.m2e.version}</version>
                     <configuration>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>
-                                            org.codehaus.gmavenplus
-                                        </groupId>
-                                        <artifactId>
-                                            gmavenplus-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [1.2,)
-                                        </versionRange>
+                                        <groupId>org.codehaus.gmavenplus</groupId>
+                                        <artifactId>gmavenplus-plugin</artifactId>
+                                        <versionRange>[1.2,)</versionRange>
                                         <goals>
                                             <goal>addTestSources</goal>
                                             <goal>testCompile</goal>
@@ -194,12 +312,8 @@
                                 <pluginExecution>
                                 	<pluginExecutionFilter>
                                 		<groupId>org.jacoco</groupId>
-                                		<artifactId>
-                                			jacoco-maven-plugin
-                                		</artifactId>
-                                		<versionRange>
-                                			[0.7.2.201409121644,)
-                                		</versionRange>
+                                		<artifactId>jacoco-maven-plugin</artifactId>
+                                		<versionRange>[0.7.2.201409121644,)</versionRange>
                                 		<goals>
                                 			<goal>prepare-agent</goal>
                                 		</goals>
@@ -210,15 +324,9 @@
                                 </pluginExecution>
                                 <pluginExecution>
                                 	<pluginExecutionFilter>
-                                		<groupId>
-                                			org.codehaus.mojo
-                                		</groupId>
-                                		<artifactId>
-                                			license-maven-plugin
-                                		</artifactId>
-                                		<versionRange>
-                                			[1.5,)
-                                		</versionRange>
+                                		<groupId>org.codehaus.mojo</groupId>
+                                		<artifactId>license-maven-plugin</artifactId>
+                                		<versionRange>[1.5,)</versionRange>
                                 		<goals>
                                 			<goal>
                                 				update-file-header
@@ -239,7 +347,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.16</version>
+                <version>${codehaus.mojo.animal.sniffer.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>sniff</id>
@@ -253,14 +361,14 @@
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
                         <artifactId>java18</artifactId>
-                        <version>1.0</version>
+                        <version>${codehaus.mojo.signature.version}</version>
                     </signature>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>${maven.release.plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -269,7 +377,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>1.8</version>
+                <version>${codehaus.mojo.license.maven.plugin.version}</version>
                 <configuration>
                     <verbose>false</verbose>
                     <addSvnKeyWords>false</addSvnKeyWords>
@@ -314,7 +422,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <!-- Unit test coverage prep; generates jacoco.exec -->
                     <execution>
@@ -360,12 +468,20 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- =================================================================== -->
+    <!--                                                             MODULES -->
+    <!-- =================================================================== -->
     <modules>
         <module>common</module>
         <module>core</module>
         <module>integration</module>
         <module>admin</module>
     </modules>
+
+    <!-- =================================================================== -->
+    <!--                                                        DEPENDENCIES -->
+    <!-- =================================================================== -->
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -374,6 +490,10 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <!-- =================================================================== -->
+    <!--                                             DISTRIBUTION MANAGEMENT -->
+    <!-- =================================================================== -->
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
@@ -384,7 +504,12 @@
             <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
         </repository>
     </distributionManagement>
+
+    <!-- =================================================================== -->
+    <!--                                                            PROFILES -->
+    <!-- =================================================================== -->
     <profiles>
+        <!-- ================================================ security-check -->
         <profile>
             <id>security-check</id>
             <build>
@@ -392,7 +517,7 @@
                     <plugin>
                       <groupId>org.owasp</groupId>
                       <artifactId>dependency-check-maven</artifactId>
-                      <version>1.3.4</version>
+                      <version>${owasp.dependency.check.maven}</version>
                       <executions>
                           <execution>
                               <goals>
@@ -404,6 +529,8 @@
             </plugins>
             </build>
         </profile>
+
+        <!-- ======================================== release-sign-artifacts -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -417,7 +544,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${gpg.plugin.version}</version>
+                        <version>${apache.maven.gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -438,6 +565,8 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- ====================================================== javadocs -->
         <profile>
             <id>javadocs</id>
             <activation>
@@ -451,7 +580,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.4</version>
+                        <version>${apache.maven.javadoc.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -479,6 +608,8 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- ======================================================= sources -->
         <profile>
             <id>sources</id>
             <activation>
@@ -492,7 +623,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven.source.plugin.version}</version>
+                        <version>${apache.maven.source.plugin.version}</version>
                         <configuration>
                             <attach>true</attach>
                         </configuration>
@@ -509,6 +640,8 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- ========================================= disable-java8-doclint -->
         <profile>
             <id>disable-java8-doclint</id>
             <activation>
@@ -519,9 +652,13 @@
             </properties>
         </profile>
     </profiles>
+
+    <!-- =================================================================== -->
+    <!--                                               DEPENDENCY MANAGEMENT -->
+    <!-- =================================================================== -->
     <dependencyManagement>
         <dependencies>
-            <!--Broadleaf libraries -->
+            <!-- ================================================= BROADLEAF -->
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile</artifactId>
@@ -576,7 +713,7 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Hibernate Libraries -->
+            <!-- =================================================== HIBERNATE -->
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
@@ -604,11 +741,113 @@
                 </exclusions>
             </dependency>
 
-            <!-- Commons Libraries -->
+            <!-- ==================================================== APACHE -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${apache.commons.collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${apache.commons.dbcp2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache.commons.lang3.version}</version>
+            </dependency>
+            <dependency> <!-- JMS Libraries -->
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jms_1.1_spec</artifactId>
+                <version>${apache.geronimo.specs.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${apache.httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${apache.logging.log4j.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+                <optional>true</optional>
+            </dependency>
+            <dependency> <!-- Search Related Libraries -->
+                <artifactId>solr-solrj</artifactId>
+                <groupId>org.apache.solr</groupId>
+                <version>${apache.solr.version}</version>
+                <exclusions>
+                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
+                        Jackson dependencies -->
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson</groupId>
+                        <artifactId>jackson-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-core</artifactId>
+                <version>${apache.tika.version}</version>
+            </dependency>
+            <dependency> <!-- XML Libraries -->
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>${apache.xmlbeans.version}</version>
+            </dependency>
+
+            <!-- =================================================== COMMONS -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons.beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>${commons.cli.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons.collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons.fileupload.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons.logging.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.5.1</version>
+                <version>${commons.validator.version}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -620,130 +859,76 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>4.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.1.3</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-cli</groupId>
-                <artifactId>commons-cli</artifactId>
-                <version>1.1</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>1.3.3</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <!-- CMYK JPEG processing -->
+
+            <!-- ================================================= CMYK JPEG -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-jpeg</artifactId>
-                <version>3.0-rc5</version>
+                <version>${imageio.jpeg.version}</version>
             </dependency>
-            <!-- PNG image processing -->
+
+            <!-- ======================================================= PNG -->
             <dependency>
                 <groupId>com.github.depsypher</groupId>
                 <artifactId>pngtastic</artifactId>
-                <version>1.5</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-dbcp2</artifactId>
-                <version>2.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.11</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.7</version>
+                <version>${pngtastic.version}</version>
             </dependency>
 
-            <!-- Logging -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-bom</artifactId>
-                <version>2.11.1</version>
-                <scope>import</scope>
-                <type>pom</type>
-                <optional>true</optional>
-            </dependency>
+            <!-- =================================================== LOGGING -->
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
+                <version>${log4j.version}</version>
                 <optional>true</optional>
             </dependency>
 
+            <!-- ===================================================== LOMBOK -->
             <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>1.4.1</version>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
 
-            <!-- Java EE APIs removed from JDK in Java 9 -->
-            <dependency>
+            <!-- ====================================================== JAVAX -->
+            <dependency> <!-- Java EE APIs removed from JDK in Java 9 -->
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
-                <version>${javax-annotation.version}</version>
+                <version>${javax.annotation.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>${jaxb.version}</version>
+                <version>${javax.jaxb.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb.version}</version>
+                <version>${javax.jaxb.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.ws</groupId>
                 <artifactId>jaxws-api</artifactId>
-                <version>${jaxws.version}</version>
+                <version>${javax.jaxws.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>
-                <version>${jaxws.version}</version>
+                <version>${javax.jaxws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>${javax.mail.version}</version>
+            </dependency>
+            <dependency> <!-- Servlet API -->
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet.version}</version>
+                <scope>provided</scope>
             </dependency>
 
-            <!-- XML Libraries -->
-            <dependency>
-                <groupId>org.apache.xmlbeans</groupId>
-                <artifactId>xmlbeans</artifactId>
-                <version>2.4.0</version>
-            </dependency>
-
-            <!-- Allow JAXB Annotations with Jackson -->
-            <dependency>
+            <!-- ==================================================== JACKSON -->
+            <dependency> <!-- Allow JAXB Annotations with Jackson -->
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${jackson.version}</version>
@@ -760,62 +945,47 @@
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>4.1.4</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <!-- JMS Libraries -->
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>1.1.1</version>
-                <scope>compile</scope>
-            </dependency>
 
-            <!-- Servlet API -->
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
-                <scope>provided</scope>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>woodstox-core-asl</artifactId>
+                <version>${codehaus.woodstox.version}</version>
             </dependency>
 
             <!-- Testing Libraries -->
             <dependency>
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
-                <version>1.5.2</version>
+                <version>${greenmail.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>2.5.1</version>
+                <version>${easymock.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymockclassextension</artifactId>
-                <version>2.4</version>
+                <version>${easymockclassextension.version}</version>
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
-                <version>${groovy.version}</version>
+                <version>${codehaus.groovy.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -855,57 +1025,38 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- Search Related Libraries -->
-            <dependency>
-                <artifactId>solr-solrj</artifactId>
-                <groupId>org.apache.solr</groupId>
-                <version>7.3.1</version>
-                <exclusions>
-                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
-                        Jackson dependencies -->
-                    <exclusion>
-                        <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson</groupId>
-                        <artifactId>jackson-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- Byte Code Manipulation Libraries -->
             <dependency>
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
-                <version>2.1_3</version>
+                <version>${cglib.nodep.version}</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>3.3</version>
+                <version>${asm.version}</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm-commons</artifactId>
-                <version>3.3</version>
+                <version>${asm.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.22.0-GA</version>
+                <version>${javassist.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.7.9</version>
+                <version>${byte.buddy.version}</version>
             </dependency>
 
             <!--Scheduling Libraries -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>2.3.2</version>
+                <version>${quartz.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -914,14 +1065,14 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.4.3.Final</version>
+                <version>${mvel2.version}</version>
             </dependency>
 
             <!--Regular Expression Libraries -->
             <dependency>
                 <groupId>jakarta-regexp</groupId>
                 <artifactId>jakarta-regexp</artifactId>
-                <version>1.4</version>
+                <version>${jakarta.regexp.version}</version>
                 <type>jar</type>
                 <scope>runtime</scope>
             </dependency>
@@ -930,19 +1081,19 @@
             <dependency>
                 <groupId>net.sf.jsr107cache</groupId>
                 <artifactId>jsr107cache</artifactId>
-                <version>1.0</version>
+                <version>${jsr107cache.version}</version>
                 <type>jar</type>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>2.10.5</version>
+                <version>${ehcache.version}</version>
                 <scope>compile</scope>
                 <type>jar</type>
             </dependency>
 
-            <!--Spring Libraries -->
+            <!-- ============================================SPRINGFRAMEWORK -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
@@ -954,7 +1105,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
@@ -1006,29 +1156,25 @@
                 <version>${spring.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework.mobile</groupId>
                 <artifactId>spring-mobile-device</artifactId>
                 <version>${spring.mobile.version}</version>
             </dependency>
-
-            <!-- Spring Plugins -->
-            <dependency>
+            <dependency> <!-- Spring Plugins -->
                 <groupId>org.springframework.social</groupId>
                 <artifactId>spring-social-web</artifactId>
-                <version>1.1.6.RELEASE</version>
+                <version>${spring.social.web.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
 
-            <!-- Spring Security -->
+            <!-- ============================================SPRING SECURITY -->
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>
@@ -1182,14 +1328,14 @@
             <dependency>
                 <groupId>commons-pool</groupId>
                 <artifactId>commons-pool</artifactId>
-                <version>1.5.6</version>
+                <version>${commons.pool.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.4.0</version>
+                <version>${hsqldb.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -1197,30 +1343,25 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.1</version>
+                <version>${joda.time.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.8.13</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tika</groupId>
-                <artifactId>tika-core</artifactId>
-                <version>1.22</version>
+                <version>${aspectjweaver.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
-                <version>1.3.9</version>
+                <version>${jsr305.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.5.7</version>
+                <version>${owasp.antisamy.version}</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -1232,7 +1373,7 @@
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
-                <version>2.2.0.0</version>
+                <version>${owasp.esapi.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-fileupload</groupId>
@@ -1248,41 +1389,36 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.6</version>
-            </dependency>
             <!--update xalan dependency for esapi for a xalan security vulnerability-->
             <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>xalan</artifactId>
-                <version>2.7.2</version>
+                <version>${xalan.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.0.18.Final</version>
+                <version>${hibernate.validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
-                <version>2.0.1.Final</version>
+                <version>${javax.validation.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>24.1.1-jre</version>
+                <version>${google.guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.jkeylockmanager</groupId>
                 <artifactId>jkeylockmanager</artifactId>
-                <version>1.1.0</version>
+                <version>${jkeylockmanager.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
-                <version>1.1</version>
+                <version>${codehaus.jettison.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>stax</groupId>
@@ -1294,7 +1430,7 @@
             <dependency>
                 <groupId>com.yahoo.platform.yui</groupId>
                 <artifactId>yuicompressor</artifactId>
-                <version>2.4.8</version>
+                <version>${yuicompressor.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.javascript</groupId>
@@ -1304,7 +1440,7 @@
             <dependency>
                 <groupId>com.googlecode.htmlcompressor</groupId>
                 <artifactId>htmlcompressor</artifactId>
-                <version>1.5.2</version>
+                <version>${htmlcompressor.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

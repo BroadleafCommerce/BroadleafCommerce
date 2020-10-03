@@ -3,16 +3,24 @@
     <parent>
         <groupId>org.broadleafcommerce</groupId>
         <artifactId>core</artifactId>
-        <version>6.0.12-SNAPSHOT</version>
+        <version>6.0.11-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-profile-web</artifactId>
     <name>BroadleafCommerce Profile Web</name>
     <description>BroadleafCommerce Profile Web</description>
     <url>http://www.broadleafcommerce.org</url>
+
+    <!-- =================================================================== -->
+    <!--                                                          PROPERTIES -->
+    <!-- =================================================================== -->
     <properties>
         <project.uri>${project.baseUri}/../../</project.uri>
     </properties>
+
+    <!-- =================================================================== -->
+    <!--                                                           LICENCIES -->
+    <!-- =================================================================== -->
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -27,6 +35,10 @@
             <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
         </license>
     </licenses>
+
+    <!-- =================================================================== -->
+    <!--                                                          DEVELOPERS -->
+    <!-- =================================================================== -->
     <developers>
         <developer>
             <id>architect</id>
@@ -36,7 +48,12 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+
+    <!-- =================================================================== -->
+    <!--                                                            PROFILES -->
+    <!-- =================================================================== -->
     <profiles>
+        <!-- =============================================== blc-development -->
         <profile>
             <id>blc-development</id>
             <build>
@@ -58,6 +75,10 @@
             </build>
         </profile>
     </profiles>
+
+    <!-- =================================================================== -->
+    <!--                                                        DEPENDENCIES -->
+    <!-- =================================================================== -->
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -86,6 +107,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 </project>
