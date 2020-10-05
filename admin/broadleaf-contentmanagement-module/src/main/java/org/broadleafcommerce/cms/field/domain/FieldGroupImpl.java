@@ -87,6 +87,7 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
+    @ClonePolicyCollectionOverride
     protected List<StructuredContentFieldGroupXref> fieldGroupXrefs = new ArrayList<StructuredContentFieldGroupXref>();
 
     @Override
