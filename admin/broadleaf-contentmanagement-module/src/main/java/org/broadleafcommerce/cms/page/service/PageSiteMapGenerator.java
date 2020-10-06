@@ -65,7 +65,7 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
             rowOffset += pages.size();
             for (Page page : pages) {
 
-                if (page.getExcludeFromSiteMap()) {
+                if (page.getExcludeFromSiteMap() || page.getFullUrl()==null || page.getFullUrl().trim().length()==0) {
                     continue;
                 }
 
