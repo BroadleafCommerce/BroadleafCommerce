@@ -22,22 +22,14 @@ import java.math.RoundingMode;
 
 public abstract class AbstractPromotionRounding implements PromotionRounding {
 
-    protected boolean roundOfferValues = true;
-    protected int roundingScale = 2;
-    protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
+    protected Integer roundingScale;
+    protected RoundingMode roundingMode;
 
     /**
      * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
      * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
      * but this may be a strange value to display to the user depending on the currency being used.
-     */
-    public boolean isRoundOfferValues() {
-        return roundOfferValues;
-    }
-
-    /**
-     * @see #isRoundOfferValues()
-     * 
+     *
      * @param roundingScale
      */
     public void setRoundingScale(int roundingScale) {
@@ -45,8 +37,10 @@ public abstract class AbstractPromotionRounding implements PromotionRounding {
     }
 
     /**
-     * @see #isRoundOfferValues()
-     * 
+     * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
+     * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
+     * but this may be a strange value to display to the user depending on the currency being used.
+     *
      * @param roundingMode
      */
     public void setRoundingMode(RoundingMode roundingMode) {
@@ -55,11 +49,15 @@ public abstract class AbstractPromotionRounding implements PromotionRounding {
 
     @Override
     public RoundingMode getRoundingMode() {
-        return roundingMode;
+        if (roundingMode != null) {
+            return roundingMode;
+        } else {
+            return RoundingMode.HALF_EVEN;
+        }
     }
 
     @Override
-    public int getRoundingScale() {
+    public Integer getRoundingScale() {
         return roundingScale;
     }
 

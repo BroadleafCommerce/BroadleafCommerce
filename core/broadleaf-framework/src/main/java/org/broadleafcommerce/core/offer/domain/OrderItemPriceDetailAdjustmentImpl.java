@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
@@ -214,7 +215,18 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
 
     @Override
     public Money getValue() {
-        return value == null ? null : BroadleafCurrencyUtils.getMoney(value, getCurrency());
+        if (value == null) {
+            return null;
+        }
+
+        BroadleafCurrency currency = getCurrency();
+
+        // handle null currency by setting to system default
+        if (currency == null) {
+            currency = new BroadleafCurrencyImpl();
+            currency.setCurrencyCode(Money.defaultCurrency().getCurrencyCode());
+        }
+        return new Money(value, currency, value.scale());
     }
     
     @Override
