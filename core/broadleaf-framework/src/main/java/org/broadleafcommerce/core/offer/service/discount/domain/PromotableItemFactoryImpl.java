@@ -124,7 +124,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
                 promotableOrder, offer, useQtyOnlyTierCalculation);
 
         // Range enforcement
-        if (itemOfferPercentRoundingScale >= 0) {
+        if (itemOfferPercentRoundingScale != null && itemOfferPercentRoundingScale >= 0) {
             itemOfferPercentRoundingScale = Math.max(0,itemOfferPercentRoundingScale);
             itemOfferPercentRoundingScale = Math.min(itemOfferPercentRoundingScale, 5);
             pcio.setRoundingScale(itemOfferPercentRoundingScale);
