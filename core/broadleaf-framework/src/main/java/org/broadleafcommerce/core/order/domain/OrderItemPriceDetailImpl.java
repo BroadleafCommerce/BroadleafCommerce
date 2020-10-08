@@ -18,6 +18,8 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -40,6 +42,7 @@ import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -84,6 +87,8 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     private static final long serialVersionUID = 1L;
 
     private static RoundingMode _roundingMode;
+
+    protected static final Log LOG = LogFactory.getLog(OrderItemPriceDetailImpl.class);
 
     @Id
     @GeneratedValue(generator = "OrderItemPriceDetailId")
@@ -222,7 +227,8 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
                     try {
                         mode = RoundingMode.valueOf(modeStr);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOG.error("Unable to initialize rounding mode, using default. Value set for " +
+                                "item.offer.percent.rounding.mode was " + modeStr, e);
                     }
                 }
             }

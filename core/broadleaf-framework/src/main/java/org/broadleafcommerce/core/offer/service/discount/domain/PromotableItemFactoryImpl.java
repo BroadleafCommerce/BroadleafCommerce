@@ -42,7 +42,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
     @Value("${use.quantity.only.tier.calculation:false}")
     protected boolean useQtyOnlyTierCalculation = false;
 
-    @Value("${item.offer.percent.rounding.scale}")
+    @Value("${item.offer.percent.rounding.scale:-1}")
     protected Integer itemOfferPercentRoundingScale;
 
 
@@ -124,7 +124,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
                 promotableOrder, offer, useQtyOnlyTierCalculation);
 
         // Range enforcement
-        if (itemOfferPercentRoundingScale != null) {
+        if (itemOfferPercentRoundingScale >= 0) {
             itemOfferPercentRoundingScale = Math.max(0,itemOfferPercentRoundingScale);
             itemOfferPercentRoundingScale = Math.min(itemOfferPercentRoundingScale, 5);
             pcio.setRoundingScale(itemOfferPercentRoundingScale);
