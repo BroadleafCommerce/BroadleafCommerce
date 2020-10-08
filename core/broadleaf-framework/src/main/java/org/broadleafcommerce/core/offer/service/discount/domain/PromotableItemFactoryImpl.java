@@ -17,22 +17,63 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessorImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Enums;
+
+import java.math.RoundingMode;
+import java.util.Arrays;
+import javax.annotation.PostConstruct;
+
 @Service("blPromotableItemFactory")
 public class PromotableItemFactoryImpl implements PromotableItemFactory {
+
+    protected static final Log LOG = LogFactory.getLog(PromotableItemFactoryImpl.class);
 
     @Value("${use.quantity.only.tier.calculation:false}")
     protected boolean useQtyOnlyTierCalculation = false;
 
-    protected final PromotableOfferUtility promotableOfferUtility;
+    @Value("${item.offer.percent.rounding.scale}")
+    protected Integer itemOfferPercentRoundingScale;
 
+
+    @Value("${item.offer.percent.rounding.mode}")
+    protected String itemOfferPercentRoundingModeStr;
+
+    protected RoundingMode itemOfferPercentRoundingMode;
+
+    @PostConstruct
+    public void init() {
+        if (itemOfferPercentRoundingModeStr != null) {
+            try {
+                itemOfferPercentRoundingMode =
+                        RoundingMode.valueOf(itemOfferPercentRoundingModeStr);
+            } catch (RuntimeException rte) {
+                LOG.error("Unable to initialize rounding mode, using default. Value set for " +
+                        "item.offer.percent.rounding.mode was " + itemOfferPercentRoundingModeStr);
+            }
+        }
+    }
+
+    protected final PromotableOfferUtility promotableOfferUtility;
+    /**
+     * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
+     * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
+     * but this may be a strange value to display to the user depending on the currency being used.
+     */    /**
+     * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
+     * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
+     * but this may be a strange value to display to the user depending on the currency being used.
+     */
     public PromotableItemFactoryImpl(PromotableOfferUtility promotableOfferUtility) {
         this.promotableOfferUtility = promotableOfferUtility;
     }
@@ -79,7 +120,20 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
 
     @Override
     public PromotableCandidateItemOffer createPromotableCandidateItemOffer(PromotableOrder promotableOrder, Offer offer) {
-        return new PromotableCandidateItemOfferImpl(promotableOrder, offer, useQtyOnlyTierCalculation);
+        PromotableCandidateItemOfferImpl pcio = new PromotableCandidateItemOfferImpl(
+                promotableOrder, offer, useQtyOnlyTierCalculation);
+
+        // Range enforcement
+        if (itemOfferPercentRoundingScale != null) {
+            itemOfferPercentRoundingScale = Math.max(0,itemOfferPercentRoundingScale);
+            itemOfferPercentRoundingScale = Math.min(itemOfferPercentRoundingScale, 5);
+            pcio.setRoundingScale(itemOfferPercentRoundingScale);
+        }
+
+        if (itemOfferPercentRoundingMode != null) {
+            pcio.setRoundingMode(itemOfferPercentRoundingMode);
+        }
+        return pcio;
     }
     
     @Override
