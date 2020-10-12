@@ -495,7 +495,9 @@ QueryBuilder.prototype.bindEvents = function() {
     // rule filter change
     this.$el.on('change.queryBuilder', Selectors.rule_filter, function() {
         var $rule = $(this).closest(Selectors.rule_container);
-        Model($rule).filter = that.getFilterById($(this).val());
+        if ($(this).val()) {
+            Model($rule).filter = that.getFilterById($(this).val());
+        }
     });
 
     // rule operator change
