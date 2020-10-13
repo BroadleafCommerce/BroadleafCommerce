@@ -43,7 +43,8 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FLD_GROUP")
+@Table(name = "BLC_FLD_GROUP",
+        uniqueConstraints = @UniqueConstraint(name = "ATTR_NAME_SITE_DISC", columnNames = {"NAME", "SITE_DISC"}))
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
