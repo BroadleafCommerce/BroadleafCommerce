@@ -21,12 +21,14 @@ import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandlerImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.jpa.QueryHints;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Resource;
+import javax.cache.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -39,16 +41,32 @@ import javax.persistence.criteria.Root;
  * Created by ppatel.
  */
 @Repository("blURLHandlerDao")
-public class URlHandlerDaoImpl implements URLHandlerDao {
+public class URlHandlerDaoImpl implements URLHandlerDao, FullTableCacheOperation {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    protected FullTableCacheStrategy fullTableCache;
 
+    @EventListener
+    public void init(ContextRefreshedEvent event) {
+        fullTableCache = new FullTableCacheStrategy("blURLHandlerFullCache", 60000L);
+        fullTableCache.initializeCache(this);
+    }
+    
     @Override
     public URLHandler findURLHandlerByURI(String uri) {
+        Object element = fullTableCache.findItemInCache(uri);
+        if (element != null) {
+            return (URLHandler) element;
+        }
+        return null;
+    }
+
+    protected URLHandler findURLHandlerByURIInternal(String uri) {
         TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_BY_INCOMING_URL", URLHandler.class);
         query.setParameter("incomingURL", uri);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -60,7 +78,7 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
             return null;
         }
     }
-
+    
     @Override
     public List<URLHandler> findAllRegexURLHandlers() {
         TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_ALL_REGEX_HANDLERS", URLHandler.class);
@@ -80,7 +98,7 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
         Root<URLHandlerImpl> handler = criteria.from(URLHandlerImpl.class);
         criteria.select(handler);
         TypedQuery<URLHandler> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        //query.setHint(QueryHints.HINT_CACHEABLE, true);
         try {
             return query.getResultList();
         } catch (NoResultException e) {
@@ -92,4 +110,24 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
         return em.merge(handler);
     }
 
+    public Long findFullCacheRowCount() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(URLHandlerImpl.class)));
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return 0L;
+        }
+    }
+    
+    public void buildNewFullCache(Cache<Object, Object> newCache) {
+        List<URLHandler> list = findAllURLHandlers();
+        for (URLHandler handler : list) {
+            newCache.put(handler.getIncomingURL(), handler);
+        }
+    }
+    
 }
