@@ -644,7 +644,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         List<CategoryProductXref> xrefs = getAllParentCategoryXrefs();
         if (!CollectionUtils.isEmpty(xrefs)) {
             for (CategoryProductXref xref : xrefs) {
-                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                if (xref.getDefaultReference() != null && xref.getDefaultReference()) {
                     response = xref.getCategory();
                     break;
                 }
@@ -653,10 +653,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         if (response == null) {
             if (!CollectionUtils.isEmpty(xrefs)) {
                 for (CategoryProductXref xref : xrefs) {
-                    if (xref.getCategory().isActive()) {
-                        response = xref.getCategory();
-                        break;
-                    }
+                    response = xref.getCategory();
+                    break;
                 }
             }
         }

@@ -115,7 +115,7 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
         List<CategoryProductXref> xrefs = product.getAllParentCategoryXrefs();
         if (!CollectionUtils.isEmpty(xrefs)) {
             for (CategoryProductXref xref : xrefs) {
-                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                if (xref.getDefaultReference() != null && xref.getDefaultReference()) {
                     response = xref.getCategory();
                     break;
                 }
