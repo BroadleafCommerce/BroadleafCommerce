@@ -57,6 +57,8 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
                 .toQuery(em);
 
         try {
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "blCountryElements");
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
@@ -71,6 +73,8 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
                 .toQuery(em);
 
         try {
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "blCountryElements");
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
@@ -82,6 +86,7 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
     public List<CountrySubdivision> findSubdivisions() {
         Query query = em.createNamedQuery("BC_FIND_COUNTRY_SUBDIVISIONS");
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blCountryElements");
         return query.getResultList();
     }
 
@@ -91,6 +96,7 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
         Query query = em.createNamedQuery("BC_FIND_SUBDIVISIONS_BY_COUNTRY_ABBREVIATION");
         query.setParameter("countryAbbreviation", countryAbbreviation);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blCountryElements");
         return query.getResultList();
     }
 
@@ -100,6 +106,7 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
         query.setParameter("countryAbbreviation", countryAbbreviation);
         query.setParameter("category", category);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blCountryElements");
         return query.getResultList();
     }
 
