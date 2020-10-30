@@ -755,7 +755,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         this.ignorePatterns = ignorePatterns;
     }
 
-    private class XFormParams {
+    protected class XFormParams {
 
         String[] xformVals = null;
         Boolean[] xformSkipOverlaps = null;
