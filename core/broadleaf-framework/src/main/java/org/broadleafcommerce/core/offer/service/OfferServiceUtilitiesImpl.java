@@ -43,6 +43,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.dto.OrderItemHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -313,6 +314,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             PromotableOrderItemPriceDetail itemPriceDetail) {
         PromotableOrderItemPriceDetailAdjustment promotableOrderItemPriceDetailAdjustment =
                 promotableItemFactory.createPromotableOrderItemPriceDetailAdjustment(itemOffer, itemPriceDetail);
+        //don't want to have negative adjustments
+        if(promotableOrderItemPriceDetailAdjustment.getRetailAdjustmentValue().lessThan(BigDecimal.ZERO) ||
+                promotableOrderItemPriceDetailAdjustment.getSaleAdjustmentValue().lessThan(BigDecimal.ZERO)){
+            return;
+        }
         itemPriceDetail.addCandidateItemPriceDetailAdjustment(promotableOrderItemPriceDetailAdjustment);
     }
 
