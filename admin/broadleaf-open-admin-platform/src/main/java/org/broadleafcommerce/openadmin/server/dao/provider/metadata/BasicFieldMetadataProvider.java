@@ -919,6 +919,10 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
     }
 
+    public void refreshDataDrivenEnumMetadata(BasicFieldMetadata metadata){
+        buildDataDrivenEnumList(metadata);
+    }
+
     @Override
     public int getOrder() {
         return FieldMetadataProvider.BASIC;
