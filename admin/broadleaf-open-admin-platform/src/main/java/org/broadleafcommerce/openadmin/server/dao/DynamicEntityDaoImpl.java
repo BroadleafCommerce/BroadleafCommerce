@@ -42,6 +42,7 @@ import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.BasicFieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
@@ -129,6 +130,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     @Resource(name = "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
+
+    @Resource(name = "blBasicFieldMetadataProvider")
+    protected BasicFieldMetadataProvider basicFieldMetadataProvider;
 
     @Resource(name = "blAppConfigurationMap")
     protected Map<String, String> propertyConfigurations = new HashMap<>();
@@ -818,6 +822,13 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 } else {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Read " + cacheData.size() + " from the metada cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
+                    }
+                    //in case of MT different sites can potentially have different data driven enums, as we don't take into account
+                    //site during cache key calculation(have metadata per-site is overkill) we want to refresh data driven enums
+                    for (FieldMetadata value : cacheData.values()) {
+                        if(value instanceof BasicFieldMetadata && StringUtils.isNotEmpty(((BasicFieldMetadata)value).getOptionListEntity())){
+                            basicFieldMetadataProvider.refreshDataDrivenEnumMetadata((BasicFieldMetadata) value);
+                        }
                     }
                 }
             }
