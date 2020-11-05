@@ -580,6 +580,8 @@ $(document).ready(function() {
             if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
                 BLCAdmin.entityForm.submitFormViaAjax($form);
             } else {
+                // Before submit we should disable submit button to prevent multiple submits
+                $button.prop('disabled', true);
                 $form.submit();
             }
 
