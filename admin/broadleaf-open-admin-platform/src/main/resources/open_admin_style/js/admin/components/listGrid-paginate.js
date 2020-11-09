@@ -535,7 +535,9 @@
         },
         
         getTopVisibleIndex : function($tbody) {
-            if (typeof mcs === 'undefined') {
+            //not sure why do we do this, but that's from legacy code
+            //probably check if mCustomScrollbar plugin was enabled for this table?
+            if (typeof $tbody.mCustomScrollbar === 'undefined') {
                 return 0;
             }
 

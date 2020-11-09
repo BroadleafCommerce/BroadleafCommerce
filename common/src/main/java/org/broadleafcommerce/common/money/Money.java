@@ -220,6 +220,14 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         return multiply(value);
     }
 
+    public Money multiplyWithRounding(int inInt, RoundingMode roundingMode) {
+        BigDecimal bd = getAmount();
+        BigDecimal in = new BigDecimal(inInt);
+        BigDecimal result = bd.multiply(in);
+        result = result.setScale(getCurrency().getDefaultFractionDigits(), roundingMode);
+        return new Money(result, getCurrency());
+    }
+
     public Money multiply(BigDecimal multiplier) {
         return new Money(amount.multiply(multiplier), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
@@ -470,6 +478,18 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         // Write out the client properties from the server representation.
         out.writeFloat(amount.floatValue());
         // out.writeObject(currency);
+    }
+
+    public static Money trimUnnecessaryScaleToCurrency(Money money) {
+        int currencyScale = 2;
+        if (money.getCurrency() != null) {
+            currencyScale = money.getCurrency().getDefaultFractionDigits();
+        }
+
+        BigDecimal amount = money.getAmount().stripTrailingZeros();
+
+        int scale = Math.max(currencyScale, amount.scale());
+        return new Money(amount, money.getCurrency(), scale);
     }
 
 }

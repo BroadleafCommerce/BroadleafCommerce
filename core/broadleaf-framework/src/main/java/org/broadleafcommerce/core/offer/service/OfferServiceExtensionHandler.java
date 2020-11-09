@@ -132,5 +132,7 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType addAdditionalOffersForCode(List<Offer> offers, OfferCode offerCode);
 
+    ExtensionResultStatusType removeOfferCodeFromOrder(OfferCode offerCode, Order order);
+
 
 }

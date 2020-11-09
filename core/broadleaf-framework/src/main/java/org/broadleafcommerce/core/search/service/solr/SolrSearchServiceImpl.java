@@ -169,7 +169,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Deprecated
     protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
             SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
-        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, defaultSort, (String[]) null);
+        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, defaultSort, searchCriteria.getFilterQueries() == null ? (String[]) null : searchCriteria.getFilterQueries().toArray(new String[searchCriteria.getFilterQueries().size()]));
     }
     
     /**

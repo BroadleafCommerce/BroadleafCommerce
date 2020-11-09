@@ -221,7 +221,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         Locale locale = brc.getJavaLocale();
         DecimalFormat format = (DecimalFormat) NumberFormat.getInstance(locale);
-        format.applyPattern("0.########");
+        format.applyLocalizedPattern("0" + format.getDecimalFormatSymbols().getDecimalSeparator() + "########");
         format.setGroupingUsed(false);
         return format;
     }

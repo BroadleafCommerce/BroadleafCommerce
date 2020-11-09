@@ -105,6 +105,8 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String toOneParentProperty;
     protected String mapKeyValueProperty;
 
+    protected Boolean allowNoValueEnumOption;
+
     public SupportedFieldType getFieldType() {
         return fieldType;
     }
@@ -602,8 +604,12 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean getAllowNoValueEnumOption() {
-        return StringUtils.isEmpty(getDefaultValue())
-            && (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
+        if (allowNoValueEnumOption==null || !allowNoValueEnumOption) {
+            return StringUtils.isEmpty(getDefaultValue())
+                    && (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
+        }else{
+            return allowNoValueEnumOption;
+        }
     }
 
     public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
@@ -612,6 +618,10 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public Boolean getCanLinkToExternalEntity() {
         return canLinkToExternalEntity;
+    }
+
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
     }
 
     @Override
@@ -702,6 +712,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.defaultValue = defaultValue;
         metadata.associatedFieldName = associatedFieldName;
         metadata.canLinkToExternalEntity = canLinkToExternalEntity;
+        metadata.allowNoValueEnumOption = allowNoValueEnumOption;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

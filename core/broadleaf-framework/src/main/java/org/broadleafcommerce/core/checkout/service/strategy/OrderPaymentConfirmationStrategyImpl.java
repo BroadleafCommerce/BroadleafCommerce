@@ -119,7 +119,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         if (isCheckout && enablePendingPaymentsOnCheckoutConfirmation()) {
             responseDTO = constructPendingTransaction(payment.getType(), payment.getGatewayType(), confirmationRequest);
         } else {
-            if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
+            if (payment.getType().isCreditCardType()) {
                 // Handles the PCI-Compliant Scenario where you have an UNCONFIRMED CREDIT_CARD payment on the order.
                 // This can happen if you send the Credit Card directly to Broadleaf or you use a Digital Wallet solution like MasterPass.
                 // The Actual Credit Card PAN is stored in blSecurePU and will need to be sent to the Payment Gateway for processing.
@@ -187,6 +187,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
 
     protected void populateCreditCardOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) throws WorkflowException {
         if (payment.getReferenceNumber() != null) {
+            //maybe instead of PaymentType.CREDIT_CARD use payment.getType()?
             CreditCardPayment creditCardPayment = (CreditCardPayment) secureOrderPaymentService.findSecurePaymentInfo(payment.getReferenceNumber(), PaymentType.CREDIT_CARD);
             if (creditCardPayment != null) {
                 requestDTO.creditCard()

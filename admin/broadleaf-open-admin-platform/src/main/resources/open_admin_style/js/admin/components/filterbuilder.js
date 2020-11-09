@@ -699,6 +699,8 @@
                     var assetGrid = $filterButton.closest('.content-yield').find('.asset-grid').html($assetGrid.html());
                     var $assetListGrid = data.find('.asset-listgrid');
                     var assetListgrid = $filterButton.closest('.content-yield').find('.asset-listgrid').html($assetListGrid.html());
+                    var $assetFunctions = data.find('.asset-functions');
+                    var assetFunctions = $filterButton.closest('.content-yield').find('.asset-functions').html($assetFunctions.html());
 
                     var container = assetGrid.closest('.asset-listgrid-container');
 
@@ -1349,10 +1351,9 @@ $(document).ready(function() {
 
             el.find('.read-only').remove();
             var readonlySpan = $("<span>", {
-                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong><span class='test'></span></strong>",
+                html: "<strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
                 'class': "read-only"
         });
-            readonlySpan.find('.test').text(valueText)
             el.append($(readonlySpan));
 
             el.find('div.rule-filter-container > div > div.selectize-input').hide();

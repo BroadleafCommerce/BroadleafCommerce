@@ -108,6 +108,8 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             returnPrice = promotableOrderItem.getRetailPriceBeforeAdjustments();
         }
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
+            returnPrice = buildPreciseMoneyFromAdjustment(returnPrice,
+                    adjustment.getSaleAdjustmentValue());
             returnPrice = returnPrice.subtract(adjustment.getSaleAdjustmentValue());
         }
         return returnPrice;
@@ -116,9 +118,17 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     public Money calculateRetailAdjustmentUnitPrice() {
         Money returnPrice = promotableOrderItem.getRetailPriceBeforeAdjustments();
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
+            returnPrice = buildPreciseMoneyFromAdjustment(returnPrice,
+                    adjustment.getRetailAdjustmentValue());
             returnPrice = returnPrice.subtract(adjustment.getRetailAdjustmentValue());
         }
         return returnPrice;
+    }
+
+    protected Money buildPreciseMoneyFromAdjustment(Money original,
+                                                    Money adjustment) {
+        return new Money(original.getAmount(), original.getCurrency(),
+                adjustment.getAmount().scale());
     }
 
     /**

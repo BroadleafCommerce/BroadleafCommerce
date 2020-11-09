@@ -18,8 +18,10 @@
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.OfferValueModifierExtensionManager;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -36,6 +38,8 @@ import javax.annotation.Resource;
 public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
     public static final int ORDER = 1000;
+    public static final String FINALIZE_CHECKOUT = "FINALIZE_CHECKOUT";
+    public static final String OFFERS_EXPIRED = "OFFERS_EXPIRED";
     
     @Resource(name="blOfferService")
     protected OfferService offerService;
@@ -64,11 +68,35 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
         if (CollectionUtils.isNotEmpty(offers) && offerModifierExtensionManager != null) {
             offerModifierExtensionManager.getProxy().modifyOfferValues(offers, order);
         }
+        Boolean isCheckout = (Boolean)BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(FINALIZE_CHECKOUT);
+        int offerCount = 0;
+        if (isCheckout != null && isCheckout) {
+            offerCount = getOfferCount(order);
+        }
 
         order = offerService.applyAndSaveOffersToOrder(offers, order);
+
+        if (isCheckout != null && isCheckout) {
+            int offerCountAfter = getOfferCount(order);
+            if (offerCountAfter != offerCount) {
+                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(OFFERS_EXPIRED, Boolean.TRUE);
+            }
+        }
         context.setSeedData(order);
 
         return context;
+    }
+
+    private int getOfferCount(Order order) {
+        int offerCount = 0;
+        if (CollectionUtils.isNotEmpty(order.getOrderAdjustments())) {
+            for (OrderAdjustment orderAdjustment : order.getOrderAdjustments()) {
+                if (orderAdjustment.getOffer() != null) {
+                    offerCount++;
+                }
+            }
+        }
+        return offerCount;
     }
 
     protected List<OfferCode> getNewOfferCodesFromCustomer(Order order) {

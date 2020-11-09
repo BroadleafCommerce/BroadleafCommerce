@@ -66,7 +66,7 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Column(name = "FLD_GROUP_ID")
     protected Long id;
 
-    @Column (name = "NAME", unique = true)
+    @Column (name = "NAME")
     protected String name;
 
     @Column (name = "INIT_COLLAPSED_FLAG")
@@ -87,6 +87,7 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
+    @ClonePolicyCollectionOverride
     protected List<StructuredContentFieldGroupXref> fieldGroupXrefs = new ArrayList<StructuredContentFieldGroupXref>();
 
     @Override
