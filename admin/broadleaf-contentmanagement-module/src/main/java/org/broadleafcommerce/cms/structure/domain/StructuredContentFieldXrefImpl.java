@@ -60,9 +60,9 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "StructuredContentFieldId")
+    @GeneratedValue(generator = "StructuredContentFieldXrefId")
     @GenericGenerator(
-            name = "StructuredContentFieldId",
+            name = "StructuredContentFieldXrefId",
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentFieldXrefImpl"),
