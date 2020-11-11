@@ -44,6 +44,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -543,7 +544,9 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
     protected Annotation getIndexes(ConstPool constantPool, Annotation existingTable, Annotation templateTable) {
         Annotation newTable = new Annotation(Table.class.getName(), constantPool);
         ArrayMemberValue indexArray = new ArrayMemberValue(constantPool);
+        ArrayMemberValue uniqueConstraintArray = new ArrayMemberValue(constantPool);
         Set<MemberValue> indexMemberValues = new HashSet<>();
+        Set<MemberValue> uniqueConstraintMemberValues = new HashSet<>();
         {
             ArrayMemberValue templateIndexValues = (ArrayMemberValue) templateTable.getMemberValue("indexes");
             if (templateIndexValues != null) {
@@ -551,6 +554,13 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 logger.debug("Adding template values to new Table");
             }
         }
+
+        ArrayMemberValue templateUniqueConstraintValues = (ArrayMemberValue) templateTable.getMemberValue("uniqueConstraints");
+        if (templateUniqueConstraintValues != null) {
+            uniqueConstraintMemberValues.addAll(Arrays.asList(templateUniqueConstraintValues.getValue()));
+            logger.debug("Adding template values to new Table");
+        }
+
         if (existingTable != null) {
             if (existingTable.getMemberValue("name") != null) {
                 StringMemberValue name = new StringMemberValue(constantPool);
@@ -560,6 +570,11 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             ArrayMemberValue oldIndexValues = (ArrayMemberValue) existingTable.getMemberValue("indexes");
             if (oldIndexValues != null) {
                 indexMemberValues.addAll(Arrays.asList(oldIndexValues.getValue()));
+                logger.debug("Adding previous values to new Table");
+            }
+            ArrayMemberValue oldUniqueConstraintValues = (ArrayMemberValue) existingTable.getMemberValue("uniqueConstraints");
+            if (oldUniqueConstraintValues != null) {
+                uniqueConstraintMemberValues.addAll(Arrays.asList(oldUniqueConstraintValues.getValue()));
                 logger.debug("Adding previous values to new Table");
             }
         }
@@ -573,9 +588,22 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 deepCopyIndexes.add(newAnnotationMember);
             }
         }
+        List<MemberValue> deepCopyUniqueConstraints = new ArrayList<>();
+        for (MemberValue value : uniqueConstraintMemberValues) {
+            if (AnnotationMemberValue.class.isAssignableFrom(value.getClass())) {
+                AnnotationMemberValue annotationMember = (AnnotationMemberValue) value;
+                AnnotationMemberValue newAnnotationMember = new AnnotationMemberValue(constantPool);
+                Annotation annotation = annotationMember.getValue();
+                newAnnotationMember.setValue(cloneUniqueAnnotation(annotation, constantPool));
+                deepCopyUniqueConstraints.add(newAnnotationMember);
+            }
+        }
         indexArray.setValue(deepCopyIndexes.toArray(new MemberValue[deepCopyIndexes.size()]));
+        uniqueConstraintArray.setValue(deepCopyUniqueConstraints.toArray(new MemberValue[deepCopyUniqueConstraints.size()]));
         newTable.addMemberValue("indexes", indexArray);
-
+        if(deepCopyUniqueConstraints.size()>0) {
+            newTable.addMemberValue("uniqueConstraints", uniqueConstraintArray);
+        }
         return newTable;
 
     }
@@ -596,6 +624,21 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             BooleanMemberValue unique = new BooleanMemberValue(constantPool);
             unique.setValue(((BooleanMemberValue) annotation.getMemberValue("unique")).getValue());
             newAnnotation.addMemberValue("unique", unique);
+        }
+        return newAnnotation;
+    }
+
+    protected Annotation cloneUniqueAnnotation(Annotation annotation, ConstPool constantPool) {
+        Annotation newAnnotation = new Annotation(UniqueConstraint.class.getName(), constantPool);
+        if (annotation.getMemberValue("name") != null) {
+            StringMemberValue name = new StringMemberValue(constantPool);
+            name.setValue(((StringMemberValue) annotation.getMemberValue("name")).getValue());
+            newAnnotation.addMemberValue("name", name);
+        }
+        if (annotation.getMemberValue("columnNames") != null) {
+            ArrayMemberValue columnNames = new ArrayMemberValue(constantPool);
+            columnNames.setValue(((ArrayMemberValue)annotation.getMemberValue("columnNames")).getValue());
+            newAnnotation.addMemberValue("columnNames", columnNames);
         }
         return newAnnotation;
     }
