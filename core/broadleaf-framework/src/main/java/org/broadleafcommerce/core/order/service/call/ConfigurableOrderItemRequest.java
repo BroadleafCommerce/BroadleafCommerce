@@ -44,7 +44,7 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected boolean firstExpandable;
     protected boolean lastExpandable;
 
-    protected boolean priceIncludedInParent;
+    protected String pricingModelType;
 
     public Product getProduct() {
         return product;
@@ -177,11 +177,11 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
         this.lastExpandable = lastExpandable;
     }
 
-    public boolean isPriceIncludedInParent() {
-        return priceIncludedInParent;
+    public String getPricingModelType() {
+        return pricingModelType;
     }
 
-    public void setPriceIncludedInParent(final boolean priceIncludedInParent) {
-        this.priceIncludedInParent = priceIncludedInParent;
+    public void setPricingModelType(final String pricingModelType) {
+        this.pricingModelType = pricingModelType;
     }
 }
