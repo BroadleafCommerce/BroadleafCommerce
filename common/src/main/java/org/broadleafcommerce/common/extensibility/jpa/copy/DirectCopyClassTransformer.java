@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.extensibility.jpa.copy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.SkipDefaultConstructorCheck;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
 import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto;
@@ -255,7 +256,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                                 // an array. In this case, we will not initialize the field.
                             }
 
-                            if (defaultConstructorFound) {
+                            if (defaultConstructorFound && field.getAnnotation(SkipDefaultConstructorCheck.class) == null) {
                                 clazz.addField(copiedField, "new " + implClass + "()");
                             } else {
                                 clazz.addField(copiedField);
