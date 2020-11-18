@@ -24,6 +24,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -52,6 +54,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -114,6 +118,10 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSiteElements")
     @AdminPresentation(excluded = true)
     protected List<Catalog> catalogs = new ArrayList<Catalog>();
+
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "DEFAULT_LOCALE")
+    protected Locale defaultLocale;
 
     /**************************************************/
     /**
@@ -184,7 +192,15 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     public void setCatalogs(List<Catalog> catalogs) {
         this.catalogs = catalogs;
     }
-    
+
+    public Locale getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    public void setDefaultLocale(Locale defaultLocale) {
+        this.defaultLocale = defaultLocale;
+    }
+
     @Override
     public Character getArchived() {
        ArchiveStatus temp;

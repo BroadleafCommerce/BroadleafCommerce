@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
@@ -33,25 +34,25 @@ public interface Site extends Serializable, Status {
      * Unique/internal id for a site.
      * @return
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the internal id for a site.
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * The display name for a site.
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Sets the displayName for a site.
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * @deprecated use {@link #getSiteResolutionType()}
@@ -61,7 +62,7 @@ public interface Site extends Serializable, Status {
      * @return
      */
     @Deprecated
-    public String getSiteIdentifierType();
+    String getSiteIdentifierType();
 
     /**
      * @deprecated Use {@link #setSiteResolutionType(SiteResolutionType)}
@@ -70,7 +71,7 @@ public interface Site extends Serializable, Status {
      * @param siteIdentifierType
      */
     @Deprecated
-    public void setSiteIdentifierType(String siteIdentifierType);
+    void setSiteIdentifierType(String siteIdentifierType);
 
     /**
      * Used along with {@link #getSiteResolutionType()} to determine the current
@@ -78,13 +79,13 @@ public interface Site extends Serializable, Status {
      *
      * @return
      */
-    public String getSiteIdentifierValue();
+    String getSiteIdentifierValue();
 
     /**
      *
      * @param siteIdentifierValue
      */
-    public void setSiteIdentifierValue(String siteIdentifierValue);
+    void setSiteIdentifierValue(String siteIdentifierValue);
     
     /**
      * Intended to be used along with the #getSiteIdentifierValue()
@@ -93,14 +94,14 @@ public interface Site extends Serializable, Status {
      *
      * @return
      */
-    public SiteResolutionType getSiteResolutionType();
+    SiteResolutionType getSiteResolutionType();
 
     /** 
      * Sets the site resolution type.
      * @see #getSiteResolutionType()
      * @param siteResolutionType
      */
-    public void setSiteResolutionType(SiteResolutionType siteResolutionType);
+    void setSiteResolutionType(SiteResolutionType siteResolutionType);
 
     /**
      * Retrieve a list of product, category and offer groupings that
@@ -110,7 +111,7 @@ public interface Site extends Serializable, Status {
      * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
     @Deprecated
-    public List<Catalog> getCatalogs();
+    List<Catalog> getCatalogs();
 
     /**
      * Set the list of product, category and offer groupings that
@@ -120,7 +121,21 @@ public interface Site extends Serializable, Status {
      * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
     @Deprecated
-    public void setCatalogs(List<Catalog> catalogs);
+    void setCatalogs(List<Catalog> catalogs);
+
+    /**
+     * used for default locale
+     *
+     * @return Locale
+     */
+    Locale getDefaultLocale();
+
+    /**
+     * Sets the site default locale.
+     * @see #getDefaultLocale()
+     * @param defaultLocale
+     */
+    void setDefaultLocale(Locale defaultLocale);
 
     /**
      * Retrieve an deep copy of this site. Not bound by
@@ -128,13 +143,13 @@ public interface Site extends Serializable, Status {
      *
      * @return a deep copy of this site
      */
-    public Site clone();
+    Site clone();
     
-    public ArchiveStatus getArchiveStatus();
+    ArchiveStatus getArchiveStatus();
 
-    public boolean isDeactivated();
+    boolean isDeactivated();
 
-    public void setDeactivated(boolean deactivated);
+    void setDeactivated(boolean deactivated);
     
     /**
      * This method will return true when the given site was created based on a template.
@@ -143,5 +158,5 @@ public interface Site extends Serializable, Status {
      * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3     
      */
     @Deprecated
-    public boolean isTemplateSite();
+    boolean isTemplateSite();
 }
