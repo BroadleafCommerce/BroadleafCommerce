@@ -121,6 +121,8 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "DEFAULT_LOCALE")
+    @AdminPresentation(friendlyName = "SiteImpl_Default_Locale", order = 5000,
+        gridOrder = 5, defaultValue = "false")
     protected Locale defaultLocale;
 
     /**************************************************/
@@ -280,6 +282,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             clone.setDeactivated(isDeactivated());
             clone.setSiteResolutionType(getSiteResolutionType());
             clone.setSiteIdentifierValue(getSiteIdentifierValue());
+            clone.setDefaultLocale(getDefaultLocale());
             ((Status) clone).setArchived(getArchived());
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -21,8 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.site.service.SiteService;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -59,9 +57,6 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
 
     @Resource(name = "blLocaleService")
     private LocaleService localeService;
-
-    @Resource(name = "blSiteService")
-    private SiteService siteService;
 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
@@ -102,9 +97,8 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
 
         // Finally, use the default
         if (locale == null) {
-//            Locale defaultSiteLocale = siteService.retrievePersistentDefaultSite().getDefaultLocale();
-//            locale = defaultSiteLocale == null ? localeService.findDefaultLocale() : defaultSiteLocale;
-            locale = localeService.findDefaultLocale();
+            Locale defaultSiteLocale = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite().getDefaultLocale();
+            locale = defaultSiteLocale == null ? localeService.findDefaultLocale() : defaultSiteLocale;
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_SESSION);
             }
