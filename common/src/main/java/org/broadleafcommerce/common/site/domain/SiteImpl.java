@@ -121,8 +121,8 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "DEFAULT_LOCALE")
-    @AdminPresentation(friendlyName = "SiteImpl_Default_Locale", order = 5000,
-        gridOrder = 5, defaultValue = "false")
+    @AdminPresentation(friendlyName = "SiteImpl_Default_Locale", order = 3500, gridOrder = 5,
+        prominent = true, fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
     protected Locale defaultLocale;
 
     /**************************************************/
@@ -195,10 +195,12 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
         this.catalogs = catalogs;
     }
 
+    @Override
     public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
+    @Override
     public void setDefaultLocale(Locale defaultLocale) {
         this.defaultLocale = defaultLocale;
     }
