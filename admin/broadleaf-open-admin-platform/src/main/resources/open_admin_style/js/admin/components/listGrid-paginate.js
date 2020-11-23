@@ -993,10 +993,9 @@
                         	var url = $tbody.closest('table').data('path');
                             if ($container.data('parentid')) {
                                 url += "?parentId=" + $container.data('parentid');
-                                url += "&inModal=" + inModal;
-                            } else {
-                                url += "?inModal=" + inModal;
                             }
+                            var ampersand = url.indexOf('?') === -1 ? "?" : "&";
+                            url += ampersand + "inModal=" + inModal;
 
                             var sectionCrumbs = $tbody.closest('table').data('sectioncrumbs');
                             if (typeof sectionCrumbs !== 'undefined') {
