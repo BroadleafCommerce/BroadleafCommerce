@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -54,6 +55,8 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -484,7 +487,16 @@ public class OrderItemServiceImpl implements OrderItemService {
                 orderItemRequest.getChildOrderItems().add(buildOrderItemRequestDTOFromOrderItem(childItem));
             }
         }
-
+        Collections.sort(orderItemRequest.getChildOrderItems(), new Comparator<OrderItemRequestDTO>() {
+            @Override
+            public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
+                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
+                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
+                return new CompareToBuilder()
+                        .append(o1DisplayOrder, o2DisplayOrder)
+                        .toComparison();
+            }
+        });
         return orderItemRequest;
     }
 
