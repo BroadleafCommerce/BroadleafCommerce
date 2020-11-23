@@ -34,25 +34,25 @@ public interface Site extends Serializable, Status {
      * Unique/internal id for a site.
      * @return
      */
-    Long getId();
+    public Long getId();
 
     /**
      * Sets the internal id for a site.
      * @param id
      */
-    void setId(Long id);
+    public void setId(Long id);
 
     /**
      * The display name for a site.
      * @return
      */
-    String getName();
+    public String getName();
 
     /**
      * Sets the displayName for a site.
      * @param name
      */
-    void setName(String name);
+    public void setName(String name);
 
     /**
      * @deprecated use {@link #getSiteResolutionType()}
@@ -62,7 +62,7 @@ public interface Site extends Serializable, Status {
      * @return
      */
     @Deprecated
-    String getSiteIdentifierType();
+    public String getSiteIdentifierType();
 
     /**
      * @deprecated Use {@link #setSiteResolutionType(SiteResolutionType)}
@@ -71,7 +71,7 @@ public interface Site extends Serializable, Status {
      * @param siteIdentifierType
      */
     @Deprecated
-    void setSiteIdentifierType(String siteIdentifierType);
+    public void setSiteIdentifierType(String siteIdentifierType);
 
     /**
      * Used along with {@link #getSiteResolutionType()} to determine the current
@@ -79,14 +79,14 @@ public interface Site extends Serializable, Status {
      *
      * @return
      */
-    String getSiteIdentifierValue();
+    public String getSiteIdentifierValue();
 
     /**
      *
      * @param siteIdentifierValue
      */
-    void setSiteIdentifierValue(String siteIdentifierValue);
-    
+    public void setSiteIdentifierValue(String siteIdentifierValue);
+
     /**
      * Intended to be used along with the #getSiteIdentifierValue()
      * by an implementation of SiteResolver to determine 
@@ -94,14 +94,15 @@ public interface Site extends Serializable, Status {
      *
      * @return
      */
-    SiteResolutionType getSiteResolutionType();
+    public SiteResolutionType getSiteResolutionType();
 
     /** 
      * Sets the site resolution type.
-     * @see #getSiteResolutionType()
+     *
      * @param siteResolutionType
+     * @see #getSiteResolutionType()
      */
-    void setSiteResolutionType(SiteResolutionType siteResolutionType);
+    public void setSiteResolutionType(SiteResolutionType siteResolutionType);
 
     /**
      * Retrieve a list of product, category and offer groupings that
@@ -111,7 +112,7 @@ public interface Site extends Serializable, Status {
      * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
     @Deprecated
-    List<Catalog> getCatalogs();
+    public List<Catalog> getCatalogs();
 
     /**
      * Set the list of product, category and offer groupings that
@@ -121,21 +122,21 @@ public interface Site extends Serializable, Status {
      * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
     @Deprecated
-    void setCatalogs(List<Catalog> catalogs);
+    public void setCatalogs(List<Catalog> catalogs);
 
     /**
      * used for default locale
      *
      * @return Locale
      */
-    Locale getDefaultLocale();
+    public Locale getDefaultLocale();
 
     /**
      * Sets the site default locale.
-     * @see #getDefaultLocale()
+     *
      * @param defaultLocale
      */
-    void setDefaultLocale(Locale defaultLocale);
+    public void setDefaultLocale(Locale defaultLocale);
 
     /**
      * Retrieve an deep copy of this site. Not bound by
@@ -143,14 +144,14 @@ public interface Site extends Serializable, Status {
      *
      * @return a deep copy of this site
      */
-    Site clone();
-    
-    ArchiveStatus getArchiveStatus();
+    public Site clone();
 
-    boolean isDeactivated();
+    public ArchiveStatus getArchiveStatus();
 
-    void setDeactivated(boolean deactivated);
-    
+    public boolean isDeactivated();
+
+    public void setDeactivated(boolean deactivated);
+
     /**
      * This method will return true when the given site was created based on a template.
      * 
@@ -158,5 +159,5 @@ public interface Site extends Serializable, Status {
      * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3     
      */
     @Deprecated
-    boolean isTemplateSite();
+    public boolean isTemplateSite();
 }
