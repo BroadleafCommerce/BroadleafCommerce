@@ -153,17 +153,6 @@ public class OrderItemRequestDTO {
     }
 
     public List<OrderItemRequestDTO> getChildOrderItems() {
-        Collections.sort(childOrderItems, new Comparator<OrderItemRequestDTO>() {
-            @Override
-            public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
-                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
-                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
-                return new CompareToBuilder()
-                        .append(o1DisplayOrder, o2DisplayOrder)
-                        .toComparison();
-            }
-        });
-
         return childOrderItems;
     }
     

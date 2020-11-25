@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -83,6 +84,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -751,6 +754,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem) {
         parentOrderItemRequest.getChildOrderItems().add(dependentOrderItem);
+        Collections.sort(parentOrderItemRequest.getChildOrderItems(), new Comparator<OrderItemRequestDTO>() {
+            @Override
+            public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
+                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
+                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
+                return new CompareToBuilder()
+                        .append(o1DisplayOrder, o2DisplayOrder)
+                        .toComparison();
+            }
+        });
     }
 
     @Override
