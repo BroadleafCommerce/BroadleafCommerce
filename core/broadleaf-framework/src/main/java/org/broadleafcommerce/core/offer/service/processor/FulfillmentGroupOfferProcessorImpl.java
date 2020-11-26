@@ -272,7 +272,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
             discountOrderRegularShippingTotal = discountOrderRegularShippingTotal.add(fg.calculatePriceWithoutAdjustments());
         }
 
-        if (discountOrderRegularShippingTotal.lessThan(regularOrderDiscountShippingTotal)) {
+        if (discountOrderRegularShippingTotal.lessThanOrEqual(regularOrderDiscountShippingTotal)) {
             // order/item offer is better; remove totalitarian fulfillment group offer and process other fg offers
             order.removeAllCandidateFulfillmentOfferAdjustments();
             fgOfferApplied = false;

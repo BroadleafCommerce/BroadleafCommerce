@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -71,6 +72,9 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager extensionManager;
+
+    @Resource(name = "blGenericEntityService")
+    protected GenericEntityService entityService;
 
     @Override
     public void sortTargetItemDetails(List<PromotableOrderItemPriceDetail> itemPriceDetails, boolean applyToSalePrice) {
@@ -431,6 +435,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                 OrderItemPriceDetailAdjustment adj = iterator.next();
                 if (adjustmentIdsToRemove.contains(adj.getOffer().getId())) {
                     iterator.remove();
+                    entityService.remove(adj);
                 }
             }
         }
@@ -451,6 +456,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             OrderItemPriceDetail currentDetail = pdIterator.next();
             if (unmatchedDetailsMap.containsKey(currentDetail.getId())) {
                 pdIterator.remove();
+                entityService.remove(currentDetail);
             }
         }
     }
@@ -462,6 +468,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             OrderItemQualifier currentQualifier = qIterator.next();
             if (unmatchedQualifiersMap.containsKey(currentQualifier.getId())) {
                 qIterator.remove();
+                entityService.remove(currentQualifier);
             }
         }
     }
@@ -530,4 +537,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         this.offerDao = offerDao;
     }
 
+    public GenericEntityService getGenericEntityService() {
+        return entityService;
+    }
+
+    public void setGenericEntityService(GenericEntityService entityService) {
+        this.entityService = entityService;
+    }
 }
