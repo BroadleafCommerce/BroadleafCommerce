@@ -537,4 +537,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         this.offerDao = offerDao;
     }
 
+    public GenericEntityService getGenericEntityService() {
+        return entityService;
+    }
+
+    public void setGenericEntityService(GenericEntityService entityService) {
+        this.entityService = entityService;
+    }
 }
