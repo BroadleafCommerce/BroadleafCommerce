@@ -8184,7 +8184,9 @@
                     if (tag.match(this.tabifier.lineBefore) || nl)
                     {
                         out = out.replace(/\s*$/, '');
-                        out += '\n';
+                        /* START BLC MODIFICATION */
+                        // out += '\n';
+                        /* END BLC MODIFICATION */
                     }
 
                     if (nl && '/' == tag.charAt(1)) this.tabifier.cleanlevel--;
