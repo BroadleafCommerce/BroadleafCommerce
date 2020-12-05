@@ -47,7 +47,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     protected static String accountWishlistRedirect = "redirect:/account/wishlist";
 
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-                      OrderItemRequestDTO  itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
+                      OrderItemRequestDTO itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
         Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer(request));
 
         if (wishlist == null) {
