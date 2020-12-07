@@ -30,9 +30,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -41,6 +42,9 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,8 +59,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -66,17 +68,51 @@ import java.util.Map;
 @EntityListeners(value = { AdminAuditableListener.class })
 @Table(name = "BLC_STATIC_ASSET")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationOverrides(
-        {
-            @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL, group = StaticAssetAdminPresentation.GroupName.File_Details)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL, group = StaticAssetAdminPresentation.GroupName.File_Details)),
-            @AdminPresentationOverride(name="sandbox", value=@AdminPresentation(excluded = true))
+@AdminPresentationMergeOverrides(value = { 
+    @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
+        mergeEntries = { 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
         }
-)
+    ),
+    @AdminPresentationMergeOverride(name = "auditable.updatedBy.id",
+        mergeEntries = { 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+        }
+    ),
+    @AdminPresentationMergeOverride(name = "auditable.createdBy.name",
+        mergeEntries = { 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+        }
+    ),
+    @AdminPresentationMergeOverride(name = "auditable.updatedBy.name",
+        mergeEntries = { 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+        }
+    ),
+    @AdminPresentationMergeOverride(name = "auditable.dateCreated",
+        mergeEntries = { 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = StaticAssetAdminPresentation.GroupName.File_Details)
+        }
+    ),
+    @AdminPresentationMergeOverride(name = "auditable.dateUpdated",
+        mergeEntries = { 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = StaticAssetAdminPresentation.GroupName.File_Details)
+        }
+    ),
+    @AdminPresentationMergeOverride(name = "sandbox",
+        mergeEntries = { 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)
+        }
+    )
+})
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
