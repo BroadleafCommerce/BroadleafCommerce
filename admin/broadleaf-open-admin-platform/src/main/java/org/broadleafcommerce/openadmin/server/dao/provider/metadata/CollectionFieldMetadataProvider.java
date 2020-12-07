@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,9 +28,11 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -37,10 +40,11 @@ import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
@@ -68,7 +72,9 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
     }
 
     protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
-        return overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationMergeOverrides.class) != null;
+        AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
+        AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationMergeOverrides.class);
+        return (myOverrides != null && !ArrayUtils.isEmpty(myOverrides.collections()) || myMergeOverrides != null);
     }
 
     @Override
@@ -90,6 +96,22 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
     public MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
             return MetadataProviderResponse.NOT_HANDLED;
+        }
+        Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
+
+        AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
+        if (myOverrides != null) {
+            for (AdminPresentationCollectionOverride myOverride : myOverrides.collections()) {
+                presentationCollectionOverrides.put(myOverride.name(), myOverride);
+            }
+        }
+
+        for (String propertyName : presentationCollectionOverrides.keySet()) {
+            for (String key : metadata.keySet()) {
+                if (key.startsWith(propertyName)) {
+                    buildAdminPresentationCollectionOverride(overrideViaAnnotationRequest.getPrefix(), overrideViaAnnotationRequest.getParentExcluded(), metadata, presentationCollectionOverrides, propertyName, key, overrideViaAnnotationRequest.getDynamicEntityDao());
+                }
+            }
         }
 
         AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationMergeOverrides.class);
@@ -181,6 +203,65 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             }
         }
         return MetadataProviderResponse.HANDLED;
+    }
+
+    protected void buildAdminPresentationCollectionOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides, String propertyName, String key, DynamicEntityDao dynamicEntityDao) {
+        AdminPresentationCollectionOverride override = presentationCollectionOverrides.get(propertyName);
+        if (override != null) {
+            AdminPresentationCollection annot = override.value();
+            if (annot != null) {
+                String testKey = prefix + key;
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("buildAdminPresentationCollectionOverride:Excluding " + key + "because an override annotation declared " + testKey + "to be excluded");
+                    }
+                    metadata.setExcluded(true);
+                    return;
+                }
+                if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && !annot.excluded()) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    if (!isParentExcluded) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("buildAdminPresentationCollectionOverride:Showing " + key + "because an override annotation declared " + testKey + " to not be excluded");
+                        }
+                        metadata.setExcluded(false);
+                    }
+                }
+                if (!(mergedProperties.get(key) instanceof BasicCollectionMetadata)) {
+                    return;
+                }
+                BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) mergedProperties.get(key);
+                if (serverMetadata.getTargetClass() != null) {
+                    try {
+                        Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                        Class<?> parentClass = null;
+                        if (serverMetadata.getOwningClass() != null) {
+                            parentClass = Class.forName(serverMetadata.getOwningClass());
+                        }
+                        String fieldName = serverMetadata.getFieldName();
+                        Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
+                        FieldMetadataOverride localMetadata = constructBasicCollectionMetadataOverride(annot);
+                        //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
+                        Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                        FieldInfo info = buildFieldInfo(field);
+                        buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata, prefix);
+                        BasicCollectionMetadata result = (BasicCollectionMetadata) temp.get(field.getName());
+                        result.setInheritedFromType(serverMetadata.getInheritedFromType());
+                        result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
+                        mergedProperties.put(key, result);
+                        if (isParentExcluded) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("buildAdminPresentationCollectionOverride:Excluding " + key + "because the parent was excluded");
+                            }
+                            serverMetadata.setExcluded(true);
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
     }
 
     protected FieldMetadataOverride overrideCollectionMergeMetadata(AdminPresentationMergeOverride merge) {

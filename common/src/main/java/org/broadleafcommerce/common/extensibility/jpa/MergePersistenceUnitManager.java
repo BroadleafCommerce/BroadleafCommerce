@@ -27,13 +27,13 @@ import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTran
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafPersistenceUnitDeclaringClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
+import org.hibernate.ejb.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
@@ -135,14 +135,6 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         if (!mergedDataSources.isEmpty()) {
             setDataSources(mergedDataSources);
         }
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        if (getLoadTimeWeaver() == null && InstrumentationLoadTimeWeaver.isInstrumentationAvailable()) {
-            setLoadTimeWeaver(new InstrumentationLoadTimeWeaver(getClass().getClassLoader()));
-        }
-        preparePersistenceUnitInfos();
     }
 
     @PostConstruct
