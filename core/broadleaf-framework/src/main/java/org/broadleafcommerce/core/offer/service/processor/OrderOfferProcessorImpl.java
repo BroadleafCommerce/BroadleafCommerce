@@ -20,17 +20,16 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferServiceUtilities;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
@@ -66,7 +65,7 @@ import javax.annotation.Resource;
 public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements OrderOfferProcessor {
 
     private static final Log LOG = LogFactory.getLog(OrderOfferProcessorImpl.class);
-
+    
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
@@ -78,6 +77,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     @Resource(name = "blOfferServiceUtilities")
     protected OfferServiceUtilities offerServiceUtilities;
+
+    @Resource(name = "blGenericEntityService")
+    protected GenericEntityService entityService;
 
     @Override
     public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
@@ -324,6 +326,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 } else {
                     // No longer using this order adjustment, remove it.
                     orderAdjIterator.remove();
+                    entityService.remove(adjustment);
                 }
             }
         }
@@ -529,6 +532,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             } else {
                 // Removing no longer valid adjustment
                 adjustmentIterator.remove();
+                entityService.remove(currentAdj);
             }
         }
 

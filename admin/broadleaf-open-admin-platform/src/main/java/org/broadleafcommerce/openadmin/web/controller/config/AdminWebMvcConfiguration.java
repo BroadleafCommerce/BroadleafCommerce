@@ -21,9 +21,12 @@ import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.config.PostAutoConfigurationImport;
 import org.broadleafcommerce.common.web.BroadleafCookieLocaleResolver;
 import org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor;
+import org.broadleafcommerce.openadmin.web.controller.AdminBasicErrorController;
 import org.broadleafcommerce.openadmin.web.controller.AdminRequestMappingHandlerMapping;
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -99,6 +102,11 @@ public class AdminWebMvcConfiguration {
                     return new AdminRequestMappingHandlerMapping();
                 }
             };
+        }
+
+        @Bean
+        public AdminBasicErrorController basicErrorController() {
+            return new AdminBasicErrorController(new DefaultErrorAttributes(), new ErrorProperties());
         }
     }
 

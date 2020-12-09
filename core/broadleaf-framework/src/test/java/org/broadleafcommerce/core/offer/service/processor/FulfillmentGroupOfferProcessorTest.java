@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
+import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -86,6 +87,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
     protected OrderMultishipOptionService multishipOptionServiceMock;
     protected OfferTimeZoneProcessor offerTimeZoneProcessorMock;
     protected OfferServiceUtilities offerServiceUtilitiesMock;
+    protected GenericEntityService genericEntityServiceMock;
 
     protected FulfillmentGroupOfferProcessorImpl fgProcessor;
 
@@ -117,6 +119,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
         offerServiceUtilitiesMock = EasyMock.createMock(OfferServiceUtilities.class);
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
+        genericEntityServiceMock = EasyMock.createMock(GenericEntityService.class);
 
         fgProcessor = new TestableFulfillmentGroupOfferProcessor();
         fgProcessor.setOfferDao(offerDaoMock);
@@ -127,6 +130,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
         offerServiceUtilities.setOfferDao(offerDaoMock);
         offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerServiceUtilities.setGenericEntityService(genericEntityServiceMock);
 
         OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
         orderProcessor.setOfferDao(offerDaoMock);
