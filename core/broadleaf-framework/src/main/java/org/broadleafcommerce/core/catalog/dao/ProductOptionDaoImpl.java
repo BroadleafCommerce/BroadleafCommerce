@@ -139,7 +139,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Sku> criteria = cb.createQuery(Sku.class);
         Root<SkuProductOptionValueXrefImpl> root = criteria.from(SkuProductOptionValueXrefImpl.class);
-        criteria.select(root.get("sku").as(Sku.class));
+        criteria.select(root.get("sku"));
 
         List<Predicate> predicates = new ArrayList<>();
 
