@@ -19,6 +19,7 @@
 package org.broadleafcommerce.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -68,6 +69,9 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
+
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
@@ -84,7 +88,8 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Override
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        Map<String, Object> md = daoHelper.getIdMetadata(clazz, em);
+        EntityManager emForClass = getEntityManager(clazz);
+        Map<String, Object> md = daoHelper.getIdMetadata(clazz, emForClass);
         AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
 
         if (type instanceof LongType) {
@@ -93,7 +98,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
             id = Integer.parseInt(String.valueOf(id));
         }
 
-        return em.find(clazz, id);
+        return emForClass.find(clazz, id);
     }
 
     @Override
@@ -228,5 +233,9 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Override
     public EntityManager getEntityManager() {
         return em;
+    }
+
+    protected EntityManager getEntityManager(Class clazz) {
+        return persistenceService.identifyEntityManager(clazz);
     }
 }
