@@ -88,6 +88,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Override
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
+        //We need to get PU dynamically to handle cases when class is not in blPU, e.g ScheduledJobImpl
         EntityManager emForClass = getEntityManager(clazz);
         Map<String, Object> md = daoHelper.getIdMetadata(clazz, emForClass);
         AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
