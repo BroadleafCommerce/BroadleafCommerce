@@ -669,7 +669,7 @@
 
             var url = $($filterFields[0]).data('action');
 
-            const urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
+            var urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
             $('body').trigger(urlEvent, [url, $tbody]);
             url = urlEvent.resultUrl || url;
 
