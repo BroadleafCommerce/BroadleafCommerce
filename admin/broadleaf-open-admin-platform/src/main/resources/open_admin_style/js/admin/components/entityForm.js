@@ -731,13 +731,17 @@ $(document).ready(function() {
                         BLCAdmin.hideCurrentModal();
 
                     } else {
-                        BLCAdmin.hideCurrentModal();
+                        if (data.status === 'error') {
+                            BLCAdmin.showMessageAsModal(null, data.message)
+                        } else {
+                            BLCAdmin.hideCurrentModal();
 
-                        BLCAdmin.listGrid.replaceRelatedCollection($(data), {
-                            message: BLCAdmin.messages.saved + '!',
-                            alertType: 'save-alert',
-                            autoClose: 3000
-                        });
+                            BLCAdmin.listGrid.replaceRelatedCollection($(data), {
+                                message: BLCAdmin.messages.saved + '!',
+                                alertType: 'save-alert',
+                                autoClose: 3000
+                            });
+                        }
                     }
                 }
             });
