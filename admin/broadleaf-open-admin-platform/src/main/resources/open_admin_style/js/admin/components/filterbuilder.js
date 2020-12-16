@@ -669,7 +669,7 @@
 
             var url = $($filterFields[0]).data('action');
 
-            const urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
+            var urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
             $('body').trigger(urlEvent, [url, $tbody]);
             url = urlEvent.resultUrl || url;
 
@@ -936,7 +936,7 @@
             }
         },
 
-        updateAppliedFiltersView(filterBuilder) {
+        updateAppliedFiltersView: function(filterBuilder) {
             var $container = $("#filter-pillow-container-" + filterBuilder.hiddenId);
             var $wrapper = $container.closest('.filter-pillow-wrapper');
 

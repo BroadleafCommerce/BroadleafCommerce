@@ -1006,7 +1006,7 @@
                                 url += "&sectionCrumbs=" + sectionCrumbs;
                             }
 
-                            const urlEvent = $.Event('listGrid-paginate-lazy-load-url');
+                            var urlEvent = $.Event('listGrid-paginate-lazy-load-url');
                             $('body').trigger(urlEvent, [url, $tbody]);
                             url = urlEvent.resultUrl || url;
 
