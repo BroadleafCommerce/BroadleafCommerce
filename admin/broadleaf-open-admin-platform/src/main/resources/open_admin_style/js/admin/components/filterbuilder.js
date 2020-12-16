@@ -936,7 +936,7 @@
             }
         },
 
-        updateAppliedFiltersView(filterBuilder) {
+        updateAppliedFiltersView: function(filterBuilder) {
             var $container = $("#filter-pillow-container-" + filterBuilder.hiddenId);
             var $wrapper = $container.closest('.filter-pillow-wrapper');
 
