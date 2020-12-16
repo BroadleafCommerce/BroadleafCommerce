@@ -22,9 +22,11 @@ import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersisten
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -49,6 +51,8 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -78,6 +82,9 @@ public class AdminProductController extends AdminBasicEntityController {
     public static final String SECTION_KEY = "product";
     public static final String DEFAULT_SKU_NAME = "defaultSku.name";
     public static final String SELECTIZE_NAME_PROPERTY = "name";
+    public static final String PRODUCT_OPTIONS_COLLECTION_FIELD = "productOptions";
+    private static final String  PRODUCT_OPTION_ID_FIELD_KEY = "productOption.id";
+    private static final String PRODUCT_ID_FIELD_KEY = "product.id";
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -371,5 +378,34 @@ public class AdminProductController extends AdminBasicEntityController {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable Map<String, String> pathVars, @PathVariable("id") String id, @PathVariable("collectionField") String collectionField, @ModelAttribute("entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+        if (PRODUCT_OPTIONS_COLLECTION_FIELD.equals(collectionField)) {
+            boolean isAttributeNameExist = false;
+            String addAttributeName = null;
+            try {
+                final Field productOptionIdField = entityForm.getFields().get(PRODUCT_OPTION_ID_FIELD_KEY);
+                final Field productIdField = entityForm.getFields().get(PRODUCT_ID_FIELD_KEY);
+                final ProductOption addProductOption = catalogService.findProductOptionById(Long.parseLong(productOptionIdField.getValue()));
+                final Product product = catalogService.findProductById(Long.parseLong(productIdField.getValue()));
+                addAttributeName = addProductOption.getAttributeName();
+                isAttributeNameExist = product.getProductOptionXrefs().stream()
+                    .map(ProductOptionXref::getProductOption)
+                    .map(ProductOption::getAttributeName)
+                    .anyMatch(attributeName -> attributeName.equals(addProductOption.getAttributeName()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (isAttributeNameExist) {
+                return new JsonResponse(response)
+                    .with("status", "error")
+                    .with("message", String.format("Product Option with attribute name: '%s' is already assigned", addAttributeName))
+                    .done();
+            }
+        }
+
+        return super.addCollectionItem(request, response, model, pathVars, id, collectionField, entityForm, result);
     }
 }
