@@ -296,12 +296,10 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
                 .append(this.id, rhs.id)
                 .append(this.quantity, rhs.quantity)
                 .append(this.itemSalePrice, rhs.itemSalePrice)
-                .append(this.bundle, rhs.bundle)
                 .append(this.sku, rhs.sku)
                 .append(this.sequence, rhs.sequence)
                 .append(this.dynamicPrices, rhs.dynamicPrices)
                 .append(this.deproxiedSku, rhs.deproxiedSku)
-                .append(this.deproxiedBundle, rhs.deproxiedBundle)
                 .isEquals();
     }
 
@@ -311,12 +309,10 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
                 .append(id)
                 .append(quantity)
                 .append(itemSalePrice)
-                .append(bundle)
                 .append(sku)
                 .append(sequence)
                 .append(dynamicPrices)
                 .append(deproxiedSku)
-                .append(deproxiedBundle)
                 .toHashCode();
     }
 }
