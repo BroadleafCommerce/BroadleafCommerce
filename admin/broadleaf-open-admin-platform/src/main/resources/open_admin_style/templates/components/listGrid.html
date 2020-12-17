@@ -249,7 +249,9 @@
                                class="button button-action"
                                th:attr="data-urlpostfix=${action.urlPostfix},
                                  data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                                 data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                                 data-queryparams=${listGrid.sectionCrumbRepresentation},
+                                 data-confirm=${action.isConfirmEnabled},
+                                 data-confirm-text=${action.confirmEnabledText}"
                                th:title="#{${action.displayText}}">
                                 <i th:class="${action.iconClass}"></i>
                             </a>

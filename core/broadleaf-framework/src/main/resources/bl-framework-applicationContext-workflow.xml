@@ -77,6 +77,8 @@
                 <ref bean="blTaxActivity" />
                 <ref bean="blTotalActivity"/>
                 <ref bean="blAdjustOrderPaymentsActivity"/>
+                <ref bean="blCountTotalOffersActivity" />
+                <ref bean="blDetermineOfferChangeActivity" />
             </list>
         </property>
     </bean>

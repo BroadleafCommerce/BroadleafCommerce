@@ -332,8 +332,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
      */
-    @OneToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL})
+    @OneToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.PERSIST,org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.REFRESH})
     @JoinColumn(name = "DEFAULT_PRODUCT_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @IgnoreEnterpriseBehavior

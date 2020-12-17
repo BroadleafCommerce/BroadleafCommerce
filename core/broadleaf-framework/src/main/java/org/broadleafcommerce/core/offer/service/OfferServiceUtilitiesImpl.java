@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -44,6 +45,8 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.dto.OrderItemHolder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,6 +73,9 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager extensionManager;
+
+    @Resource(name = "blGenericEntityService")                                                                                                                                                                   
+    protected GenericEntityService entityService;
 
     protected final PromotableOfferUtility promotableOfferUtility;
 
@@ -357,6 +363,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             PromotableOrderItemPriceDetail itemPriceDetail) {
         PromotableOrderItemPriceDetailAdjustment promotableOrderItemPriceDetailAdjustment =
                 promotableItemFactory.createPromotableOrderItemPriceDetailAdjustment(itemOffer, itemPriceDetail);
+        //don't want to have negative adjustments
+        if(promotableOrderItemPriceDetailAdjustment.getRetailAdjustmentValue().lessThan(BigDecimal.ZERO) ||
+                promotableOrderItemPriceDetailAdjustment.getSaleAdjustmentValue().lessThan(BigDecimal.ZERO)){
+            return;
+        }
         itemPriceDetail.addCandidateItemPriceDetailAdjustment(promotableOrderItemPriceDetailAdjustment);
     }
 
@@ -469,6 +480,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                 OrderItemPriceDetailAdjustment adj = iterator.next();
                 if (adjustmentIdsToRemove.contains(adj.getOffer().getId())) {
                     iterator.remove();
+                    entityService.remove(adj);
                 }
             }
         }
@@ -489,6 +501,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             OrderItemPriceDetail currentDetail = pdIterator.next();
             if (unmatchedDetailsMap.containsKey(currentDetail.getId())) {
                 pdIterator.remove();
+                entityService.remove(currentDetail);
             }
         }
     }
@@ -500,6 +513,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             OrderItemQualifier currentQualifier = qIterator.next();
             if (unmatchedQualifiersMap.containsKey(currentQualifier.getId())) {
                 qIterator.remove();
+                entityService.remove(currentQualifier);
             }
         }
     }
@@ -568,4 +582,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         this.offerDao = offerDao;
     }
 
+    public GenericEntityService getGenericEntityService() {
+        return entityService;
+    }
+
+    public void setGenericEntityService(GenericEntityService entityService) {
+        this.entityService = entityService;
+    }
 }
