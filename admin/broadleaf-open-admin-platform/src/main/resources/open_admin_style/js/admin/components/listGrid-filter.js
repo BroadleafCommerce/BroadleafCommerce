@@ -306,7 +306,7 @@ $(document).ready(function() {
 
         url = getFilteredParams($(this), url);
 
-        const urlEvent = $.Event('listGrid-filter-lazy-load-url');
+        var urlEvent = $.Event('listGrid-filter-lazy-load-url');
         $('body').trigger(urlEvent, [url, $tbody]);
         url = urlEvent.resultUrl || url;
 
