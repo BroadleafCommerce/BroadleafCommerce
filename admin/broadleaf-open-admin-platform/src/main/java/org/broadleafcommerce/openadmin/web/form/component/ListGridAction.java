@@ -53,7 +53,9 @@ public class ListGridAction implements Cloneable {
     protected Boolean singleActionOnly = false;
     protected String actionTargetEntity = "";
     protected Boolean requiresNonEmptyGrid = false;
-    
+    protected Boolean isConfirmEnabled = Boolean.FALSE;
+    protected String confirmEnabledText = "";
+
     public ListGridAction(String actionId) {
         this.actionId = actionId;
     }
@@ -135,7 +137,17 @@ public class ListGridAction implements Cloneable {
         setActionTargetEntity(actionTargetEntity);
         return this;
     }
-    
+
+    public ListGridAction withIsConfirmEnabled(Boolean isConfirmEnabled) {
+        setIsConfirmEnabled(isConfirmEnabled);
+        return this;
+    }
+
+    public ListGridAction withConfirmEnabledText(String confirmEnabledText) {
+        setConfirmEnabledText(confirmEnabledText);
+        return this;
+    }
+
     public String getButtonClass() {
         return buttonClass + (allCapable ? " all-capable" : "") + (singleActionOnly ? " single-action-only" : "");
     }
@@ -297,6 +309,22 @@ public class ListGridAction implements Cloneable {
 
     public void setRequiresNonEmptyGrid(Boolean requiresNonEmptyGrid) {
         this.requiresNonEmptyGrid = requiresNonEmptyGrid;
+    }
+
+    public Boolean getIsConfirmEnabled() {
+        return isConfirmEnabled == null ? Boolean.FALSE : isConfirmEnabled;
+    }
+
+    public void setIsConfirmEnabled(Boolean confirmEnabled) {
+        isConfirmEnabled = confirmEnabled;
+    }
+
+    public String getConfirmEnabledText() {
+        return confirmEnabledText;
+    }
+
+    public void setConfirmEnabledText(String confirmEnabledText) {
+        this.confirmEnabledText = confirmEnabledText;
     }
 
     @Override
