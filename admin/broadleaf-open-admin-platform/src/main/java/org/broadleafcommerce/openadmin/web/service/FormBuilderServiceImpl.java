@@ -793,6 +793,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             //  "Locale" entity is a special occasion. Because it have not "ID" column with "Long" type
             } else if (e.findProperty("localeCode") != null) {
                 selectizeOption.put("id", e.findProperty("localeCode").getValue());
+                // BroadleafCurrency entity is a special occasion. Because it have not "ID" column with "Long" type
+            } else if (e.findProperty("currencyCode") != null) {
+                selectizeOption.put("id", e.findProperty("currencyCode").getValue());
             }
             if (e.findProperty(ALTERNATE_ID_PROPERTY) != null) {
                 selectizeOption.put("alternateId", e.findProperty(ALTERNATE_ID_PROPERTY).getValue());
