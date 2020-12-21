@@ -1274,7 +1274,14 @@ $(document).ready(function() {
         $modalContainer.attr('id', $modalContainer.attr('id') + '-modal');
         $modalContainer.empty();
 
-        var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilder($modalContainer.attr('id'));
+        var filterBuilder;
+
+        if (hiddenId) {
+            filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+        } else {
+            filterBuilder = BLCAdmin.filterBuilders.getFilterBuilder($modalContainer.attr('id'));
+        }
+
         if (filterBuilder) {
             var jsonVal = $.parseJSON($('#'+hiddenId).val());
             if (jsonVal.data.length > 0) {
