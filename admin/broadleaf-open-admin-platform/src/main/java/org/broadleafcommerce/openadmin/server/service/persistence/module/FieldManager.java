@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -95,10 +94,7 @@ public class FieldManager {
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
-                
-                if (value instanceof HibernateProxy) {
-                    value = HibernateUtils.deproxy(value);
-                }
+                value = HibernateUtils.deproxy(value);
 
                 if (mapKey != null) {
                     value = handleMapFieldExtraction(bean, fieldName, componentClass, value, fieldNamePart, mapKey);
