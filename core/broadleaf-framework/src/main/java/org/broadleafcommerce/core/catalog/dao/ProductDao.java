@@ -345,5 +345,6 @@ public interface ProductDao {
      * @return
      */
     public List<Long> readAllActiveProductIds(Long lastId, int pageSize);
-    
+
+    List<Product> readAllActiveProductsForSiteMap(int page, int pageSize);
 }

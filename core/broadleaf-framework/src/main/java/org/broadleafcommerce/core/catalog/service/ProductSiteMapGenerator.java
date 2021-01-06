@@ -63,7 +63,7 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
         List<Product> products;
 
         do {
-            products = productDao.readAllActiveProducts(pageNum++, pageSize);
+            products = productDao.readAllActiveProductsForSiteMap(pageNum++, pageSize);
             for (Product product : products) {
                 if (StringUtils.isEmpty(product.getUrl())) {
                     continue;
