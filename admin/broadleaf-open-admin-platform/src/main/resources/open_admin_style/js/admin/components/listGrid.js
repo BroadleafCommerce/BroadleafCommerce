@@ -1160,7 +1160,7 @@ $(document).ready(function () {
         }
 
         // Remove the criteria input val
-        $container.find('.value').val('').trigger('change').trigger('input');
+        $container.find('.value').val(' ').trigger('change').trigger('input');
         $container.find('.hidden-display-value').val('').trigger('change').trigger('input');
 
         $container.find('.external-link-container').hide();
