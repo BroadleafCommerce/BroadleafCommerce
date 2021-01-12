@@ -67,7 +67,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
             throw new RequiredAttributeNotProvidedException(message, attributeName);
         } else {
             String validationString = productOption.getValidationString();
+            validationString = Boolean.parseBoolean(environment.getProperty("exploitProtection.xssEnabled", "false")) ? ESAPI.encoder().decodeForHTML(validationString) : validationString;
             value = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false")) ? ESAPI.encoder().decodeForHTML(value) : value;
+
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
                 String errorMessage = productOption.getErrorMessage();
                 String fullErrorMessage = StringUtil.sanitize(errorMessage) + ". Value [" + StringUtil.sanitize(value) + "] does not match regex string [" + validationString + "]";
