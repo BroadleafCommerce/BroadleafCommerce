@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,12 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     @Autowired
     protected Environment environment;
 
+    @Value("${exploitProtection.xssEnabled:false}")
+    protected boolean xssExploitProtectionEnabled;
+
+    @Value("${blc.site.enable.xssWrapper:false}")
+    protected boolean siteXssWrapperEnabled;
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.order.service.ProductOptionValidationService#validate(org.broadleafcommerce.core.catalog.domain.ProductOption, java.lang.String)
      */
@@ -67,8 +74,8 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
             throw new RequiredAttributeNotProvidedException(message, attributeName);
         } else {
             String validationString = productOption.getValidationString();
-            validationString = Boolean.parseBoolean(environment.getProperty("exploitProtection.xssEnabled", "false")) ? ESAPI.encoder().decodeForHTML(validationString) : validationString;
-            value = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false")) ? ESAPI.encoder().decodeForHTML(value) : value;
+            validationString = xssExploitProtectionEnabled ? ESAPI.encoder().decodeForHTML(validationString) : validationString;
+            value = siteXssWrapperEnabled ? ESAPI.encoder().decodeForHTML(value) : value;
 
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
                 String errorMessage = productOption.getErrorMessage();
