@@ -17,9 +17,8 @@
  */
 package org.broadleafcommerce.core.web.security;
 
-import org.broadleafcommerce.common.util.StringUtil;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.ValidationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +30,9 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
     protected final Environment environment;
     private String[] whiteListParamNames;
 
+    @Value("${custom.strip.xss:false}")
+    protected boolean customStripXssEnabled;
+
     public XssRequestWrapper(HttpServletRequest servletRequest, Environment environment, String[] whiteListParamNames) {
         super(servletRequest);
         this.environment = environment;
@@ -41,11 +43,11 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
     public String[] getParameterValues(String parameter) {
 
         String[] values = super.getParameterValues(parameter);
-        if(checkWhitelist(parameter)){
-            return values;
-        }
         if (values == null) {
             return null;
+        }
+        if(checkWhitelist(parameter)){
+            return values;
         }
 
         int count = values.length;
@@ -57,7 +59,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         return encodedValues;
     }
 
-    private boolean checkWhitelist(String parameter) {
+    protected boolean checkWhitelist(String parameter) {
         for (String whiteListParamName : whiteListParamNames) {
             if(whiteListParamName.equals(parameter)){
                 return true;
@@ -75,11 +77,11 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         return stripXSS(value);
     }
 
-    private String stripXSS(String value) {
+    protected String stripXSS(String value) {
         return customStripXssEnabled ? customStripXss(value) : ESAPI.encoder().encodeForHTML(value);
     }
 
-    private String customStripXss(String value) {
+    protected String customStripXss(String value) {
         if (value == null) {
             return null;
         }
