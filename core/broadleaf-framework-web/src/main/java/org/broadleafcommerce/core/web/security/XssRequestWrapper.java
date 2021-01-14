@@ -76,24 +76,14 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
     }
 
     private String stripXSS(String value) {
-        if (value != null) {
-            boolean customStripXss = Boolean.parseBoolean(environment.getProperty("custom.strip.xss", "false"));
-            if (customStripXss) {
-                value = customStripXss(value);
-            } else {
-                String newValue;
-                try {
-                    newValue = ESAPI.validator().getValidSafeHTML("context", value, 99999, true);
-                } catch (ValidationException e) {
-                    newValue = ESAPI.encoder().encodeForHTML(value);
-                }
-                value = newValue;
-            }
-        }
-        return value;
+        return customStripXssEnabled ? customStripXss(value) : ESAPI.encoder().encodeForHTML(value);
     }
 
     private String customStripXss(String value) {
+        if (value == null) {
+            return null;
+        }
+
         // Avoid null characters
         value = value.replaceAll("", "");
 
