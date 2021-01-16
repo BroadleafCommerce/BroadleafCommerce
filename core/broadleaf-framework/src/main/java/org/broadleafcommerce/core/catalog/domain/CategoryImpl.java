@@ -297,7 +297,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "category", orphanRemoval = true,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @OrderBy(value="displayOrder")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(
             targetObjectProperty = "subCategory",
@@ -311,7 +311,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "subCategory", orphanRemoval = true,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @OrderBy(value="displayOrder")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(
             targetObjectProperty = "category",
@@ -325,7 +325,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "category", orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @OrderBy(value="displayOrder")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryProduct")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(
             targetObjectProperty = "product",
@@ -338,7 +338,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "key")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CategoryImpl_Category_Media",
         tab = TabName.Media,
@@ -364,7 +364,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
     @OrderBy(value="sequence")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "featuredProductsTitle", order = 1000,
@@ -377,7 +377,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 2000,
             tab = TabName.Marketing,
@@ -389,7 +389,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 3000,
             tab = TabName.Marketing,
@@ -400,7 +400,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "categoryFacetsTitle", order = 1000,
             tab = TabName.Search,
@@ -411,7 +411,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryExcludedSearchFacetImpl.class, cascade = { CascadeType.ALL })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @OrderBy(value = "sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "excludedFacetsTitle", order = 2000,
             tab = TabName.Search,
@@ -422,7 +422,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected List<CategoryExcludedSearchFacet> excludedSearchFacets = new ArrayList<CategoryExcludedSearchFacet>(10);
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "categoryAttributesTitle",
             tab = TabName.General, order = FieldOrder.CustomAttributes)

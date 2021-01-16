@@ -61,7 +61,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
@@ -165,7 +165,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     protected String errorMessage;
 
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
     @OrderBy(value = "displayOrder")
     @AdminPresentationCollection(friendlyName = "ProductOptionImpl_Allowed_Values",
         group = GroupName.General,
@@ -173,7 +173,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     protected List<ProductOptionValue> allowedValues = new ArrayList<>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
     @BatchSize(size = 50)
     @ClonePolicyCollectionOverride
     protected List<ProductOptionXref> products = new ArrayList<>();

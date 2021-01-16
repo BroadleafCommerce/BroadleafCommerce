@@ -50,7 +50,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_MEDIA_MAP")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSkuMedia")
 @AdminPresentationClass(excludeFromPolymorphism = false, populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),

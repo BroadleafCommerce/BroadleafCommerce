@@ -63,7 +63,7 @@
         <expiry>
             <ttl>86400</ttl>
         </expiry>
-        <heap>100000</heap>
+        <heap>5000</heap>
     </cache>
     
     <cache alias="blProducts" uses-template="hydratedCacheTemplate">
@@ -84,7 +84,7 @@
         <expiry>
             <ttl>86400</ttl>
         </expiry>
-        <heap>100000</heap>
+        <heap>3000</heap>
     </cache>
 
     <cache alias="blCategoryUrlCache">
@@ -282,6 +282,34 @@
              <none/>
          </expiry>
         <heap>100</heap>
+    </cache>
+    
+    <cache alias="blCountryElements" >
+        <expiry>
+             <none/>
+         </expiry>
+        <heap>2000</heap>
+    </cache>
+    
+    <cache alias="blDataDrivenEnumeration" >
+        <expiry>
+             <ttl>86400</ttl>
+         </expiry>
+        <heap>1000</heap>
+    </cache>
+    
+     <cache alias="blMediaElements" >
+        <expiry>
+             <ttl>86400</ttl>
+         </expiry>
+        <heap>20000</heap>
+    </cache>
+    
+    <cache alias="blSystemProperties" >
+        <expiry>
+             <ttl>86400</ttl>
+         </expiry>
+        <heap>2000</heap>
     </cache>
     
 </config>

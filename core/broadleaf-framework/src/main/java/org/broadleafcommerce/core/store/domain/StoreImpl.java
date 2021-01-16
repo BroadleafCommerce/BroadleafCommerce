@@ -46,7 +46,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "BLC_STORE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStoreElements")
 @SQLDelete(sql="UPDATE BLC_STORE SET ARCHIVED = 'Y' WHERE STORE_ID = ?")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StoreImpl_baseStore")
 @Inheritance(strategy = InheritanceType.JOINED)

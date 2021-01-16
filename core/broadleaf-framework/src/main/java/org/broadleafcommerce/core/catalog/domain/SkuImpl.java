@@ -303,7 +303,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = { CascadeType.ALL })
     @MapKey(name = "key")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSkuMedia")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
         tab = TabName.Media,
@@ -348,14 +348,14 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected Product product;
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "skuAttributesTitle",
             tab = TabName.Advanced, order = 1000)
     protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
     @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL, mappedBy = "sku")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     @ClonePolicyCollectionOverride
     @ClonePolicyArchive
@@ -369,7 +369,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @JoinTable(name = "BLC_SKU_FEE_XREF",
             joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true),
             inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
@@ -380,7 +380,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @MapKeyClass(FulfillmentOptionImpl.class)
     @Column(name = "RATE", precision = 19, scale = 5)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
 
@@ -388,7 +388,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED",
             joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"),
             inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID",referencedColumnName = "FULFILLMENT_OPTION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
 

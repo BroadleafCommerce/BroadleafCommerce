@@ -1,8 +1,8 @@
 <!--
   #%L
-  BroadleafCommerce CMS Module
+  BroadleafCommerce Framework
   %%
-  Copyright (C) 2009 - 2016 Broadleaf Commerce
+  Copyright (C) 2009 - 2021 Broadleaf Commerce
   %%
   Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
   (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,59 +18,75 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://www.ehcache.org/v3"
         xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.3.xsd">
-    
-    <cache alias="blCMSElements">
+        
+    <cache alias="blCategoryProduct">
         <expiry>
-            <ttl>3600</ttl>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>40000</heap>
+    </cache>
+    
+    <cache alias="blCategoryRelationships">
+        <expiry>
+            <ttl>86400</ttl>
         </expiry>
         <heap>10000</heap>
     </cache>
-
-    <cache alias="cmsPageCache">
-        <expiry>
-            <ttl>3600</ttl>
-        </expiry>
-        <heap>1000</heap>
-    </cache>
     
-    <cache alias="cmsPageMapCache">
-        <expiry>
-            <ttl>3600</ttl>
-        </expiry>
-        <heap>1000</heap>
-    </cache>
-    
-    <!-- Caches Page URIs by date added to Cache to reduce 
-         number of queries to find Pages by URI.
-         Cache for a day -->
-    <cache alias="uriCachedDateCache">
+    <cache alias="blFulfillmentOptionElements">
         <expiry>
             <ttl>86400</ttl>
         </expiry>
         <heap>1000</heap>
     </cache>
-
-    <!-- Structured Content Cache - 1 hour cache -->
-    <cache alias="cmsStructuredContentCache">
+    
+    <cache alias="blProductAttributes">
         <expiry>
-            <ttl>3600</ttl>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>10000</heap>
+    </cache>
+    
+    <cache alias="blProductOptions">
+        <expiry>
+            <ttl>86400</ttl>
         </expiry>
         <heap>5000</heap>
     </cache>
     
-    <!--  URLHandlerCache -->
-    <cache alias="cmsUrlHandlerCache">
+    <cache alias="blProductRelationships">
         <expiry>
-            <ttl>3600</ttl>
+            <ttl>86400</ttl>
         </expiry>
-        <heap>5000</heap>
+        <heap>30000</heap>
     </cache>
     
-    <cache alias="blUrlHandler">
+    <cache alias="blRelatedProducts">
         <expiry>
             <ttl>86400</ttl>
         </expiry>
         <heap>1000</heap>
     </cache>
-
+    
+    <cache alias="blSearchElements">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>5000</heap>
+    </cache>
+    
+    <cache alias="blSkuMedia">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>40000</heap>
+    </cache>
+    
+    <cache alias="blStoreElements">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
+    
 </config>
