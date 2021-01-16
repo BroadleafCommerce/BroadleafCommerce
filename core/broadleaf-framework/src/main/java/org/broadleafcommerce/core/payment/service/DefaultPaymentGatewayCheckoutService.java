@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -53,6 +54,10 @@ import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -249,6 +254,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     }
 
     @Override
+    @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER, isolation = Isolation.SERIALIZABLE)
     public String initiateCheckout(Long orderId) throws Exception{
         Order order = orderService.findOrderById(orderId, true);
         if (order == null || order instanceof NullOrderImpl) {
