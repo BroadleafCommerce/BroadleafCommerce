@@ -1695,7 +1695,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 populateTypeAndId = false;
             }
             try {
-                entityForm.setTranslationCeilingEntity(Class.forName(fmd.getValueClassName()).getDeclaredField(fmd.getToOneTargetProperty()).getType().getName());
+                if (StringUtils.isNotEmpty(fmd.getToOneTargetProperty())) {
+                    entityForm.setTranslationCeilingEntity(Class.forName(fmd.getValueClassName()).getDeclaredField(fmd.getToOneTargetProperty()).getType().getName());
+                }
             } catch (Exception e) {
                 LOG.error(e);
             }
