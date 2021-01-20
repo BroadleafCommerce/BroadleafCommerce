@@ -54,7 +54,7 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_INTERCEPT")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)

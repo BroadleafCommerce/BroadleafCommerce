@@ -64,7 +64,7 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)

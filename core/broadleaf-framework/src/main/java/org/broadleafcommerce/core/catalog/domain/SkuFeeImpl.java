@@ -59,7 +59,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SKU_FEE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
 })
@@ -105,7 +105,7 @@ public class SkuFeeImpl implements SkuFee {
     @JoinTable(name = "BLC_SKU_FEE_XREF",
             joinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true),
             inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     protected List<Sku> skus;
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)

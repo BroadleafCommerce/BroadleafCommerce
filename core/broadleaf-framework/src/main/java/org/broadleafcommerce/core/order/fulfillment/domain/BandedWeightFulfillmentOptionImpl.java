@@ -47,7 +47,7 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
     private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy="option", targetEntity=FulfillmentWeightBandImpl.class)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blFulfillmentOptionElements")
     @AdminPresentationCollection(friendlyName = "BandedWeightFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentWeightBand> bands = new ArrayList<FulfillmentWeightBand>();
 

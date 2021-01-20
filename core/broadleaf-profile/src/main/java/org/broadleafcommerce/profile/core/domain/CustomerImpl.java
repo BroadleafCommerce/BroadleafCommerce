@@ -197,7 +197,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     protected Locale customerLocale;
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",
@@ -208,7 +208,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @Where(clause = "archived != 'Y'")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses",
             group = GroupName.ContactInfo, order = FieldOrder.ADDRESSES,
@@ -217,7 +217,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Phones",
             group = GroupName.ContactInfo, order = FieldOrder.PHONES,
             addType = AddMethodType.PERSIST)
@@ -225,7 +225,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments",
             tab = TabName.PaymentMethods, order = 1000,

@@ -47,7 +47,7 @@ public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl impl
     private static final long serialVersionUID = 1L;
     
     @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blFulfillmentOptionElements")
     @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();
 

@@ -48,7 +48,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_OPTION_VALUE_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)

@@ -138,7 +138,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
     @Column(name = "FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @AdminPresentationMap(friendlyName = "CustomerPaymentImpl_additionalFields",
             tab = TabName.Payment,
             keyPropertyFriendlyName = "CustomerPaymentImpl_additional_field_key",

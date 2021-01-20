@@ -41,7 +41,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ISO_COUNTRY")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCountryElements")
 @AdminPresentationClass(friendlyName = "ISOCountryImpl_baseCountry")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)

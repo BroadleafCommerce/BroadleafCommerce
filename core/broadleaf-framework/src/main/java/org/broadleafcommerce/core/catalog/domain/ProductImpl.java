@@ -268,7 +268,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
     @OrderBy(value = "sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle",
             tab = TabName.Marketing, order = 1000,
@@ -280,7 +280,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
     @OrderBy(value = "sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle",
             tab = TabName.Marketing, order = 2000,
@@ -311,7 +311,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @OrderBy(value = "displayOrder")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryProduct")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle",
             tab = TabName.Marketing, order = 3000,
@@ -321,7 +321,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "productAttributesTitle",
             tab = TabName.General, order = 6000)
@@ -329,7 +329,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "productOptionsTitle",
             tab = TabName.ProductOptions,

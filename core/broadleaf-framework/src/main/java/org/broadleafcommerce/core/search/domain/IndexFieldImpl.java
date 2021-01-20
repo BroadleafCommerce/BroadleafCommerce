@@ -59,7 +59,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_INDEX_FIELD")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
@@ -100,7 +100,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     protected Field field;
 
     @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class, cascade = CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @BatchSize(size = 50)
     @Where(clause = "(ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
     @AdminPresentationCollection(friendlyName = "IndexFieldImpl_fieldTypes", order = 1000)
