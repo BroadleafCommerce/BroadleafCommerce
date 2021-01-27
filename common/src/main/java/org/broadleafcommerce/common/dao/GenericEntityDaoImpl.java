@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.service.PersistenceService;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -99,7 +100,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
             id = Integer.parseInt(String.valueOf(id));
         }
 
-        return emForClass.find(clazz, id);
+        return HibernateUtils.deproxy(emForClass.find(clazz, id));
     }
 
     @Override
