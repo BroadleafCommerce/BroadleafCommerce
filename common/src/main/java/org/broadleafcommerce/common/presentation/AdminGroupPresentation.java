@@ -89,7 +89,6 @@ public @interface AdminGroupPresentation {
      * Specify whether a group is collapsed by default in the admin UI.
      *
      * @return whether or not the group is collapsed by default
-     * @deprecated not supported
      */
     boolean collapsed() default false;
 }
