@@ -114,7 +114,10 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             }
             return StringUtils.isBlank(redirectUrl) ? getRegisterSuccessView() : "redirect:" + redirectUrl;
         } else {
-            //We need to detach Customer to avoid update Customer in DB QA#4356
+            //Initially Customer was read from the db and is "attached to session",
+            //later CustomerStateFilter does order "unlock", where it starts transaction,
+            //and so on transaction commit session is flashed and changes to customer is persisted.
+            //For this case we need to detach customer from session. QA#4356
             customerService.detachCustomer(registerCustomerForm.getCustomer());
             return getRegisterView();
         }
