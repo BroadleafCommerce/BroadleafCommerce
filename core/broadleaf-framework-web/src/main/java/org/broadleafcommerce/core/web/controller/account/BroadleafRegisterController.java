@@ -114,6 +114,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             }
             return StringUtils.isBlank(redirectUrl) ? getRegisterSuccessView() : "redirect:" + redirectUrl;
         } else {
+            //We need to detach Customer to avoid update Customer in DB QA#4356
             customerService.detachCustomer(registerCustomerForm.getCustomer());
             return getRegisterView();
         }
