@@ -74,7 +74,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
             HttpServletResponse response, Model model) {
         registrationService.addRedirectUrlToForm(registerCustomerForm);
@@ -114,6 +114,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             }
             return StringUtils.isBlank(redirectUrl) ? getRegisterSuccessView() : "redirect:" + redirectUrl;
         } else {
+            customerService.detachCustomer(registerCustomerForm.getCustomer());
             return getRegisterView();
         }
     }

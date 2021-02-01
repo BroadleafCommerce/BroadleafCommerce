@@ -100,5 +100,12 @@ public interface CustomerDao {
      */
     void delete(Customer customer);
 
+    /**
+     * Detaches the given Customer instance from the entity manager.
+     *
+     * @param customer
+     */
+    void detach(Customer customer);
+
     Long readNumberOfCustomers();
 }
