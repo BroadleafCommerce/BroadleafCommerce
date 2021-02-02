@@ -245,6 +245,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public void detachCustomer(Customer customer) {
+        customerDao.detach(customer);
+    }
+
+    @Override
     public Customer readCustomerByUsername(String username) {
         return customerDao.readCustomerByUsername(username);
     }

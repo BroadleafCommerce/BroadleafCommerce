@@ -152,6 +152,11 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
+    public void detach(Customer customer) {
+        em.detach(customer);
+    }
+
+    @Override
     public List<Customer> readBatchCustomers(int start, int pageSize) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
