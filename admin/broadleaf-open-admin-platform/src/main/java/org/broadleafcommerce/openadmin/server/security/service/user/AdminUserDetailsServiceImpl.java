@@ -56,12 +56,6 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         AdminUser adminUser = adminUserDao.readAdminUserByUserName(username);
-        if (adminUser == null) {
-            List<AdminUser> results = adminUserDao.readAdminUserByEmail(username);
-            if (!CollectionUtils.isEmpty(results)) {
-                adminUser = results.get(0);
-            }
-        }
         if (adminUser == null || adminUser.getActiveStatusFlag() == null || !adminUser.getActiveStatusFlag()) {
             throw new UsernameNotFoundException("The user was not found");
         }
