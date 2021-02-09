@@ -27,12 +27,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
-import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.ValidationUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -41,13 +39,10 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -67,9 +62,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -78,8 +70,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -328,7 +322,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     protected PersistenceResponse executePostFetchHandlers(PersistencePackage persistencePackage, CriteriaTransferObject
             cto, PersistenceResponse persistenceResponse) throws ServiceException {
-        postFetchValidation(persistencePackage, persistenceResponse);
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postFetch(this, persistenceResponse.getDynamicResultSet(), persistencePackage, cto);
             if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
@@ -403,28 +396,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
 
         return persistenceResponse;
-    }
-
-    private void postFetchValidation(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
-        final Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems();
-        final SectionCrumb[] sectionCrumbs = persistencePackage.getSectionCrumbs();
-        if (persistencePerspectiveItems == null) return;
-        for (PersistencePerspectiveItem persistencePerspectiveItem : persistencePerspectiveItems.values()) {
-            for (Entity entity : persistenceResponse.getDynamicResultSet().getRecords()) {
-                final Map<String, Property> propertyMap = entity.getPMap();
-                if (persistencePerspectiveItem instanceof ForeignKey) {
-                    final ForeignKey foreignKey = (ForeignKey) persistencePerspectiveItem;
-                    final Property property = propertyMap.get(foreignKey.getManyToField());
-                    final Optional<SectionCrumb> sectionCrumbOptional = Stream.of(sectionCrumbs)
-                        .filter(sectionCrumb -> sectionCrumb.getSectionIdentifier().equals(foreignKey.getForeignKeyClass()))
-                        .findFirst();
-                    if (property != null && sectionCrumbOptional.isPresent() && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
-                        throw new SecurityServiceException();
-                    }
-
-                }
-            }
-        }
     }
 
     /**
