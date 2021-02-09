@@ -408,9 +408,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     private void postFetchValidation(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
         final Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems();
         final SectionCrumb[] sectionCrumbs = persistencePackage.getSectionCrumbs();
-        if (persistencePerspectiveItems == null) return;
+        final DynamicResultSet dynamicResultSet = persistenceResponse.getDynamicResultSet();
+        if (persistencePerspectiveItems == null || sectionCrumbs == null
+            || dynamicResultSet == null || dynamicResultSet.getRecords() == null ) return;
         for (PersistencePerspectiveItem persistencePerspectiveItem : persistencePerspectiveItems.values()) {
-            for (Entity entity : persistenceResponse.getDynamicResultSet().getRecords()) {
+            for (Entity entity : dynamicResultSet.getRecords()) {
                 final Map<String, Property> propertyMap = entity.getPMap();
                 if (persistencePerspectiveItem instanceof ForeignKey) {
                     final ForeignKey foreignKey = (ForeignKey) persistencePerspectiveItem;
