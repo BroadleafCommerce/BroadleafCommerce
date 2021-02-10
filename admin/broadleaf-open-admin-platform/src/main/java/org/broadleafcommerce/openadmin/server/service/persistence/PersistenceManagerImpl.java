@@ -418,10 +418,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     final ForeignKey foreignKey = (ForeignKey) persistencePerspectiveItem;
                     final Property property = propertyMap.get(foreignKey.getManyToField());
                     final Optional<SectionCrumb> sectionCrumbOptional = Stream.of(sectionCrumbs)
-                        .filter(sectionCrumb -> sectionCrumb.getSectionIdentifier().equals(foreignKey.getForeignKeyClass()))
+                        .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
                         .findFirst();
-                    if (property != null && sectionCrumbOptional.isPresent() && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
-                        throw new SecurityServiceException();
+                    if (property != null && sectionCrumbOptional.isPresent()
+                        && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
+                        throw new SecurityServiceException("Post fetch validation: Access denied");
                     }
 
                 }
