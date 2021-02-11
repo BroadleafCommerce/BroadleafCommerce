@@ -183,7 +183,12 @@ public class MVELToDataWrapperTranslator {
         for (Group subgroup : group.getSubGroups()) {
             DataDTO subCriteria = createRuleDataDTO(data, subgroup, fieldService);
             if (subCriteria != null && !subCriteria.getRules().isEmpty()) {
-                data.getRules().add(subCriteria);
+                if(subCriteria.getRules().size()==1){
+                    data.getRules().add(subCriteria.getRules().get(0));
+                    subCriteria.getRules().get(0).setCreatedFromSubGroup(false);
+                }else {
+                    data.getRules().add(subCriteria);
+                }
             }
         }
         if (data.getRules() != null && !data.getRules().isEmpty()) {
