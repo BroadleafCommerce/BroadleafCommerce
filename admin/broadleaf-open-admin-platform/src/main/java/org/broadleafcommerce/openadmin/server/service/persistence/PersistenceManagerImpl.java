@@ -418,6 +418,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     final ForeignKey foreignKey = (ForeignKey) persistencePerspectiveItem;
                     final Property property = propertyMap.get(foreignKey.getManyToField());
                     final Optional<SectionCrumb> sectionCrumbOptional = Stream.of(sectionCrumbs)
+                        .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
                         .findFirst();
                     if (property != null && sectionCrumbOptional.isPresent()
