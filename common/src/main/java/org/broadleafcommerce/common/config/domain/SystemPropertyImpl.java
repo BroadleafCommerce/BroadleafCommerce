@@ -55,7 +55,7 @@ import javax.persistence.Table;
         @Index(name = "IDX_BLSYPR_PROPERTY_NAME", columnList = "PROPERTY_NAME")
     })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSystemProperties")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX)
@@ -191,6 +191,7 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
         this.friendlyTab = friendlyTab;
     }
 
+    @Override
     public SystemPropertyFieldType getPropertyType() {
         if (propertyType != null) {
             SystemPropertyFieldType returnType = SystemPropertyFieldType.getInstance(propertyType);
@@ -201,6 +202,7 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
         return SystemPropertyFieldType.STRING_TYPE;
     }
 
+    @Override
     public void setPropertyType(SystemPropertyFieldType propertyType) {
         this.propertyType = propertyType.getType();
     }

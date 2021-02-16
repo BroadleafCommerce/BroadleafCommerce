@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -34,6 +35,8 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.OfferServiceExtensionHandler;
+import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
@@ -81,6 +84,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -200,6 +205,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
+
+    @Resource(name = "blOfferServiceExtensionManager")
+    protected OfferServiceExtensionManager offerServiceExtensionManager;
+
 
     @Override
     @Transactional("blTransactionManager")
@@ -480,6 +489,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional("blTransactionManager")
     public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
         order.getAddedOfferCodes().remove(offerCode);
+        offerServiceExtensionManager.removeOfferCodeFromOrder(offerCode, order);
         order = save(order, priceOrder);
         return order;   
     }
@@ -744,6 +754,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem) {
         parentOrderItemRequest.getChildOrderItems().add(dependentOrderItem);
+        Collections.sort(parentOrderItemRequest.getChildOrderItems(), new Comparator<OrderItemRequestDTO>() {
+            @Override
+            public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
+                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
+                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
+                return new CompareToBuilder()
+                        .append(o1DisplayOrder, o2DisplayOrder)
+                        .toComparison();
+            }
+        });
     }
 
     @Override
@@ -905,6 +925,29 @@ public class OrderServiceImpl implements OrderService {
         List<OrderPayment> infos = new ArrayList<OrderPayment>();
         for (OrderPayment paymentInfo : order.getPayments()) {
             if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
+                infos.add(paymentInfo);
+            }
+        }
+        order.getPayments().removeAll(infos);
+        for (OrderPayment paymentInfo : infos) {
+            try {
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                // do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the OrderPayment", e);
+            }
+            order.getPayments().remove(paymentInfo);
+            paymentInfo = paymentDao.readPaymentById(paymentInfo.getId());
+            paymentDao.delete(paymentInfo);
+        }
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void removeCreditCardPaymentsFromOrder(Order order) {
+        List<OrderPayment> infos = new ArrayList<OrderPayment>();
+        for (OrderPayment paymentInfo : order.getPayments()) {
+            if (paymentInfo.getType().isCreditCardType()) {
                 infos.add(paymentInfo);
             }
         }

@@ -535,7 +535,9 @@
         },
         
         getTopVisibleIndex : function($tbody) {
-            if (typeof mcs === 'undefined') {
+            //not sure why do we do this, but that's from legacy code
+            //probably check if mCustomScrollbar plugin was enabled for this table?
+            if (typeof $tbody.mCustomScrollbar === 'undefined') {
                 return 0;
             }
 
@@ -988,20 +990,23 @@
                         
                         // Fetch records if necessary
                         $.doTimeout('fetch', fetchDebounce, function() {
-                        	var url = $tbody.closest('table').data('path');
+                            var url = $tbody.closest('table').data('path');
+                            //If this is modal and 'multitenant add' we use url from parent button
+                            var multitenantAdd = $('button.add-multitenant-main-entity').length === 1;
+                            if (multitenantAdd && inModal) {
+                                url = $('button.add-multitenant-main-entity').data('url');
+                            }
                             if ($container.data('parentid')) {
                                 url += "?parentId=" + $container.data('parentid');
-                                url += "&inModal=" + inModal;
-                            } else {
-                                url += "?inModal=" + inModal;
                             }
-
+                            var ampersand = url.indexOf('?') === -1 ? "?" : "&";
+                            url += ampersand + "inModal=" + inModal;
                             var sectionCrumbs = $tbody.closest('table').data('sectioncrumbs');
                             if (typeof sectionCrumbs !== 'undefined') {
                                 url += "&sectionCrumbs=" + sectionCrumbs;
                             }
 
-                            const urlEvent = $.Event('listGrid-paginate-lazy-load-url');
+                            var urlEvent = $.Event('listGrid-paginate-lazy-load-url');
                             $('body').trigger(urlEvent, [url, $tbody]);
                             url = urlEvent.resultUrl || url;
 

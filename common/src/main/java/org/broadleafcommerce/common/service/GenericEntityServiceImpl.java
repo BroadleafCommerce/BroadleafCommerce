@@ -19,7 +19,9 @@
 package org.broadleafcommerce.common.service;
 
 import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
@@ -50,6 +52,7 @@ public class GenericEntityServiceImpl implements GenericEntityService {
         return genericEntityDao.save(object);
     }
 
+    @Override
     public void persist(Object object) {
         genericEntityDao.persist(object);
     }
@@ -115,6 +118,7 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void remove(Object object) {
         genericEntityDao.remove(object);
     }

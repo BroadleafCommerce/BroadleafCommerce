@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
 
@@ -159,12 +160,22 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
         }
 
         if (OfferDiscountType.PERCENT_OFF.equals(discountType)) {
-            BigDecimal offerValue = currentPriceDetailValue.getAmount().multiply(offerUnitValue.divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-
-            if (rounding.isRoundOfferValues()) {
-                offerValue = offerValue.setScale(rounding.getRoundingScale(), rounding.getRoundingMode());
+            BigDecimal offerValue =
+                    currentPriceDetailValue.getAmount().multiply(offerUnitValue.divide(
+                            new BigDecimal("100"), 5, rounding.getRoundingMode()));
+            int scale = 2;
+            if (currency != null) {
+                // default scale to currency if currency is not null
+                scale = currency.getJavaCurrency().getDefaultFractionDigits();
             }
-            adjustmentValue = new Money(offerValue, currency);
+            if (rounding.getRoundingScale() != null) {
+                // override scale from rounding settings if set
+                scale = rounding.getRoundingScale();
+            }
+            adjustmentValue = new Money(offerValue, currency, scale);
+            if (rounding.getRoundingScale() != null) {
+                adjustmentValue = Money.trimUnnecessaryScaleToCurrency(adjustmentValue);
+            }
         }
 
         if (currentPriceDetailValue.lessThan(adjustmentValue)) {

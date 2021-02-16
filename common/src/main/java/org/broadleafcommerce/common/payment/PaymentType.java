@@ -37,7 +37,7 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
     private static final Map<String, PaymentType> TYPES = new LinkedHashMap<String, PaymentType>();
 
     public static final PaymentType GIFT_CARD = new PaymentType("GIFT_CARD", "Gift Card", false);
-    public static final PaymentType CREDIT_CARD = new PaymentType("CREDIT_CARD", "Credit Card", true);
+    public static final PaymentType CREDIT_CARD = new PaymentType("CREDIT_CARD", "Credit Card", true, true);
     public static final PaymentType BANK_ACCOUNT = new PaymentType("BANK_ACCOUNT", "Bank Account", false);
     public static final PaymentType CHECK = new PaymentType("CHECK", "Check", false);
     public static final PaymentType ELECTRONIC_CHECK = new PaymentType("ELECTRONIC_CHECK", "Electronic Check", false);
@@ -47,6 +47,8 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
     public static final PaymentType COD = new PaymentType("COD", "Collect On Delivery", false);
     public static final PaymentType CUSTOMER_PAYMENT = new PaymentType("CUSTOMER_PAYMENT", "Customer Payment", true);
     public static final PaymentType PURCHASE_ORDER = new PaymentType("PURCHASE_ORDER", "Purchase Order", false);
+    public static final PaymentType APPLE_PAY = new PaymentType("APPLE_PAY", "Apple Pay", true, true);
+    public static final PaymentType GOOGLE_PAY = new PaymentType("GOOGLE_PAY", "Google Pay", true, true);
     /**
      * Intended for modules like PayPal Express Checkout
      *
@@ -66,6 +68,7 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
     private String type;
     private String friendlyType;
     private boolean isFinalPayment;
+    private boolean isCreditCardType;
 
     public PaymentType() {
         //do nothing
@@ -75,18 +78,31 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
         this.friendlyType = friendlyType;
         setType(type);
         this.isFinalPayment = false;
+        this.isCreditCardType = false;
     }
     
     public PaymentType(final String type, final String friendlyType, final boolean isFinalPayment) {
         this.friendlyType = friendlyType;
         this.isFinalPayment = isFinalPayment;
+        this.isCreditCardType = false;
+        setType(type);
+    }
+
+    public PaymentType(final String type, final String friendlyType, final boolean isFinalPayment, final boolean isCreditCardType) {
+        this.friendlyType = friendlyType;
+        this.isFinalPayment = isFinalPayment;
+        this.isCreditCardType = isCreditCardType;
         setType(type);
     }
     
     public boolean getIsFinalPayment() {
         return isFinalPayment;
     }
-    
+
+    public boolean isCreditCardType() {
+        return isCreditCardType;
+    }
+
     @Override
     public String getType() {
         return type;

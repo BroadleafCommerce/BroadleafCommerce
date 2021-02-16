@@ -37,7 +37,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_COUNTRY")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCountryElements")
 @AdminPresentationClass(friendlyName = "CountryImpl_baseCountry")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
@@ -54,18 +54,22 @@ public class CountryImpl implements Country, AdminMainEntity {
     @AdminPresentation(friendlyName = "CountryImpl_Country", order=12, group = "CountryImpl_Address", prominent = true, translatable = true)
     protected String name;
 
+    @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    @Override
     public void setAbbreviation(String Abbreviation) {
         this.abbreviation = Abbreviation;
     }
 
+    @Override
     public String getName() {
         return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

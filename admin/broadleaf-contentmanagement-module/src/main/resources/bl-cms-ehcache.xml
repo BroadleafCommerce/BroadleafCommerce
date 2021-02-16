@@ -65,5 +65,12 @@
         </expiry>
         <heap>5000</heap>
     </cache>
+    
+    <cache alias="blUrlHandler">
+        <expiry>
+            <ttl>86400</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
 </config>

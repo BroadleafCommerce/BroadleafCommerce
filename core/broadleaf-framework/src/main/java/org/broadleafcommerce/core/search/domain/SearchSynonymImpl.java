@@ -32,7 +32,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "BLC_SEARCH_SYNONYM")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 public class SearchSynonymImpl implements SearchSynonym {
     
     @Id

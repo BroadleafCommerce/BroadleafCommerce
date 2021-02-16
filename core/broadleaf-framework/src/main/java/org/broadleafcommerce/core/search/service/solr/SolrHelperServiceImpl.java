@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -74,7 +75,9 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -140,8 +143,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
 
-    @Value(value = "${enable.solr.optimize:true}")
+    @Value(value = "${enable.solr.optimize:false}")
     private boolean optimizeEnabled;
+
+
+    @Autowired
+    protected Environment environment;
 
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex.
@@ -427,7 +434,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Object getPropertyValue(Object object, String propertyName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String[] components = propertyName.split("\\.");
-        return getPropertyValueInternal(object, components, 0);
+        Object propertyValueInternal = getPropertyValueInternal(object, components, 0);
+        if(propertyValueInternal instanceof String){
+            String enabled = environment.getProperty("exploitProtection.xssEnabled", "false");
+            if(Boolean.parseBoolean(enabled)){
+                return StringEscapeUtils.unescapeHtml((String) propertyValueInternal);
+            }
+        }
+        return propertyValueInternal;
     }
 
     @Override

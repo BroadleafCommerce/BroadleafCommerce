@@ -55,7 +55,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -106,20 +105,23 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
-    @Autowired
-    protected Environment environment;
-
     @Value("${solr.global.facets.category.search:false}")
     protected boolean globalFacetsForCategorySearch;
 
     @Value("${solr.boost.category.results:false}")
     protected boolean boostSearchResultsCategory;
 
+    @Value("${solr.showDebugQuery:false}")
+    protected boolean shouldShowDebugQuery;
+
+    @Value("${solr.search.method:POST}")
+    protected METHOD solrSearchMethod;
+
     /**
      * @return whether or not to enable debug query info for the SolrQuery
      */
     protected boolean shouldShowDebugQuery() {
-        return environment.getProperty("solr.showDebugQuery", Boolean.class, false);
+        return shouldShowDebugQuery;
     }
 
     @Override
@@ -169,7 +171,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Deprecated
     protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
             SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
-        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, defaultSort, (String[]) null);
+        return findSearchResults(searchCriteria.getQuery(), facets, searchCriteria, defaultSort, searchCriteria.getFilterQueries() == null ? (String[]) null : searchCriteria.getFilterQueries().toArray(new String[searchCriteria.getFilterQueries().size()]));
     }
     
     /**
@@ -647,7 +649,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return
      */
     protected METHOD getSolrQueryMethod() {
-        return environment.getProperty("solr.search.method", METHOD.class, METHOD.POST);
+        return solrSearchMethod;
     }
 
     @Override

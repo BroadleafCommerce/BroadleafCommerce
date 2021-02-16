@@ -70,8 +70,8 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
             value = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false")) ? ESAPI.encoder().decodeForHTML(value) : value;
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
                 String errorMessage = productOption.getErrorMessage();
-                String message = StringUtil.sanitize(errorMessage) + ". Value [" + StringUtil.sanitize(value)
-                                 + "] does not match regex string [" + validationString + "]";
+                String fullErrorMessage = StringUtil.sanitize(errorMessage) + ". Value [" + StringUtil.sanitize(value) + "] does not match regex string [" + validationString + "]";
+                String message = StringUtils.isEmpty(errorMessage) ? fullErrorMessage : errorMessage;
 
                 LOG.error(message);
                 throw new ProductOptionValidationException(message, productOption.getErrorCode(),

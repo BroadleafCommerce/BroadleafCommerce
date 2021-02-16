@@ -110,8 +110,8 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
             throw new IllegalArgumentException("Invalid facet fieldName specified: " + fieldName);
         }
         
-        criteria.where(pathToUse.get(fieldName).as(fieldValueClass).isNotNull());
-        criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
+        criteria.where(pathToUse.get(fieldName).isNotNull());
+        criteria.distinct(true).select(pathToUse.get(fieldName));
 
         TypedQuery<T> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);

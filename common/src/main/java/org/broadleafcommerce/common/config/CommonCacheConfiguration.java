@@ -42,7 +42,7 @@ public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration blStandardElements() {
-        return new JCacheRegionConfiguration("blStandardElements", 86400, 100000);
+        return new JCacheRegionConfiguration("blStandardElements", 86400, 5000);
     }
 
     @Bean
@@ -57,7 +57,7 @@ public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration blCategories() {
-        return new JCacheRegionConfiguration("blCategories", 86400, 100000);
+        return new JCacheRegionConfiguration("blCategories", 86400, 3000);
     }
 
     @Bean
@@ -199,4 +199,25 @@ public class CommonCacheConfiguration {
     public JCacheRegionConfiguration blProductOverrideCache() {
         return new JCacheRegionConfiguration("blProductOverrideCache", -1, 100);
     }
+
+    @Bean
+    public JCacheRegionConfiguration blCountryElements() {
+        return new JCacheRegionConfiguration("blCountryElements", -1, 2000);
+    }
+
+    @Bean
+    public JCacheRegionConfiguration blDataDrivenEnumeration() {
+        return new JCacheRegionConfiguration("blDataDrivenEnumeration", 86400, 1000);
+    }
+
+    @Bean
+    public JCacheRegionConfiguration blMediaElements() {
+        return new JCacheRegionConfiguration("blMediaElements", 86400, 20000);
+    }
+
+    @Bean
+    public JCacheRegionConfiguration blSystemProperties() {
+        return new JCacheRegionConfiguration("blSystemProperties", 86400, 2000);
+    }
+
 }

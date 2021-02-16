@@ -4,7 +4,7 @@
 </label>
 
 <th:block th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
-    <select class="six" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}">
+    <select class="six" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}" th:classappend="${field.allowNoValueEnumOption} ? selectAllowNoValueEnumOption : notAllowNoValueEnumOption">
         <option th:if="${field.allowNoValueEnumOption}" value="" th:utext="#{No_Value_Selected}"></option>
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"

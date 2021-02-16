@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -25,6 +28,7 @@ import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -34,14 +38,20 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.payment.service.OrderPaymentStatusService;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +85,10 @@ import javax.persistence.Table;
 public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
+
+    private static RoundingMode _roundingMode;
+
+    protected static final Log LOG = LogFactory.getLog(OrderItemPriceDetailImpl.class);
 
     @Id
     @GeneratedValue(generator = "OrderItemPriceDetailId")
@@ -168,8 +182,16 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     public Money getAdjustmentValue() {
         Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderItemPriceDetailAdjustment adjustment : orderItemPriceDetailAdjustments) {
-            if (!adjustment.isFutureCredit()) {
-                adjustmentValue = adjustmentValue.add(adjustment.getValue());
+            if (! adjustment.isFutureCredit()) {
+                // preserve highest scale / allows adjustments to maintain more precision
+                // adjustments should only have more precision if the roundingScale was
+                // overridden
+                if (adjustment.getValue().getAmount().scale() >
+                        adjustmentValue.getAmount().scale()) {
+                    adjustmentValue = adjustment.getValue().add(adjustmentValue);
+                } else {
+                    adjustmentValue = adjustmentValue.add(adjustment.getValue());
+                }
             }
         }
         return adjustmentValue;
@@ -180,20 +202,52 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
         Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderItemPriceDetailAdjustment adjustment : orderItemPriceDetailAdjustments) {
             if (adjustment.isFutureCredit()) {
-                adjustmentValue = adjustmentValue.add(adjustment.getValue());
+                // preserve highest scale / allows adjustments to maintain more precision
+                // adjustments should only have more precision if the roundingScale was
+                // overridden
+                if (adjustment.getValue().getAmount().scale() >
+                        adjustmentValue.getAmount().scale()) {
+                    adjustmentValue = adjustment.getValue().add(adjustmentValue);
+                } else {
+                    adjustmentValue = adjustmentValue.add(adjustment.getValue());
+                }
             }
         }
         return adjustmentValue;
     }
 
+    public RoundingMode getRoundingModeForAdj() {
+        RoundingMode mode = RoundingMode.HALF_EVEN;
+        if (_roundingMode == null) {
+            ApplicationContext ctx = ApplicationContextHolder.getApplicationContext();
+            if (ctx != null) {
+                String modeStr = ctx.getEnvironment().getProperty(
+                        "item.offer.percent.rounding.mode");
+                if (StringUtils.isNotEmpty(modeStr)) {
+                    try {
+                        mode = RoundingMode.valueOf(modeStr);
+                    } catch (Exception e) {
+                        LOG.error("Unable to initialize rounding mode, using default. Value set for " +
+                                "item.offer.percent.rounding.mode was " + modeStr, e);
+                    }
+                }
+            }
+            _roundingMode = mode;
+        }
+
+        return _roundingMode;
+    }
+
     @Override
     public Money getTotalAdjustmentValue() {
-        return getAdjustmentValue().multiply(quantity);
+        return getAdjustmentValue().multiplyWithRounding(quantity,
+                getRoundingModeForAdj());
     }
 
     @Override
     public Money getFutureCreditTotalAdjustmentValue() {
-        return getFutureCreditAdjustmentValue().multiply(quantity);
+        return getFutureCreditAdjustmentValue().multiplyWithRounding(quantity,
+                getRoundingModeForAdj());
     }
 
     @Override

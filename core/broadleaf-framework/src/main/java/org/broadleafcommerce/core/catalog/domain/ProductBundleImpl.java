@@ -88,7 +88,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @OrderBy(value = "sequence")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle",
         sortProperty = "sequence",

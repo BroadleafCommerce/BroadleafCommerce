@@ -64,7 +64,7 @@ public class UserConnectionImpl implements UserConnection {
     @EmbeddedId
     UserConnectionPK userConnectionPK;
 
-    @Column(name = "rank", nullable = false)
+    @Column(name = "`rank`", nullable = false)
     private Integer rank;
 
     @Column(name = "displayName")

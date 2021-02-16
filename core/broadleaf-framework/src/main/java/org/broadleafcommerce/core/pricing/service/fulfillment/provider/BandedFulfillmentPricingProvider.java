@@ -70,7 +70,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
             LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
             fulfillmentGroup.setRetailFulfillmentPrice(Money.ZERO);
             fulfillmentGroup.setSaleFulfillmentPrice(Money.ZERO);
-            fulfillmentGroup.setRetailFulfillmentPrice(Money.ZERO);
+            fulfillmentGroup.setFulfillmentPrice(Money.ZERO);
             return fulfillmentGroup;
         }
 
@@ -81,7 +81,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
             FulfillmentEstimationResponse response = estimateCostForFulfillmentGroup(fulfillmentGroup, options);
             fulfillmentGroup.setSaleFulfillmentPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
             fulfillmentGroup.setRetailFulfillmentPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
-            fulfillmentGroup.setRetailFulfillmentPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setFulfillmentPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
 
             return fulfillmentGroup;
         }

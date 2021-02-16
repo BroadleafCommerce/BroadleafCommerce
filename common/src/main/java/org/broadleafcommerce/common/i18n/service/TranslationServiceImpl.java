@@ -233,7 +233,8 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         org.broadleafcommerce.common.locale.domain.Locale locale = localeService.findLocaleByCode(localeCode);
 
         if (locale == null) {
-            throw new IllegalArgumentException("A locale could not be found for the provided localeCode: "+ localeCode);
+            LOG.warn("A locale could not be found for the provided localeCode: "+ localeCode);
+            return true;
         }
 
         return !locale.getDefaultFlag();

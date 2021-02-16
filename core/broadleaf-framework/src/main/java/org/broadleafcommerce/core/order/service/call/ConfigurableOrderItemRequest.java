@@ -44,6 +44,8 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
     protected boolean firstExpandable;
     protected boolean lastExpandable;
 
+    protected String pricingModelType;
+
     public Product getProduct() {
         return product;
     }
@@ -173,5 +175,13 @@ public class ConfigurableOrderItemRequest extends AddToCartItem {
 
     public void setLastExpandable(boolean lastExpandable) {
         this.lastExpandable = lastExpandable;
+    }
+
+    public String getPricingModelType() {
+        return pricingModelType;
+    }
+
+    public void setPricingModelType(final String pricingModelType) {
+        this.pricingModelType = pricingModelType;
     }
 }

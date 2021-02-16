@@ -44,6 +44,11 @@ var BLCAdmin = (function($) {
                          'textarea:not(.redactor-box textarea), div.radio-container, >.selectize-control>.selectize-input, .redactor-box, .description-field, ' +
                          '.rule-builder-simple-time, .rule-builder-simple, .rule-builder-with-quantity, >div>div>input:not([type=hidden]), .selectize-wrapper';
 
+    function checkFormFound() {
+        return BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0 &&
+            BLCAdmin.currentModal().find('.modal-body>.content-yield>.row>.entity-form.modal-add-entity-form').length === 0;
+    }
+
     function showModal($data, onModalHide, onModalHideArgs) {
         // If we already have an active modal, we don't need another backdrop on subsequent modals
         $data.modal({
@@ -97,7 +102,7 @@ var BLCAdmin = (function($) {
 
         // Only initialize all fields if NOT a normal EntityForm in modal
         // Should initialize for lookups
-        if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
+        if (checkFormFound()) {
             BLCAdmin.initializeFields(BLCAdmin.currentModal());
         } else {
             BLCAdmin.initializeModalTabs($data);
@@ -400,7 +405,7 @@ var BLCAdmin = (function($) {
 
                     // Only initialize all fields if NOT a normal EntityForm in modal
                     // Should initialize for lookups
-                    if (BLCAdmin.currentModal().find('.modal-body>.content-yield .entity-form.modal-form').length === 0) {
+                    if (checkFormFound()) {
                         BLCAdmin.initializeFields(BLCAdmin.currentModal());
                     } else {
                         BLCAdmin.initializeModalTabs($data);
@@ -994,6 +999,9 @@ var BLCAdmin = (function($) {
                         if (typeof showIfValue === "function") {
                             shouldShow = showIfValue(parentValue, event.data.$container);
                         } else {
+                            if(typeof parentValue == "string"  && typeof showIfValue == "boolean"){
+                                showIfValue=showIfValue.toString();
+                            }
                             shouldShow = (parentValue === showIfValue);
                         }
 
@@ -1221,6 +1229,7 @@ $.fn.blSelectize = function (settings_user) {
         if (settings_user === undefined) {
             settings_user = {};
         }
+
         // add default settings here
         settings_user['dropdownParent'] = settings_user['dropdownParent'] || 'body';
         settings_user['hideSelected'] = settings_user['hideSelected'] !== undefined ? settings_user['hideSelected'] : true;
@@ -1234,7 +1243,7 @@ $.fn.blSelectize = function (settings_user) {
                 this.$control.addClass('remove-caret');
             }
         };
-
+        settings_user['allowEmptyOption'] = settings_user['allowEmptyOption'] || $(el).hasClass("selectAllowNoValueEnumOption");
         var $select = $(el).selectize(settings_user);
         var selectize = $select[0].selectize;
 
@@ -1633,11 +1642,4 @@ $('body').on('input', 'input.resize-as-needed', function () {
     newSize = Math.max(minSize, newSize);
     newSize = Math.min(maxSize, newSize);
     $(this).attr('size', newSize);
-});
-
-$("a.add-url-param-click").on('click', function () {
-    var param = $(this).attr('data-param');
-    var prop = $(this).attr('data-prop');
-    BLC.addUrlParam(document.location.search, prop, param);
-    return false;
 });

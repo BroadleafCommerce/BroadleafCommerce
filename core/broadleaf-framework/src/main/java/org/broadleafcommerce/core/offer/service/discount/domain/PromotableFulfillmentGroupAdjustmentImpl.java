@@ -65,12 +65,22 @@ public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionR
         }
 
         if (OfferDiscountType.PERCENT_OFF.equals(discountType)) {
-            BigDecimal offerValue = currentPriceDetailValue.getAmount().multiply(offer.getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+            BigDecimal offerValue = currentPriceDetailValue.getAmount().multiply(
+                    offer.getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
 
-            if (isRoundOfferValues()) {
-                offerValue = offerValue.setScale(roundingScale, roundingMode);
+            int scale = 2;
+            if (getCurrency() != null) {
+                // default scale to currency if currency is not null
+                scale = getCurrency().getJavaCurrency().getDefaultFractionDigits();
             }
-            adjustmentValue = new Money(offerValue, getCurrency(), 5);
+            if (roundingScale != null) {
+                // override scale from rounding settings if set
+                scale = roundingScale;
+            }
+            adjustmentValue = new Money(offerValue, getCurrency(), scale);
+            if (roundingScale != null) {
+                adjustmentValue = Money.trimUnnecessaryScaleToCurrency(adjustmentValue);
+            }
         }
 
         if (currentPriceDetailValue.lessThan(adjustmentValue)) {

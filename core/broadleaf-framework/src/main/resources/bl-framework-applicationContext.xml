@@ -243,4 +243,17 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blMergedCacheConfigLocations-framework" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-framework-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedCacheConfigLocations-framework"/>
+        <property name="targetRef" value="blMergedCacheConfigLocations"/>
+    </bean>
 </beans>

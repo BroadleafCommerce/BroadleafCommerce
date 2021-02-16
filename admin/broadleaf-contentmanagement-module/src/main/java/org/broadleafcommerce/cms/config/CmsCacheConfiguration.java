@@ -59,4 +59,9 @@ public class CmsCacheConfiguration {
     public JCacheRegionConfiguration cmsUrlHandlerCache() {
         return new JCacheRegionConfiguration("cmsUrlHandlerCache", 3600, 5000);
     }
+
+    @Bean
+    public JCacheRegionConfiguration blUrlHandler() {
+        return new JCacheRegionConfiguration("blUrlHandler", 86400, 1000);
+    }
 }

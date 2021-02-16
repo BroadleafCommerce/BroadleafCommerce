@@ -250,7 +250,7 @@ public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierP
                 if (payment.isActive() && PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
                     orderContainsThirdPartyPayment = true;
                 }
-                if (payment.isActive() && (PaymentType.CREDIT_CARD.equals(payment.getType()) && !PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()))) {
+                if (payment.isActive() && (payment.getType().isCreditCardType() && !PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()))) {
                     orderContainsUnconfirmedCreditCard = true;
                     unconfirmedCC = payment;
                 }

@@ -52,7 +52,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION_VALUE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
@@ -188,11 +188,11 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
             return id.equals(other.id);
         }
 
-        if (getAttributeValue() == null) {
-            if (other.getAttributeValue() != null) {
+        if (attributeValue == null) {
+            if (other.attributeValue != null) {
                 return false;
             }
-        } else if (!getAttributeValue().equals(other.getAttributeValue())) {
+        } else if (!attributeValue.equals(other.attributeValue)) {
             return false;
         }
         return true;
@@ -201,7 +201,7 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, getAttributeValue());
+        return Objects.hash(id, attributeValue);
     }
 
     @Override

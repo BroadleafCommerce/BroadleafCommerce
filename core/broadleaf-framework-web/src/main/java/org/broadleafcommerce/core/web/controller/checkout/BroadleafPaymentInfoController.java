@@ -88,7 +88,7 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
                 CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(paymentForm.getCustomerPaymentId());
 
                 if (!cartStateService.cartHasCreditCardPaymentWithSameToken(customerPayment.getPaymentToken())) {
-                    orderService.removePaymentsFromOrder(cart, PaymentType.CREDIT_CARD);
+                    orderService.removeCreditCardPaymentsFromOrder(cart);
                     orderPaymentService.createOrderPaymentFromCustomerPayment(cart, customerPayment, cart.getTotalAfterAppliedPayments());
                 }
             }
@@ -136,7 +136,7 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
                     (StringUtils.isEmpty(paymentForm.getAddress().getPhoneFax().getPhoneNumber()))) {
                 paymentForm.getAddress().setPhoneFax(null);
             }
-            orderService.removePaymentsFromOrder(cart, PaymentType.CREDIT_CARD);
+            orderService.removeCreditCardPaymentsFromOrder(cart);
 
             addTemporaryOrderPayment(paymentForm, cart);
 

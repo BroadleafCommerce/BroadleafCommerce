@@ -67,7 +67,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "BLC_OFFER_CODE")
 @Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
 @SQLDelete(sql="UPDATE BLC_OFFER_CODE SET ARCHIVED = 'Y' WHERE OFFER_CODE_ID = ?")
 @DirectCopyTransform({
@@ -297,7 +297,7 @@ public class OfferCodeImpl implements OfferCode {
         } else {
             datesActive = DateUtil.isActive(offerCodeStartDate, offerCodeEndDate, true);
         }
-        return datesActive && 'Y' != getArchived();
+        return datesActive && 'Y' != getArchived() && offer.isActive();
     }
 
     @Override

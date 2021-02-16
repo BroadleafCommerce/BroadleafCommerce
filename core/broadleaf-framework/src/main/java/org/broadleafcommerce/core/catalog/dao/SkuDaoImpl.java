@@ -31,6 +31,8 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.hibernate.jpa.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +54,8 @@ import javax.persistence.criteria.Root;
  *
  * @author Jeff Fischer
  */
+
+@Repository("blSkuDao")
 public class SkuDaoImpl implements SkuDao {
 
     private static final SupportLogger logger = SupportLogManager.getLogger("Enterprise", SkuDaoImpl.class);
@@ -68,7 +72,9 @@ public class SkuDaoImpl implements SkuDao {
     @Resource(name = "blSkuDaoExtensionManager")
     protected SkuDaoExtensionManager extensionManager;
 
+    @Value("${query.dateResolution.sku:10000}")
     protected Long currentDateResolution;
+
     protected Date cachedDate = SystemTime.asDate();
 
     @Override
@@ -83,7 +89,7 @@ public class SkuDaoImpl implements SkuDao {
 
     @Override
     public Sku readSkuById(Long skuId) {
-        return (Sku) em.find(SkuImpl.class, skuId);
+        return em.find(SkuImpl.class, skuId);
     }
 
     @Override
