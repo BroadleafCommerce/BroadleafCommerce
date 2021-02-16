@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -175,7 +175,7 @@
                         });
                     });
                     // Then get the other normal properties
-                    var params = $form.serializeArray();
+                    var params = BLCAdmin.serializeArray($form);
                     $.each(params, function (i, val) {
                         formData.append(val.name, val.value);
                     });
@@ -415,7 +415,7 @@ $(document).ready(function() {
      		BLC.ajax({
      			url: tabUrl,
      			type: "POST",
-     			data: $form.serializeArray()
+     			data: BLCAdmin.serializeArray($form)
      		}, function(data) {
 
      		    // using tabKey instead of href. Href is not dependable because of hidden tabs
@@ -490,7 +490,7 @@ $(document).ready(function() {
             BLC.ajax({
                 url: deleteUrl,
                 type: "POST",
-                data: $form.serializeArray(),
+                data: BLCAdmin.serializeArray($form),
                 complete: BLCAdmin.entityForm.hideActionSpinner()
             }, function (data) {
                 $("#headerFlashAlertBoxContainer").removeClass("hidden");
@@ -529,7 +529,7 @@ $(document).ready(function() {
         BLC.ajax({
             url: dupUrl,
             type: "POST",
-            data: $form.serializeArray(),
+            data: BLCAdmin.serializeArray($form),
             complete: BLCAdmin.entityForm.hideActionSpinner()
         }, function (data) {
             $("#headerFlashAlertBoxContainer").removeClass("hidden");
