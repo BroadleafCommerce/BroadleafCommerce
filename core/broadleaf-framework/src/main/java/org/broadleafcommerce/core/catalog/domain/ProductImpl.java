@@ -157,6 +157,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
      */
     private static final long serialVersionUID = 1L;
 
+    public static final String EXCLUDE_PRODUCT_CODE_COPY_HINT = "exclude-product-productCodes";
+
     /**
      * The id.
      */

@@ -518,39 +518,43 @@ $(document).ready(function() {
 
     $('body').on('click', 'button.duplicate-button, a.duplicate-button', function(event) {
         var $button = $(this);
-        var $form = BLCAdmin.getForm($button);
+        BLCAdmin.confirmProcessBeforeProceeding(true, 'You are about to copy this product', processCopyCall, [$button]);
 
-        var currentAction = $form.attr('action');
-        var dupUrl = currentAction + '/duplicate';
+        function processCopyCall (params) {
+            var $form = BLCAdmin.getForm($button);
 
-        BLCAdmin.entityForm.showActionSpinner($button.closest('.entity-form-actions'));
+            var currentAction = $form.attr('action');
+            var dupUrl = currentAction + '/duplicate';
 
-        // On success this should redirect, on failure we'll get some JSON back
-        BLC.ajax({
-            url: dupUrl,
-            type: "POST",
-            data: $form.serializeArray(),
-            complete: BLCAdmin.entityForm.hideActionSpinner()
-        }, function (data) {
-            $("#headerFlashAlertBoxContainer").removeClass("hidden");
-            $(".errors, .error, .tab-error-indicator, .tabError").remove();
-            $('.has-error').removeClass('has-error');
+            BLCAdmin.entityForm.showActionSpinner($button.closest('.entity-form-actions'));
 
-            if (!data.errors) {
-                var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
-                BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.duplicated + '!', {
-                    alertType: 'save-alert',
-                    autoClose: 2000,
-                    clearOtherAlerts: true
-                });
-            } else {
-                BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDuplicating);
-            }
+            // On success this should redirect, on failure we'll get some JSON back
+            BLC.ajax({
+                url: dupUrl,
+                type: "POST",
+                data: $form.serializeArray(),
+                complete: BLCAdmin.entityForm.hideActionSpinner()
+            }, function (data) {
+                $("#headerFlashAlertBoxContainer").removeClass("hidden");
+                $(".errors, .error, .tab-error-indicator, .tabError").remove();
+                $('.has-error').removeClass('has-error');
 
-            BLCAdmin.runPostFormSubmitHandlers($form, data);
-        });
+                if (!data.errors) {
+                    var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
+                    BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.duplicated + '!', {
+                        alertType: 'save-alert',
+                        autoClose: 2000,
+                        clearOtherAlerts: true
+                    });
+                } else {
+                    BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDuplicating);
+                }
 
-        event.preventDefault();
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
+            });
+
+            event.preventDefault();
+        }
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {
