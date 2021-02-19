@@ -405,7 +405,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return persistenceResponse;
     }
 
-    private void postFetchValidation(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+    protected void postFetchValidation(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
         final Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems();
         final SectionCrumb[] sectionCrumbs = persistencePackage.getSectionCrumbs();
         final DynamicResultSet dynamicResultSet = persistenceResponse.getDynamicResultSet();
