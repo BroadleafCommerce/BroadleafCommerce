@@ -38,6 +38,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.util.service.SiteMapExtensionManager;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -89,6 +90,9 @@ public class ProductDaoImpl implements ProductDao {
 
     @Value("${query.dateResolution.product:10000}")
     protected Long currentDateResolution;
+
+    @Resource(name = "blSiteMapExtensionManager")
+    protected SiteMapExtensionManager productTypeSiteMapExtensionManager;
 
     protected Date cachedDate = SystemTime.asDate();
 
@@ -546,7 +550,24 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {    
         return readAllActiveProductsInternal(page, pageSize, currentDate);
     }
-    
+
+    @Override
+    public List<Product> readAllActiveProductsForSiteMap(int page, int pageSize) {
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
+        CriteriaQuery<Product> criteria = getCriteriaForActiveProductsForSiteMap(currentDate);
+
+        int firstResult = page * pageSize;
+        TypedQuery<Product> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+
+    }
+
+    protected CriteriaQuery<Product> getCriteriaForActiveProductsForSiteMap(Date currentDate) {
+        return getCriteriaForActiveProducts(currentDate, null, true);
+    }
+
     @Override
     public List<Long> readAllActiveProductIds(Long lastId, int pageSize) {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
@@ -598,7 +619,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     protected List<Product> readAllActiveProductsInternal(Integer pageSize, Date currentDate, Long lastId) {
-        CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate, lastId);
+        CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate, lastId, false);
         TypedQuery<Product> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
@@ -668,10 +689,10 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate) {
-        return getCriteriaForActiveProducts(currentDate, null);
+        return getCriteriaForActiveProducts(currentDate, null, false);
     }
 
-    protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate, Long lastId) {
+    protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate, Long lastId, boolean forSiteMap) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -696,6 +717,11 @@ public class ProductDaoImpl implements ProductDao {
         // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
+        if(forSiteMap){
+            if (productTypeSiteMapExtensionManager != null) {
+                productTypeSiteMapExtensionManager.getProxy().modifyQuery(criteria, builder, product);
+            }
+        }
         //Add ordering so that paginated queries are consistent
         criteria.orderBy(builder.asc(product.get("id")));
         return criteria;

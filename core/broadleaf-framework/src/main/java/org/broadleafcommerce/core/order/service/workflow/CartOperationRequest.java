@@ -17,12 +17,16 @@
  */
 package org.broadleafcommerce.core.order.service.workflow;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -51,8 +55,30 @@ public class CartOperationRequest {
     
     public CartOperationRequest(Order order, OrderItemRequestDTO itemRequest, boolean priceOrder) {
         setOrder(order);
+        sortAllDescendantChildItems(itemRequest);
         setItemRequest(itemRequest);
         setPriceOrder(priceOrder);
+    }
+
+    protected void sortAllDescendantChildItems(final OrderItemRequestDTO orderItemRequestDTO) {
+        if (CollectionUtils.isEmpty(orderItemRequestDTO.getChildOrderItems())) {
+            return;
+        }
+
+        Collections.sort(orderItemRequestDTO.getChildOrderItems(), new Comparator<OrderItemRequestDTO>() {
+            @Override
+            public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
+                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
+                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
+                return new CompareToBuilder()
+                        .append(o1DisplayOrder, o2DisplayOrder)
+                        .toComparison();
+            }
+        });
+
+        for (final OrderItemRequestDTO childOrderItem : orderItemRequestDTO.getChildOrderItems()) {
+            sortAllDescendantChildItems(childOrderItem);
+        }
     }
     
     public OrderItemRequestDTO getItemRequest() {

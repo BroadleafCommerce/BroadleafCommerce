@@ -266,7 +266,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.getRules().add(e2);
 
         String translated = translator.createMVEL("fulfillmentGroup", dataDTO, fulfillmentGroupFieldService);
-        String mvel = "?fulfillmentGroup.?address.?state.?name==\"Texas\"&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&?fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199)";
+        String mvel = "?fulfillmentGroup.?address.?state.?name==\"Texas\"&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199))";
         assert (mvel.equals(translated));
     }
 
@@ -312,8 +312,8 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         
         String d1Mvel = "(MvelHelper.convertField(\"DATE\",?customer.?getCustomerAttributes()[\"invoice_date\"])" +
                 ">MvelHelper.convertField(\"DATE\",MvelHelper.subtractFromCurrentTime(12))" +
-                "&&MvelHelper.convertField(\"DATE\",?customer.?getCustomerAttributes()[\"invoice_date\"])" +
-                "<MvelHelper.convertField(\"DATE\",MvelHelper.currentTime()))";
+                "&&(MvelHelper.convertField(\"DATE\",?customer.?getCustomerAttributes()[\"invoice_date\"])" +
+                "<MvelHelper.convertField(\"DATE\",MvelHelper.currentTime())))";
 
         customerFieldService.init();
         

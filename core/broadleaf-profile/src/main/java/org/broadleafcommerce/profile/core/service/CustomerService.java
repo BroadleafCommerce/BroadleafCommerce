@@ -57,6 +57,13 @@ public interface CustomerService {
     void deleteCustomer(Customer customer);
 
     /**
+     * Detaches the given Customer instance from the entity manager.
+     *
+     * @param customer
+     */
+    void detachCustomer(Customer customer);
+
+    /**
      * Returns a {@link Customer} by first looking in the database, otherwise creating a new non-persisted {@link Customer}
      *
      * @param customerId the id of the customer to lookup

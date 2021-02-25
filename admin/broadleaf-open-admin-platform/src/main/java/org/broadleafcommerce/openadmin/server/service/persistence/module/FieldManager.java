@@ -94,6 +94,7 @@ public class FieldManager {
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
+                value = HibernateUtils.deproxy(value);
 
                 if (mapKey != null) {
                     value = handleMapFieldExtraction(bean, fieldName, componentClass, value, fieldNamePart, mapKey);

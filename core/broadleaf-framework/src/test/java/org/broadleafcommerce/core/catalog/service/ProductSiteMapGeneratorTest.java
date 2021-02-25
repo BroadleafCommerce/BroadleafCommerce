@@ -71,7 +71,7 @@ public class ProductSiteMapGeneratorTest extends SiteMapGeneratorTest {
         products.add(p4);
         
         ProductDao productDao = EasyMock.createMock(ProductDao.class);
-        EasyMock.expect(productDao.readAllActiveProducts(EasyMock.eq(0), EasyMock.eq(5))).andReturn(products);
+        EasyMock.expect(productDao.readAllActiveProductsForSiteMap(EasyMock.eq(0), EasyMock.eq(5))).andReturn(products);
         EasyMock.replay(productDao);
 
         ProductSiteMapGenerator psmg = new ProductSiteMapGenerator();

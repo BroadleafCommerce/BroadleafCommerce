@@ -446,6 +446,12 @@ public class DataDTOToMVELTranslator {
             sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
             sb.append(")");
         } else {
+            boolean addParenthesis = false;
+            if(sb.length()>0 && sb.charAt(sb.length()-1)!='('){
+                addParenthesis = true;
+                sb.append("(");
+            }
+
             sb.append(formatField(entityKey, type, field, ignoreCase));
             sb.append(operator);
             if (includeParenthesis) {
@@ -453,6 +459,9 @@ public class DataDTOToMVELTranslator {
             }
             sb.append(formatValue(field, entityKey, type, secondaryType, value,
                     isFieldComparison, ignoreCase, ignoreQuotes));
+            if(addParenthesis){
+                sb.append(")");
+            }
             if (includeParenthesis) {
                 sb.append(")");
             }
