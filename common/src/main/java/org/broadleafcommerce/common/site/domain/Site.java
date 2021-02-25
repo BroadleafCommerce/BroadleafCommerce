@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
@@ -85,7 +86,7 @@ public interface Site extends Serializable, Status {
      * @param siteIdentifierValue
      */
     public void setSiteIdentifierValue(String siteIdentifierValue);
-    
+
     /**
      * Intended to be used along with the #getSiteIdentifierValue()
      * by an implementation of SiteResolver to determine 
@@ -97,8 +98,9 @@ public interface Site extends Serializable, Status {
 
     /** 
      * Sets the site resolution type.
-     * @see #getSiteResolutionType()
+     *
      * @param siteResolutionType
+     * @see #getSiteResolutionType()
      */
     public void setSiteResolutionType(SiteResolutionType siteResolutionType);
 
@@ -123,19 +125,33 @@ public interface Site extends Serializable, Status {
     public void setCatalogs(List<Catalog> catalogs);
 
     /**
+     * used for default locale
+     *
+     * @return Locale
+     */
+    public Locale getDefaultLocale();
+
+    /**
+     * Sets the site default locale.
+     *
+     * @param defaultLocale
+     */
+    public void setDefaultLocale(Locale defaultLocale);
+
+    /**
      * Retrieve an deep copy of this site. Not bound by
      * entity manager scope.
      *
      * @return a deep copy of this site
      */
     public Site clone();
-    
+
     public ArchiveStatus getArchiveStatus();
 
     public boolean isDeactivated();
 
     public void setDeactivated(boolean deactivated);
-    
+
     /**
      * This method will return true when the given site was created based on a template.
      * 

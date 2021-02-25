@@ -24,6 +24,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -52,6 +54,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -114,6 +118,12 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSiteElements")
     @AdminPresentation(excluded = true)
     protected List<Catalog> catalogs = new ArrayList<Catalog>();
+
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "DEFAULT_LOCALE")
+    @AdminPresentation(friendlyName = "SiteImpl_Default_Locale", order = 3500, gridOrder = 5,
+        prominent = true, fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
+    protected Locale defaultLocale;
 
     /**************************************************/
     /**
@@ -184,7 +194,17 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     public void setCatalogs(List<Catalog> catalogs) {
         this.catalogs = catalogs;
     }
-    
+
+    @Override
+    public Locale getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    @Override
+    public void setDefaultLocale(Locale defaultLocale) {
+        this.defaultLocale = defaultLocale;
+    }
+
     @Override
     public Character getArchived() {
        ArchiveStatus temp;
@@ -264,6 +284,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             clone.setDeactivated(isDeactivated());
             clone.setSiteResolutionType(getSiteResolutionType());
             clone.setSiteIdentifierValue(getSiteIdentifierValue());
+            clone.setDefaultLocale(getDefaultLocale());
             ((Status) clone).setArchived(getArchived());
         } catch (Exception e) {
             throw new RuntimeException(e);

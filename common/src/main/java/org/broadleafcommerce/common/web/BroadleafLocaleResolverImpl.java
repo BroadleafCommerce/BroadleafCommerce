@@ -97,7 +97,8 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
 
         // Finally, use the default
         if (locale == null) {
-            locale = localeService.findDefaultLocale();
+            Locale defaultSiteLocale = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite().getDefaultLocale();
+            locale = defaultSiteLocale == null ? localeService.findDefaultLocale() : defaultSiteLocale;
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_SESSION);
             }
