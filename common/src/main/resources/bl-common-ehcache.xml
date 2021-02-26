@@ -112,7 +112,7 @@
         <expiry>
             <ttl>600</ttl>
         </expiry>
-        <heap>1000</heap>
+        <heap>10000</heap>
     </cache>
 
     <cache alias="query.PriceList">
@@ -175,7 +175,7 @@
          <expiry>
             <ttl>3600</ttl>
          </expiry>
-         <heap>1000</heap>
+         <heap>5000</heap>
      </cache>
 
     <cache alias="blTranslationElements">

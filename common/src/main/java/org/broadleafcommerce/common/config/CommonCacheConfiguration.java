@@ -77,7 +77,7 @@ public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration queryCatalog() {
-        return new JCacheRegionConfiguration("query.Catalog", 600, 1000);
+        return new JCacheRegionConfiguration("query.Catalog", 600, 10000);
     }
 
     @Bean
@@ -122,7 +122,7 @@ public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration blTemplateElements() {
-        return new JCacheRegionConfiguration("blTemplateElements", 3600, 1000);
+        return new JCacheRegionConfiguration("blTemplateElements", 3600, 5000);
     }
 
     @Bean
