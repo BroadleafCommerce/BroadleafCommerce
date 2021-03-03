@@ -42,6 +42,7 @@ import java.util.Map;
 public class MultiTenantCopyContext {
 
     public static final String[] BROADLEAF_PACKAGE_PREFIXES = {"org.broadleafcommerce","com.broadleafcommerce"};
+    public static final String MANUAL_DUPLICATION = "MANUAL_DUPLICATION";
 
     protected Catalog fromCatalog;
     protected Catalog toCatalog;

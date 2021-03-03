@@ -88,6 +88,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
  * product is a general description of an item that can be sold (for example: a
@@ -1153,8 +1155,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setUrlKey(urlKey);
         cloned.setManufacturer(manufacturer);
         cloned.setPromoMessage(promoMessage);
-        if (defaultCategory != null) {
+        if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
+        } else {
+            cloned.setDefaultCategory(defaultCategory);
         }
         cloned.setModel(model);
         if (defaultSku != null) {

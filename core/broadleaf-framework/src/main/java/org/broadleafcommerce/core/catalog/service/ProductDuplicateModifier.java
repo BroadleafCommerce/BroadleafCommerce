@@ -10,20 +10,27 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.service;
 
+import lombok.SneakyThrows;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.AbstractEntityDuplicationHelper;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component("blProductDuplicateModifier")
 public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Product> {
@@ -43,10 +50,23 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
         return Product.class.isAssignableFrom(candidate.getClass());
     }
 
+    @SneakyThrows
     @Override
-    public void modifyInitialDuplicateState(final Product copy) {
+    public void modifyInitialDuplicateState(final Product original, final Product copy, final MultiTenantCopyContext context) {
+        for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
+            final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
+            clone.setProduct(copy);
+            copy.getAllParentCategoryXrefs().add(clone);
+        }
+        List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
+        for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
+            final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
+            clone.setProduct(copy);
+            productOptionXrefs.add(clone);
+        }
+        copy.setProductOptionXrefs(productOptionXrefs);
+
         setNameAndUrl(copy);
-        copy.setDefaultSku(copy.getDefaultSku());
     }
 
     private void setNameAndUrl(Product copy) {
@@ -65,6 +85,6 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             name = name + suffix;
         }
         copy.setName(name);
-        copy.setUrl(copy.getName().replace("-", "").replace(" ", "-").toLowerCase());
+        copy.setUrl("/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase());
     }
 }

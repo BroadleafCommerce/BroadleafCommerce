@@ -38,6 +38,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 /**
  * @see EntityDuplicator
  * @author Jeff Fischer
@@ -161,7 +163,8 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
                     context = contextResponse.getResult();
                 }
             }
-            
+
+            context.getCopyHints().put(MANUAL_DUPLICATION, Boolean.TRUE.toString());
             dup = performCopy(context, (MultiTenantCloneable<T>) entity);
         } catch (Exception e) {
             throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class,
@@ -234,7 +237,7 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
             public T execute(T original) throws CloneNotSupportedException {
                 T response = entity.createOrRetrieveCopyInstance(context).getClone();
                 for (final EntityDuplicationHelper helper : helpers) {
-                    helper.modifyInitialDuplicateState(response);
+                    helper.modifyInitialDuplicateState(original, response, context);
                 }
                 return response;
             }
