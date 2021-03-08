@@ -217,11 +217,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
-        // Persist anonymous customer before mapping it with the new cart
-        if (customer.isAnonymous()) {
-            customer = customerService.saveCustomer(customer);
-        }
-
+        customer = customerService.saveCustomer(customer);
         return orderDao.createNewCartForCustomer(customer);
     }
 
