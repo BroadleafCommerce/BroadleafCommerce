@@ -110,8 +110,7 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
     }
     
     public Customer createCustomer() {
-        Long customerId = customerService.findNextCustomerId();
-        return customerService.createCustomerFromId(customerId);
+        return customerService.createCustomerFromId(null);
     }
     
     /**

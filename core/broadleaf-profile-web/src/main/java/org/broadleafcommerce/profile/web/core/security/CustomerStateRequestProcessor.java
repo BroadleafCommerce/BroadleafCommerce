@@ -248,7 +248,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      *      </ul>
      *      <li>If no there is no customer ID in session (and thus no {@link Customer})</li>
      *      <ol>
-     *          <li>Create a new customer</li>
+     *          <li>Create a new customer with null customer id</li>
      *          <li>Put the newly-created {@link Customer} in session</li>
      *      </ol>
      *  </ul>
@@ -267,7 +267,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         //If there is no Customer object in session, AND no customer id in session, create a new customer
         //and store the entire customer in session (don't persist to DB just yet)
         if (customer == null) {
-            customer = customerService.createNewCustomer();
+            customer = customerService.createCustomerWithNullId();
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.setAttribute(getAnonymousCustomerSessionAttributeName(), customer, WebRequest.SCOPE_SESSION);
             }

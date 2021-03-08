@@ -223,12 +223,20 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer createCustomerWithNullId() {
+        return customerDao.create();
+    }
+
+    @Override
     public Customer createCustomerFromId(Long customerId) {
         Customer customer = customerId != null ? readCustomerById(customerId) : null;
         if (customer == null) {
             customer = customerDao.create();
-            // allow null IDs to be set. ID will be assigned when the customer is being persisted
-            customer.setId(customerId);
+            if (customerId != null) {
+                customer.setId(customerId);
+            } else {
+                customer.setId(findNextCustomerId());
+            }
         }
         return customer;
     }
@@ -239,6 +247,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Deprecated
     public Customer createNewCustomer() {
         return createCustomerFromId(null);
     }
