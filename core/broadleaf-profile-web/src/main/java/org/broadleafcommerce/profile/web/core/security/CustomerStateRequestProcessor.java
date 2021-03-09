@@ -47,7 +47,7 @@ import javax.annotation.Resource;
 
 /**
  * @author Phillip Verheyden
- * @see {@link CustomerStateFilter}
+ * @see {@link org.broadleafcommerce.profile.web.site.security.CustomerStateFilter}
  */
 @Component("blCustomerStateRequestProcessor")
 public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestProcessor implements ApplicationEventPublisherAware {
@@ -248,7 +248,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      *      </ul>
      *      <li>If no there is no customer ID in session (and thus no {@link Customer})</li>
      *      <ol>
-     *          <li>Create a new customer</li>
+     *          <li>Create a new customer with null customer id</li>
      *          <li>Put the newly-created {@link Customer} in session</li>
      *      </ol>
      *  </ul>
@@ -257,8 +257,8 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * @param request
      * @return
      * @see {@link #getAnonymousCustomer(WebRequest)}
-     * @see {@link #getAnonymousCustomerAttributeName()}
-     * @see {@link #getAnonymousCustomerIdAttributeName()}
+     * @see {@link #getAnonymousCustomerSessionAttributeName()}
+     * @see {@link #getAnonymousCustomerIdSessionAttributeName()}
      */
     public Customer resolveAnonymousCustomer(WebRequest request) {
         Customer customer;
@@ -267,7 +267,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         //If there is no Customer object in session, AND no customer id in session, create a new customer
         //and store the entire customer in session (don't persist to DB just yet)
         if (customer == null) {
-            customer = customerService.createNewCustomer();
+            customer = customerService.createCustomerWithNullId();
             if (BLCRequestUtils.isOKtoUseSession(request)) {
                 request.setAttribute(getAnonymousCustomerSessionAttributeName(), customer, WebRequest.SCOPE_SESSION);
             }
@@ -320,7 +320,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * Some implementations may wish to have a different anonymous customer instance (and as a result a different cart). 
      * 
      * The entire Customer should be stored in session ONLY if that Customer has not already been persisted to the database.
-     * Once it has been persisted (like once the user has added something to the cart) then {@link #getAnonymousCustomerIdAttributeName()}
+     * Once it has been persisted (like once the user has added something to the cart) then {@link #getAnonymousCustomerIdSessionAttributeName()}
      * should be used instead.
      * 
      * @return the session attribute for an anonymous {@link Customer} that has not been persisted to the database yet 

@@ -39,7 +39,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     public RegisterCustomerForm initCustomerRegistrationForm() {
         Customer customer = CustomerState.getCustomer();
         if (customer == null || ! customer.isAnonymous()) {
-            customer = customerService.createCustomerFromId(null);
+            customer = customerService.createCustomerWithNullId();
         }
 
         RegisterCustomerForm customerRegistrationForm = new RegisterCustomerForm();

@@ -71,6 +71,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.exception.LockAcquisitionException;
@@ -119,6 +120,9 @@ public class OrderServiceImpl implements OrderService {
     protected NullOrderFactory nullOrderFactory;
     
     /* Services */
+    @Resource(name = "blCustomerService")
+    protected CustomerService customerService;
+
     @Resource(name = "blPricingService")
     protected PricingService pricingService;
     
@@ -213,6 +217,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
+        customer = customerService.saveCustomer(customer);
         return orderDao.createNewCartForCustomer(customer);
     }
 

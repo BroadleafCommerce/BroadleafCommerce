@@ -93,7 +93,7 @@ public class RegisterCustomerController {
     @ModelAttribute("registerCustomerForm")
     public RegisterCustomerForm initCustomerRegistrationForm() {
         RegisterCustomerForm customerRegistrationForm = new RegisterCustomerForm();
-        Customer customer = customerService.createNewCustomer();
+        Customer customer = customerService.createCustomerWithNullId();
         customerRegistrationForm.setCustomer(customer);
         return customerRegistrationForm;
     }

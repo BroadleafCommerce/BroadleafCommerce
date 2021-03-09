@@ -84,7 +84,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
     protected FulfillmentGroupService fulfillmentGroupService;
 
     private Order createTestOrderWithOfferAndGiftWrap() throws PricingException {
-        Customer customer = customerService.createCustomerFromId(null);
+        Customer customer = createCustomer();
         Order order = orderService.createNewCartForCustomer(customer);
 
         customerService.saveCustomer(order.getCustomer());

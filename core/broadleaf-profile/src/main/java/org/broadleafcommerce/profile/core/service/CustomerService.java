@@ -50,6 +50,13 @@ public interface CustomerService {
     public Customer createCustomer();
 
     /**
+     * Returns a non-persisted {@link Customer} with a null id. Typically used with registering a new
+     * customer or creating a new anonymous customer. Creating a customer with null id so that we don't
+     * need to query the database for the next id everytime an anonymous customer browses the site.
+     */
+    Customer createCustomerWithNullId();
+
+    /**
      * Delete the customer entity from the persistent store
      *
      * @param customer the customer entity to remove
@@ -71,8 +78,11 @@ public interface CustomerService {
     public Customer createCustomerFromId(Long customerId);
 
     /**
-     * Returns a non-persisted {@link Customer}. Typically used with registering a new customer.
+     * Returns a non-persisted {@link Customer}.
+     *
+     * @deprecated use {@link #createCustomer()} or {@link #createCustomerWithNullId()}} instead.
      */
+    @Deprecated
     public Customer createNewCustomer();
 
     /**

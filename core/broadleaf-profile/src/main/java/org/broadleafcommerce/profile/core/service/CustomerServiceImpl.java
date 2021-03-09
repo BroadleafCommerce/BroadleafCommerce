@@ -79,10 +79,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource(name = "blCustomerForgotPasswordSecurityTokenDao")
     protected CustomerForgotPasswordSecurityTokenDao customerForgotPasswordSecurityTokenDao;
 
-    /**
-     * <p>This is simply a placeholder to be used by {@link #setupPasswordEncoder()} to determine if we're using the
-     * new {@link PasswordEncoder} or the deprecated {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder}
-     */
     @Resource(name = "blPasswordEncoder")
     protected PasswordEncoder passwordEncoderBean;
 
@@ -105,6 +101,21 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer saveCustomer(Customer customer, boolean register) {
+        if (customer.getId() == null) {
+            customer.setId(findNextCustomerId());
+        }
+
+        if (customer.getUsername() == null) {
+            customer.setUsername(String.valueOf(customer.getId()));
+            if (readCustomerById(customer.getId()) != null) {
+                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") " +
+                        "that already exists in the database. This can occur when legacy customers have been migrated to " +
+                        "Broadleaf customers, but the batchStart setting has not been declared for id generation. In " +
+                        "such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of " +
+                        "blIdGenerationDao) should be set to the appropriate start value.");
+            }
+        }
+
         if (register && !customer.isRegistered()) {
             customer.setRegistered(true);
         }
@@ -132,9 +143,6 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setRegistered(true);
 
         // When unencodedPassword is set the save() will encode it
-        if (customer.getId() == null) {
-            customer.setId(findNextCustomerId());
-        }
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
         createRegisteredCustomerRoles(retCustomer);
@@ -215,6 +223,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer createCustomerWithNullId() {
+        return customerDao.create();
+    }
+
+    @Override
     public Customer createCustomerFromId(Long customerId) {
         Customer customer = customerId != null ? readCustomerById(customerId) : null;
         if (customer == null) {
@@ -234,6 +247,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Deprecated
     public Customer createNewCustomer() {
         return createCustomerFromId(null);
     }

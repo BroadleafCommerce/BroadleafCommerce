@@ -35,7 +35,6 @@ import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.jpa.AvailableSettings;
 import org.hibernate.jpa.QueryHints;
@@ -62,9 +61,6 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    @Resource(name = "blCustomerDao")
-    protected CustomerDao customerDao;
 
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
@@ -225,17 +221,6 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order createNewCartForCustomer(Customer customer) {
         Order order = create();
-        if (customer.getUsername() == null) {
-            customer.setUsername(String.valueOf(customer.getId()));
-            if (customerDao.readCustomerById(customer.getId()) != null) {
-                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") " +
-                        "that already exists in the database. This can occur when legacy customers have been migrated to " +
-                        "Broadleaf customers, but the batchStart setting has not been declared for id generation. In " +
-                        "such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of " +
-                        "blIdGenerationDao) should be set to the appropriate start value.");
-            }
-            customer = customerDao.save(customer);
-        }
         order.setCustomer(customer);
         order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS);
