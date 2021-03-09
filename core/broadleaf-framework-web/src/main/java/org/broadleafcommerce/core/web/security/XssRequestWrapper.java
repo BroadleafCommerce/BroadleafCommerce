@@ -17,8 +17,9 @@
  */
 package org.broadleafcommerce.core.web.security;
 
-import org.broadleafcommerce.common.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.esapi.ESAPI;
+import org.springframework.beans.factory.annotation.Value;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.core.env.Environment;
 
@@ -30,6 +31,11 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
 
     protected final Environment environment;
     private String[] whiteListParamNames;
+    private final int MAX_INPUT_LENGTH = ESAPI.securityConfiguration().getIntProp("HttpUtilities.BroadleafMaxInputLength");
+    private final String BLC_PARAM_VALUE_INPUT_TYPE = "BroadleafHttpParameterValue";
+
+    @Value("${custom.strip.xss:false}")
+    protected boolean customStripXssEnabled;
 
     public XssRequestWrapper(HttpServletRequest servletRequest, Environment environment, String[] whiteListParamNames) {
         super(servletRequest);
@@ -41,23 +47,23 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
     public String[] getParameterValues(String parameter) {
 
         String[] values = super.getParameterValues(parameter);
-        if(checkWhitelist(parameter)){
-            return values;
-        }
         if (values == null) {
             return null;
+        }
+        if(checkWhitelist(parameter)){
+            return values;
         }
 
         int count = values.length;
         String[] encodedValues = new String[count];
         for (int i = 0; i < count; i++) {
-            encodedValues[i] = stripXSS(values[i]);
+            encodedValues[i] = stripXss(values[i], BLC_PARAM_VALUE_INPUT_TYPE);
         }
 
         return encodedValues;
     }
 
-    private boolean checkWhitelist(String parameter) {
+    protected boolean checkWhitelist(String parameter) {
         for (String whiteListParamName : whiteListParamNames) {
             if(whiteListParamName.equals(parameter)){
                 return true;
@@ -72,28 +78,29 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         if(checkWhitelist(parameter)){
             return value;
         }
-        return stripXSS(value);
+        return stripXss(value, BLC_PARAM_VALUE_INPUT_TYPE);
     }
 
-    private String stripXSS(String value) {
-        if (value != null) {
-            boolean customStripXss = Boolean.parseBoolean(environment.getProperty("custom.strip.xss", "false"));
-            if (customStripXss) {
-                value = customStripXss(value);
-            } else {
-                String newValue;
-                try {
-                    newValue = ESAPI.validator().getValidSafeHTML("context", value, 99999, true);
-                } catch (ValidationException e) {
-                    newValue = ESAPI.encoder().encodeForHTML(value);
-                }
-                value = newValue;
-            }
+    protected String stripXss(String value) {
+        return stripXss(value, null);
+    }
+
+    /**
+     * When {@link #customStripXssEnabled} is false, it will run ESAPI's logic based on the esapiInputType.
+     * If esapiInputType is null or empty, it will run {@link #stripXssAsHTML(String)}.
+     *
+     * @param value - value to be stripped
+     * @param esapiInputType - The name of the ESAPI validation rule defined in ESAPI validation configuration file.
+     */
+    protected String stripXss(String value, String esapiInputType) {
+        return customStripXssEnabled ? customStripXss(value) : stripXssWithESAPI(value, esapiInputType);
+    }
+
+    protected String customStripXss(String value) {
+        if (value == null) {
+            return null;
         }
-        return value;
-    }
 
-    private String customStripXss(String value) {
         // Avoid null characters
         value = value.replaceAll("", "");
 
@@ -136,5 +143,25 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         scriptPattern = Pattern.compile("onload(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
         value = scriptPattern.matcher(value).replaceAll("");
         return value;
+    }
+
+    protected String stripXssWithESAPI(String value, String esapiInputType) {
+        if (StringUtils.isEmpty(esapiInputType)) {
+            return stripXssAsHTML(value);
+        }
+
+        try {
+            return ESAPI.validator().getValidInput("Value: " + value, value, esapiInputType, MAX_INPUT_LENGTH, true, false);
+        } catch (ValidationException e) {
+            return stripXssAsHTML(value);
+        }
+    }
+
+    protected String stripXssAsHTML(String value) {
+        try {
+            return ESAPI.validator().getValidSafeHTML("Value: " + value, value, MAX_INPUT_LENGTH, true);
+        } catch (ValidationException e2) {
+            return ESAPI.encoder().encodeForHTML(value);
+        }
     }
 }
