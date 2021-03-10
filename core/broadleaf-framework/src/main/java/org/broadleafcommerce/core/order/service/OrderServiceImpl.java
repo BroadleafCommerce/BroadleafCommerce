@@ -277,6 +277,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> findOrdersByDaysCount(Integer daysCount, Integer limit) {
+        return orderDao.readOrdersOlderThanDaysCount(daysCount, limit);
+    }
+
+    @Override
     public List<Order> findOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate) {
         return orderDao.readOrdersForCustomersInDateRange(customerIds, startDate, endDate);
     }
