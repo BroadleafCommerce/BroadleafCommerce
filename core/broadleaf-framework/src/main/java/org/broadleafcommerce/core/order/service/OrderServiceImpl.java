@@ -34,6 +34,8 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.OfferServiceExtensionHandler;
+import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
@@ -200,6 +202,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
+
+    @Resource(name = "blOfferServiceExtensionManager")
+    protected OfferServiceExtensionManager offerServiceExtensionManager;
+
 
     @Override
     @Transactional("blTransactionManager")
@@ -480,6 +486,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional("blTransactionManager")
     public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
         order.getAddedOfferCodes().remove(offerCode);
+        offerServiceExtensionManager.removeOfferCodeFromOrder(offerCode, order);
         order = save(order, priceOrder);
         return order;   
     }
@@ -905,6 +912,29 @@ public class OrderServiceImpl implements OrderService {
         List<OrderPayment> infos = new ArrayList<OrderPayment>();
         for (OrderPayment paymentInfo : order.getPayments()) {
             if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
+                infos.add(paymentInfo);
+            }
+        }
+        order.getPayments().removeAll(infos);
+        for (OrderPayment paymentInfo : infos) {
+            try {
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                // do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the OrderPayment", e);
+            }
+            order.getPayments().remove(paymentInfo);
+            paymentInfo = paymentDao.readPaymentById(paymentInfo.getId());
+            paymentDao.delete(paymentInfo);
+        }
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void removeCreditCardPaymentsFromOrder(Order order) {
+        List<OrderPayment> infos = new ArrayList<OrderPayment>();
+        for (OrderPayment paymentInfo : order.getPayments()) {
+            if (paymentInfo.getType().isCreditCardType()) {
                 infos.add(paymentInfo);
             }
         }

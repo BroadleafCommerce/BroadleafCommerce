@@ -98,7 +98,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         String paymentName = billingForm.getPaymentName();
         Boolean saveNewPayment = billingForm.getSaveNewPayment();
         for (OrderPayment p : cart.getPayments()) {
-            if (PaymentType.CREDIT_CARD.equals(p.getType()) && p.isActive()) {
+            if (p.getType().isCreditCardType() && p.isActive()) {
                 if (p.getBillingAddress() == null) {
                     p.setBillingAddress(billingForm.getAddress());
                 } else {

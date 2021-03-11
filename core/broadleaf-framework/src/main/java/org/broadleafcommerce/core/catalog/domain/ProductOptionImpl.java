@@ -405,8 +405,6 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
                 .append(this.validationString, rhs.validationString)
                 .append(this.errorCode, rhs.errorCode)
                 .append(this.errorMessage, rhs.errorMessage)
-                .append(this.allowedValues, rhs.allowedValues)
-                .append(this.products, rhs.products)
                 .isEquals();
     }
 
@@ -426,8 +424,6 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
                 .append(validationString)
                 .append(errorCode)
                 .append(errorMessage)
-                .append(allowedValues)
-                .append(products)
                 .toHashCode();
     }
 }

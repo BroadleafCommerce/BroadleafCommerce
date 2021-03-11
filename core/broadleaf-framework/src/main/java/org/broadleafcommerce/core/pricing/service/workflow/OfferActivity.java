@@ -36,6 +36,9 @@ import javax.annotation.Resource;
 public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
     public static final int ORDER = 1000;
+    public static final String FINALIZE_CHECKOUT = "FINALIZE_CHECKOUT";
+    public static final String OFFERS_EXPIRED = "OFFERS_EXPIRED";
+    public static final String ORIG_OFFERS = "ORIG_OFFERS";
     
     @Resource(name="blOfferService")
     protected OfferService offerService;
@@ -66,6 +69,7 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
         }
 
         order = offerService.applyAndSaveOffersToOrder(offers, order);
+
         context.setSeedData(order);
 
         return context;

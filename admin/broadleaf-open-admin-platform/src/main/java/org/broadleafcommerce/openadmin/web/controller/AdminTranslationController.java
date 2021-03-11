@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -171,27 +171,9 @@ public class AdminTranslationController extends AdminAbstractController {
         entityForm.setCeilingEntityClassname(Translation.class.getName());
         entityForm.setEntityType(TranslationImpl.class.getName());
 
-        Field entityType = new Field();
-        entityType.setName("entityType");
+        populateTranslationFields(entityForm, form);
 
-        String ceilingEntity = form.getCeilingEntity();
-
-        TranslatedEntity translatedEntity = translationService.getAssignableEntityType(ceilingEntity);
-        if (translatedEntity == null && ceilingEntity.endsWith("Impl")) {
-            int pos = ceilingEntity.lastIndexOf("Impl");
-            ceilingEntity = ceilingEntity.substring(0, pos);
-            translatedEntity = TranslatedEntity.getInstance(ceilingEntity);
-        }
-        entityType.setValue(translatedEntity.getFriendlyType());
-
-        Field fieldName = new Field();
-        fieldName.setName("fieldName");
-        fieldName.setValue(form.getPropertyName());
-
-        entityForm.getFields().put("entityType", entityType);
-        entityForm.getFields().put("fieldName", fieldName);
-
-        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(ceilingEntity, getSectionCustomCriteria());
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(form.getCeilingEntity(), getSectionCustomCriteria());
         Entity entity = service.addEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
 
         entityFormValidator.validate(entityForm, entity, result);
@@ -296,7 +278,9 @@ public class AdminTranslationController extends AdminAbstractController {
         entityForm.getFields().put("id", id);
         entityForm.setId(String.valueOf(form.getTranslationId()));
 
-        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(Translation.class.getName(), getSectionCustomCriteria());
+        populateTranslationFields(entityForm, form);
+
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(form.getCeilingEntity(), getSectionCustomCriteria());
         service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
         return viewTranslation(request, response, model, form, result);
     }
@@ -377,6 +361,28 @@ public class AdminTranslationController extends AdminAbstractController {
         if (action != null) {
             action.setButtonClass("translation-revert-button");
         }
+    }
+
+    protected void populateTranslationFields(EntityForm entityForm, TranslationForm translationForm) {
+        Field entityType = new Field();
+        entityType.setName("entityType");
+
+        String ceilingEntity = translationForm.getCeilingEntity();
+
+        TranslatedEntity translatedEntity = translationService.getAssignableEntityType(ceilingEntity);
+        if (translatedEntity == null && ceilingEntity.endsWith("Impl")) {
+            int pos = ceilingEntity.lastIndexOf("Impl");
+            ceilingEntity = ceilingEntity.substring(0, pos);
+            translatedEntity = TranslatedEntity.getInstance(ceilingEntity);
+        }
+        entityType.setValue(translatedEntity.getFriendlyType());
+
+        Field fieldName = new Field();
+        fieldName.setName("fieldName");
+        fieldName.setValue(translationForm.getPropertyName());
+
+        entityForm.getFields().put("entityType", entityType);
+        entityForm.getFields().put("fieldName", fieldName);
     }
 
 }

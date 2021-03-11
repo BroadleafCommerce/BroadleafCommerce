@@ -498,6 +498,8 @@ public class OfferServiceImpl implements OfferService {
                 fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
                 fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
                 orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
+                order.setSubTotal(order.calculateSubTotal());
+                order.finalizeItemPrices();
             }
 
             return orderService.save(order, false);
@@ -509,7 +511,7 @@ public class OfferServiceImpl implements OfferService {
     public boolean verifyMaxCustomerUsageThreshold(Order order, Offer offer) {
         Customer customer = order.getCustomer();
         
-        if (offer.isLimitedUsePerCustomer()) {
+        if (customer != null && customer.isRegistered() && offer.isLimitedUsePerCustomer()) {
             Long currentUses = offerAuditService.countUsesByCustomer(order, customer.getId(), offer.getId());
             
             if (currentUses >= offer.getMaxUsesPerCustomer()) {

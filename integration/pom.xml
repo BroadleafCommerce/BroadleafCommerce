@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.0.11-SNAPSHOT</version>
+        <version>6.0.13-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>integration</artifactId>
@@ -271,7 +271,7 @@
         <dependency>
             <groupId>com.broadleafcommerce</groupId>
             <artifactId>broadleaf-boot-starter-hsql-database</artifactId>
-            <version>${database.starter.version}</version>
+            <version>${hsqldb.database.starter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -1025,34 +1025,42 @@ $(document).ready(function () {
     /**
      * Handle the removing of ListGridItems from the ListGrid
      */
-    $('body').on('click', 'a.sub-list-grid-remove, button.sub-list-grid-remove', function () {
+    $('body').on('click', 'a.sub-list-grid-remove, button.sub-list-grid-remove', function (event) {
         var link = BLCAdmin.listGrid.getActionLink($(this));
 
-        var $selectedRows;
-        if ($(this).is('a')) {
-            $selectedRows = $(this).closest('tr');
-        } else {
-            var $container = $(this).closest('.listgrid-container');
-            $selectedRows = $container.find('table tr.selected');
-        }
-        var rowFields = BLCAdmin.listGrid.getRowFields($selectedRows);
+        var $button = $(this);
+        var mustConfirm = $button.data('confirm');
+        var confirmMsg = $button.data('confirm-text');
 
-        BLC.ajax({
-            url: link,
-            data: rowFields,
-            type: "POST"
-        }, function (data) {
-            if (data.status == 'error') {
-                BLCAdmin.listGrid.showAlert($container, data.message);
+        BLCAdmin.confirmProcessBeforeProceeding(mustConfirm, confirmMsg, processDeleteCall, [$button]);
+
+        function processDeleteCall (params) {
+            var $selectedRows;
+            if ($(this).is('a')) {
+                $selectedRows = $(this).closest('tr');
             } else {
-                BLCAdmin.listGrid.replaceRelatedCollection($(data), {
-                    message: BLCAdmin.messages.saved + '!',
-                    alertType: 'save-alert',
-                    autoClose: 3000,
-                    clearOtherAlerts: true
-                });
+                var $container = $(this).closest('.listgrid-container');
+                $selectedRows = $container.find('table tr.selected');
             }
-        });
+            var rowFields = BLCAdmin.listGrid.getRowFields($selectedRows);
+
+            BLC.ajax({
+                url: link,
+                data: rowFields,
+                type: "POST"
+            }, function (data) {
+                if (data.status == 'error') {
+                    BLCAdmin.listGrid.showAlert($container, data.message);
+                } else {
+                    BLCAdmin.listGrid.replaceRelatedCollection($(data), {
+                        message: BLCAdmin.messages.saved + '!',
+                        alertType: 'save-alert',
+                        autoClose: 3000,
+                        clearOtherAlerts: true
+                    });
+                }
+            });
+        }
 
         return false;
     });
