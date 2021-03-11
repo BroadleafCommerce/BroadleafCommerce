@@ -160,7 +160,7 @@ public interface OrderService {
 
     List<Order> findOrdersByDateRange(Date startDate, Date endDate);
 
-    List<Order> findOrdersByDaysCount(Integer daysCount, Integer limit);
+    List<Order> findOrdersByDaysCount(Integer daysCount, Integer batchSize);
 
     List<Order> findOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 

@@ -171,9 +171,9 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         }
 
         Integer daysCount = config.get(OLDER_THAN_DAYS.toString());
-        Integer limit = config.get(BATCH_SIZE.toString());
+        Integer batchSize = config.get(BATCH_SIZE.toString());
 
-        List<Order> oldOrders = orderService.findOrdersByDaysCount(daysCount, limit);
+        List<Order> oldOrders = orderService.findOrdersByDaysCount(daysCount, batchSize);
         Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
 
         List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();

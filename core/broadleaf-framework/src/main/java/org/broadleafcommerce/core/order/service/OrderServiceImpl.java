@@ -277,8 +277,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findOrdersByDaysCount(Integer daysCount, Integer limit) {
-        return orderDao.readOrdersOlderThanDaysCount(daysCount, limit);
+    public List<Order> findOrdersByDaysCount(Integer daysCount, Integer batchSize) {
+        return orderDao.readOrdersOlderThanDaysCount(daysCount, batchSize);
     }
 
     @Override

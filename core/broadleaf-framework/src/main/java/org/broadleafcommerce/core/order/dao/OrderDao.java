@@ -71,7 +71,7 @@ public interface OrderDao {
 
     List<Order> readOrdersByDateRange(Date startDate, Date endDate);
 
-    List<Order> readOrdersOlderThanDaysCount(Integer daysCount, Integer limit);
+    List<Order> readOrdersOlderThanDaysCount(Integer daysCount, Integer batchSize);
 
     List<Order> readOrdersForCustomersInDateRange(List<Long> customerIds, Date startDate, Date endDate);
 

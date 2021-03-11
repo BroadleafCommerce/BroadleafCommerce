@@ -341,7 +341,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> readOrdersOlderThanDaysCount(final Integer daysCount, final Integer limit) {
+    public List<Order> readOrdersOlderThanDaysCount(final Integer daysCount, final Integer batchSize) {
         final LocalDate dateInPast = LocalDate.now().minusDays(daysCount);
         final Date convertedDate = Date.from(dateInPast.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -352,7 +352,7 @@ public class OrderDaoImpl implements OrderDao {
         criteria.orderBy(builder.desc(order.get("submitDate")));
 
         TypedQuery<Order> query = em.createQuery(criteria);
-        query.setMaxResults(limit);
+        query.setMaxResults(batchSize);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
 
