@@ -50,6 +50,6 @@ public interface ResourcePurgeService {
      *                join column name(FK column that is in depending table) and id field name in table to depend on.
      *
      */
-    void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends);
+    void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends, final Map<String, Integer> config);
 
 }

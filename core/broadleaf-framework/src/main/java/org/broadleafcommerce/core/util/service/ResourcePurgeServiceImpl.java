@@ -43,13 +43,13 @@ import org.springframework.transaction.TransactionStatus;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import static org.broadleafcommerce.core.util.service.type.PurgeOrderHistoryVariableNames.OLDER_THAN_DAYS;
 
 /**
  * Service capable of deleting old or defunct entities from the persistence layer (e.g. Carts and anonymous Customers).
@@ -157,7 +157,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     }
 
     @Override
-    public void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends) {
+    public void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends, final Map<String, Integer> config) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Purging historical orders");
@@ -170,61 +170,53 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             return;
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.dd.MM");
-        String dateStart = env.getProperty("purge.order.history.date.start");
-        String dateEnd = env.getProperty("purge.order.history.date.end");
+        Integer daysCount = config.get(OLDER_THAN_DAYS.toString());
+        Integer batchSize = config.get(BATCH_SIZE.toString());
 
-        try {
-            Date startDate = formatter.parse(dateStart);
-            Date endDate = formatter.parse(dateEnd);
+        List<Order> oldOrders = orderService.findOrdersByDaysCount(daysCount, batchSize);
+        Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
 
-            List<Order> ordersByDateRange = orderService.findOrdersByDateRange(startDate, endDate);
-            Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
+        List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();
 
-            List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();
+        orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
 
-            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
+        dependencies.put("BLC_ORDER", orderDependencies);
 
-            dependencies.put("BLC_ORDER", orderDependencies);
-
-            ArrayList<DeleteStatementGeneratorImpl.PathElement> orderItemDependencies = new ArrayList<>();
-            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID"));
-            orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_GIFTWRAP_ORDER_ITEM", "ORDER_ITEM_ID", "ORDER_ITEM_ID"));
-            dependencies.put("BLC_ORDER_ITEM", orderItemDependencies);
-            dependencies.put("BLC_ORDER_PAYMENT", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_PAYMENT_LOG", "ORDER_PAYMENT_ID", "ORDER_PAYMENT_ID")));
-            extensionManager.getProxy().addPurgeDependencies(dependencies);
-            Set<String> exclusions = new HashSet<>();
-            exclusions.add("BLC_ADMIN_USER");
-            extensionManager.getProxy().addPurgeExclusions(exclusions);
-            Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies, exclusions);
-            for (Order order : ordersByDateRange) {
-                TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
-                        TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
-                try {
-                    em.unwrap(Session.class).doWork(new Work() {
-                        @Override
-                        public void execute(Connection connection) throws SQLException {
-                            Statement statement = connection.createStatement();
-                            for (String value : deleteStatement.values()) {
-                                String sql = value.replace("?", String.valueOf(order.getId()));
-                                statement.addBatch(sql);
-                            }
-                            extensionManager.getProxy().addPurgeStatements(statement, rootTypeIdValue);
-                            statement.executeBatch();
+        ArrayList<DeleteStatementGeneratorImpl.PathElement> orderItemDependencies = new ArrayList<>();
+        orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID"));
+        orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_GIFTWRAP_ORDER_ITEM", "ORDER_ITEM_ID", "ORDER_ITEM_ID"));
+        dependencies.put("BLC_ORDER_ITEM", orderItemDependencies);
+        dependencies.put("BLC_ORDER_PAYMENT", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_PAYMENT_LOG", "ORDER_PAYMENT_ID", "ORDER_PAYMENT_ID")));
+        extensionManager.getProxy().addPurgeDependencies(dependencies);
+        Set<String> exclusions = new HashSet<>();
+        exclusions.add("BLC_ADMIN_USER");
+        extensionManager.getProxy().addPurgeExclusions(exclusions);
+        Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies, exclusions);
+        for (Order order : oldOrders) {
+            TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
+                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
+            try {
+                em.unwrap(Session.class).doWork(new Work() {
+                    @Override
+                    public void execute(Connection connection) throws SQLException {
+                        Statement statement = connection.createStatement();
+                        for (String value : deleteStatement.values()) {
+                            String sql = value.replace("?", String.valueOf(order.getId()));
+                            statement.addBatch(sql);
                         }
-                    });
-                    TransactionUtils.finalizeTransaction(status, transactionManager, false);
-                } catch (Exception e) {
-                    if (!status.isCompleted()) {
-                        TransactionUtils.finalizeTransaction(status, transactionManager, true);
+                        extensionManager.getProxy().addPurgeStatements(statement, rootTypeIdValue);
+                        statement.executeBatch();
                     }
-                    LOG.error(String.format("Not able to purge Order ID: %d", order.getId()), e);
+                });
+                TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            } catch (Exception e) {
+                if (!status.isCompleted()) {
+                    TransactionUtils.finalizeTransaction(status, transactionManager, true);
                 }
+                LOG.error(String.format("Not able to purge Order ID: %d", order.getId()), e);
             }
-
-        } catch (ParseException e) {
-            LOG.debug("Wrong date format");
         }
+
         LOG.info("Finished purging historical orders.");
     }
 
