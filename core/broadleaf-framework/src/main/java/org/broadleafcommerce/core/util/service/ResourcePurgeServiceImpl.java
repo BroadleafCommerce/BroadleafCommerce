@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.util.dao.ResourcePurgeDao;
 import org.broadleafcommerce.core.util.service.type.PurgeCartVariableNames;
 import org.broadleafcommerce.core.util.service.type.PurgeCustomerVariableNames;
+import org.broadleafcommerce.core.util.service.type.PurgeOrderHistoryVariableNames;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.hibernate.Session;
@@ -49,7 +50,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.broadleafcommerce.core.util.service.type.PurgeOrderHistoryVariableNames.OLDER_THAN_DAYS;
 
 /**
  * Service capable of deleting old or defunct entities from the persistence layer (e.g. Carts and anonymous Customers).
@@ -170,8 +170,8 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             return;
         }
 
-        Integer daysCount = config.get(OLDER_THAN_DAYS.toString());
-        Integer batchSize = config.get(BATCH_SIZE.toString());
+        Integer daysCount = config.get(PurgeOrderHistoryVariableNames.OLDER_THAN_DAYS.toString());
+        Integer batchSize = config.get(PurgeOrderHistoryVariableNames.BATCH_SIZE.toString());
 
         List<Order> oldOrders = orderService.findOrdersByDaysCount(daysCount, batchSize);
         Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
