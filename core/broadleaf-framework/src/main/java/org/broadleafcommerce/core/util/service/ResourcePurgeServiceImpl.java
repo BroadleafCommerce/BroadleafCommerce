@@ -49,6 +49,8 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import static org.broadleafcommerce.core.util.service.type.PurgeOrderHistoryVariableNames.OLDER_THAN_DAYS;
+
 /**
  * Service capable of deleting old or defunct entities from the persistence layer (e.g. Carts and anonymous Customers).
  * {@link ResourcePurgeService} for additional API documentation.
@@ -91,8 +93,6 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
 
     private static final Long BATCH_SIZE = 50L;
     private static final Long PURGE_ERROR_CACHE_RETRY_SECONDS = System.currentTimeMillis() - 172800; //48 HOURS
-    private static final Integer DEFAULT_DAYS_COUNT_PURGE_HISTORY = 2190; //6 years
-    private static final Integer DEFAULT_LIMIT_PURGE_HISTORY = 100;
 
     protected PurgeErrorCache customerPurgeErrors = new PurgeErrorCache();
     protected PurgeErrorCache historyPurgeErrors = new PurgeErrorCache();
@@ -170,8 +170,8 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             return;
         }
 
-        Integer daysCount = config.getOrDefault("daysCount", DEFAULT_DAYS_COUNT_PURGE_HISTORY);
-        Integer limit = config.getOrDefault("limit", DEFAULT_LIMIT_PURGE_HISTORY);
+        Integer daysCount = config.get(OLDER_THAN_DAYS.toString());
+        Integer limit = config.get(BATCH_SIZE.toString());
 
         List<Order> oldOrders = orderService.findOrdersByDaysCount(daysCount, limit);
         Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
