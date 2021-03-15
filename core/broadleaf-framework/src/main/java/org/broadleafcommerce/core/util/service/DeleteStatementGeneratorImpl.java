@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
      *
      * @param rootType type to start build sql dependency list
      * @param rootTypeIdValue value of id column of the rootType to be passed in where clause
-     * @param dependencies - map of additional dependecies that can't be discovered during ineration from root type,
+     * @param dependencies - map of additional dependencies that can't be discovered during iteration from root type,
      *                     key is table name to depend on like blc_order->some other table, value is structure representing dependant table, its PK, and FK to join with/
      * @param exclustions - Set with table name to exclude from list, like price_list, etc
      * @return a Map which key is a table name, and value is string with sql delete statement.
@@ -128,7 +128,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             shouldAppendWhere = false;
             PathElement pop = value.pop();
             if(prevTable.isFromManyToOne()){
-                if(pop.getIdField().equals(prevTable.getJoinColumn()) || operationStackHolder.isRelationshipUpdate()) {
+                if(pop.getIdField().equals(prevTable.getJoinColumn()) || operationStackHolder.isManyToOneRelationshipDelete()) {
                     builder.append(" WHERE ")
                             .append(pop.getIdField()).append("=").append(rootTypeIdValue);
                 }else{
@@ -261,7 +261,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         //so this is biderectional and we will update one side to set null, to to delete we need to use another side of relationship
         //mostly for order->blc_quote->order relationship case.
         if(operationStackHolder!=null && operationStackHolder.isRelationshipUpdate()){
-            result.put(tableAnnotation.name(),new OperationStackHolder((Stack<PathElement>) stack.clone(), false, "",true));
+            result.put(tableAnnotation.name(),new OperationStackHolder((Stack<PathElement>) stack.clone(), false, "",false, true));
         }else {
             result.put(tableAnnotation.name(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
         }
@@ -397,12 +397,17 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         private String columnToUpdate;
         private boolean xref;
         private boolean relationshipUpdate;
+        private boolean manyToOneRelationshipDelete;
 
         public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate,boolean relationshipUpdate) {
             this.stack = stack;
             this.isUpdate = isUpdate;
             this.columnToUpdate = columnToUpdate;
             this.relationshipUpdate = relationshipUpdate;
+        }
+        public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate,boolean relationshipUpdate, boolean manyToOneRelationshipDelete) {
+            this(stack, isUpdate, columnToUpdate, relationshipUpdate);
+            this.manyToOneRelationshipDelete = manyToOneRelationshipDelete;
         }
 
         public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate) {
@@ -437,6 +442,10 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
 
         public boolean isRelationshipUpdate() {
             return relationshipUpdate;
+        }
+
+        public boolean isManyToOneRelationshipDelete() {
+            return manyToOneRelationshipDelete;
         }
     }
 
