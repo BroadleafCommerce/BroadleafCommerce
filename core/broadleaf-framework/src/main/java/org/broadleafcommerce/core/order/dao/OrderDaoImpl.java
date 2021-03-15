@@ -349,7 +349,7 @@ public class OrderDaoImpl implements OrderDao {
         Root<OrderImpl> order = criteria.from(OrderImpl.class);
         criteria.select(order);
         criteria.where(builder.lessThan(order.get("submitDate"), convertedDate));
-        criteria.orderBy(builder.desc(order.get("submitDate")));
+        criteria.orderBy(builder.asc(order.get("submitDate")));
 
         TypedQuery<Order> query = em.createQuery(criteria);
         query.setMaxResults(batchSize);
