@@ -33,25 +33,25 @@ import java.util.List;
 public interface IndexFieldDao {
 
     /**
-     * Returns the SearchField instance associated with the given field parameter, or null if non exists.
+     * Returns the IndexField instance associated with the given field parameter, or null if non exists.
      *
-     * @param field the Field we are looking for the SearchField for
-     * @return a SearchField instance for the given field
+     * @param field the Field we are looking for the IndexField for
+     * @return a IndexField instance for the given field
      */
     public IndexField readIndexFieldForField(Field field);
 
     /**
-     * Returns the SearchField instance associated with the given field parameter, or null if non exists.
+     * Returns the IndexField instance associated with the given field parameter, or null if non exists.
      *
-     * @param fieldId the Field we are looking for the SearchField for
-     * @return a SearchField instance for the given field
+     * @param fieldId the Field we are looking for the IndexField for
+     * @return a IndexField instance for the given field
      */
     public IndexField readIndexFieldByFieldId(Long fieldId);
 
     /**
      * Finds all of the {@link IndexField}s associated with the given field parameter, or null if non exists.
      *
-     * @param fieldId the Field we are looking for the SearchField for
+     * @param fieldId the Field we are looking for the IndexField for
      * @return
      */
     public List<IndexField> readAllIndexFieldsByFieldId(Long fieldId);
