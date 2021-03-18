@@ -610,7 +610,7 @@
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.5.1</version>
+                <version>1.7</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -761,11 +761,12 @@
                 <artifactId>jackson-dataformat-smile</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>4.1.4</version>
-            </dependency>
+            <!-- Commenting this as part of testing QA#4391. Delete or update version after testing/verifying -->
+<!--            <dependency>-->
+<!--                <groupId>org.codehaus.woodstox</groupId>-->
+<!--                <artifactId>woodstox-core-asl</artifactId>-->
+<!--                <version>4.1.4</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
@@ -867,7 +868,7 @@
                         Jackson dependencies -->
                     <exclusion>
                         <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
+                        <artifactId>woodstox-core-asl</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>com.fasterxml.jackson</groupId>
