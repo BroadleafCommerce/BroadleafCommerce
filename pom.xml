@@ -748,7 +748,7 @@
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <!-- Add in Jackson's XML converter along with a faster serializer (Woodstox) -->
+            <!-- Add in Jackson's XML converter -->
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
@@ -759,13 +759,6 @@
                 <artifactId>jackson-dataformat-smile</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <!-- Commenting this as part of testing QA#4391. Delete or update version after testing/verifying -->
-<!--            <dependency>-->
-<!--                <groupId>org.codehaus.woodstox</groupId>-->
-<!--                <artifactId>woodstox-core-asl</artifactId>-->
-<!--                <version>4.1.4</version>-->
-<!--            </dependency>-->
-
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
@@ -862,8 +855,7 @@
                 <groupId>org.apache.solr</groupId>
                 <version>7.3.1</version>
                 <exclusions>
-                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
-                        Jackson dependencies -->
+                    <!-- This brings in a very old version of Woodstox -->
                     <exclusion>
                         <groupId>org.codehaus.woodstox</groupId>
                         <artifactId>woodstox-core-asl</artifactId>
