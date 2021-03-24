@@ -55,6 +55,13 @@ public class EntityDuplicatorExtensionManager extends ExtensionManager<EntityDup
         }
     };
 
+    public static final ExtensionManagerOperation addToSandbox = new ExtensionManagerOperation() {
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((EntityDuplicatorExtensionHandler) handler).addToSandbox(params[0]);
+        }
+    };
+
     public EntityDuplicatorExtensionManager() {
         super(EntityDuplicatorExtensionHandler.class);
     }
@@ -67,6 +74,11 @@ public class EntityDuplicatorExtensionManager extends ExtensionManager<EntityDup
     @Override
     public ExtensionResultStatusType setupDuplicate(Object entity, ExtensionResultHolder<MultiTenantCopyContext> resultHolder) {
         return execute(setupDuplicate, entity, resultHolder);
+    }
+
+    @Override
+    public ExtensionResultStatusType addToSandbox(Object entity) {
+        return execute(addToSandbox, entity);
     }
 
     @Override

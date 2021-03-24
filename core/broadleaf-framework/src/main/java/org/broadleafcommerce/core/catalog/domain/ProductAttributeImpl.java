@@ -43,6 +43,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 /**
  * The Class ProductAttributeImpl.
  */
@@ -185,8 +187,10 @@ public class ProductAttributeImpl implements ProductAttribute {
             return createResponse;
         }
         ProductAttribute cloned = createResponse.getClone();
-        if (product != null) {
+        if (product != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        } else {
+            cloned.setProduct(product);
         }
         cloned.setName(name);
         cloned.setValue(value);

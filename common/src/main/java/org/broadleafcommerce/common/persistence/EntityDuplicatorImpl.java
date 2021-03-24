@@ -166,6 +166,9 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
 
             context.getCopyHints().put(MANUAL_DUPLICATION, Boolean.TRUE.toString());
             dup = performCopy(context, (MultiTenantCloneable<T>) entity);
+            if (extensionManager != null) {
+                extensionManager.addToSandbox(dup);
+            }
         } catch (Exception e) {
             throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class,
                     String.format("Unable to duplicate entity %s:%s", entityClass.getName(), id), 

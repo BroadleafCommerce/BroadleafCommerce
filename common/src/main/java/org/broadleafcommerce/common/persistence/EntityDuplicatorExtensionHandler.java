@@ -48,6 +48,14 @@ public interface EntityDuplicatorExtensionHandler extends ExtensionHandler {
     ExtensionResultStatusType setupDuplicate(Object entity, ExtensionResultHolder<MultiTenantCopyContext> resultHolder);
 
     /**
+     * Add duplication entity to the sandbox
+     *
+     * @param entity
+     * @return
+     */
+    ExtensionResultStatusType addToSandbox (Object entity);
+
+    /**
      * Tear down any expired context and state used during the duplication
      *
      * @return
