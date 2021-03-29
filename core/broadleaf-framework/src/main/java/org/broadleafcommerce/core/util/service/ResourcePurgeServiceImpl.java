@@ -202,6 +202,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                         Statement statement = connection.createStatement();
                         for (String value : deleteStatement.values()) {
                             String sql = value.replace("?", String.valueOf(order.getId()));
+                            LOG.debug(sql);
                             statement.addBatch(sql);
                         }
                         extensionManager.getProxy().addPurgeStatements(statement, rootTypeIdValue);
