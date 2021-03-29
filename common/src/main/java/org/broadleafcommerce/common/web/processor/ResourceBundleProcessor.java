@@ -302,7 +302,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                 model.addElement(element);
             }
         } else {
-            model.addElement(context.createNonVoidElement("link", getNormalCssAttributes(attributes), true));
+            model.addElement(context.createStandaloneElement("link", getNormalCssAttributes(attributes), true));
         }
     }
 
