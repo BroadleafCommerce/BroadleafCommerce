@@ -18,7 +18,6 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import static com.google.common.base.CharMatcher.DIGIT;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -37,7 +36,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
-import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
