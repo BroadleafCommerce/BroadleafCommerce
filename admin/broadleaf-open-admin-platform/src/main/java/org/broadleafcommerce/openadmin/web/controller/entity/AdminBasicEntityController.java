@@ -126,6 +126,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
     public static final String CUSTOM_CRITERIA = "criteria";
     public static final String IS_SELECTIZE_REQUEST = "isSelectizeRequest";
+    protected static final String CURRENT_FOLDER_ID = "currentFolderId";
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
@@ -518,6 +519,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", currentUrl);
+        model.addAttribute(CURRENT_FOLDER_ID, getCurrentFolderId(request));
 
         setModelAttributes(model, sectionKey);
 
@@ -2058,6 +2060,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
             return firstTab != null ? firstTab.getTabName() : "General";
         }
         return tabName;
+    }
+
+    protected String getCurrentFolderId(HttpServletRequest request) {
+        if (request.getParameterMap().containsKey(CURRENT_FOLDER_ID)) {
+            return request.getParameter(CURRENT_FOLDER_ID);
+        }
+        return "unassigned";
     }
 
     // *****************************************
