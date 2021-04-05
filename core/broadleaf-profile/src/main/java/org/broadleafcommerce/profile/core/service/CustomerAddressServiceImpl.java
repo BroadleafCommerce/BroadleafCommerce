@@ -20,6 +20,7 @@ package org.broadleafcommerce.profile.core.service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
+import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,9 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
 
     @Resource(name="blCustomerAddressDao")
     protected CustomerAddressDao customerAddressDao;
+
+    @Resource(name="blCustomerDao")
+    protected CustomerDao customerDao;
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
@@ -51,6 +55,7 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
         if (customerAddress.getAddress().isDefault()) {
             customerAddressDao.makeCustomerAddressDefault(customerAddress.getId(), customer.getId());
         }
+        customerDao.refreshCustomer(customerAddress.getCustomer());
 
         return customerAddress;
     }
@@ -74,7 +79,9 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void deleteCustomerAddressById(Long customerAddressId){
+        CustomerAddress customerAddress = customerAddressDao.readCustomerAddressById(customerAddressId);
         customerAddressDao.deleteCustomerAddressById(customerAddressId);
+        customerDao.refreshCustomer(customerAddress.getCustomer());
     }
 
     @Override

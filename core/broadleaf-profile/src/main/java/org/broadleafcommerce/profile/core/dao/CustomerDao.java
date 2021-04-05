@@ -108,4 +108,6 @@ public interface CustomerDao {
     void detach(Customer customer);
 
     Long readNumberOfCustomers();
+
+    void refreshCustomer(Customer customer);
 }
