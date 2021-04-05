@@ -6178,7 +6178,7 @@
                     {
                         e.preventDefault();
                     }
-
+                    $('button.button.primary.large.submit-button.primary').removeAttr('disabled');
                     var nodes = this.selection.getNodes();
                     if (!nodes) return;
 

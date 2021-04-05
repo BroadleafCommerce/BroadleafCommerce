@@ -610,7 +610,7 @@
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.5.1</version>
+                <version>1.7</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -750,7 +750,7 @@
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <!-- Add in Jackson's XML converter along with a faster serializer (Woodstox) -->
+            <!-- Add in Jackson's XML converter -->
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
@@ -761,12 +761,6 @@
                 <artifactId>jackson-dataformat-smile</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>4.1.4</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
@@ -863,11 +857,10 @@
                 <groupId>org.apache.solr</groupId>
                 <version>7.7.0</version>
                 <exclusions>
-                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
-                        Jackson dependencies -->
+                    <!-- This brings in a very old version of Woodstox -->
                     <exclusion>
                         <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
+                        <artifactId>woodstox-core-asl</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>com.fasterxml.jackson</groupId>
@@ -1265,7 +1258,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>24.1.1-jre</version>
+                <version>30.1.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>de.jkeylockmanager</groupId>

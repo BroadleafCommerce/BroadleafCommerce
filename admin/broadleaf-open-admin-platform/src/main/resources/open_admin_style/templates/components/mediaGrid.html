@@ -47,7 +47,7 @@
                         <div class="asset-actions">
                             <th:block th:each="action : ${listGrid.activeRowActions}">
                                 <a href="#"
-                                   th:if="#{${action.displayText}} == 'Delete'"
+                                   th:if="${action.displayText} == 'Delete'"
                                    class="media-grid-remove"
                                    th:attr="data-urlpostfix=${action.urlPostfix},
                                      data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
@@ -60,7 +60,7 @@
                     </div>
 
                     <!-- Title and Key links -->
-                     <th:block th:each="action : ${listGrid.activeRowActions}" th:if="#{${action.displayText}} == 'Edit'">
+                     <th:block th:each="action : ${listGrid.activeRowActions}" th:if="${action.displayText} == 'Edit'">
                         <a href="#"
                            class="js-media-link"
                            th:attr="data-urlpostfix=${action.urlPostfix},
