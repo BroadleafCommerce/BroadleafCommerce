@@ -846,11 +846,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
     public void refreshDecimalDefaultValue(BasicFieldMetadata value) {
         DecimalFormat instance = (DecimalFormat) NumberFormat.getInstance(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
-        if('.'!=instance.getDecimalFormatSymbols().getDecimalSeparator()){
-            if(StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(".")){
-                value.setDefaultValue(value.getDefaultValue().replace('.', instance.getDecimalFormatSymbols().getDecimalSeparator()));
-            }
+        if(StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(".") && instance.getDecimalFormatSymbols().getDecimalSeparator()!='.'){
+            value.setDefaultValue(value.getDefaultValue().replace('.', instance.getDecimalFormatSymbols().getDecimalSeparator()));
+        }else if(StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(",") && instance.getDecimalFormatSymbols().getDecimalSeparator()!=','){
+            value.setDefaultValue(value.getDefaultValue().replace(',', instance.getDecimalFormatSymbols().getDecimalSeparator()));
         }
+
     }
 
     @Override
