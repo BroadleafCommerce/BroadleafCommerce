@@ -299,7 +299,7 @@ public interface SolrIndexService {
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
 
     /**
-     * Iterates through the fields for this indexable and indexes any SearchField's or SearchFacet's.
+     * Iterates through the fields for this Indexable and indexes any IndexFields
      *  @param document
      * @param indexable
      * @param fields
