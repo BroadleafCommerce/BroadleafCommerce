@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -72,6 +73,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -819,6 +822,17 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Read " + cacheData.size() + " from the metada cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
                     }
+                    for (FieldMetadata value : cacheData.values()) {
+                        //that's for the case when metadata cache is enabled(cache.entity.dao.metadata.ttl=-1) and you cache metadata for en locale
+                        //then switch to FR that has comma as decimal separator
+                        if (value instanceof BasicFieldMetadata) {
+                            BasicFieldMetadata v = (BasicFieldMetadata) value;
+                            if (SupportedFieldType.DECIMAL.equals(v.getSecondaryType()) || SupportedFieldType.INTEGER.equals(v.getSecondaryType())
+                                    || SupportedFieldType.INTEGER.equals(v.getFieldType()) || SupportedFieldType.DECIMAL.equals(v.getFieldType())) {
+                                refreshDecimalDefaultValue(v);
+                            }
+                        }
+                    }
                 }
             }
             //clone the metadata before passing to the system
@@ -828,6 +842,16 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             }
             mergedProperties.putAll(clonedCache);
         }
+    }
+
+    public void refreshDecimalDefaultValue(BasicFieldMetadata value) {
+        DecimalFormat instance = (DecimalFormat) NumberFormat.getInstance(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
+        if(StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(".") && instance.getDecimalFormatSymbols().getDecimalSeparator()!='.'){
+            value.setDefaultValue(value.getDefaultValue().replace('.', instance.getDecimalFormatSymbols().getDecimalSeparator()));
+        }else if(StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(",") && instance.getDecimalFormatSymbols().getDecimalSeparator()!=','){
+            value.setDefaultValue(value.getDefaultValue().replace(',', instance.getDecimalFormatSymbols().getDecimalSeparator()));
+        }
+
     }
 
     @Override
