@@ -151,7 +151,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         }
 
         try {
-            return ESAPI.validator().getValidInput("Value: " + value, value, esapiInputType, MAX_INPUT_LENGTH, true, false);
+            return ESAPI.validator().getValidInput("Value: " + value, value, esapiInputType, MAX_INPUT_LENGTH, true, true);
         } catch (ValidationException e) {
             return stripXssAsHTML(value);
         }
