@@ -532,7 +532,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected boolean fgContainsFutureCreditAdjustment(FulfillmentGroup fg) {
-        return !fg.getFutureCreditFulfillmentGroupAdjustmentsValue().equals(Money.ZERO);
+        return !(fg.getFutureCreditFulfillmentGroupAdjustmentsValue().compareTo(Money.ZERO) == 0);
     }
 
     protected void syncFulfillmentPrice(FulfillmentGroup fg) {
