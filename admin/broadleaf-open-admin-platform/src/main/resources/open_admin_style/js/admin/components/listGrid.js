@@ -704,6 +704,21 @@ $(document).ready(function () {
      */
     $('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fields, currentUrl) {
         var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+        //we found that if adorned target list entity has another field which is adorned target list
+        //this might have one modal over another modal, and both will have adorned lists and this will result in overriding
+        // as the current shown adorned target list selection will override all other adorned lists.
+        if ($adornedTargetId.length > 1) {
+            if (typeof BLCAdmin.currentModal() !== 'undefined' && BLCAdmin.currentModal() != null) {
+                $adornedTargetId = BLCAdmin.currentModal().find('input#adornedTargetIdProperty');
+            } else {
+                $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+                $adornedTargetId = $adornedTargetId[$adornedTargetId.length - 1];
+            }
+            if ($adornedTargetId.length == 0) {
+                $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+                $adornedTargetId = $adornedTargetId[$adornedTargetId.length - 1];
+            }
+        }
         if ($adornedTargetId.val() == fields['id']) {
             $adornedTargetId.val('');
         } else {
