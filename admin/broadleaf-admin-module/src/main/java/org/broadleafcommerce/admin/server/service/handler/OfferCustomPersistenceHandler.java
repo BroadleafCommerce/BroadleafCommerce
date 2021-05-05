@@ -70,6 +70,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -246,8 +247,11 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
 
             if (!"listGridView".equals(customCriteria)) {
                 String moneyPrefix = ((DecimalFormat) nf).getPositivePrefix();
+                String moneySuffix = ((DecimalFormat) nf).getPositiveSuffix();
                 String setValue = discountValue.getValue();
-                setValue = setValue.replaceAll("\\%", "").replaceAll(moneyPrefix, "");
+                setValue = setValue.replaceAll("\\%", "")
+                        .replaceAll(Pattern.quote(moneyPrefix), "")
+                        .replaceAll(Pattern.quote(moneySuffix), "");
                 discountValue.setValue(setValue);
             }
 
