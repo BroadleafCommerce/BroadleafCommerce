@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.catalog.dao;
 
 
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
 import java.util.List;
@@ -226,4 +227,10 @@ public interface CategoryDao {
 
     Long readCountAllActiveProductsByCategory(Category category);
 
+    /**
+     * returns a list of CategoryProductXref where provided category is default reference(xref.defaultReference=true)
+     * @param categoryId long, id of the category
+     * @return returns a list of CategoryProductXref where provided category is default reference(xref.defaultReference=true)
+     */
+    List<CategoryProductXref> findXrefByCategoryWithDefaultReference(Long categoryId);
 }

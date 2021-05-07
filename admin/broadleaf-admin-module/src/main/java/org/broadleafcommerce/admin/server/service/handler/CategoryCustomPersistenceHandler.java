@@ -29,8 +29,10 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -71,6 +73,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Resource(name = "blCategoryCustomPersistenceHandlerExtensionManager")
     protected CategoryCustomPersistenceHandlerExtensionManager extensionManager;
+
+    @Resource(name = "blCategoryDao")
+    protected CategoryDao categoryDao;
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
@@ -190,11 +195,8 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Property id = persistencePackage.getEntity().getPMap().get("id");
-        Query query = dynamicEntityDao.getStandardEntityManager().createQuery("SELECT xref FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl xref" +
-                " WHERE xref.category.id = :categoryId AND xref.defaultReference=TRUE");
-        query.setParameter("categoryId", Long.valueOf(persistencePackage.getEntity().getPMap().get("id").getValue()));
-        List resultList = query.getResultList();
+        String id = persistencePackage.getEntity().getPMap().get("id").getValue();
+        List<CategoryProductXref> resultList = categoryDao.findXrefByCategoryWithDefaultReference(Long.valueOf(id));
         if(resultList.isEmpty()) {
             OperationType removeType = persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType();
             helper.getCompatibleModule(removeType).remove(persistencePackage);
