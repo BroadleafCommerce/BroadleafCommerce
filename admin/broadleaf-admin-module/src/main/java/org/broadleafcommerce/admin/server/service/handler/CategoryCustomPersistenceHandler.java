@@ -26,10 +26,13 @@ import org.broadleafcommerce.admin.server.service.extension.CategoryCustomPersis
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -38,9 +41,13 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +57,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Resource;
+import javax.persistence.Query;
 
 /**
  * 
@@ -66,6 +74,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     @Resource(name = "blCategoryCustomPersistenceHandlerExtensionManager")
     protected CategoryCustomPersistenceHandlerExtensionManager extensionManager;
 
+    @Resource(name = "blCategoryDao")
+    protected CategoryDao categoryDao;
+
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -81,6 +92,12 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         return canHandleAdd(persistencePackage);
+    }
+
+    @Override
+    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return Category.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -173,6 +190,18 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             }
         } catch (Exception e) {
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
+    }
+
+    @Override
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        String id = persistencePackage.getEntity().getPMap().get("id").getValue();
+        List<CategoryProductXref> resultList = categoryDao.findXrefByCategoryWithDefaultReference(Long.valueOf(id));
+        if(resultList.isEmpty()) {
+            OperationType removeType = persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType();
+            helper.getCompatibleModule(removeType).remove(persistencePackage);
+        }else{
+            throw new ValidationException(persistencePackage.getEntity(), "Unable to delete category - found that this category is primary category for some product(s)");
         }
     }
 

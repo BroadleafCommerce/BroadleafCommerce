@@ -21,7 +21,7 @@
     </title>
     
     <!--[if IE 7]>
-    <link rel="stylesheet" th:href="@{/css/font-awesome-ie7.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/font-awesome-ie7-6.1.7.min.css}" />
     <![endif]-->
     
     <th:block th:unless="${#arrays.contains({'iw','ar','fa','ur'},session.blLocale.localeCode)}">
@@ -33,7 +33,7 @@
                            admin/redactor.css,
                            admin/selectize.css,
                            admin/spectrum.css,
-                           admin/font-awesome.min.css,
+                           admin/font-awesome-6.1.7.min.css,
                            admin/blc-query-builder.css,
                            admin/jquery-ui-1.10.2.custom.css,
                            admin/jquery.mCustomScrollbar.css,
@@ -55,7 +55,7 @@
                                admin/redactor.css,
                                admin/selectize.css,
                                admin/rtl/spectrum.rtl.css,
-                               admin/font-awesome.min.rtl.css,
+                               admin/font-awesome-6.1.7.min.rtl.css,
                                admin/rtl/blc-query-builder.rtl.css,
                                admin/jquery-ui-1.10.2.custom.css,
                                admin/rtl/jquery.mCustomScrollbar.rtl.css,
@@ -70,11 +70,11 @@
                                admin/rtl/rtl-overrides.css" ></blc:bundle>
     </th:block>
 
-    <script type="text/javascript" th:src="@{/js/admin/lib/modernizr.foundation.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/lib/modernizr.foundation-3.6.0.js}"></script>
     
     <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 
-    <script type="text/javascript" th:src="@{/js/admin/blc-admin-js-check.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/blc-admin-js-check.js(v=6.1.7)}"></script>
 
     <div th:replace="layout/partials/postHeadContent" ></div>
     
