@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,6 +30,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Component("blProductDuplicateModifier")
@@ -65,6 +67,11 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             productOptionXrefs.add(clone);
         }
         copy.setProductOptionXrefs(productOptionXrefs);
+
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.YEAR, 1);
+        copy.setActiveStartDate(instance.getTime());
+        copy.setActiveEndDate(null);
 
         setNameAndUrl(copy);
     }

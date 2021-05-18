@@ -1173,9 +1173,13 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             cloned.getProductOptionXrefs().add(clonedEntry);
 
         }
+        Map<String, ProductAttribute> attributeMap = new HashMap<>();
         for (Map.Entry<String, ProductAttribute> entry : getProductAttributes().entrySet()) {
             ProductAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getProductAttributes().put(entry.getKey(), clonedEntry);
+            attributeMap.put(entry.getKey(), clonedEntry);
+        }
+        if(attributeMap.size()>0) {
+            cloned.setProductAttributes(attributeMap);
         }
 
         //Don't clone references to other Product and Category collections - those will be handled by another MultiTenantCopier call

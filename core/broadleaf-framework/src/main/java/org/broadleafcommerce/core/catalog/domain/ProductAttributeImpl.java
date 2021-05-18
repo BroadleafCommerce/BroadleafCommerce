@@ -187,10 +187,8 @@ public class ProductAttributeImpl implements ProductAttribute {
             return createResponse;
         }
         ProductAttribute cloned = createResponse.getClone();
-        if (product != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
+        if (product != null) {
             cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
-        } else {
-            cloned.setProduct(product);
         }
         cloned.setName(name);
         cloned.setValue(value);
