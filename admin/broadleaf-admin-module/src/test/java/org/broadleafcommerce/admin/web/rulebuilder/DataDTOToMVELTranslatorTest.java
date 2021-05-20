@@ -17,20 +17,17 @@
  */
 package org.broadleafcommerce.admin.web.rulebuilder;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.admin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.OrderFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.OrderItemFieldServiceImpl;
-import org.broadleafcommerce.common.presentation.RuleOperatorType;
-import org.broadleafcommerce.common.presentation.RuleOptionType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
+
+import junit.framework.TestCase;
 
 /**
  * @author Elbert Bautista (elbertbautista)
