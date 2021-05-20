@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -283,39 +283,6 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
 
         String d1Translated = translator.createMVEL("discreteOrderItem", d1, orderItemFieldService);
         String d1Mvel = "CollectionUtils.intersection(?discreteOrderItem.?category.?name,[\"test category\", \"test category 2\"]).size()>0";
-        assert(d1Mvel.equals(d1Translated));
-
-    }
-
-    public void testWithinDaysMVEL() throws MVELTranslationException {
-        DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
-
-        DataDTO d1 = new DataDTO();
-        d1.setQuantity(0);
-        d1.setCondition(BLCOperator.AND.name());
-        ExpressionDTO d1e1 = new ExpressionDTO();
-        d1e1.setId("getCustomerAttributes()---invoice_date");
-        d1e1.setOperator(BLCOperator.WITHIN_DAYS.name());
-        d1e1.setValue("12");
-        d1.getRules().add(d1e1);
-
-        customerFieldService.getFields().add(new FieldData.Builder()
-                .label("Customer - invoice date")
-                .name("getCustomerAttributes()---invoice_date")
-                .operators(RuleOperatorType.DATE)
-                .options(RuleOptionType.EMPTY_COLLECTION)
-                .type(SupportedFieldType.DATE)
-                .build());
-
-        String d1Translated = translator.createMVEL("customer", d1, customerFieldService);
-
-        String d1Mvel = "(MvelHelper.convertField(\"DATE\",?customer.?getCustomerAttributes()[\"invoice_date\"])" +
-                ">MvelHelper.convertField(\"DATE\",MvelHelper.subtractFromCurrentTime(12))" +
-                "&&(MvelHelper.convertField(\"DATE\",?customer.?getCustomerAttributes()[\"invoice_date\"])" +
-                "<MvelHelper.convertField(\"DATE\",MvelHelper.currentTime())))";
-
-        customerFieldService.init();
-
         assert(d1Mvel.equals(d1Translated));
 
     }
