@@ -90,7 +90,14 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
 
     @Override
     public Money computeSalesAdjustmentValue(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItemPriceDetail orderItemPriceDetail) {
-        return computeAdjustmentValue(promotableCandidateItemOffer, orderItemPriceDetail, true);
+        if (promotableCandidateItemOffer.getOffer().getApplyDiscountToSalePrice()) {
+            return computeAdjustmentValue(promotableCandidateItemOffer, orderItemPriceDetail, true);
+        } else {
+            //If we aren't evaluating the sale price then the adjustment will be zero
+            PromotableOrderItem promotableOrderItem = orderItemPriceDetail.getPromotableOrderItem();
+            BroadleafCurrency currency = promotableOrderItem.getCurrency();
+            return new Money(currency);
+        }
     }
 
     @Override

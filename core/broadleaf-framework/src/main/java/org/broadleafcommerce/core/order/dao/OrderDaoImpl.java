@@ -41,6 +41,8 @@ import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -317,6 +319,25 @@ public class OrderDaoImpl implements OrderDao {
         criteria.orderBy(builder.desc(order.get("submitDate")));
 
         TypedQuery<Order> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Order> readOrdersOlderThanDaysCount(final Integer daysCount, final Integer batchSize) {
+        final LocalDate dateInPast = LocalDate.now().minusDays(daysCount);
+        final Date convertedDate = Date.from(dateInPast.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+        criteria.where(builder.lessThan(order.get("submitDate"), convertedDate));
+        criteria.orderBy(builder.asc(order.get("submitDate")));
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setMaxResults(batchSize);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
 

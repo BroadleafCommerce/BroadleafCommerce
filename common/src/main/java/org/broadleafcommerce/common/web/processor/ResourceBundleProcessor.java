@@ -199,10 +199,11 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
         final List<String> files = postProcessUnbundledFileList(attributeFiles, attributes, context);
 
         if (StringUtils.isEmpty(attributes.bundleDependencyEvent())) {
+            double random = Math.random();
             // add files one by one
             for (String file : files) {
                 ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
-                        .src(file);
+                        .src(file+"?v="+random);
                 addElementToModel(unbundledAttributes, context, model);
             }
 
@@ -302,7 +303,7 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
                 model.addElement(element);
             }
         } else {
-            model.addElement(context.createNonVoidElement("link", getNormalCssAttributes(attributes), true));
+            model.addElement(context.createStandaloneElement("link", getNormalCssAttributes(attributes), true));
         }
     }
 

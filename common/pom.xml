@@ -320,10 +320,6 @@
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <dependency>
-	       <groupId>com.fasterxml.woodstox</groupId>
-	       <artifactId>woodstox-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.yahoo.platform.yui</groupId>
             <artifactId>yuicompressor</artifactId>
             <exclusions>

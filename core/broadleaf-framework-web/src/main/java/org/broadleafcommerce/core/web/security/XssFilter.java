@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
 @ConditionalOnNotAdmin
 @Component("blXssFilter")
 public class XssFilter extends AbstractIgnorableOncePerRequestFilter {
@@ -39,13 +39,14 @@ public class XssFilter extends AbstractIgnorableOncePerRequestFilter {
     @Autowired
     protected Environment environment;
 
+    @Value("${blc.site.enable.xssWrapper:false}")
+    protected boolean siteXssWrapperEnabled;
+
+    protected String[] whiteListUris;
+    protected String[] whiteListParamNames;
+
     @Override
-    public void destroy() {
-
-    }
-
-    private String[] whiteListUris;
-    private String[] whiteListParamNames;
+    public void destroy() { }
 
     @PostConstruct
     public void init(){
@@ -61,15 +62,18 @@ public class XssFilter extends AbstractIgnorableOncePerRequestFilter {
         //we can use esapi SecurityWrapperRequest but then we need to tweak patterns for header, parameter names, also add a number of HttpUtilities.xxx params to esapi.properties
         //oob it is not allowing abc[xxx]. so using custom one for now.
 //        filterChain.doFilter(new SecurityWrapperRequest((HttpServletRequest) httpServletRequest), httpServletResponse);
-        String enabled = environment.getProperty("blc.site.enable.xssWrapper", "false");
-        if(Boolean.parseBoolean(enabled) && isValidUrl(httpServletRequest.getRequestURI())) {
-            filterChain.doFilter(new XssRequestWrapper((HttpServletRequest) httpServletRequest, environment, whiteListParamNames), httpServletResponse);
-        }else{
+        if (siteXssWrapperEnabled && isWhiteListUrl(httpServletRequest.getRequestURI())) {
+            filterChain.doFilter(wrapRequest(httpServletRequest), httpServletResponse);
+        } else {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
     }
 
-    private boolean isValidUrl(String requestURI) {
+    protected XssRequestWrapper wrapRequest(HttpServletRequest httpServletRequest) {
+        return new XssRequestWrapper(httpServletRequest, environment, whiteListParamNames);
+    }
+
+    protected boolean isWhiteListUrl(String requestURI) {
         for (String uri : whiteListUris) {
             if(uri.equals(requestURI)){
                 return false;

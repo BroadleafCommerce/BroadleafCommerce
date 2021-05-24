@@ -224,7 +224,7 @@ public class AdminProductController extends AdminBasicEntityController {
             lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
             lg.setSectionCrumbs(sectionCrumbs);
         }
-
+        addAuditableDisplayFields(entityForm);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleEditEntity");
 

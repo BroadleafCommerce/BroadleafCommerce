@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.beans.factory.annotation.Value;
@@ -311,5 +312,15 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.getSingleResult();
+    }
+
+
+    @Override
+    public List<CategoryProductXref> findXrefByCategoryWithDefaultReference(Long categoryId){
+        TypedQuery<CategoryProductXref> query = em.createQuery("SELECT xref FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl xref" +
+                " WHERE xref.category.id = :categoryId AND xref.defaultReference=TRUE", CategoryProductXref.class);
+        query.setParameter("categoryId", categoryId);
+        return query.getResultList();
+
     }
 }

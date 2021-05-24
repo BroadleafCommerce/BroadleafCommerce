@@ -35,6 +35,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
@@ -180,5 +181,11 @@ public class CustomerDaoImpl implements CustomerDao {
         TypedQuery<Long> query = em.createQuery(criteria);
 
         return query.getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public void refreshCustomer(Customer customer) {
+        em.refresh(customer);
     }
 }

@@ -696,26 +696,33 @@ $(document).ready(function () {
         });
     });
 
-    /**
-     * The rowSelected handler for an adornedTarget list grid. This is specific to adorned target
-     * lists that do not have any additional maintained fields. In this case, we can simply
-     * submit the form directly. Also need to enable or disable the submit
-     * button based on whether the row is being de/selected.
-     */
-    $('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fields, currentUrl) {
-        var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
-        if ($adornedTargetId.val() == fields['id']) {
-            $adornedTargetId.val('');
-        } else {
+/**
+ * The rowSelected handler for an adornedTarget list grid. This is specific to adorned target
+ * lists that do not have any additional maintained fields. In this case, we can simply
+ * submit the form directly. Also need to enable or disable the submit
+ * button based on whether the row is being de/selected.
+ */
+$('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fields, currentUrl) {
+    var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+    //if we are in a modal, make sure we have the adornedTargetIdProperty from that modal
+    if (typeof BLCAdmin.currentModal() !== undefined && BLCAdmin.currentModal() != null) {
+        $adornedTargetId = BLCAdmin.currentModal().find('input#adornedTargetIdProperty');
+    }
+    if ($adornedTargetId.val() == fields['id']) {
+        $adornedTargetId.val('');
+    } else {
+        //if the adornedTargetId value is not set (we are picking a new add value), set it to the field['id] value
+        // otherwise leave it alone as it should already have the correct value
+        if ($adornedTargetId.val() !== undefined && $adornedTargetId.val().length == 0) {
             $adornedTargetId.val(fields['id']);
         }
-        // if selecting a row -> enable submit button, else deselecting -> disable submit button
-        if ($target.hasClass('selected')) {
-            $('button[type="submit"]').prop('disabled', false);
-        } else {
-            $('button[type="submit"]').prop('disabled', true);
-        }
-    });
+    }
+    if ($target.hasClass('selected')) {
+        $('button[type="submit"]').prop('disabled', false);
+    } else {
+        $('button[type="submit"]').prop('disabled', true);
+    }
+});
 
     /**
      * The rowSelected handler for an adornedTargetWithForm list grid. Once the user selects an entity,

@@ -79,11 +79,12 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
 
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
                 String errorMessage = productOption.getErrorMessage();
-                String fullErrorMessage = StringUtil.sanitize(errorMessage) + ". Value [" + StringUtil.sanitize(value) + "] does not match regex string [" + validationString + "]";
-                String message = StringUtils.isEmpty(errorMessage) ? fullErrorMessage : errorMessage;
+                if (StringUtils.isEmpty(errorMessage)) {
+                    errorMessage = "Value [" + StringUtil.sanitize(value) + "] does not match regex string [" + validationString + "]";
+                }
 
-                LOG.error(message);
-                throw new ProductOptionValidationException(message, productOption.getErrorCode(),
+                LOG.error(errorMessage);
+                throw new ProductOptionValidationException(errorMessage, productOption.getErrorCode(),
                                                            attributeName, value, validationString,
                                                            errorMessage);
             }

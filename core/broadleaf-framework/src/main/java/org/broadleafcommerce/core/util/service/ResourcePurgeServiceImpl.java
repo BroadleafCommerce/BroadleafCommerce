@@ -17,15 +17,23 @@
  */
 package org.broadleafcommerce.core.util.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -37,15 +45,21 @@ import org.broadleafcommerce.common.notification.service.type.NotificationEventT
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.util.dao.ResourcePurgeDao;
 import org.broadleafcommerce.core.util.service.type.PurgeCartVariableNames;
 import org.broadleafcommerce.core.util.service.type.PurgeCustomerVariableNames;
+import org.broadleafcommerce.core.util.service.type.PurgeOrderHistoryVariableNames;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -112,6 +126,18 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     @Qualifier("blNotificationDispatcher")
     protected NotificationDispatcher notificationDispatcher;
 
+    @Resource(name = "blDeleteStatementGenerator")
+    protected DeleteStatementGenerator deleteStatementGenerator;
+
+    @Autowired
+    protected Environment env;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+
+    @Resource(name = "blResourcePurgeExtensionManager")
+    protected ResourcePurgeExtensionManager extensionManager;
+
     @Override
     public void purgeCarts(final Map<String, String> config) {
         if (LOG.isDebugEnabled()) {
@@ -163,6 +189,70 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         for (Order cart : carts) {
             notifyCart(cart);
         }
+    }
+
+    public void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends, final Map<String, Integer> config) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Purging historical orders");
+        }
+
+        String enablePurge = env.getProperty("enable.purge.order.history");
+
+        if (!Boolean.parseBoolean(enablePurge)) {
+            LOG.info("Save protection. Purging history is off. Please set property enable.purge.order.history to true.");
+            return;
+        }
+
+        Integer daysCount = config.get(PurgeOrderHistoryVariableNames.OLDER_THAN_DAYS.toString());
+        Integer batchSize = config.get(PurgeOrderHistoryVariableNames.BATCH_SIZE.toString());
+
+        List<Order> oldOrders = orderService.findOrdersByDaysCount(daysCount, batchSize);
+        Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies = new HashMap<>(depends);
+
+        List<DeleteStatementGeneratorImpl.PathElement> orderDependencies = new ArrayList<>();
+
+        orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_LOCK", "ORDER_ID", "ORDER_ID"));
+
+        dependencies.put("BLC_ORDER", orderDependencies);
+
+        ArrayList<DeleteStatementGeneratorImpl.PathElement> orderItemDependencies = new ArrayList<>();
+        orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_ORDER_MULTISHIP_OPTION", "ORDER_MULTISHIP_OPTION_ID", "ORDER_ITEM_ID"));
+        orderDependencies.add(new DeleteStatementGeneratorImpl.PathElement("BLC_GIFTWRAP_ORDER_ITEM", "ORDER_ITEM_ID", "ORDER_ITEM_ID"));
+        dependencies.put("BLC_ORDER_ITEM", orderItemDependencies);
+        dependencies.put("BLC_ORDER_PAYMENT", Collections.singletonList(new DeleteStatementGeneratorImpl.PathElement("BLC_PAYMENT_LOG", "ORDER_PAYMENT_ID", "ORDER_PAYMENT_ID")));
+        extensionManager.getProxy().addPurgeDependencies(dependencies);
+        Set<String> exclusions = new HashSet<>();
+        exclusions.add("BLC_ADMIN_USER");
+        extensionManager.getProxy().addPurgeExclusions(exclusions);
+        Map<String, String> deleteStatement = deleteStatementGenerator.generateDeleteStatementsForType(OrderImpl.class, "?", dependencies, exclusions);
+        for (Order order : oldOrders) {
+            TransactionStatus status = TransactionUtils.createTransaction("Cart Purge",
+                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, false);
+            try {
+                em.unwrap(Session.class).doWork(new Work() {
+                    @Override
+                    public void execute(Connection connection) throws SQLException {
+                        Statement statement = connection.createStatement();
+                        for (String value : deleteStatement.values()) {
+                            String sql = value.replace("?", String.valueOf(order.getId()));
+                            LOG.debug(sql);
+                            statement.addBatch(sql);
+                        }
+                        extensionManager.getProxy().addPurgeStatements(statement, rootTypeIdValue);
+                        statement.executeBatch();
+                    }
+                });
+                TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            } catch (Exception e) {
+                if (!status.isCompleted()) {
+                    TransactionUtils.finalizeTransaction(status, transactionManager, true);
+                }
+                LOG.error(String.format("Not able to purge Order ID: %d", order.getId()), e);
+            }
+        }
+
+        LOG.info("Finished purging historical orders.");
     }
 
     @Override
