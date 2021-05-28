@@ -883,7 +883,7 @@
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>4.1.4</version>
             </dependency>
-            
+
             <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
             <dependency>
                 <groupId>javax.ws.rs</groupId>
@@ -914,7 +914,7 @@
                 <artifactId>jackson-annotations</artifactId>
                 <version>2.8.0</version>
             </dependency>
-            
+
 
             <!-- JMS Libraries -->
             <dependency>
@@ -1619,7 +1619,7 @@
                 <groupId>de.jkeylockmanager</groupId>
                 <artifactId>jkeylockmanager</artifactId>
                 <version>1.1.0</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>

@@ -36,8 +36,8 @@ import javax.persistence.Version;
  */
 public class OptimisticLockUtils {
 
-    private static final Log log = LogFactory.getLog(OptimisticLockUtils.class);
-    
+    private static final Log LOG = LogFactory.getLog(OptimisticLockUtils.class);
+
     /**
      * Performs an update operation on an entity within an optimistic lock aware transaction.
      *
@@ -94,17 +94,17 @@ public class OptimisticLockUtils {
         T entity = null;
         while (!saveSuccessful) {
             if (retryCount >= maxRetryCount) {
-                log.debug("Max retry count was reached while trying to perform " + name + " on " + entityClass.getSimpleName()+ " with id: " + identifier);
+                LOG.debug("Max retry count was reached while trying to perform " + name + " on " + entityClass.getSimpleName()+ " with id: " + identifier);
                 throw new OptimisticLockMaxRetryException("Unable to perform " + name + " on " + entityClass.getSimpleName() + " with id: " + identifier + ". " +
                         "Tried " + retryCount + " times, but the version for this entity continues to be concurrently modified.");
             }
             try {
                 entity = doTransactionalOptimisticUpdate(name, operation, entityClass, identifier, transactionManager, entityManager);
                 saveSuccessful = true;
-                log.debug(name + " for " + entityClass.getSimpleName() + " with ID: " + identifier + " performed " + retryCount + " retries.");
+                LOG.debug(name + " for " + entityClass.getSimpleName() + " with ID: " + identifier + " performed " + retryCount + " retries.");
 
             } catch (OptimisticLockException e) {
-                log.debug("Optimistic locking failure. Concurrent modification detected when attempting to modify " + entityClass.getSimpleName() + " with id: " + identifier);
+                LOG.debug("Optimistic locking failure. Concurrent modification detected when attempting to modify " + entityClass.getSimpleName() + " with id: " + identifier);
             }
             retryCount++;
         }
@@ -120,7 +120,7 @@ public class OptimisticLockUtils {
         try {
             entity = entityManager.find(entityClass, identifier);
             if (operation instanceof ValidatedUpdateOperation && !((ValidatedUpdateOperation<T>) operation).isValid(entity)) {
-                log.debug("Entity state was found to be invalid while trying to perform " + name + " on " + entityClass.getSimpleName() + " with id: " + identifier);
+                LOG.debug("Entity state was found to be invalid while trying to perform " + name + " on " + entityClass.getSimpleName() + " with id: " + identifier);
                 throw new OptimisticLockInvalidStateException("Unable to perform " + name + " on " + entityClass.getSimpleName() + " with id: " + identifier + ". Aborting update due to invalid state.");
             }
             operation.update(entity);

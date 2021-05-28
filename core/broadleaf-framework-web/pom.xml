@@ -59,7 +59,7 @@
         </profile>
     </profiles>
     <dependencies>
-    
+
         <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -79,7 +79,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>

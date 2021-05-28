@@ -85,11 +85,33 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
             public void execute() throws Throwable {
                 pagedItems = streamOperation.retrievePage(holder.getVal(), pageSize);
                 streamOperation.pagedExecute(pagedItems);
-                if (((Collection) pagedItems[0]).size() == 0) {
+
+                int pagedItemCount = ((Collection) pagedItems[0]).size();
+                if (pagedItemCount == 0) {
                     holder.setVal(totalCount.intValue());
                 } else {
-                    holder.setVal(holder.getVal() + ((Collection) pagedItems[0]).size());
+                    if (LOG.isDebugEnabled() && !isFinalPage(holder, pagedItemCount, totalCount) && (pagedItemCount != pageSize)) {
+                        LOG.debug(String.format("In the previous iteration of this streaming transactional operation, " +
+                                        "(%s) pagedItems were processed when we were expecting a full page of (%s) items. " +
+                                        "Please ensure that your StreamCapableTransactionalOperation#retrieveTotalCount() " +
+                                        "and StreamCapableTransactionalOperation#retrievePage(int startPos, int pageSize) " +
+                                        "queries contain the same conditions as to ultimately provide the number of entities " +
+                                        "equal to the declared total count. Stream operation: %s",
+                                pagedItemCount, pageSize, streamOperation.getClass()));
+                    }
+
+                    if (pagedItemCount < pageSize) {
+                        holder.setVal(holder.getVal() + pageSize);
+                    } else {
+                        holder.setVal(holder.getVal() + pagedItemCount);
+                    }
                 }
+            }
+
+            private boolean isFinalPage(Holder holder, int pagedItemCount, Long totalCount) {
+                int processedItemCount = holder.getVal() + pagedItemCount;
+
+                return processedItemCount >= totalCount;
             }
         };
         while (holder.getVal() < totalCount) {
