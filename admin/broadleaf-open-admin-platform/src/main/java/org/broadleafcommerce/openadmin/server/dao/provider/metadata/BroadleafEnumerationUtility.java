@@ -60,7 +60,7 @@ public class BroadleafEnumerationUtility {
                         blcEnumSet.add((BroadleafEnumerationType) value);
                     }
     
-                    for (Object value : typesMap.values()) {
+                    for (Object value : blcEnumSet) {
                         enumVals.put((String) friendlyTypeMethod.invoke(value), (String) typeMethod.invoke(value));
                     }
                 }
