@@ -20,10 +20,17 @@ package org.broadleafcommerce.core.catalog.service;
 import lombok.SneakyThrows;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.AbstractEntityDuplicationHelper;
+import org.broadleafcommerce.common.persistence.EntityDuplicatorExtensionManager;
+import org.broadleafcommerce.common.service.GenericEntityService;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -33,11 +40,22 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATION;
 
 @Component("blProductDuplicateModifier")
 public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Product> {
 
     private static final String COPY_NUMBER_SEPARATOR = "#";
+
+    @Resource(name = "blEntityDuplicatorExtensionManager")
+    protected EntityDuplicatorExtensionManager extensionManager;
+
+    @Resource(name = "blGenericEntityService")
+    protected GenericEntityService genericEntityService;
 
     @Autowired
     public ProductDuplicateModifier(final Environment environment) {
@@ -55,25 +73,53 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
     @SneakyThrows
     @Override
     public void modifyInitialDuplicateState(final Product original, final Product copy, final MultiTenantCopyContext context) {
-        for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
-            final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
-            clone.setProduct(copy);
-            copy.getAllParentCategoryXrefs().add(clone);
-        }
-        List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
-        for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
-            final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
-            clone.setProduct(copy);
-            productOptionXrefs.add(clone);
-        }
-        copy.setProductOptionXrefs(productOptionXrefs);
+        if(context.getCopyHints().get(PROPAGATION)!=null && "TRUE".equalsIgnoreCase(context.getCopyHints().get(PROPAGATION))){
+            for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
+                final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
+                clone.setProduct(copy);
+                ExtensionResultHolder<Map<Long, Map<Long, Long>>> resultHolder = new ExtensionResultHolder<>();
+                Long categoryId = clone.getCategory().getId();
+                extensionManager.getClonesByCatalogs("BLC_CATEGORY", categoryId, context, resultHolder);
+                Long aLong = resultHolder.getResult().get(categoryId).get(context.getToCatalog().getId());
+                Category category = (Category) genericEntityService.readGenericEntity(genericEntityService.getCeilingImplClass(CategoryImpl.class.getName()), aLong);
+                clone.setCategory(category);
+                copy.getAllParentCategoryXrefs().add(clone);
+            }
+            List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
+            for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
+                final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
+                ExtensionResultHolder<Map<Long, Map<Long, Long>>> resultHolder = new ExtensionResultHolder<>();
+                Long optionId = clone.getProductOption().getId();
+                extensionManager.getClonesByCatalogs("BLC_PRODUCT_OPTION", optionId, context, resultHolder);
+                Long aLong = resultHolder.getResult().get(optionId).get(context.getToCatalog().getId());
+                ProductOption productOption = (ProductOption) genericEntityService.readGenericEntity(genericEntityService.getCeilingImplClass(ProductOptionImpl.class.getName()), aLong);
+                clone.setProductOption(productOption);
+                clone.setProduct(copy);
+                productOptionXrefs.add(clone);
+            }
+            copy.setProductOptionXrefs(productOptionXrefs);
 
+        }else {
+            for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
+                final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
+                clone.setProduct(copy);
+                copy.getAllParentCategoryXrefs().add(clone);
+            }
+            List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
+            for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
+                final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
+                clone.setProduct(copy);
+                productOptionXrefs.add(clone);
+            }
+            copy.setProductOptionXrefs(productOptionXrefs);
+        }
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.YEAR, 1);
         copy.setActiveStartDate(instance.getTime());
         copy.setActiveEndDate(null);
 
         setNameAndUrl(copy);
+
     }
 
     private void setNameAndUrl(Product copy) {

@@ -43,6 +43,7 @@ public class MultiTenantCopyContext {
 
     public static final String[] BROADLEAF_PACKAGE_PREFIXES = {"org.broadleafcommerce","com.broadleafcommerce"};
     public static final String MANUAL_DUPLICATION = "MANUAL_DUPLICATION";
+    public static final String PROPAGATION = "PROPAGATION";
 
     protected Catalog fromCatalog;
     protected Catalog toCatalog;
