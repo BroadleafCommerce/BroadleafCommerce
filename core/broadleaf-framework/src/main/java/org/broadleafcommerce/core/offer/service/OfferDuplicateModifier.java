@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.AbstractEntityDuplicationHelper;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
@@ -46,7 +47,7 @@ public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offe
     }
     
     @Override
-    public void modifyInitialDuplicateState(final Offer copy) {
+    public void modifyInitialDuplicateState(final Offer original, final Offer copy, MultiTenantCopyContext context) {
         String currentName = copy.getName();
         copy.setName(currentName + getCopySuffix());
         copy.setStartDate(null);

@@ -43,6 +43,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+
 /**
  * The Class ProductAttributeImpl.
  */

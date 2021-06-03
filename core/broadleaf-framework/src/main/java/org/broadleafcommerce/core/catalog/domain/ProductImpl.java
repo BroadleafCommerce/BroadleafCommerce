@@ -88,6 +88,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
  * product is a general description of an item that can be sold (for example: a
@@ -156,6 +158,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
      * The Constant serialVersionUID.
      */
     private static final long serialVersionUID = 1L;
+
+    public static final String EXCLUDE_PRODUCT_CODE_COPY_HINT = "exclude-product-productCodes";
 
     /**
      * The id.
@@ -1151,8 +1155,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setUrlKey(urlKey);
         cloned.setManufacturer(manufacturer);
         cloned.setPromoMessage(promoMessage);
-        if (defaultCategory != null) {
+        if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
+        } else {
+            cloned.setDefaultCategory(defaultCategory);
         }
         cloned.setModel(model);
         if (defaultSku != null) {
@@ -1167,9 +1173,13 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             cloned.getProductOptionXrefs().add(clonedEntry);
 
         }
+        Map<String, ProductAttribute> attributeMap = new HashMap<>();
         for (Map.Entry<String, ProductAttribute> entry : getProductAttributes().entrySet()) {
             ProductAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getProductAttributes().put(entry.getKey(), clonedEntry);
+            attributeMap.put(entry.getKey(), clonedEntry);
+        }
+        if(attributeMap.size()>0) {
+            cloned.setProductAttributes(attributeMap);
         }
 
         //Don't clone references to other Product and Category collections - those will be handled by another MultiTenantCopier call
