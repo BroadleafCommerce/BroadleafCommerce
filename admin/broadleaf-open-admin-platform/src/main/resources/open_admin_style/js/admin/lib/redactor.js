@@ -8299,7 +8299,9 @@
                         '\u2026': '&hellip;',
                         '\u2014': '&mdash;',
                         '\u2010': '&dash;',
-                        '\u00ae': '&reg;'
+                        '\u00ae': '&reg;',
+                        '\u00ab': '&laquo;',
+                        '\u00bb': '&raquo;'
                     };
                     // replace special characters
                     $.each(chars, function(i,s)
