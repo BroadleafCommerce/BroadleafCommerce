@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.admin.web.rulebuilder;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.admin.web.rulebuilder.service.CustomerFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.OrderFieldServiceImpl;
@@ -27,6 +26,8 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
+
+import junit.framework.TestCase;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -261,7 +262,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.getRules().add(e2);
 
         String translated = translator.createMVEL("fulfillmentGroup", dataDTO, fulfillmentGroupFieldService);
-        String mvel = "?fulfillmentGroup.?address.?state.?name==\"Texas\"&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&?fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199)";
+        String mvel = "?fulfillmentGroup.?address.?state.?name==\"Texas\"&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199))";
         assert (mvel.equals(translated));
     }
 
