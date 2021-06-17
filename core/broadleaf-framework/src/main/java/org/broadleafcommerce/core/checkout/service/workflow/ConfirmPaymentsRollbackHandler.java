@@ -150,6 +150,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<ProcessCo
                     if (!rollbackTX.getSuccess()) {
                         rollbackFailure = true;
                     }
+                    order = payment.getOrder();
                 }
             }
     
