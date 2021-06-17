@@ -108,7 +108,6 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
         address.setAddressLine1(dto.getAddressLine1());
         address.setAddressLine2(dto.getAddressLine2());
         address.setCity(dto.getAddressCityLocality());
-        address.setCounty(dto.getCounty());
 
         State state = null;
         if(dto.getAddressStateRegion() != null) {

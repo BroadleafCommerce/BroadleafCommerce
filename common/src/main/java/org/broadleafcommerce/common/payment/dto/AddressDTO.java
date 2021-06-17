@@ -41,7 +41,6 @@ public class AddressDTO<T> {
     protected String addressCountryCode;
     protected String addressPhone;
     protected String addressEmail;
-    protected String county;
 
     public AddressDTO() {
         this.additionalFields = new HashMap<String, Object>();
@@ -121,11 +120,6 @@ public class AddressDTO<T> {
         return this;
     }
 
-    public AddressDTO<T> addressCounty(String county) {
-        this.county = county;
-        return this;
-    }
-
     public Map<String, Object> getAdditionalFields() {
         return additionalFields;
     }
@@ -178,10 +172,6 @@ public class AddressDTO<T> {
         return addressEmail;
     }
 
-    public String getCounty() {
-        return county;
-    }
-
     public boolean addressPopulated() {
         return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
                 getAddressFirstName() != null ||
@@ -196,5 +186,5 @@ public class AddressDTO<T> {
                 getAddressPhone() != null ||
                 getAddressEmail() != null);
     }
-
+    
 }

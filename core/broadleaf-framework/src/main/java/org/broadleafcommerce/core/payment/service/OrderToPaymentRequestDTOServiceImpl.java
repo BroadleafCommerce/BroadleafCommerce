@@ -230,7 +230,6 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                         .addressStateRegion(stateAbbr)
                         .addressPostalCode(fgAddress.getPostalCode())
                         .addressCountryCode(countryAbbr)
-                        .addressCounty(fgAddress.getCounty())
                         .addressPhone(phone)
                         .addressEmail(fgAddress.getEmailAddress());
             }
@@ -278,7 +277,6 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                             .addressPostalCode(billAddress.getPostalCode())
                             .addressCountryCode(countryAbbr)
                             .addressPhone(phone)
-                            .addressCounty(billAddress.getCounty())
                             .addressEmail(billAddress.getEmailAddress());
                 }
             }
