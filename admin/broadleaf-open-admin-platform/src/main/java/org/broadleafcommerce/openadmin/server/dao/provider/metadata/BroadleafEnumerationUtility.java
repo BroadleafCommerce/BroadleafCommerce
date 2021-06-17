@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.springframework.stereotype.Component;
@@ -25,13 +24,8 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -40,7 +34,6 @@ import java.util.TreeSet;
  */
 @Component("blBroadleafEnumerationUtility")
 public class BroadleafEnumerationUtility {
-
     @SuppressWarnings("rawtypes")
     public List<Tuple<String, String>> getEnumerationValues(String broadleafEnumerationClass, DynamicEntityDao dynamicEntityDao) {
         try {
@@ -53,21 +46,16 @@ public class BroadleafEnumerationUtility {
             
             if (Comparable.class.isAssignableFrom(broadleafEnumeration)) {
                 enumVals = new LinkedHashMap<String, String>();
-                Set<BroadleafEnumerationType> blcEnumSet = new TreeSet<BroadleafEnumerationType>();
                 if (types != null) {
-                    Map typesMap = (Map) types.get(null);
-                    for (Object value : typesMap.values()) {
-                        blcEnumSet.add((BroadleafEnumerationType) value);
-                    }
-    
-                    for (Object value : blcEnumSet) {
+                    Map<Object, ?> typesMap = getTypesMap(types, broadleafEnumeration);
+                    for (final Object value : getSortedEnumValues(typesMap)) {
                         enumVals.put((String) friendlyTypeMethod.invoke(value), (String) typeMethod.invoke(value));
                     }
                 }
             } else {
                 enumVals = new TreeMap<String, String>();
                 if (types != null) {
-                    Map typesMap = (Map) types.get(null);
+                    Map<Object, ?> typesMap = getTypesMap(types, broadleafEnumeration);
                     for (Object value : typesMap.values()) {
                         enumVals.put((String) friendlyTypeMethod.invoke(value), (String) typeMethod.invoke(value));
                     }
@@ -92,4 +80,22 @@ public class BroadleafEnumerationUtility {
             throw new RuntimeException(e);
         }
     }
+
+    protected Map<Object, ?> getTypesMap(final Field types, @SuppressWarnings("unused") final Class<?> broadleafEnumeration)
+            throws IllegalAccessException {
+        //this method will allow customizations to modify types map if needed (cache issues should be solved if customizing)
+        //noinspection unchecked
+        return (Map<Object, ?>) types.get(null);
+    }
+
+    protected Collection<Object> getSortedEnumValues(final Map<Object, ?> typesMap) {
+        //noinspection unchecked
+        final ArrayList<Comparable<Object>> broadleafEnumerationTypes = new ArrayList<>((Collection<Comparable<Object>>) typesMap.values());
+        Collections.sort(broadleafEnumerationTypes);
+
+        return broadleafEnumerationTypes.stream()
+                .map(objectComparable -> (Object) objectComparable)
+                .collect(Collectors.toList());
+    }
+
 }
