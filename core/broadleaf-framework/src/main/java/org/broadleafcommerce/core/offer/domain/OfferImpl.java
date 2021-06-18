@@ -91,9 +91,10 @@ import javax.persistence.Transient;
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {
 
-    public static final String EXCLUDE_OFFERCODE_COPY_HINT = "exclude-offerCodes";
     public static final long serialVersionUID = 1L;
 
+    public static final String EXCLUDE_OFFERCODE_COPY_HINT = "exclude-offer-offerCodes";
+    
     @Id
     @GeneratedValue(generator= "OfferId")
     @GenericGenerator(

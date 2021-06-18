@@ -27,6 +27,7 @@ public class EntityFormAction implements Cloneable {
     public static final String SAVE = "SAVE";
     public static final String DELETE = "DELETE";
     public static final String PREVIEW = "PREVIEW";
+    public static final String DUPLICATE = "DUPLICATE";
 
     protected String buttonType = "button";
     protected String buttonClass = "";
@@ -184,7 +185,7 @@ public class EntityFormAction implements Cloneable {
      * This is a manual override for the data-actionurl attribute for an listgrid action. The data-actionurl attribute on a
      * button is normally automatically computed by appending the postfix URL to the path of the list grid
      * 
-     * @param actionUrlOverride
+     * @param urlOverride
      */
     public void setUrlOverride(String urlOverride) {
         this.urlOverride = urlOverride;

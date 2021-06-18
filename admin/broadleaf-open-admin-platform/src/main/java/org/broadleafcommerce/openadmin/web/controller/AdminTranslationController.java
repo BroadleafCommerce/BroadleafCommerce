@@ -111,7 +111,7 @@ public class AdminTranslationController extends AdminAbstractController {
         model.addAttribute("listGrid", lg);
         model.addAttribute("viewType", "modal/translationListGrid");
         model.addAttribute("modalHeaderType", ModalHeaderType.TRANSLATION.getType());
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
 
     /**
@@ -142,7 +142,7 @@ public class AdminTranslationController extends AdminAbstractController {
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.ADD_TRANSLATION.getType());
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
 
     /**
@@ -186,7 +186,7 @@ public class AdminTranslationController extends AdminAbstractController {
             model.addAttribute("viewType", "modal/translationAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
             model.addAttribute("modalHeaderType", ModalHeaderType.ADD_TRANSLATION.getType());
-            return "modules/modalContainer";
+            return MODAL_CONTAINER_VIEW;
         } else {
             return viewTranslation(request, response, model, form, result);
         }
@@ -246,7 +246,7 @@ public class AdminTranslationController extends AdminAbstractController {
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_TRANSLATION.getType());
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
 
     /**

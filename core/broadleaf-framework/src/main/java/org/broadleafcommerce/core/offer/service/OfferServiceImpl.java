@@ -119,7 +119,10 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name="blEntityDuplicator")
     protected EntityDuplicator duplicator;
 
-    @Resource(name="blOfferDuplicateModifier")
+    /**
+     * @deprecated Add {@link EntityDuplicateModifier}s to {@code blEntityDuplicationHelpers}
+     */
+    @Deprecated
     protected EntityDuplicateModifier<Offer> offerDuplicateModifier;
 
     @Override
@@ -632,9 +635,7 @@ public class OfferServiceImpl implements OfferService {
     @Transactional("blTransactionManager")
     @Override
     public Offer duplicate(Long originalOfferId) {
-        Map<String, String> copyHints = new HashMap<String, String>();
-        copyHints.put(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, "true");
-        return duplicator.copy(OfferImpl.class, originalOfferId, copyHints, offerDuplicateModifier);
+        return duplicator.copy(OfferImpl.class, originalOfferId);
     }
 
     @Override
