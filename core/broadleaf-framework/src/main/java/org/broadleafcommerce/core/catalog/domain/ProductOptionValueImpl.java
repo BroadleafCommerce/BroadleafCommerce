@@ -49,6 +49,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION_VALUE")
@@ -214,8 +216,10 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
         cloned.setAttributeValue(attributeValue);
         cloned.setDisplayOrder(displayOrder);
         cloned.setPriceAdjustment(getPriceAdjustment());
-        if (productOption != null) {
+        if (productOption != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setProductOption(productOption.createOrRetrieveCopyInstance(context).getClone());
+        } else {
+            cloned.setProductOption(productOption);
         }
         
         return  createResponse;

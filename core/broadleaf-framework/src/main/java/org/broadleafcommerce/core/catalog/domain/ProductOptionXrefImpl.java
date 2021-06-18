@@ -41,6 +41,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 /**
  * @author Jeff Fischer
  */
@@ -116,11 +118,16 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
             return createResponse;
         }
         ProductOptionXref cloned = createResponse.getClone();
-        if (product != null) {
-            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
-        }
-        if (productOption != null) {
-            cloned.setProductOption(productOption.createOrRetrieveCopyInstance(context).getClone());
+        if (!context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
+            if (product != null) {
+                cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+            }
+            if (productOption != null) {
+                cloned.setProductOption(productOption.createOrRetrieveCopyInstance(context).getClone());
+            }
+        } else {
+            cloned.setProduct(product);
+            cloned.setProductOption(productOption);
         }
         return createResponse;
     }

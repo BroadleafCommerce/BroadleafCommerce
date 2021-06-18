@@ -22,6 +22,9 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Allow other modules to contribute to the duplication lifecycle
  *
@@ -48,9 +51,21 @@ public interface EntityDuplicatorExtensionHandler extends ExtensionHandler {
     ExtensionResultStatusType setupDuplicate(Object entity, ExtensionResultHolder<MultiTenantCopyContext> resultHolder);
 
     /**
+     * Add duplication entity to the sandbox
+     *
+     * @param entity
+     * @return
+     */
+    ExtensionResultStatusType addToSandbox (Object entity);
+
+    /**
      * Tear down any expired context and state used during the duplication
      *
      * @return
      */
     ExtensionResultStatusType tearDownDuplicate();
+
+    ExtensionResultStatusType getCatalogsForPropagation(MultiTenantCopyContext context, ExtensionResultHolder<List<MultiTenantCopyContext>> resultHolder );
+
+    ExtensionResultStatusType getClonesByCatalogs(String tableName, Long id, MultiTenantCopyContext multiTenantCopyContext, ExtensionResultHolder<Map<Long, Map<Long,Long>>> resultHolder);
 }

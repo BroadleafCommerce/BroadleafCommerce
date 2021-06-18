@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.persistence;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 
 import java.util.Map;
 
@@ -41,5 +42,5 @@ public interface EntityDuplicationHelper<T> {
     
     void addCopyHint(final String name, final String hint);
 
-    void modifyInitialDuplicateState(T copy);
+    void modifyInitialDuplicateState(T original, T copy, MultiTenantCopyContext context);
 }
