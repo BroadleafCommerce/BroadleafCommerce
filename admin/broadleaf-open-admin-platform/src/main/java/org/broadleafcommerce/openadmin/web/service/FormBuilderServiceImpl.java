@@ -504,7 +504,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 selectize = true;
 
                 Property p = cmd.getPMap().get(atcmd.getSelectizeVisibleField());
-                if (p != null) {
+                if (propertyExistsInResultSet(p, drs)) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
 
                     Field hf = createHeaderField(p, md);
@@ -514,7 +514,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             } else {
                 for (String fieldName : atcmd.getGridVisibleFields()) {
                     Property p = cmd.getPMap().get(fieldName);
-                    if (p != null) {
+                    if (propertyExistsInResultSet(p, drs)) {
                         BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
 
                         Field hf = createHeaderField(p, md);
@@ -717,6 +717,19 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
         return listGrid;
+    }
+
+    protected boolean propertyExistsInResultSet(Property property, DynamicResultSet drs) {
+        //If the drs is empty we can't check for the property, default to true
+        if (drs.getRecords().length == 0) {
+            return true;
+        }
+        for (Property drsProperty : drs.getRecords()[0].getProperties()) {
+            if (property != null && drsProperty.getName().equals(property.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected String getMapKeyFriendlyName(Property property) {
