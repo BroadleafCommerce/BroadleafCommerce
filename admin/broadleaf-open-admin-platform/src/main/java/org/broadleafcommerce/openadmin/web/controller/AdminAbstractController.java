@@ -87,6 +87,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     public static final String CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME = "currentAdminModule";
     public static final String CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME = "currentAdminSection";
+    
+    public static final String DEFAULT_CONTAINER_VIEW = "modules/defaultContainer";
+    public static final String MODAL_CONTAINER_VIEW = "modules/modalContainer";
 
     // ***********************
     // RESOURCE DECLARATIONS *

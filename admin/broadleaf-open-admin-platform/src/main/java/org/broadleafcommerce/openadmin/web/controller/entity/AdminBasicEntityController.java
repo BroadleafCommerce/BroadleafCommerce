@@ -26,9 +26,11 @@ import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.persistence.EntityDuplicator;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -87,8 +89,11 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UrlPathHelper;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,9 +109,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to super
- * and does not provide any custom-tailored functionality. It is responsible for rendering the admin for every entity
- * that is not explicitly customized by its own controller.
+ * The default implementation of the {@link AdminAbstractController}. This delegates every call to
+ * super and does not provide any custom-tailored functionality. It is responsible for rendering the
+ * admin for every entity that is not explicitly customized by its own controller.
  *
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
@@ -135,6 +140,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService rowLevelSecurityService;
+
+    @Resource(name = "blEntityDuplicator")
+    protected EntityDuplicator duplicator;
+
+    @Resource(name = "blGenericEntityService")
+    protected GenericEntityService genericEntityService;
 
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
@@ -179,7 +190,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         setupViewEntityListBasicModel(request, cmd, sectionKey, sectionClassName, model, requestParams);
         model.addAttribute("listGrid", listGrid);
 
-        return "modules/defaultContainer";
+        return DEFAULT_CONTAINER_VIEW;
     }
 
     protected void setupViewEntityListBasicModel(HttpServletRequest request, ClassMetadata cmd, String sectionKey,
@@ -259,37 +270,33 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
     }
 
-    protected boolean isAddActionAllowed(String sectionClassName, ClassMetadata cmd) {
+    protected boolean isAddActionAllowed(final String sectionClassName, final ClassMetadata cmd) {
         // If the user does not have create permissions, we will not add the "Add New" button
-        boolean canCreate = true;
         try {
             adminRemoteSecurityService.securityCheck(sectionClassName, EntityOperationType.ADD);
         } catch (ServiceException e) {
             if (e instanceof SecurityServiceException) {
-                canCreate = false;
+                return false;
             }
         }
 
-        if (canCreate) {
-            checkReadOnly: {
-                //check if all the metadata is read only
-                for (Property property : cmd.getProperties()) {
-                    if (property.getMetadata() instanceof BasicFieldMetadata) {
-                        if (((BasicFieldMetadata) property.getMetadata()).getReadOnly() == null ||
-                                !((BasicFieldMetadata) property.getMetadata()).getReadOnly()) {
-                            break checkReadOnly;
-                        }
-                    }
+        final boolean canAdd = rowLevelSecurityService
+                .canAdd(adminRemoteSecurityService.getPersistentAdminUser(), sectionClassName, cmd);
+        return isNotReadOnly(cmd) && canAdd;
+    }
+
+    protected boolean isNotReadOnly(final ClassMetadata cmd) {
+        //check if all the metadata is read only
+        for (Property property : cmd.getProperties()) {
+            if (property.getMetadata() instanceof BasicFieldMetadata) {
+                if (((BasicFieldMetadata) property.getMetadata()).getReadOnly() == null ||
+                        !((BasicFieldMetadata) property.getMetadata()).getReadOnly()) {
+                    return true;
                 }
-                canCreate = false;
             }
         }
 
-        if (canCreate) {
-            canCreate = rowLevelSecurityService.canAdd(adminRemoteSecurityService.getPersistentAdminUser(), sectionClassName, cmd);
-        }
-
-        return canCreate;
+        return false;
     }
 
     /**
@@ -317,16 +324,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ppr.setAddOperationInspect(true);
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
-        // If the entity type isn't specified, we need to determine if there are various polymorphic types for this entity.
-        if (StringUtils.isBlank(entityType)) {
-            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
-                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
-            } else {
-                entityType = getDefaultEntityType();
-            }
-        } else {
-            entityType = URLDecoder.decode(entityType, "UTF-8");
-        }
+        entityType = determineEntityType(entityType, cmd);
 
         EntityForm entityForm = formService.createEntityForm(cmd, sectionCrumbs);
 
@@ -349,7 +347,23 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
         setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
+    }
+
+    // If the entity type isn't specified, we need to determine if there are various polymorphic
+    // types for this entity.
+    protected String determineEntityType(String entityType, final ClassMetadata cmd)
+            throws UnsupportedEncodingException {
+        if (StringUtils.isBlank(entityType)) {
+            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
+                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
+            } else {
+                entityType = getDefaultEntityType();
+            }
+        } else {
+            entityType = URLDecoder.decode(entityType, "UTF-8");
+        }
+        return entityType;
     }
 
     /**
@@ -391,11 +405,65 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
             model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
             setModelAttributes(model, sectionKey);
-            return "modules/modalContainer";
+            return MODAL_CONTAINER_VIEW;
         }
 
         // Note that AJAX Redirects need the context path prepended to them
         return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + entity.getPMap().get("id").getValue();
+    }
+
+    @RequestMapping(value = "/{id}/duplicate", method = RequestMethod.POST)
+    public String duplicateEntity(final HttpServletRequest request,
+            final HttpServletResponse response,
+            final Model model,
+            @PathVariable final Map<String, String> pathVars,
+            @PathVariable(value = "id") final String id,
+            @ModelAttribute(value = "entityForm") final EntityForm entityForm,
+            final BindingResult result) throws Exception {
+        final String sectionKey = getSectionKey(pathVars);
+        final String sectionClassName = getClassNameForSection(sectionKey);
+        final Class<?> entityClass = dynamicEntityDao.getImplClass(sectionClassName);
+        final long identifier = Long.parseLong(id);
+
+        if (duplicator.validate(entityClass, identifier)) {
+            final Object duplicate;
+
+            try {
+                duplicate = duplicator.copy(entityClass, identifier);
+            } catch (Exception e) {
+                LOG.error("Could not duplicate entity", e);
+                return getErrorDuplicatingResponse(response, "Duplication_Failure");
+            }
+
+            final Serializable dupId = genericEntityService.getIdentifier(duplicate);
+
+            // Note that AJAX Redirects need the context path prepended to them
+            return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + dupId;
+        } else {
+            return getErrorDuplicatingResponse(response, "Validation_Failure");
+        }
+    }
+
+    protected String getErrorDuplicatingResponse(HttpServletResponse response, String code) {
+        List<Map<String, Object>> errors = new ArrayList<>();
+        String message;
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            message = context.getMessageSource()
+                    .getMessage(code, null, code, context.getJavaLocale());
+        } else {
+            LOG.warn(
+                    "Could not find the MessageSource on the current request, "
+                            + "not translating the message key");
+            message = "Duplication_Failure";
+        }
+
+        Map<String, Object> errorMap = new HashMap<>();
+        errorMap.put("errorType", "global");
+        errorMap.put("code", code);
+        errorMap.put("message", message);
+        errors.add(errorMap);
+        return new JsonResponse(response).with("errors", errors).done();
     }
 
     /**
@@ -425,11 +493,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
-        if (isAddRequest(entity)) {
-            modifyAddEntityForm(entityForm, pathVars);
-        } else {
-            modifyEntityForm(entityForm, pathVars);
-        }
+        modifyEntityForm(entity, entityForm, pathVars);
 
         if (request.getParameter("headerFlash") != null) {
             model.addAttribute("headerFlash", request.getParameter("headerFlash"));
@@ -454,16 +518,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // We want to replace author ids with their names
         addAuditableDisplayFields(entityForm);
 
-        if (isAjaxRequest(request)) {
-            entityForm.setReadOnly();
-            model.addAttribute("viewType", "modal/entityView");
-            model.addAttribute("modalHeaderType", ModalHeaderType.VIEW_ENTITY.getType());
-            return "modules/modalContainer";
-        } else {
-            model.addAttribute("useAjaxUpdate", true);
-            model.addAttribute("viewType", "entityEdit");
-            return "modules/defaultContainer";
-        }
+        return resolveAppropriateEntityView(request, model, entityForm);
     }
 
     protected Map<String, DynamicResultSet> getViewSubRecords(HttpServletRequest request, Map<String, String> pathVars,
@@ -516,11 +571,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Map<String, DynamicResultSet> subRecordsMap = getViewSubRecords(request, pathVars, cmd, entity, crumbs);
         entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
 
-        if (isAddRequest(entity)) {
-            modifyAddEntityForm(entityForm, pathVars);
-        } else {
-            modifyEntityForm(entityForm, pathVars);
-        }
+        modifyEntityForm(entity, entityForm, pathVars);
 
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
@@ -530,7 +581,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         model.addAttribute("useAjaxUpdate", true);
         model.addAttribute("viewType", "entityEdit");
-        return "modules/defaultContainer";
+
+        return DEFAULT_CONTAINER_VIEW;
     }
 
     /**
@@ -630,6 +682,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
 
         entityFormValidator.validate(entityForm, entity, result);
+
         if (result.hasErrors()) {
             model.addAttribute("headerFlash", "save.unsuccessful");
             model.addAttribute("headerFlashAlert", true);
@@ -638,32 +691,43 @@ public class AdminBasicEntityController extends AdminAbstractController {
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm, sectionCrumbs);
 
-            if (isAddRequest(entity)) {
-                modifyAddEntityForm(entityForm, pathVars);
-            } else {
-                modifyEntityForm(entityForm, pathVars);
-            }
+            modifyEntityForm(entity, entityForm, pathVars);
 
             model.addAttribute("entity", entity);
             model.addAttribute("currentUrl", request.getRequestURL().toString());
 
             setModelAttributes(model, sectionKey);
 
-            if (isAjaxRequest(request)) {
-                entityForm.setReadOnly();
-                model.addAttribute("viewType", "modal/entityView");
-                model.addAttribute("modalHeaderType", ModalHeaderType.VIEW_ENTITY.getType());
-                return "modules/modalContainer";
-            } else {
-                model.addAttribute("useAjaxUpdate", true);
-                model.addAttribute("viewType", "entityEdit");
-                return "modules/defaultContainer";
-            }
+            return resolveAppropriateEntityView(request, model, entityForm);
         }
 
         ra.addFlashAttribute("headerFlash", "save.successful");
 
         return "redirect:/" + sectionKey + "/" + id;
+    }
+
+    protected void modifyEntityForm(final Entity entity, final EntityForm entityForm,
+            final Map<String, String> pathVars) throws Exception {
+        if (isAddRequest(entity)) {
+            modifyAddEntityForm(entityForm, pathVars);
+        } else {
+            modifyEntityForm(entityForm, pathVars);
+        }
+    }
+
+    protected String resolveAppropriateEntityView(final HttpServletRequest request,
+            final Model model,
+            final @ModelAttribute(value = "entityForm") EntityForm entityForm) {
+        if (isAjaxRequest(request)) {
+            entityForm.setReadOnly();
+            model.addAttribute("viewType", "modal/entityView");
+            model.addAttribute("modalHeaderType", ModalHeaderType.VIEW_ENTITY.getType());
+            return MODAL_CONTAINER_VIEW;
+        } else {
+            model.addAttribute("useAjaxUpdate", true);
+            model.addAttribute("viewType", "entityEdit");
+            return DEFAULT_CONTAINER_VIEW;
+        }
     }
 
     /**
@@ -944,35 +1008,18 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 // If the entity type isn't specified, we need to determine if there are various polymorphic types
                 // for this entity.
                 String entityType = null;
+
                 if (requestParams.containsKey("entityType")) {
                     entityType = requestParams.get("entityType").get(0);
                 }
-                if (StringUtils.isBlank(entityType)) {
-                    if (cmd.getPolymorphicEntities().getChildren().length == 0) {
-                        entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
-                    } else {
-                        entityType = getDefaultEntityType();
-                    }
-                } else {
-                    entityType = URLDecoder.decode(entityType, "UTF-8");
-                }
+
+                entityType = determineEntityType(entityType, cmd);
 
                 if (StringUtils.isBlank(entityType)) {
-                    List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
-                    model.addAttribute("entityTypes", entityTypes);
-                    model.addAttribute("viewType", "modal/entityTypeSelection");
-                    model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
-                    String requestUri = request.getRequestURI();
-                    if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
-                        requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
-                    }
-                    model.addAttribute("currentUri", requestUri);
-                    model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
-                    setModelAttributes(model, sectionKey);
-                    return "modules/modalContainer";
-                } else {
-                    ppr = ppr.withCeilingEntityClassname(entityType);
+                    return getModalForBlankEntityType(request, model, sectionKey, cmd);
                 }
+
+                ppr = ppr.withCeilingEntityClassname(entityType);
             }
         } else if (md instanceof MapMetadata) {
             ExtensionResultStatusType result = extensionManager.getProxy().modifyModelForAddCollectionType(request,response,model,sectionKey,id,requestParams,(MapMetadata) md);
@@ -980,11 +1027,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 model.addAttribute("entityId", id);
                 model.addAttribute("sectionKey", sectionKey);
                 model.addAttribute("collectionField", collectionField);
-                return "modules/modalContainer";
+                return MODAL_CONTAINER_VIEW;
             }
         }
-
-        //service.getContextSpecificRelationshipId(mainMetadata, entity, prefix);
 
         model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
 
@@ -1010,6 +1055,27 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     collectionItemId, responseMap);
         }
         return responseMap;
+    }
+
+    protected String getModalForBlankEntityType(final HttpServletRequest request,
+                                                final Model model, final String sectionKey, final ClassMetadata cmd) {
+        final List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
+        model.addAttribute("entityTypes", entityTypes);
+        model.addAttribute("viewType", "modal/entityTypeSelection");
+        model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
+
+        String requestUri = request.getRequestURI();
+        final String contextPath = request.getContextPath();
+
+        if (!contextPath.equals("/") && requestUri.startsWith(contextPath)) {
+            requestUri = requestUri.substring(contextPath.length() + 1, requestUri.length());
+        }
+
+        model.addAttribute("currentUri", requestUri);
+        model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
+        setModelAttributes(model, sectionKey);
+
+        return MODAL_CONTAINER_VIEW;
     }
 
     /**
@@ -1338,7 +1404,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("modalHeaderType", ModalHeaderType.ADD_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
     }
 
     /**
@@ -1455,8 +1521,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return
      * @throws ServiceException
      */
-    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
-            String id, String collectionField, String collectionItemId, String alternateId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
+    protected String showViewUpdateCollection(HttpServletRequest request,
+            Model model,
+            Map<String, String> pathVars,
+            String id,
+            String collectionField,
+            String collectionItemId,
+            String alternateId,
+            String modalHeaderType,
+            EntityForm entityForm,
+            Entity entity) throws ServiceException {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
@@ -1491,15 +1565,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
-            if (entityForm == null) {
-                entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
-            } else {
-                entityForm.clearFieldsMap();
-                formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm, sectionCrumbs);
-                //remove all the actions since we're not trying to redisplay them on the form
-                entityForm.removeAllActions();
-            }
+
+            entityForm = reinitializeEntityForm(entityForm, collectionMetadata, entity,
+                    subRecordsMap, sectionCrumbs);
+
             entityForm.removeAction(DefaultEntityFormActions.DELETE);
+            entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
+
             addAuditableDisplayFields(entityForm);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/simpleEditEntity");
@@ -1635,7 +1707,26 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("modalHeaderType", modalHeaderType);
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, sectionKey);
-        return "modules/modalContainer";
+        return MODAL_CONTAINER_VIEW;
+    }
+
+    protected EntityForm reinitializeEntityForm(final EntityForm entityForm,
+            final ClassMetadata collectionMetadata,
+            final Entity entity,
+            final Map<String, DynamicResultSet> subRecordsMap,
+            final List<SectionCrumb> sectionCrumbs) throws ServiceException {
+        if (entityForm == null) {
+            return formService
+                    .createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
+        }
+
+        entityForm.clearFieldsMap();
+        formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm,
+                sectionCrumbs);
+        //remove all the actions since we're not trying to redisplay them on the form
+        entityForm.removeAllActions();
+
+        return entityForm;
     }
 
     /**

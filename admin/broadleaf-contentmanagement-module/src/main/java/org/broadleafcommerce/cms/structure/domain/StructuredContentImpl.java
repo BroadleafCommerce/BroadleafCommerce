@@ -101,6 +101,8 @@ import javax.persistence.Transient;
 public class StructuredContentImpl implements StructuredContent, AdminMainEntity, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
+    
+    public static final String SC_DONT_DUPLICATE_SC_TYPE_HINT = "dont-duplicate-sc-type";
 
     @Id
     @GeneratedValue(generator = "StructuredContentId")
@@ -333,21 +335,30 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         cloned.setLocale(locale);
         cloned.setOfflineFlag(offlineFlag);
         cloned.setPriority(priority);
+        
         if (structuredContentType != null) {
-            CreateResponse<StructuredContentType> clonedType = structuredContentType.createOrRetrieveCopyInstance(context);
-            cloned.setStructuredContentType(clonedType.getClone());
+            if (Boolean.valueOf(context.getCopyHints().get(SC_DONT_DUPLICATE_SC_TYPE_HINT))) {
+                cloned.setStructuredContentType(structuredContentType);
+            } else {
+                CreateResponse<StructuredContentType> clonedType = 
+                        structuredContentType.createOrRetrieveCopyInstance(context);
+                cloned.setStructuredContentType(clonedType.getClone());
+            }
         }
+        
         for(StructuredContentItemCriteria itemCriteria : qualifyingItemCriteria){
             CreateResponse<StructuredContentItemCriteria> clonedItem = itemCriteria.createOrRetrieveCopyInstance(context);
             StructuredContentItemCriteria clonedCritera = clonedItem.getClone();
             cloned.getQualifyingItemCriteria().add(clonedCritera);
         }
+        
         for(Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()){
             CreateResponse<StructuredContentRule> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
             StructuredContentRule clonedRule = clonedItem.getClone();
             cloned.getStructuredContentMatchRules().put(entry.getKey(),clonedRule);
 
         }
+        
         for(Entry<String, StructuredContentFieldXref> entry : structuredContentFields.entrySet() ){
             CreateResponse<StructuredContentFieldXref> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
             StructuredContentFieldXref clonedContentFieldXref = clonedItem.getClone();

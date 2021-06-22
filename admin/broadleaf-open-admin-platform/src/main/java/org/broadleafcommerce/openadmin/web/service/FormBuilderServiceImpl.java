@@ -34,6 +34,7 @@ import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityDuplicator;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.AdornedTargetAddMethodType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
@@ -61,6 +62,7 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -103,9 +105,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -124,6 +128,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -178,6 +183,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Resource(name = "blExploitProtectionService")
     ExploitProtectionService exploitProtectionService;
+
+    @Resource(name = "blEntityDuplicator")
+    protected EntityDuplicator duplicator;
+
+    @Resource(name = "blDynamicEntityDao")
+    protected DynamicEntityDao dynamicEntityDao;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN
@@ -1664,6 +1675,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         addDeleteActionIfAllowed(ef, cmd, entity);
+        addDuplicateActionIfAllowed(ef, cmd);
         setReadOnlyState(ef, cmd, entity);
 
         // check for fields that should be hidden based on annotations
@@ -1690,28 +1702,52 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @see {@link RowLevelSecurityService#canRemove(AdminUser, Entity)}
      */
     protected void addDeleteActionIfAllowed(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
-        boolean canDelete = true;
-        try {
-            String securityEntityClassname = getSecurityClassname(entityForm, cmd);
-            adminRemoteSecurityService.securityCheck(securityEntityClassname, EntityOperationType.REMOVE);
-        } catch (ServiceException e) {
-            if (e instanceof SecurityServiceException) {
-                canDelete = false;
-            }
-        }
-        
-        // If I cannot update a record then I certainly cannot delete it either
-        if (canDelete) {
-            canDelete = rowLevelSecurityService.canUpdate(adminRemoteSecurityService.getPersistentAdminUser(), entity);
-        }
-        
-        if (canDelete) {
-            canDelete = rowLevelSecurityService.canRemove(adminRemoteSecurityService.getPersistentAdminUser(), entity);
-        }
-        
-        if (canDelete) {
+        if (isDeletionAllowed(entityForm, cmd, entity)) {
             entityForm.addAction(DefaultEntityFormActions.DELETE);
         }
+    }
+    
+    protected boolean isDeletionAllowed(final EntityForm entityForm, final ClassMetadata cmd, 
+            final Entity entity) {
+        try {
+            String securityEntityClassname = getSecurityClassname(entityForm, cmd);
+            adminRemoteSecurityService
+                    .securityCheck(securityEntityClassname, EntityOperationType.REMOVE);
+        } catch (ServiceException e) {
+            if (e instanceof SecurityServiceException) {
+                return false;
+            }
+        }
+
+        final AdminUser persistentAdminUser = adminRemoteSecurityService.getPersistentAdminUser();
+        
+        return rowLevelSecurityService.canUpdate(persistentAdminUser, entity)
+                && rowLevelSecurityService.canRemove(persistentAdminUser, entity);
+    }
+    
+    protected void addDuplicateActionIfAllowed(final EntityForm entityForm,
+            final ClassMetadata cmd) {
+        if (isDuplicationAllowed(entityForm, cmd)) {
+            entityForm.addAction(DefaultEntityFormActions.DUPLICATE);
+        }
+    }
+
+    protected boolean isDuplicationAllowed(final EntityForm entityForm, final ClassMetadata cmd) {
+        final String securityClassname = getSecurityClassname(entityForm, cmd);
+
+        try {
+            adminRemoteSecurityService.securityCheck(securityClassname, EntityOperationType.ADD);
+        } catch (ServiceException e) {
+            if (e instanceof SecurityServiceException) {
+                return false;
+            }
+        }
+
+        final Class<?> entityClass = dynamicEntityDao.getImplClass(securityClassname);
+        
+        return duplicator.validate(entityClass, Long.valueOf(entityForm.getId())) && 
+                rowLevelSecurityService.canAdd(adminRemoteSecurityService.getPersistentAdminUser(), 
+                        securityClassname, cmd);
     }
     
     /**
