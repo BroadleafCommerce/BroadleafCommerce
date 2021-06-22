@@ -19,6 +19,7 @@
 package org.broadleafcommerce.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -74,6 +75,9 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transactionUtil;
 
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
+
     protected DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
     @Override
@@ -84,7 +88,8 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Override
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        Map<String, Object> md = daoHelper.getIdMetadata(clazz, em);
+        EntityManager entityManager = persistenceService.identifyEntityManager(clazz);
+        Map<String, Object> md = daoHelper.getIdMetadata(clazz, entityManager);
         AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
 
         if (type instanceof LongType) {
@@ -93,20 +98,20 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
             id = Integer.parseInt(String.valueOf(id));
         }
 
-        return em.find(clazz, id);
+        return entityManager.find(clazz, id);
     }
 
     @Override
     public <T> Long readCountGenericEntity(Class<T> clazz) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        TypedQuery<Long> q = new TypedQueryBuilder<T>(clazz, "root").toCountQuery(em);
+        TypedQuery<Long> q = new TypedQueryBuilder<T>(clazz, "root").toCountQuery(persistenceService.identifyEntityManager(clazz));
         return q.getSingleResult();
     }
 
     @Override
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(em);
+        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(persistenceService.identifyEntityManager(clazz));
         q.setMaxResults(limit);
         q.setFirstResult(offset);
         return q.getResultList();
@@ -115,20 +120,21 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Override
     public <T> List<T> readAllGenericEntity(Class<T> clazz) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(em);
+        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(persistenceService.identifyEntityManager(clazz));
         return q.getResultList();
     }
 
     @Override
     public List<Long> readAllGenericEntityId(Class<?> clazz) {
         clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        EntityManager entityManager = persistenceService.identifyEntityManager(clazz);
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root root = criteria.from(clazz);
         criteria.select(root.get(getIdField(clazz).getName()).as(Long.class));
         criteria.orderBy(builder.asc(root.get(getIdField(clazz).getName())));
 
-        return em.createQuery(criteria).getResultList();
+        return entityManager.createQuery(criteria).getResultList();
     }
 
     @Override
