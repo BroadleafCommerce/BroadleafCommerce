@@ -50,9 +50,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.9.0</ehcache3.version>
-        <spring.version>5.3.0</spring.version>
-        <spring.security.version>5.4.1</spring.security.version>
-        <spring.boot.version>2.4.0</spring.boot.version>
+        <spring.version>5.3.8</spring.version>
+        <spring.security.version>5.4.7</spring.security.version>
+        <spring.boot.version>2.4.7</spring.boot.version>
         <spring.mobile.version>2.0.0.M3</spring.mobile.version>
         <jackson.version>2.11.3</jackson.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
@@ -67,7 +67,7 @@
         <lombok.version>1.18.16</lombok.version>
         <hsqldb.database.starter.version>2.0.2-GA</hsqldb.database.starter.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
-        <hibernate.version>5.4.23.Final</hibernate.version>
+        <hibernate.version>5.4.32.Final</hibernate.version>
         <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
         <jaxb.version>2.3.1</jaxb.version>
         <jaxws.version>2.3.1</jaxws.version>
