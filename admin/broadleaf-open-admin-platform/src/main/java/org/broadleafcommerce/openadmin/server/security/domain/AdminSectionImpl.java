@@ -116,6 +116,7 @@ public class AdminSectionImpl implements AdminSection {
     protected Boolean useDefaultHandler = Boolean.TRUE;
 
     @Column(name = "CEILING_ENTITY", nullable = true)
+    @Index(name="ADMINSECTION_CEILING_ENTITY_INDEX", columnNames={"CEILING_ENTITY"})
     @AdminPresentation(friendlyName = "AdminSectionImpl_Ceiling_Entity", order = 6, group = "AdminSectionImpl_Section")
     protected String ceilingEntity;
 
