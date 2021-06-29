@@ -6,4 +6,5 @@
        th:attr="title=${record.icon.message}"
        th:class="${record.icon.cssClass + ' tooltip'}"
        th:classappend="${#bools.isTrue(record.icon.hasDetails) ? 'has-details' : ''}"></a>
+    <a th:if="${record.inheritedFromAnotherCatalog}" data-width="200" title="This record was inherited from another catalog" class="blc-icon-triangle-down has-tip hover-cursor workflow-icon"></a>
 </span>

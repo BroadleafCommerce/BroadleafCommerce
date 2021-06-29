@@ -47,6 +47,7 @@ public class ListGridRecord {
     protected Boolean isLocked = false;
     protected Boolean isReadOnly = false;
     protected Entity entity;
+    protected Boolean inheritedFromAnotherCatalog=false;
 
     /**
      * Convenience map keyed by the field name. Used to guarantee field ordering with header fields within a ListGrid
@@ -309,5 +310,13 @@ public class ListGridRecord {
 
     public void setLocked(Boolean locked) {
         isLocked = locked;
+    }
+
+    public Boolean getInheritedFromAnotherCatalog() {
+        return inheritedFromAnotherCatalog;
+    }
+
+    public void setInheritedFromAnotherCatalog(Boolean inheritedFromAnotherCatalog) {
+        this.inheritedFromAnotherCatalog = inheritedFromAnotherCatalog;
     }
 }
