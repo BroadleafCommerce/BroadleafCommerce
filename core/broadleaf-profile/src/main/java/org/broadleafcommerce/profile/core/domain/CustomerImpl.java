@@ -109,6 +109,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "USER_NAME")
+    @Index(name = "CUSTOMER_USER_NAME_INDEX", columnNames = { "USER_NAME" })
     @AdminPresentation(friendlyName = "CustomerImpl_UserName",
             group = GroupName.Customer, order = FieldOrder.USERNAME,
             requiredOverride = RequiredOverride.REQUIRED)
