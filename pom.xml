@@ -741,7 +741,7 @@
             <dependency>
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
-                <version>2.4.0</version>
+                <version>5.0.0</version>
             </dependency>
 
             <!-- Allow JAXB Annotations with Jackson -->
