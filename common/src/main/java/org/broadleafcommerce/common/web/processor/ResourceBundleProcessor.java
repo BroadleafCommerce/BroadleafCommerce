@@ -25,6 +25,7 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.InvalidParameterException;
@@ -167,6 +168,9 @@ import java.util.Map;
 @ConditionalOnTemplating
 public class ResourceBundleProcessor extends AbstractResourceProcessor {
 
+    @Value("${resource.versioning.enabled:true}")
+    protected boolean resourceVersioningEnabled;
+
     protected final Map<String, String> deferredCssAttributes;
     protected final Map<String, String> normalCssAttributes;
 
@@ -202,8 +206,14 @@ public class ResourceBundleProcessor extends AbstractResourceProcessor {
             double random = Math.random();
             // add files one by one
             for (String file : files) {
-                ResourceTagAttributes unbundledAttributes = new ResourceTagAttributes(attributes)
-                        .src(file+"?v="+random);
+                ResourceTagAttributes unbundledAttributes = null;
+                if (resourceVersioningEnabled) {
+                    unbundledAttributes = new ResourceTagAttributes(attributes)
+                            .src(file+"?v="+random);
+                } else {
+                    unbundledAttributes = new ResourceTagAttributes(attributes)
+                            .src(file);
+                }
                 addElementToModel(unbundledAttributes, context, model);
             }
 
