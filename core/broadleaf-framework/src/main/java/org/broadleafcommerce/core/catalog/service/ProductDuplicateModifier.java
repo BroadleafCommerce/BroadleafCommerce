@@ -115,27 +115,38 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
         }
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.YEAR, 1);
+        instance.set(Calendar.MILLISECOND, 0);
+        instance.set(Calendar.SECOND, 0);
+        instance.set(Calendar.MINUTE, 0);
+        instance.set(Calendar.HOUR, 0);
         copy.setActiveStartDate(instance.getTime());
         copy.setActiveEndDate(null);
 
-        setNameAndUrl(copy);
+        setNameAndUrl(copy, context);
 
     }
 
-    private void setNameAndUrl(Product copy) {
+    private void setNameAndUrl(Product copy, MultiTenantCopyContext context) {
         String suffix = getCopySuffix();
         String name = copy.getName();
-
-        if (name.contains(suffix)) {
-            if (name.contains(COPY_NUMBER_SEPARATOR)) {
-                final String copyNumber = name.split(suffix)[1];
-                suffix = String.format("%d", Long.parseLong(copyNumber.split(COPY_NUMBER_SEPARATOR)[1]) + 1);
+        if(!context.getCopyHints().containsKey("PROPAGATION")) {
+            int index = 0;
+            if (name.contains(suffix)) {
+                index = name.indexOf(COPY_NUMBER_SEPARATOR);
+                if (index > 0) {
+                    final String copyNumber = name.split(suffix)[1];
+                    suffix = String.format("%d", Long.parseLong(copyNumber.split(COPY_NUMBER_SEPARATOR)[1]) + 1);
+                } else {
+                    suffix = COPY_NUMBER_SEPARATOR + 1;
+                }
+                if(index>0) {
+                    name = name.substring(0, index) + suffix;
+                }else{
+                    name = name + suffix;
+                }
             } else {
-                suffix = COPY_NUMBER_SEPARATOR + 1;
+                name = name + suffix;
             }
-            name = name.substring(0, name.length() - 1) + suffix;
-        } else {
-            name = name + suffix;
         }
         copy.setName(name);
         copy.setUrl("/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase());
