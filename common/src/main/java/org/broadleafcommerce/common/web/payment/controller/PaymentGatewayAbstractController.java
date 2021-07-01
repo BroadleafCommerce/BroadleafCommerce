@@ -76,7 +76,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) throws IllegalArgumentException {
         if (LOG.isErrorEnabled()) {
             if (paymentGatewayCheckoutService == null) {
-                LOG.trace("applyPaymentToOrder: PaymentCheckoutService is null. Please check your configuration.");
+                LOG.error("applyPaymentToOrder: PaymentCheckoutService is null. Please check your configuration.");
             }
         }
 
@@ -90,7 +90,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         String orderNumber = null;
         if (LOG.isErrorEnabled()) {
             if (paymentGatewayCheckoutService == null) {
-                LOG.trace("initiateCheckout: PaymentCheckoutService is null. Please check your configuration.");
+                LOG.error("initiateCheckout: PaymentCheckoutService is null. Please check your configuration.");
             }
         }
 
@@ -111,7 +111,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         String orderNumber = null;
         if (LOG.isErrorEnabled()) {
             if (paymentGatewayCheckoutService == null) {
-                LOG.trace("lookupOrderNumberFromOrderId: PaymentCheckoutService is null. Please check your configuration.");
+                LOG.error("lookupOrderNumberFromOrderId: PaymentCheckoutService is null. Please check your configuration.");
             }
         }
 
