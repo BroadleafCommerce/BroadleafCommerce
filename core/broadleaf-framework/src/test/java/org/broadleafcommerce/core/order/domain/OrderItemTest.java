@@ -21,6 +21,8 @@ import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
@@ -38,6 +40,9 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -206,5 +211,23 @@ public class OrderItemTest extends TestCase {
         //this item qualified for a different promotion, but the restriction rule is QUALIFIER, 
         // so this item can be a qualifier for this promotion
 //dpc disabling this test for now        assertTrue(quantity==2);
+    }
+
+    /**
+     * This test checks the return value of OrderImpl.getHasOrderAdjustments()
+     * By default (when there is no order adjustment), the method should return false
+     * If an adjustment is given, the method should return true
+     */
+    public void testGetHasOrderAdjustments() {
+        OrderImpl order = new OrderImpl();
+        assertFalse(order.getHasOrderAdjustments());
+
+        OrderAdjustmentImpl adjustment = new OrderAdjustmentImpl();
+        List<OrderAdjustment> adjustmentList = new ArrayList<OrderAdjustment>();
+        adjustment.setOrder(order);
+        adjustment.setValue(new Money(19.99D));
+        adjustmentList.add(adjustment);
+        order.setOrderAdjustments(adjustmentList);
+        assertTrue(order.getHasOrderAdjustments());
     }
 }
