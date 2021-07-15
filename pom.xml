@@ -48,6 +48,7 @@
         <spring.version>4.1.9.RELEASE</spring.version>
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
+        <jackson.version>2.11.3</jackson.version>
         <geb.version>0.10.0</geb.version>
         <spock.core.version>1.0-groovy-2.3</spock.core.version>
         <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
@@ -853,7 +854,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>2.5.0</version>
+                <version>${jackson.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -864,13 +865,13 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.8.11.1</version>
+                <version>${jackson.version}</version>
             </dependency>
             <!-- Add in Jackson's XML converter along with a faster serializer (Woodstox) -->
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
-                <version>2.7.8</version>
+                <version>${jackson.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -900,7 +901,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>2.8.6</version>
+                <version>${jackson.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -912,7 +913,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.8.0</version>
+                <version>${jackson.version}</version>
             </dependency>
 
 
