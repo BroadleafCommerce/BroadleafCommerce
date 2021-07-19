@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -195,43 +196,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         if (fgs != null && fgs.size() > 0) {
             FulfillmentGroup defaultFg = fgService.getFirstShippableFulfillmentGroup(order);
             if (defaultFg != null && defaultFg.getAddress() != null) {
-                Address fgAddress = defaultFg.getAddress();
-                String stateAbbr = null;
-                String countryAbbr = null;
-                String phone = null;
-
-                if (StringUtils.isNotBlank(fgAddress.getStateProvinceRegion())) {
-                    stateAbbr = fgAddress.getStateProvinceRegion();
-                } else if (fgAddress.getState() != null) {
-                    //support legacy
-                    stateAbbr = fgAddress.getState().getAbbreviation();
-                }
-
-                if (fgAddress.getIsoCountryAlpha2() != null) {
-                    countryAbbr = fgAddress.getIsoCountryAlpha2().getAlpha2();
-                } else if (fgAddress.getCountry() != null) {
-                    //support legacy
-                    countryAbbr = fgAddress.getCountry().getAbbreviation();
-                }
-
-                if (fgAddress.getPhonePrimary() != null) {
-                    phone = fgAddress.getPhonePrimary().getPhoneNumber();
-                }
-                
-                NameResponse name = getName(fgAddress);
-                
-                requestDTO.shipTo()
-                        .addressFirstName(name.firstName)
-                        .addressLastName(name.lastName)
-                        .addressCompanyName(fgAddress.getCompanyName())
-                        .addressLine1(fgAddress.getAddressLine1())
-                        .addressLine2(fgAddress.getAddressLine2())
-                        .addressCityLocality(fgAddress.getCity())
-                        .addressStateRegion(stateAbbr)
-                        .addressPostalCode(fgAddress.getPostalCode())
-                        .addressCountryCode(countryAbbr)
-                        .addressPhone(phone)
-                        .addressEmail(fgAddress.getEmailAddress());
+                populateAddressInfo(requestDTO.shipTo(), defaultFg.getAddress());
             }
         }
     }
@@ -242,48 +207,52 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             if (payment.isActive()) {
                 Address billAddress = payment.getBillingAddress();
                 if (billAddress != null) {
-                    String stateAbbr = null;
-                    String countryAbbr = null;
-                    String phone = null;
-
-                    if (StringUtils.isNotBlank(billAddress.getStateProvinceRegion())) {
-                        stateAbbr = billAddress.getStateProvinceRegion();
-                    } else if (billAddress.getState() != null) {
-                        //support legacy
-                        stateAbbr = billAddress.getState().getAbbreviation();
-                    }
-
-                    if (billAddress.getIsoCountryAlpha2() != null) {
-                        countryAbbr = billAddress.getIsoCountryAlpha2().getAlpha2();
-                    } else if (billAddress.getCountry() != null) {
-                        //support legacy
-                        countryAbbr = billAddress.getCountry().getAbbreviation();
-                    }
-
-                    if (billAddress.getPhonePrimary() != null) {
-                        phone = billAddress.getPhonePrimary().getPhoneNumber();
-                    }
-                    
-                    NameResponse name = getName(billAddress);
-                    
-                    requestDTO.billTo()
-                            .addressFirstName(name.firstName)
-                            .addressLastName(name.lastName)
-                            .addressCompanyName(billAddress.getCompanyName())
-                            .addressLine1(billAddress.getAddressLine1())
-                            .addressLine2(billAddress.getAddressLine2())
-                            .addressCityLocality(billAddress.getCity())
-                            .addressStateRegion(stateAbbr)
-                            .addressPostalCode(billAddress.getPostalCode())
-                            .addressCountryCode(countryAbbr)
-                            .addressPhone(phone)
-                            .addressEmail(billAddress.getEmailAddress());
+                    populateAddressInfo(requestDTO.billTo(), billAddress);
                 }
             }
         }
     }
 
-    
+    protected void populateAddressInfo(final AddressDTO<PaymentRequestDTO> dto, final Address address) {
+        String stateAbbr = null;
+        String countryAbbr = null;
+        String phone = null;
+
+        if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
+            stateAbbr = address.getStateProvinceRegion();
+        } else if (address.getState() != null) {
+            //support legacy
+            stateAbbr = address.getState().getAbbreviation();
+        }
+
+        if (address.getIsoCountryAlpha2() != null) {
+            countryAbbr = address.getIsoCountryAlpha2().getAlpha2();
+        } else if (address.getCountry() != null) {
+            //support legacy
+            countryAbbr = address.getCountry().getAbbreviation();
+        }
+
+        if (address.getPhonePrimary() != null) {
+            phone = address.getPhonePrimary().getPhoneNumber();
+        }
+
+        NameResponse name = getName(address);
+
+        dto
+           .addressFirstName(name.firstName)
+           .addressLastName(name.lastName)
+           .addressCompanyName(address.getCompanyName())
+           .addressLine1(address.getAddressLine1())
+           .addressLine2(address.getAddressLine2())
+           .addressCityLocality(address.getCity())
+           .addressStateRegion(stateAbbr)
+           .addressPostalCode(address.getPostalCode())
+           .addressCountryCode(countryAbbr)
+           .addressPhone(phone)
+           .addressCounty(address.getCounty())
+           .addressEmail(address.getEmailAddress());
+    }
+
     protected NameResponse getName(Address address) {
         NameResponse response = new NameResponse();
         

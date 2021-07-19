@@ -1242,6 +1242,10 @@ $(document).ready(function() {
         $filterButton.closest('.listgrid-search').find('.custom-asset-search input').val('');
         $filterButton.closest('.listgrid-search').find('.custom-asset-search button.asset-search-button').click();
 
+        // for folder grid filters
+        $filterButton.closest('.folder-filter-container').find('.custom-folder-item-search input').val('');
+        $filterButton.closest('.folder-filter-container').find('.custom-folder-item-search button.search-button').click();
+
         // apply the empty filters
         BLCAdmin.filterBuilders.applyFilters(hiddenId);
 

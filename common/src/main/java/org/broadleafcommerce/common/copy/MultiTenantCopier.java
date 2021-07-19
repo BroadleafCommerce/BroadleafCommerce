@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.DeployState;
 import org.broadleafcommerce.common.web.EnforceEnterpriseCollectionBehaviorState;
 import org.springframework.core.Ordered;
 
@@ -105,9 +107,15 @@ public abstract class MultiTenantCopier implements Ordered {
             context.clearOriginalIdentifiers();
             genericEntityService.clearAutoFlushMode();
             Object copy = copyOperation.execute(original);
+            SandBox sandBox = BroadleafRequestContext.getBroadleafRequestContext().getSandBox();
+            DeployState deployState = BroadleafRequestContext.getBroadleafRequestContext().getDeployState();
+            BroadleafRequestContext.getBroadleafRequestContext().setDeployState(DeployState.PRODUCTION);
+            BroadleafRequestContext.getBroadleafRequestContext().setSandBox(null);
             BroadleafRequestContext.getBroadleafRequestContext().setEnforceEnterpriseCollectionBehaviorState(EnforceEnterpriseCollectionBehaviorState.FALSE);
             persistCopyObjectTreeInternal(copy, new HashSet<Integer>(), context);
             genericEntityService.flush();
+            BroadleafRequestContext.getBroadleafRequestContext().setSandBox(sandBox);
+            BroadleafRequestContext.getBroadleafRequestContext().setDeployState(deployState);
         } catch (Exception e) {
             LOG.error("Unable to persist the copy object tree", e);
             throw ExceptionHelper.refineException(e);

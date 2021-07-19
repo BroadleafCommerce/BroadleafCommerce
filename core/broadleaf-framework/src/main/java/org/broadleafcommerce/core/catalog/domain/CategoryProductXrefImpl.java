@@ -43,6 +43,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 /**
  * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}.
  * This entity is only used for executing a named query.
@@ -184,11 +186,16 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
         CategoryProductXref cloned = createResponse.getClone();
         cloned.setDisplayOrder(displayOrder);
         cloned.setDefaultReference(defaultReference);
-        if (product != null) {
-            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
-        }
-        if (category != null) {
-            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        if (!context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
+            if (product != null) {
+                cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+            }
+            if (category != null) {
+                cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+            }
+        } else {
+            cloned.setProduct(product);
+            cloned.setCategory(category);
         }
         return createResponse;
     }

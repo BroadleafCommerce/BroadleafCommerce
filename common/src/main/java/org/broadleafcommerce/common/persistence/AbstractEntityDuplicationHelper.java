@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.persistence;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.springframework.core.env.Environment;
 
 import java.util.HashMap;
@@ -65,5 +66,5 @@ public abstract class AbstractEntityDuplicationHelper<T> implements EntityDuplic
     }
 
     @Override 
-    public abstract void modifyInitialDuplicateState(final T copy);
+    public abstract void modifyInitialDuplicateState(final T original, final T copy, MultiTenantCopyContext context);
 }

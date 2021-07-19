@@ -421,7 +421,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
      * Normally null and hidden.  Use Meta-Data overrides to display in the admin.
      * @see Sku#getCurrency() for further cautions about using this field.
      */
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "SkuImpl_Currency",
             group = GroupName.Advanced, order = 3000,

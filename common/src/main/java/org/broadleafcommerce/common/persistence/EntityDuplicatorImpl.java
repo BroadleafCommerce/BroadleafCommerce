@@ -33,10 +33,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATION;
 
 /**
  * @see EntityDuplicator
@@ -161,8 +165,19 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
                     context = contextResponse.getResult();
                 }
             }
-            
+
+            context.getCopyHints().put(MANUAL_DUPLICATION, Boolean.TRUE.toString());
             dup = performCopy(context, (MultiTenantCloneable<T>) entity);
+
+            ExtensionResultHolder<List<MultiTenantCopyContext>> resultHolder = new ExtensionResultHolder<>();
+            extensionManager.getCatalogsForPropagation(context, resultHolder);
+            List<MultiTenantCopyContext> contexts = resultHolder.getResult();
+            for (MultiTenantCopyContext multiTenantCopyContext : contexts) {
+                multiTenantCopyContext.getCopyHints().put(MANUAL_DUPLICATION, Boolean.TRUE.toString());
+                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put("MANUAL_DUPLICATION_PROPAGATION","TRUE");
+                multiTenantCopyContext.getCopyHints().put(PROPAGATION, Boolean.TRUE.toString());
+                performCopy(multiTenantCopyContext, (MultiTenantCloneable<T>) dup);
+            }
         } catch (Exception e) {
             throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class,
                     String.format("Unable to duplicate entity %s:%s", entityClass.getName(), id), 
@@ -234,13 +249,13 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
             public T execute(T original) throws CloneNotSupportedException {
                 T response = entity.createOrRetrieveCopyInstance(context).getClone();
                 for (final EntityDuplicationHelper helper : helpers) {
-                    helper.modifyInitialDuplicateState(response);
+                    helper.modifyInitialDuplicateState(original, response, context);
                 }
                 return response;
             }
         }, (Class<T>) entity.getClass(), (T) entity, context);
         
-        return context.getClonedVersion((Class<T>) entity.getClass(), 
+        return context.getClonedVersion((Class<T>) entity.getClass(),
                 genericEntityService.getIdentifier(entity));
     }
     

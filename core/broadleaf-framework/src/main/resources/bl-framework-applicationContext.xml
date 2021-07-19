@@ -240,6 +240,7 @@
         <property name="sourceList">
             <list>
                 <ref bean="blOfferDuplicateModifier"/>
+                <ref bean="blProductDuplicateModifier"/>
             </list>
         </property>
     </bean>

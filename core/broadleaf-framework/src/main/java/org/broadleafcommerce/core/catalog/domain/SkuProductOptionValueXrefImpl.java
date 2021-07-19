@@ -43,6 +43,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+
 @Entity
 @Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -126,7 +128,11 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }
         if (productOptionValue != null) {
-            cloned.setProductOptionValue(productOptionValue.createOrRetrieveCopyInstance(context).getClone());
+            if(context.getCopyHints().containsKey(MANUAL_DUPLICATION)){
+                cloned.setProductOptionValue(productOptionValue);
+            }else {
+                cloned.setProductOptionValue(productOptionValue.createOrRetrieveCopyInstance(context).getClone());
+            }
         }
         return createResponse;
     }

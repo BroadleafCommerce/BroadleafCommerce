@@ -172,10 +172,18 @@ public class AdminLoginController extends BroadleafAbstractController {
     @RequestMapping(value="/changePassword", method=RequestMethod.POST)
     public String processchangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
-        GenericResponse errorResponse = adminSecurityService.changePassword(resetPasswordForm.getUsername(),
-                resetPasswordForm.getOldPassword(),
-                resetPasswordForm.getPassword(),
-                resetPasswordForm.getConfirmPassword());
+        SecurityContext c = SecurityContextHolder.getContext();
+        String username = ((AdminUserDetails) c.getAuthentication().getPrincipal()).getUsername();
+        GenericResponse errorResponse;
+        if(resetPasswordForm.getUsername()!=null && resetPasswordForm.getUsername().equals(username)) {
+            errorResponse = adminSecurityService.changePassword(resetPasswordForm.getUsername(),
+                    resetPasswordForm.getOldPassword(),
+                    resetPasswordForm.getPassword(),
+                    resetPasswordForm.getConfirmPassword());
+        }else{
+            errorResponse = new GenericResponse();
+            errorResponse.getErrorCodesList().add("invalidUser");
+        }
         
         if (errorResponse.getHasErrors()) {
             String errorCode = errorResponse.getErrorCodesList().get(0);
