@@ -19,13 +19,14 @@ package org.broadleafcommerce.core.web.security;
 
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.esapi.ESAPI;
-import org.springframework.beans.factory.annotation.Value;
 import org.owasp.esapi.errors.ValidationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.util.regex.Pattern;
 
 public class XssRequestWrapper extends HttpServletRequestWrapper {
 
@@ -45,7 +46,9 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String[] getParameterValues(String parameter) {
-
+        if (parameter == null) {
+            return null;
+        }
         String[] values = super.getParameterValues(parameter);
         if (values == null) {
             return null;
@@ -74,6 +77,9 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getParameter(String parameter) {
+        if (parameter == null) {
+            return null;
+        }
         String value = super.getParameter(parameter);
         if(checkWhitelist(parameter)){
             return value;
