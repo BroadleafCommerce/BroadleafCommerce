@@ -216,7 +216,10 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
         String productPaginationParam = getProductPaginationParam();
-        String productPaginationParamValue = request.getParameter(productPaginationParam);
+        String productPaginationParamValue = null;
+        if (productPaginationParam != null) {
+            productPaginationParamValue = request.getParameter(productPaginationParam);
+        }
         boolean hasPaginationParamValue = StringUtils.isNotBlank(productPaginationParamValue);
 
         return productPaginationIsEnabled() && (hasPaginationParamValue || (pageNumber > 1));
@@ -254,9 +257,13 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
             HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
             String productPaginationParam = getProductPaginationParam();
-            String productPaginationParamValue = request.getParameter(productPaginationParam);
+            if (productPaginationParam != null) {
+                String productPaginationParamValue = request.getParameter(productPaginationParam);
 
-            return Integer.valueOf(productPaginationParamValue);
+                return Integer.valueOf(productPaginationParamValue);
+            } else {
+                return 1;
+            }
         } catch (NumberFormatException e) {
             // Unable to parse page number value. That's fine, return page 1 instead;
             return 1;
@@ -296,7 +303,10 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
         String categoryPaginationParam = getCategoryPaginationParam();
-        String categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
+        String categoryPaginationParamValue = null;
+        if(categoryPaginationParam!=null) {
+            categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
+        }
         boolean hasPaginationParamValue = StringUtils.isNotBlank(categoryPaginationParamValue);
 
         return hasPaginationParamValue || (pageNumber > 1);
@@ -329,9 +339,12 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
             HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
             String categoryPaginationParam = getCategoryPaginationParam();
-            String categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
-
-            return Integer.valueOf(categoryPaginationParamValue);
+            if(categoryPaginationParam != null) {
+                String categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
+                return Integer.valueOf(categoryPaginationParamValue);
+            }else{
+                return 1;
+            }
         } catch (NumberFormatException e) {
             // Unable to parse page number value. That's fine, return page 1 instead;
             return 1;
