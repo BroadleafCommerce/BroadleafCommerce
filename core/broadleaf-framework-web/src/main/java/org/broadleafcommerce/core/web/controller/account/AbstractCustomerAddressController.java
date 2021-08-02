@@ -23,11 +23,9 @@ import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddre
 import org.broadleafcommerce.core.web.service.InitBinderService;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
@@ -61,9 +59,6 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
     @Resource(name = "blCustomerAddressValidator")
     protected CustomerAddressValidator customerAddressValidator;
 
-    @Resource(name = "blStateService")
-    protected StateService stateService;
-
     @Resource(name = "blISOService")
     protected ISOService isoService;
 
@@ -84,9 +79,6 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
         initBinderService.configAddressInitBinder(binder);
     }
 
-    protected List<State> populateStates() {
-        return stateService.findStates();
-    }
 
     protected List<Country> populateCountries() {
         return countryService.findCountries();

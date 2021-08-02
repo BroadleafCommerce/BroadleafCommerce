@@ -43,21 +43,6 @@ public interface Address extends Serializable, MultiTenantCloneable<Address> {
 
     public String getCity();
 
-    /**
-     * @deprecated Should use {@link #setIsoCountrySubdivision()} or {@link #setStateProvinceRegion()} instead
-     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
-     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
-     */
-    @Deprecated
-    public void setState(State state);
-
-    /**
-     * @deprecated Should use {@link #getIsoCountrySubdivision()} or {@link #getStateProvinceRegion()} instead
-     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
-     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
-     */
-    @Deprecated
-    public State getState();
 
     /**
      * gets the ISO 3166-2 code for the country subdivision (state/region/province) where this address resides
@@ -93,22 +78,6 @@ public interface Address extends Serializable, MultiTenantCloneable<Address> {
     public String getZipFour();
 
     public void setZipFour(String zipFour);
-
-    /**
-     * @deprecated Should use {@link #setIsoCountryAlpha2(ISOCountry)} instead
-     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
-     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
-     */
-    @Deprecated
-    public void setCountry(Country country);
-
-    /**
-     * @deprecated Should use {@link #getIsoCountryAlpha2()} instead
-     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
-     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
-     */
-    @Deprecated
-    public Country getCountry();
 
     /**
      * gets the ISO 3166-1 alpha-2 code for the country where this address resides

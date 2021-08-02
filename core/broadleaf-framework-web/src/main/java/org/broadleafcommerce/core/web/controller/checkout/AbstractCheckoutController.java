@@ -44,7 +44,6 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
@@ -102,9 +101,6 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blCustomerPaymentService")
     protected CustomerPaymentService customerPaymentService;
-
-    @Resource(name = "blStateService")
-    protected StateService stateService;
 
     @Resource(name = "blCountryService")
     protected CountryService countryService;

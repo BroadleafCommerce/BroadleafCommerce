@@ -41,7 +41,6 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,9 +85,6 @@ public class OfferTest extends CommonSetupBaseTest {
     
     @Resource
     private CountryService countryService;
-    
-    @Resource
-    private StateService stateService;
 
     private long sku1;
     private long sku2;
@@ -99,7 +95,7 @@ public class OfferTest extends CommonSetupBaseTest {
     @Rollback(false)
     public void createSku1(Sku sku) {
         offerUtil = new CreateOfferUtility(offerDao, offerCodeDao, offerService);
-        orderUtil = new CreateOrderEntityUtility(catalogService, orderItemService, isoService, stateService, countryService);
+        orderUtil = new CreateOrderEntityUtility(catalogService, orderItemService, isoService, countryService);
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku.setName("test1");

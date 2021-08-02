@@ -81,8 +81,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
 
@@ -385,7 +383,6 @@ public class OfferDataItemProvider {
         isoCountry.setAlpha2("US");
         isoCountry.setName("UNITED STATES");
 
-        address1.setCountry(country);
         address1.setIsoCountryAlpha2(isoCountry);
         address1.setDefault(true);
         address1.setFirstName("John");
@@ -396,12 +393,7 @@ public class OfferDataItemProvider {
         primary.setPhoneNumber("972-976-1234");
         address1.setPhonePrimary(primary);
         
-        State state = new StateImpl();
-        state.setAbbreviation("TX");
-        state.setCountry(country);
-        state.setName("Texas");
-        
-        address1.setState(state);
+
         address1.setIsoCountrySubdivision("US-TX");
         fg1.setAddress(address1);
         fg1.setOrder(order);
@@ -434,7 +426,6 @@ public class OfferDataItemProvider {
         isoCountry2.setAlpha2("US");
         isoCountry2.setName("UNITED STATES");
         
-        address2.setCountry(country2);
         address2.setIsoCountryAlpha2(isoCountry2);
         address2.setDefault(true);
         address2.setFirstName("John");
@@ -445,12 +436,6 @@ public class OfferDataItemProvider {
         primary2.setPhoneNumber("972-976-1234");
         address2.setPhonePrimary(primary2);
         
-        State state2 = new StateImpl();
-        state2.setAbbreviation("TX");
-        state2.setCountry(country2);
-        state2.setName("Texas");
-        
-        address2.setState(state2);
         address2.setIsoCountrySubdivision("US-TX");
         fg2.setAddress(address2);
         fg2.setOrder(order);
@@ -602,7 +587,6 @@ public class OfferDataItemProvider {
         isoCountry.setAlpha2("US");
         isoCountry.setName("UNITED STATES");
 
-        address1.setCountry(country);
         address1.setIsoCountryAlpha2(isoCountry);
         address1.setDefault(true);
         address1.setFirstName("John");
@@ -613,12 +597,6 @@ public class OfferDataItemProvider {
         primary.setPhoneNumber("972-976-1234");
         address1.setPhonePrimary(primary);
 
-        State state = new StateImpl();
-        state.setAbbreviation("TX");
-        state.setCountry(country);
-        state.setName("Texas");
-
-        address1.setState(state);
         address1.setIsoCountrySubdivision("US-TX");
         fg1.setAddress(address1);
         fg1.setOrder(order);
@@ -651,7 +629,6 @@ public class OfferDataItemProvider {
         isoCountry2.setAlpha2("US");
         isoCountry2.setName("UNITED STATES");
 
-        address2.setCountry(country2);
         address2.setIsoCountryAlpha2(isoCountry2);
         address2.setDefault(true);
         address2.setFirstName("John");
@@ -662,12 +639,6 @@ public class OfferDataItemProvider {
         primary2.setPhoneNumber("972-976-1234");
         address2.setPhonePrimary(primary2);
 
-        State state2 = new StateImpl();
-        state2.setAbbreviation("TX");
-        state2.setCountry(country2);
-        state2.setName("Texas");
-
-        address2.setState(state2);
         address2.setIsoCountrySubdivision("US-TX");
         fg2.setAddress(address2);
         fg2.setOrder(order);

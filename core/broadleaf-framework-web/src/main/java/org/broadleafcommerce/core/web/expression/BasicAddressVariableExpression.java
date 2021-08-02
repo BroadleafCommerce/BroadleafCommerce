@@ -22,10 +22,8 @@ import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
-import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -40,9 +38,6 @@ import javax.annotation.Resource;
 @ConditionalOnTemplating
 public class BasicAddressVariableExpression implements BroadleafVariableExpression {
 
-    @Resource(name = "blStateService")
-    protected StateService stateService;
-
     @Resource(name = "blCountrySubdivisionService")
     protected CountrySubdivisionService countrySubdivisionService;
 
@@ -52,11 +47,6 @@ public class BasicAddressVariableExpression implements BroadleafVariableExpressi
     @Override
     public String getName() {
         return "address";
-    }
-
-    @Deprecated
-    public List<State> getStateOptions() {
-        return stateService.findStates();
     }
 
     public List<CountrySubdivision> getCountrySubOptionsByISOCountry(ISOCountry isoCountry) {

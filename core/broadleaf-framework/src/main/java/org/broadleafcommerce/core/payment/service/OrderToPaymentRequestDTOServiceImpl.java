@@ -220,16 +220,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
         if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
             stateAbbr = address.getStateProvinceRegion();
-        } else if (address.getState() != null) {
-            //support legacy
-            stateAbbr = address.getState().getAbbreviation();
         }
 
         if (address.getIsoCountryAlpha2() != null) {
             countryAbbr = address.getIsoCountryAlpha2().getAlpha2();
-        } else if (address.getCountry() != null) {
-            //support legacy
-            countryAbbr = address.getCountry().getAbbreviation();
         }
 
         if (address.getPhonePrimary() != null) {

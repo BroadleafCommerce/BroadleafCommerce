@@ -90,7 +90,6 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         customerService.saveCustomer(order.getCustomer());
 
         createCountry();
-        createState();
 
         Address address = new AddressImpl();
         address.setAddressLine1("123 Test Rd");
@@ -99,8 +98,6 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         address.setLastName("Fischer");
         address.setPostalCode("75240");
         address.setPrimaryPhone("972-978-9067");
-        address.setState(stateService.findStateByAbbreviation("KY"));
-        address.setCountry(countryService.findCountryByAbbreviation("US"));
         address.setIsoCountrySubdivision("US-KY");
         address.setIsoCountryAlpha2(isoService.findISOCountryByAlpha2Code("US"));
 
