@@ -63,9 +63,6 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
     @Resource(name = "blEntityDuplicationHelpers")
     protected Collection<EntityDuplicationHelper> entityDuplicationHelpers;
 
-    @Resource(name = "blSiteService")
-    protected SiteService siteService;
-
     @Override
     public void copyEntities(final MultiTenantCopyContext context) throws Exception {
         throw new UnsupportedOperationException("Not Supported");
@@ -141,7 +138,7 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
 
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     @Override
-    public <T> T copy(final Class<T> entityClass, final Long id, final Long catalogIdentifier) {
+    public <T> T copy(final Class<T> entityClass, final Long id, final String catalogIdentifier) {
         genericEntityService.flush();
         genericEntityService.clear();
         
@@ -158,9 +155,8 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
         try {
             final Site currentSite =
                     BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
-            final Catalog toCatalog = siteService.findCatalogById(catalogIdentifier);
-            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(toCatalog);
-            MultiTenantCopyContext context = new MultiTenantCopyContext(null, toCatalog,
+            BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put("duplicateToCatalogId", catalogIdentifier);
+            MultiTenantCopyContext context = new MultiTenantCopyContext(null, null,
                     currentSite, currentSite, genericEntityService, mtCopierExtensionManager);
             
             if (extensionManager != null) {

@@ -102,7 +102,7 @@ public interface EntityDuplicator {
      * @param <T>               the entity type
      * @return the duplicated entity
      */
-    <T> T copy(Class<T> entityClass, Long id, Long catalogIdentifier);
+    <T> T copy(Class<T> entityClass, Long id, String catalogIdentifier);
 
     /**
      * Create a production duplicate of the entity specified in the params. 

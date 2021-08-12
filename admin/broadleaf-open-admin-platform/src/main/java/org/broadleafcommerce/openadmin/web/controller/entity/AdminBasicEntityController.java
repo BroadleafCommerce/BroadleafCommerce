@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.persistence.EntityDuplicator;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
@@ -151,6 +152,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     @Resource(name = "blMultipleCatalogExtensionManager")
     protected MultipleCatalogExtensionManager multipleCatalogExtensionManager;
+
+    @Resource(name = "blStaleStateProtectionService")
+    protected StaleStateProtectionService spps;
 
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
@@ -430,13 +434,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         final String sectionClassName = getClassNameForSection(sectionKey);
         final Class<?> entityClass = dynamicEntityDao.getImplClass(sectionClassName);
         final long identifier = Long.parseLong(id);
-        final long catalogIdentifier = Long.parseLong(catalogId);
 
         if (duplicator.validate(entityClass, identifier)) {
             final Object duplicate;
             
             try {
-                duplicate = duplicator.copy(entityClass, identifier, catalogIdentifier);
+                duplicate = duplicator.copy(entityClass, identifier, catalogId);
             } catch (Exception e) {
                 LOG.error("Could not duplicate entity", e);
                 return getErrorDuplicatingResponse(response, "Duplication_Failure");
@@ -445,7 +448,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             final Serializable dupId = genericEntityService.getIdentifier(duplicate);
             
             // Note that AJAX Redirects need the context path prepended to them
-            return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + dupId;
+            return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + dupId + "?blCatalogId=" + catalogId + "&stateVersionToken=" + spps.getStateVersionToken();
         } else {
             return getErrorDuplicatingResponse(response, "Validation_Failure");
         }
