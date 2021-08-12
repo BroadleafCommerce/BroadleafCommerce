@@ -117,12 +117,13 @@ public class AdminOfferController extends AdminBasicEntityController {
      */
     @Deprecated
     @Override
-    @RequestMapping(value = "/{id}/duplicate", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/duplicate/{catalogId}", method = RequestMethod.POST)
     public String duplicateEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars, @PathVariable(value="id") String id,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) 
+                                  @PathVariable Map<String, String> pathVars, @PathVariable(value = "id") String id,
+                                  @PathVariable(value = "catalogId") final String catalogId,
+                                  @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result)
             throws Exception {
-        return super.duplicateEntity(request, response, model, pathVars, id, entityForm, result);
+        return super.duplicateEntity(request, response, model, pathVars, id, catalogId, entityForm, result);
     }
 
     /**

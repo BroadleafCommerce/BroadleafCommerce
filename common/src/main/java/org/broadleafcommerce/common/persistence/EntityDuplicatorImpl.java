@@ -24,7 +24,9 @@ import org.broadleafcommerce.common.copy.MultiTenantCopierExtensionManager;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.service.SiteService;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +62,9 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
     
     @Resource(name = "blEntityDuplicationHelpers")
     protected Collection<EntityDuplicationHelper> entityDuplicationHelpers;
+
+    @Resource(name = "blSiteService")
+    protected SiteService siteService;
 
     @Override
     public void copyEntities(final MultiTenantCopyContext context) throws Exception {
@@ -136,7 +141,7 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
 
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     @Override
-    public <T> T copy(final Class<T> entityClass, final Long id) {
+    public <T> T copy(final Class<T> entityClass, final Long id, final Long catalogIdentifier) {
         genericEntityService.flush();
         genericEntityService.clear();
         
@@ -151,9 +156,11 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
         final T dup;
         
         try {
-            final Site currentSite = 
+            final Site currentSite =
                     BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
-            MultiTenantCopyContext context = new MultiTenantCopyContext(null, null, 
+            final Catalog toCatalog = siteService.findCatalogById(catalogIdentifier);
+            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(toCatalog);
+            MultiTenantCopyContext context = new MultiTenantCopyContext(null, toCatalog,
                     currentSite, currentSite, genericEntityService, mtCopierExtensionManager);
             
             if (extensionManager != null) {
@@ -193,7 +200,7 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
 
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     @Override
-    public <T> T copy(final MultiTenantCopyContext context, final MultiTenantCloneable<T> entity) {
+    public <T> T copy(final MultiTenantCopyContext context, final MultiTenantCloneable<T> entity, final Long catalogIdentifier) {
         if (!validate(entity)) {
             throw new IllegalArgumentException(
                     String.format("Entity not valid for duplication - %s:%s",

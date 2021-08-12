@@ -516,45 +516,12 @@ $(document).ready(function() {
         }
     });
 
-    $('body').on('click', 'button.duplicate-button, a.duplicate-button', function(event) {
-        var $button = $(this);
-        BLCAdmin.confirmProcessBeforeProceeding(true, 'You are about to copy this product', processCopyCall, [$button]);
-
-        function processCopyCall (params) {
-            var $form = BLCAdmin.getForm($button);
-
-            var currentAction = $form.attr('action');
-            var dupUrl = currentAction + '/duplicate';
-
-            BLCAdmin.entityForm.showActionSpinner($button.closest('.entity-form-actions'));
-
-            // On success this should redirect, on failure we'll get some JSON back
-            BLC.ajax({
-                url: dupUrl,
-                type: "POST",
-                data: $form.serializeArray(),
-                complete: BLCAdmin.entityForm.hideActionSpinner()
-            }, function (data) {
-                $("#headerFlashAlertBoxContainer").removeClass("hidden");
-                $(".errors, .error, .tab-error-indicator, .tabError").remove();
-                $('.has-error').removeClass('has-error');
-
-                if (!data.errors) {
-                    var $titleBar = $form.closest('.main-content').find('.content-area-title-bar');
-                    BLCAdmin.alert.showAlert($titleBar, 'Successfully ' + BLCAdmin.messages.duplicated + '!', {
-                        alertType: 'save-alert',
-                        autoClose: 2000,
-                        clearOtherAlerts: true
-                    });
-                } else {
-                    BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDuplicating);
-                }
-
-                BLCAdmin.runPostFormSubmitHandlers($form, data);
-            });
-
-            event.preventDefault();
-        }
+    $('body').on('click', 'button.duplicate-button, a.duplicate-button', function (event) {
+        var $form = BLCAdmin.getForm($(this));
+        var currentAction = $form.attr('action').substring(6, $form.attr('action').length);
+        var dupUrl = currentAction + '/duplicate';
+        var action = "/admin/product/multitenant-catalog-select?entityType=org.broadleafcommerce.core.catalog.domain.ProductImpl&actionUrl=" + dupUrl;
+        BLCAdmin.showLinkAsModal(action);
     });
 
     $('body').on('click', 'button.submit-button, a.submit-button', function(event) {

@@ -417,24 +417,26 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + entity.getPMap().get("id").getValue();
     }
 
-    @RequestMapping(value = "/{id}/duplicate", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/duplicate/{catalogId}", method = RequestMethod.POST)
     public String duplicateEntity(final HttpServletRequest request,
             final HttpServletResponse response, 
             final Model model,
             @PathVariable final Map<String, String> pathVars,
             @PathVariable(value = "id") final String id,
+            @PathVariable(value = "catalogId") final String catalogId,
             @ModelAttribute(value = "entityForm") final EntityForm entityForm,
             final BindingResult result) throws Exception {
         final String sectionKey = getSectionKey(pathVars);
         final String sectionClassName = getClassNameForSection(sectionKey);
         final Class<?> entityClass = dynamicEntityDao.getImplClass(sectionClassName);
         final long identifier = Long.parseLong(id);
-        
+        final long catalogIdentifier = Long.parseLong(catalogId);
+
         if (duplicator.validate(entityClass, identifier)) {
             final Object duplicate;
             
             try {
-                duplicate = duplicator.copy(entityClass, identifier);
+                duplicate = duplicator.copy(entityClass, identifier, catalogIdentifier);
             } catch (Exception e) {
                 LOG.error("Could not duplicate entity", e);
                 return getErrorDuplicatingResponse(response, "Duplication_Failure");

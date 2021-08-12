@@ -641,7 +641,7 @@ public class OfferServiceImpl implements OfferService {
     @Transactional("blTransactionManager")
     @Override
     public Offer duplicate(Long originalOfferId) {
-        return duplicator.copy(OfferImpl.class, originalOfferId);
+        return duplicator.copy(OfferImpl.class, originalOfferId, null);
     }
 
     @Override

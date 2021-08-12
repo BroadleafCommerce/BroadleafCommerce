@@ -93,16 +93,16 @@ public interface EntityDuplicator {
             EntityDuplicateModifier... modifiers);
 
     /**
-     * Create a production duplicate of the entity specified in the params. 
+     * Create a production duplicate of the entity specified in the params.
      * The is the most oft used copy method.
      *
-     * @param entityClass the class for the entity
-     * @param id          the primary key
-     * @param <T>         the entity type
-     *
+     * @param entityClass       the class for the entity
+     * @param id                the primary key
+     * @param catalogIdentifier the catalog Id key
+     * @param <T>               the entity type
      * @return the duplicated entity
      */
-    <T> T copy(Class<T> entityClass, Long id);
+    <T> T copy(Class<T> entityClass, Long id, Long catalogIdentifier);
 
     /**
      * Create a production duplicate of the entity specified in the params. 
@@ -114,5 +114,5 @@ public interface EntityDuplicator {
      *
      * @return the duplicated entity
      */
-    <T> T copy(MultiTenantCopyContext context, MultiTenantCloneable<T> entity);
+    <T> T copy(MultiTenantCopyContext context, MultiTenantCloneable<T> entity, Long catalogIdentifier);
 }
