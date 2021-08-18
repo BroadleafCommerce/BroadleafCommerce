@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -43,6 +45,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Service(value = "blCategoryLinkedDataGenerator")
 public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator {
+
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     @Override
     public boolean canHandle(final HttpServletRequest request) {
@@ -85,8 +90,8 @@ public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
     }
 
     protected List<Product> getProducts(final HttpServletRequest request) {
-        final Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
-
+        Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
+        category = catalogService.findCategoryById(category.getId());
         return BLCArrayUtils.collect(category.getActiveProductXrefs().toArray(), new TypedTransformer<Product>() {
             @Override
             public Product transform(Object input) {
