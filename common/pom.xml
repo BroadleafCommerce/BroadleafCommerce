@@ -257,6 +257,10 @@
                     <artifactId>commons-httpclient</artifactId>
                     <groupId>commons-httpclient</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
