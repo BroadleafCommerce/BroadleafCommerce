@@ -100,18 +100,23 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             copy.setProductOptionXrefs(productOptionXrefs);
 
         }else {
-            for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
-                final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
-                clone.setProduct(copy);
-                copy.getAllParentCategoryXrefs().add(clone);
+            if(!context.getToCatalog().getId().equals(context.getFromCatalog().getId())){
+                copy.setAllParentCategoryXrefs(new ArrayList<>());
+                copy.setProductOptionXrefs(new ArrayList<>());
+            }else {
+                for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
+                    final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
+                    clone.setProduct(copy);
+                    copy.getAllParentCategoryXrefs().add(clone);
+                }
+                List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
+                for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
+                    final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
+                    clone.setProduct(copy);
+                    productOptionXrefs.add(clone);
+                }
+                copy.setProductOptionXrefs(productOptionXrefs);
             }
-            List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
-            for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
-                final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
-                clone.setProduct(copy);
-                productOptionXrefs.add(clone);
-            }
-            copy.setProductOptionXrefs(productOptionXrefs);
         }
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.YEAR, 1);
