@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -518,7 +518,7 @@ $(document).ready(function() {
 
     $('body').on('click', 'button.duplicate-button, a.duplicate-button', function(event) {
         var $button = $(this);
-        BLCAdmin.confirmProcessBeforeProceeding(true, 'You are about to copy this product', processCopyCall, [$button]);
+        BLCAdmin.confirmProcessBeforeProceeding(true, 'Are you sure you want to duplicate?', processCopyCall, [$button]);
 
         function processCopyCall (params) {
             var $form = BLCAdmin.getForm($button);

@@ -668,7 +668,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Override
     public void setCost(Money cost) {
-        this.cost = cost.getAmount();
+        this.cost = Money.toAmount(cost);
     }
 
     @Override
@@ -1333,6 +1333,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         Sku cloned = createResponse.getClone();
         cloned.setRetailPrice(getRetailPrice());
         cloned.setSalePrice(getSalePrice());
+        cloned.setCost(getCost());
         cloned.setName(name);
         cloned.setActiveEndDate(activeEndDate);
         cloned.setActiveStartDate(activeStartDate);

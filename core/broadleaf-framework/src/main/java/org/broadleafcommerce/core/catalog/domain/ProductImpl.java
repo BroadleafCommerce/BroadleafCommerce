@@ -1155,23 +1155,28 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setUrlKey(urlKey);
         cloned.setManufacturer(manufacturer);
         cloned.setPromoMessage(promoMessage);
+        cloned.setMetaDescription(metaDescription);
+        cloned.setCanonicalUrl(canonicalUrl);
+        cloned.setMetaTitle(metaTitle);
         if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
-        } else {
+        } else if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
             cloned.setDefaultCategory(defaultCategory);
         }
         cloned.setModel(model);
         if (defaultSku != null) {
             cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
         }
-        for (Sku entry : additionalSkus) {
-            Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getAdditionalSkus().add(clonedEntry);
-        }
-        for (ProductOptionXref entry : productOptions) {
-            ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getProductOptionXrefs().add(clonedEntry);
+        if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
+            for (Sku entry : additionalSkus) {
+                Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+                cloned.getAdditionalSkus().add(clonedEntry);
+            }
+            for (ProductOptionXref entry : productOptions) {
+                ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+                cloned.getProductOptionXrefs().add(clonedEntry);
 
+            }
         }
         Map<String, ProductAttribute> attributeMap = new HashMap<>();
         for (Map.Entry<String, ProductAttribute> entry : getProductAttributes().entrySet()) {
