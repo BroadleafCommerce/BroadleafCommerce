@@ -1155,6 +1155,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setUrlKey(urlKey);
         cloned.setManufacturer(manufacturer);
         cloned.setPromoMessage(promoMessage);
+        cloned.setMetaDescription(metaDescription);
+        cloned.setCanonicalUrl(canonicalUrl);
+        cloned.setMetaTitle(metaTitle);
         if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
         } else if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
