@@ -668,7 +668,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Override
     public void setCost(Money cost) {
-        this.cost = cost.getAmount();
+        this.cost = Money.toAmount(cost);
     }
 
     @Override
