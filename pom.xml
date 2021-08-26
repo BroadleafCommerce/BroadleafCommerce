@@ -415,7 +415,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -685,7 +685,7 @@
                 <artifactId>mail</artifactId>
                 <version>1.4.1</version>
             </dependency>
-            
+
             <!-- Java EE APIs removed from JDK in Java 9 -->
             <dependency>
                 <groupId>javax.annotation</groupId>
@@ -1254,7 +1254,7 @@
                 <groupId>de.jkeylockmanager</groupId>
                 <artifactId>jkeylockmanager</artifactId>
                 <version>1.1.0</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
