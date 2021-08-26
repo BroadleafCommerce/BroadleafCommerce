@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
@@ -59,6 +60,9 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
     @Resource(name = "blRatingService")
     protected RatingService ratingService;
 
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+
     @Override 
     public boolean canHandle(final HttpServletRequest request) {
         return request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME) != null;
@@ -80,7 +84,9 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
     }
     
     protected Product getProduct(final HttpServletRequest request) {
-        return (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
+        Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
+        product = catalogService.findProductById(product.getId());
+        return product;
     }
     
     protected JSONObject addProductData(final HttpServletRequest request, final Product product, final String url) 
