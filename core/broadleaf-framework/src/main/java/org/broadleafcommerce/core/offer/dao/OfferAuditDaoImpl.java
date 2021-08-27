@@ -41,6 +41,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -122,6 +124,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
         Root<OrderImpl> orderRoot = criteria.from(OrderImpl.class);
+        Join<Object, Object> parentOrder = orderRoot.join("embeddedOmsOrder", JoinType.LEFT).join("parentOrder", JoinType.LEFT);
         criteria.select(builder.count(root));
 
         Predicate customerOrAccountPredicate = null;
@@ -147,6 +150,10 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                         builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
                         builder.equal(orderRoot.get("id"),root.get("orderId"))
                     )
+                ),
+                builder.or(
+                        builder.isNull(orderRoot.get("embeddedOmsOrder").get("parentOrder")),
+                        builder.notEqual(parentOrder.get("status"), OrderStatus.CANCELLED.getType())
                 )
             )
         );
@@ -193,6 +200,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
         Root<OrderImpl> orderRoot = criteria.from(OrderImpl.class);
+        Join<Object, Object> parentOrder = orderRoot.join("embeddedOmsOrder", JoinType.LEFT).join("parentOrder", JoinType.LEFT);
         criteria.select(builder.count(root));
 
         List<Predicate> restrictions = new ArrayList<>();
@@ -209,6 +217,10 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                                 builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
                                 builder.equal(orderRoot.get("id"),root.get("orderId"))
                         )
+                ),
+                builder.or(
+                        builder.isNull(orderRoot.get("embeddedOmsOrder").get("parentOrder")),
+                        builder.notEqual(parentOrder.get("status"), OrderStatus.CANCELLED.getType())
                 )
             )
         );
