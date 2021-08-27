@@ -1144,6 +1144,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public <G extends Product> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        boolean isPropagation = context.getCopyHints().get("PROPAGATION") != null && "TRUE".equalsIgnoreCase((String)context.getCopyHints().get("PROPAGATION"));
+
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -1167,7 +1169,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         if (defaultSku != null) {
             cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
         }
-        if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
+        if(context.getToCatalog().getId().equals(context.getFromCatalog().getId()) || isPropagation) {
             for (Sku entry : additionalSkus) {
                 Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
                 cloned.getAdditionalSkus().add(clonedEntry);
