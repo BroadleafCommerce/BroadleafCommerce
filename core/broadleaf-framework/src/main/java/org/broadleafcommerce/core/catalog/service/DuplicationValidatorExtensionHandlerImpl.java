@@ -60,11 +60,7 @@ public class DuplicationValidatorExtensionHandlerImpl implements EntityDuplicato
 
     @Override
     public ExtensionResultStatusType validateDuplicate(Object entity, ExtensionResultHolder<Boolean> resultHolder) {
-        if (!(entity instanceof Product)) {
-            resultHolder.setResult(false);
-        } else {
-            resultHolder.setResult(true);
-        }
+        resultHolder.setResult(true);
         return resultHolder.getResult() ? ExtensionResultStatusType.HANDLED_CONTINUE : ExtensionResultStatusType.HANDLED_STOP;
     }
 
