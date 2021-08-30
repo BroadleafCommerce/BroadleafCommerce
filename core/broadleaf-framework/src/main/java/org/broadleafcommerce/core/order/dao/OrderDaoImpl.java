@@ -162,6 +162,38 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public List<Order> readBatchOrdersFromLastID(Long lastID, int pageSize, List<OrderStatus> statuses) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        //If we have a lastID, find the next order after that ID
+        if (lastID !=  null) {
+            restrictions.add(builder.gt(order.get("id").as(Long.class), lastID));
+        }
+        //In order for the "from last ID" approach to work we have to sort by ID ascending
+        criteria.orderBy(builder.asc(order.get("id")));
+
+        if (CollectionUtils.isNotEmpty(statuses)) {
+            // We only want results that match the orders with the correct status
+            List<String> statusStrings = new ArrayList<String>();
+            for (OrderStatus status : statuses) {
+                statusStrings.add(status.getType());
+            }
+            restrictions.add(builder.in(order.get("status")).value(statusStrings));
+        }
+        if (restrictions.size() > 0) {
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        }
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
     public Order save(final Order order) {
         Order response = em.merge(order);
         //em.flush();
