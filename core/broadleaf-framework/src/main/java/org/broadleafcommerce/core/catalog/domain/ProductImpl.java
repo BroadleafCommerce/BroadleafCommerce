@@ -278,6 +278,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             tab = TabName.Marketing, order = 1000,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
+            customCriteria = {"crossSaleProduct"},
             maintainedAdornedTargetFields = {"promotionMessage"},
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
@@ -290,6 +291,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             tab = TabName.Marketing, order = 2000,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
+            customCriteria = {"upsaleProduct"},
             maintainedAdornedTargetFields = {"promotionMessage"},
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
     protected List<RelatedProduct> upSaleProducts = new ArrayList<RelatedProduct>();
