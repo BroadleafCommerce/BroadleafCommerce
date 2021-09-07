@@ -52,8 +52,7 @@ import net.sf.ehcache.CacheManager;
 public class TranslationServiceImpl implements TranslationService, TranslationSupport {
 
     protected static final Log LOG = LogFactory.getLog(TranslationServiceImpl.class);
-    private static final Translation DELETED_TRANSLATION = new TranslationImpl();
-    
+
     @Resource(name = "blTranslationDao")
     protected TranslationDao dao;
 
