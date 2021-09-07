@@ -486,7 +486,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     protected boolean isRecursiveProductSelection(PersistencePackage persistencePackage) {
         List<String> customCriteria = Arrays.asList(persistencePackage.getCustomCriteria());
-        return customCriteria.contains("upsaleProduct") || customCriteria.contains("crossSaleProduct");
+        return customCriteria.contains("upsaleProduct") || customCriteria.contains("crossSaleProduct") || customCriteria.contains("requestingField=addOnProduct");
     }
 
     protected FilterMapping createFilterMappingForProperty(String targetPropertyName, PredicateProvider predicateProvider) {
