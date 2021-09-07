@@ -26,6 +26,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -34,6 +35,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
@@ -170,6 +172,27 @@ public class CustomerDaoImpl implements CustomerDao {
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Customer");
 
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Customer> readBatchCustomersFromLastID(Long lastID, int pageSize) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
+        Root<CustomerImpl> customer = criteria.from(CustomerImpl.class);
+        criteria.select(customer);
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        //If we have a lastID, find the next customer after that ID
+        if (lastID !=  null) {
+            restrictions.add(builder.gt(customer.get("id").as(Long.class), lastID));
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        }
+        //In order for the "from last ID" approach to work we have to sort by ID ascending
+        criteria.orderBy(builder.asc(customer.get("id")));
+
+        TypedQuery<Customer> query = em.createQuery(criteria);
+        query.setMaxResults(pageSize);
         return query.getResultList();
     }
 

@@ -43,6 +43,17 @@ public interface OrderDao {
      */
     List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> statuses);
 
+    /**
+     * Reads a batch list of orders from the DB starting at the ID passed in.  The lookup sorts by ID so the proper
+     * starting point will be used.  The status is optional and can be null.  If no status is provided, then all order
+     * will be read.  Otherwise, only orders with that status will be read.
+     * @param lastID
+     * @param pageSize
+     * @param statuses
+     * @return
+     */
+    List<Order> readBatchOrdersFromLastID(Long lastID, int pageSize, List<OrderStatus> statuses);
+
     Order readOrderById(Long orderId, boolean refresh);
 
     Order readOrderByExternalId(String orderExternalId);
