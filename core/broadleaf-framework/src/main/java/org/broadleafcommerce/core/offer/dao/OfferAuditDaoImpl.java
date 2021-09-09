@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.offer.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
+import org.broadleafcommerce.common.module.ModulePresentUtil;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
@@ -41,6 +43,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -122,6 +126,10 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
         Root<OrderImpl> orderRoot = criteria.from(OrderImpl.class);
+        Join<Object, Object> parentOrder= null;
+        if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.OMS)) {
+            parentOrder = orderRoot.join("embeddedOmsOrder", JoinType.LEFT).join("parentOrder", JoinType.LEFT);
+        }
         criteria.select(builder.count(root));
 
         Predicate customerOrAccountPredicate = null;
@@ -138,7 +146,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(
             builder.and(
-                customerOrAccountPredicate, 
+                customerOrAccountPredicate,
                 builder.equal(root.get("offerId"), offerId),
                 builder.or(
                     builder.isNull(root.get("orderId")),
@@ -147,7 +155,8 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                         builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
                         builder.equal(orderRoot.get("id"),root.get("orderId"))
                     )
-                )
+                ),
+                getOmsOrderPredicate(builder, orderRoot, parentOrder)
             )
         );
 
@@ -171,7 +180,18 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
             return null;
         }
     }
-    
+
+    protected Predicate getOmsOrderPredicate(CriteriaBuilder builder, Root<OrderImpl> orderRoot, Join<Object, Object> parentOrder) {
+        if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.OMS)) {
+            return builder.or(
+                    builder.isNull(orderRoot.get("embeddedOmsOrder").get("parentOrder")),
+                    builder.notEqual(parentOrder.get("status"), OrderStatus.CANCELLED.getType())
+            );
+        } else {
+            return builder.isTrue(builder.literal(Boolean.TRUE));
+        }
+    }
+
     protected Long getOrderId(Order order) {
         return order.getId();
     }
@@ -193,6 +213,10 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
         Root<OrderImpl> orderRoot = criteria.from(OrderImpl.class);
+        Join<Object, Object> parentOrder = null;
+        if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.OMS)) {
+            parentOrder = orderRoot.join("embeddedOmsOrder", JoinType.LEFT).join("parentOrder", JoinType.LEFT);
+        }
         criteria.select(builder.count(root));
 
         List<Predicate> restrictions = new ArrayList<>();
@@ -209,7 +233,8 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                                 builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
                                 builder.equal(orderRoot.get("id"),root.get("orderId"))
                         )
-                )
+                ),
+                getOmsOrderPredicate(builder, orderRoot, parentOrder)
             )
         );
 
