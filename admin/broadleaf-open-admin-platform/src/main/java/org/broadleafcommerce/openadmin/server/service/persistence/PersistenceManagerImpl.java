@@ -675,11 +675,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         } catch (ValidationException e) {
             response = e.getEntity();
-            LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
+            logValidationError(response);
         } catch (ServiceException e) {
             if (e.getCause() instanceof ValidationException) {
                 response = ((ValidationException) e.getCause()).getEntity();
-                LOG.error("A validation erorr occurred: " + response.getPropertyValidationErrors());
+                logValidationError(response);
             } else {
                 throw e;
             }
@@ -729,6 +729,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
 
         return executePostUpdateHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
+    }
+
+    protected void logValidationError(Entity response) {
+        LOG.info("A validation error occurred: " + response.getPropertyValidationErrors());
     }
 
     protected PersistenceResponse executePostUpdateHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
