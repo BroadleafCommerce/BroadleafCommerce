@@ -125,10 +125,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        if (isRecursiveProductSelection(persistencePackage)) {
-            return true;
-        }
-        return canHandleAdd(persistencePackage);
+        return isRecursiveProductSelection(persistencePackage) || canHandleAdd(persistencePackage);
     }
 
     @Override
@@ -152,18 +149,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
 
         if (isRecursiveProductSelection(persistencePackage)) {
-            FilterMapping defaultCategoryMapping = createFilterMappingForProperty(ID_PROPERTY, new PredicateProvider() {
-                @Override
-                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
-                                                String ceilingEntity, String fullPropertyName, Path explicitPath,
-                                                List directValues) {
-                    return builder.and(builder.notEqual(explicitPath, persistencePackage.getSectionCrumbs()[0].getSectionId()));
-                }
-            });
-            cto.getAdditionalFilterMappings().add(defaultCategoryMapping);
-            OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
-            PersistenceModule persistenceModule = helper.getCompatibleModule(fetchType);
-            return persistenceModule.fetch(persistencePackage, cto);
+            return getFilteredDynamicResultSet(persistencePackage, cto, helper);
         }
 
         boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
@@ -499,5 +485,20 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             .withFieldPath(fieldPath)
             .withDirectFilterValues(directFilterValues)
             .withRestriction(newRestriction);
+    }
+
+    protected DynamicResultSet getFilteredDynamicResultSet(PersistencePackage persistencePackage, CriteriaTransferObject cto, RecordHelper helper) throws ServiceException {
+        FilterMapping defaultCategoryMapping = createFilterMappingForProperty(ID_PROPERTY, new PredicateProvider() {
+            @Override
+            public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                            String ceilingEntity, String fullPropertyName, Path explicitPath,
+                                            List directValues) {
+                return builder.and(builder.notEqual(explicitPath, persistencePackage.getSectionCrumbs()[0].getSectionId()));
+            }
+        });
+        cto.getAdditionalFilterMappings().add(defaultCategoryMapping);
+        OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
+        PersistenceModule persistenceModule = helper.getCompatibleModule(fetchType);
+        return persistenceModule.fetch(persistencePackage, cto);
     }
 }
