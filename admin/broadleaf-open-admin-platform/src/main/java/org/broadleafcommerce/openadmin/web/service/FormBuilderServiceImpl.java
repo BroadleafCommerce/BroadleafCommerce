@@ -731,6 +731,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     protected boolean propertyExistsInResultSet(Property property, DynamicResultSet drs) {
+        if(property == null) return false;
         //If the drs is empty we can't check for the property, default to true
         if (drs.getRecords().length == 0) {
             return true;
