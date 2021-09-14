@@ -202,7 +202,6 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     ClassFile templateFile = template.getClassFile();
                     ConstPool constantPool = classFile.getConstPool();
                     buildClassLevelAnnotations(classFile, templateFile, constantPool);
-                    buildClassLevelCacheAnnotation(classFile, templateFile, constantPool);
 
                     // Copy over all declared fields from the template class
                     // Note that we do not copy over fields with the @NonCopiedField annotation
@@ -492,6 +491,11 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
     }
 
     protected void buildClassLevelAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+        buildEntityListenerAnnotations(classFile, templateClassFile, constantPool);
+        buildClassCacheAnnotation(classFile, templateClassFile, constantPool);
+    }
+
+    protected void buildEntityListenerAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
         List<?> templateAttributes = templateClassFile.getAttributes();
         Iterator<?> templateItr = templateAttributes.iterator();
         Annotation templateEntityListeners = null;
@@ -567,7 +571,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
      * @param constantPool
      * @throws NotFoundException
      */
-    protected void buildClassLevelCacheAnnotation(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+    protected void buildClassCacheAnnotation(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
         List<?> templateAttributes = templateClassFile.getAttributes();
         Iterator<?> templateItr = templateAttributes.iterator();
         Annotation templateCache = null;
@@ -581,6 +585,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     if (typeName.equals(javax.persistence.Cache.class.getName())
                             || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                         templateCache = annotation;
+                        break;
                     }
                 }
             }
@@ -600,7 +605,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                         if (typeName.equals(javax.persistence.Cache.class.getName())
                                 || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                             logger.debug("Stripping out previous Cache annotation at the class level - will merge into new EntityListeners");
-                            //annotationsAttribute.addAnnotation(templateCache);
+                            // Since we are replacing the existing, we just drop the existing cache setting
                             continue;
                         }
                         annotationsAttribute.addAnnotation(annotation);
