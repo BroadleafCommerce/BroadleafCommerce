@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <name>BroadleafCommerce</name>
+    <description>BroadleafCommerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
-    <name>BroadleafCommerce</name>
     <version>6.0.16-SNAPSHOT</version>
-    <description>BroadleafCommerce Top Level Project</description>
-    <url>http://www.broadleafcommerce.org</url>
+    <url>https://www.broadleafcommerce.com/</url>
+
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -27,7 +29,7 @@
             <id>architect</id>
             <email>architect@broadleafcommerce.org</email>
             <organization>Broadleaf Commerce</organization>
-            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <organizationUrl>https://www.broadleafcommerce.com/</organizationUrl>
             <timezone>-6</timezone>
         </developer>
     </developers>
@@ -35,12 +37,12 @@
         <repository>
             <id>releases</id>
             <name>public releases</name>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/groups/community-releases/</url>
+            <url>https://nexus2.broadleafcommerce.org/nexus/content/groups/community-releases/</url>
         </repository>
         <repository>
             <id>snapshots</id>
             <name>public snapshots</name>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/groups/community-snapshots/</url>
+            <url>https://nexus2.broadleafcommerce.org/nexus/content/groups/community-snapshots/</url>
         </repository>
         <repository>
             <id>spring-milestones</id>
@@ -377,11 +379,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-snapshots</url>
+            <url>https://nexus2.broadleafcommerce.org/nexus/content/repositories/framework-snapshots</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
+            <url>https://nexus2.broadleafcommerce.org/nexus/content/repositories/framework-releases</url>
         </repository>
     </distributionManagement>
     <profiles>
