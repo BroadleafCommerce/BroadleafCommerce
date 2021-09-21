@@ -278,6 +278,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             tab = TabName.Marketing, order = 1000,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
+            customCriteria = {"crossSaleProduct"},
             maintainedAdornedTargetFields = {"promotionMessage"},
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
@@ -290,6 +291,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             tab = TabName.Marketing, order = 2000,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
+            customCriteria = {"upsaleProduct"},
             maintainedAdornedTargetFields = {"promotionMessage"},
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
     protected List<RelatedProduct> upSaleProducts = new ArrayList<RelatedProduct>();
@@ -1144,6 +1146,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public <G extends Product> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        boolean isPropagation = context.getCopyHints().get("PROPAGATION") != null && "TRUE".equalsIgnoreCase((String)context.getCopyHints().get("PROPAGATION"));
+
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -1155,23 +1159,28 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setUrlKey(urlKey);
         cloned.setManufacturer(manufacturer);
         cloned.setPromoMessage(promoMessage);
+        cloned.setMetaDescription(metaDescription);
+        cloned.setCanonicalUrl(canonicalUrl);
+        cloned.setMetaTitle(metaTitle);
         if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
-        } else {
+        } else if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
             cloned.setDefaultCategory(defaultCategory);
         }
         cloned.setModel(model);
         if (defaultSku != null) {
             cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
         }
-        for (Sku entry : additionalSkus) {
-            Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getAdditionalSkus().add(clonedEntry);
-        }
-        for (ProductOptionXref entry : productOptions) {
-            ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            cloned.getProductOptionXrefs().add(clonedEntry);
+        if(context.getToCatalog().getId().equals(context.getFromCatalog().getId()) || isPropagation) {
+            for (Sku entry : additionalSkus) {
+                Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+                cloned.getAdditionalSkus().add(clonedEntry);
+            }
+            for (ProductOptionXref entry : productOptions) {
+                ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+                cloned.getProductOptionXrefs().add(clonedEntry);
 
+            }
         }
         Map<String, ProductAttribute> attributeMap = new HashMap<>();
         for (Map.Entry<String, ProductAttribute> entry : getProductAttributes().entrySet()) {

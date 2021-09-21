@@ -518,7 +518,7 @@ $(document).ready(function() {
 
     $('body').on('click', 'button.duplicate-button, a.duplicate-button', function(event) {
         var $button = $(this);
-        BLCAdmin.confirmProcessBeforeProceeding(true, 'You are about to copy this product', processCopyCall, [$button]);
+        BLCAdmin.confirmProcessBeforeProceeding(true, 'Are you sure you want to duplicate?', processCopyCall, [$button]);
 
         function processCopyCall (params) {
             var $form = BLCAdmin.getForm($button);

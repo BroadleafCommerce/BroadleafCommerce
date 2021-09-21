@@ -37,6 +37,17 @@ public interface CustomerDao {
      */
     public List<Customer> readBatchCustomers(int start, int pageSize);
 
+
+    /**
+     * Reads a batch of customer using ID as a starting point
+     *
+     * @param lastID
+     * @param pageSize
+     * @return
+     */
+    List<Customer> readBatchCustomersFromLastID(Long lastID, int pageSize);
+
+
     /**
      * Returns the first customer that match the passed in username, with caching defaulted.
      *
