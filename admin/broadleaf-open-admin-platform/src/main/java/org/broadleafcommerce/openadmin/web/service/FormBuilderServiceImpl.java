@@ -1521,13 +1521,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             Class<MediaDto> type = entityConfiguration.lookupEntityClass(MediaDto.class.getName(), MediaDto.class);
                             mf.setMedia(mediaBuilderService.convertJsonToMedia(entityProp.getUnHtmlEncodedValue(), type));
                         } else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())) {
-                            field.setValue((basicFM.isLargeEntry() != null && basicFM.isLargeEntry()) ? entityProp.getValue() : exploitProtectionService.htmlDecode(entityProp.getValue()));
-                            field.setDisplayValue(entityProp.getDisplayValue());
+                            field.setValue(decodeValueIfNeeded(basicFM, entityProp.getValue()));
+                            field.setDisplayValue(decodeValueIfNeeded(basicFM, entityProp.getDisplayValue()));
                         }
                     }
                 }
             }
         }
+    }
+
+    protected String decodeValueIfNeeded(final BasicFieldMetadata basicFM, final String value) {
+        if (basicFM.isLargeEntry() != null && basicFM.isLargeEntry()) {
+            return value;
+        }
+        return exploitProtectionService.htmlDecode(value);
     }
 
     /**
