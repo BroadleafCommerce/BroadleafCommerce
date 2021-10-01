@@ -59,6 +59,7 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.AnnotationMemberValue;
 import javassist.bytecode.annotation.ArrayMemberValue;
 import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
@@ -601,6 +602,11 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
     }
 
     protected void buildClassLevelAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+        buildEntityListenerAnnotations(classFile, templateClassFile, constantPool);
+        buildClassCacheAnnotation(classFile, templateClassFile, constantPool);
+    }
+
+    protected void buildEntityListenerAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
         List<?> templateAttributes = templateClassFile.getAttributes();
         Iterator<?> templateItr = templateAttributes.iterator();
         Annotation templateEntityListeners = null;
@@ -667,6 +673,84 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
 
         return listeners;
 
+    }
+
+    /**
+     * Allows replacing of Cache annotations at the class level
+     * @param classFile
+     * @param templateClassFile
+     * @param constantPool
+     * @throws NotFoundException
+     */
+    protected void buildClassCacheAnnotation(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+        List<?> templateAttributes = templateClassFile.getAttributes();
+        Iterator<?> templateItr = templateAttributes.iterator();
+        Annotation templateCache = null;
+        while(templateItr.hasNext()) {
+            Object object = templateItr.next();
+            if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                Annotation[] items = attr.getAnnotations();
+                for (Annotation annotation : items) {
+                    String typeName = annotation.getTypeName();
+                    if (typeName.equals(javax.persistence.Cache.class.getName())
+                            || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
+                        templateCache = annotation;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (templateCache != null) {
+            AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+            List<?> attributes = classFile.getAttributes();
+            Iterator<?> itr = attributes.iterator();
+            while(itr.hasNext()) {
+                Object object = itr.next();
+                if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                    AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                    Annotation[] items = attr.getAnnotations();
+                    for (Annotation annotation : items) {
+                        String typeName = annotation.getTypeName();
+                        if (typeName.equals(javax.persistence.Cache.class.getName())
+                                || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
+                            logger.debug("Stripping out previous Cache annotation at the class level - will merge into new EntityListeners");
+                            // Since we are replacing the existing, we just drop the existing cache setting
+                            continue;
+                        }
+                        annotationsAttribute.addAnnotation(annotation);
+                    }
+                    itr.remove();
+                }
+            }
+
+            Annotation cacheAnnotation = getNewCacheAnnotation(constantPool, templateCache);
+            annotationsAttribute.addAnnotation(cacheAnnotation);
+
+            classFile.addAttribute(annotationsAttribute);
+        }
+    }
+
+    protected Annotation getNewCacheAnnotation(ConstPool constantPool, Annotation annotation) {
+        Annotation newAnnotation = new Annotation(org.hibernate.annotations.Cache.class.getName(), constantPool);
+        if (annotation.getMemberValue("usage") != null) {
+            EnumMemberValue usage = new EnumMemberValue(constantPool);
+            usage.setType("org.hibernate.annotations.CacheConcurrencyStrategy");
+            usage.setValue(((EnumMemberValue) annotation.getMemberValue("usage")).getValue());
+            newAnnotation.addMemberValue("usage", usage);
+        }
+        if (annotation.getMemberValue("region") != null) {
+            StringMemberValue region = new StringMemberValue(constantPool);
+            region.setValue(((StringMemberValue)annotation.getMemberValue("region")).getValue());
+            newAnnotation.addMemberValue("region", region);
+        }
+        if (annotation.getMemberValue("include") != null) {
+            StringMemberValue include = new StringMemberValue(constantPool);
+            include.setValue(((StringMemberValue)annotation.getMemberValue("include")).getValue());
+            newAnnotation.addMemberValue("include", include);
+        }
+        return newAnnotation;
     }
 
     /**
