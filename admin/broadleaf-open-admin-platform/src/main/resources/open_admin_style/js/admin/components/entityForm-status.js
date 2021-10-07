@@ -567,7 +567,7 @@
             if (el) {
                 var $element = $(el);
 
-                // if changes are explcitly tracked on this input, track it
+                // if changes are explicitly tracked on this input, track it
                 if ($element.data('track-changes')) {
                     return true;
                 }
@@ -591,12 +591,8 @@
                 if ($element.closest('.field-group').find('.boolean-link').length) {
                     return false;
                 }
-
-                // Otherwise, track the changes
-                return true;
             }
-
-            return false;
+            return true;
         },
 
         /**
