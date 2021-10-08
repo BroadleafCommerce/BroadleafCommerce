@@ -4,7 +4,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>4.0.0-ST-PATCH2</version>
+        <version>4.0.0-ST-PATCH2.1</version>
     </parent>
     <artifactId>core</artifactId>
     <packaging>pom</packaging>
