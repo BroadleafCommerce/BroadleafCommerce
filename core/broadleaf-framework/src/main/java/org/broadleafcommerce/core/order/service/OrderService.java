@@ -584,4 +584,6 @@ public interface OrderService {
      * @return whether or not the lock was released
      */
     public boolean releaseLock(Order order);
+
+    Order findCartForCustomerWithEnhancements(Customer customer);
 }

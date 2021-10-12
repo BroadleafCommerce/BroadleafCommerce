@@ -44,4 +44,6 @@ public interface OrderServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     public ExtensionResultStatusType attachAdditionalDataToOrder(Order order, boolean priceOrder);
+
+    public ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, ExtensionResultHolder erh);
 }
