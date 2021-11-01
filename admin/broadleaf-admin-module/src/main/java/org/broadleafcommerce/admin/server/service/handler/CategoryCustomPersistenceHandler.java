@@ -49,6 +49,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -70,6 +71,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
     
     protected static final String DEFAULT_PARENT_CATEGORY = "defaultParentCategory";
+
+    @Value("${allow.category.delete.with.children:false}")
+    protected boolean allowCategoryDeleteWithChildren;
 
     @Resource(name = "blCategoryCustomPersistenceHandlerExtensionManager")
     protected CategoryCustomPersistenceHandlerExtensionManager extensionManager;
@@ -196,12 +200,22 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String id = persistencePackage.getEntity().getPMap().get("id").getValue();
+        checkIfHasSubCategories(persistencePackage, id);
         List<CategoryProductXref> resultList = categoryDao.findXrefByCategoryWithDefaultReference(Long.valueOf(id));
-        if(resultList.isEmpty()) {
+        if (resultList.isEmpty()) {
             OperationType removeType = persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType();
             helper.getCompatibleModule(removeType).remove(persistencePackage);
-        }else{
+        } else {
             throw new ValidationException(persistencePackage.getEntity(), "Unable to delete category - found that this category is primary category for some product(s)");
+        }
+    }
+
+    private void checkIfHasSubCategories(PersistencePackage persistencePackage, String id) throws ValidationException {
+        if (!allowCategoryDeleteWithChildren) {
+            final List<Category> subCategories = categoryDao.readAllSubCategories(Long.valueOf(id));
+            if (!subCategories.isEmpty()) {
+                throw new ValidationException(persistencePackage.getEntity(), "Unable to delete category - found that this category is parent category for some other category(s)");
+            }
         }
     }
 

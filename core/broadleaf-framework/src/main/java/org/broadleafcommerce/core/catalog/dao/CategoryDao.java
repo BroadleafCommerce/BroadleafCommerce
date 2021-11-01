@@ -140,6 +140,15 @@ public interface CategoryDao {
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance
      *
+     * @param id the parent category ID
+     * @return a list of all child categories
+     */
+    @Nonnull
+    public List<Category> readAllSubCategories(@Nonnull Long id);
+
+    /**
+     * Retrieve a list of all child categories of the passed in {@code Category} instance
+     *
      * @param category the parent category
      * @param limit the maximum number of results to return
      * @param offset the starting point in the record set
