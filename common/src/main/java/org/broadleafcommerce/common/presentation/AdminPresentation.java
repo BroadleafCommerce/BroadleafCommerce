@@ -154,7 +154,6 @@ public @interface AdminPresentation {
      * 
      * @return the order for this group
      */
-    @Deprecated
     int groupOrder() default 99999;
 
     /**
@@ -165,7 +164,6 @@ public @interface AdminPresentation {
      * @return whether or not the group is collapsed by default
      * @deprecated not supported
      */
-    @Deprecated
     boolean groupCollapsed() default false;
     
     /**
