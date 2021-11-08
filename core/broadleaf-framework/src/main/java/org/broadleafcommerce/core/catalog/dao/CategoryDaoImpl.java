@@ -221,6 +221,16 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
+    public List<Category> readAllSubCategories(Long id) {
+        TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, id));
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
     public List<Category> readAllSubCategories(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
         query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, category.getId()));
