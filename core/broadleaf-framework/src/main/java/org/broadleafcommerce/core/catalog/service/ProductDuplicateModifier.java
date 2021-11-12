@@ -118,10 +118,8 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                 copy.setProductOptionXrefs(productOptionXrefs);
             }
         }
-        Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.YEAR, 1);
-        copy.setActiveStartDate(instance.getTime());
-        copy.setActiveEndDate(null);
+        copy.setActiveStartDate(new Date());
+        copy.setActiveEndDate(new Date());
 
         setNameAndUrl(copy);
 
