@@ -130,10 +130,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Embedded
     protected Auditable auditable = new Auditable();
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
-    @NotFound(action = NotFoundAction.IGNORE)
     @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
             group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()

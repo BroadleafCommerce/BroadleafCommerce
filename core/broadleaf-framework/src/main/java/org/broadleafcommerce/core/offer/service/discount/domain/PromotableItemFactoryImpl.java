@@ -58,7 +58,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
                 itemOfferPercentRoundingMode =
                         RoundingMode.valueOf(itemOfferPercentRoundingModeStr);
             } catch (RuntimeException rte) {
-                LOG.error("Unable to initialize rounding mode, using default. Value set for " +
+                LOG.info("Unable to initialize rounding mode, using default. Value set for " +
                         "item.offer.percent.rounding.mode was " + itemOfferPercentRoundingModeStr);
             }
         }
