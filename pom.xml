@@ -6,7 +6,7 @@
     <description>BroadleafCommerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
-    <version>6.2.1-SNAPSHOT</version>
+    <version>6.2.1-GA</version>
     <packaging>pom</packaging>
     <url>https://www.broadleafcommerce.com/</url>
 
@@ -80,7 +80,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>HEAD</tag>
+        <tag>broadleaf-6.2.1-GA</tag>
     </scm>
     <build>
         <pluginManagement>
