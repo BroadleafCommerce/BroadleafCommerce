@@ -758,7 +758,7 @@
             for (var j = 0; j < ruleBuilder.builders.length; j++) {
                 var builder = ruleBuilder.builders[j];
                 $(builder).one('validationError.queryBuilder', function(e, node, error, value) {
-                    if(value != null && error != "no_filter"){
+                    if(value != null && error !== "no_filter"){
                         collectedData.error = "Invalid Rule";
                     }
                 });
@@ -773,8 +773,6 @@
                     }
 
                     collectedData.data.push(dataDTO);
-                }else{
-
                 }
             }
 
