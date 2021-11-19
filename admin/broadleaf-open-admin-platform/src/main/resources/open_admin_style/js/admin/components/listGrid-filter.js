@@ -446,12 +446,12 @@ $(document).ready(function() {
         var hiddenId = $filterButton.data('hiddenid');
         if (hiddenId) {
             var filteredValues = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
-            filteredValues = $.param(filteredValues);
-            if (filteredValues.length > 0) {
+           var filteredValuesParam = $.param(filteredValues);
+            if (filteredValuesParam.length > 0 && !url.includes(filteredValues[0].name)) {
                 if (url.indexOf('?') >= 0) {
-                    url += '&' + filteredValues;
+                    url += '&' + filteredValuesParam;
                 } else {
-                    url += '?' + filteredValues;
+                    url += '?' + filteredValuesParam;
                 }
             }
         }
