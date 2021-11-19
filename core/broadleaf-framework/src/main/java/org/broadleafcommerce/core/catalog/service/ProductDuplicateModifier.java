@@ -126,7 +126,7 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
 
     }
 
-    private void setNameAndUrl(Product copy) {
+    protected void setNameAndUrl(Product copy) {
         String suffix = getCopySuffix();
         String name = copy.getName();
 
