@@ -118,14 +118,15 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                 copy.setProductOptionXrefs(productOptionXrefs);
             }
         }
-        copy.setActiveStartDate(new Date());
-        copy.setActiveEndDate(new Date());
+        final Date currentDate = new Date();
+        copy.setActiveStartDate(currentDate);
+        copy.setActiveEndDate(currentDate);
 
         setNameAndUrl(copy);
 
     }
 
-    private void setNameAndUrl(Product copy) {
+    protected void setNameAndUrl(Product copy) {
         String suffix = getCopySuffix();
         String name = copy.getName();
 
