@@ -757,6 +757,11 @@
             collectedData.data = [];
             for (var j = 0; j < ruleBuilder.builders.length; j++) {
                 var builder = ruleBuilder.builders[j];
+                $(builder).one('validationError.queryBuilder', function(e, node, error, value) {
+                    if(value != null && error !== "no_filter"){
+                        collectedData.error = "Invalid Rule";
+                    }
+                });
                 var dataDTO = $(builder).queryBuilder('getRules', { displayErrors : ruleBuilder.displayErrors });
                 if (dataDTO.rules) {
                     dataDTO.pk = $(builder).find(".rules-group-header-item-pk").val();
