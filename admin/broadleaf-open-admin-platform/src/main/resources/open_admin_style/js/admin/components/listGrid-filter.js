@@ -446,7 +446,7 @@ $(document).ready(function() {
         var hiddenId = $filterButton.data('hiddenid');
         if (hiddenId) {
             var filteredValues = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
-           var filteredValuesParam = $.param(filteredValues);
+            var filteredValuesParam = $.param(filteredValues);
             if (filteredValuesParam.length > 0 && !url.includes(filteredValues[0].name)) {
                 if (url.indexOf('?') >= 0) {
                     url += '&' + filteredValuesParam;
