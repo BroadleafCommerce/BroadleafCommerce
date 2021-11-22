@@ -996,6 +996,11 @@
                             if (multitenantAdd && inModal) {
                                 url = $('button.add-multitenant-main-entity').data('url');
                             }
+                            //If this is modal and 'multitenant duplicate' we use url from parent
+                            var multitenantDuplicate = $('.duplicate-multitenant-main-entity').length === 1;
+                            if (multitenantDuplicate  && inModal) {
+                                url = $('.duplicate-multitenant-main-entity').data('url');
+                            }
                             if ($container.data('parentid')) {
                                 url += "?parentId=" + $container.data('parentid');
                             }
