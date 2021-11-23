@@ -34,6 +34,7 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tika.Tika;
@@ -105,6 +106,15 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
+
+    @Value("${static.asset.invalid.chars.in.filename}")
+    protected char[] notAllowedCharsInFileName;
+
+    @Value("${static.asset.exception.on.invalid.char.in.filename:false}")
+    protected boolean exceptionOnInvalidChar = false;
+
+    @Value("${static.asset.invalid.chars.replacement}")
+    protected String replacementString;
 
     @Override
     public StaticAsset findStaticAssetById(Long id) {
@@ -227,10 +237,23 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         try {
             validateFileExtension(file);
             staticAssetStorageService.validateFileSize(file);
-            return createStaticAsset(file.getInputStream(), normalizeFileExtension(file), file.getSize(), properties);
+            String fileName = normalizeFileExtension(file);
+            boolean b = validateFileName(fileName);
+            if(b){
+                fileName = fileName.replaceAll("[" + String.valueOf(notAllowedCharsInFileName) + "]", replacementString);
+            }
+            return createStaticAsset(file.getInputStream(), fileName, file.getSize(), properties);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected boolean validateFileName(String fileName) {
+        boolean result = StringUtils.containsAny(fileName, notAllowedCharsInFileName);
+        if(exceptionOnInvalidChar && result){
+            throw new RuntimeException("File contains illegal chars. Illegal chars are:[" + String.valueOf(notAllowedCharsInFileName)+"]");
+        }
+        return result;
     }
 
     @Override
