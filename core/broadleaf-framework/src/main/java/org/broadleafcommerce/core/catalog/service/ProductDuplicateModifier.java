@@ -131,7 +131,7 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
 
     }
 
-    private void setNameAndUrl(Product copy, MultiTenantCopyContext context) {
+    protected void setNameAndUrl(Product copy, MultiTenantCopyContext context) {
         String suffix = getCopySuffix();
         String name = copy.getName();
         if(!context.getCopyHints().containsKey("PROPAGATION")) {
@@ -145,7 +145,7 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                     suffix = COPY_NUMBER_SEPARATOR + 1;
                 }
                 if(index>0) {
-                    name = name.substring(0, index) + suffix;
+                    name = name.substring(0, index+1) + suffix;
                 }else{
                     name = name + suffix;
                 }
