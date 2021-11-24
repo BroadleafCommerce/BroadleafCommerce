@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -126,11 +127,11 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
         copy.setActiveStartDate(instance.getTime());
         copy.setActiveEndDate(null);
 
-        setNameAndUrl(copy, original, context);
+        setNameAndUrl(copy, context);
 
     }
 
-    protected void setNameAndUrl(Product copy, Product original,  MultiTenantCopyContext context) {
+    protected void setNameAndUrl(Product copy, MultiTenantCopyContext context) {
         String suffix = getCopySuffix();
         String name = copy.getName();
         if(!context.getCopyHints().containsKey("PROPAGATION")) {
@@ -153,9 +154,6 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             }
         }
         copy.setName(name);
-        copy.setUrl(null);
-        if(original.getUrl()!=null) {
-            copy.setUrl("/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase());
-        }
+        copy.setUrl("/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase());
     }
 }
