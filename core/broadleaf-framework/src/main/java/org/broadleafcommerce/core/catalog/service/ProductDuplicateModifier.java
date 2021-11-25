@@ -21,6 +21,7 @@ import lombok.SneakyThrows;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.AbstractEntityDuplicationHelper;
 import org.broadleafcommerce.common.persistence.EntityDuplicatorExtensionManager;
 import org.broadleafcommerce.common.service.GenericEntityService;
@@ -32,13 +33,13 @@ import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
+import org.broadleafcommerce.core.catalog.service.extension.ProductUrlDuplicatorExtensionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,9 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
 
     @Resource(name = "blGenericEntityService")
     protected GenericEntityService genericEntityService;
+
+    @Resource(name = "blProductUrlDuplicatorExtensionManager")
+    protected ProductUrlDuplicatorExtensionManager productUrlDuplicatorExtensionManager;
 
     @Autowired
     public ProductDuplicateModifier(final Environment environment) {
@@ -154,6 +158,10 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             }
         }
         copy.setName(name);
-        copy.setUrl("/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase());
+        String url = "/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase();
+        ExtensionResultStatusType extensionResultStatusType = productUrlDuplicatorExtensionManager.getProxy().modifyUrl(url, copy, new ExtensionResultHolder<>());
+        if(extensionResultStatusType == ExtensionResultStatusType.NOT_HANDLED) {
+            copy.setUrl(url);
+        }
     }
 }
