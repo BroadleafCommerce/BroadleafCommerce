@@ -70,9 +70,8 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
         return Product.class.isAssignableFrom(candidate.getClass());
     }
 
-    @SneakyThrows
     @Override
-    public void modifyInitialDuplicateState(final Product original, final Product copy, final MultiTenantCopyContext context) {
+    public void modifyInitialDuplicateState(final Product original, final Product copy, final MultiTenantCopyContext context) throws CloneNotSupportedException {
         if(context.getCopyHints().get(PROPAGATION)!=null && "TRUE".equalsIgnoreCase(context.getCopyHints().get(PROPAGATION))){
             for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
                 final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
