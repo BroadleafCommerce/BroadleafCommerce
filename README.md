@@ -10,7 +10,7 @@ Broadleaf has a number of editions available commercially including a Marketplac
 
 ## Getting Started
 
-Check out our [Getting Started guide](http://docs.broadleafcommerce.org/current/Getting-Started.html) to quickly kick off your Broadleaf-enabled website.
+Check out our [Getting Started guide](https://www.broadleafcommerce.com/docs/core/6.1/tutorials/getting-started-tutorials) to quickly kick off your Broadleaf-enabled website.
 
 ## License
 
