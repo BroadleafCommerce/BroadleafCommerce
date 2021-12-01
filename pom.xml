@@ -6,7 +6,7 @@
     <description>BroadleafCommerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
-    <version>6.1.9-SNAPSHOT</version>
+    <version>6.1.10-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>https://www.broadleafcommerce.com/</url>
 
@@ -54,8 +54,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.6.3</ehcache3.version>
         <spring.version>5.1.20.RELEASE</spring.version>
-        <spring.security.version>5.2.11.RELEASE</spring.security.version>
-        <spring.boot.version>2.1.15.RELEASE</spring.boot.version>
+        <spring.security.version>5.2.12.RELEASE</spring.security.version>
+        <spring.boot.version>2.1.18.RELEASE</spring.boot.version>
         <spring.mobile.version>2.0.0.M3</spring.mobile.version>
         <jackson.version>2.11.3</jackson.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
@@ -71,7 +71,7 @@
         <database.starter.version>2.0.3-GA</database.starter.version>
         <hsqldb.database.starter.version>2.0.2-GA</hsqldb.database.starter.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
-        <hibernate.version>5.3.20.Final</hibernate.version>
+        <hibernate.version>5.3.23.Final</hibernate.version>
         <hibernate-validator.version>6.0.22.Final</hibernate-validator.version>
         <jaxb.version>2.3.0</jaxb.version>
         <jaxws.version>2.3.1</jaxws.version>

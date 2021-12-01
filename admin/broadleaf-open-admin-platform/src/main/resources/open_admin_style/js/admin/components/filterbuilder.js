@@ -775,14 +775,14 @@
                     input = '\'\'';
                     break;
                 case "BETWEEN":
-                    var array = JSON.parse(input);
+                    var array = Array.isArray(input) ? input : JSON.parse(input);
                     input = array[0] + '|' + array[1];
                     break;
                 case "COLLECTION_IN":
                 case "COLLECTION_NOT_IN":
                     var array;
                     try {
-                       array = JSON.parse(input);
+                       array = Array.isArray(input) ? input : JSON.parse(input);
                     } catch (e) {
                        array = input.slice(1, -1).split(',');
                     }
@@ -970,12 +970,12 @@
                     case "IS_NULL":
                         break;
                     case "BETWEEN":
-                        var arr = JSON.parse(rule.value);
+                        var arr = Array.isArray(rule.value) ? rule.value : JSON.parse(rule.value);
                         value = "<b>" + arr[0] + " AND " + arr[1] + "</b>";
                         break;
                     case "COLLECTION_IN":
                     case "COLLECTION_NOT_IN":
-                        var ruleVal = JSON.parse(rule.value);
+                        var ruleVal = Array.isArray(rule.value) ? rule.value : JSON.parse(rule.value);
                         var arr = Array.isArray(ruleVal) ? ruleVal : [ruleVal];
                         var sectionKey = field.selectizeSectionKey;
                         var url = BLC.servletContext + "/" + sectionKey + "/selectize?id=" + arr.join("|");

@@ -32,7 +32,7 @@ http://www.w3.org/TR/html401/struct/global.html
         <directive name="omitDoctypeDeclaration" value="true"/>
         <directive name="maxInputSize" value="15000"/>
         <directive name="useXHTML" value="true"/>
-        <directive name="formatOutput" value="true"/>
+        <directive name="formatOutput" value="false"/>
 
         <!--
         remember, this won't work for relative URIs - AntiSamy doesn't
