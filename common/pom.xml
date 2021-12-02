@@ -404,8 +404,6 @@
         <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler-unshaded</artifactId>
-            <version>v20180506</version>
-            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
