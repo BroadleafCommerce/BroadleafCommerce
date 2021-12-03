@@ -111,6 +111,10 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
         // Check if admin user has access to this section.
         if (!adminUserHasAccess(typedEntitySection)) {
+            if (LOG.isDebugEnabled()) {
+                AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+                LOG.debug(String.format("User %s does not have access to %s", adminUser.getLogin(), typedEntitySection));
+            }
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access is denied");
             return true;
         }

@@ -42,5 +42,5 @@ public interface EntityDuplicationHelper<T> {
     
     void addCopyHint(final String name, final String hint);
 
-    void modifyInitialDuplicateState(T original, T copy, MultiTenantCopyContext context);
+    void modifyInitialDuplicateState(T original, T copy, MultiTenantCopyContext context) throws CloneNotSupportedException;
 }

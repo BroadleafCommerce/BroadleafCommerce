@@ -66,5 +66,5 @@ public abstract class AbstractEntityDuplicationHelper<T> implements EntityDuplic
     }
 
     @Override 
-    public abstract void modifyInitialDuplicateState(final T original, final T copy, MultiTenantCopyContext context);
+    public abstract void modifyInitialDuplicateState(final T original, final T copy, MultiTenantCopyContext context) throws CloneNotSupportedException;
 }
