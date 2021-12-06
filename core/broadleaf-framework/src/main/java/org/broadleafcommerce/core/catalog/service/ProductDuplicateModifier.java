@@ -157,7 +157,7 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             }
         }
         copy.setName(name);
-        String url = "/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase();
+        String url = "/" + copy.getName().replace("-", "").replace(" ", "-").replace("#","_").toLowerCase();
         ExtensionResultStatusType extensionResultStatusType = productUrlDuplicatorExtensionManager.getProxy().modifyUrl(url, copy, new ExtensionResultHolder<>());
         if(extensionResultStatusType == ExtensionResultStatusType.NOT_HANDLED) {
             copy.setUrl(url);
