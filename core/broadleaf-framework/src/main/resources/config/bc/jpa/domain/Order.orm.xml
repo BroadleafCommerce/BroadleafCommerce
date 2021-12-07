@@ -61,16 +61,6 @@
         ORDER BY order.id desc</query>
     </named-query>
 
-    <named-query name="BC_READ_NAMED_ORDER_FOR_CUSTOMER">
-        <query>
-            SELECT order 
-            FROM  org.broadleafcommerce.core.order.domain.Order order
-            WHERE order.customer.id = :customerId
-                 AND order.name = :orderName
-                 AND order.status = :orderStatus
-        </query>
-    </named-query>
-
     <named-query name="BC_READ_NAMED_ORDER_FOR_CUSTOMER_WITH_LOCALE">
         <query>
             SELECT order
