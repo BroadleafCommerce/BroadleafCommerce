@@ -315,16 +315,14 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     @SuppressWarnings("unchecked")
     public Order readNamedOrderForCustomer(final Customer customer, final String name) {
-        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
+        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER_WITH_LOCALE");
+
+        final Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+        query.setParameter("locale", locale);
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            final Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-            if (locale != null) {
-                query.setParameter("locale", locale);
-            }
-        }
+
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
         List<Order> orders = query.getResultList();
