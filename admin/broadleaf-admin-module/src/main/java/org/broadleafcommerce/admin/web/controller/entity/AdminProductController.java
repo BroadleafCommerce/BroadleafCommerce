@@ -258,6 +258,7 @@ public class AdminProductController extends AdminBasicEntityController {
             }
         }
         ppr.withFilterAndSortCriteria(fascs);
+        ppr.addCustomCriteria(buildSelectizeCustomCriteria());
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
