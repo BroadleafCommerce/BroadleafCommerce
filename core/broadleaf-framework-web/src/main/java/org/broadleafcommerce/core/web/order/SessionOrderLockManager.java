@@ -38,9 +38,11 @@ import javax.servlet.http.HttpSession;
 /**
  * An {@link HttpSession} based {@link OrderLockManager}. This implementation is less concerned with the given Order
  * and instead will lock on the user's session to serialize order modification requests.
- * 
+ *
+ * @deprecated it is no longer needed and will be deleted
  * @author Andre Azzolini (apazzolini)
  */
+@Deprecated
 public class SessionOrderLockManager implements OrderLockManager, ApplicationListener<HttpSessionDestroyedEvent> {
 
     private static final Log LOG = LogFactory.getLog(SessionOrderLockManager.class);
