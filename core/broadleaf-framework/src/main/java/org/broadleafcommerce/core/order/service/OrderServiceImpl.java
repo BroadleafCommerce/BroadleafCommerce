@@ -95,11 +95,12 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+
 /**
  * @author apazzolini
  */
 @Service("blOrderService")
-@ManagedResource(objectName = "org.broadleafcommerce:name=OrderService", description = "Order Service", currencyTimeLimit = 15)
+@ManagedResource(objectName="org.broadleafcommerce:name=OrderService", description="Order Service", currencyTimeLimit=15)
 public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 
@@ -193,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
     @Value("${auto.flush.on.query.during.cart.pricing.save:false}")
     protected boolean autoFlushSaveCart = false;
 
-    @PersistenceContext(unitName = "blPU")
+    @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
     /* Fields */
@@ -212,8 +213,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
-        final Object look = Objects.isNull(customer.getId()) ? customer : customer.getId();
-        synchronized (look) {
+        final Object lock = Objects.isNull(customer.getId()) ? customer : customer.getId();
+        synchronized (lock) {
             return orderDao.createNewCartForCustomer(customer);
         }
     }
@@ -510,7 +511,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @ManagedAttribute(description = "The delete empty named order after adding items to cart attribute", currencyTimeLimit = 15)
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
@@ -518,7 +519,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId) {
         if (order.getOrderItems() != null) {
-            for (int i = (order.getOrderItems().size() - 1); i >= 0; i--) {
+            for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
                 OrderItem currentItem = (order.getOrderItems().get(i));
                 if (currentItem instanceof DiscreteOrderItem) {
                     DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
@@ -561,7 +562,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
 
         // Remove any order items that are children
-        CollectionUtils.filter(items, new TypedPredicate<OrderItem>() {
+        CollectionUtils.filter(items,  new TypedPredicate<OrderItem>() {
             @Override
             public boolean eval(OrderItem orderItem) {
                 return orderItem.getParentOrderItem() == null;
@@ -657,7 +658,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
+    @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         Order order = findOrderById(orderId);
         preValidateCartOperation(order);
@@ -834,7 +835,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    protected void findAllChildrenToRemove(List<Long> childrenToRemove, OrderItem orderItem) {
+    protected void findAllChildrenToRemove(List<Long> childrenToRemove, OrderItem orderItem){
         if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
             for (OrderItem childOrderItem : orderItem.getChildOrderItems()) {
                 findAllChildrenToRemove(childrenToRemove, childOrderItem);
@@ -868,7 +869,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
+    @Transactional(value = "blTransactionManager", rollbackFor = { RemoveFromCartException.class })
     public Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException {
         Order order = findOrderById(orderId);
         try {
@@ -901,19 +902,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @ManagedAttribute(description = "The move item from named order when adding to the cart attribute", currencyTimeLimit = 15)
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
     public boolean isMoveNamedOrderItems() {
         return moveNamedOrderItems;
     }
 
     @Override
-    @ManagedAttribute(description = "The move item from named order when adding to the cart attribute", currencyTimeLimit = 15)
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
     public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
         this.moveNamedOrderItems = moveNamedOrderItems;
     }
 
     @Override
-    @ManagedAttribute(description = "The delete empty named order after adding items to cart attribute", currencyTimeLimit = 15)
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
     public boolean isDeleteEmptyNamedOrders() {
         return deleteEmptyNamedOrders;
     }
@@ -972,14 +973,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void removePaymentFromOrder(Order order, OrderPayment payment) {
+    public void removePaymentFromOrder(Order order, OrderPayment payment){
         OrderPayment paymentToRemove = null;
-        for (OrderPayment info : order.getPayments()) {
-            if (info.equals(payment)) {
+        for (OrderPayment info : order.getPayments()){
+            if (info.equals(payment)){
                 paymentToRemove = info;
             }
         }
-        if (paymentToRemove != null) {
+        if (paymentToRemove != null){
             try {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentToRemove.getReferenceNumber(), payment.getType());
             } catch (WorkflowException e) {
@@ -1018,7 +1019,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * Returns true if the two items attributes exactly match.
-     *
      * @param item1Attributes
      * @param item2
      * @return
@@ -1080,7 +1080,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class})
+    @Transactional(value = "blTransactionManager", rollbackFor = { UpdateCartException.class })
     public Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
@@ -1118,7 +1118,7 @@ public class OrderServiceImpl implements OrderService {
             return;
         }
 
-        TableCreator tc = new TableCreator(new TableCreator.Col[]{
+        TableCreator tc = new TableCreator(new TableCreator.Col[] {
                 new TableCreator.Col("Order Item", 30),
                 new TableCreator.Col("Qty"),
                 new TableCreator.Col("Unit Price"),
@@ -1128,7 +1128,7 @@ public class OrderServiceImpl implements OrderService {
         });
 
         for (OrderItem oi : order.getOrderItems()) {
-            tc.addRow(new String[]{
+            tc.addRow(new String[] {
                     oi.getName(),
                     String.valueOf(oi.getQuantity()),
                     String.valueOf(oi.getPriceBeforeAdjustments(true)),
