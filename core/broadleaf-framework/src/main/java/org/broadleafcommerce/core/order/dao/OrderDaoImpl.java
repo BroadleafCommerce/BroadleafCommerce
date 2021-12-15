@@ -69,7 +69,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
-    
+
     @Override
     public Order readOrderById(final Long orderId) {
         return em.find(OrderImpl.class, orderId);
@@ -267,7 +267,7 @@ public class OrderDaoImpl implements OrderDao {
         if (extensionManager != null) {
             extensionManager.getProxy().attachAdditionalDataToNewCart(customer, order);
         }
-        
+
         order = save(order);
 
         if (extensionManager != null) {
@@ -300,31 +300,23 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     @SuppressWarnings("unchecked")
     public Order readNamedOrderForCustomer(final Customer customer, final String name) {
-        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
+        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER_WITH_LOCALE");
+
+        final Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+        query.setParameter("locale", locale);
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
+
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
         List<Order> orders = query.getResultList();
-        
-        // Filter out orders that don't match the current locale (if one is set)
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            ListIterator<Order> iter = orders.listIterator();
-            while (iter.hasNext()) {
-                Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-                Order order = iter.next();
-                if (locale != null && !locale.equals(order.getLocale())) {
-                    iter.remove();
-                }
-            }
-        }
-            
+
         // Apply any additional filters that extension modules have registered
         if (orders != null && !orders.isEmpty() && extensionManager != null) {
             extensionManager.getProxy().applyAdditionalOrderLookupFilter(customer, name, orders);
         }
-        
+
         return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
 
@@ -416,7 +408,7 @@ public class OrderDaoImpl implements OrderDao {
         q.setParameter("key", orderLockKey);
         q.setHint(QueryHints.HINT_CACHEABLE, false);
         Long count = (Long) q.getSingleResult();
-        
+
         if (count == 0L) {
             // If there wasn't a lock, we'll try to create one. It's possible that another thread is attempting the
             // same thing at the same time, so we might get a constraint violation exception here. That's ok. If we 

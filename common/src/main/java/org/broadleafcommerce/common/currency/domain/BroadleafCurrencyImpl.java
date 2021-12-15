@@ -122,7 +122,7 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity
 
         BroadleafCurrencyImpl currency = (BroadleafCurrencyImpl) o;
 
-        if (currencyCode != null ? !currencyCode.equals(currency.currencyCode) : currency.currencyCode != null) {
+        if (currencyCode != null ? !currencyCode.equals(currency.getCurrencyCode()) : currency.getCurrencyCode() != null) {
             return false;
         }
 
