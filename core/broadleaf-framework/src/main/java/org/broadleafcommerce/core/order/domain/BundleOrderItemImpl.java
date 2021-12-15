@@ -95,7 +95,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             group = OrderItemImpl.Presentation.Group.Name.Catalog,
             groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
-    protected Sku sku;
+    protected Sku sku;  
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID")

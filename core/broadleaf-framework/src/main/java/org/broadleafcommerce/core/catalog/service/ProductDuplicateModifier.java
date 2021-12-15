@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
-import lombok.SneakyThrows;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -39,7 +38,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -121,14 +120,9 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                 copy.setProductOptionXrefs(productOptionXrefs);
             }
         }
-        Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.YEAR, 1);
-        instance.set(Calendar.MILLISECOND, 0);
-        instance.set(Calendar.SECOND, 0);
-        instance.set(Calendar.MINUTE, 0);
-        instance.set(Calendar.HOUR, 0);
-        copy.setActiveStartDate(instance.getTime());
-        copy.setActiveEndDate(null);
+        final Date currentDate = new Date();
+        copy.setActiveStartDate(currentDate);
+        copy.setActiveEndDate(currentDate);
 
         setNameAndUrl(copy, context);
 
