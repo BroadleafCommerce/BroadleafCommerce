@@ -60,12 +60,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     public CheckoutResponse performCheckout(Order order) throws CheckoutException {
-        //Immediately fail if another thread is currently attempting to check out the order
-        Object lockObject = putLock(order.getId());
-        if (lockObject != null) {
-            throw new CheckoutException("This order is already in the process of being submitted, unable to checkout order -- id: " + order.getId(), new CheckoutSeed(order, new HashMap<String, Object>()));
-        }
-
         // Immediately fail if this order has already been checked out previously
         if (hasOrderBeenCompleted(order)) {
             throw new CheckoutException("This order has already been submitted or cancelled, unable to checkout order -- id: " + order.getId(), new CheckoutSeed(order, new HashMap<String, Object>()));
