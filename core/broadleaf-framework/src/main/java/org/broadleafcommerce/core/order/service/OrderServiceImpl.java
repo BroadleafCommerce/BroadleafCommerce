@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -35,7 +34,6 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.OfferServiceExtensionHandler;
 import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
@@ -90,12 +88,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 
 /**
  * @author apazzolini
@@ -214,7 +212,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
-        return orderDao.createNewCartForCustomer(customer);
+        final Object look = Objects.isNull(customer.getId()) ? customer : customer.getId();
+        synchronized (look) {
+            return orderDao.createNewCartForCustomer(customer);
+        }
     }
 
     @Override
