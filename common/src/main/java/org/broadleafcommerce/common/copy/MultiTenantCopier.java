@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.persistence.Embeddable;
@@ -71,8 +72,14 @@ public abstract class MultiTenantCopier implements Ordered {
     protected StreamingTransactionCapableUtil transUtil;
     
     protected int order = 0;
-    
-    protected List<Matcher> classExcludeRegexList = new ArrayList<Matcher>();
+
+    /**
+     * @deprecated Please use `classExcludeRegexPatternList`
+     */
+    @Deprecated
+    protected List<Matcher> classExcludeRegexList = new ArrayList<>();
+
+    protected List<Pattern> classExcludeRegexPatternList = new ArrayList<>();
 
     /**
      * Main method that should be implemented by each {@link MultiTenantCopier} to drive the logic of
@@ -175,13 +182,42 @@ public abstract class MultiTenantCopier implements Ordered {
         }
     }
 
-    protected Boolean excludeFromCopyRegex(Object copy) {
-        for (Matcher regex : classExcludeRegexList) {
-            if (regex.reset(copy.getClass().toString()).matches()) {
-               return true; 
+    /**
+     * @deprecated Please use `excludeFromCopyRegexPattern()`
+     * @param copy Copy object
+     * @return excluded or not in Regex
+     */
+    @Deprecated
+    protected Boolean excludeFromCopyRegex(final Object copy) {
+        boolean match = false;
+        if (this.classExcludeRegexPatternList.isEmpty()) {
+            for (Matcher regex : this.classExcludeRegexList) {
+                if (regex.reset(copy.getClass().toString()).matches()) {
+                    match = true;
+                    break;
+                }
+            }
+        } else {
+           match = this.excludeFromCopyRegexPattern(copy);
+        }
+        return match;
+    }
+
+    /**
+     *
+     * @param copy Copy object
+     * @return excluded or not in patterns
+     */
+    protected Boolean excludeFromCopyRegexPattern(final Object copy) {
+        boolean match = false;
+        for (final Pattern pattern : this.classExcludeRegexPatternList) {
+            final Matcher matcher = pattern.matcher(copy.getClass().toString());
+            if (matcher.matches()) {
+                match = true;
+                break;
             }
         }
-        return false;
+        return match;
     }
 
     protected void persistNode(final Object copy, final MultiTenantCopyContext context) {
