@@ -497,6 +497,13 @@
                             <sourceFileExcludes>
                                 <sourceFileExclude>org/broadleafcommerce/cms/web/PreviewTemplateController.java</sourceFileExclude>
                             </sourceFileExcludes>
+                            <additionalDependencies>
+                                <additionalDependency>
+                                    <groupId>javax.interceptor</groupId>
+                                    <artifactId>javax.interceptor-api</artifactId>
+                                    <version>1.2.2</version>
+                                </additionalDependency>
+                            </additionalDependencies>
                         </configuration>
                     </plugin>
                 </plugins>
