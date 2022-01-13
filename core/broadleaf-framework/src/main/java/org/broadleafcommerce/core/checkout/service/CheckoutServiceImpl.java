@@ -53,9 +53,9 @@ public class CheckoutServiceImpl implements CheckoutService {
     protected OrderService orderService;
     
     /**
-     * Map of locks for given order ids. This lock map ensures that only a single request can handle a particular order
-     * at a time
+     * @deprecated no longer supported - simplifying interface
      */
+    @Deprecated
     protected static ConcurrentMap<Long, Object> lockMap = new ConcurrentHashMap<>();
 
     @Override
@@ -94,9 +94,6 @@ public class CheckoutServiceImpl implements CheckoutService {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e.getRootCause(), seed);
         } catch (RequiredAttributeNotProvidedException e) {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e.getCause(), seed);
-        } finally {
-            // The order has completed processing, remove the order from the processing map
-            removeLock(order.getId());
         }
     }
     
@@ -111,21 +108,17 @@ public class CheckoutServiceImpl implements CheckoutService {
     }
 
     /**
-    * Get an object to lock on for the given order id
-    * 
-    * @param orderId
-    * @return null if there was not already a lock object available. If an object was already in the map, this will return
-    * that object, which means that there is already a thread attempting to go through the checkout workflow
-    */
+     * @deprecated no longer supported - simplifying interface
+     */
+    @Deprecated
     protected Object putLock(Long orderId) {
         return lockMap.putIfAbsent(orderId, new Object());
     }
-    
+
     /**
-     * Done with processing the given orderId, remove the lock from the map
-     * 
-     * @param orderId
+     * @deprecated no longer supported - simplifying interface
      */
+    @Deprecated
     protected void removeLock(Long orderId) {
         lockMap.remove(orderId);
     }
