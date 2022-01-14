@@ -21,18 +21,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.order.security.exception.OrderLockAcquisitionFailureException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,6 +60,11 @@ public class UpdateCartServiceImpl implements UpdateCartService {
     
     @Resource(name = "blUpdateCartServiceExtensionManager")
     protected UpdateCartServiceExtensionManager extensionManager;
+
+    @Autowired
+    @Qualifier("blOrderLockManager")
+    protected OrderLockManager orderLockManager;
+
 
     @Override
     public boolean currencyHasChanged() {
@@ -159,14 +169,53 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             Boolean repriceCart = (Boolean) erh.getContextMap().get("repriceCart");
             Boolean saveCart = (Boolean) erh.getContextMap().get("saveCart");
             if (clearCart != null && clearCart.booleanValue()) {
-                orderService.cancelOrder(cart);
-                cart = orderService.createNewCartForCustomer(cart.getCustomer());
+                Object lockObject = null;
+                try {
+                    lockObject = lockOrder(cart, lockObject);
+
+                    orderService.cancelOrder(cart);
+                    cart = orderService.createNewCartForCustomer(cart.getCustomer());
+                }finally {
+                    if (lockObject != null) {
+                        orderLockManager.releaseLock(lockObject);
+                    }
+
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() +"]");
+                    }
+                }
             } else {
                 try {
                     if (repriceCart != null && repriceCart.booleanValue()) {
-                        orderService.save(cart, true, true);
+                        Object lockObject = null;
+                        try {
+                            lockObject = lockOrder(cart, lockObject);
+
+                            orderService.save(cart, true, true);
+                        }finally {
+                            if (lockObject != null) {
+                                orderLockManager.releaseLock(lockObject);
+                            }
+
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() +"]");
+                            }
+                        }
                     } else if (saveCart != null && saveCart.booleanValue()) {
-                        orderService.save(cart, false);
+                        Object lockObject = null;
+                        try {
+                            lockObject = lockOrder(cart, lockObject);
+
+                            orderService.save(cart, false);
+                        }finally {
+                            if (lockObject != null) {
+                                orderLockManager.releaseLock(lockObject);
+                            }
+
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() +"]");
+                            }
+                        }
                     }
                 } catch (PricingException pe) {
                     LOG.error("Pricing Exception while validating cart.   Clearing cart.", pe);
@@ -175,6 +224,28 @@ public class UpdateCartServiceImpl implements UpdateCartService {
                 }
             }
         }
+    }
+
+
+    protected Object lockOrder(Order order, Object lockObject){
+        if (lockObject == null) {
+            if (getErrorInsteadOfQueue()) {
+                lockObject = orderLockManager.acquireLockIfAvailable(order);
+                if (lockObject == null) {
+                    // We weren't able to acquire the lock immediately because some other thread has it. Because the
+                    // order.lock.errorInsteadOfQueue property was set to true, we're going to throw an exception now.
+                    throw new OrderLockAcquisitionFailureException("Thread[" + Thread.currentThread().getId() +
+                            "] could not acquire lock for order[" + order.getId() + "]");
+                }
+            } else {
+                lockObject = orderLockManager.acquireLock(order);
+            }
+        }
+        return lockObject;
+    }
+
+    protected boolean getErrorInsteadOfQueue() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.errorInsteadOfQueue");
     }
 
     protected BroadleafCurrency findActiveCurrency(){
