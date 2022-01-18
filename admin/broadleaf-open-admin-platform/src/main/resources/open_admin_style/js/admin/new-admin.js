@@ -50,6 +50,14 @@ $(document).ready(function(){
 
     $(window).on('load', function() {
         equalHeight('.equals .equal');
+        $('img').each(function() {
+            if ( !this.complete
+                ||   typeof this.naturalWidth == "undefined"
+                ||   this.naturalWidth == 0                  ) {
+                // image was broken, replace with your new image
+                this.src = 'https://via.placeholder.com/64x64';
+            }
+        });
     });
 
 
