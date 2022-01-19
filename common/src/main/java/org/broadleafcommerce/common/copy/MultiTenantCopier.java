@@ -129,7 +129,7 @@ public abstract class MultiTenantCopier implements Ordered {
     }
 
     protected void persistCopyObjectTreeInternal(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
-        // TODO: 1/19/2022 replace excludeFromCopyRegex with excludeFromCopyRegexPattern
+        // TODO: 1/19/2022 replace excludeFromCopyRegex() with excludeFromCopyRegexPattern() after remove property classExcludeRegexList
         if (library.contains(System.identityHashCode(copy)) || !(copy instanceof MultiTenantCloneable)
                 || excludeFromCopyRegex(copy)) {
             return;
