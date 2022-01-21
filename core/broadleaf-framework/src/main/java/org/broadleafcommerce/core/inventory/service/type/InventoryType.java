@@ -34,11 +34,6 @@ public class InventoryType implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, InventoryType> TYPES = new LinkedHashMap<String, InventoryType>();
     
-    @Deprecated
-    public static final InventoryType NONE = new InventoryType("NONE", "None");
-    @Deprecated
-    public static final InventoryType BASIC = new InventoryType("BASIC", "Basic");
-    
     public static final InventoryType ALWAYS_AVAILABLE  = new InventoryType("ALWAYS_AVAILABLE", "Always Available");
     public static final InventoryType UNAVAILABLE  = new InventoryType("UNAVAILABLE", "Unavailable");
     public static final InventoryType CHECK_QUANTITY = new InventoryType("CHECK_QUANTITY", "Check Quantity");
