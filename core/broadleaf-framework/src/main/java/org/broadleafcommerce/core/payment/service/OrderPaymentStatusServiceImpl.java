@@ -80,7 +80,9 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
     }
 
     protected boolean determinePartiallyComplete(OrderPayment payment) {
-        Money fullAuthAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE);
+        Money fullAuthAmount =
+            payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE)
+                .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
         Money fullCaptureAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.CAPTURE);
         Money totalVoidAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.VOID);
         Money totalRefundAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.REFUND);
