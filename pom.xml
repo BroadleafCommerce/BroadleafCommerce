@@ -582,6 +582,7 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>integration</artifactId>
+                <classifier>tests</classifier>
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>
