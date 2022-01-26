@@ -17,32 +17,20 @@
   #L%
   -->
 
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
-<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+<Configuration>
+<Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+        <PatternLayout pattern="[%5p] %d{HH:mm:ss} %c{1} - %m%n"/>
+    </Console>
+</Appenders>
 
-    <appender name="console" class="org.apache.log4j.ConsoleAppender">
-        <param name="Target" value="System.out" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern"
-                value="[%5p] %d{HH:mm:ss} %c{1} - %m%n" />
-        </layout>
-    </appender>
-    
-    <logger name="org.broadleafcommerce">
-        <level value="INFO"/>
-    </logger>
-    
-    <logger name="org.springframework">
-        <level value="WARN"/>
-    </logger>
-    
-    <logger name="org.hibernate">
-        <level value="WARN"/>
-    </logger>
-    
-    <root>
-        <level value="WARN" />
-        <appender-ref ref="console" />
-    </root>
-
-</log4j:configuration>
+<Loggers>
+    <Logger name="org.broadleafcommerce" level="info"/>
+    <Logger name="org.springframework" level="warn"/>
+    <Logger name="org.hibernate" level="warn"/>
+    <Logger name="org.broadleafcommerce" level="info"/>
+    <Root level="debug">
+        <AppenderRef ref="console"/>
+    </Root>
+</Loggers>
+</Configuration>
