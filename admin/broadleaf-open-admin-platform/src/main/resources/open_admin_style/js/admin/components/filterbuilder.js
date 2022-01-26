@@ -659,7 +659,11 @@
             // Convert JSON to request params
             var filters = JSON.parse($('#' + hiddenId).val());
             var inputs = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
-
+            if($tbody){
+                if($tbody.closest('table').data('sectioncrumbs')){
+                    inputs.push({name:'sectionCrumbs', value:$tbody.closest('table').data('sectioncrumbs')});
+                }
+            }
             if (filters.data.length <= 0) {
                 var mainContent = $filterButton.closest('.main-content');
                 if (mainContent.length) {
