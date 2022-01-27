@@ -81,6 +81,9 @@ public abstract class MultiTenantCopier implements Ordered {
     @Deprecated
     protected List<Matcher> classExcludeRegexList = new ArrayList<>();
 
+    /**
+     * To add elements use {@link #addPattern(Pattern)}
+     */
     protected List<Pattern> classExcludeRegexPatternList = new ArrayList<>();
 
     /**
@@ -134,6 +137,7 @@ public abstract class MultiTenantCopier implements Ordered {
     }
 
     protected void persistCopyObjectTreeInternal(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
+        // TODO: 1/19/2022 replace excludeFromCopyRegex() with excludeFromCopyRegexPattern() after remove property classExcludeRegexList
         if (library.contains(System.identityHashCode(copy)) || !(copy instanceof MultiTenantCloneable)
                 || excludeFromCopyRegex(copy)) {
             return;
@@ -395,6 +399,28 @@ public abstract class MultiTenantCopier implements Ordered {
                 return genericEntityService.readAllGenericEntity(clazz, limit, offset);
             }
         }, site, site, catalog);
+    }
+
+    /**
+     * Checks for similar items before adding to avoid duplication
+     *
+     * @param pattern input pattern
+     */
+    protected void addPattern(final Pattern pattern) {
+        if (this.needToAdd(pattern)) {
+            this.classExcludeRegexPatternList.add(pattern);
+        }
+    }
+
+    protected boolean needToAdd(final Pattern pattern) {
+        boolean exist = false;
+        for (Pattern item : this.classExcludeRegexPatternList) {
+            if (item.pattern().equals(pattern.pattern())) {
+                exist = true;
+                break;
+            }
+        }
+        return !exist;
     }
 
 }
