@@ -330,11 +330,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
@@ -363,7 +358,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.7.0</version>
+            <version>3.19.2</version>
         </dependency>
         <dependency>
             <groupId>com.google.javascript</groupId>
