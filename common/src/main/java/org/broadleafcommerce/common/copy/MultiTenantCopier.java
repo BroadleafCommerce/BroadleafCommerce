@@ -76,12 +76,6 @@ public abstract class MultiTenantCopier implements Ordered {
     protected int order = 0;
 
     /**
-     * @deprecated Please use `classExcludeRegexPatternList`
-     */
-    @Deprecated
-    protected List<Matcher> classExcludeRegexList = new ArrayList<>();
-
-    /**
      * To add elements use {@link #addPattern(Pattern)}
      */
     protected List<Pattern> classExcludeRegexPatternList = new ArrayList<>();
@@ -137,9 +131,8 @@ public abstract class MultiTenantCopier implements Ordered {
     }
 
     protected void persistCopyObjectTreeInternal(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
-        // TODO: 1/19/2022 replace excludeFromCopyRegex() with excludeFromCopyRegexPattern() after remove property classExcludeRegexList
         if (library.contains(System.identityHashCode(copy)) || !(copy instanceof MultiTenantCloneable)
-                || excludeFromCopyRegex(copy)) {
+                || this.excludeFromCopyRegexPattern(copy)) {
             return;
         }
         library.add(System.identityHashCode(copy));
@@ -192,28 +185,6 @@ public abstract class MultiTenantCopier implements Ordered {
                         "recognizes Collection and Map. (%s.%s)", copy.getClass().getName(), ((Field) collectionItem[0]).getName()));
             }
         }
-    }
-
-    /**
-     * @deprecated Please use `excludeFromCopyRegexPattern()`
-     * @param copy Copy object
-     * @return excluded or not in Regex
-     */
-    @Deprecated
-    protected Boolean excludeFromCopyRegex(final Object copy) {
-        boolean match = false;
-        if (this.classExcludeRegexPatternList.isEmpty()) {
-            LOG.warn("classExcludeRegexPatternList is empty, deprecated classExcludeRegexList is used");
-            for (Matcher regex : this.classExcludeRegexList) {
-                if (regex.reset(copy.getClass().toString()).matches()) {
-                    match = true;
-                    break;
-                }
-            }
-        } else {
-           match = this.excludeFromCopyRegexPattern(copy);
-        }
-        return match;
     }
 
     /**
