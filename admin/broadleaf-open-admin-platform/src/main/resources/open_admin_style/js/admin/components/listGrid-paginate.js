@@ -267,8 +267,6 @@
                     tableResizing.startWidths.push($(this).outerWidth());
                     tableResizing.totalWidth += $(this).outerWidth();
                 });
-                
-                $(document).disableSelection();
             });
 
             $(document).mousemove(function(e) {
@@ -306,7 +304,6 @@
             $(document).mouseup(function() {
                 if (tableResizing.active) {
                     tableResizing.active = false;
-                    $(document).enableSelection();
                 }
             });
 
