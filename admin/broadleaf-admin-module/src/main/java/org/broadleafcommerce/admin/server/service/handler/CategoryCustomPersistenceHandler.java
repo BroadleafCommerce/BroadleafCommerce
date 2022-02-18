@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
@@ -41,24 +42,21 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.Query;
 
 /**
  * 
@@ -69,8 +67,8 @@ import javax.persistence.Query;
 public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
-    
     protected static final String DEFAULT_PARENT_CATEGORY = "defaultParentCategory";
+    protected static final String ID_PROPERTY = "id";
 
     @Value("${allow.category.delete.with.children:false}")
     protected boolean allowCategoryDeleteWithChildren;
@@ -80,6 +78,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
+
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
@@ -120,10 +121,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity  = persistencePackage.getEntity();
+        Entity entity = persistencePackage.getEntity();
         try {
-            entity = validateParentCategory(entity, true);
-
+            entity = this.validateRecursiveRelationship(entity);
             if (entity.isValidationFailure()) {
                 return entity;
             } else {
@@ -150,25 +150,11 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         }
     }
 
-    protected Entity validateParentCategory(Entity entity, boolean isAdd) {
-        String defaultParentCategoryId = (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null)
-                ? entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue() : null;
-        String categoryId = entity.findProperty("id").getValue();
-
-        if (!isAdd && Objects.equals(defaultParentCategoryId, categoryId)) {
-            entity.addValidationError(DEFAULT_PARENT_CATEGORY, "admin.cantAddCategoryAsOwnParent");
-        }
-
-        return entity;
-    }
-
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
-        
         try {
-            entity = validateParentCategory(entity, false);
-            
+            entity = this.validateRecursiveRelationship(entity);
             if (entity.isValidationFailure()) {
                 return entity;
             } else {
@@ -189,7 +175,6 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
                     setupXref(adminInstance);
                     removeOldDefault(adminInstance, oldDefault, entity);
                 }
-
                 return helper.getRecord(adminProperties, adminInstance, null, null);
             }
         } catch (Exception e) {
@@ -208,6 +193,45 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         } else {
             throw new ValidationException(persistencePackage.getEntity(), "Unable to delete category - found that this category is primary category for some product(s)");
         }
+    }
+
+    protected Entity validateRecursiveRelationship(final Entity entity) throws ServiceException {
+        try {
+            Long categoryId = Long.parseLong(entity.findProperty(ID_PROPERTY).getValue());
+            Set<Long> ids = this.parentCategoryIds(entity);
+            if (ids.contains(categoryId)) {
+                entity.addValidationError(DEFAULT_PARENT_CATEGORY, "admin.validationRecursiveRelationship");
+            }
+            return entity;
+        } catch (Exception e) {
+            String message = "Unable to execute persistence " + entity.getType()[0];
+            LOG.error(message, e);
+            throw new ServiceException(message, e);
+        }
+    }
+
+    protected Set<Long> parentCategoryIds(final Entity entity) {
+        Set<Long> ids = new HashSet<>();
+        String parentCategoryId = entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue();
+        while (parentCategoryId != null) {
+            long parentId = Long.parseLong(parentCategoryId);
+            ids.add(parentId);
+            Category category = this.categoryDao.readCategoryById(parentId);
+            parentCategoryId = this.parentCategoryId(category);
+        }
+        return ids;
+    }
+
+    protected String parentCategoryId(final Category category) {
+        String parentCategoryId = null;
+        Category parentCategory = category.getParentCategory();
+        if (parentCategory != null) {
+            Long originalId = this.sandBoxHelper.getOriginalId(parentCategory);
+            parentCategoryId = String.valueOf(
+                    originalId != null ? originalId : parentCategory.getId()
+            );
+        }
+        return parentCategoryId;
     }
 
     private void checkIfHasSubCategories(PersistencePackage persistencePackage, String id) throws ValidationException {
@@ -234,9 +258,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             Field defaultCategory = CategoryImpl.class.getDeclaredField(DEFAULT_PARENT_CATEGORY);
             defaultCategory.setAccessible(true);
             parentCategory = (Category) defaultCategory.get(category);
-        } catch (NoSuchFieldException e) {
-            throw ExceptionHelper.refineException(e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw ExceptionHelper.refineException(e);
         }
         return parentCategory;
