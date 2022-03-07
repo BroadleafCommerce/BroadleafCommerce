@@ -383,8 +383,9 @@
                 // If the original value is not set, this is likely being populated for the first time.
                 // In this case, we set the original value to the new value.
                 if ($ruleBuilderContainer.attr('data-orig-val') === undefined) {
-                    $ruleBuilderContainer.attr('data-orig-val', JSON.stringify(newVal));
-                    origVal = newVal;
+                    var value = JSON.stringify(newVal);
+                    $ruleBuilderContainer.attr('data-orig-val', value);
+                    origVal = value;
                 }
 
                 // Convert the new value to a JSON object
