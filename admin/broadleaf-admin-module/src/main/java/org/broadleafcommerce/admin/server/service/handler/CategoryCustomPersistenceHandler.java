@@ -142,7 +142,6 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
                     setupXref(adminInstance);
                 }
                 adminInstance = dynamicEntityDao.merge(adminInstance);
-
                 return helper.getRecord(adminProperties, adminInstance, null, null);
             }
         } catch (Exception e) {
@@ -162,7 +161,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
                 Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
                 Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
                 Category adminInstance = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-                CategoryXref oldDefault = getCurrentDefaultXref(adminInstance);
+                CategoryXref oldDefault = this.getCurrentDefaultXref(adminInstance);
                 adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
                 adminInstance = dynamicEntityDao.merge(adminInstance);
                 boolean handled = false;
@@ -269,7 +268,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             if (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null && StringUtils.isEmpty(entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue())) {
                 adminInstance.setParentCategory(null);
             }
-            CategoryXref newDefault = getCurrentDefaultXref(adminInstance);
+            CategoryXref newDefault = this.getCurrentDefaultXref(adminInstance);
             if (oldDefault != null && !oldDefault.equals(newDefault)) {
                 adminInstance.getAllParentCategoryXrefs().remove(oldDefault);
             }
