@@ -1145,7 +1145,7 @@ var BLCAdmin = (function($) {
             var serializedForm = $form.serializeArray();
             $disabledFields.attr('disabled', true);
 
-            return serializedForm.filter(field => field.name !== 'id');
+            return serializedForm.filter(notIdFilterFunction);
         },
 
         /**
@@ -1421,6 +1421,11 @@ function finalPageLoadIfReady() {
     if (BLC.readyEventTriggered && BLC.loadEventTriggered) {
         $(document).trigger("finalPageLoadEvent");
     }
+};
+
+
+function notIdFilterFunction(element, index, array){
+    return element.name !== 'id';
 };
 
 // primary entity buttons should be disabled until page is loaded
