@@ -73,7 +73,13 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 				if($.support.touch){
 					mCSB_container.addClass("mCS_touch");
 				}
-				mCSB_container.after("<div class='mCSB_scrollTools' style='position:absolute;'><div class='mCSB_draggerContainer'><div class='mCSB_dragger' style='position:absolute;' oncontextmenu='return false;'><div class='mCSB_dragger_bar' style='position:relative;'></div></div><div class='mCSB_draggerRail'></div></div></div>");
+				$(mCSB_container).contextmenu(function() {
+					return false;
+				});
+				$(mCSB_scrollTools).contextmenu(function() {
+					return false;
+				});
+				mCSB_container.after("<div class='mCSB_scrollTools' style='position:absolute;'><div class='mCSB_draggerContainer'><div class='mCSB_dragger' style='position:absolute;'><div class='mCSB_dragger_bar' style='position:relative;'></div></div><div class='mCSB_draggerRail'></div></div></div>");
 				var mCSB_scrollTools=mCustomScrollBox.children(".mCSB_scrollTools"),
 					mCSB_draggerContainer=mCSB_scrollTools.children(".mCSB_draggerContainer"),
 					mCSB_dragger=mCSB_draggerContainer.children(".mCSB_dragger");
@@ -84,9 +90,9 @@ plugin home: http://manos.malihu.gr/jquery-custom-content-scroller
 				}
 				if(options.scrollButtons.enable){
 					if(options.horizontalScroll){
-						mCSB_scrollTools.prepend("<a class='mCSB_buttonLeft' oncontextmenu='return false;'></a>").append("<a class='mCSB_buttonRight' oncontextmenu='return false;'></a>");
+						mCSB_scrollTools.prepend("<a class='mCSB_buttonLeft' ></a>").append("<a class='mCSB_buttonRight' ></a>");
 					}else{
-						mCSB_scrollTools.prepend("<a class='mCSB_buttonUp' oncontextmenu='return false;'></a>").append("<a class='mCSB_buttonDown' oncontextmenu='return false;'></a>");
+						mCSB_scrollTools.prepend("<a class='mCSB_buttonUp' ></a>").append("<a class='mCSB_buttonDown' ></a>");
 					}
 				}
 				/*mCustomScrollBox scrollTop and scrollLeft is always 0 to prevent browser focus scrolling*/
