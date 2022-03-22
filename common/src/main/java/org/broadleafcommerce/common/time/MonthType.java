@@ -34,18 +34,18 @@ public class MonthType implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, MonthType> TYPES = new LinkedHashMap<String, MonthType>();
 
-    public static final MonthType JANUARY  = new MonthType("1", "January");
-    public static final MonthType FEBRUARY  = new MonthType("2", "February");
-    public static final MonthType MARCH  = new MonthType("3", "March");
-    public static final MonthType APRIL  = new MonthType("4", "April");
-    public static final MonthType MAY  = new MonthType("5", "May");
-    public static final MonthType JUNE  = new MonthType("6", "June");
-    public static final MonthType JULY  = new MonthType("7", "July");
-    public static final MonthType AUGUST  = new MonthType("8", "August");
-    public static final MonthType SEPTEMBER  = new MonthType("9", "September");
-    public static final MonthType OCTOBER  = new MonthType("10", "October");
-    public static final MonthType NOVEMBER  = new MonthType("11", "November");
-    public static final MonthType DECEMBER  = new MonthType("12", "December");
+    public static final MonthType JANUARY  = new MonthType("0", "January");
+    public static final MonthType FEBRUARY  = new MonthType("1", "February");
+    public static final MonthType MARCH  = new MonthType("2", "March");
+    public static final MonthType APRIL  = new MonthType("3", "April");
+    public static final MonthType MAY  = new MonthType("4", "May");
+    public static final MonthType JUNE  = new MonthType("5", "June");
+    public static final MonthType JULY  = new MonthType("6", "July");
+    public static final MonthType AUGUST  = new MonthType("7", "August");
+    public static final MonthType SEPTEMBER  = new MonthType("8", "September");
+    public static final MonthType OCTOBER  = new MonthType("9", "October");
+    public static final MonthType NOVEMBER  = new MonthType("10", "November");
+    public static final MonthType DECEMBER  = new MonthType("11", "December");
 
     public static MonthType getInstance(final String type) {
         return TYPES.get(type);
