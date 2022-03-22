@@ -726,13 +726,23 @@ $(document).ready(function() {
                         } else {
                             initAssetGrid($assetGrid);
                         }
-
-                        $('.asset-grid-container').replaceWith($assetGrid);
+                        var $assetGridBodyWrapper = $('.asset-grid-body-wrapper');
+                        if($assetGridBodyWrapper.length) {
+                            $assetGridBodyWrapper.find('.asset-grid-container').replaceWith($assetGrid);
+                        }else{
+                            $('.asset-grid-container').replaceWith($assetGrid);
+                        }
                         $('.asset-listgrid').replaceWith($assetListGrid);
 
-                        $assetGrid.find('.listgrid-container').each(function (index, container) {
-                            BLCAdmin.listGrid.initialize($(container));
-                        });
+                        if($assetGridBodyWrapper.length) {
+                            $assetGridBodyWrapper.find('.asset-grid-container').find('.listgrid-container').each(function (index, container) {
+                                BLCAdmin.listGrid.initialize($(container));
+                            });
+                        }else{
+                            $('.asset-grid-container').find('.listgrid-container').each(function (index, container) {
+                                BLCAdmin.listGrid.initialize($(container));
+                            });
+                        }
                         BLCAdmin.hideCurrentModal();
 
                     } else {
