@@ -169,7 +169,10 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
                 offer.put("priceValidUntil", ISO_8601_FORMAT.format(sku.getActiveEndDate()));
             }
 
-            final Money price = sku.getPriceData().getPrice();
+            Money price = sku.getPriceData().getPrice();
+            if (price == null) {
+                price = product.getPrice();
+            }
             offer.put("price", price.getAmount());
 
             if (price.greaterThan(highPrice)) {
