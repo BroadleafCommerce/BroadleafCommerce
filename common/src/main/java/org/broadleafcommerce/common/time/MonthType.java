@@ -47,7 +47,6 @@ public class MonthType implements Serializable, BroadleafEnumerationType {
     public static final MonthType NOVEMBER  = new MonthType("11", "November");
     public static final MonthType DECEMBER  = new MonthType("12", "December");
 
-
     public static MonthType getInstance(final String type) {
         return TYPES.get(type);
     }

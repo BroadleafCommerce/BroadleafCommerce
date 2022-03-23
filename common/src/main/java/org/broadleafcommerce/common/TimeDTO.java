@@ -100,7 +100,7 @@ public class TimeDTO {
      */
     public MonthType getMonth() {
         if (month == null) {
-            month = cal.get(Calendar.MONTH + 1);
+            month = cal.get(Calendar.MONTH) + 1;
         }
         return MonthType.getInstance(month.toString());
     }
