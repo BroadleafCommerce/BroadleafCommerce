@@ -89,7 +89,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
-    private ConcurrentHashMap<String, BundledResourceInfo> createdBundles = new ConcurrentHashMap<String, BundledResourceInfo>();
+    protected ConcurrentHashMap<String, BundledResourceInfo> createdBundles = new ConcurrentHashMap<String, BundledResourceInfo>();
 
     @Override
     public Resource rebuildBundledResource(String requestedBundleName) {
