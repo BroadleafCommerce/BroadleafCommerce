@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,11 +30,14 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -60,12 +63,11 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = this.validateUpSaleProduct(persistencePackage.getEntity());
         try {
-            Entity entity = this.validateUpSaleProduct(persistencePackage.getEntity());
             if (!entity.isValidationFailure()) {
                 OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
-                entity = helper.getCompatibleModule(updateType)
-                        .add(persistencePackage);
+                entity = helper.getCompatibleModule(updateType).add(persistencePackage);
             }
             return entity;
         } catch (Exception e) {
@@ -107,7 +109,7 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
                 final String productId = relatedSaleProductId.getValue();
                 final Set<Long> ids = this.allProductIds(productId);
                 if (ids.contains(Long.parseLong(productIdProperty.getValue()))) {
-                    entity.addValidationError(RELATED_SALE_PRODUCT_ID, "validationRecursiveRelationship");
+                    entity.getGlobalValidationErrors().add("This linked upSale product cannot be used because it is a recursive relationship");
                 }
             }
             return entity;
