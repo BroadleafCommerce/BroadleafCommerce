@@ -47,9 +47,9 @@
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>4.3.18.RELEASE</spring.version>
-        <spring.security.version>4.2.17.RELEASE</spring.security.version>
-        <spring.boot.version>1.5.15.RELEASE</spring.boot.version>
+        <spring.version>4.3.30.RELEASE</spring.version>
+        <spring.security.version>4.2.20.RELEASE</spring.security.version>
+        <spring.boot.version>1.5.22.RELEASE</spring.boot.version>
         <spring.mobile.version>1.1.5.RELEASE</spring.mobile.version>
         <jackson.version>2.11.3</jackson.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
@@ -64,6 +64,8 @@
         <lombok.version>1.16.22</lombok.version>
         <database.starter.version>1.0.1-GA</database.starter.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
+        <hibernate.version>4.1.12.Final</hibernate.version>
+        <hibernate-validator.version>5.4.3.Final</hibernate-validator.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
@@ -610,20 +612,20 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>4.1.11.Final</version>
+                <version>${hibernate.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>4.1.11.Final</version>
+                <version>${hibernate.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>4.1.11.Final</version>
+                <version>${hibernate.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -640,7 +642,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-ehcache</artifactId>
-                <version>4.1.11.Final</version>
+                <version>${hibernate.version}</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -819,7 +821,7 @@
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity</artifactId>
-                <version>1.6.2</version>
+                <version>1.6.4</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -859,7 +861,7 @@
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.9</version>
+                <version>1.4.19</version>
                 <type>jar</type>
                 <scope>runtime</scope>
             </dependency>
@@ -1000,7 +1002,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>5.3.1</version>
+                <version>5.3.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -1019,7 +1021,7 @@
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>5.3.1</version>
+                <version>5.3.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -1139,7 +1141,7 @@
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
-                <version>3.4.9</version>
+                <version>3.4.14</version>
             </dependency>
 
             <!-- Byte Code Manipulation Libraries -->
@@ -1175,7 +1177,7 @@
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>2.2.0</version>
+                <version>2.2.3</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1575,7 +1577,7 @@
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.5.7</version>
+                <version>1.5.13</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -1587,7 +1589,7 @@
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
-                <version>2.1.0</version>
+                <version>2.1.0.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-fileupload</groupId>
@@ -1617,7 +1619,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.4.1.Final</version>
+                <version>${hibernate-validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
