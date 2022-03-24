@@ -712,6 +712,11 @@ $(document).ready(function() {
                         }
                     });
 
+                    let validationErrors = $(data).find('.fieldError');
+                    if (validationErrors.length !== 0) {
+                        BLCAdmin.showMessageAsModal(BLCAdmin.messages.validationError, validationErrors.text());
+                    }
+
                     var $actions = BLCAdmin.currentModal().find('.entity-form-actions');
                     $actions.find('button').show();
                     $actions.find('img.ajax-loader').hide();

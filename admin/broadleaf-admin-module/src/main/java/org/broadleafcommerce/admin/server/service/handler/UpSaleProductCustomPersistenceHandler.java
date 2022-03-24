@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
@@ -60,16 +61,15 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = this.validateUpSaleProduct(persistencePackage.getEntity());
         try {
-            Entity entity = this.validateUpSaleProduct(persistencePackage.getEntity());
             if (!entity.isValidationFailure()) {
                 OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
-                entity = helper.getCompatibleModule(updateType)
-                        .add(persistencePackage);
+                entity = helper.getCompatibleModule(updateType).add(persistencePackage);
             }
             return entity;
         } catch (Exception e) {
-            LOG.error("Unable to add entity (execute persistence activity) ", e);
+            LOG.error("Unable to add entity (execute persistence activity)");
             throw new ServiceException("Unable to add entity", e);
         }
     }
@@ -80,42 +80,32 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
     }
 
     protected Entity validateSelfLink(final Entity entity) throws ServiceException {
-        try {
-            Property productIdProperty = entity.findProperty(PRODUCT_ID);
-            Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
-            if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
-                    && productIdProperty != null) {
-                String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
-                String productId = productIdProperty.getValue();
-                if (relatedSaleProductId.equals(productId)) {
-                    entity.addValidationError(RELATED_SALE_PRODUCT_ID, "validateSelfLink");
-                }
+        Property productIdProperty = entity.findProperty(PRODUCT_ID);
+        Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
+        if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
+                && productIdProperty != null) {
+            String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
+            String productId = productIdProperty.getValue();
+            if (relatedSaleProductId.equals(productId)) {
+                entity.addGlobalValidationError("validateSelfLink");
+                throw new ValidationException(entity);
             }
-            return entity;
-        } catch (Exception e) {
-            String message = "Unable to execute persistence " + entity.getType()[0];
-            LOG.error(message, e);
-            throw new ServiceException(message, e);
         }
+        return entity;
     }
 
     protected Entity validateRecursiveRelationship(final Entity entity) throws ServiceException {
-        try {
-            final Property productIdProperty = entity.findProperty(PRODUCT_ID);
-            final Property relatedSaleProductId = entity.findProperty(RELATED_SALE_PRODUCT_ID);
-            if (relatedSaleProductId != null && relatedSaleProductId.getValue() != null && productIdProperty != null) {
-                final String productId = relatedSaleProductId.getValue();
-                final Set<Long> ids = this.allProductIds(productId);
-                if (ids.contains(Long.parseLong(productIdProperty.getValue()))) {
-                    entity.addValidationError(RELATED_SALE_PRODUCT_ID, "validationRecursiveRelationship");
-                }
+        final Property productIdProperty = entity.findProperty(PRODUCT_ID);
+        final Property relatedSaleProductId = entity.findProperty(RELATED_SALE_PRODUCT_ID);
+        if (relatedSaleProductId != null && relatedSaleProductId.getValue() != null && productIdProperty != null) {
+            final String productId = relatedSaleProductId.getValue();
+            final Set<Long> ids = this.allProductIds(productId);
+            if (ids.contains(Long.parseLong(productIdProperty.getValue()))) {
+                entity.addGlobalValidationError("validationRecursiveRelationship");
+                throw new ValidationException(entity);
             }
-            return entity;
-        } catch (Exception e) {
-            String message = "Unable to execute persistence " + entity.getType()[0];
-            LOG.error(message, e);
-            throw new ServiceException(message, e);
         }
+        return entity;
     }
 
     protected Set<Long> allProductIds(final String productId) {
