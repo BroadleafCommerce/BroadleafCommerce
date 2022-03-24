@@ -712,7 +712,7 @@ $(document).ready(function() {
                         }
                     });
 
-                    let validationErrors = $(data).find('.fieldError');
+                    var validationErrors = $(data).find('.fieldError');
                     if (validationErrors.length !== 0) {
                         BLCAdmin.showMessageAsModal(BLCAdmin.messages.validationError, validationErrors.text());
                     }
