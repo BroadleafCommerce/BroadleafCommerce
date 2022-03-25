@@ -45,6 +45,7 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
     private static final String VALIDATION_RECURSIVE_RELATIONSHIP = "This linked upSale product cannot be used because it causes a recursive relationship with another product: ";
     protected static final String PRODUCT_ID = "product.id";
     protected static final String RELATED_SALE_PRODUCT_ID = "relatedSaleProduct.id";
+    protected static final String PRODUCTS_SEPARATOR = " -> ";
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -97,23 +98,35 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
             final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
             final String productId = productIdProperty.getValue();
             final Product relatedProduct = this.catalogService.findProductById(Long.parseLong(relatedSaleProductId));
-            this.validateUpSaleProducts(entity, relatedProduct, Long.parseLong(productId));
+            final Product product = this.catalogService.findProductById(Long.parseLong(productId));
+            final StringBuilder productLinks = new StringBuilder();
+            this.addProductLink(productLinks, product.getName());
+            this.addProductLink(productLinks, relatedProduct.getName());
+            this.validateUpSaleProducts(entity, relatedProduct, Long.parseLong(productId), productLinks);
         }
     }
 
-    protected void validateUpSaleProducts(final Entity entity, final Product product, final Long id) throws ValidationException {
+    protected void validateUpSaleProducts(final Entity entity, final Product product, final Long id,
+                                          final StringBuilder productLinks) throws ValidationException {
         if (product != null) {
             for (RelatedProduct upSaleProduct : product.getUpSaleProducts()) {
                 final Product relatedProduct = upSaleProduct.getRelatedProduct();
                 if (relatedProduct != null) {
+                    this.addProductLink(productLinks, relatedProduct.getName());
                     if (relatedProduct.getId().equals(id)) {
-                        entity.addGlobalValidationError(VALIDATION_RECURSIVE_RELATIONSHIP + product.getName());
+                        productLinks.delete(productLinks.lastIndexOf(PRODUCTS_SEPARATOR), productLinks.length());
+                        entity.addGlobalValidationError(VALIDATION_RECURSIVE_RELATIONSHIP + productLinks);
                         throw new ValidationException(entity);
                     }
-                    this.validateUpSaleProducts(entity, relatedProduct, id);
+                    this.validateUpSaleProducts(entity, relatedProduct, id, productLinks);
                 }
             }
         }
+    }
+
+    protected void addProductLink(final StringBuilder productLinks, final String productName) {
+        productLinks.append(productName);
+        productLinks.append(PRODUCTS_SEPARATOR);
     }
 
 }
