@@ -35,15 +35,14 @@ import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.annotation.Resource;
 
 @Component("blUpSaleProductCustomPersistenceHandler")
 public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(UpSaleProductCustomPersistenceHandler.class);
+    private static final String VALIDATION_SELF_LINK = "Do not add self link";
+    private static final String VALIDATION_RECURSIVE_RELATIONSHIP = "This linked upSale product cannot be used because it causes a recursive relationship with another product: ";
     protected static final String PRODUCT_ID = "product.id";
     protected static final String RELATED_SALE_PRODUCT_ID = "relatedSaleProduct.id";
 
@@ -61,76 +60,60 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity = this.validateUpSaleProduct(persistencePackage.getEntity());
+        this.validateUpSaleProduct(persistencePackage.getEntity());
         try {
-            if (!entity.isValidationFailure()) {
-                OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
-                entity = helper.getCompatibleModule(updateType).add(persistencePackage);
-            }
-            return entity;
+            OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
+            return helper.getCompatibleModule(updateType).add(persistencePackage);
         } catch (Exception e) {
             LOG.error("Unable to add entity (execute persistence activity)");
             throw new ServiceException("Unable to add entity", e);
         }
     }
 
-    protected Entity validateUpSaleProduct(final Entity entity) throws ServiceException {
-        final Entity entityAfterValidateSelfLink = this.validateSelfLink(entity);
-        return this.validateRecursiveRelationship(entityAfterValidateSelfLink);
+    protected void validateUpSaleProduct(final Entity entity) throws ValidationException {
+        this.validateSelfLink(entity);
+        this.validateRecursiveRelationship(entity);
     }
 
-    protected Entity validateSelfLink(final Entity entity) throws ServiceException {
-        Property productIdProperty = entity.findProperty(PRODUCT_ID);
-        Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
+    protected void validateSelfLink(final Entity entity) throws ValidationException {
+        final Property productIdProperty = entity.findProperty(PRODUCT_ID);
+        final Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
         if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
                 && productIdProperty != null) {
-            String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
-            String productId = productIdProperty.getValue();
+            final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
+            final String productId = productIdProperty.getValue();
             if (relatedSaleProductId.equals(productId)) {
-                entity.addGlobalValidationError("validateSelfLink");
+                entity.addGlobalValidationError(VALIDATION_SELF_LINK);
                 throw new ValidationException(entity);
             }
         }
-        return entity;
     }
 
-    protected Entity validateRecursiveRelationship(final Entity entity) throws ServiceException {
+    protected void validateRecursiveRelationship(final Entity entity) throws ValidationException {
         final Property productIdProperty = entity.findProperty(PRODUCT_ID);
-        final Property relatedSaleProductId = entity.findProperty(RELATED_SALE_PRODUCT_ID);
-        if (relatedSaleProductId != null && relatedSaleProductId.getValue() != null && productIdProperty != null) {
-            final String productId = relatedSaleProductId.getValue();
-            final Set<Long> ids = this.allProductIds(productId);
-            if (ids.contains(Long.parseLong(productIdProperty.getValue()))) {
-                entity.addGlobalValidationError("validationRecursiveRelationship");
-                throw new ValidationException(entity);
-            }
+        final Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
+        if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
+                && productIdProperty != null && productIdProperty.getValue() != null) {
+            final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
+            final String productId = productIdProperty.getValue();
+            final Product relatedProduct = this.catalogService.findProductById(Long.parseLong(relatedSaleProductId));
+            this.validateUpSaleProducts(entity, relatedProduct, Long.parseLong(productId));
         }
-        return entity;
     }
 
-    protected Set<Long> allProductIds(final String productId) {
-        final Set<Long> ids = new HashSet<>();
-        if (productId != null) {
-            final Product product = this.catalogService.findProductById(Long.parseLong(productId));
-            if (product != null) {
-                ids.addAll(this.upSaleProductIds(product, new HashSet<>()));
+    protected void validateUpSaleProducts(final Entity entity, final Product product, final Long id) throws ValidationException {
+        if (product != null) {
+            for (RelatedProduct upSaleProduct : product.getUpSaleProducts()) {
+                final Product relatedProduct = upSaleProduct.getRelatedProduct();
+                if (relatedProduct != null) {
+                    if (relatedProduct.getId().equals(id)) {
+                        entity.addGlobalValidationError(VALIDATION_RECURSIVE_RELATIONSHIP + product.getName());
+                        throw new ValidationException(entity);
+                    }
+                    this.validateUpSaleProducts(entity, relatedProduct, id);
+                }
             }
         }
-        return ids;
-    }
-
-    protected Set<Long> upSaleProductIds(final Product upSaleProduct, final Set<Long> ids) {
-        final Long upSaleProductId = upSaleProduct.getId();
-        final Product originProduct = this.catalogService.findProductById(upSaleProductId);
-        for (RelatedProduct relatedProduct : originProduct.getUpSaleProducts()) {
-            final Product product = relatedProduct.getRelatedProduct();
-            if (product != null && !ids.contains(product.getId())) {
-                ids.add(product.getId());
-                final Set<Long> longs = this.upSaleProductIds(product, ids);
-                ids.addAll(longs);
-            }
-        }
-        return ids;
     }
 
 }
