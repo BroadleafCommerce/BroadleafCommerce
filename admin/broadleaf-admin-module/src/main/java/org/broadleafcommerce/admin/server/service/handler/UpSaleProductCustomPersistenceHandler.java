@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.UpSaleProduct;
@@ -41,8 +42,6 @@ import javax.annotation.Resource;
 public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(UpSaleProductCustomPersistenceHandler.class);
-    private static final String VALIDATION_SELF_LINK = "Do not add self link";
-    private static final String VALIDATION_RECURSIVE_RELATIONSHIP = "This linked upSale product cannot be used because it causes a recursive relationship with another product: ";
     protected static final String PRODUCT_ID = "product.id";
     protected static final String RELATED_SALE_PRODUCT_ID = "relatedSaleProduct.id";
     protected static final String PRODUCTS_SEPARATOR = " -> ";
@@ -84,7 +83,7 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
             final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
             final String productId = productIdProperty.getValue();
             if (relatedSaleProductId.equals(productId)) {
-                entity.addGlobalValidationError(VALIDATION_SELF_LINK);
+                entity.addGlobalValidationError("validateSelfLink");
                 throw new ValidationException(entity);
             }
         }
@@ -115,7 +114,10 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
                     this.addProductLink(productLinks, relatedProduct.getName());
                     if (relatedProduct.getId().equals(id)) {
                         productLinks.delete(productLinks.lastIndexOf(PRODUCTS_SEPARATOR), productLinks.length());
-                        entity.addGlobalValidationError(VALIDATION_RECURSIVE_RELATIONSHIP + productLinks);
+                        final String errorMessage = BLCMessageUtils.getMessage(
+                                "validationRecursiveRelationship", productLinks
+                        );
+                        entity.addGlobalValidationError(errorMessage);
                         throw new ValidationException(entity);
                     }
                     this.validateUpSaleProducts(entity, relatedProduct, id, productLinks);
