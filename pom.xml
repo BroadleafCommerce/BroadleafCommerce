@@ -53,9 +53,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.9.0</ehcache3.version>
-        <spring.version>5.3.15</spring.version>
+        <spring.version>5.3.18</spring.version>
         <spring.security.version>5.4.10</spring.security.version>
-        <spring.boot.version>2.4.13</spring.boot.version>
+        <spring.boot.version>2.5.12</spring.boot.version>
         <spring.mobile.version>2.0.0.M3</spring.mobile.version>
         <jackson.version>2.11.4</jackson.version>
         <lombok.version>1.18.22</lombok.version>
