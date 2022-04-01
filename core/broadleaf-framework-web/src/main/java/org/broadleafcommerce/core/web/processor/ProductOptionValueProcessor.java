@@ -18,6 +18,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -58,8 +59,8 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
         ProductOptionValueDTO dto = new ProductOptionValueDTO();
         dto.setOptionId(productOptionValue.getProductOption().getId());
         dto.setValueId(productOptionValue.getId());
-        dto.setValueName(productOptionValue.getAttributeValue());
-        dto.setRawValue(productOptionValue.getRawAttributeValue());
+        dto.setValueName(StringEscapeUtils.escapeXml(productOptionValue.getAttributeValue()));
+        dto.setRawValue(StringEscapeUtils.escapeXml(productOptionValue.getRawAttributeValue()));
         if (productOptionValue.getPriceAdjustment() != null) {
             dto.setPriceAdjustment(productOptionValue.getPriceAdjustment().getAmount());
         }
