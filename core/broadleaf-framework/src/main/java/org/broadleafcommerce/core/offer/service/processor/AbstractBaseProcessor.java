@@ -47,19 +47,10 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * 
@@ -76,6 +67,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager extensionManager;
+
+    @Value("${exploitProtection.xssEnabled:false}")
+    protected boolean xssExploitProtectionEnabled;
 
     protected final PromotableOfferUtility promotableOfferUtility;
 
@@ -269,7 +263,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 extensionManager.applyAdditionalRuleVariablesForItemOfferEvaluation(orderItem, vars);
             }
 
-            Boolean expressionOutcome = executeExpression(criteria.getMatchRule(), vars);
+            Boolean expressionOutcome = executeExpression(escapeSpecialCharacters(criteria.getMatchRule()), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
             }
@@ -278,6 +272,18 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
 
         return appliesToItem;
+    }
+
+    protected String escapeSpecialCharacters(String s) {
+        if (xssExploitProtectionEnabled) {
+            Map<String, String> stringMapping = new HashMap<>();
+            stringMapping.put("&", "&amp;");
+
+            for (Map.Entry<String, String> entry : stringMapping.entrySet()) {
+                s = s.replace(entry.getKey(), entry.getValue());
+            }
+        }
+        return s;
     }
     
     /**
