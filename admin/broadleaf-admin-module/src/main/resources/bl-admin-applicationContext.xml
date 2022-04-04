@@ -53,6 +53,7 @@
                 <ref bean="blCustomerCustomPersistenceHandler" />
                 <ref bean="blCustomerPaymentCustomPersistenceHandler"/>
                 <ref bean="blProductCustomPersistenceHandler" />
+                <ref bean="blUpSaleProductCustomPersistenceHandler" />
                 <ref bean="blCrossSaleProductCustomPersistenceHandler" />
                 <ref bean="blChildCategoriesCustomPersistenceHandler" />
                 <ref bean="blSkuCustomPersistenceHandler" />
