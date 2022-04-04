@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -21,22 +21,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.catalog.domain.CrossSaleProduct;
 import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -46,12 +44,13 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
     private static final Log LOG = LogFactory.getLog(CrossSaleProductCustomPersistenceHandler.class);
     protected static final String PRODUCT_ID = "product.id";
     protected static final String RELATED_SALE_PRODUCT_ID = "relatedSaleProduct.id";
+    protected static final String PRODUCTS_SEPARATOR = " -> ";
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     public CrossSaleProductCustomPersistenceHandler() {
-        super(CrossSaleProduct.class, CrossSaleProductImpl.class, Product.class, ProductImpl.class);
+        super(CrossSaleProduct.class, CrossSaleProductImpl.class);
     }
 
     @Override
@@ -61,87 +60,75 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        this.validateCrossSaleProduct(persistencePackage.getEntity());
         try {
-            Entity entity = this.validateCrossSaleProduct(persistencePackage.getEntity());
-            if (!entity.isValidationFailure()) {
-                OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
-                entity = helper.getCompatibleModule(updateType)
-                        .add(persistencePackage);
-            }
-            return entity;
+            OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
+            return helper.getCompatibleModule(updateType).add(persistencePackage);
         } catch (Exception e) {
             LOG.error("Unable to add entity (execute persistence activity) ", e);
             throw new ServiceException("Unable to add entity", e);
         }
     }
 
-    protected Entity validateCrossSaleProduct(final Entity entity) throws ServiceException {
-        final Entity entityAfterValidateSelfLink = this.validateSelfLink(entity);
-        return this.validateRecursiveRelationship(entityAfterValidateSelfLink);
+    protected void validateCrossSaleProduct(final Entity entity) throws ValidationException {
+        this.validateSelfLink(entity);
+        this.validateRecursiveRelationship(entity);
     }
 
-    protected Entity validateSelfLink(final Entity entity) throws ServiceException {
-        try {
-            Property productIdProperty = entity.findProperty(PRODUCT_ID);
-            Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
-            if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
-                    && productIdProperty != null) {
-                String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
-                String productId = productIdProperty.getValue();
-                if (relatedSaleProductId.equals(productId)) {
-                    entity.addValidationError(RELATED_SALE_PRODUCT_ID, "validateSelfLink");
-                }
+    protected void validateSelfLink(final Entity entity) throws ValidationException {
+        final Property productIdProperty = entity.findProperty(PRODUCT_ID);
+        final Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
+        if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
+                && productIdProperty != null) {
+            final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
+            final String productId = productIdProperty.getValue();
+            if (relatedSaleProductId.equals(productId)) {
+                entity.addGlobalValidationError("validateSelfLink");
+                throw new ValidationException(entity);
             }
-            return entity;
-        } catch (Exception e) {
-            String message = "Unable to execute persistence " + entity.getType()[0];
-            LOG.error(message, e);
-            throw new ServiceException(message, e);
         }
     }
 
-    protected Entity validateRecursiveRelationship(final Entity entity) throws ServiceException {
-        try {
-            final Property productIdProperty = entity.findProperty(PRODUCT_ID);
-            final Property relatedSaleProductId = entity.findProperty(RELATED_SALE_PRODUCT_ID);
-            if (relatedSaleProductId != null && relatedSaleProductId.getValue() != null && productIdProperty != null) {
-                final String productId = relatedSaleProductId.getValue();
-                final Set<Long> ids = this.allProductIds(productId);
-                if (ids.contains(Long.parseLong(productIdProperty.getValue()))) {
-                    entity.addValidationError(RELATED_SALE_PRODUCT_ID, "validationRecursiveRelationship");
-                }
-            }
-            return entity;
-        } catch (Exception e) {
-            String message = "Unable to execute persistence " + entity.getType()[0];
-            LOG.error(message, e);
-            throw new ServiceException(message, e);
-        }
-    }
-
-    protected Set<Long> allProductIds(final String productId) {
-        final Set<Long> ids = new HashSet<>();
-        if (productId != null) {
+    protected void validateRecursiveRelationship(final Entity entity) throws ValidationException {
+        final Property productIdProperty = entity.findProperty(PRODUCT_ID);
+        final Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
+        if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
+                && productIdProperty != null && productIdProperty.getValue() != null) {
+            final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
+            final String productId = productIdProperty.getValue();
+            final Product relatedProduct = this.catalogService.findProductById(Long.parseLong(relatedSaleProductId));
             final Product product = this.catalogService.findProductById(Long.parseLong(productId));
-            if (product != null) {
-                ids.addAll(this.crossSaleProductIds(product, new HashSet<>()));
-            }
+            final StringBuilder productLinks = new StringBuilder();
+            this.addProductLink(productLinks, product.getName());
+            this.addProductLink(productLinks, relatedProduct.getName());
+            this.validateCrossSaleProducts(entity, relatedProduct, Long.parseLong(productId), productLinks);
         }
-        return ids;
     }
 
-    protected Set<Long> crossSaleProductIds(final Product crossSaleProduct, final Set<Long> ids) {
-        final Long crossSaleProductId = crossSaleProduct.getId();
-        final Product originProduct = this.catalogService.findProductById(crossSaleProductId);
-        for (RelatedProduct relatedProduct : originProduct.getCrossSaleProducts()) {
-            final Product product = relatedProduct.getRelatedProduct();
-            if (product != null && !ids.contains(product.getId())) {
-                ids.add(product.getId());
-                final Set<Long> longs = this.crossSaleProductIds(product, ids);
-                ids.addAll(longs);
+    protected void validateCrossSaleProducts(final Entity entity, final Product product, final Long id,
+                                             final StringBuilder productLinks) throws ValidationException {
+        if (product != null) {
+            for (RelatedProduct upSaleProduct : product.getUpSaleProducts()) {
+                final Product relatedProduct = upSaleProduct.getRelatedProduct();
+                if (relatedProduct != null) {
+                    this.addProductLink(productLinks, relatedProduct.getName());
+                    if (relatedProduct.getId().equals(id)) {
+                        productLinks.delete(productLinks.lastIndexOf(PRODUCTS_SEPARATOR), productLinks.length());
+                        final String errorMessage = BLCMessageUtils.getMessage(
+                                "crossSaleProductValidationRecursiveRelationship", productLinks
+                        );
+                        entity.addGlobalValidationError(errorMessage);
+                        throw new ValidationException(entity);
+                    }
+                    this.validateCrossSaleProducts(entity, relatedProduct, id, productLinks);
+                }
             }
         }
-        return ids;
+    }
+
+    protected void addProductLink(final StringBuilder productLinks, final String productName) {
+        productLinks.append(productName);
+        productLinks.append(PRODUCTS_SEPARATOR);
     }
 
 }

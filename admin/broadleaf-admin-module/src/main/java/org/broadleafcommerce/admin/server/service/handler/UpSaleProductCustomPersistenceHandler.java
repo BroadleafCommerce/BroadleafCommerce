@@ -115,7 +115,7 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
                     if (relatedProduct.getId().equals(id)) {
                         productLinks.delete(productLinks.lastIndexOf(PRODUCTS_SEPARATOR), productLinks.length());
                         final String errorMessage = BLCMessageUtils.getMessage(
-                                "validationRecursiveRelationship", productLinks
+                                "upSaleProductValidationRecursiveRelationship", productLinks
                         );
                         entity.addGlobalValidationError(errorMessage);
                         throw new ValidationException(entity);
