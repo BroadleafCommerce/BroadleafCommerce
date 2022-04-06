@@ -83,7 +83,7 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
             final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
             final String productId = productIdProperty.getValue();
             if (relatedSaleProductId.equals(productId)) {
-                entity.addGlobalValidationError("validateSelfLink");
+                entity.addGlobalValidationError("validateProductSelfLink");
                 throw new ValidationException(entity);
             }
         }
@@ -111,16 +111,17 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
             for (RelatedProduct upSaleProduct : product.getUpSaleProducts()) {
                 final Product relatedProduct = upSaleProduct.getRelatedProduct();
                 if (relatedProduct != null) {
-                    this.addProductLink(productLinks, relatedProduct.getName());
+                    final StringBuilder newProductLinks = new StringBuilder(productLinks);
+                    this.addProductLink(newProductLinks, relatedProduct.getName());
                     if (relatedProduct.getId().equals(id)) {
-                        productLinks.delete(productLinks.lastIndexOf(PRODUCTS_SEPARATOR), productLinks.length());
+                        newProductLinks.delete(newProductLinks.lastIndexOf(PRODUCTS_SEPARATOR), newProductLinks.length());
                         final String errorMessage = BLCMessageUtils.getMessage(
-                                "crossSaleProductValidationRecursiveRelationship", productLinks
+                                "validateProductRecursiveRelationship", newProductLinks
                         );
                         entity.addGlobalValidationError(errorMessage);
                         throw new ValidationException(entity);
                     }
-                    this.validateCrossSaleProducts(entity, relatedProduct, id, productLinks);
+                    this.validateCrossSaleProducts(entity, relatedProduct, id, newProductLinks);
                 }
             }
         }
