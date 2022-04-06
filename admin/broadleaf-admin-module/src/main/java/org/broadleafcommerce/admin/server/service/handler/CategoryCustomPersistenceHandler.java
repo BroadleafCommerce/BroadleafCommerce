@@ -200,7 +200,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             final String categoryId = categoryIdProperty.getValue();
             final String parentCategoryId = parentCategoryIdProperty.getValue();
             if (categoryId.equals(parentCategoryId)) {
-                entity.addValidationError(DEFAULT_PARENT_CATEGORY, "validateSelfLink");
+                entity.addValidationError(DEFAULT_PARENT_CATEGORY, "validateCategorySelfLink");
                 throw new ValidationException(entity);
             }
         }
@@ -232,7 +232,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
                 if (id.equals(parentCategory.getId()) || id.equals(originalId)) {
                     categoryLinks.delete(categoryLinks.lastIndexOf(CATEGORY_SEPARATOR), categoryLinks.length());
                     final String errorMessage = BLCMessageUtils.getMessage(
-                            "categoryValidationRecursiveRelationship", categoryLinks
+                            "validateCategoryRecursiveRelationship", categoryLinks
                     );
                     entity.addValidationError(DEFAULT_PARENT_CATEGORY, errorMessage);
                     throw new ValidationException(entity);

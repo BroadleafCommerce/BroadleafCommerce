@@ -89,7 +89,7 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
             final String categoryId = categoryIdProperty.getValue();
             final String subCategoryId = subCategoryIdProperty.getValue();
             if (categoryId.equals(subCategoryId)) {
-                entity.addGlobalValidationError("validateSelfLink");
+                entity.addGlobalValidationError("validateCategorySelfLink");
                 throw new ValidationException(entity);
             }
         }
@@ -108,7 +108,7 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
                     .map(categoryXref -> categoryXref.getSubCategory().getId())
                     .collect(Collectors.toList());
             if (childCategoryIds.contains(subCategory.getId())) {
-                entity.addGlobalValidationError("childCategoryValidationDuplicateChild");
+                entity.addGlobalValidationError("validateCategoryDuplicateChild");
                 throw new ValidationException(entity);
             }
         }
@@ -142,7 +142,7 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
                     if (id.equals(subCategory.getId()) || id.equals(originalId)) {
                         newCategoryLinks.delete(newCategoryLinks.lastIndexOf(CATEGORY_SEPARATOR), newCategoryLinks.length());
                         final String errorMessage = BLCMessageUtils.getMessage(
-                                "childCategoryValidationRecursiveRelationship", newCategoryLinks
+                                "validateCategoryRecursiveRelationship", newCategoryLinks
                         );
                         entity.addGlobalValidationError(errorMessage);
                         throw new ValidationException(entity);
