@@ -136,17 +136,18 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
             for (CategoryXref categoryXref : category.getChildCategoryXrefs()) {
                 final Category subCategory = categoryXref.getSubCategory();
                 if (subCategory != null) {
-                    this.addCategoryLink(categoryLinks, subCategory.getName());
+                    final StringBuilder newCategoryLinks = new StringBuilder(categoryLinks);
+                    this.addCategoryLink(newCategoryLinks, subCategory.getName());
                     Long originalId = this.sandBoxHelper.getOriginalId(subCategory);
                     if (id.equals(subCategory.getId()) || id.equals(originalId)) {
-                        categoryLinks.delete(categoryLinks.lastIndexOf(CATEGORY_SEPARATOR), categoryLinks.length());
+                        newCategoryLinks.delete(newCategoryLinks.lastIndexOf(CATEGORY_SEPARATOR), newCategoryLinks.length());
                         final String errorMessage = BLCMessageUtils.getMessage(
-                                "childCategoryValidationRecursiveRelationship", categoryLinks
+                                "childCategoryValidationRecursiveRelationship", newCategoryLinks
                         );
                         entity.addGlobalValidationError(errorMessage);
                         throw new ValidationException(entity);
                     }
-                    this.validateChildCategories(entity, subCategory, id, categoryLinks);
+                    this.validateChildCategories(entity, subCategory, id, newCategoryLinks);
                 }
             }
         }
