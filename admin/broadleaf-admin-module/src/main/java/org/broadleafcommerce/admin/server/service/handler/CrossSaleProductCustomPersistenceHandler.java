@@ -108,8 +108,8 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
     protected void validateCrossSaleProducts(final Entity entity, final Product product, final Long id,
                                              final StringBuilder productLinks) throws ValidationException {
         if (product != null) {
-            for (RelatedProduct upSaleProduct : product.getUpSaleProducts()) {
-                final Product relatedProduct = upSaleProduct.getRelatedProduct();
+            for (RelatedProduct crossSaleProduct : product.getCrossSaleProducts()) {
+                final Product relatedProduct = crossSaleProduct.getRelatedProduct();
                 if (relatedProduct != null) {
                     final StringBuilder newProductLinks = new StringBuilder(productLinks);
                     this.addProductLink(newProductLinks, relatedProduct.getName());
