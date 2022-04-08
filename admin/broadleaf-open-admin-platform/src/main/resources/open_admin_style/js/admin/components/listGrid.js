@@ -709,12 +709,21 @@ $('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fie
     if (typeof BLCAdmin.currentModal() !== undefined && BLCAdmin.currentModal() != null) {
         $adornedTargetId = BLCAdmin.currentModal().find('input#adornedTargetIdProperty');
     }
-    if ($adornedTargetId.val() == fields['id']) {
+    //who says that this can't be id clash from different entities, so we want to check that we've selected via mouse click
+    // and not pre-loaded from server
+    var attr = $adornedTargetId.attr('wasSetFromUserClick');
+    if ($adornedTargetId.val() == fields['id'] && (attr !== undefined && attr=='true')) {
         $adornedTargetId.val('');
     } else {
         //if the adornedTargetId value is not set (we are picking a new add value), set it to the field['id] value
         // otherwise leave it alone as it should already have the correct value
         if ($adornedTargetId.val() !== undefined && $adornedTargetId.val().length == 0) {
+            $adornedTargetId.val(fields['id']);
+            $adornedTargetId.attr('wasSetFromUserClick','true');
+        //this is protection from adorned list in adorned list, https://github.com/BroadleafCommerce/QA/issues/4434
+        // and https://github.com/BroadleafCommerce/QA/issues/4671, allow to change value if it was set via this script
+        // and not pre-loaded from server - this means that this property "belongs" to parent and we should not change it
+        }else if($adornedTargetId.val() !== undefined && $adornedTargetId.val().length > 0 && (attr !== undefined && attr=='true')){
             $adornedTargetId.val(fields['id']);
         }
     }

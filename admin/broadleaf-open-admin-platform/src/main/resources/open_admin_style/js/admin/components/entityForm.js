@@ -674,6 +674,11 @@ $(document).ready(function() {
                     var isAdornedModal = false;
                     if ($adornedTargetIdProperty[0]) {
                         $adornedTargetIdProperty.val($form.find('input#adornedTargetIdProperty').val());
+                        var attr = $form.find('input#adornedTargetIdProperty').attr('wasSetFromUserClick');
+                        if (attr !== undefined) {
+                            $adornedTargetIdProperty.attr('wasSetFromUserClick', attr);
+                        }
+                        $adornedTargetIdProperty.val($form.find('input#adornedTargetIdProperty').val());
                         isAdornedModal = true;
                     }
                     //we are potentially replacing a form that has tabs. Ensure those are removed from the replacing form so
