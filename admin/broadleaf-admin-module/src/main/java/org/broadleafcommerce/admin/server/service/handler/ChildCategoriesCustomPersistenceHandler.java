@@ -17,40 +17,47 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
-import org.broadleafcommerce.common.util.Tuple;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
-import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
-import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
  */
 @Component("blChildCategoriesCustomPersistenceHandler")
 public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    private static final Log LOG = LogFactory.getLog(ChildCategoriesCustomPersistenceHandler.class);
     protected static final String ALL_CHILD_CATEGORY_XREFS = "allChildCategoryXrefs";
-    protected static final String ADMIN_CANT_ADD_DUPLICATE_CHILD = "admin.cantAddDuplicateChild";
-    protected static final String ADMIN_CANT_ADD_CATEGORY_AS_OWN_PARENT = "admin.cantAddCategoryAsOwnParent";
-    protected static final String ADMIN_CANT_ADD_ANCESTOR_AS_CHILD = "admin.cantAddAncestorAsChild";
+    protected static final String CATEGORY_ID = "category.id";
+    protected static final String SUB_CATEGORY_ID = "subCategory.id";
+    protected static final String CATEGORY_SEPARATOR = " -> ";
+
+    @Resource(name = "blCategoryDao")
+    protected CategoryDao categoryDao;
+
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
@@ -59,63 +66,96 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        final Tuple<Category, Category> parentAndChild = getChildAndParentCategories(persistencePackage, dynamicEntityDao);
-        final Category parent = parentAndChild.getFirst();
-        final Category child = parentAndChild.getSecond();
-        final CategoryXref categoryXref = createXref(parentAndChild);
-
-        if (parent.getAllChildCategoryXrefs().contains(categoryXref)) {
-            throw new ServiceException(BLCMessageUtils.getMessage(ADMIN_CANT_ADD_DUPLICATE_CHILD));
-        } else if (Objects.equals(child.getId(), parent.getId())) {
-            throw new ServiceException(BLCMessageUtils.getMessage(ADMIN_CANT_ADD_CATEGORY_AS_OWN_PARENT));
-        } else if (isChildAlreadyAnAncestor(child, parent)) {
-            throw new ServiceException(BLCMessageUtils.getMessage(ADMIN_CANT_ADD_ANCESTOR_AS_CHILD));
+        this.validateChildCategory(persistencePackage.getEntity());
+        try {
+            return helper.getCompatibleModule(OperationType.ADORNEDTARGETLIST).add(persistencePackage);
+        } catch (Exception e) {
+            LOG.error("Unable to add entity (execute persistence activity)");
+            throw new ServiceException("Unable to add entity", e);
         }
-        
-        return helper.getCompatibleModule(OperationType.ADORNEDTARGETLIST).add(persistencePackage);
     }
-    
-    protected Tuple<Category, Category> getChildAndParentCategories(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao) {
-        AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-        final String targetPath = adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty();
-        final String linkedPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
 
-        Long parentId = Long.parseLong(persistencePackage.getEntity().findProperty(linkedPath).getValue());
-        Long childId = Long.parseLong(persistencePackage.getEntity().findProperty(targetPath).getValue());
-
-        Category parent = (Category) dynamicEntityDao.retrieve(CategoryImpl.class, parentId);
-        Category child = (Category) dynamicEntityDao.retrieve(CategoryImpl.class, childId);
-        
-        return new Tuple<>(parent, child);
+    protected void validateChildCategory(final Entity entity) throws ValidationException {
+        this.validateSelfLink(entity);
+        this.validateDuplicateChild(entity);
+        this.validateRecursiveRelationship(entity);
     }
-    
-    protected CategoryXref createXref(Tuple<Category, Category> parentAndChild) {
-        CategoryXref xref = new CategoryXrefImpl();
-        xref.setCategory(parentAndChild.getFirst());
-        xref.setSubCategory(parentAndChild.getSecond());
-        
-        return xref;
-    }
-    
-    protected boolean isChildAlreadyAnAncestor(Category child, Category parent) {
-        Set<Category> knownAncestors = new HashSet<>();
-        checkCategoryAncestry(parent, knownAncestors);
-        
-        return knownAncestors.contains(child);
-    }
-    
-    protected void checkCategoryAncestry(Category category, Set<Category> knownAncestors) {
-        List<CategoryXref> parentXrefs = ListUtils.emptyIfNull(category.getAllParentCategoryXrefs());
 
-        knownAncestors.add(category);
-
-        for (CategoryXref parentXref : parentXrefs) {
-            final Category parentCategory = parentXref.getCategory();
-
-            if (!knownAncestors.contains(parentCategory)) {
-                checkCategoryAncestry(parentCategory, knownAncestors);
+    protected void validateSelfLink(final Entity entity) throws ValidationException {
+        final Property categoryIdProperty = entity.findProperty(CATEGORY_ID);
+        final Property subCategoryIdProperty = entity.findProperty(SUB_CATEGORY_ID);
+        if (categoryIdProperty != null && categoryIdProperty.getValue() != null
+                && subCategoryIdProperty != null) {
+            final String categoryId = categoryIdProperty.getValue();
+            final String subCategoryId = subCategoryIdProperty.getValue();
+            if (categoryId.equals(subCategoryId)) {
+                entity.addGlobalValidationError("validateCategorySelfLink");
+                throw new ValidationException(entity);
             }
         }
     }
-    
- }
+
+    protected void validateDuplicateChild(final Entity entity) throws ValidationException {
+        final Property categoryIdProperty = entity.findProperty(CATEGORY_ID);
+        final Property subCategoryIdProperty = entity.findProperty(SUB_CATEGORY_ID);
+        if (categoryIdProperty != null && categoryIdProperty.getValue() != null
+                && subCategoryIdProperty != null && subCategoryIdProperty.getValue() != null) {
+            final String categoryId = categoryIdProperty.getValue();
+            final String subCategoryId = subCategoryIdProperty.getValue();
+            final Category category = this.categoryDao.readCategoryById(Long.parseLong(categoryId));
+            final Category subCategory = this.categoryDao.readCategoryById(Long.parseLong(subCategoryId));
+            final List<Long> childCategoryIds = category.getChildCategoryXrefs().stream()
+                    .map(categoryXref -> categoryXref.getSubCategory().getId())
+                    .collect(Collectors.toList());
+            if (childCategoryIds.contains(subCategory.getId())) {
+                entity.addGlobalValidationError("validateCategoryDuplicateChild");
+                throw new ValidationException(entity);
+            }
+        }
+    }
+
+    protected void validateRecursiveRelationship(final Entity entity) throws ValidationException {
+        final Property categoryIdProperty = entity.findProperty(CATEGORY_ID);
+        final Property subCategoryIdProperty = entity.findProperty(SUB_CATEGORY_ID);
+        if (categoryIdProperty != null && categoryIdProperty.getValue() != null
+                && subCategoryIdProperty != null && subCategoryIdProperty.getValue() != null) {
+            final Long categoryId = Long.parseLong(categoryIdProperty.getValue());
+            final Long subCategoryId = Long.parseLong(subCategoryIdProperty.getValue());
+            final Category category = this.categoryDao.readCategoryById(categoryId);
+            final Category subCategory = this.categoryDao.readCategoryById(subCategoryId);
+            final StringBuilder categoryLinks = new StringBuilder();
+            this.addCategoryLink(categoryLinks, category.getName());
+            this.addCategoryLink(categoryLinks, subCategory.getName());
+            this.validateChildCategories(entity, subCategory, categoryId, categoryLinks);
+        }
+    }
+
+    protected void validateChildCategories(final Entity entity, final Category category, final Long id,
+                                           final StringBuilder categoryLinks) throws ValidationException {
+        if (category != null) {
+            for (CategoryXref categoryXref : category.getChildCategoryXrefs()) {
+                final Category subCategory = categoryXref.getSubCategory();
+                if (subCategory != null) {
+                    final StringBuilder newCategoryLinks = new StringBuilder(categoryLinks);
+                    this.addCategoryLink(newCategoryLinks, subCategory.getName());
+                    Long originalId = this.sandBoxHelper.getOriginalId(subCategory);
+                    if (id.equals(subCategory.getId()) || id.equals(originalId)) {
+                        newCategoryLinks.delete(newCategoryLinks.lastIndexOf(CATEGORY_SEPARATOR), newCategoryLinks.length());
+                        final String errorMessage = BLCMessageUtils.getMessage(
+                                "validateCategoryRecursiveRelationship", newCategoryLinks
+                        );
+                        entity.addGlobalValidationError(errorMessage);
+                        throw new ValidationException(entity);
+                    }
+                    this.validateChildCategories(entity, subCategory, id, newCategoryLinks);
+                }
+            }
+        }
+    }
+
+    protected void addCategoryLink(final StringBuilder productLinks, final String categoryName) {
+        productLinks.append(categoryName);
+        productLinks.append(CATEGORY_SEPARATOR);
+    }
+
+}
