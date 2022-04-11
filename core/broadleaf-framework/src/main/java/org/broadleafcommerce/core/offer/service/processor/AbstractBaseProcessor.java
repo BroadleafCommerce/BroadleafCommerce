@@ -279,7 +279,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         return appliesToItem;
     }
-    
+
     /**
      * Private method used by couldOfferApplyToOrder to execute the MVEL expression in the
      * appliesToOrderRules to determine if this offer can be applied.

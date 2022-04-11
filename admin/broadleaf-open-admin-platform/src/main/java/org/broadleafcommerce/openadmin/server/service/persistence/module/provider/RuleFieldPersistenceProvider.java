@@ -538,7 +538,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
             Property mvelProperty = new Property();
             mvelProperty.setName("matchRule");
-            mvelProperty.setValue(quantityBasedRule.getMatchRule());
+            mvelProperty.setValue(ruleFieldExtractionUtility.unescapeSpecialCharacters(quantityBasedRule.getMatchRule()));
 
             Property quantityProperty = new Property();
             quantityProperty.setName("quantity");

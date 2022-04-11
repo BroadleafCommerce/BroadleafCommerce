@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.Version;
@@ -35,6 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -48,6 +51,9 @@ public class RuleFieldExtractionUtility {
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
+
+    @Value("${exploitProtection.xssEnabled:false}")
+    protected boolean xssExploitProtectionEnabled;
 
     /**
      * Takes a JSON string that came from the frontend form submission and deserializes it into its {@link DataWrapper} dto
@@ -66,6 +72,7 @@ public class RuleFieldExtractionUtility {
         }
 
         try {
+            json = escapeSpecialCharacters(json);
             return mapper.readValue(json, DataWrapper.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -113,7 +120,7 @@ public class RuleFieldExtractionUtility {
         Property[] properties = new Property[1];
         Property mvelProperty = new Property();
         mvelProperty.setName("matchRule");
-        mvelProperty.setValue(matchRule == null ? "" : matchRule);
+        mvelProperty.setValue(matchRule == null ? "" : unescapeSpecialCharacters(matchRule));
         properties[0] = mvelProperty;
         Entity criteria = new Entity();
         criteria.setProperties(properties);
@@ -132,6 +139,32 @@ public class RuleFieldExtractionUtility {
         p.setValue(json);
 
         return p;
+    }
+
+    protected String escapeSpecialCharacters(String s) {
+        if (xssExploitProtectionEnabled) {
+            Map<String, String> stringMapping = populateSpecialCharactersMap();
+            for (Map.Entry<String, String> entry : stringMapping.entrySet()) {
+                s = s.replace(entry.getKey(), entry.getValue());
+            }
+        }
+        return s;
+    }
+
+    protected String unescapeSpecialCharacters(String s) {
+        if (xssExploitProtectionEnabled) {
+            Map<String, String> stringMapping = populateSpecialCharactersMap();
+            for (Map.Entry<String, String> entry : stringMapping.entrySet()) {
+                s = s.replace(entry.getValue(), entry.getKey());
+            }
+        }
+        return s;
+    }
+
+    private Map<String, String> populateSpecialCharactersMap() {
+        Map<String, String> stringMapping = new HashMap<>();
+        stringMapping.put("&", "&amp;");
+        return stringMapping;
     }
 
 }
