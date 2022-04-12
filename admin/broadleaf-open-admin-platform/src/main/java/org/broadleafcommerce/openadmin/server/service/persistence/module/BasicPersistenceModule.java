@@ -902,15 +902,31 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         List<FilterMapping> filterMappings = new ArrayList<FilterMapping>();
 
-        for (String propertyId : cto.getCriteriaMap().keySet()) {
-            if (mergedProperties.containsKey(propertyId)) {
+        for (String realPropertyId : cto.getCriteriaMap().keySet()) {
+
+            boolean found = mergedProperties.containsKey(realPropertyId);
+            String propertyId = realPropertyId;
+            if(!found && propertyId.equals("id")){
+                propertyId = getIdPropertyName(mergedProperties);
+                found = mergedProperties.containsKey(propertyId);
+            }
+            if (found) {
                 boolean handled = false;
+                AddSearchMappingRequest addSearchMappingRequest;
+                if(realPropertyId.equals(propertyId)) {
+                    addSearchMappingRequest = new AddSearchMappingRequest(persistencePerspective, cto,
+                            ceilingEntityFullyQualifiedClassname, mergedProperties,
+                            propertyId, getFieldManager(), this, this, customRestrictionFactory == null ? restrictionFactory
+                            : customRestrictionFactory);
+                }else{
+                    addSearchMappingRequest = new AddSearchMappingRequest(persistencePerspective, cto,
+                            ceilingEntityFullyQualifiedClassname, mergedProperties,
+                            propertyId, realPropertyId,getFieldManager(), this, this, customRestrictionFactory == null ? restrictionFactory
+                            : customRestrictionFactory);
+                }
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                     MetadataProviderResponse response = fieldPersistenceProvider.addSearchMapping(
-                            new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties,
-                                    propertyId, getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
-                                    :customRestrictionFactory), filterMappings);
+                            addSearchMappingRequest, filterMappings);
                     if (MetadataProviderResponse.NOT_HANDLED != response) {
                         handled = true;
                     }
@@ -920,10 +936,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
                 if (!handled) {
                     defaultFieldPersistenceProvider.addSearchMapping(
-                            new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties, propertyId,
-                                    getFieldManager(), this, this, customRestrictionFactory == null ? restrictionFactory
-                                            : customRestrictionFactory), filterMappings);
+                            addSearchMappingRequest, filterMappings);
                 }
             }
         }
