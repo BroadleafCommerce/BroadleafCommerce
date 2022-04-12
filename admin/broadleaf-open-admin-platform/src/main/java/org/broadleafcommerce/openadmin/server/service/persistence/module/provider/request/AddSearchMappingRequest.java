@@ -39,6 +39,7 @@ public class AddSearchMappingRequest {
     private final String ceilingEntityFullyQualifiedClassname;
     private final Map<String, FieldMetadata> mergedProperties;
     private final String propertyName;
+    private final String realPropertyName;
     private final FieldManager fieldManager;
     private final DataFormatProvider dataFormatProvider;
     private final RecordHelper recordHelper;
@@ -54,6 +55,24 @@ public class AddSearchMappingRequest {
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
         this.mergedProperties = mergedProperties;
         this.propertyName = propertyName;
+        this.realPropertyName = propertyName;
+        this.fieldManager = fieldManager;
+        this.dataFormatProvider = dataFormatProvider;
+        this.recordHelper = recordHelper;
+        this.restrictionFactory = restrictionFactory;
+    }
+
+    public AddSearchMappingRequest(PersistencePerspective persistencePerspective, CriteriaTransferObject
+            requestedCto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties,
+                                   String propertyName, String realPropertyName, FieldManager fieldManager,
+                                   DataFormatProvider dataFormatProvider, RecordHelper recordHelper,
+                                   RestrictionFactory restrictionFactory) {
+        this.persistencePerspective = persistencePerspective;
+        this.requestedCto = requestedCto;
+        this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
+        this.mergedProperties = mergedProperties;
+        this.propertyName = propertyName;
+        this.realPropertyName = realPropertyName;
         this.fieldManager = fieldManager;
         this.dataFormatProvider = dataFormatProvider;
         this.recordHelper = recordHelper;
@@ -78,6 +97,10 @@ public class AddSearchMappingRequest {
 
     public String getPropertyName() {
         return propertyName;
+    }
+
+    public String getRealPropertyName() {
+        return realPropertyName;
     }
 
     public FieldManager getFieldManager() {
