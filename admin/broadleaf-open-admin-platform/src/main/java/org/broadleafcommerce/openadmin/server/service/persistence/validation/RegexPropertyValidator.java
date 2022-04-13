@@ -20,12 +20,14 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
@@ -54,7 +56,10 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
      * regular expression
      */
     protected boolean suceedForInvalidRegex = true;
-    
+
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService eps;
+
     @Override
     public PropertyValidationResult validate(Entity entity,
             Serializable instance,
@@ -70,7 +75,7 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
         }
         
         try {
-            return new PropertyValidationResult(value.matches(expression), validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE));
+            return new PropertyValidationResult(eps.htmlDecode(value).matches(expression), validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE));
         } catch (PatternSyntaxException e) {
             String message = "Invalid regular expression pattern '" + StringUtil.sanitize(expression) + "' for " 
                     + StringUtil.sanitize(propertyName);
