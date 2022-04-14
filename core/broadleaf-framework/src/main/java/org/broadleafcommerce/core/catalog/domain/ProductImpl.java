@@ -264,6 +264,13 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             tooltip = "ProductImpl_Canonical_Url_Tooltip")
     protected String canonicalUrl;
 
+    @Column(name = "USE_DEFAULT_SKU_IN_INVENTORY")
+    @AdminPresentation(friendlyName = "ProductImpl_useDefaultSkuInInventory",
+            group = GroupName.Miscellaneous, order = 7000,
+            tooltip = "ProductImpl_useDefaultSkuInInventory_Tooltip",
+            defaultValue = "false")
+    protected Boolean useDefaultSkuInInventory = false;
+
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
 
@@ -553,6 +560,16 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public void setCanonicalUrl(String canonicalUrl) {
         this.canonicalUrl = canonicalUrl;
+    }
+
+    @Override
+    public Boolean getUseDefaultSkuInInventory() {
+        return useDefaultSkuInInventory != null && useDefaultSkuInInventory;
+    }
+
+    @Override
+    public void setUseDefaultSkuInInventory(Boolean useDefaultSkuInInventory) {
+        this.useDefaultSkuInInventory = useDefaultSkuInInventory != null && useDefaultSkuInInventory;;
     }
 
     @Override
