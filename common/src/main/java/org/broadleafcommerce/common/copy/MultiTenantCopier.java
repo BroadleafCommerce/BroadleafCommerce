@@ -202,10 +202,8 @@ public abstract class MultiTenantCopier implements Ordered {
     @Deprecated
     protected Boolean excludeFromCopyRegex(final Object copy) {
         boolean match = false;
-        if (this.classExcludeRegexPatternList.isEmpty()) {
-            if(LOG.isDebugEnabled()) {
-                LOG.warn("classExcludeRegexPatternList is empty, deprecated classExcludeRegexList is used");
-            }
+        if (this.classExcludeRegexPatternList.isEmpty() && this.classExcludeRegexList!=null && !this.classExcludeRegexList.isEmpty()) {
+            LOG.warn("classExcludeRegexList is deprecated, please use excludeFromCopyRegexPattern");
             for (Matcher regex : this.classExcludeRegexList) {
                 if (regex.reset(copy.getClass().toString()).matches()) {
                     match = true;
