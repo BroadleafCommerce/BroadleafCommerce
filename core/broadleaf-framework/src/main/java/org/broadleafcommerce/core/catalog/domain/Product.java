@@ -881,10 +881,6 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public boolean isOnSale();
 
-    public Boolean getUseDefaultSkuInInventory();
-
-    public void setUseDefaultSkuInInventory(Boolean useDefaultSkuInInventory);
-
     /**
      * added just for convenience, references defaultSku.margin
      * @return
