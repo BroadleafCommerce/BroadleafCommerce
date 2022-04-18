@@ -264,6 +264,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             tooltip = "ProductImpl_Canonical_Url_Tooltip")
     protected String canonicalUrl;
 
+    // TODO: uncomment next fileds for 6.3 version, and weave class should be deleted
+
 //    @Column(name = "USE_DEFAULT_SKU_IN_INVENTORY")
 //    @AdminPresentation(friendlyName = "ProductImpl_useDefaultSkuInInventory",
 //            group = GroupName.Miscellaneous, order = 7000,
