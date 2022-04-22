@@ -18,6 +18,8 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -307,7 +309,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             defaultFieldPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
         }
         //Order media field, map field and rule builder fields last, as they will have some validation components that depend on previous values
-        Property[] sortedProperties = entity.getProperties();
+        Property[] sortedProperties = entity.getProperties().clone();
         Arrays.sort(sortedProperties, new Comparator<Property>() {
 
             @Override
@@ -330,6 +332,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 return 0;
             }
         });
+
+        Optional<Property> firstRuleProperty = getFirstRuleProperty(mergedProperties, sortedProperties);
+
         Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
         FlushMode originalFlushMode = session.getHibernateFlushMode();
         try {
@@ -388,6 +393,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         if (isValid) {
                             try {
                                 boolean isBreakDetected = false;
+                                if (firstRuleProperty.isPresent() && firstRuleProperty.get().equals(property)) {
+                                    preValidateEntityIfNeeded(instance, entity, validateUnsubmittedProperties, mergedProperties);
+                                }
                                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                                     if ((!isBreakDetected || fieldPersistenceProvider.alwaysRun()) && (value != null || fieldPersistenceProvider.canHandlePopulateNull())) {
                                         MetadataProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
@@ -423,22 +431,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
             //if validation failed, refresh the current instance so that none of the changes will be persisted
             if (entity.isValidationFailure()) {
-                //only refresh the instance if it was managed to begin with
-                if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
-                    persistenceManager.getDynamicEntityDao().refresh(instance);
-                }
-
-                //re-initialize the valid properties for the entity in order to deal with the potential of not
-                //completely sending over all checkbox/radio fields
-                List<Serializable> entityList = new ArrayList<Serializable>(1);
-                entityList.add(instance);
-                Entity invalid = getRecords(mergedProperties, entityList, null, null, null)[0];
-                invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
-                invalid.setGlobalValidationErrors(entity.getGlobalValidationErrors());
-                invalid.overridePropertyValues(entity);
-
-                String message = ValidationUtil.buildErrorMessage(invalid.getPropertyValidationErrors(), invalid.getGlobalValidationErrors());
-                throw new ValidationException(invalid, message);
+                handleEntityValidationFailure(instance, entity, mergedProperties);
             } else if (entityPersistenceException != null) {
                 throw ExceptionHelper.refineException(entityPersistenceException.getCause());
             } else {
@@ -452,6 +445,52 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             session.setHibernateFlushMode(originalFlushMode);
         }
         return instance;
+    }
+
+    private void preValidateEntityIfNeeded(Serializable instance, Entity entity,
+        Boolean validateUnsubmittedProperties, Map<String, FieldMetadata> mergedProperties)
+        throws ValidationException {
+        if (!entity.isPreAdd()) {
+            validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
+        }
+        if (entity.isValidationFailure()) {
+            handleEntityValidationFailure(instance, entity, mergedProperties);
+        }
+    }
+
+    private void handleEntityValidationFailure(Serializable instance, Entity entity,
+        Map<String, FieldMetadata> mergedProperties) throws ValidationException {
+        //only refresh the instance if it was managed to begin with
+        if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
+            persistenceManager.getDynamicEntityDao().refresh(instance);
+        }
+
+        //re-initialize the valid properties for the entity in order to deal with the potential of not
+        //completely sending over all checkbox/radio fields
+        List<Serializable> entityList = new ArrayList<Serializable>(1);
+        entityList.add(instance);
+        Entity invalid = getRecords(mergedProperties, entityList, null, null, null)[0];
+        invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
+        invalid.setGlobalValidationErrors(entity.getGlobalValidationErrors());
+        invalid.overridePropertyValues(entity);
+
+        String message = ValidationUtil.buildErrorMessage(invalid.getPropertyValidationErrors(), invalid.getGlobalValidationErrors());
+        throw new ValidationException(invalid, message);
+    }
+
+    private Optional<Property> getFirstRuleProperty(Map<String, FieldMetadata> mergedProperties,
+        Property[] sortedProperties) {
+        List<SupportedFieldType> ruleFieldTypes = Arrays.asList(SupportedFieldType.RULE_SIMPLE,
+            SupportedFieldType.RULE_WITH_QUANTITY, SupportedFieldType.RULE_SIMPLE_TIME);
+
+        List<String> ruleFieldsNames = mergedProperties.entrySet().stream()
+            .filter(entry -> ruleFieldTypes.contains(
+                ((BasicFieldMetadata) entry.getValue()).getFieldType()))
+            .map(entry -> entry.getKey())
+            .collect(Collectors.toList());
+
+        return Arrays.stream(sortedProperties)
+            .filter(p -> ruleFieldsNames.contains(p.getName())).findFirst();
     }
 
     protected boolean attemptToPopulateValue(Property property, FieldManager fieldManager, Serializable instance,
