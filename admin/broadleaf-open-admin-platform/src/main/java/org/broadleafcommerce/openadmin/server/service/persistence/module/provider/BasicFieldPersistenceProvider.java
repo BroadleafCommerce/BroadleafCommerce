@@ -548,7 +548,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get
                 (addSearchMappingRequest.getPropertyName());
 
-        FilterAndSortCriteria fasc = addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName());
+        FilterAndSortCriteria fasc = addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getRealPropertyName());
 
         FilterMapping filterMapping = new FilterMapping()
                 .withInheritedFromClass(clazz)
