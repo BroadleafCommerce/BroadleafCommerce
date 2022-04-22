@@ -86,6 +86,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PopulateValueRequestValidator;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -337,6 +338,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             RuntimeException entityPersistenceException = null;
             for (Property property : sortedProperties) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
+                if (metadata != null && metadata.getFieldType() != null &&
+                        (SupportedFieldType.RULE_SIMPLE == metadata.getFieldType() || SupportedFieldType.RULE_WITH_QUANTITY == metadata.getFieldType()
+                                || SupportedFieldType.RULE_SIMPLE_TIME == metadata.getFieldType()
+                        )
+                ) {
+                    //because RuleFieldPersistenceProvider can attempt to persist instance of entity we can face situation
+                    //when instance will have empty required fields and so will result null constraint violation DB error
+                    if (entity.getPropertyValidationErrors() != null && !entity.getPropertyValidationErrors().isEmpty()) {
+                        break;
+                    }
+                }
                 Class<?> returnType;
                 if (!property.getName().contains(FieldManager.MAPFIELDSEPARATOR) && !property.getName().startsWith("__")) {
                     Field field = fieldManager.getField(instance.getClass(), property.getName());
@@ -384,6 +396,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     isValid = false;
                                 }
                             }
+                        } else if (metadata.getRequired() || (metadata.getRequiredOverride() != null && metadata.getRequiredOverride())) {
+                            entity.addValidationError(property.getName(), RequiredPropertyValidator.ERROR_MESSAGE);
                         }
                         if (isValid) {
                             try {
@@ -418,7 +432,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
             }
             // Only check validation if not the initial add
-            if (!entity.isPreAdd()) {
+            if (!entity.isPreAdd() && entity.getPropertyValidationErrors() != null && entity.getPropertyValidationErrors().isEmpty()) {
                 validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
             }
             //if validation failed, refresh the current instance so that none of the changes will be persisted
