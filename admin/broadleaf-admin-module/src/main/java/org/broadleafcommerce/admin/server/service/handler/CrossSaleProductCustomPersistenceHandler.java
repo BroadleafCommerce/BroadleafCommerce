@@ -36,6 +36,9 @@ import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
 
 @Component("blCrossSaleProductCustomPersistenceHandler")
@@ -71,38 +74,45 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
     }
 
     protected void validateCrossSaleProduct(final Entity entity) throws ValidationException {
-        this.validateSelfLink(entity);
-        this.validateRecursiveRelationship(entity);
-    }
-
-    protected void validateSelfLink(final Entity entity) throws ValidationException {
-        final Property productIdProperty = entity.findProperty(PRODUCT_ID);
-        final Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
-        if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
-                && productIdProperty != null) {
-            final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
-            final String productId = productIdProperty.getValue();
-            if (relatedSaleProductId.equals(productId)) {
-                entity.addGlobalValidationError("validateProductSelfLink");
-                throw new ValidationException(entity);
-            }
-        }
-    }
-
-    protected void validateRecursiveRelationship(final Entity entity) throws ValidationException {
         final Property productIdProperty = entity.findProperty(PRODUCT_ID);
         final Property relatedSaleProductIdProperty = entity.findProperty(RELATED_SALE_PRODUCT_ID);
         if (relatedSaleProductIdProperty != null && relatedSaleProductIdProperty.getValue() != null
                 && productIdProperty != null && productIdProperty.getValue() != null) {
+            this.validateSelfLink(entity, relatedSaleProductIdProperty.getValue(), productIdProperty.getValue());
             final String relatedSaleProductId = relatedSaleProductIdProperty.getValue();
             final String productId = productIdProperty.getValue();
             final Product relatedProduct = this.catalogService.findProductById(Long.parseLong(relatedSaleProductId));
             final Product product = this.catalogService.findProductById(Long.parseLong(productId));
-            final StringBuilder productLinks = new StringBuilder();
-            this.addProductLink(productLinks, product.getName());
-            this.addProductLink(productLinks, relatedProduct.getName());
-            this.validateCrossSaleProducts(entity, relatedProduct, Long.parseLong(productId), productLinks);
+            this.validateDuplicateChild(entity, relatedProduct, product);
+            this.validateRecursiveRelationship(entity, relatedProduct, product);
         }
+    }
+
+    protected void validateSelfLink(final Entity entity, final String relatedSaleProductId, final String productId)
+            throws ValidationException {
+        if (relatedSaleProductId.equals(productId)) {
+            entity.addGlobalValidationError("validateProductSelfLink");
+            throw new ValidationException(entity);
+        }
+    }
+
+    protected void validateDuplicateChild(final Entity entity, final Product relatedProduct, final Product product)
+            throws ValidationException {
+        final List<Long> childProductIds = product.getCrossSaleProducts().stream()
+                .map(crossSaleProduct -> crossSaleProduct.getRelatedProduct().getId())
+                .collect(Collectors.toList());
+        if (childProductIds.contains(relatedProduct.getId())) {
+            entity.addGlobalValidationError("validateProductDuplicateChild");
+            throw new ValidationException(entity);
+        }
+    }
+
+    protected void validateRecursiveRelationship(final Entity entity, final Product relatedProduct,
+                                                 final Product product) throws ValidationException {
+        final StringBuilder productLinks = new StringBuilder();
+        this.addProductLink(productLinks, product.getName());
+        this.addProductLink(productLinks, relatedProduct.getName());
+        this.validateCrossSaleProducts(entity, relatedProduct, product.getId(), productLinks);
     }
 
     protected void validateCrossSaleProducts(final Entity entity, final Product product, final Long id,
