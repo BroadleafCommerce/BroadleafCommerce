@@ -345,7 +345,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 ) {
                     //because RuleFieldPersistenceProvider can attempt to persist instance of entity we can face situation
                     //when instance will have empty required fields and so will result null constraint violation DB error
-                    if (entity.getPropertyValidationErrors() != null && !entity.getPropertyValidationErrors().isEmpty()) {
+                    if (entity.isValidationFailure()) {
                         break;
                     }
                 }
@@ -432,7 +432,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
             }
             // Only check validation if not the initial add
-            if (!entity.isPreAdd() && entity.getPropertyValidationErrors() != null && entity.getPropertyValidationErrors().isEmpty()) {
+            if (!entity.isPreAdd() && entity.isValidationFailure()) {
                 validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
             }
             //if validation failed, refresh the current instance so that none of the changes will be persisted
