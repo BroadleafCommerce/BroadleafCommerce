@@ -49,8 +49,9 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             
             mav.addObject("showDebugMessage", showDebugMessage);
             if (showDebugMessage) {
-                StringBuilder sb2 = new StringBuilder();
-                appendStackTrace(ex, sb2);
+                StringBuilder sb2 = new StringBuilder("An error was occured");
+                //uncomment next line to show stacktrace when error is occured
+                //appendStackTrace(ex, sb2);
                 mav.addObject("debugMessage", sb2.toString());
                 LOG.error("Unhandled error processing ajax request", ex);
             }
