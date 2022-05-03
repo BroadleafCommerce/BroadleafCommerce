@@ -35,7 +35,6 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
     
     protected boolean showDebugMessage = false;
 
-
     protected boolean enableStacktrace = false;
     
     @Override
