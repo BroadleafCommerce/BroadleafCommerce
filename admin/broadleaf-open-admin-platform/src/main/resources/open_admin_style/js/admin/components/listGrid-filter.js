@@ -297,10 +297,7 @@ $(document).ready(function() {
 
         $(this).closest('.listgrid-container').find('.mCSB_container').css('top', '0px');
         $(this).closest('.listgrid-container').find('.listgrid-body-wrapper').mCustomScrollbar('update');
-        var oldParams = BLCAdmin.history.getUrlParameters();
-        if (oldParams == null) {
-            oldParams = {};
-        }
+        oldParams = {};
         oldParams['isLookup'] = $(this).closest('.modal').length > 0;
         var url = BLC.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
 
@@ -442,12 +439,12 @@ $(document).ready(function() {
         var hiddenId = $filterButton.data('hiddenid');
         if (hiddenId) {
             var filteredValues = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
-            filteredValues = $.param(filteredValues);
-            if (filteredValues.length > 0) {
+            var filteredValuesParam = $.param(filteredValues);
+            if (filteredValuesParam.length > 0 && !url.includes(filteredValues[0].name)) {
                 if (url.indexOf('?') >= 0) {
-                    url += '&' + filteredValues;
+                    url += '&' + filteredValuesParam;
                 } else {
-                    url += '?' + filteredValues;
+                    url += '?' + filteredValuesParam;
                 }
             }
         }
