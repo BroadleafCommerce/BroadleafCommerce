@@ -34,10 +34,10 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
 
         if (determineComplete(orderPayment)) {
             return OrderPaymentStatus.COMPLETE;
+        }else if (determineFullyCaptured(orderPayment)) {
+            return OrderPaymentStatus.FULLY_CAPTURED;
         } else if (determinePartiallyComplete(orderPayment)) {
             return OrderPaymentStatus.PARTIALLY_COMPLETE;
-        } else if (determineFullyCaptured(orderPayment)) {
-            return OrderPaymentStatus.FULLY_CAPTURED;
         } else if (determineAuthorized(orderPayment)) {
             return OrderPaymentStatus.AUTHORIZED;
         } else if (determinePending(orderPayment)) {
@@ -80,8 +80,7 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
     }
 
     protected boolean determinePartiallyComplete(OrderPayment payment) {
-        Money fullAuthAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE)
-                .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
+        Money fullAuthAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE);
         Money fullCaptureAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.CAPTURE);
         Money totalVoidAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.VOID);
         Money totalRefundAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.REFUND);

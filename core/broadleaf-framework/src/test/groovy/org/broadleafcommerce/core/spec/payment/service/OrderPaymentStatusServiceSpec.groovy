@@ -234,7 +234,7 @@ class OrderPaymentStatusServiceSpec extends Specification {
         status == OrderPaymentStatus.COMPLETE
     }
 
-    def "Test OrderPaymentStatus.PARTIALLY_COMPLETE with a partial VOID on partial captures"() {
+    def "Test OrderPaymentStatus.FULLY_CAPTURED with a partial VOID on partial captures"() {
         setup: "I have an Order Payment with a partial VOID on partial captures"
         reset()
         payment.transactions << authTX
@@ -245,11 +245,11 @@ class OrderPaymentStatusServiceSpec extends Specification {
         when: "I execute the order payment status service"
         OrderPaymentStatus status = statusService.determineOrderPaymentStatus(payment);
 
-        then: "The OrderPaymentStatus should be PARTIALLY_COMPLETE"
-        status == OrderPaymentStatus.PARTIALLY_COMPLETE
+        then: "The OrderPaymentStatus should be FULLY_CAPTURED"
+        status == OrderPaymentStatus.FULLY_CAPTURED
     }
 
-    def "Test OrderPaymentStatus.PARTIALLY_COMPLETE on multiple captures"() {
+    def "Test OrderPaymentStatus.FULLY_CAPTURED on multiple captures with partial refund"() {
         setup: "I have an Order Payment with a partial refund"
         reset()
         payment.transactions << authTX
@@ -260,8 +260,8 @@ class OrderPaymentStatusServiceSpec extends Specification {
         when: "I execute the order payment status service"
         OrderPaymentStatus status = statusService.determineOrderPaymentStatus(payment);
 
-        then: "The OrderPaymentStatus should be PARTIALLY_COMPLETE"
-        status == OrderPaymentStatus.PARTIALLY_COMPLETE
+        then: "The OrderPaymentStatus should be FULLY_CAPTURED"
+        status == OrderPaymentStatus.FULLY_CAPTURED
     }
 
     def "Test OrderPaymentStatus.PARTIALLY_COMPLETE on a single capture and refund"() {
@@ -316,6 +316,20 @@ class OrderPaymentStatusServiceSpec extends Specification {
         when: "I execute the order payment status service"
         OrderPaymentStatus status = statusService.determineOrderPaymentStatus(payment);
 
+        then: "The OrderPaymentStatus should be FULLY_CAPTURED"
+        status == OrderPaymentStatus.FULLY_CAPTURED
+    }
+
+    def "Test1 OrderPaymentStatus.FULLY_CAPTURED on multiple captures"() {
+        setup: "I have an Order Payment with multiple captures"
+        reset()
+        payment.transactions << unconfirmedTX
+        payment.transactions << saleTX
+        payment.transactions << refundCapture1TX
+
+        when: "I execute the order payment status service"
+        OrderPaymentStatus status = statusService.determineOrderPaymentStatus(payment);
+        println status.getFriendlyType()
         then: "The OrderPaymentStatus should be FULLY_CAPTURED"
         status == OrderPaymentStatus.FULLY_CAPTURED
     }
