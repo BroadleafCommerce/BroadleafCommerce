@@ -154,7 +154,6 @@ public @interface AdminPresentation {
      * 
      * @return the order for this group
      */
-    @Deprecated
     int groupOrder() default 99999;
 
     /**
@@ -165,7 +164,6 @@ public @interface AdminPresentation {
      * @return whether or not the group is collapsed by default
      * @deprecated not supported
      */
-    @Deprecated
     boolean groupCollapsed() default false;
     
     /**
@@ -175,7 +173,6 @@ public @interface AdminPresentation {
      * 
      * @return the tab for this field
      */
-    @Deprecated
     String tab() default "General";
 
     /**
@@ -188,7 +185,6 @@ public @interface AdminPresentation {
      * 
      * @return the order for this tab
      */
-    @Deprecated
     int tabOrder() default 99999;
 
     /**

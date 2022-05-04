@@ -4,13 +4,13 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>6.3.0-SNAPSHOT</version>
     </parent>
     <artifactId>admin</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce Admin</name>
     <description>BroadleafCommerce Admin Mid Level Project</description>
-    <url>http://www.broadleafcommerce.org</url>
+    <url>https://www.broadleafcommerce.com</url>
     <properties>
         <project.uri>${project.baseUri}/../</project.uri>
     </properties>
@@ -33,7 +33,7 @@
             <id>architect</id>
             <email>architect@broadleafcommerce.org</email>
             <organization>Broadleaf Commerce</organization>
-            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <organizationUrl>https://www.broadleafcommerce.com</organizationUrl>
             <timezone>-6</timezone>
         </developer>
     </developers>

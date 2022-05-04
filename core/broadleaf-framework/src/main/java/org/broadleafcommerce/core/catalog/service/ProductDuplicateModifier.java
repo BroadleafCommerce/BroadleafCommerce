@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
-import lombok.SneakyThrows;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.AbstractEntityDuplicationHelper;
 import org.broadleafcommerce.common.persistence.EntityDuplicatorExtensionManager;
 import org.broadleafcommerce.common.service.GenericEntityService;
@@ -32,12 +32,12 @@ import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
+import org.broadleafcommerce.core.catalog.service.extension.ProductUrlDuplicatorExtensionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +57,9 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
     @Resource(name = "blGenericEntityService")
     protected GenericEntityService genericEntityService;
 
+    @Resource(name = "blProductUrlDuplicatorExtensionManager")
+    protected ProductUrlDuplicatorExtensionManager productUrlDuplicatorExtensionManager;
+
     @Autowired
     public ProductDuplicateModifier(final Environment environment) {
 
@@ -70,9 +73,8 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
         return Product.class.isAssignableFrom(candidate.getClass());
     }
 
-    @SneakyThrows
     @Override
-    public void modifyInitialDuplicateState(final Product original, final Product copy, final MultiTenantCopyContext context) {
+    public void modifyInitialDuplicateState(final Product original, final Product copy, final MultiTenantCopyContext context) throws CloneNotSupportedException {
         if(context.getCopyHints().get(PROPAGATION)!=null && "TRUE".equalsIgnoreCase(context.getCopyHints().get(PROPAGATION))){
             for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
                 final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
@@ -100,33 +102,33 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             copy.setProductOptionXrefs(productOptionXrefs);
 
         }else {
-            for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
-                final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
-                clone.setProduct(copy);
-                copy.getAllParentCategoryXrefs().add(clone);
+            if(!context.getToCatalog().getId().equals(context.getFromCatalog().getId())){
+                copy.setAllParentCategoryXrefs(new ArrayList<>());
+                copy.setProductOptionXrefs(new ArrayList<>());
+            }else {
+                for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
+                    final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
+                    clone.setProduct(copy);
+                    copy.getAllParentCategoryXrefs().add(clone);
+                }
+                List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
+                for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
+                    final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
+                    clone.setProduct(copy);
+                    productOptionXrefs.add(clone);
+                }
+                copy.setProductOptionXrefs(productOptionXrefs);
             }
-            List<ProductOptionXref> productOptionXrefs = new ArrayList<>();
-            for (ProductOptionXref productOptionXref : original.getProductOptionXrefs()) {
-                final ProductOptionXref clone = productOptionXref.createOrRetrieveCopyInstance(context).getClone();
-                clone.setProduct(copy);
-                productOptionXrefs.add(clone);
-            }
-            copy.setProductOptionXrefs(productOptionXrefs);
         }
-        Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.YEAR, 1);
-        instance.set(Calendar.MILLISECOND, 0);
-        instance.set(Calendar.SECOND, 0);
-        instance.set(Calendar.MINUTE, 0);
-        instance.set(Calendar.HOUR, 0);
-        copy.setActiveStartDate(instance.getTime());
-        copy.setActiveEndDate(null);
+        final Date currentDate = new Date();
+        copy.setActiveStartDate(currentDate);
+        copy.setActiveEndDate(currentDate);
 
         setNameAndUrl(copy, context);
 
     }
 
-    private void setNameAndUrl(Product copy, MultiTenantCopyContext context) {
+    protected void setNameAndUrl(Product copy, MultiTenantCopyContext context) {
         String suffix = getCopySuffix();
         String name = copy.getName();
         if(!context.getCopyHints().containsKey("PROPAGATION")) {
@@ -140,7 +142,7 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                     suffix = COPY_NUMBER_SEPARATOR + 1;
                 }
                 if(index>0) {
-                    name = name.substring(0, index) + suffix;
+                    name = name.substring(0, index+1) + suffix;
                 }else{
                     name = name + suffix;
                 }
@@ -149,6 +151,10 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             }
         }
         copy.setName(name);
-        copy.setUrl("/" + copy.getName().replace("-", "").replace(" ", "-").toLowerCase());
+        String url = "/" + copy.getName().replace("-", "").replace(" ", "-").replace("#","_").toLowerCase();
+        ExtensionResultStatusType extensionResultStatusType = productUrlDuplicatorExtensionManager.getProxy().modifyUrl(url, copy, new ExtensionResultHolder<>());
+        if(extensionResultStatusType == ExtensionResultStatusType.NOT_HANDLED) {
+            copy.setUrl(url);
+        }
     }
 }

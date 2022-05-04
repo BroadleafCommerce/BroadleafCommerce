@@ -426,6 +426,7 @@ $(document).ready(function() {
                     var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
                     BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
                     BLCAdmin.listGrid.updateGridTitleBarSize($(this).closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
+                    alignListgridColumns();
      			});
      			$('#' + tabKey + 'Contents .selectize-wrapper', $(data)).each(function() {
      				var tableId = $(this).attr('id');
@@ -518,7 +519,7 @@ $(document).ready(function() {
 
     $('body').on('click', 'button.duplicate-button, a.duplicate-button', function(event) {
         var $button = $(this);
-        BLCAdmin.confirmProcessBeforeProceeding(true, 'You are about to copy this product', processCopyCall, [$button]);
+        BLCAdmin.confirmProcessBeforeProceeding(true, 'Are you sure you want to duplicate?', processCopyCall, [$button]);
 
         function processCopyCall (params) {
             var $form = BLCAdmin.getForm($button);
@@ -967,5 +968,9 @@ $(document).ready(function() {
         $wrapper.css('height', wrapperHeight);
         $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
         $wrapper.mCustomScrollbar('update');
+    }
+
+    function alignListgridColumns() {
+        $(window).resize();
     }
 });

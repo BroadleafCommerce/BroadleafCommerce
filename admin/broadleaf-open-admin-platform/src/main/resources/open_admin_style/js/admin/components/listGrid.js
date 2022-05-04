@@ -1042,7 +1042,7 @@ $('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fie
                         BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                     });
                 }
-            }).disableSelection();
+            });
         },
         mouseleave: function () {
             if (isMouseDown) {

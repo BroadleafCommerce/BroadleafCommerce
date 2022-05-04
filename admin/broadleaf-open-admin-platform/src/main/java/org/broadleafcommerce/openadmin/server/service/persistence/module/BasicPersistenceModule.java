@@ -521,6 +521,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                String pathToTargetObject,
                                String[] customCriteria) {
         Map<String, FieldMetadata> primaryMergedProperties = filterOutCollectionMetadata(primaryUnfilteredMergedProperties);
+        if (customCriteria != null) {
+            boolean b = Arrays.stream(customCriteria).anyMatch("ProductList"::equals);
+            if (b) {
+                primaryMergedProperties.remove("defaultSku.skuMedia---primary");
+            }
+        }
         Map<String, FieldMetadata> alternateMergedProperties = filterOutCollectionMetadata(alternateUnfilteredMergedProperties);
         Entity[] entities = new Entity[records.size()];
         int j = 0;

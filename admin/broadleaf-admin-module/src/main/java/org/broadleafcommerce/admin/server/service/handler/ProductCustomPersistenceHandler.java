@@ -54,6 +54,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
@@ -82,6 +83,8 @@ import javax.persistence.criteria.Root;
  */
 @Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    protected static final String ID_PROPERTY = "id";
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -122,7 +125,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return canHandleAdd(persistencePackage);
+        return isRecursiveProductSelection(persistencePackage) || canHandleAdd(persistencePackage);
     }
 
     @Override
@@ -145,6 +148,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
 
+        if (isRecursiveProductSelection(persistencePackage)) {
+            return getFilteredDynamicResultSet(persistencePackage, cto, helper);
+        }
 
         boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
 
@@ -462,5 +468,39 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
         }
         return currentDefault;
+    }
+
+    protected boolean isRecursiveProductSelection(PersistencePackage persistencePackage) {
+        List<String> customCriteria = Arrays.asList(persistencePackage.getCustomCriteria());
+        return customCriteria.contains("upsaleProduct") || customCriteria.contains("crossSaleProduct") || customCriteria.contains("requestingField=addOnProduct");
+    }
+
+    protected FilterMapping createFilterMappingForProperty(String targetPropertyName, PredicateProvider predicateProvider) {
+
+        FieldPath fieldPath = new FieldPath().withTargetProperty(targetPropertyName);
+        EmptyFilterValues directFilterValues = new EmptyFilterValues();
+        Restriction newRestriction = new Restriction().withPredicateProvider(predicateProvider);
+
+        return new FilterMapping()
+            .withFieldPath(fieldPath)
+            .withDirectFilterValues(directFilterValues)
+            .withRestriction(newRestriction);
+    }
+
+    protected DynamicResultSet getFilteredDynamicResultSet(PersistencePackage persistencePackage, CriteriaTransferObject cto, RecordHelper helper) throws ServiceException {
+        if(persistencePackage.getSectionCrumbs()!=null && persistencePackage.getSectionCrumbs().length>0) {
+            FilterMapping defaultCategoryMapping = createFilterMappingForProperty(ID_PROPERTY, new PredicateProvider() {
+                @Override
+                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                                String ceilingEntity, String fullPropertyName, Path explicitPath,
+                                                List directValues) {
+                    return builder.and(builder.notEqual(explicitPath, persistencePackage.getSectionCrumbs()[0].getSectionId()));
+                }
+            });
+            cto.getAdditionalFilterMappings().add(defaultCategoryMapping);
+        }
+        OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
+        PersistenceModule persistenceModule = helper.getCompatibleModule(fetchType);
+        return persistenceModule.fetch(persistencePackage, cto);
     }
 }

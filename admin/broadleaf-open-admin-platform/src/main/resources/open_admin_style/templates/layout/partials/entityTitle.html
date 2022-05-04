@@ -103,7 +103,7 @@
         </a>
         <h3 class="breadcrumb-divider">&nbsp;&nbsp;/&nbsp;&nbsp;</h3>
         <h3 class="mainEntityName" th:text="${entityForm.mainEntityName}"></h3>
-        <span class="entityCatalogName" th:if="${entityCatalog != null}" th:text="${'(' + entityCatalog.name + ')'}"></span>
+        <span class="entityCatalogName" th:if="${entityCatalog != null}" th:utext="${'(' + entityCatalog.name + ')'}"></span>
 
         <!-- Dropdown button if more than one action -->
         <div th:if="${#lists.size(entityForm.actions) > 1}" class="button-group">

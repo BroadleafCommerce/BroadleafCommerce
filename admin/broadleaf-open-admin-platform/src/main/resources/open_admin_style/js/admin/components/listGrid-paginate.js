@@ -267,8 +267,6 @@
                     tableResizing.startWidths.push($(this).outerWidth());
                     tableResizing.totalWidth += $(this).outerWidth();
                 });
-                
-                $(document).disableSelection();
             });
 
             $(document).mousemove(function(e) {
@@ -306,7 +304,6 @@
             $(document).mouseup(function() {
                 if (tableResizing.active) {
                     tableResizing.active = false;
-                    $(document).enableSelection();
                 }
             });
 
@@ -995,6 +992,11 @@
                             var multitenantAdd = $('button.add-multitenant-main-entity').length === 1;
                             if (multitenantAdd && inModal) {
                                 url = $('button.add-multitenant-main-entity').data('url');
+                            }
+                            //If this is modal and 'multitenant duplicate' we use url from parent
+                            var multitenantDuplicate = $('.duplicate-multitenant-main-entity').length === 1;
+                            if (multitenantDuplicate  && inModal) {
+                                url = $('.duplicate-multitenant-main-entity').data('url');
                             }
                             if ($container.data('parentid')) {
                                 url += "?parentId=" + $container.data('parentid');

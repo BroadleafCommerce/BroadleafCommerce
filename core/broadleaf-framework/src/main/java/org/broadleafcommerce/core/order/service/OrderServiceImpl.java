@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -35,7 +34,6 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.OfferServiceExtensionHandler;
 import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
@@ -84,18 +82,19 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 
 /**
  * @author apazzolini
@@ -218,7 +217,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
         customer = customerService.saveCustomer(customer);
-        return orderDao.createNewCartForCustomer(customer);
+        final Object lock = Objects.isNull(customer.getId()) ? customer : customer.getId();
+        synchronized (lock) {
+            return orderDao.createNewCartForCustomer(customer);
+        }
     }
 
     @Override
@@ -767,11 +769,9 @@ public class OrderServiceImpl implements OrderService {
         Collections.sort(parentOrderItemRequest.getChildOrderItems(), new Comparator<OrderItemRequestDTO>() {
             @Override
             public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
-                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
-                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
-                return new CompareToBuilder()
-                        .append(o1DisplayOrder, o2DisplayOrder)
-                        .toComparison();
+                BigDecimal o1DisplayOrder = new BigDecimal(o1.getAdditionalAttributes().get("addOnDisplayOrder"));
+                BigDecimal o2DisplayOrder = new BigDecimal(o2.getAdditionalAttributes().get("addOnDisplayOrder"));
+                return o1DisplayOrder.compareTo(o2DisplayOrder);
             }
         });
     }

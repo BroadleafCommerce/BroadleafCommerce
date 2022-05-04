@@ -111,6 +111,10 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
         // Check if admin user has access to this section.
         if (!adminUserHasAccess(typedEntitySection)) {
+            if (LOG.isDebugEnabled()) {
+                AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+                LOG.debug(String.format("User %s does not have access to %s", adminUser.getLogin(), typedEntitySection));
+            }
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access is denied");
             return true;
         }
@@ -170,7 +174,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         return true;
     }
 
-    private TypedEntity getTypedEntityFromServletPathId(String servletPath, String ceilingEntity) {
+    protected TypedEntity getTypedEntityFromServletPathId(String servletPath, String ceilingEntity) {
         int idBegIndex = servletPath.indexOf("/", 1);
         if (idBegIndex > 0) {
             String id = servletPath.substring(idBegIndex + 1, servletPath.length());
@@ -184,7 +188,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         return null;
     }
 
-    private String getTypeAdminSectionMismatchUrl(TypedEntity typedEntity, String ceilingEntity, String uri, String sectionKey) {
+    protected String getTypeAdminSectionMismatchUrl(TypedEntity typedEntity, String ceilingEntity, String uri, String sectionKey) {
         int lastDotIndex = StringUtils.lastIndexOf(ceilingEntity, ".");
         String ceilingEntityType = StringUtils.substring(ceilingEntity, lastDotIndex + 1).toLowerCase();
         String entityType = typedEntity.getType().getType().toLowerCase();
@@ -194,7 +198,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         return StringUtils.replace(uri, sectionKey, "/" + ceilingEntityType + ":" + entityType);
     }
 
-    private boolean typeMatchesAdminSection(TypedEntity typedEntity, String sectionKey) {
+    protected boolean typeMatchesAdminSection(TypedEntity typedEntity, String sectionKey) {
         String urlType = StringUtils.substring(sectionKey, sectionKey.indexOf(":") + 1);
         if(!StringUtils.equalsIgnoreCase(typedEntity.getType().getType(), urlType)) {
             return false;

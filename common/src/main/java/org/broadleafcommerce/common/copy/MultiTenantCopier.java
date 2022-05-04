@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.persistence.Embeddable;
@@ -73,8 +74,11 @@ public abstract class MultiTenantCopier implements Ordered {
     protected StreamingTransactionCapableUtil transUtil;
     
     protected int order = 0;
-    
-    protected List<Matcher> classExcludeRegexList = new ArrayList<Matcher>();
+
+    /**
+     * To add elements use {@link #addPattern(Pattern)}
+     */
+    protected List<Pattern> classExcludeRegexPatternList = new ArrayList<>();
 
     /**
      * Main method that should be implemented by each {@link MultiTenantCopier} to drive the logic of
@@ -128,7 +132,7 @@ public abstract class MultiTenantCopier implements Ordered {
 
     protected void persistCopyObjectTreeInternal(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
         if (library.contains(System.identityHashCode(copy)) || !(copy instanceof MultiTenantCloneable)
-                || excludeFromCopyRegex(copy)) {
+                || this.excludeFromCopyRegexPattern(copy)) {
             return;
         }
         library.add(System.identityHashCode(copy));
@@ -183,13 +187,21 @@ public abstract class MultiTenantCopier implements Ordered {
         }
     }
 
-    protected Boolean excludeFromCopyRegex(Object copy) {
-        for (Matcher regex : classExcludeRegexList) {
-            if (regex.reset(copy.getClass().toString()).matches()) {
-               return true; 
+    /**
+     *
+     * @param copy Copy object
+     * @return excluded or not in patterns
+     */
+    protected Boolean excludeFromCopyRegexPattern(final Object copy) {
+        boolean match = false;
+        for (final Pattern pattern : this.classExcludeRegexPatternList) {
+            final Matcher matcher = pattern.matcher(copy.getClass().toString());
+            if (matcher.matches()) {
+                match = true;
+                break;
             }
         }
-        return false;
+        return match;
     }
 
     protected void persistNode(final Object copy, final MultiTenantCopyContext context) {
@@ -358,6 +370,28 @@ public abstract class MultiTenantCopier implements Ordered {
                 return genericEntityService.readAllGenericEntity(clazz, limit, offset);
             }
         }, site, site, catalog);
+    }
+
+    /**
+     * Checks for similar items before adding to avoid duplication
+     *
+     * @param pattern input pattern
+     */
+    protected void addPattern(final Pattern pattern) {
+        if (this.needToAdd(pattern)) {
+            this.classExcludeRegexPatternList.add(pattern);
+        }
+    }
+
+    protected boolean needToAdd(final Pattern pattern) {
+        boolean exist = false;
+        for (Pattern item : this.classExcludeRegexPatternList) {
+            if (item.pattern().equals(pattern.pattern())) {
+                exist = true;
+                break;
+            }
+        }
+        return !exist;
     }
 
 }

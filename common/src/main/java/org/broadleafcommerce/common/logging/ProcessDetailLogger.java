@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collection;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Extra logging facility whose design intent is to handle detailed production logging for complex interactions.
  * Generally, the target of this logging is a rolling log file. This is intentionally separate from the standard system
@@ -72,6 +74,8 @@ public class ProcessDetailLogger {
 
     private Log processDetailLog;
 
+    protected String logIdentifier;
+
     /**
      * Max number of members that will output in the log for a collection or array member passed as a template variable
      */
@@ -94,6 +98,11 @@ public class ProcessDetailLogger {
      * @param logIdentifier the logger name that should be used from the backing logging system configuration
      */
     public ProcessDetailLogger(String logIdentifier) {
+        this.logIdentifier = logIdentifier;
+    }
+
+    @PostConstruct
+    public void init(){
         if (!disableAllProcessDetailLogging) {
             processDetailLog = LogFactory.getLog(logIdentifier);
             if (!ignoreNoProcessDetailLoggerConfiguration && !processDetailLog.isDebugEnabled()) {

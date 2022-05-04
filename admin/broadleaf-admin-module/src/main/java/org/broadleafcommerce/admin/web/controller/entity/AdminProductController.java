@@ -83,7 +83,7 @@ public class AdminProductController extends AdminBasicEntityController {
     public static final String DEFAULT_SKU_NAME = "defaultSku.name";
     public static final String SELECTIZE_NAME_PROPERTY = "name";
     public static final String PRODUCT_OPTIONS_COLLECTION_FIELD = "productOptions";
-    private static final String  PRODUCT_OPTION_ID_FIELD_KEY = "productOption.id";
+    private static final String PRODUCT_OPTION_ID_FIELD_KEY = "productOption.id";
     private static final String PRODUCT_ID_FIELD_KEY = "product.id";
 
     @Resource(name = "blCatalogService")
@@ -258,6 +258,7 @@ public class AdminProductController extends AdminBasicEntityController {
             }
         }
         ppr.withFilterAndSortCriteria(fascs);
+        ppr.addCustomCriteria(buildSelectizeCustomCriteria());
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
