@@ -432,7 +432,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
             }
             // Only check validation if not the initial add
-            if (!entity.isPreAdd() && entity.isValidationFailure()) {
+            if (!entity.isPreAdd() && !entity.isValidationFailure()) {
                 validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
             }
             //if validation failed, refresh the current instance so that none of the changes will be persisted
