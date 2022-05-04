@@ -27,7 +27,6 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.RequestWrapper;
 
 
 public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolver {
@@ -35,6 +34,8 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
     private static final Log LOG = LogFactory.getLog(AdminMappingExceptionResolver.class);
     
     protected boolean showDebugMessage = false;
+
+    protected boolean enableStacktrace = false;
     
     @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, 
@@ -49,8 +50,10 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             
             mav.addObject("showDebugMessage", showDebugMessage);
             if (showDebugMessage) {
-                StringBuilder sb2 = new StringBuilder();
-                appendStackTrace(ex, sb2);
+                StringBuilder sb2 = new StringBuilder("An error has occured");
+                if (!enableStacktrace) {
+                    appendStackTrace(ex, sb2);
+                }
                 mav.addObject("debugMessage", sb2.toString());
                 LOG.error("Unhandled error processing ajax request", ex);
             }
@@ -100,6 +103,14 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
     
     public void setShowDebugMessage(boolean showDebugMessage) {
         this.showDebugMessage = showDebugMessage;
+    }
+
+    public boolean isEnableStacktrace() {
+        return enableStacktrace;
+    }
+
+    public void setEnableStacktrace(boolean enableStacktrace) {
+        this.enableStacktrace = enableStacktrace;
     }
 
 }

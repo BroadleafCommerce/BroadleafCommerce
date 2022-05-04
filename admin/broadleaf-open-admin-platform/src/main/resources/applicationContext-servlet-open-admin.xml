@@ -40,6 +40,7 @@
 
     <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
         <property name="showDebugMessage" value="${exception.showDebugMessage}" />
+        <property name="enableStacktrace" value="${exception.enableStacktrace}"/>
         <property name="order" value="#{T(org.springframework.core.Ordered).LOWEST_PRECEDENCE - 50}" />
     </bean>
     
