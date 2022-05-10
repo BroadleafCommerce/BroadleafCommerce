@@ -257,40 +257,4 @@
         <property name="collectionRef" value="blMergedCacheConfigLocations-framework"/>
         <property name="targetRef" value="blMergedCacheConfigLocations"/>
     </bean>
-
-    <bean id="blUsingDefaultSkuInInventoryTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="enableUseDegaultSkuInventory"
-                       value="org.broadleafcommerce.core.catalog.domain.WeaveProductSkuUsage"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blUsingDefaultSkuInInventoryTokenMap"/>
-        <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
-    </bean>
-
-    <bean id="blProductUsingDefaultSkuInInventoryDirectCopyTransformerMember"
-          class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
-        <property name="templateTokens" value="enableUseDegaultSkuInventory"/>
-        <property name="conditionalProperty" value="enable.weave.use.default.sku.inventory"/>
-    </bean>
-
-    <bean id="blProductInventoryUseDefaultSku"
-          class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="org.broadleafcommerce.core.catalog.domain.ProductImpl"
-                       value-ref="blProductUsingDefaultSkuInInventoryDirectCopyTransformerMember"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blProductInventoryUseDefaultSku"/>
-        <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
-    </bean>
-
 </beans>
