@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.event.BroadleafSystemEventDetail;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.core.catalog.domain.ProductSkuUsage;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -37,6 +38,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +67,10 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
     @Autowired
     protected ApplicationContext applicationContext;
+
+    @Value("${enable.weave.use.default.sku.inventory:false}")
+    protected boolean enableUseDegaultSkuInventory = false;
+
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
@@ -137,14 +143,18 @@ public class InventoryServiceImpl implements ContextualInventoryService {
             Map<Sku, Integer> inventories = new HashMap<>();
 
             for (Sku sku : skus) {
+                Sku skuForInventory = sku;
+                if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                    skuForInventory = sku.getProduct().getDefaultSku();
+                }
                 Integer quantityAvailable = 0;
-                if(checkBasicAvailablility(sku)) {
-                    InventoryType skuInventoryType = sku.getInventoryType();
+                if(checkBasicAvailablility(skuForInventory)) {
+                    InventoryType skuInventoryType = skuForInventory.getInventoryType();
                     if(InventoryType.CHECK_QUANTITY.equals(skuInventoryType)) {
-                        if(sku.getQuantityAvailable() != null) {
-                            quantityAvailable = sku.getQuantityAvailable();
+                        if(skuForInventory.getQuantityAvailable() != null) {
+                            quantityAvailable = skuForInventory.getQuantityAvailable();
                         }
-                    } else if(sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(skuInventoryType)) {
+                    } else if(skuForInventory.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(skuInventoryType)) {
                         quantityAvailable = null;
                     }
                 }
@@ -157,14 +167,19 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         }
     }
 
+    //here
     @Override
     public boolean isAvailable(Sku sku, int quantity, Map<String, Object> context) {
+        Sku skuForInventory = sku;
+        if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+            skuForInventory = sku.getProduct().getDefaultSku();
+        }
         if (quantity < 1) {
             throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero.");
         }
-        if (checkBasicAvailablility(sku)) {
-            if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                Integer quantityAvailable = retrieveQuantityAvailable(sku, context);
+        if (checkBasicAvailablility(skuForInventory)) {
+            if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
+                Integer quantityAvailable = retrieveQuantityAvailable(skuForInventory, context);
                 
                 return quantityAvailable != null && quantity <= quantityAvailable;
             } else {
@@ -195,25 +210,29 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     protected void decrementSku(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
         for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
             Sku sku = entry.getKey();
+            Sku skuForInventory = sku;
+            if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                skuForInventory = sku.getProduct().getDefaultSku();
+            }
             Integer quantity = entry.getValue();
             if (quantity == null || quantity < 1) {
                 throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
             }
 
-            if (checkBasicAvailablility(sku)) {
-                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    Integer inventoryAvailable = retrieveQuantityAvailable(sku, context);
+            if (checkBasicAvailablility(skuForInventory)) {
+                if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
+                    Integer inventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
                     if (inventoryAvailable == null) {
                         return;
                     }
                     if (inventoryAvailable < quantity) {
                         throw new InventoryUnavailableException(
-                                "There was not enough inventory to fulfill this request.", sku.getId(), quantity, inventoryAvailable);
+                                "There was not enough inventory to fulfill this request.", skuForInventory.getId(), quantity, inventoryAvailable);
                     }
                     int newInventory = inventoryAvailable - quantity;
-                    sku.setQuantityAvailable(newInventory);
-                    catalogService.saveSku(sku);
-                    invalidateSkuInventory(sku);
+                    skuForInventory.setQuantityAvailable(newInventory);
+                    catalogService.saveSku(skuForInventory);
+                    invalidateSkuInventory(skuForInventory);
                 } else {
                     LOG.info("Not decrementing inventory as the Sku has been marked as always available");
                 }
@@ -243,19 +262,24 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     protected void incrementSku(Map<Sku, Integer> skuQuantities, Map<String, Object> context) {
         for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
             Sku sku = entry.getKey();
+
+            Sku skuForInventory = sku;
+            if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                skuForInventory = sku.getProduct().getDefaultSku();
+            }
             Integer quantity = entry.getValue();
             if (quantity == null || quantity < 1) {
                 throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
             }
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                Integer currentInventoryAvailable = retrieveQuantityAvailable(sku, context);
+                Integer currentInventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
                 if (currentInventoryAvailable == null) {
                     throw new IllegalArgumentException("The current inventory for this Sku is null");
                 }
                 int newInventory = currentInventoryAvailable + quantity;
-                sku.setQuantityAvailable(newInventory);
-                catalogService.saveSku(sku);
-                invalidateSkuInventory(sku);
+                skuForInventory.setQuantityAvailable(newInventory);
+                catalogService.saveSku(skuForInventory);
+                invalidateSkuInventory(skuForInventory);
             } else {
                 LOG.info("Not incrementing inventory as the Sku has been marked as always available");
             }
@@ -284,33 +308,45 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         for (OrderItem orderItem : order.getOrderItems()) {
             if (orderItem instanceof DiscreteOrderItem) {
                 Sku sku = ((DiscreteOrderItem) orderItem).getSku();
-                Integer quantity = skuInventoryMap.get(sku);
+                Sku skuForInventory = sku;
+                if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                    skuForInventory = sku.getProduct().getDefaultSku();
+                }
+                Integer quantity = skuInventoryMap.get(skuForInventory);
                 if (quantity == null) {
                     quantity = orderItem.getQuantity();
                 } else {
                     quantity += orderItem.getQuantity();
                 }
-                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    skuInventoryMap.put(sku, quantity);
+                if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
+                    skuInventoryMap.put(skuForInventory, quantity);
                 }
             } else if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
-                if (InventoryType.CHECK_QUANTITY.equals(bundleItem.getSku().getInventoryType())) {
+                Sku bundleSku = bundleItem.getSku();
+                if (enableUseDegaultSkuInventory && ((ProductSkuUsage) bundleSku.getProduct()).getUseDefaultSkuInInventory()){
+                    bundleSku = bundleSku.getProduct().getDefaultSku();
+                }
+                if (InventoryType.CHECK_QUANTITY.equals(bundleSku.getInventoryType())) {
                     // add the bundle sku of quantities to decrement
-                    skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
+                    skuInventoryMap.put(bundleSku, bundleItem.getQuantity());
                 }
 
                 // Now add all of the discrete items within the bundl
                 List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
                 for (DiscreteOrderItem discreteItem : discreteItems) {
-                    if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
-                        Integer quantity = skuInventoryMap.get(discreteItem.getSku());
+                    Sku sku = discreteItem.getSku();
+                    if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                        sku = sku.getProduct().getDefaultSku();
+                    }
+                    if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                        Integer quantity = skuInventoryMap.get(sku);
                         if (quantity == null) {
                             quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
                         } else {
                             quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
                         }
-                        skuInventoryMap.put(discreteItem.getSku(), quantity);
+                        skuInventoryMap.put(sku, quantity);
                     }
                 }
             }
@@ -378,12 +414,15 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
     @Override
     public void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
+        Sku skuForInventory = sku;
+        if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+            skuForInventory = sku.getProduct().getDefaultSku();
+        }
         // First check if this Sku is available
         if (!sku.isAvailable()) {
             throw new InventoryUnavailableException("The referenced Sku " + sku.getId() + " is marked as unavailable", sku.getId(), requestedQuantity, 0);
         }
-
-        if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+        if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
             Map<String, Object> inventoryContext = new HashMap<>();
             inventoryContext.put(ContextualInventoryService.ORDER_KEY, order);
             boolean available = isAvailable(sku, requestedQuantity, inventoryContext);
