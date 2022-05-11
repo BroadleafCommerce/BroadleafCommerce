@@ -979,7 +979,12 @@
                         break;
                     case "COLLECTION_IN":
                     case "COLLECTION_NOT_IN":
-                        var ruleVal = Array.isArray(rule.value) ? rule.value : JSON.parse(rule.value);
+                        var ruleVal;
+                        try{
+                            ruleVal = Array.isArray(rule.value) ? rule.value : JSON.parse(rule.value);
+                        } catch (e) {
+                            ruleVal = rule.value.slice(1, -1).split(',');
+                        }
                         var arr = Array.isArray(ruleVal) ? ruleVal : [ruleVal];
                         var sectionKey = field.selectizeSectionKey;
                         var url = BLC.servletContext + "/" + sectionKey + "/selectize?id=" + arr.join("|");
