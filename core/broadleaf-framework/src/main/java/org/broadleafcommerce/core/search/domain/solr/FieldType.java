@@ -59,6 +59,7 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
     public static final FieldType TRIEDATE = new FieldType("tdt", "Trie Date");
     public static final FieldType COORDINATE = new FieldType("c", "Coordinate");
     public static final FieldType SORT = new FieldType("sort", "SORT");
+    public static final FieldType TS = new FieldType("ts", "Text sortable");
     
     public static boolean isMultiValued(FieldType type) {
         return ArrayUtils.contains(new FieldType[] {
