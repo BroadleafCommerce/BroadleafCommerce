@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.springframework.util.Log4jConfigurer;
+//import org.springframework.util.Log4jConfigurer;
 
 import java.io.FileNotFoundException;
 
@@ -36,12 +36,12 @@ public class RuntimeLog4jConfigurer {
         return log4jConfigLocation;
     }
 
-    public void setLog4jConfigLocation(String log4jConfigLocation) {
-        this.log4jConfigLocation = log4jConfigLocation;
-        try {
-            Log4jConfigurer.initLogging(log4jConfigLocation);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public void setLog4jConfigLocation(String log4jConfigLocation) {
+//        this.log4jConfigLocation = log4jConfigLocation;
+//        try {
+//            //Log4jConfigurer.initLogging(log4jConfigLocation);
+//        } catch (FileNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
