@@ -1577,7 +1577,7 @@
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.5.13</version>
+                <version>1.6.7</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
