@@ -81,7 +81,7 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupState")
-                .name("address.state.name")
+                .name("address.stateProvinceRegion")
                 .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
@@ -95,7 +95,7 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupCountry")
-                .name("address.country.name")
+                .name("address.isoCountryAlpha2.name")
                 .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)

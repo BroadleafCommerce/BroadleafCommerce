@@ -77,7 +77,7 @@ public class FutureCreditOfferTest extends CommonSetupBaseTest {
     @Rollback(false)
     public void createSku1(Sku sku) {
         offerUtil = new CreateOfferUtility(offerDao, offerCodeDao, offerService);
-        orderUtil = new CreateOrderEntityUtility(catalogService, orderItemService, isoService, stateService, countryService);
+        orderUtil = new CreateOrderEntityUtility(catalogService, orderItemService, isoService, countryService);
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku.setName("test1");

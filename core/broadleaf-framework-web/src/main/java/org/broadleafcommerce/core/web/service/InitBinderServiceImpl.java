@@ -20,12 +20,9 @@ package org.broadleafcommerce.core.web.service;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
-import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
-import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
@@ -42,46 +39,11 @@ public class InitBinderServiceImpl implements InitBinderService {
     @Resource(name = "blCountryService")
     protected CountryService countryService;
 
-    @Resource(name = "blStateService")
-    protected StateService stateService;
-
     @Resource(name = "blISOService")
     protected ISOService isoService;
 
     @Override
     public void configAddressInitBinder(ServletRequestDataBinder binder) {
-
-        /**
-         * @deprecated - address.setState() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    State state = stateService.findStateByAbbreviation(text);
-                    setValue(state);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        /**
-         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    Country country = countryService.findCountryByAbbreviation(text);
-                    setValue(country);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
 
         binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
             @Override

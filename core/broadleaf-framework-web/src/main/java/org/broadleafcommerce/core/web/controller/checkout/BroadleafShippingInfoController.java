@@ -242,7 +242,6 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
      * @return the return path
      */
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
-        model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         model.addAttribute("countrySubdivisions", countrySubdivisionService.findSubdivisions());
         return getMultishipAddAddressView();

@@ -39,10 +39,7 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.StateService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,17 +51,15 @@ import java.util.List;
 public class CreateOrderEntityUtility {
 
     private CountryService countryService;
-    private StateService stateService;
     private ISOService isoService;
     private CatalogService catalogService;
     private OrderItemService orderItemService;
 
     public CreateOrderEntityUtility(CatalogService catalogService, OrderItemService orderItemService,
-                              ISOService isoService, StateService stateService, CountryService countryService) {
+                              ISOService isoService, CountryService countryService) {
         this.catalogService = catalogService;
         this.orderItemService = orderItemService;
         this.isoService = isoService;
-        this.stateService = stateService;
         this.countryService = countryService;
     }
 
@@ -111,15 +106,6 @@ public class CreateOrderEntityUtility {
 
         isoService.save(isoCountry);
 
-        State state = new StateImpl();
-        state.setAbbreviation("TX");
-        state.setName("Texas");
-        state.setCountry(country);
-
-        stateService.save(state);
-
-        address.setState(state);
-        address.setCountry(country);
         address.setIsoCountrySubdivision("US-TX");
         address.setIsoCountryAlpha2(isoCountry);
 
@@ -152,15 +138,6 @@ public class CreateOrderEntityUtility {
 
         isoService.save(isoCountry);
 
-        State state = new StateImpl();
-        state.setAbbreviation("MXC");
-        state.setName("Mexico City");
-        state.setCountry(country);
-
-        stateService.save(state);
-
-        address.setState(state);
-        address.setCountry(country);
         address.setIsoCountrySubdivision("MX-MXC");
         address.setIsoCountryAlpha2(isoCountry);
 

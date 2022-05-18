@@ -47,12 +47,9 @@ import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.profile.core.service.StateService;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -66,10 +63,7 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     protected CountryService countryService;
-    
-    @Resource
-    protected StateService stateService;
-    
+
     @Resource
     protected CustomerService customerService;
     
@@ -100,15 +94,7 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
         isoCountry.setName("UNITED STATES");
         isoService.save(isoCountry);
     }
-    
-    public void createState() {
-        State state = new StateImpl();
-        state.setAbbreviation("KY");
-        state.setName("Kentucky");
-        state.setCountry(countryService.findCountryByAbbreviation("US"));
-        stateService.save(state);
-    }
-    
+
     public Customer createCustomer() {
         return customerService.createCustomerFromId(null);
     }
@@ -119,7 +105,6 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
      */
     public Customer createCustomerWithAddresses() {
         createCountry();
-        createState();
 
         Customer customer = createCustomer();
         customer.setUsername(String.valueOf(customer.getId()));
@@ -157,7 +142,6 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
      */
     public CustomerAddress createCustomerWithAddress(CustomerAddress customerAddress) {
         createCountry();
-        createState();
         Customer customer = createCustomer();
         customer.setUsername(String.valueOf(customer.getId()));
         customerAddress.setCustomer(customer);
@@ -169,11 +153,6 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
      * @param customerAddress
      */
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
-        State state = stateService.findStateByAbbreviation("KY");
-        customerAddress.getAddress().setState(state);
-        Country country = countryService.findCountryByAbbreviation("US");
-        customerAddress.getAddress().setCountry(country);
-
         customerAddress.getAddress().setIsoCountrySubdivision("US-KY");
         ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code("US");
         customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);

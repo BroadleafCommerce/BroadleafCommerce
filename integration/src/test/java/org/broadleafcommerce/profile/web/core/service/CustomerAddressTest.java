@@ -20,11 +20,9 @@ package org.broadleafcommerce.profile.web.core.service;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
-import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.dataprovider.CustomerAddressDataProvider;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
@@ -85,7 +83,7 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
      * @param customerAddress
      */
     @Deprecated
-    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer", "createCountry", "createState"})
+    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer", "createCountry"})
     @Transactional
     @Rollback(false)
     public void createCustomerAddress(CustomerAddress customerAddress) {
@@ -93,10 +91,6 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
         Customer customer = customerService.readCustomerByUsername(userName);
         assert customerAddress.getId() == null;
         customerAddress.setCustomer(customer);
-        State state = stateService.findStateByAbbreviation("KY");
-        customerAddress.getAddress().setState(state);
-        Country country = countryService.findCountryByAbbreviation("US");
-        customerAddress.getAddress().setCountry(country);
         customerAddress.getAddress().setIsoCountrySubdivision("US-KY");
         ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code("US");
         customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);

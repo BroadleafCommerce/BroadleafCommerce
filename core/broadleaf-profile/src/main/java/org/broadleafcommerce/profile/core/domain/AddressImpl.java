@@ -154,13 +154,6 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_City", order=70, group = "AddressImpl_Address")
     protected String city;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
-    @JoinColumn(name = "STATE_PROV_REGION")
-    @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
-    @AdminPresentation(friendlyName = "StateImpl_State", order=70, group = "AddressImpl_Address", prominent = true)
-    @Deprecated
-    protected State state;
-
     @Column(name = "ISO_COUNTRY_SUB")
     @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=110, group = "AddressImpl_Address",
                         tooltip = "AddressImpl_Country_Subdivision_ToolTip")
@@ -173,13 +166,6 @@ public class AddressImpl implements Address {
     @Column(name = "COUNTY")
     @AdminPresentation(friendlyName = "AddressImpl_County", order=90, group = "AddressImpl_Address")
     protected String county;
-
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class)
-    @JoinColumn(name = "COUNTRY")
-    @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
-    @AdminPresentation(friendlyName = "CountryImpl_Country", order=100, group = "AddressImpl_Address", prominent = true, translatable = true)
-    @Deprecated
-    protected Country country;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
     @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
@@ -321,18 +307,6 @@ public class AddressImpl implements Address {
     }
 
     @Override
-    @Deprecated
-    public Country getCountry() {
-        return country;
-    }
-
-    @Override
-    @Deprecated
-    public void setCountry(Country country) {
-        this.country = country;
-    }
-
-    @Override
     public String getIsoCountrySubdivision() {
         return isoCountrySubdivision;
     }
@@ -380,18 +354,6 @@ public class AddressImpl implements Address {
     @Override
     public void setCounty(String county) {
         this.county = county;
-    }
-
-    @Override
-    @Deprecated
-    public State getState() {
-        return state;
-    }
-
-    @Override
-    @Deprecated
-    public void setState(State state) {
-        this.state = state;
     }
 
     @Override
@@ -640,11 +602,6 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!companyName.equals(other.companyName))
             return false;
-        if (country == null) {
-            if (other.country != null)
-                return false;
-        } else if (!country.equals(other.country))
-            return false;
         if (isoCountryAlpha2 == null) {
             if (other.isoCountryAlpha2 != null)
                 return false;
@@ -675,11 +632,6 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!postalCode.equals(other.postalCode))
             return false;
-        if (state == null) {
-            if (other.state != null)
-                return false;
-        } else if (!state.equals(other.state))
-            return false;
         if (isoCountrySubdivision == null) {
             if (other.isoCountrySubdivision != null)
                 return false;
@@ -702,14 +654,12 @@ public class AddressImpl implements Address {
         result = prime * result + ((addressLine2 == null) ? 0 : addressLine2.hashCode());
         result = prime * result + ((city == null) ? 0 : city.hashCode());
         result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
-        result = prime * result + ((country == null) ? 0 : country.hashCode());
         result = prime * result + ((isoCountryAlpha2 == null) ? 0 : isoCountryAlpha2.hashCode());
         result = prime * result + ((county == null) ? 0 : county.hashCode());
         result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((postalCode == null) ? 0 : postalCode.hashCode());
-        result = prime * result + ((state == null) ? 0 : state.hashCode());
         result = prime * result + ((isoCountrySubdivision == null) ? 0 : isoCountrySubdivision.hashCode());
         result = prime * result + ((stateProvinceRegion == null) ? 0 : stateProvinceRegion.hashCode());
         return result;
@@ -749,8 +699,6 @@ public class AddressImpl implements Address {
         cloned.setVerificationLevel(verificationLevel);
         cloned.setStateProvinceRegion(stateProvinceRegion);
         cloned.setPhoneSecondary(phoneSecondary);
-        cloned.setState(state);
-        cloned.setCountry(country);
         return createResponse;
     }
 }
