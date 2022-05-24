@@ -256,6 +256,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 String moneySuffix = ((DecimalFormat) nf).getPositiveSuffix();
                 String setValue = discountValue.getValue();
                 setValue = setValue.replaceAll("\\%", "")
+                        .replaceAll("\\,", "")
                         .replaceAll(Pattern.quote(moneyPrefix), "")
                         .replaceAll(Pattern.quote(moneySuffix), "");
                 discountValue.setValue(setValue);
