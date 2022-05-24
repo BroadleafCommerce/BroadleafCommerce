@@ -1311,10 +1311,6 @@
                         <artifactId>commons-fileupload</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>xalan</groupId>
-                        <artifactId>xalan</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <groupId>org.owasp.antisamy</groupId>
                         <artifactId>antisamy</artifactId>
                     </exclusion>
@@ -1328,18 +1324,6 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>4.5.13</version>
-            </dependency>
-            <!--update xalan dependency for esapi for a xalan security vulnerability-->
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>2.7.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
