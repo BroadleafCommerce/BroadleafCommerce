@@ -29,7 +29,6 @@ import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Commonalities between {@link PageTemplateCustomPersistenceHandler} and {@link StructuredContentTypeCustomPersistenceHandler}
@@ -58,7 +56,7 @@ public class DynamicFieldPersistenceHandlerHelper {
 
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(inheritedType.getName());
-        fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
+        fieldMetadata.setAvailableToTypes(new String[]{inheritedType.getName()});
         fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         fieldMetadata.setLength(definition.getMaxLength());
@@ -74,8 +72,8 @@ public class DynamicFieldPersistenceHandlerHelper {
         }
         fieldMetadata.setName(definition.getName());
         fieldMetadata.setFriendlyName(definition.getFriendlyName());
-        fieldMetadata.setSecurityLevel(definition.getSecurityLevel()==null?"":definition.getSecurityLevel());
-        fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
+        fieldMetadata.setSecurityLevel(definition.getSecurityLevel() == null ? "" : definition.getSecurityLevel());
+        fieldMetadata.setVisibility(definition.getHiddenFlag() ? VisibilityEnum.HIDDEN_ALL : VisibilityEnum.VISIBLE_ALL);
         fieldMetadata.setTab("General");
         fieldMetadata.setTabOrder(100);
         fieldMetadata.setOrder(definition.getFieldOrder());
@@ -91,14 +89,13 @@ public class DynamicFieldPersistenceHandlerHelper {
         fieldMetadata.setTooltip(definition.getTooltip());
         fieldMetadata.setTranslatable(true);
         if (definition.getValidationRegEx() != null) {
-            Map<String, String> itemMap = new HashMap<String, String>();
+            Map<String, String> itemMap = new HashMap<>();
             itemMap.put("regularExpression", definition.getValidationRegEx());
             itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
-            List<Map<String, String>> configurationItems = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> configurationItems = new ArrayList<>();
             configurationItems.add(itemMap);
-            fieldMetadata.getValidationConfigurations().put(RegexPropertyValidator.class.getName(), configurationItems);
+            fieldMetadata.getValidationConfigurations().put("blRegexPropertyValidator", configurationItems);
         }
-
 
         if (definition.getFieldType().equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) {
             fieldMetadata.setForeignKeyClass(definition.getAdditionalForeignKeyClass());
@@ -137,19 +134,19 @@ public class DynamicFieldPersistenceHandlerHelper {
             @Override
             public int compare(Property o1, Property o2) {
                 /*
-                     * First, compare properties based on order fields
-                     */
+                 * First, compare properties based on order fields
+                 */
                 if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() != null) {
                     return o1.getMetadata().getOrder().compareTo(o2.getMetadata().getOrder());
                 } else if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() == null) {
                     /*
-                          * Always favor fields that have an order identified
-                          */
+                     * Always favor fields that have an order identified
+                     */
                     return -1;
                 } else if (o1.getMetadata().getOrder() == null && o2.getMetadata().getOrder() != null) {
                     /*
-                          * Always favor fields that have an order identified
-                          */
+                     * Always favor fields that have an order identified
+                     */
                     return 1;
                 } else if (o1.getMetadata().getFriendlyName() != null && o2.getMetadata().getFriendlyName() != null) {
                     return o1.getMetadata().getFriendlyName().compareTo(o2.getMetadata().getFriendlyName());
@@ -170,7 +167,7 @@ public class DynamicFieldPersistenceHandlerHelper {
         fieldMetadata.setSecondaryType(SupportedFieldType.INTEGER);
         fieldMetadata.setMutable(true);
         fieldMetadata.setInheritedFromType(inheritedType.getName());
-        fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
+        fieldMetadata.setAvailableToTypes(new String[]{inheritedType.getName()});
         fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         fieldMetadata.setName("id");
@@ -208,7 +205,6 @@ public class DynamicFieldPersistenceHandlerHelper {
 
         Property[] properties = sortProperties(propertiesList);
         return properties;
-
     }
 
 }
