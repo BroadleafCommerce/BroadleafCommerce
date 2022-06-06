@@ -102,7 +102,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
-    private ConcurrentHashMap<String, BundledResourceInfo> createdBundles = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<String, BundledResourceInfo> createdBundles = new ConcurrentHashMap<String, BundledResourceInfo>();
     
     /**
      * Initalize the blJsResources and blCssResources. The reason that we are doing it this way and not via the normal
