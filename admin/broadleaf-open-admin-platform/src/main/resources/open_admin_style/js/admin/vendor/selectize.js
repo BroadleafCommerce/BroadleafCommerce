@@ -1176,7 +1176,6 @@
 		var key, i, n, dir, input, self = this;
 		input = $input[0];
 		input.selectize = self;
-		settings.persist = true;
 
 		// detect rtl environment
 		var computedStyle = window.getComputedStyle && window.getComputedStyle(input, null);

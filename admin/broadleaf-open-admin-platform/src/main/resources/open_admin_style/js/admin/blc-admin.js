@@ -718,7 +718,7 @@ var BLCAdmin = (function($) {
 
                 var selectizeAdderOptions = {
                     maxItems: null,
-                    persist: false,
+                    persist: true,
                     loadThrottle: 100,
                     preload: 'focus',
                     hideSelected: true,
@@ -816,7 +816,7 @@ var BLCAdmin = (function($) {
 
                 var selectizeCollectionOptions = {
                     maxItems: null,
-                    persist: false,
+                    persist: true,
                     placeholder: collectionPlaceholder,
                     dropdownParent: 'body',
                     hideSelected: true,
