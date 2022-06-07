@@ -295,7 +295,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
         tab = TabName.Qualifiers,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
-        ruleIdentifier = RuleIdentifier.ORDERITEM)
+        ruleIdentifier = RuleIdentifier.ORDERITEM,
+        validationConfigurations =
+            @ValidationConfiguration(validationImplementation = "blOfferQualifyingCriteriaValidator"))
     protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();
 
     @Transient
