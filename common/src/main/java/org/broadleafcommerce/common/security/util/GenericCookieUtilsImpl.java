@@ -84,7 +84,6 @@ public class GenericCookieUtilsImpl implements CookieUtils {
         // RFC2965 is not supported by browsers and the Servlet spec
         // asks for 2109.
 
-        /** HOTFIX added fragment **/
         if (isSecure){
             sb.append("; SameSite=None");
         }
