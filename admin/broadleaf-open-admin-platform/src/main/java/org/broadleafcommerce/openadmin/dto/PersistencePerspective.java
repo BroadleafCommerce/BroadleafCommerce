@@ -131,7 +131,7 @@ public class PersistencePerspective implements Serializable {
     /**
      * Retrieve the list of fields to exclude from the admin presentation.
      * Implementations should use the excluded property of the AdminPresentation
-     * annotation instead, or use an AdminPresentationOverride if re-enabling a
+     * annotation instead, or use an AdminPresentationMergeOverride if re-enabling a
      * Broadleaf field is desired. If multiple datasources point to the same
      * entity, but different exclusion behavior is required, a custom persistence
      * handler may be employed with different inspect method implementations to
@@ -147,7 +147,7 @@ public class PersistencePerspective implements Serializable {
     /**
      * Set the list of fields to exclude from the admin presentation.
      * Implementations should use the excluded property of the AdminPresentation
-     * annotation instead, or use an AdminPresentationOverride if re-enabling a
+     * annotation instead, or use an AdminPresentationMergeOverride if re-enabling a
      * Broadleaf field is desired. If multiple datasources point to the same
      * entity, but different exclusion behavior is required, a custom persistence
      * handler may be employed with different inspect method implementations to
