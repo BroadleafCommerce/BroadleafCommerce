@@ -83,6 +83,11 @@ public class GenericCookieUtilsImpl implements CookieUtils {
         // the header name is Set-Cookie for both "old" and v.1 ( RFC2109 )
         // RFC2965 is not supported by browsers and the Servlet spec
         // asks for 2109.
+
+        if (isSecure){
+            sb.append("; SameSite=None");
+        }
+
         ESAPI.httpUtilities().addHeader(response, "Set-Cookie", sb.toString());
     }
     
