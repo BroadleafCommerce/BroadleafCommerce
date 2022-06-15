@@ -421,8 +421,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
                         .findFirst();
-                    if (property != null && sectionCrumbOptional.isPresent()
-                        && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
+                    property.setValue(sectionCrumbOptional.get().getSectionId());
+                    if (sectionCrumbOptional.isPresent() && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
                         throw new SecurityServiceException("Post fetch validation: Access denied");
                     }
 
