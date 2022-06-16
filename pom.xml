@@ -72,8 +72,8 @@
         <closure.compiler.version>v20180506</closure.compiler.version>
         <hibernate.version>5.4.33.Final</hibernate.version>
         <hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
-        <jaxb.version>2.3.1</jaxb.version>
-        <jaxws.version>2.3.1</jaxws.version>
+        <javax.version>2.3.1</javax.version>
+        <sunxml.version>3.0.2</sunxml.version>
         <javax-annotation.version>1.3.2</javax-annotation.version>
     </properties>
     <scm>
@@ -764,22 +764,22 @@
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>${jaxb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb.version}</version>
+                <version>${javax.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.ws</groupId>
                 <artifactId>jaxws-api</artifactId>
-                <version>${jaxws.version}</version>
+                <version>${javax.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${sunxml.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>
-                <version>${jaxws.version}</version>
+                <version>${sunxml.version}</version>
             </dependency>
 
             <!-- XML Libraries -->
