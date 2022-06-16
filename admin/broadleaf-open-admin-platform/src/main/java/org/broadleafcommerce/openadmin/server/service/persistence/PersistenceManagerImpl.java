@@ -29,6 +29,8 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -48,6 +50,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.handler.ParentIdServiceExtensionManager;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -67,9 +70,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,6 +80,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -107,6 +111,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Resource(name="blPersistenceManagerEventHandlers")
     protected List<PersistenceManagerEventHandler> persistenceManagerEventHandlers;
+
+    @Resource(name = "blParentIdServiceExtensionManager")
+    protected ParentIdServiceExtensionManager extensionManager;
 
     @Autowired(required = false)
     protected FetchTypeDetection fetchDetection = null;
@@ -421,9 +428,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
                         .findFirst();
-                    property.setValue(sectionCrumbOptional.get().getSectionId());
-                    if (sectionCrumbOptional.isPresent() && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
-                        throw new SecurityServiceException("Post fetch validation: Access denied");
+                    if (property != null && sectionCrumbOptional.isPresent()
+                            && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
+                        ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<String>();
+                        if (extensionManager.getProxy().checkParentId(property.getValue(),foreignKey.getForeignKeyClass(), extensionResultHolder) != ExtensionResultStatusType.NOT_HANDLED ){
+                           String parentID = extensionResultHolder.getResult();
+                           if (!parentID.equals(sectionCrumbOptional.get().getSectionId())){
+                               throw new SecurityServiceException("Post fetch validation: Access denied");
+                           }
+                        } else {
+                            throw new SecurityServiceException("Post fetch validation: Access denied");
+                        }
                     }
 
                 }
