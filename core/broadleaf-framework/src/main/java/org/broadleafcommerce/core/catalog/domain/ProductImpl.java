@@ -345,6 +345,13 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             gridVisibleFields = {"name", "type", "required"})
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
+    @Column(name = "ENABLE_DEFAULT_SKU_IN_INVENTORY")
+    @AdminPresentation(friendlyName = "ProductImpl_enableDefaultSkuInInventory",
+            group = GroupName.Miscellaneous, order = 7000,
+            tooltip = "ProductImpl_enableDefaultSkuInInventory_Tooltip",
+            defaultValue = "false")
+    protected boolean enableDefaultSkuInventory;
+
     @Transient
     protected Map<String, Set<String>> productOptionMap;
 
@@ -353,6 +360,14 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
+
+    @Override
+    public Boolean getEnableDefaultSkuInInventory(){return false;}
+
+    @Override
+    public void isEnableDefaultSkuInInventory(Boolean enableDefaultSkuInventory) {
+        this.enableDefaultSkuInventory = enableDefaultSkuInventory != null && enableDefaultSkuInventory;
+    }
 
     @Override
     public Long getId() {

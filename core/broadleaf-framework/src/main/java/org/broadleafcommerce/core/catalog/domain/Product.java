@@ -895,4 +895,8 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      * @see {@link Category}
      */
     public List<Long> getParentCategoryHierarchyIds();
+
+    public void isEnableDefaultSkuInInventory(Boolean enableUseDefaultSkuInventory);
+
+    public Boolean getEnableDefaultSkuInInventory();
 }
