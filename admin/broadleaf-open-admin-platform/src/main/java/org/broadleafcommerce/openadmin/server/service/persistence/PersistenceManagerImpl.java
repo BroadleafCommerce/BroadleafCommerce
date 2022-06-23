@@ -428,26 +428,27 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
                         .findFirst();
-                    boolean isValid = false;
-                    if (property != null && sectionCrumbOptional.isPresent()
-                            && property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
-                        isValid = true;
-                    } else {
-                        // It's possible that we are trying to validate against an inherited entity.  To be sure, let's get
-                        //  the parentID and compare against that
-                        if (extensionManager != null) {
-                            ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<String>();
-                            ExtensionResultStatusType result = extensionManager.getProxy().findEntityParentId(property.getValue(), foreignKey.getForeignKeyClass(), extensionResultHolder);
-                            if (result.equals(ExtensionResultStatusType.HANDLED)) {
-                                String parentID = extensionResultHolder.getResult();
-                                if (parentID.equals(sectionCrumbOptional.get().getSectionId())) {
-                                    isValid = true;
+                    if (property != null && sectionCrumbOptional.isPresent()) {
+                        boolean isValid = false;
+                        if (property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
+                            isValid = true;
+                        } else {
+                            // It's possible that we are trying to validate against an inherited entity.  To be sure, let's get
+                            //  the parentID and compare against that
+                            if (extensionManager != null) {
+                                ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<String>();
+                                ExtensionResultStatusType result = extensionManager.getProxy().findEntityParentId(property.getValue(), foreignKey.getForeignKeyClass(), extensionResultHolder);
+                                if (result.equals(ExtensionResultStatusType.HANDLED)) {
+                                    String parentID = extensionResultHolder.getResult();
+                                    if (parentID.equals(sectionCrumbOptional.get().getSectionId())) {
+                                        isValid = true;
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (!isValid) {
-                        throw new SecurityServiceException("Post fetch validation: Access denied");
+                        if (!isValid) {
+                            throw new SecurityServiceException("Post fetch validation: Access denied");
+                        }
                     }
                 }
             }
