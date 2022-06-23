@@ -50,7 +50,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.openadmin.handler.ParentIdServiceExtensionManager;
+import org.broadleafcommerce.common.persistence.EntityParentIdServiceExtensionManager;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -112,8 +112,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     @Resource(name="blPersistenceManagerEventHandlers")
     protected List<PersistenceManagerEventHandler> persistenceManagerEventHandlers;
 
-    @Resource(name = "blParentIdServiceExtensionManager")
-    protected ParentIdServiceExtensionManager extensionManager;
+    @Resource(name = "blEntityParentIdServiceExtensionManager")
+    protected EntityParentIdServiceExtensionManager extensionManager;
 
     @Autowired(required = false)
     protected FetchTypeDetection fetchDetection = null;
@@ -428,19 +428,27 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
                         .findFirst();
+                    boolean isValid = false;
                     if (property != null && sectionCrumbOptional.isPresent()
-                            && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
-                        ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<String>();
-                        if (extensionManager.getProxy().checkParentId(property.getValue(),foreignKey.getForeignKeyClass(), extensionResultHolder) != ExtensionResultStatusType.NOT_HANDLED ){
-                           String parentID = extensionResultHolder.getResult();
-                           if (!parentID.equals(sectionCrumbOptional.get().getSectionId())){
-                               throw new SecurityServiceException("Post fetch validation: Access denied");
-                           }
-                        } else {
-                            throw new SecurityServiceException("Post fetch validation: Access denied");
+                            && property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
+                        isValid = true;
+                    } else {
+                        // It's possible that we are trying to validate against an inherited entity.  To be sure, let's get
+                        //  the parentID and compare against that
+                        if (extensionManager != null) {
+                            ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<String>();
+                            ExtensionResultStatusType result = extensionManager.getProxy().findEntityParentId(property.getValue(), foreignKey.getForeignKeyClass(), extensionResultHolder);
+                            if (result.equals(ExtensionResultStatusType.HANDLED)) {
+                                String parentID = extensionResultHolder.getResult();
+                                if (parentID.equals(sectionCrumbOptional.get().getSectionId())) {
+                                    isValid = true;
+                                }
+                            }
                         }
                     }
-
+                    if (!isValid) {
+                        throw new SecurityServiceException("Post fetch validation: Access denied");
+                    }
                 }
             }
         }

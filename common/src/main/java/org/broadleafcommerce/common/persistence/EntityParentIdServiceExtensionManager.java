@@ -15,16 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.handler;
+package org.broadleafcommerce.common.persistence;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
-public interface BasicParentIdServiceExtensionHandler extends ExtensionHandler {
+/**
+ * Manage the handling of EntityParentIdServiceExtensionHandlers
+ */
+@Service("blEntityParentIdServiceExtensionManager")
+public class EntityParentIdServiceExtensionManager extends ExtensionManager<EntityParentIdServiceExtensionHandler> {
 
-    int DEFAULT_PRIORITY = 2147483646;
-
-    ExtensionResultStatusType checkParentId(String id, String className, ExtensionResultHolder<String> resultHolder);
+    public EntityParentIdServiceExtensionManager() {
+        super(EntityParentIdServiceExtensionHandler.class);
+    }
 
 }
