@@ -50,6 +50,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
@@ -68,6 +69,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
+
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -471,8 +474,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     protected boolean isRecursiveProductSelection(PersistencePackage persistencePackage) {
-        List<String> customCriteria = Arrays.asList(persistencePackage.getCustomCriteria());
-        return customCriteria.contains("upsaleProduct") || customCriteria.contains("crossSaleProduct") || customCriteria.contains("requestingField=addOnProduct");
+        final List<String> customCriteria = Arrays.asList(persistencePackage.getCustomCriteria());
+        return Stream.of("upsaleProduct", "crossSaleProduct", "requestingField=addOnProduct")
+                .anyMatch(customCriteria::contains);
     }
 
     protected FilterMapping createFilterMappingForProperty(String targetPropertyName, PredicateProvider predicateProvider) {
@@ -488,15 +492,15 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     protected DynamicResultSet getFilteredDynamicResultSet(PersistencePackage persistencePackage, CriteriaTransferObject cto, RecordHelper helper) throws ServiceException {
-        FilterMapping defaultCategoryMapping = createFilterMappingForProperty(ID_PROPERTY, new PredicateProvider() {
-            @Override
-            public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
-                                            String ceilingEntity, String fullPropertyName, Path explicitPath,
-                                            List directValues) {
-                return builder.and(builder.notEqual(explicitPath, persistencePackage.getSectionCrumbs()[0].getSectionId()));
-            }
-        });
-        cto.getAdditionalFilterMappings().add(defaultCategoryMapping);
+        SectionCrumb[] sectionCrumbs = persistencePackage.getSectionCrumbs();
+        if (sectionCrumbs != null && sectionCrumbs.length > 0) {
+            FilterMapping defaultCategoryMapping = this.createFilterMappingForProperty(
+                    ID_PROPERTY,
+                    (builder, fieldPathBuilder, root, ceilingEntity, fullPropertyName, explicitPath, directValues)
+                            -> builder.and(builder.notEqual(explicitPath, sectionCrumbs[0].getSectionId()))
+            );
+            cto.getAdditionalFilterMappings().add(defaultCategoryMapping);
+        }
         OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
         PersistenceModule persistenceModule = helper.getCompatibleModule(fetchType);
         return persistenceModule.fetch(persistencePackage, cto);
