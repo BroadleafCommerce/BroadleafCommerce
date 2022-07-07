@@ -37,7 +37,7 @@ public interface DataDrivenEnumeration extends Serializable, MultiTenantCloneabl
     public void setModifiable(Boolean modifiable);
 
     /**
-     * Gets list of values associated with this enumeration only if they are not flag has hidden.
+     * Gets list of values associated with this enumeration with the hidden flag set to false or null.
      */
     public List<DataDrivenEnumerationValue> getEnumValues();
 
