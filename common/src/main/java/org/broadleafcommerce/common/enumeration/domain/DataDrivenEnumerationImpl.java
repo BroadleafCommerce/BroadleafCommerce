@@ -35,6 +35,7 @@ import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -122,7 +123,9 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
 
     @Override
     public List<DataDrivenEnumerationValue> getEnumValues() {
-        return enumValues;
+        return enumValues.stream()
+                .filter(value -> !value.getHidden())
+                .collect(Collectors.toList());
     }
 
     @Override
