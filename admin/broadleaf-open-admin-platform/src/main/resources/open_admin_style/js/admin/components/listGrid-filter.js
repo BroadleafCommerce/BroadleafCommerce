@@ -372,7 +372,7 @@ $(document).ready(function() {
         $this.removeClass('search-button').addClass('disabled');
 
         //this takes place on the main list grid screen so there should be a single list grid
-        var search = $this.closest('form').find('input').val();
+        var search = encodeURIComponent($this.closest('form').find('input').val());
         var $container = $this.closest('.listgrid-container');
         var tableId = $container.find('table').last().attr('id');
         var $firstInput = $($container.find('#listGrid-main-header th .listgrid-criteria-input')[0]);

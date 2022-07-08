@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -124,6 +125,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
     @Resource(name = "blFilterProductTypePersistenceHandlerExtensionManager")
     protected FilterProductTypePersistenceHandlerExtensionManager filterProductTypeExtensionManager;
+
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService eps;
 
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -462,8 +466,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                     for (String value : values) {
                         String decoded = null;
                         try {
-                            decoded = URLDecoder.decode(value, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
+                            decoded = eps.cleanString(URLDecoder.decode(value, "UTF-8"));
+                        } catch (UnsupportedEncodingException | ServiceException e) {
                             LOG.info("Could not decode value", e);
                         }
                         if (decoded.contains(FILTER_VALUE_SEPARATOR)) {
