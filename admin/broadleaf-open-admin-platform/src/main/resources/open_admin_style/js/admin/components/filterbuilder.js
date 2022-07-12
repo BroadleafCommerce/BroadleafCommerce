@@ -460,7 +460,7 @@
                 },
                     field.plugin_config = {
                         maxItems: null,
-                        persist: false,
+                        persist: true,
                         valueField: "id",
                         labelField: "label",
                         searchField: "label",
@@ -659,6 +659,12 @@
             // Convert JSON to request params
             var filters = JSON.parse($('#' + hiddenId).val());
             var inputs = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
+            if (inputs.length) {
+                for (var i in inputs) {
+                    var input = inputs[i];
+                    input.value = encodeURIComponent(input.value);
+                }
+            }
             if($tbody){
                 if($tbody.closest('table').data('sectioncrumbs')){
                     inputs.push({name:'sectionCrumbs', value:$tbody.closest('table').data('sectioncrumbs')});

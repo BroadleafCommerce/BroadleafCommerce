@@ -514,7 +514,7 @@
                 };
                 field.plugin_config = {
                     maxItems: null,
-                    persist: false,
+                    persist: true,
                     valueField: "id",
                     labelField: "label",
                     searchField: "label",

@@ -29,6 +29,8 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -48,6 +50,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.common.persistence.EntityParentIdServiceExtensionManager;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -67,9 +70,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,6 +80,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -107,6 +111,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Resource(name="blPersistenceManagerEventHandlers")
     protected List<PersistenceManagerEventHandler> persistenceManagerEventHandlers;
+
+    @Resource(name = "blEntityParentIdServiceExtensionManager")
+    protected EntityParentIdServiceExtensionManager extensionManager;
 
     @Autowired(required = false)
     protected FetchTypeDetection fetchDetection = null;
@@ -421,11 +428,28 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
                         .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
                         .findFirst();
-                    if (property != null && sectionCrumbOptional.isPresent()
-                        && !property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
-                        throw new SecurityServiceException("Post fetch validation: Access denied");
+                    if (property != null && sectionCrumbOptional.isPresent()) {
+                        boolean isValid = false;
+                        if (property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
+                            isValid = true;
+                        } else {
+                            // It's possible that we are trying to validate against an inherited entity.  To be sure, let's get
+                            //  the parentID and compare against that
+                            if (extensionManager != null) {
+                                ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<String>();
+                                ExtensionResultStatusType result = extensionManager.getProxy().findEntityParentId(property.getValue(), foreignKey.getForeignKeyClass(), extensionResultHolder);
+                                if (result.equals(ExtensionResultStatusType.HANDLED)) {
+                                    String parentID = extensionResultHolder.getResult();
+                                    if (parentID.equals(sectionCrumbOptional.get().getSectionId())) {
+                                        isValid = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (!isValid) {
+                            throw new SecurityServiceException("Post fetch validation: Access denied");
+                        }
                     }
-
                 }
             }
         }

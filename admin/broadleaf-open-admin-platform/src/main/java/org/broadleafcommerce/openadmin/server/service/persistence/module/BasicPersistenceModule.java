@@ -388,6 +388,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         boolean isValid = true;
                         PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
                         handled = false;
+                        boolean required = metadata.getRequiredOverride() != null ? metadata.getRequiredOverride() : BooleanUtils.isTrue(metadata.getRequired());
                         if (value != null) {
                             for (PopulateValueRequestValidator validator : populateValidators) {
                                 PropertyValidationResult validationResult = validator.validate(request, instance);
@@ -396,7 +397,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     isValid = false;
                                 }
                             }
-                        } else if (metadata.getRequired() || (metadata.getRequiredOverride() != null && metadata.getRequiredOverride())) {
+                        } else if (required) {
                             entity.addValidationError(property.getName(), RequiredPropertyValidator.ERROR_MESSAGE);
                         }
                         if (isValid) {
