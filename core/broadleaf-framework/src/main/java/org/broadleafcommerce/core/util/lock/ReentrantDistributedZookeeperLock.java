@@ -336,6 +336,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
     @Override
     public void lockInterruptibly() throws InterruptedException {
         if (Thread.interrupted()) {
+            Thread.currentThread().interrupt();
             throw new InterruptedException("Thread was interrupted prior to trying to acquire the lock.");
         }
         
@@ -423,6 +424,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                 long timeToWait = waitTime;
                 while(true) {
                     if (Thread.interrupted()) {
+                        Thread.currentThread().interrupt();
                         throw new InterruptedException();
                     }
                     
@@ -560,7 +562,6 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             }
             
             GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
-
                 @Override
                 public Void execute() throws Exception {
                     ZookeeperUtil.makePath(getLockFolderPath(), null, getZookeeperClient(), CreateMode.PERSISTENT, acls);
