@@ -23,6 +23,7 @@ package org.broadleafcommerce.common.util;
  * @author Kelly Tisdell
  *
  */
+@FunctionalInterface
 public interface GenericOperation<R> {
 
     /**

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -403,6 +404,8 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             return true;
         }
         
+        final AtomicReference<String> lockPathReference = new AtomicReference<>();
+        
         try {
             //Create a lock reference in Zookeeper.  It looks something like /broadleaf/app/distributed-locks/path/to/my/locks/myLock000000000015
             //The sequential part of this guaranteed by Zookeeper to be unique.  Creating this file does not guarantee that a lock has been acquired.
@@ -414,6 +417,7 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
                 }
                 
             }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
+            lockPathReference.set(localLockPath); //Set this so we can use it in a catch block if needed.
             
             synchronized (LOCK_MONITOR) {
                 long timeToWait = waitTime;
@@ -521,6 +525,23 @@ public class ReentrantDistributedZookeeperLock implements DistributedLock {
             }
         } catch (Exception e) {
             LOG.error("Error occured trying to obtain a distributed lock from Zookeeper.", e);
+            
+            try {
+                if (lockPathReference.get() != null) {
+                    //Do some cleanup
+                    GenericOperationUtil.executeRetryableOperation(new GenericOperation<Void>() {
+    
+                        @Override
+                        public Void execute() throws Exception {
+                            getZookeeperClient().delete(lockPathReference.get(), 0);
+                            return null;
+                        }
+                    }, getFailureRetries(), getRetryWaitTime(), isAdditiveWaitTtimes(), null);
+                }
+            } catch (Exception e2) {
+                LOG.warn("Error occured trying to delete a temporary distributed lock file in Zookeeper", e2);
+            }
+            
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 throw (InterruptedException)e;
             }
