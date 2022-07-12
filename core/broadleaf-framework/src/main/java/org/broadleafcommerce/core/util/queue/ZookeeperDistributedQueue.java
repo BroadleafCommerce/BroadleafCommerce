@@ -169,7 +169,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         Assert.notNull(this.configLock, "The config lock cannot be null.");
         
         this.requestedMaxQueueCapacity = maxQueueSize;
-        seMaxCapacity(this.requestedMaxQueueCapacity);
+        setMaxCapacity(this.requestedMaxQueueCapacity);
         
         if (this.requestedMaxQueueCapacity > DEFAULT_MAX_QUEUE_SIZE) {
             LOG.error("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. "
@@ -288,7 +288,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         try {
             lock.lockInterruptibly();
             try {
-                Map<String, T> elements = readQueueInternal(geMaxCapacity(), false, 0L);
+                Map<String, T> elements = readQueueInternal(getMaxCapacity(), false, 0L);
                 if (!elements.isEmpty()) {
                     return elements.values().containsAll(c);
                 }
@@ -429,7 +429,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public int remainingCapacity() {
         synchronized (QUEUE_MONITOR) {
-            final int cap = geMaxCapacity() - size();
+            final int cap = getMaxCapacity() - size();
             if (cap < 0) {
                 return 0;
             }
@@ -443,7 +443,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             DistributedLock lock = getQueueAccessLock();
             lock.lockInterruptibly();
             try {
-                Map<String, T> entries = readQueueInternal(geMaxCapacity(), false, 0L);
+                Map<String, T> entries = readQueueInternal(getMaxCapacity(), false, 0L);
                 if (!entries.isEmpty()) {
                     Iterator<Map.Entry<String, T>> itr = entries.entrySet().iterator();
                     while (itr.hasNext()) {
@@ -479,7 +479,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public int drainTo(Collection<? super T> c) {
         try {
-            Map<String, T> entries = readQueueInternal(geMaxCapacity(), true, 0L);
+            Map<String, T> entries = readQueueInternal(getMaxCapacity(), true, 0L);
             c.addAll(entries.values());
             return entries.size();
         } catch (InterruptedException e) {
@@ -761,7 +761,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         if (getZookeeperClient().exists(getConfigsFolder() + "/maxCapacity", false) == null) {
                             final int size = getRequestedMaxQueueSize();
                             ZookeeperUtil.makePath(getConfigsFolder() + "/maxCapacity", serialize(size), getZookeeperClient(), CreateMode.EPHEMERAL, getAcls());
-                            seMaxCapacity(size);
+                            setMaxCapacity(size);
                         } else {
                             final Integer size = (Integer)deserialize(getZookeeperClient().getData(getConfigsFolder() + "/maxCapacity", new Watcher() {
                                 @Override
@@ -778,7 +778,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                 }
                                 
                             }, null));
-                            seMaxCapacity(size);
+                            setMaxCapacity(size);
                         }
                         return null;
                     }
@@ -893,13 +893,13 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         return getQueueFolderPath() + QUEUE_ENTRY_FOLDER;
     }
     
-    protected int geMaxCapacity() {
+    protected int getMaxCapacity() {
         synchronized (QUEUE_MONITOR) {
             return capacity;
         }
     }
     
-    protected void seMaxCapacity(int size) {
+    protected void setMaxCapacity(int size) {
         synchronized (QUEUE_MONITOR) {
             this.capacity = size;
         }
