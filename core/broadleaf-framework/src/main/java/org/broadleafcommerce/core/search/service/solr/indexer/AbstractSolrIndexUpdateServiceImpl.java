@@ -187,6 +187,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                 while (isRunning()) {
                     if (Thread.interrupted()) {
                         stopRunning();
+                        Thread.currentThread().interrupt();
                         return;
                     }
                     lock.lockInterruptibly();
@@ -195,6 +196,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                         while (isRunning()) {
                             if (Thread.interrupted()) {
                                 stopRunning();
+                                Thread.currentThread().interrupt();
                                 return;
                             }
                             
