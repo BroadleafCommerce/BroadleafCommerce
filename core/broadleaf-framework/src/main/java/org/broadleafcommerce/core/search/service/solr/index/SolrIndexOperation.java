@@ -23,6 +23,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 import org.apache.solr.client.solrj.SolrClient;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+
 import java.util.List;
 
 
@@ -36,7 +37,10 @@ public interface SolrIndexOperation {
 
     /**
      * Grab some sort of lock so that nothing else can index items at the same time
+     * 
+     * @deprecated
      */
+    @Deprecated
     public boolean obtainLock();
     
     /**
@@ -96,7 +100,10 @@ public interface SolrIndexOperation {
     
     /**
      * If a lock was obtained in {@link #obtainLock()} this releases it
+     * 
+     * @deprecated
      */
+    @Deprecated
     public void releaseLock();
     
 }

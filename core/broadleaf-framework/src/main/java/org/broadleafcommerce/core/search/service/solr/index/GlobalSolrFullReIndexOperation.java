@@ -26,6 +26,9 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.broadleafcommerce.core.search.service.solr.SolrConfiguration;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Rebuilds the entire Solr index. This type of indexing operation prevents other threads from performing any other global
  * reindex operation. The rebuild operation is done on {@link SolrContext#getReindexServer()} and then at the end, the
@@ -39,8 +42,7 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
 
     private static final Log LOG = LogFactory.getLog(GlobalSolrFullReIndexOperation.class);
     
-    protected final static Object LOCK_OBJECT = new Object();
-    protected static boolean IS_LOCKED;
+    protected static final Lock globalLock = new ReentrantLock(true);
     protected boolean errorOnConcurrentReIndex;
     
     protected SolrConfiguration solrConfiguration;
@@ -56,27 +58,20 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
     
     @Override
     public boolean obtainLock() {
-        synchronized (LOCK_OBJECT) {
-            if (IS_LOCKED) {
-                if (errorOnConcurrentReIndex) {
-                    throw new IllegalStateException("More than one thread attempting to concurrently reindex Solr.");
-                } else {
-                    LOG.warn("There is more than one thread attempting to concurrently "
-                            + "reindex Solr. Failing additional threads gracefully. Check your configuration.");
-                    return false;
-                }
-            } else {
-                IS_LOCKED = true;
-                return IS_LOCKED;
-            }
+        if (globalLock.tryLock()) {
+            return true;
+        } else if (errorOnConcurrentReIndex) {
+            throw new IllegalStateException("More than one thread attempting to concurrently reindex Solr.");
+        } else {
+            LOG.warn("There is more than one thread attempting to concurrently "
+                    + "reindex Solr. Failing additional threads gracefully. Check your configuration.");
+            return false;
         }
     }
     
     @Override
     public void releaseLock() {
-        synchronized (LOCK_OBJECT) {
-            IS_LOCKED = false;
-        }
+        globalLock.unlock();
     }
 
     @Override

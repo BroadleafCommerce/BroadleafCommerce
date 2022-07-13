@@ -237,53 +237,53 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
 
     @Override
     public void executeSolrIndexOperation(final SolrIndexOperation operation) throws ServiceException, IOException {
-        operation.obtainLock();
-
-        try {
-            LOG.info("Executing Indexing operation");
-            StopWatch s = new StopWatch();
-
-            Object[] pack = saveState();
+        if (operation.obtainLock()) {
             try {
-                final Long numItemsToIndex;
+                LOG.info("Executing Indexing operation");
+                StopWatch s = new StopWatch();
+    
+                Object[] pack = saveState();
                 try {
-                    operation.beforeCountIndexables();
-
-                    numItemsToIndex = operation.countIndexables();
-                } finally {
-                    operation.afterCountIndexables();
-                }
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("There are at most " + numItemsToIndex + " items to index");
-                }
-                performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
-
-                    @Override
-                    public void execute() throws ServiceException {
-                        int page = 1;
-                        Long lastId = null;
-                        Long remainingNumItemsToIndex = numItemsToIndex;
-                        Long totalPages = getTotalPageCount(numItemsToIndex);
-
-                        while (remainingNumItemsToIndex > 0) {
-                            String pageNumberMessage = buildPageNumberMessage(page, totalPages);
-                            LOG.info(pageNumberMessage);
-
-                            lastId = buildIncrementalIndex(pageSize, lastId, operation);
-                            remainingNumItemsToIndex -= pageSize;
-                            page++;
-                        }
+                    final Long numItemsToIndex;
+                    try {
+                        operation.beforeCountIndexables();
+    
+                        numItemsToIndex = operation.countIndexables();
+                    } finally {
+                        operation.afterCountIndexables();
                     }
-                });
-
+    
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("There are at most " + numItemsToIndex + " items to index");
+                    }
+                    performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
+    
+                        @Override
+                        public void execute() throws ServiceException {
+                            int page = 1;
+                            Long lastId = null;
+                            Long remainingNumItemsToIndex = numItemsToIndex;
+                            Long totalPages = getTotalPageCount(numItemsToIndex);
+    
+                            while (remainingNumItemsToIndex > 0) {
+                                String pageNumberMessage = buildPageNumberMessage(page, totalPages);
+                                LOG.info(pageNumberMessage);
+    
+                                lastId = buildIncrementalIndex(pageSize, lastId, operation);
+                                remainingNumItemsToIndex -= pageSize;
+                                page++;
+                            }
+                        }
+                    });
+   
+                } finally {
+                    restoreState(pack);
+                }
+    
+                LOG.info(String.format("Indexing operation completed in %s", s.toLapString()));
             } finally {
-                restoreState(pack);
+                operation.releaseLock();
             }
-
-            LOG.info(String.format("Indexing operation completed in %s", s.toLapString()));
-        } finally {
-            operation.releaseLock();
         }
     }
 
