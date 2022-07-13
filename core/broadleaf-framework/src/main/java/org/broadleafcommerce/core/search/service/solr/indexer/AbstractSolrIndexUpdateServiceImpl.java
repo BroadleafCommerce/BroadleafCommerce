@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.util.queue.DistributedBlockingQueue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
@@ -44,10 +45,7 @@ import java.util.concurrent.locks.Lock;
  * or reindexing Solr.  This makes use of a single background Thread, per command type (or command identifier - i.e. "catalog") that monitors a command queue, ensuring that all 
  * commands to update or reindex Solr happen serially for a given command identifier, but without blocking the calling thread that is issuing the command.
  * 
- * This component makes use of a {@link Lock} and a {@link BlockingQueue}.  The providers for these components, {@link SolrIndexQueueProvider} and 
- * {@link SolrIndexLockProvider} provide an <code>isDistributed()</code> method.  They must both return the same value.  Note that if 
- * <code>isDistributed()</code> returns false, then care must be taken to ensure that 2 or more nodes (i.e. JVMs) cannot execute at the same time. 
- * This is typically done by ensuring that only a single node will receive calls/events to update a Solr index.
+ * This component makes use of a {@link Lock} and a {@link BlockingQueue}, provided by {@link SolrIndexQueueProvider}.
  * 
  * @author Kelly Tisdell
  *
@@ -58,7 +56,7 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
     private static final Map<String, AtomicReferenceArray<Runnable>> commandThreadRegistry = Collections.synchronizedMap(new HashMap<String, AtomicReferenceArray<Runnable>>());
     
     private final String commandGroup;
-    private BlockingQueue<? super SolrUpdateCommand> commandQueue;
+    private final BlockingQueue<? super SolrUpdateCommand> commandQueue;
     private final SolrIndexUpdateCommandHandler commandHandler;
     
     public AbstractSolrIndexUpdateServiceImpl(final String commandGroup, final SolrIndexQueueProvider queueProvider, final SolrIndexUpdateCommandHandler commandHandler) {
@@ -82,13 +80,15 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                 
                 final CommandCoordinator commandRunnable = new CommandCoordinator(this.commandQueue, lock, commandHandler);
                 final Thread commandThread = new Thread(commandRunnable, getCommandGroup() + "-Solr-Index-Update-Command-Master");
-                commandThread.start();
+                commandThread.setDaemon(true);
                 
-                AtomicReferenceArray<Runnable> ref = new AtomicReferenceArray<>(2);
+                final AtomicReferenceArray<Runnable> ref = new AtomicReferenceArray<>(2);
                 ref.set(0, commandRunnable);
                 ref.set(1, commandThread);
                 
                 commandThreadRegistry.put(getCommandGroup(), ref);
+                
+                commandThread.start();
             } else {
                 LOG.warn("A command thread has already been registered for the following command group: " + getCommandGroup());
             }
@@ -184,15 +184,14 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
             try {
                 startRunning();
                 
-                while (isRunning()) {
-                    if (Thread.interrupted()) {
-                        stopRunning();
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
+                if (queue instanceof DistributedBlockingQueue) {
+                    // If this is a DistributedBlockingQueue, we can grab the lock once and then continue to process 
+                    // all commands, as they are distributed across nodes.
+                    // In this case we put the lock outside of the while loop. 
+                    // If this thread obtains the lock, then it will be the master Queue listener 
+                    // for commands indefinitely, until it is shut down or interrupted.
                     lock.lockInterruptibly();
                     try {
-                        SolrUpdateCommand command;
                         while (isRunning()) {
                             if (Thread.interrupted()) {
                                 stopRunning();
@@ -200,31 +199,69 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
                                 return;
                             }
                             
-                            command = (SolrUpdateCommand)queue.poll(getQueuePollTime(), TimeUnit.MILLISECONDS);
-                            
-                            if (command != null) {
-                                try {
-                                    //We're running in a background thread, so let's just set up a new BroadleafRequestContext.
-                                    BroadleafRequestContext.setBroadleafRequestContext(new BroadleafRequestContext());
-                                    commandHandler.executeCommand(command);
-                                } catch (Exception e) {
-                                    LOG.error("Unexpected error occured attempting to update a Solr index.", e);
-                                } finally {
-                                    BroadleafRequestContext.setBroadleafRequestContext(null);
-                                }
-                            }
+                            pollQueueAndExecuteCommand(getDistributedQueuePollTime());
                         }
                     } finally {
+                        // This likely means we're being shut down.
                         lock.unlock();
                     }
                     
+                } else {
+                    // If this is not a DistributedBlockingQueue, then it's probably a local queue or an 
+                    // ArrayBlockingQueue.  In this case, we need to allow other threads to obtain the lock to 
+                    // get commands from their own queues.
+                    // The order of the commands will be undetermined because each server has its own Queue 
+                    // and so there is no particular ordering. If it's a distributed lock it allows us to ensure 
+                    // that even though the Queue is not distributed, at least the execution of commands is synchronized.
+                    // In this case we put the lock inside of the while loop.
+                    // When this thread becomes 
+                    while (isRunning()) {
+                        if (Thread.interrupted()) {
+                            stopRunning();
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
+                        lock.lockInterruptibly();
+                        try {
+                            // Hold the lock and drain the local queue until no elements were processed, and then 
+                            // we'll continue and release the lock so other servers can 
+                            // execute commands in their own queues.
+                            while (isRunning() && pollQueueAndExecuteCommand(getNonDistributedQueuePollTime())) {
+                                if (Thread.interrupted()) {
+                                    stopRunning();
+                                    Thread.currentThread().interrupt();
+                                    return;
+                                }
+                            }
+                        } finally {
+                            // This will allow other servers to grab the lock, and check their local queues 
+                            // before we obtain the lock again.
+                            lock.unlock();
+                        }
+                    }
                 }
-                
             } catch (InterruptedException e) {
                 stopRunning();
                 return;
             }
+        }
+        
+        private boolean pollQueueAndExecuteCommand(final long pollTime) throws InterruptedException {
+            final SolrUpdateCommand command = (SolrUpdateCommand)queue.poll(pollTime, TimeUnit.MILLISECONDS);
+            if (command != null) {
+                try {
+                    // We're running in a background thread, so let's just set up a new BroadleafRequestContext.
+                    BroadleafRequestContext.setBroadleafRequestContext(new BroadleafRequestContext());
+                    commandHandler.executeCommand(command);
+                    return true;
+                } catch (Exception e) {
+                    LOG.error("Unexpected error occured attempting to update a Solr index.", e);
+                } finally {
+                    BroadleafRequestContext.setBroadleafRequestContext(null);
+                }
+            }
             
+            return false;
         }
         
         public synchronized boolean isRunning() {
@@ -279,8 +316,17 @@ public abstract class AbstractSolrIndexUpdateServiceImpl implements SolrIndexUpd
      * 
      * @return
      */
-    protected long getQueuePollTime() {
+    protected long getDistributedQueuePollTime() {
         return 60000L;
+    }
+    
+    /**
+     * Amount of time in millis that the queue will be polled before returning an item or null.  Default is 5 seconds (5000 ms).  If you override this method, it must return 
+     * a positive long value, preferrably greater than 1000 to reduce the polling cycles.
+     * @return
+     */
+    protected long getNonDistributedQueuePollTime() {
+        return 5000L;
     }
     
     /**
