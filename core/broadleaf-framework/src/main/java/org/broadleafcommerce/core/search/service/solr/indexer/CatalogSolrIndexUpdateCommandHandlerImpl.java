@@ -325,6 +325,9 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
                         }
                         
                         lastId.set(batch.get(batch.size() - 1));
+                        if (HibernateUtils.getCurrentDefaultEntityManager() != null) {
+                            HibernateUtils.getCurrentDefaultEntityManager().clear();
+                        }
                         
                     }
                 } finally {
