@@ -781,7 +781,7 @@ public class CatalogSolrIndexUpdateCommandHandlerImpl extends AbstractSolrIndexU
      * @throws ServiceException
      */
     protected void afterPage(List<Long> productIds, List<Product> products, List<Locale> locales, List<IndexField> fields, ReindexStateHolder holder) throws ServiceException {
-        //Nothing to do by default.
+        HibernateUtils.clearDefaultEntityManager();
     }
     
     /**
