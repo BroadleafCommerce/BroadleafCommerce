@@ -131,4 +131,27 @@ public class HibernateUtils {
     public static EntityManager getCurrentDefaultEntityManager() {
         return getCurrentEntityManager(DEFAULT_ENTITY_MANAGER_NAME);
     }
+    
+    /**
+     * Calls the {@link EntityManager#clear()} method on the current default (blPU) {@link EntityManager} 
+     * if it is bound to a thread via the {@link TransactionSynchronizationManager}. If not, it is ignored.
+     */
+    public static void clearDefaultEntityManager() {
+        final EntityManager em = getCurrentDefaultEntityManager();
+        if (em != null) {
+            em.clear();
+        }
+    }
+    
+    /**
+     * Calls the {@link EntityManager#clear()} method on the current {@link EntityManager} 
+     * with the provide persistence unit name if it is bound to a thread via 
+     * the {@link TransactionSynchronizationManager}. If not, it is ignored.
+     */
+    public static void clearEntityManager(String persistenceUnitName) {
+        final EntityManager em = getCurrentEntityManager(persistenceUnitName);
+        if (em != null) {
+            em.clear();
+        }
+    }
 }
