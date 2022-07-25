@@ -377,6 +377,7 @@
     right: 16px;
     top: 15px;
     z-index: 10;
+    width: 20px;
 }
 
 .query-builder-filters-container .query-builder .rule-container .rule-value-container {
