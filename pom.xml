@@ -107,7 +107,6 @@
                         <excludes>
                             <exclude>**/browsertest/**</exclude>
                         </excludes>
-                        <!--suppress UnresolvedMavenProperty -->
                         <argLine>${surefire.argLine}</argLine>
                     </configuration>
                 </plugin>
