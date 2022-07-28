@@ -84,4 +84,15 @@ public interface InventoryServiceExtensionHandler extends ExtensionHandler {
      * @param holder
      */
     ExtensionResultStatusType isProductBundleAvailable(Product product, int quantity, ExtensionResultHolder<Boolean> holder);
+
+    /**
+     * This determines if the missing quantity is critical (blocking) to be added to the cart
+     * Usually invoked via the UncacheableDataProcessor to determine the availability of product.
+     *
+     * @param baseProduct base product with add-ons
+     * @param product     one of the add-on products of the base product
+     * @param holder      holder for result
+     * @return ExtensionResultStatusType status after operation
+     */
+    ExtensionResultStatusType isBlockingAvailabilityOfProduct(Product baseProduct, Product product, ExtensionResultHolder<Boolean> holder);
 }

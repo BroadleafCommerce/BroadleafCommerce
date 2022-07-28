@@ -53,4 +53,9 @@ public abstract class AbstractInventoryServiceExtensionHandler extends AbstractE
     public ExtensionResultStatusType isProductBundleAvailable(Product product, int quantity, ExtensionResultHolder<Boolean> holder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public ExtensionResultStatusType isBlockingAvailabilityOfProduct(Product baseProduct,Product product, ExtensionResultHolder<Boolean> holder) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

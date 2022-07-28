@@ -19,8 +19,11 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+import org.broadleafcommerce.common.admin.domain.TypedEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -84,7 +87,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     @Resource(name = "blUncacheableDataProcessorExtensionManager")
     protected UncacheableDataProcessorExtensionManager extensionManager;
 
-    @Resource(name = "blInventoryServiceExtensionManager"   )
+    @Resource(name = "blInventoryServiceExtensionManager")
     protected InventoryServiceExtensionManager inventoryServiceExtensionManager;
 
     private String defaultCallbackFunction = "updateUncacheableData(params);\n";
@@ -131,7 +134,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     }
 
     protected void addProductInventoryData(Map<String, Object> attrMap, BroadleafTemplateContext context) {
-        List<Long> outOfStockProducts = new ArrayList<>();
+        Set<Long> outOfStockProducts = new HashSet<>();
         List<Long> outOfStockSkus = new ArrayList<>();
 
         Set<Product> allProducts = new HashSet<>();
@@ -144,27 +147,9 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         if (!CollectionUtils.isEmpty(skus)) {
             allSkus.addAll(skus);
         }
-
         extensionManager.getProxy().modifyProductListForInventoryCheck(context, allProducts, allSkus);
-
         if (!allProducts.isEmpty()) {
-            for (Product product : allProducts) {
-                if (product.getDefaultSku() != null) {
-
-                    Boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
-                    if (qtyAvailable != null && !qtyAvailable) {
-                        outOfStockProducts.add(product.getId());
-                    } else {
-                        InventoryServiceExtensionHandler handler = inventoryServiceExtensionManager.getProxy();
-                        ExtensionResultHolder<Boolean> holder = new ExtensionResultHolder<>();
-                        handler.isProductBundleAvailable(product, 1, holder);
-                        Boolean available = holder.getResult();
-                        if (available != null && !available) {
-                            outOfStockProducts.add(product.getId());
-                        }
-                    }
-                }
-            }
+            this.defineOutOfStockProducts(context, allProducts, outOfStockProducts);
         } else {
             if (!allSkus.isEmpty()) {
                 Map<Sku, Integer> inventoryAvailable = inventoryService.retrieveQuantitiesAvailable(allSkus);
@@ -177,6 +162,57 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         }
         attrMap.put("outOfStockProducts", outOfStockProducts);
         attrMap.put("outOfStockSkus", outOfStockSkus);
+    }
+
+    protected void defineOutOfStockProducts(BroadleafTemplateContext context, Set<Product> allProducts, Set<Long> outOfStockProducts) {
+        Product baseProduct = (Product) context.getVariable("product");
+        boolean isBundle = this.isBundle(baseProduct);
+        for (Product product : allProducts) {
+            if (product.getDefaultSku() != null) {
+                boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
+                if (!qtyAvailable) {
+                    outOfStockProducts.add(product.getId());
+                    if (!baseProduct.getId().equals(product.getId()) && this.isBlockingAvailabilityOfProduct(baseProduct, product)) {
+                        outOfStockProducts.add(baseProduct.getId());
+                    }
+                } else {
+                    if (isBundle) {
+                        InventoryServiceExtensionHandler handler = inventoryServiceExtensionManager.getProxy();
+                        ExtensionResultHolder<Boolean> holder = new ExtensionResultHolder<>();
+                        ExtensionResultStatusType result = handler.isProductBundleAvailable(product, 1, holder);
+                        if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                            Boolean available = holder.getResult();
+                            if (available != null && !available) {
+                                outOfStockProducts.add(product.getId());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isBlockingAvailabilityOfProduct(Product baseProduct, Product product) {
+        boolean isBlockingAvailabilityOfProduct = false;
+        InventoryServiceExtensionHandler handler = inventoryServiceExtensionManager.getProxy();
+        ExtensionResultHolder<Boolean> holder = new ExtensionResultHolder<>();
+        ExtensionResultStatusType result = handler.isBlockingAvailabilityOfProduct(baseProduct, product, holder);
+        if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+            Boolean blocked = holder.getResult();
+            if (blocked != null && blocked) {
+                isBlockingAvailabilityOfProduct = true;
+            }
+        }
+        return isBlockingAvailabilityOfProduct;
+    }
+
+    protected boolean isBundle(Product product) {
+        boolean isBundle = false;
+        if (TypedEntity.class.isAssignableFrom(product.getClass())) {
+            BroadleafEnumerationType type = ((TypedEntity) product).getType();
+            isBundle = "BUNDLE".equals(type.getType());
+        }
+        return isBundle;
     }
 
     protected void addCartData(Map<String, Object> attrMap) {
