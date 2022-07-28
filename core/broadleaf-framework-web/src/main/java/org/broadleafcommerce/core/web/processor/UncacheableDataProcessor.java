@@ -192,7 +192,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         }
     }
 
-    private boolean isBlockingAvailabilityOfProduct(Product baseProduct, Product product) {
+    protected boolean isBlockingAvailabilityOfProduct(Product baseProduct, Product product) {
         boolean isBlockingAvailabilityOfProduct = false;
         InventoryServiceExtensionHandler handler = inventoryServiceExtensionManager.getProxy();
         ExtensionResultHolder<Boolean> holder = new ExtensionResultHolder<>();
