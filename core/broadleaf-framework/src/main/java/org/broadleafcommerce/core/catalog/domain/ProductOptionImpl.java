@@ -36,10 +36,8 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
@@ -47,14 +45,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.*;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
@@ -171,6 +164,16 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
         group = GroupName.General,
         addType = AddMethodType.PERSIST)
     protected List<ProductOptionValue> allowedValues = new ArrayList<>();
+
+    @Lob
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
+    @AdminPresentation(friendlyName = "Checkbox_Description",
+            group = GroupName.General,
+            largeEntry = true,
+            fieldType = SupportedFieldType.HTML_BASIC,
+            translatable = true)
+    protected String longDescription;
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")

@@ -28,5 +28,24 @@
                 return value !== "NONE";
             }
         );
+
+        BLCAdmin.addDependentFieldHandler(
+            className,
+            '#field-type',
+            '#allowedValues',
+            function(value, $container) {
+                return value !== "CHECKBOX";
+            }
+        );
+
+        BLCAdmin.addDependentFieldHandler(
+            className,
+            '#field-type',
+            '#field-longDescription',
+            function(value, $container) {
+                return value == "CHECKBOX";
+            }
+        );
+
     }
 })(jQuery, BLCAdmin);
