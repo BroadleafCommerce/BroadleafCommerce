@@ -364,6 +364,12 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     }
 
     @Override
+    public void setLongDescription(String longDescription){this.longDescription = longDescription;};
+
+    @Override
+    public String getLongDescription() {return longDescription;}
+
+    @Override
     public <G extends ProductOption> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
