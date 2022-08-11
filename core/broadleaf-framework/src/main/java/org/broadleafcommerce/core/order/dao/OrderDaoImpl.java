@@ -73,7 +73,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderById(final Long orderId) {
         TypedQuery<Order> query = em.createQuery("SELECT o FROM OrderImpl o WHERE o.id=?1", Order.class);
-        query.setParameter(1,orderId);
+        query.setParameter(1, orderId);
         return query.getSingleResult();
     }
 
