@@ -166,24 +166,26 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
 
     protected void defineOutOfStockProducts(BroadleafTemplateContext context, Set<Product> allProducts, Set<Long> outOfStockProducts) {
         Product baseProduct = (Product) context.getVariable("product");
-        boolean isBundle = this.isBundle(baseProduct);
-        for (Product product : allProducts) {
-            if (product.getDefaultSku() != null) {
-                boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
-                if (!qtyAvailable) {
-                    outOfStockProducts.add(product.getId());
-                    if (!baseProduct.getId().equals(product.getId()) && this.isBlockingAvailabilityOfProduct(baseProduct, product)) {
-                        outOfStockProducts.add(baseProduct.getId());
-                    }
-                } else {
-                    if (isBundle) {
-                        InventoryServiceExtensionHandler handler = inventoryServiceExtensionManager.getProxy();
-                        ExtensionResultHolder<Boolean> holder = new ExtensionResultHolder<>();
-                        ExtensionResultStatusType result = handler.isProductBundleAvailable(product, 1, holder);
-                        if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                            Boolean available = holder.getResult();
-                            if (available != null && !available) {
-                                outOfStockProducts.add(product.getId());
+        if (baseProduct != null) {
+            boolean isBundle = this.isBundle(baseProduct);
+            for (Product product : allProducts) {
+                if (product.getDefaultSku() != null) {
+                    boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
+                    if (!qtyAvailable) {
+                        outOfStockProducts.add(product.getId());
+                        if (!baseProduct.getId().equals(product.getId()) && this.isBlockingAvailabilityOfProduct(baseProduct, product)) {
+                            outOfStockProducts.add(baseProduct.getId());
+                        }
+                    } else {
+                        if (isBundle) {
+                            InventoryServiceExtensionHandler handler = inventoryServiceExtensionManager.getProxy();
+                            ExtensionResultHolder<Boolean> holder = new ExtensionResultHolder<>();
+                            ExtensionResultStatusType result = handler.isProductBundleAvailable(product, 1, holder);
+                            if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                                Boolean available = holder.getResult();
+                                if (available != null && !available) {
+                                    outOfStockProducts.add(product.getId());
+                                }
                             }
                         }
                     }
