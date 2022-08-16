@@ -214,7 +214,7 @@
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-metadata</artifactId>
-            <version>3.7.1</version>
+            <version>${imageio-metadata.version}</version>
         </dependency>
     </dependencies>
 </project>

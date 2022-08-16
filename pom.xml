@@ -75,6 +75,8 @@
         <javax.version>2.3.1</javax.version>
         <sunxml.version>3.0.2</sunxml.version>
         <javax-annotation.version>1.3.2</javax-annotation.version>
+        <eclipse.jetty.version>9.4.47.v20220610</eclipse.jetty.version>
+        <imageio-metadata.version>3.7.1</imageio-metadata.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
