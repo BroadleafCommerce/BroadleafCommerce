@@ -425,4 +425,9 @@ public class NullOrderImpl implements Order {
     public Long getBroadleafAccountId() {
         return null;
     }
+
+    @Override
+    public Boolean hasValidationErrors() {
+        return null;
+    }
 }

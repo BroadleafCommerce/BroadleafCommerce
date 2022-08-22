@@ -560,4 +560,6 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * 
      */
     Long getBroadleafAccountId();
+
+    Boolean hasValidationErrors();
 }
