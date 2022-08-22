@@ -428,6 +428,6 @@ public class NullOrderImpl implements Order {
 
     @Override
     public Boolean hasValidationErrors() {
-        return null;
+        return false;
     }
 }
