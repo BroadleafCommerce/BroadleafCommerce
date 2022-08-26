@@ -148,6 +148,9 @@ public class SiteMapServiceImpl implements SiteMapService {
                 if ((now - lastModified) > getSiteMapTimeoutInMillis().longValue()) {
                     generateSiteMap();
                     siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeoutInMillis());
+                    if (LOG.isTraceEnabled()){
+                        LOG.trace("Generating new SiteMap after timeout");
+                    }
                 }
             }
             if (LOG.isTraceEnabled()) {
