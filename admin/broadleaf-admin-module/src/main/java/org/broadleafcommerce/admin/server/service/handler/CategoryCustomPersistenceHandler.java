@@ -1,4 +1,4 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Admin Module
  * %%
