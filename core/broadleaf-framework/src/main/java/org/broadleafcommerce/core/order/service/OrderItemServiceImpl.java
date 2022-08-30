@@ -20,12 +20,7 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.*;
 import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
@@ -124,6 +119,13 @@ public class OrderItemServiceImpl implements OrderItemService {
                 String value = attributes.get(key);
                 if(value == null){
                     continue;
+                }
+                List<ProductOptionValue> optionValues = ((DiscreteOrderItem) item).getSku().getProductOptionValues();
+                for (ProductOptionValue optionValue : optionValues) {
+                    if (optionValue.getProductOption().getAttributeName().equals(key)) {
+                        value = optionValue.getAttributeValue();
+                        break;
+                    }
                 }
                 OrderItemAttribute attribute = orderItemAttributes.get(key);
 
