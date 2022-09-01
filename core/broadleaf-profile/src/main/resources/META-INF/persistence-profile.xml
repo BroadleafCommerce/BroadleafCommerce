@@ -44,7 +44,6 @@
         <class>org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.PhoneImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.RoleImpl</class>
-        <class>org.broadleafcommerce.profile.core.domain.StateImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CountrySubdivisionImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl</class>
         <exclude-unlisted-classes/>
