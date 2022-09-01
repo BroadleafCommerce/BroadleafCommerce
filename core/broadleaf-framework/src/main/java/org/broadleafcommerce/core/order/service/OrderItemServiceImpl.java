@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.domain.pricing.SkuPriceWrapper;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
@@ -140,11 +141,10 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     protected Optional<ProductOptionValue> getTranslatedProductOptionValue(DiscreteOrderItem item, String key) {
-        Optional<ProductOptionValue> productOptionValue = item.getSku().getProductOptionValueXrefs().stream()
-                .map(t -> t.getProductOptionValue())
+        return item.getSku().getProductOptionValueXrefs().stream()
+                .map(SkuProductOptionValueXref::getProductOptionValue)
                 .filter(t -> t.getProductOption().getAttributeName().equals(key))
                 .findFirst();
-        return productOptionValue;
     }
 
     @Override
