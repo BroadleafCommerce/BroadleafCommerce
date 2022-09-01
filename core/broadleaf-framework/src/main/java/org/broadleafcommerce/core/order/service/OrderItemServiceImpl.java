@@ -64,6 +64,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -126,26 +127,24 @@ public class OrderItemServiceImpl implements OrderItemService {
                 if(value == null){
                     continue;
                 }
-                List<ProductOptionValue> optionValues = ((DiscreteOrderItem) item).getSku().getProductOptionValues();
-                for (ProductOptionValue optionValue : optionValues) {
-                    if (optionValue.getProductOption().getAttributeName().equals(key)) {
-                        value = optionValue.getAttributeValue();
-                        break;
-                    }
-                }
-                OrderItemAttribute attribute = orderItemAttributes.get(key);
+                Optional<ProductOptionValue> productOptionValue = getTranslatedProductOptionValue((DiscreteOrderItem) item, key);
 
-                if(attribute == null) {
-                    attribute = new OrderItemAttributeImpl();
-                }
-
+                OrderItemAttribute attribute = orderItemAttributes.getOrDefault(key, new OrderItemAttributeImpl());
                 attribute.setName(key);
-                attribute.setValue(value);
+                attribute.setValue(productOptionValue.isPresent() ? productOptionValue.get().getAttributeValue() : value);
                 attribute.setOrderItem(item);
 
                 orderItemAttributes.put(key, attribute);
             }
         }
+    }
+
+    protected Optional<ProductOptionValue> getTranslatedProductOptionValue(DiscreteOrderItem item, String key) {
+        Optional<ProductOptionValue> productOptionValue = item.getSku().getProductOptionValueXrefs().stream()
+                .map(t -> t.getProductOptionValue())
+                .filter(t -> t.getProductOption().getAttributeName().equals(key))
+                .findFirst();
+        return productOptionValue;
     }
 
     @Override
