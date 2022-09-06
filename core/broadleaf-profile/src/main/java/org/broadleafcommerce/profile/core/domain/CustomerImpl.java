@@ -47,8 +47,9 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Index;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,7 +75,10 @@ import javax.persistence.Transient;
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER")
+@Table(name = "BLC_CUSTOMER", indexes = {
+        @Index(name = "CUSTOMER_EMAIL_INDEX", columnList =  "EMAIL_ADDRESS" ),
+        @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList =  "CHALLENGE_QUESTION_ID" )
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides(
     {
@@ -120,7 +124,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     protected String password;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name = "CUSTOMER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
     @AdminPresentation(friendlyName = "CustomerImpl_Email_Address",
             group = GroupName.Customer, order = FieldOrder.EMAIL,
             prominent = true, gridOrder = 1000)
@@ -146,7 +149,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
-    @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",
             excluded = true)
     protected ChallengeQuestion challengeQuestion;

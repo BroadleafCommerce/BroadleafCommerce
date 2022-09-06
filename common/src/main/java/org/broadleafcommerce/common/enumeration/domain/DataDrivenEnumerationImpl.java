@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
@@ -46,10 +45,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_DATA_DRVN_ENUM")
+@Table(name="BLC_DATA_DRVN_ENUM", indexes = {
+        @Index(name = "ENUM_KEY_INDEX", columnList = "KEY")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "DataDrivenEnumerationImpl_friendyName")
 @DirectCopyTransform({
@@ -74,7 +76,6 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     protected Long id;
     
     @Column(name = "ENUM_KEY")
-    @Index(name = "ENUM_KEY_INDEX", columnNames = {"KEY"})
     @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Key", order = 1, gridOrder = 1, prominent = true)
     protected String key;
     

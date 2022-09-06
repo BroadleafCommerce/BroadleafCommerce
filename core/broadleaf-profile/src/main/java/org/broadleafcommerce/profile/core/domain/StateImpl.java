@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,6 +31,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 /**
  * @deprecated - use {@link org.broadleafcommerce.profile.core.domain.CountrySubdivision} instead.
@@ -39,7 +39,9 @@ import javax.persistence.Table;
 @Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_STATE")
+@Table(name = "BLC_STATE", indexes = {
+        @Index(name="STATE_NAME_INDEX", columnList="NAME")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCountryElements")
 @AdminPresentationClass(friendlyName = "StateImpl_baseState")
 public class StateImpl implements State {
@@ -51,7 +53,6 @@ public class StateImpl implements State {
     protected String abbreviation;
 
     @Column(name = "NAME", nullable = false)
-    @Index(name="STATE_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "StateImpl_State", order=9, group = "StateImpl_Address", prominent = true)
     protected String name;
 

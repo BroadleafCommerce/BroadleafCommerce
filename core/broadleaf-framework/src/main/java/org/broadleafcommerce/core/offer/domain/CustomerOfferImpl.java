@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -32,9 +31,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 @Entity
-@Table(name = "BLC_CUSTOMER_OFFER_XREF")
+@Table(name = "BLC_CUSTOMER_OFFER_XREF", indexes = {
+        @Index(name="CUSTOFFER_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+        @Index(name="CUSTOFFER_OFFER_INDEX", columnList="OFFER_ID")
+})
 @Inheritance(strategy=InheritanceType.JOINED)
 public class CustomerOfferImpl implements CustomerOffer {
 
@@ -55,12 +58,10 @@ public class CustomerOfferImpl implements CustomerOffer {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="CUSTOFFER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="CUSTOFFER_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Override

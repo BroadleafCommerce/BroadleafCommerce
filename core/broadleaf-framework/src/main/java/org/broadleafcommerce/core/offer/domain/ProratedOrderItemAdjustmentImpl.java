@@ -34,7 +34,6 @@ import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -48,10 +47,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUST")
+@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUST", indexes = {
+        @Index(name="POIADJUST_ITEM_INDEX", columnList =  "ORDER_ITEM_ID" )
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -80,7 +82,6 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    @Index(name="POIADJUST_ITEM_INDEX", columnNames = { "ORDER_ITEM_ID" })
     @AdminPresentation(excluded = true)
     protected OrderItem orderItem;
 
