@@ -74,7 +74,13 @@ public class OrderDaoImpl implements OrderDao {
     public Order readOrderById(final Long orderId) {
         TypedQuery<Order> query = em.createQuery("SELECT o FROM OrderImpl o WHERE o.id= :orderId", Order.class);
         query.setParameter("orderId", orderId);
-        return query.getSingleResult();
+        Order order = null;
+        try {
+            order = query.getSingleResult();
+        } catch (NoResultException e) {
+            LOG.warn(String.format("Could not find order by ID %s", orderId));
+        }
+        return order;
     }
 
     @Override
