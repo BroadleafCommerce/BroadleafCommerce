@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
@@ -59,13 +60,13 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
         Object item = context.parseExpression(tagAttributes.get("orderItem"));
         if (item instanceof DiscreteOrderItem) {
             DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
-
-            for (String i : orderItem.getOrderItemAttributes().keySet()) {
-                for (ProductOption option : orderItem.getProduct().getProductOptions()) {
-                    if (option.getAttributeName().equals(i) && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())) {
-                        productOptionDisplayValues.put(option.getLabel(), orderItem.getOrderItemAttributes().get(i).toString());
-                    }
+            for (SkuProductOptionValueXref productOptionValueXref : orderItem.getSku().getProductOptionValueXrefs()) {
+                if(orderItem.getOrderItemAttributes().containsKey(productOptionValueXref.getProductOptionValue().getProductOption().getAttributeName())) {
+                    String label = productOptionValueXref.getProductOptionValue().getProductOption().getLabel();
+                    String optionValue = productOptionValueXref.getProductOptionValue().getAttributeValue();
+                    productOptionDisplayValues.put(label, optionValue);
                 }
+
             }
         }
         return ImmutableMap.of("productOptionDisplayValues", (Object) productOptionDisplayValues);
