@@ -80,7 +80,7 @@ import javax.persistence.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC", indexes = {
-        @Index(name="CONTENT_NAME_INDEX", columnList = "CONTENT_NAME , ARCHIVED_FLAG , SC_TYPE_ID"),
+        @Index(name="CONTENT_NAME_INDEX", columnList = "CONTENT_NAME, ARCHIVED, SC_TYPE_ID"),
         @Index(name="CONTENT_PRIORITY_INDEX", columnList = "PRIORITY"),
         @Index(name="SC_OFFLN_FLG_INDX", columnList = "OFFLINE_FLAG")
 

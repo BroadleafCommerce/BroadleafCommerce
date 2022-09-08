@@ -55,7 +55,7 @@ import javax.persistence.Index;
         @Index(name="PAYMENTLOG_USER_INDEX", columnList="USER_NAME"),
         @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnList="ORDER_PAYMENT_ID"),
         @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-        @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REFERENCE_NUMBER"),
+        @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REF_NUM"),
         @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnList="TRANSACTION_TYPE"),
         @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnList="LOG_TYPE")
 })

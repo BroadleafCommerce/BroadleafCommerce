@@ -50,7 +50,7 @@ import javax.persistence.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_DATA_DRVN_ENUM", indexes = {
-        @Index(name = "ENUM_KEY_INDEX", columnList = "KEY")
+        @Index(name = "ENUM_KEY_INDEX", columnList = "ENUM_KEY")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "DataDrivenEnumerationImpl_friendyName")
