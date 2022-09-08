@@ -76,18 +76,11 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT", indexes = {
-                                    @Index(
-                                            name = "ORDERPAYMENT_ORDER_INDEX" , columnList = "ORDER_ID"
-                                    ),
-                                    @Index(
-                                            name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"
-                                    ),
-                                    @Index(
-                                            name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID"
-                                    ),
-                                    @Index(
-                                           name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE"
-                                    )})
+        @Index(name = "ORDERPAYMENT_ORDER_INDEX" , columnList = "ORDER_ID"),
+        @Index(name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"),
+        @Index(name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID"),
+        @Index(name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE")
+})
 
 @AdminPresentationMergeOverrides(
     {
