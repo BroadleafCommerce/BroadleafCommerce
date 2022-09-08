@@ -90,9 +90,7 @@ public class OrderDaoImpl implements OrderDao {
         try {
             order = query.getSingleResult();
         } catch (NoResultException e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn(String.format("Could not find order by ID %s", orderId));
-            }
+            LOG.warn(String.format("Could not find order by ID %s", orderId));
         }
         return order;
     }
