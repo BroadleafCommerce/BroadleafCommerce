@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
@@ -67,6 +68,17 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
                     productOptionDisplayValues.put(label, optionValue);
                 }
 
+            }
+            for (String i : orderItem.getOrderItemAttributes().keySet()) {
+                for (ProductOptionXref option : orderItem.getProduct().getProductOptionXrefs()) {
+                    String label = option.getProductOption().getLabel();
+                    if (option.getProductOption().getAttributeName().equals(i)
+                            && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())
+                            && !productOptionDisplayValues.containsKey(label)
+                    ) {
+                        productOptionDisplayValues.put(label, orderItem.getOrderItemAttributes().get(i).toString());
+                    }
+                }
             }
         }
         return ImmutableMap.of("productOptionDisplayValues", (Object) productOptionDisplayValues);
