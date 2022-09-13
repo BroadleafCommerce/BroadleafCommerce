@@ -18,11 +18,11 @@
 package org.broadleafcommerce.common.util;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.joda.time.DateTime;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -66,7 +66,7 @@ public class BLCPaymentMethodUtils {
      */
     public static List<String> getExpirationYearOptions() {
         List<String> expirationYears = new ArrayList<>();
-        DateTime dateTime = new DateTime();
+        LocalDateTime dateTime = LocalDateTime.now();
         for (int i = 0; i < 10; i++) {
             expirationYears.add(dateTime.plusYears(i).getYear() + "");
         }

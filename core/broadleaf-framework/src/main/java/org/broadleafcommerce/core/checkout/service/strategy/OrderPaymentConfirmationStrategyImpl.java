@@ -41,12 +41,15 @@ import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOServic
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import java.text.SimpleDateFormat;
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 /**
  * Strategy to handle confirming "UNCONFIRMED" transactions on an Order Payment during the checkout workflow.
@@ -233,11 +236,13 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
      */
     protected String constructExpirationDate(Integer expMonth, Integer expYear) {
         SimpleDateFormat sdf = new SimpleDateFormat(getGatewayExpirationDateFormat());
-        DateTime exp = new DateTime()
+        LocalDateTime exp = LocalDateTime.now()
                 .withYear(expYear)
-                .withMonthOfYear(expMonth);
+                .withMonth(expMonth);
+        ZonedDateTime zonedDateTime = exp.atZone(ZoneId.systemDefault());
+        Date expiryDate = Date.from(zonedDateTime.toInstant());
 
-        return sdf.format(exp.toDate());
+        return sdf.format(expiryDate);
     }
 
     protected String getGatewayExpirationDateFormat(){
