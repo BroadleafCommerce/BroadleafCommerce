@@ -39,7 +39,6 @@ import org.hibernate.internal.TypeLocatorImpl;
 import org.hibernate.type.Type;
 import org.hibernate.type.TypeFactory;
 import org.hibernate.type.TypeResolver;
-import org.hibernate.type.internal.TypeConfigurationRegistry;
 import org.hibernate.type.spi.TypeConfiguration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -171,7 +170,6 @@ public class MapFieldsFieldMetadataProvider extends DefaultFieldMetadataProvider
                         ((BasicFieldMetadata) entry.getValue()).getExplicitFieldType(),
                         myType.getReturnedClass(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()), metadata);
 
-                TypeConfigurationRegistry.INSTANCE.deregisterTypeConfiguration(typeConfiguration);
             }
         }
         return MetadataProviderResponse.HANDLED;
