@@ -369,16 +369,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else {
             hf = new Field();
         }
-        
-        hf.withName(p.getName())
-          .withFriendlyName(StringUtils.isNotEmpty(fmd.getFriendlyName()) ? fmd.getFriendlyName() : p.getName())
-          .withOrder(fmd.getGridOrder())
-          .withColumnWidth(fmd.getColumnWidth())
-          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
-          .withForeignKeyClass(fmd.getForeignKeyClass())
-          .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
-          .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass())
-          .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
+
+        hf
+                .withName(p.getName())
+                .withFriendlyName(StringUtils.isNotEmpty(fmd.getFriendlyName()) ? fmd.getFriendlyName() : p.getName())
+                .withOrder(fmd.getGridOrder())
+                .withColumnWidth(fmd.getColumnWidth())
+                .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
+                .withForeignKeyClass(fmd.getForeignKeyClass())
+                .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
+                .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass())
+                .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
         String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
         hf.setFieldType(fieldType);
         
@@ -951,11 +952,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         } else {
                             recordField.setValue(p.getValue());
                         }
+                        recordField.setTooltip(p.getOriginalDisplayValue());
                         recordField.setDisplayValue(p.getDisplayValue());
                     }
-
                     recordField.setDerived(isDerivedField(headerField, recordField, p));
-
                     record.getFields().add(recordField);
                 }
             }

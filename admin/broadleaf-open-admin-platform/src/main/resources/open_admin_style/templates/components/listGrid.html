@@ -133,7 +133,7 @@
                         th:switch="${listGrid.listGridType}"
                         th:with="field=${record.getField(headerField.name)}"
                         th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
-                        th:title="${field.displayValue}"
+                        th:title="${field.tooltip == null ? field.displayValue : field.tooltip}"
                         th:class="${field.isDerived ? 'derived' : ''}"
                         th:style="${headerField.contentOverflowAllowed?'overflow: visible;':''}">
                         <th:block th:case="'main'">
