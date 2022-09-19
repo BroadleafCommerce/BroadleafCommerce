@@ -917,7 +917,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>7.7.0</version>
+                <version>7.7.2</version>
                 <exclusions>
                     <!-- This brings in a very old version of Woodstox -->
                     <exclusion>
