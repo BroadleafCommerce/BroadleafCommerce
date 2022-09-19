@@ -111,7 +111,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -128,12 +127,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -271,7 +270,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return listGrid;
     }
 
-    private void getTranslationSearchField(String ceilingEntity, ArrayList<FieldDTO> defaultWrapperFields) {
+    protected void getTranslationSearchField(String ceilingEntity, ArrayList<FieldDTO> defaultWrapperFields) {
 
         TranslatedEntity translatedEntity;
 
@@ -355,22 +354,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
     
     protected Field createHeaderField(Property p, BasicFieldMetadata fmd) {
-        Field hf;
-        if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION) ||
-                fmd.getFieldType().equals(SupportedFieldType.BROADLEAF_ENUMERATION) ||
-                fmd.getFieldType().equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION) ||
-                fmd.getFieldType().equals(SupportedFieldType.EMPTY_ENUMERATION)) {
-            hf = new ComboField();
-            String[][] enumerationValues = fmd.getEnumerationValues();
-            for(int i=0; i< enumerationValues.length;i++){
-                enumerationValues[i][1] = exploitProtectionService.htmlDecode(enumerationValues[i][1]);
-            }
-            ((ComboField) hf).setOptions(enumerationValues);
-        } else {
-            hf = new Field();
-        }
+        Field headerField = this.initHeaderField(fmd);
 
-        hf
+        headerField
                 .withName(p.getName())
                 .withFriendlyName(StringUtils.isNotEmpty(fmd.getFriendlyName()) ? fmd.getFriendlyName() : p.getName())
                 .withOrder(fmd.getGridOrder())
@@ -381,9 +367,39 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass())
                 .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
         String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
-        hf.setFieldType(fieldType);
-        
-        return hf;
+        headerField.setFieldType(fieldType);
+
+        return headerField;
+    }
+
+    protected Field initHeaderField(BasicFieldMetadata fmd) {
+        Field headerField;
+        if (isComboField(fmd)) {
+            headerField = new ComboField();
+            String[][] enumerationValues = fmd.getEnumerationValues();
+            IntStream.range(0, enumerationValues.length).forEachOrdered(
+                    i -> enumerationValues[i][1] = this.exploitProtectionService.htmlDecode(enumerationValues[i][1])
+            );
+            ((ComboField) headerField).setOptions(enumerationValues);
+        } else {
+            headerField = new Field();
+        }
+        return headerField;
+    }
+
+    protected boolean isComboField(BasicFieldMetadata fmd) {
+        return this.isSupportedFieldTypes(
+                fmd,
+                SupportedFieldType.EXPLICIT_ENUMERATION,
+                SupportedFieldType.BROADLEAF_ENUMERATION,
+                SupportedFieldType.DATA_DRIVEN_ENUMERATION,
+                SupportedFieldType.EMPTY_ENUMERATION
+        );
+    }
+
+    protected boolean isSupportedFieldTypes(BasicFieldMetadata fmd, SupportedFieldType... supportedFieldType) {
+        return Arrays.asList(supportedFieldType)
+                .contains(fmd.getFieldType());
     }
 
     @Override
