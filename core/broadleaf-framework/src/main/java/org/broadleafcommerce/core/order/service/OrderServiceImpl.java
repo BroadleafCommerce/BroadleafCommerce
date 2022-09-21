@@ -1158,10 +1158,12 @@ public class OrderServiceImpl implements OrderService {
     public void preValidateCartOperation(Order cart) {
         ExtensionResultHolder erh = new ExtensionResultHolder();
         extensionManager.getProxy().preValidateCartOperation(cart, erh);
-        if (erh.getThrowable() instanceof IllegalCartOperationException) {
-            throw ((IllegalCartOperationException) erh.getThrowable());
-        } else if (erh.getThrowable() != null) {
-            throw new RuntimeException(erh.getThrowable());
+        if (erh.getThrowable() != null) {
+            if (erh.getThrowable() instanceof IllegalCartOperationException) {
+                throw ((IllegalCartOperationException) erh.getThrowable());
+            } else {
+                throw new RuntimeException(erh.getThrowable());
+            }
         }
     }
 
