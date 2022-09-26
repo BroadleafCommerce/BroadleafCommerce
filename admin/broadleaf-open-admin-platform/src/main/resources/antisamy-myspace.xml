@@ -121,11 +121,11 @@ http://www.w3.org/TR/html401/struct/global.html
         <regexp name="integer" value="(-|\+)?[0-9]+"/>
         <regexp name="positiveInteger" value="(\+)?[0-9]+"/>
         <regexp name="number" value="(-|\+)?([0-9]+(\.[0-9]+)?)"/>
-        <regexp name="angle" value="(-|\+)?([0-9]+(\.[0-9]+)?)(deg|grads|rad)"/>
+        <regexp name="angle" value="(-|\+)?([0-9]+(\.[0-9]+)?)(deg|grad|rad)"/>
         <regexp name="time" value="([0-9]+(\.[0-9]+)?)(ms|s)"/>
         <regexp name="frequency" value="([0-9]+(\.[0-9]+)?)(hz|khz)"/>
-        <regexp name="length" value="((-|\+)?0|(-|\+)?([0-9]+(\.[0-9]+)?)(em|ex|px|in|cm|mm|pt|pc))"/>
-        <regexp name="positiveLength" value="((\+)?0|(\+)?([0-9]+(\.[0-9]+)?)(em|ex|px|in|cm|mm|pt|pc))"/>
+        <regexp name="length" value="((-|\+)?0|(-|\+)?([0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?)(rem|vw|vh|em|ex|px|in|cm|mm|pt|pc))"/>
+        <regexp name="positiveLength" value="((\+)?0|(\+)?([0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?)(rem|vw|vh|em|ex|px|in|cm|mm|pt|pc))"/>
         <regexp name="percentage" value="(-|\+)?([0-9]+(\.[0-9]+)?)%"/>
         <regexp name="positivePercentage" value="(\+)?([0-9]+(\.[0-9]+)?)%"/>
 
@@ -179,7 +179,7 @@ http://www.w3.org/TR/html401/struct/global.html
         <attribute name="lang"
                    description="The 'lang' attribute tells the browser what language the element's attribute values and content are written in">
             <regexp-list>
-                <regexp value="[a-zA-Z]{2,20}"/>
+                <regexp value="[a-zA-Z0-9-]{2,20}"/>
             </regexp-list>
         </attribute>
         <attribute name="title"
