@@ -330,8 +330,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             Map<String, String> enumMap = new HashMap<>();
-            for (int i = 0; i < enumerationValues.length; i++) {
-                enumMap.put(enumerationValues[i][0], enumerationValues[i][1]);
+            for (String[] enumerationValue : enumerationValues) {
+                enumMap.put(enumerationValue[0], enumerationValue[1]);
             }
 
             fieldDTO.setValues(new JSONObject(enumMap).toString());
@@ -365,9 +365,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withForeignKeyClass(fmd.getForeignKeyClass())
                 .withForeignKeySectionPath(getAdminSectionPath(fmd.getForeignKeyClass()))
                 .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass())
-                .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity());
-        String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
-        headerField.setFieldType(fieldType);
+                .withCanLinkToExternalEntity(fmd.getCanLinkToExternalEntity())
+                .withFieldType(fmd.getFieldType() == null ? null : fmd.getFieldType().toString());
 
         return headerField;
     }
@@ -409,6 +408,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(fmd, sectionCrumbs);
+        // TODO: 9/27/2022 remove "if (field != null)" or move up before "field.getMetadata()"
         if (field != null) {
             ppr.setSectionEntityField(field.getName());
         }
