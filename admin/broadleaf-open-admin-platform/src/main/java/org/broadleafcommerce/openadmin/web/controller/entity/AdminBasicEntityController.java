@@ -101,8 +101,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
@@ -119,7 +119,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminBasicEntityController")
 @RequestMapping("/{sectionKey:.+}")
-public class AdminBasicEntityController extends AdminAbstractController {
+public abstract class AdminBasicEntityController extends AdminAbstractController {
 
     protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
 
@@ -716,6 +716,23 @@ public class AdminBasicEntityController extends AdminAbstractController {
     
     protected void modifyEntityForm(final Entity entity, final EntityForm entityForm, 
             final Map<String, String> pathVars) throws Exception {
+        Field overrideGeneratedUrl = entityForm.findField("overrideGeneratedUrl");
+        if (overrideGeneratedUrl != null) {
+            overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+            boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+            Field fullUrl = entityForm.findField("url");
+            if (!overriddenUrl) {
+                if (fullUrl != null) {
+                    fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+                            .withAttribute("sourceField", "defaultSku--name")
+                            .withAttribute("toggleField", "overrideGeneratedUrl")
+                            .withAttribute("prefix-selector", "#field-defaultCategory")
+                            .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+                }
+            } else {
+                fullUrl.withReadOnly(true);
+            }
+        }
         if (isAddRequest(entity)) {
             modifyAddEntityForm(entityForm, pathVars);
         } else {
