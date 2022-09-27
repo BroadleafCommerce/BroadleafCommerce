@@ -119,7 +119,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminBasicEntityController")
 @RequestMapping("/{sectionKey:.+}")
-public abstract class AdminBasicEntityController extends AdminAbstractController {
+public class AdminBasicEntityController extends AdminAbstractController {
 
     protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
 
