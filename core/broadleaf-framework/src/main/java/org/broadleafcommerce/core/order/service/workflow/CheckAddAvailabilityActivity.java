@@ -71,7 +71,9 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
         // No order item, this must be a new item add request
         Long skuId = request.getItemRequest().getSkuId();
         Sku sku = catalogService.findSkuById(skuId);
-
+        if(sku.getProduct().getEnableDefaultSkuInInventory()){
+            sku = sku.getProduct().getDefaultSku();
+        }
         Order order = context.getSeedData().getOrder();
         Integer requestedQuantity = request.getItemRequest().getQuantity();
 
@@ -82,6 +84,9 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
                 skuFromOrder = ((DiscreteOrderItem) orderItem).getSku();
             } else if (orderItem instanceof BundleOrderItem) {
                 skuFromOrder = ((BundleOrderItem) orderItem).getSku();
+            }
+            if(skuFromOrder != null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
+                skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
             if (skuFromOrder != null && skuFromOrder.equals(sku)) {
                 skuItems.merge(sku, orderItem.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
