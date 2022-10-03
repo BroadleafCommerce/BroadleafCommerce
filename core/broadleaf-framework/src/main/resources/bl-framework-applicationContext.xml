@@ -261,7 +261,7 @@
     <bean id="blUsingDefaultSkuInInventoryTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
-                <entry key="enableUseDegaultSkuInventory"
+                <entry key="enableUseDefaultSkuInventory"
                        value="org.broadleafcommerce.core.catalog.domain.WeaveProductSkuUsage"/>
             </map>
         </property>
@@ -274,7 +274,7 @@
 
     <bean id="blProductUsingDefaultSkuInInventoryDirectCopyTransformerMember"
           class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
-        <property name="templateTokens" value="enableUseDegaultSkuInventory"/>
+        <property name="templateTokens" value="enableUseDefaultSkuInventory"/>
         <property name="conditionalProperty" value="enable.weave.use.default.sku.inventory"/>
     </bean>
 
