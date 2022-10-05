@@ -34,8 +34,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mobile.device.DeviceResolver;
-import org.springframework.mobile.device.LiteDeviceResolver;
 import org.springframework.web.filter.RequestContextFilter;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +55,6 @@ public class FrameworkWebConfig {
         OrderedRequestContextFilter filter = new OrderedRequestContextFilter();
         filter.setOrder(FilterOrdered.PRE_SECURITY_HIGH - 1000);
         return filter;
-    }
-    
-    @Bean
-    public DeviceResolver blDeviceResolver() {
-        return new LiteDeviceResolver();
     }
 
     @Bean
