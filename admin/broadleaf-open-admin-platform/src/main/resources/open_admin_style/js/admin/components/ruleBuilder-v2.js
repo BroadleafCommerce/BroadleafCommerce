@@ -553,20 +553,28 @@
                         // (Values may contain multiple items and are sent back as a single String array)
                         var $selectize = this;
                         var data = $selectize.$input.attr("data-hydrate");
+                        var optionsPopup = $(".selectize-dropdown.query-builder-selectize-input");
+                        var popupIsVisible = false;
+                        if(optionsPopup){
+                            popupIsVisible = $(optionsPopup).is(":visible");
+                        }
+                        //if popup with options is visible there is no reason to try to add options from hydrate property again
+                        //this makes sense on initial page load and at that time popup is not visible
+                        if(!popupIsVisible) {
+                            var dataHydrate = BLCAdmin.stringToArray(data, "\",\"");
+                            for (var k = 0; k < dataHydrate.length; k++) {
+                                var item = dataHydrate[k];
+                                if ($selectize.getOption(item).length === 0 || allowAdd) {
+                                    var label = labelsByItemId[item] || item;
 
-                        var dataHydrate = BLCAdmin.stringToArray(data, "\",\"");
-                        for (var k = 0; k < dataHydrate.length; k++) {
-                            var item = dataHydrate[k];
-                            if ($selectize.getOption(item).length === 0 || allowAdd) {
-                                var label = labelsByItemId[item] || item;
-
-                                $selectize.addOption({id: item, label: label});
-                            }
-                            // leading 0s get stripped when converted to number
-                            if (!isNaN(item) && !String(item).startsWith('0')) {
-                                $selectize.addItem(Number(item), false);
-                            } else {
-                                $selectize.addItem(item, false);
+                                    $selectize.addOption({id: item, label: label});
+                                }
+                                // leading 0s get stripped when converted to number
+                                if (!isNaN(item) && !String(item).startsWith('0')) {
+                                    $selectize.addItem(Number(item), false);
+                                } else {
+                                    $selectize.addItem(item, false);
+                                }
                             }
                         }
                     },
