@@ -352,6 +352,10 @@ public class OrderServiceImpl implements OrderService {
                         //incorrect results because something has not been flushed to the database yet.
                         session.setHibernateFlushMode(FlushMode.MANUAL);
                     }
+
+                    //solution for pricing deadlock
+                    order.getOrderItems().stream().flatMap(oi -> oi.getOrderItemPriceDetails().stream()).flatMap(oipd -> oipd.getOrderItemPriceDetailAdjustments().stream()).count();
+
                     order = pricingService.executePricing(order);
                     isValid = true;
                 } catch (Exception ex) {
