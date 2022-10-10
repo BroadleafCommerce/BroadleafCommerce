@@ -935,4 +935,8 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         return null;
     }
 
+    @Override
+    public Boolean hasValidationErrors() {
+        return getOrderItems().stream().anyMatch(OrderItem::getHasValidationError);
+    }
 }
