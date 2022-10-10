@@ -112,6 +112,4 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
         return dto;
     }
 
-
-
 }
