@@ -35,8 +35,8 @@ public class DefaultEhCacheConfigurationBuilder extends DefaultJCacheConfigurati
     public <K, V> Configuration<K, V> buildConfiguration(int ttlSeconds, int maxElementsInMemory, Class<K> keyClass, Class<V> valueClass) {
         ExpiryPolicy<Object, Object> expiryPolicy = new DefaultExpiryPolicy(ttlSeconds);
         
-        CacheConfiguration config = CacheConfigurationBuilder.
-                newCacheConfigurationBuilder(valueClass, keyClass, ResourcePoolsBuilder.heap(maxElementsInMemory))
+        CacheConfiguration<K, V> config = CacheConfigurationBuilder.
+                newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(maxElementsInMemory))
                 .withExpiry(expiryPolicy)
                 .build();
 
