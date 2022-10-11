@@ -127,3 +127,11 @@ $('body').on('click', 'a.override-generated-url', function(event) {
 	
 	$this.data('enabled', !enabled);
 });
+
+$("#overrideGeneratedUrl-true").change(function(){
+    $($('#field-url').find('input')[0]).prop('disabled', '')
+});
+
+$("#overrideGeneratedUrl-false").change(function(){
+    $($('#field-url').find('input')[0]).prop('disabled', 'disabled')
+});

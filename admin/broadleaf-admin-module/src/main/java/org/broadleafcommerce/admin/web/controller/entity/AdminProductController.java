@@ -123,6 +123,21 @@ public class AdminProductController extends AdminBasicEntityController {
         }
     }
 
+
+    @Override
+    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) throws Exception {
+        Field overrideGeneratedUrl = entityForm.findField("overrideGeneratedUrl");
+        if (overrideGeneratedUrl != null) {
+           boolean overridenURL = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+           if (!overridenURL) {
+               Field url = entityForm.findField("url");
+               url.setReadOnly(true);
+           }
+
+        }
+    }
+
+
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
             String id, Map<String, String> pathVars) throws Exception {
         String collectionField = "additionalSkus";
