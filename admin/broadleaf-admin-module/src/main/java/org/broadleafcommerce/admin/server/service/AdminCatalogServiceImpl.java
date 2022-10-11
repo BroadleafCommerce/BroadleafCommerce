@@ -154,7 +154,9 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
     public List<List<ProductOptionValue>> generatePermutations(int currentTypeIndex, List<ProductOptionValue> currentPermutation, List<ProductOption> options) {
         List<List<ProductOptionValue>> result = new ArrayList<List<ProductOptionValue>>();
         if (currentTypeIndex == options.size()) {
-            result.add(currentPermutation);
+            if (!currentPermutation.isEmpty()) {
+                result.add(currentPermutation);
+            }
             return result;
         }
 
