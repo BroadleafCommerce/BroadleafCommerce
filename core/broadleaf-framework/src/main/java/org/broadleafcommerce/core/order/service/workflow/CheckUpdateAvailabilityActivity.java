@@ -80,7 +80,9 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
             LOG.warn("Could not check availability; did not recognize passed-in item " + orderItem.getClass().getName());
             return context;
         }
-
+        if(sku.getProduct().getEnableDefaultSkuInInventory()){
+            sku = sku.getProduct().getDefaultSku();
+        }
         Order order = context.getSeedData().getOrder();
         Integer requestedQuantity = request.getItemRequest().getQuantity();
         Map<Sku, Integer> skuItems = new HashMap<>();
@@ -90,6 +92,9 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
                 skuFromOrder = ((DiscreteOrderItem) orderItemFromOrder).getSku();
             } else if (orderItemFromOrder instanceof BundleOrderItem) {
                 skuFromOrder = ((BundleOrderItem) orderItemFromOrder).getSku();
+            }
+            if(skuFromOrder != null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
+                skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
             if (skuFromOrder != null && skuFromOrder.equals(sku) && !orderItemFromOrder.equals(orderItem)) {
                 skuItems.merge(sku, orderItemFromOrder.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
@@ -103,6 +108,9 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
         Integer previousQty = orderItem.getQuantity();
         for (OrderItem child : orderItem.getChildOrderItems()) {
             Sku childSku = ((DiscreteOrderItem) child).getSku();
+            if(childSku.getProduct().getEnableDefaultSkuInInventory()){
+                childSku = childSku.getProduct().getDefaultSku();
+            }
             Integer childQuantity = child.getQuantity();
             childQuantity = childQuantity / previousQty;
             checkSkuAvailability(order, childSku, childQuantity * requestedQuantity);
