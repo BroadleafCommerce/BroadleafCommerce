@@ -278,7 +278,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         // Get the products
         List<Product> products = getProducts(responseDocuments);
-        if (products != null) {
+        if (products != null && searchCriteria.getCategory() != null) {
             filterProductsBasedOnInactiveCategory(products, searchCriteria.getCategory());
         }
         result.setProducts(products);
