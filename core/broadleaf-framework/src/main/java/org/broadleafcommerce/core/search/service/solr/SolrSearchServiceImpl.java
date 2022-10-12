@@ -278,27 +278,29 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         // Get the products
         List<Product> products = getProducts(responseDocuments);
-        filterProductsBasedOnInactionCategory(products, searchCriteria.getCategory());
+        if (products != null) {
+            filterProductsBasedOnInactiveCategory(products, searchCriteria.getCategory());
+        }
         result.setProducts(products);
 
         return result;
     }
 
-    protected void filterProductsBasedOnInactionCategory(List<Product> products, Category category) {
+    protected void filterProductsBasedOnInactiveCategory(List<Product> products, Category category) {
         Iterator<Product> iterator = products.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Product product = iterator.next();
             Optional<CategoryProductXref> defaultParent;
-            if(product.getAllParentCategoryXrefs().size()>1) {
+            if (product.getAllParentCategoryXrefs().size() > 1) {
                 defaultParent = product.getAllParentCategoryXrefs()
                         .stream().filter(t -> t.getDefaultReference() != null && t.getDefaultReference()).findFirst();
-            }else{
+            } else {
                 defaultParent = Optional.of(product.getAllParentCategoryXrefs().get(0));
             }
-            if(defaultParent.isPresent() && defaultParent.get().getCategory().isActive()) {
+            if (defaultParent.isPresent() && defaultParent.get().getCategory().isActive()) {
                 Category parentCategory = defaultParent.get().getCategory();
-                while (parentCategory!=null && parentCategory.getId() != category.getId()) {
-                    if(!parentCategory.isActive()){
+                while (parentCategory != null && !Objects.equals(parentCategory.getId(), category.getId())) {
+                    if (!parentCategory.isActive()) {
                         iterator.remove();
                         break;
                     }
@@ -307,7 +309,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 if (parentCategory == null) {
                     iterator.remove();
                 }
-            }else{
+            } else {
                 iterator.remove();
             }
         }
