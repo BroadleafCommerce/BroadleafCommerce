@@ -499,7 +499,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected Calendar dateToCalendar(Date date, TimeZone offerTimeZone) {
         LocalDateTime offerDateTime = LocalDateTime.ofInstant(date.toInstant(), offerTimeZone.toZoneId());
 
-        Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone(String.valueOf(offerTimeZone)));
+        Calendar calendar = new GregorianCalendar(offerTimeZone);
 
         calendar.set(Calendar.YEAR, offerDateTime.getYear());
         calendar.set(Calendar.MONTH, offerDateTime.getMonthValue() - 1);
