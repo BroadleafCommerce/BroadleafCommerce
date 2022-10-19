@@ -18,8 +18,6 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.CreditCardValidator;
 import org.broadleafcommerce.common.money.Money;
@@ -32,11 +30,16 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayTransactionService;
 import org.broadleafcommerce.common.payment.service.FailureCountExposable;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+import java.util.Map;
 
 @Service("blNullIntegrationGatewayTransactionService")
 public class NullIntegrationGatewayTransactionServiceImpl extends AbstractPaymentGatewayTransactionService implements FailureCountExposable {
@@ -157,10 +160,11 @@ public class NullIntegrationGatewayTransactionServiceImpl extends AbstractPaymen
             if (parsedDate.length == 2) {
                 String expMonth = parsedDate[0];
                 String expYear = parsedDate[1];
+                ZoneId zone = ZoneId.systemDefault();
                 try {
-                    DateTime expirationDate = new DateTime(Integer.parseInt("20" + expYear), Integer.parseInt(expMonth), 1, 0, 0);
-                    expirationDate = expirationDate.dayOfMonth().withMaximumValue();
-                    validDate = expirationDate.isAfterNow();
+                    ZonedDateTime expirationDate = ZonedDateTime.of((Integer.parseInt("20" + expYear)), Integer.parseInt(expMonth), 1, 0, 0, 0, 0, zone);
+                    LocalDateTime expDate = expirationDate.toInstant().atZone(zone).toLocalDateTime();
+                    validDate = expDate.isAfter(LocalDateTime.now());
                     validDateFormat = true;
                 } catch (Exception e) {
                     //invalid date format

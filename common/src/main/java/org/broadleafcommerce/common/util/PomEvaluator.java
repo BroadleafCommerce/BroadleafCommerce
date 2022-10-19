@@ -53,7 +53,6 @@ public class PomEvaluator {
     private static Category CGLIB = new Category("CGLIB libraries", LicenseType.APACHE2, FrameworkType.GENERAL, SPRING, HIBERNATE);
     private static Category JERSEY = new Category("Jersey Libraries", LicenseType.LGPL, FrameworkType.XML);
     private static Category XSTREAM = new Category("Codehaus XML parsing library", LicenseType.XSTREAM_BSD, FrameworkType.XML);
-    private static Category JODA_TIME = new Category("Date and time utilities", LicenseType.APACHE2, FrameworkType.UTILITY, APACHE_FOUNDATION);
     private static Category TRANSMORPH = new Category("Entropy Transmorph - SalesForce.com", LicenseType.APACHE2, FrameworkType.UTILITY);    
     private static Category QUARTZ = new Category("Teracotta Quartz", LicenseType.APACHE2, FrameworkType.SCHEDULER);
     private static Category EHCACHE = new Category("Teracotta ehCache", LicenseType.APACHE2, FrameworkType.CACHE);
@@ -137,9 +136,6 @@ public class PomEvaluator {
 
         // XStream - used for REST services
         knownLibraries.put("com.thoughtworks.xstream", JERSEY);
-
-        // Joda-Time
-        knownLibraries.put("joda-time", JODA_TIME);
 
         // Cache
         knownLibraries.put("net.sf.jsr107cache", JAVAX);
