@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
@@ -304,12 +305,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                         iterator.remove();
                         break;
                     }
-                    parentCategory = parentCategory.getParentCategory();
+                    Optional<CategoryXref> parentXref = parentCategory.getAllParentCategoryXrefs().stream().filter(CategoryXref::getDefaultReference).findFirst();
+                    parentCategory = parentXref.map(CategoryXref::getCategory).orElse(null);
                 }
-                if (parentCategory == null) {
-                    iterator.remove();
-                }
-            } else {
+            } else if(defaultParent.isPresent() && !defaultParent.get().getCategory().isActive()) {
                 iterator.remove();
             }
         }
