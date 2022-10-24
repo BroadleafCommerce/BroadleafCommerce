@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.spec.order.service.workflow
 
+import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
@@ -79,7 +80,8 @@ class CheckUpdateAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
-        
+        mockSku.getProduct() >> new ProductImpl()
+
         context.seedData.itemRequest.getQuantity() >> 0
         context.seedData.itemRequest.getOrderItemId() >> 1
         mockOrderItemService.readOrderItemById(_) >> mockOrderItem
@@ -98,6 +100,7 @@ class CheckUpdateAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         BundleOrderItemImpl mockOrderItem = Spy(BundleOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> new ProductImpl()
         
         context.seedData.itemRequest.getQuantity() >> 0
         context.seedData.itemRequest.getOrderItemId() >> 1
@@ -117,6 +120,7 @@ class CheckUpdateAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         OrderItemImpl mockOrderItem = Spy(OrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> new ProductImpl()
     
         
         context.seedData.itemRequest.getQuantity() >> 0

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.spec.order.service.workflow
 
+import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
@@ -68,6 +69,7 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         setup: "order item id is set to be null and catalogService set to return a sku"
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> new ProductImpl();
         
         context.seedData.itemRequest.getQuantity() >> 0
         context.seedData.itemRequest.getOrderItemId() >> null
@@ -87,7 +89,8 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         setup: "Sku is setup to be found and not available"
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
-        
+        mockSku.getProduct() >> new ProductImpl()
+
         context.seedData.itemRequest.getQuantity() >> 0
         context.seedData.itemRequest.getOrderItemId() >> null
         context.seedData.itemRequest.getSkuId() >> 1
@@ -108,6 +111,7 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         setup: "sku is setup to have a CHECK_QUANITY InventoryType"
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> new ProductImpl()
         
         context.seedData.itemRequest.getQuantity() >> 0
         context.seedData.itemRequest.getOrderItemId() >> null
@@ -130,6 +134,7 @@ class CheckAddAvailabilityActivitySpec extends BaseOrderWorkflowSpec {
         setup: "sku is setup to have a CHECK_QUANITY InventoryType"
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> new ProductImpl()
         
         context.seedData.itemRequest.getQuantity() >> 0
         context.seedData.itemRequest.getOrderItemId() >> null
