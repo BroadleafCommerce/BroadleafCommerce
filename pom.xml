@@ -695,7 +695,7 @@
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-jpeg</artifactId>
-                <version>3.6</version>
+                <version>3.9.3</version>
             </dependency>
             <!-- PNG image processing -->
             <dependency>
