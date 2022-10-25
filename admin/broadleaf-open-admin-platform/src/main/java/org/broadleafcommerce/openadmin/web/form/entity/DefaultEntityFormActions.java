@@ -17,23 +17,21 @@
  */
 package org.broadleafcommerce.openadmin.web.form.entity;
 
-
-
 public class DefaultEntityFormActions {
-    
+
     public static final EntityFormAction SAVE = new EntityFormAction(EntityFormAction.SAVE)
-        .withButtonType("submit")
-        .withButtonClass("submit-button primary")
-        .withDisplayText("Save");
+            .withButtonType("submit")
+            .withButtonClass("submit-button primary")
+            .withDisplayText("Save");
 
     public static final EntityFormAction DELETE = new EntityFormAction(EntityFormAction.DELETE)
         .withButtonClass("delete-button")
-        .withDisplayText("Delete");
-    
+            .withDisplayText("Delete");
+
     public static final EntityFormAction PREVIEW = new EntityFormAction(EntityFormAction.PREVIEW)
-        .withButtonClass("preview-button")
-        .withDisplayText("Preview");
-    
+            .withButtonClass("preview-button")
+            .withDisplayText("Preview");
+
     public static final EntityFormAction DUPLICATE = new EntityFormAction(EntityFormAction.DUPLICATE)
             .withButtonClass("duplicate-button")
             .withDisplayText("Duplicate");

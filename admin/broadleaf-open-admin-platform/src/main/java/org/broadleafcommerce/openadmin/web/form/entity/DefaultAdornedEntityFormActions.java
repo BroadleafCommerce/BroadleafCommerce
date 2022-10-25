@@ -17,16 +17,14 @@
  */
 package org.broadleafcommerce.openadmin.web.form.entity;
 
-
-
 public class DefaultAdornedEntityFormActions {
     
-    public static final EntityFormAction Add = new EntityFormAction(EntityFormAction.ADD)
+    public static final EntityFormAction ADD = new EntityFormAction(EntityFormAction.ADD)
         .withButtonType("submit")
         .withButtonClass("submit-button primary")
         .withDisplayText("Add");
 
-    public static final EntityFormAction Save = new EntityFormAction(EntityFormAction.SAVE)
+    public static final EntityFormAction SAVE = new EntityFormAction(EntityFormAction.SAVE)
         .withButtonType("submit")
         .withButtonClass("submit-button primary")
         .withDisplayText("Save");

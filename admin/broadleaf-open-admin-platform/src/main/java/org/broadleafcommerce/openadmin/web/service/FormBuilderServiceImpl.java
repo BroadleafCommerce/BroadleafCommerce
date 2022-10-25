@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -111,7 +110,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -128,12 +126,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -1989,7 +1987,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ef.setEntityType(foreignKey.getForeignKeyClass());
 
         Field keyField;
-        if (!mapMd.getForceFreeFormKeys()) {
+        if (mapMd.getForceFreeFormKeys()) {
+            keyField = new Field().withName("key")
+                                .withFieldType(SupportedFieldType.STRING.toString())
+                                .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
+        } else {
             // We will use a combo field to render the key choices
             ComboField temp = new ComboField();
             temp.withName("key")
@@ -2004,7 +2006,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         .withCeilingEntityClassname(mapMd.getMapKeyOptionEntityClass());
 
                 DynamicResultSet drs = adminEntityService.getRecords(ppr).getDynamicResultSet();
-    
+
                 for (Entity entity : drs.getRecords()) {
                     String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
                     String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
@@ -2012,28 +2014,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
             }
             keyField = temp;
-        } else {
-            keyField = new Field().withName("key")
-                                .withFieldType(SupportedFieldType.STRING.toString())
-                                .withFriendlyName(mapStructure.getKeyPropertyFriendlyName());
         }
         keyField.setRequired(true);
         ef.addMapKeyField(cmd, keyField);
-        
-        // Set the fields for this form
-        List<Property> mapFormProperties;
-        if (mapMd.isSimpleValue()) {
-            ef.setIdProperty("key");
-            mapFormProperties = new ArrayList<>();
-            Property valueProp = cmd.getPMap().get("value");
-            mapFormProperties.add(valueProp);
-        } else {
-            String valueClassName = mapStructure.getValueClassName();
-            List<String> classNames = getValueClassNames(valueClassName);
 
-            mapFormProperties = new ArrayList<>(Arrays.asList(cmd.getProperties()));
-            filterMapFormProperties(mapFormProperties, classNames);
-        }
+        List<Property> mapFormProperties = this.setFieldsForForm(mapMd, ef, cmd, mapStructure);
 
         setEntityFormFields(cmd, ef, mapFormProperties);
 
@@ -2061,19 +2046,27 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return classNames;
     }
 
-    protected void filterMapFormProperties(List<Property> mapFormProperties, final List<String> classNames) {
-        CollectionUtils.filter(mapFormProperties, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                Property p = (Property) object;
-                for (String availType : p.getMetadata().getAvailableToTypes()) {
-                    if (classNames.contains(availType)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
+    protected List<Property> setFieldsForForm(MapMetadata mapMd, EntityForm ef, ClassMetadata cmd, MapStructure mapStructure) {
+        List<Property> mapFormProperties;
+        if (mapMd.isSimpleValue()) {
+            ef.setIdProperty("key");
+            mapFormProperties = new ArrayList<>();
+            Property valueProp = cmd.getPMap().get("value");
+            mapFormProperties.add(valueProp);
+        } else {
+            String valueClassName = mapStructure.getValueClassName();
+            List<String> classNames = getValueClassNames(valueClassName);
+            mapFormProperties = this.filterMapFormProperties(Arrays.asList(cmd.getProperties()), classNames);
+        }
+        return mapFormProperties;
+    }
+
+    protected List<Property> filterMapFormProperties(final List<Property> mapFormProperties, final List<String> classNames) {
+        return mapFormProperties.stream()
+                .filter(property ->
+                        Arrays.stream(property.getMetadata().getAvailableToTypes())
+                                .anyMatch(classNames::contains))
+                .collect(Collectors.toList());
     }
 
     protected EntityForm createStandardEntityForm() {
@@ -2084,7 +2077,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     protected EntityForm createStandardAdornedEntityForm() {
         EntityForm ef = new EntityForm();
-        ef.addAction(DefaultAdornedEntityFormActions.Add);
+        ef.addAction(DefaultAdornedEntityFormActions.ADD);
         return ef;
     }
     

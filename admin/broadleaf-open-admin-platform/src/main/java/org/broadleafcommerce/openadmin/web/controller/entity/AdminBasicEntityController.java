@@ -1596,8 +1596,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             boolean isViewCollectionItem = ModalHeaderType.VIEW_COLLECTION_ITEM.getType().equals(modalHeaderType);
             if (entityForm == null) {
                 entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem, sectionCrumbs, false);
-                entityForm.removeAction(DefaultAdornedEntityFormActions.Add);
-                entityForm.addAction(DefaultAdornedEntityFormActions.Save);
+                entityForm.removeAction(DefaultAdornedEntityFormActions.ADD);
+                entityForm.addAction(DefaultAdornedEntityFormActions.SAVE);
             } else {
                 entityForm.clearFieldsMap();
                 String entityType = entityForm.getEntityType();
