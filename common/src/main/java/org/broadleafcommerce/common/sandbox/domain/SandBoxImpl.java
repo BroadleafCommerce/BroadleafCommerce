@@ -34,7 +34,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -49,6 +48,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Index;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -56,7 +56,9 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SANDBOX")
+@Table(name="BLC_SANDBOX", indexes = {
+        @Index(name="SANDBOX_NAME_INDEX", columnList="SANDBOX_NAME"),
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @SQLDelete(sql="UPDATE BLC_SANDBOX SET ARCHIVED = 'Y' WHERE SANDBOX_ID = ?")
 @DirectCopyTransform({
@@ -82,7 +84,6 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     protected Long id;
     
     @Column(name = "SANDBOX_NAME")
-    @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
     @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = SandboxAdminPresentation.GroupName.Description, prominent = true, 
             gridOrder = 2000, order = 1000,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blSandBoxNameValidator") })

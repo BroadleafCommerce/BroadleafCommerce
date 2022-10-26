@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -32,11 +31,14 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ROLE")
+@Table(name = "BLC_ROLE", indexes = {
+        @Index(name="ROLE_NAME_INDEX", columnList="ROLE_NAME")
+})
 @AdminPresentationClass(friendlyName = "RoleImpl")
 public class RoleImpl implements Role {
 
@@ -56,7 +58,6 @@ public class RoleImpl implements Role {
     protected Long id;
 
     @Column(name = "ROLE_NAME", nullable = false)
-    @Index(name="ROLE_NAME_INDEX", columnNames={"ROLE_NAME"})
     @AdminPresentation(friendlyName = "rolesTitle",prominent = true)
     protected String roleName;
 

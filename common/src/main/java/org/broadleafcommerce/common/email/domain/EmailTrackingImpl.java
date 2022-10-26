@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.email.domain;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
@@ -31,13 +30,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 /**
  * @author jfischer
  *
  */
 @Entity
-@Table(name = "BLC_EMAIL_TRACKING")
+@Table(name = "BLC_EMAIL_TRACKING", indexes = {
+        @Index(name="EMAILTRACKING_INDEX", columnList="EMAIL_ADDRESS")
+})
 public class EmailTrackingImpl implements EmailTracking {
 
     /** The Constant serialVersionUID. */
@@ -57,7 +59,6 @@ public class EmailTrackingImpl implements EmailTracking {
     protected Long id;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name="EMAILTRACKING_INDEX", columnNames={"EMAIL_ADDRESS"})
     protected String emailAddress;
 
     @Column(name = "DATE_SENT")

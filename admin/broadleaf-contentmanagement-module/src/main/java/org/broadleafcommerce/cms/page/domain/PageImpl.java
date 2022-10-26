@@ -41,7 +41,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
@@ -67,13 +66,16 @@ import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 /**
  * Created by bpolster.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PAGE")
+@Table(name = "BLC_PAGE", indexes = {
+        @Index(name = "PAGE_FULL_URL_INDEX", columnList="FULL_URL")
+})
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationMergeOverrides(value = { 
     @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
@@ -169,7 +171,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     protected String description;
 
     @Column (name = "FULL_URL")
-    @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
     @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 3000,
         group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
         prominent = true, gridOrder = 2,

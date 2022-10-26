@@ -40,7 +40,6 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.proxy.HibernateProxy;
@@ -63,9 +62,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Index;
 
 @Entity
-@Table(name = "BLC_OFFER_CODE")
+@Table(name = "BLC_OFFER_CODE", indexes = {
+        @Index(name="OFFERCODE_OFFER_INDEX", columnList="OFFER_ID"),
+        @Index(name="OFFERCODE_CODE_INDEX", columnList="OFFER_CODE"),
+        @Index(name = "OFFER_CODE_EMAIL_INDEX", columnList =  "EMAIL_ADDRESS" )
+})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
@@ -94,14 +98,12 @@ public class OfferCodeImpl implements OfferCode {
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order=2000,
             prominent = true, gridOrder = 2000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
-    @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
     @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true, gridOrder = 1000,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blRegexPropertyValidator",
                     configurationItems = {
@@ -135,7 +137,6 @@ public class OfferCodeImpl implements OfferCode {
     protected int uses;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name = "OFFER_CODE_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
     @AdminPresentation(friendlyName = "OfferCodeImpl_Email_Address")
     protected String emailAddress;
 

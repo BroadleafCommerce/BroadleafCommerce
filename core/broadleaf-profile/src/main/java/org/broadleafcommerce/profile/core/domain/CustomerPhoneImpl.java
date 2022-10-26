@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
@@ -41,11 +40,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Index;
 
 @Entity
 @EntityListeners(value = {CustomerPhonePersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(name="CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
+@Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(name="CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PHONE_NAME" }), indexes = {
+        @Index(name="CUSTPHONE_PHONE_INDEX", columnList="PHONE_ID")
+})
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
@@ -92,7 +94,6 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
     @JoinColumn(name = "PHONE_ID")
-    @Index(name="CUSTPHONE_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
 
     @Override

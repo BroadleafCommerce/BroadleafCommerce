@@ -20,22 +20,17 @@ package org.broadleafcommerce.core.pricing.domain;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SHIPPING_RATE")
+@Table(name = "BLC_SHIPPING_RATE", indexes = {
+        @Index(name="SHIPPINGRATE_FEE_INDEX", columnList="FEE_TYPE"),
+        @Index(name="SHIPPINGRATE_FEESUB_INDEX", columnList="FEE_SUB_TYPE")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Deprecated
 public class ShippingRateImpl implements ShippingRate {
@@ -56,11 +51,9 @@ public class ShippingRateImpl implements ShippingRate {
     protected Long id;
 
     @Column(name = "FEE_TYPE", nullable=false)
-    @Index(name="SHIPPINGRATE_FEE_INDEX", columnNames={"FEE_TYPE"})
     protected String feeType;
 
     @Column(name = "FEE_SUB_TYPE")
-    @Index(name="SHIPPINGRATE_FEESUB_INDEX", columnNames={"FEE_SUB_TYPE"})
     protected String feeSubType;
 
     @Column(name = "FEE_BAND", nullable=false)

@@ -19,7 +19,6 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -32,11 +31,15 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ROLE")
+@Table(name = "BLC_CUSTOMER_ROLE", indexes = {
+        @Index(name="CUSTROLE_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+        @Index(name="CUSTROLE_ROLE_INDEX", columnList="ROLE_ID")
+})
 public class CustomerRoleImpl implements CustomerRole {
 
     private static final long serialVersionUID = 1L;
@@ -56,12 +59,10 @@ public class CustomerRoleImpl implements CustomerRole {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="CUSTROLE_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(targetEntity = RoleImpl.class, optional = false)
     @JoinColumn(name = "ROLE_ID")
-    @Index(name="CUSTROLE_ROLE_INDEX", columnNames={"ROLE_ID"})
     protected Role role;
 
     @Override

@@ -38,7 +38,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -54,9 +53,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Index;
 
 @Entity
-@Table(name = "BLC_FG_ADJUSTMENT")
+@Table(name = "BLC_FG_ADJUSTMENT", indexes = {
+        @Index(name="FGADJUSTMENT_INDEX", columnList="FULFILLMENT_GROUP_ID"),
+        @Index(name="FGADJUSTMENT_OFFER_INDEX", columnList="OFFER_ID")
+})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
@@ -86,13 +89,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    @Index(name="FGADJUSTMENT_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     @AdminPresentation(excluded = true)
     protected FulfillmentGroup fulfillmentGroup;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="FGADJUSTMENT_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_Offer", order=1000,
             prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()
