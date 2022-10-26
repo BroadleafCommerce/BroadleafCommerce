@@ -350,7 +350,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             group = GroupName.Miscellaneous, order = 7000,
             tooltip = "ProductImpl_enableDefaultSkuInInventory_Tooltip",
             defaultValue = "false")
-    protected boolean enableDefaultSkuInventory;
+    protected Boolean enableDefaultSkuInventory = false;
 
     @Transient
     protected Map<String, Set<String>> productOptionMap;
@@ -362,10 +362,12 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
-    public Boolean getEnableDefaultSkuInInventory(){return false;}
+    public Boolean getEnableDefaultSkuInInventory(){
+        return this.enableDefaultSkuInventory == null ? false : this.enableDefaultSkuInventory;
+    }
 
     @Override
-    public void isEnableDefaultSkuInInventory(Boolean enableDefaultSkuInventory) {
+    public void setEnableDefaultSkuInInventory(Boolean enableDefaultSkuInventory) {
         this.enableDefaultSkuInventory = enableDefaultSkuInventory != null && enableDefaultSkuInventory;
     }
 
@@ -1177,7 +1179,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setMetaDescription(metaDescription);
         cloned.setCanonicalUrl(canonicalUrl);
         cloned.setMetaTitle(metaTitle);
-        cloned.isEnableDefaultSkuInInventory(enableDefaultSkuInventory);
+        cloned.setEnableDefaultSkuInInventory(enableDefaultSkuInventory);
         if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
         } else if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
