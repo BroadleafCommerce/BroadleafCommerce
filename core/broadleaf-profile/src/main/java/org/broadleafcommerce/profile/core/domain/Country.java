@@ -33,6 +33,7 @@ import java.io.Serializable;
  *
  * @author Elbert Bautista (elbertbautista)
  */
+@Deprecated
 public interface Country extends Serializable {
 
     /**
