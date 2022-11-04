@@ -42,7 +42,6 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-@Deprecated
 public class CountryImpl implements Country, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
