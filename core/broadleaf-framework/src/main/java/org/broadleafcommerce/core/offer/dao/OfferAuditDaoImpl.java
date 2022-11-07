@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -126,7 +126,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
         Root<OrderImpl> orderRoot = criteria.from(OrderImpl.class);
-        Join<Object, Object> parentOrder= null;
+        Join<Object, Object> parentOrder = null;
         if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.OMS)) {
             parentOrder = orderRoot.join("embeddedOmsOrder", JoinType.LEFT).join("parentOrder", JoinType.LEFT);
         }
@@ -209,39 +209,25 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public Long countOfferCodeUses(Order order, Long offerCodeId) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-        Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
-        Root<OrderImpl> orderRoot = criteria.from(OrderImpl.class);
-        Join<Object, Object> parentOrder = null;
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT count(oa.id) AS countOfferCodeUses ")
+                .append("FROM OrderImpl o ");
         if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.OMS)) {
-            parentOrder = orderRoot.join("embeddedOmsOrder", JoinType.LEFT).join("parentOrder", JoinType.LEFT);
+            sqlBuilder.append("LEFT JOIN OrderImpl o2 ON o.embeddedOmsOrder.parentOrder.id = o2.id ");
         }
-        criteria.select(builder.count(root));
-
-        List<Predicate> restrictions = new ArrayList<>();
-        restrictions.add(
-            builder.and(
-                builder.or(
-                    builder.notEqual(root.get("orderId"),  getOrderId(order)),
-                    builder.isNull(root.get("orderId"))
-                ),
-                builder.equal(root.get("offerCodeId"), offerCodeId),
-                builder.or(
-                        builder.isNull(root.get("orderId")),
-                        builder.and(
-                                builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
-                                builder.equal(orderRoot.get("id"),root.get("orderId"))
-                        )
-                ),
-                getOmsOrderPredicate(builder, orderRoot, parentOrder)
-            )
-        );
-
-        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        
+        sqlBuilder.append("LEFT JOIN OfferAuditImpl oa ON oa.orderId = o.id ")
+                .append("WHERE (oa.orderId IS NULL OR oa.orderId <> :orderId ) ")
+                .append("AND oa.offerCodeId = :offerCodeId ")
+                .append("AND (oa.orderId IS NULL OR o.status <> :orderStatus) ");
+        if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.OMS)) {
+            sqlBuilder.append("AND (o.embeddedOmsOrder.parentOrder.id IS NULL OR o2.status <> :orderStatus) ");
+        }
         try {
-            return em.createQuery(criteria).getSingleResult();
+            return (Long) em.createQuery(sqlBuilder.toString())
+                    .setParameter("orderId", order.getId())
+                    .setParameter("offerCodeId", offerCodeId)
+                    .setParameter("orderStatus", OrderStatus.CANCELLED.getType())
+                    .getSingleResult();
         } catch (Exception e) {
             LOG.error("Error counting offer code uses.", e);
             return null;
@@ -266,7 +252,6 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         
         return query.getResultList();
     }
-
 
     @Override
     public Long getCurrentDateResolution() {

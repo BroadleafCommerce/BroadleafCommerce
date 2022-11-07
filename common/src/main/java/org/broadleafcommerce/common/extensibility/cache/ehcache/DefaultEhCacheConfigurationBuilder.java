@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2020 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -35,8 +35,8 @@ public class DefaultEhCacheConfigurationBuilder extends DefaultJCacheConfigurati
     public <K, V> Configuration<K, V> buildConfiguration(int ttlSeconds, int maxElementsInMemory, Class<K> keyClass, Class<V> valueClass) {
         ExpiryPolicy<Object, Object> expiryPolicy = new DefaultExpiryPolicy(ttlSeconds);
         
-        CacheConfiguration config = CacheConfigurationBuilder.
-                newCacheConfigurationBuilder(valueClass, keyClass, ResourcePoolsBuilder.heap(maxElementsInMemory))
+        CacheConfiguration<K, V> config = CacheConfigurationBuilder.
+                newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(maxElementsInMemory))
                 .withExpiry(expiryPolicy)
                 .build();
 

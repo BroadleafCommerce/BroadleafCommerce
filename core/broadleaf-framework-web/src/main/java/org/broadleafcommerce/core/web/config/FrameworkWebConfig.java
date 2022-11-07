@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -34,8 +34,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mobile.device.DeviceResolver;
-import org.springframework.mobile.device.LiteDeviceResolver;
 import org.springframework.web.filter.RequestContextFilter;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +55,6 @@ public class FrameworkWebConfig {
         OrderedRequestContextFilter filter = new OrderedRequestContextFilter();
         filter.setOrder(FilterOrdered.PRE_SECURITY_HIGH - 1000);
         return filter;
-    }
-    
-    @Bean
-    public DeviceResolver blDeviceResolver() {
-        return new LiteDeviceResolver();
     }
 
     @Bean

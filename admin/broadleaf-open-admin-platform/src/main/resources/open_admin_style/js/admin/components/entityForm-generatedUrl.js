@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -126,4 +126,12 @@ $('body').on('click', 'a.override-generated-url', function(event) {
 	$container.closest('form').find('#field-' + $container.data('toggle-field') + ' input').val(!enabled);
 	
 	$this.data('enabled', !enabled);
+});
+
+$("#overrideGeneratedUrl-true").change(function(){
+    $($('#field-url').find('input')[0]).prop('disabled', '')
+});
+
+$("#overrideGeneratedUrl-false").change(function(){
+    $($('#field-url').find('input')[0]).prop('disabled', 'disabled')
 });

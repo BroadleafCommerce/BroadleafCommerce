@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -23,15 +23,18 @@ import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.PostgreSQL81Dialect;
 import org.hibernate.dialect.SQLServerDialect;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 /**
  * @author Jeff Fischer
  */
+@Transactional
 @Repository("blDialectHelper")
 public class DialectHelper {
 
@@ -45,7 +48,7 @@ public class DialectHelper {
 
     public Dialect getHibernateDialect(EntityManager em) {
         SessionFactoryImplementor factory = (SessionFactoryImplementor) em.unwrap(Session.class).getSessionFactory();
-        return factory.getDialect();
+        return factory.getServiceRegistry().getService(JdbcServices.class).getDialect();
     }
 
     public boolean isOracle() {
