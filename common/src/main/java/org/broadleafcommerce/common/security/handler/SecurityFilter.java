@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.security.handler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
@@ -87,6 +88,8 @@ public class SecurityFilter extends OncePerRequestFilter {
             } catch (SecurityServiceException e) {
                 response.sendError(403);
                 return;
+            } catch (ServiceException e) {
+                throw new ServletException(e);
             }
         }
 
