@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.security.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateProtectionService;
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
@@ -29,13 +29,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Checks the validity of the CSRF token on every POST request. Also Checks the validity of the state token on every POST
@@ -85,8 +84,9 @@ public class SecurityFilter extends OncePerRequestFilter {
             String requestToken = request.getParameter(exploitProtectionService.getCsrfTokenParameter());
             try {
                 exploitProtectionService.compareToken(requestToken);
-            } catch (ServiceException e) {
-                throw new ServletException(e);
+            } catch (SecurityServiceException e) {
+                response.sendError(403);
+                return;
             }
         }
 
