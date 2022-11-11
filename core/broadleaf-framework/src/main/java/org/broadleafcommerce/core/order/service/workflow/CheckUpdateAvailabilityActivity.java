@@ -22,7 +22,6 @@ package org.broadleafcommerce.core.order.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.ProductSkuUsage;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -33,7 +32,6 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -58,10 +56,7 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-
-    @Value("${enable.weave.use.default.sku.inventory:false}")
-    protected boolean enableUseDefaultSkuInventory = false;
-
+    
     public CheckUpdateAvailabilityActivity() {
         setOrder(ORDER);
     }
@@ -86,7 +81,7 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
             return context;
         }
 
-        if(enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+        if(sku.getProduct().getEnableDefaultSkuInInventory()){
             sku = sku.getProduct().getDefaultSku();
         }
 
@@ -100,7 +95,7 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
             } else if (orderItemFromOrder instanceof BundleOrderItem) {
                 skuFromOrder = ((BundleOrderItem) orderItemFromOrder).getSku();
             }
-            if(skuFromOrder!= null && enableUseDefaultSkuInventory && ((ProductSkuUsage) skuFromOrder.getProduct()).getUseDefaultSkuInInventory()){
+            if(skuFromOrder!= null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
                 skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
             if (skuFromOrder != null && skuFromOrder.equals(sku) && !orderItemFromOrder.equals(orderItem)) {
@@ -115,7 +110,7 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
         Integer previousQty = orderItem.getQuantity();
         for (OrderItem child : orderItem.getChildOrderItems()) {
             Sku childSku = ((DiscreteOrderItem) child).getSku();
-            if(enableUseDefaultSkuInventory && ((ProductSkuUsage) childSku.getProduct()).getUseDefaultSkuInInventory()){
+            if(childSku.getProduct().getEnableDefaultSkuInInventory()){
                 childSku = childSku.getProduct().getDefaultSku();
             }
             Integer childQuantity = child.getQuantity();
