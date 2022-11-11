@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.event.BroadleafSystemEventDetail;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.core.catalog.domain.ProductSkuUsage;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -38,7 +37,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,10 +65,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
     @Autowired
     protected ApplicationContext applicationContext;
-
-    @Value("${enable.weave.use.default.sku.inventory:false}")
-    protected boolean enableUseDefaultSkuInventory = false;
-
+    
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
         if(sku != null) {
@@ -143,7 +138,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
             for (Sku sku : skus) {
                 Sku skuForInventory = sku;
-                if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                if ( sku.getProduct().getEnableDefaultSkuInInventory()){
                     skuForInventory = sku.getProduct().getDefaultSku();
                 }
                 Integer quantityAvailable = 0;
@@ -173,7 +168,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
             throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero.");
         }
         Sku skuForInventory = sku;
-        if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()) {
+        if ( sku.getProduct().getEnableDefaultSkuInInventory()) {
             skuForInventory = sku.getProduct().getDefaultSku();
         }
         if (checkBasicAvailablility(skuForInventory)) {
@@ -210,7 +205,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
             Sku sku = entry.getKey();
             Sku skuForInventory = sku;
-            if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+            if ( sku.getProduct().getEnableDefaultSkuInInventory()){
                 skuForInventory = sku.getProduct().getDefaultSku();
             }
             Integer quantity = entry.getValue();
@@ -263,7 +258,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
             Sku sku = entry.getKey();
 
             Sku skuForInventory = sku;
-            if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+            if ( sku.getProduct().getEnableDefaultSkuInInventory()){
                 skuForInventory = sku.getProduct().getDefaultSku();
             }
             Integer quantity = entry.getValue();
@@ -308,7 +303,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
             if (orderItem instanceof DiscreteOrderItem) {
                 Sku sku = ((DiscreteOrderItem) orderItem).getSku();
                 Sku skuForInventory = sku;
-                if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                if ( sku.getProduct().getEnableDefaultSkuInInventory()){
                     skuForInventory = sku.getProduct().getDefaultSku();
                 }
                 Integer quantity = skuInventoryMap.get(skuForInventory);
@@ -323,7 +318,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
             } else if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
                 Sku bundleSku = bundleItem.getSku();
-                if (enableUseDefaultSkuInventory && ((ProductSkuUsage) bundleSku.getProduct()).getUseDefaultSkuInInventory()){
+                if ( bundleSku.getProduct().getEnableDefaultSkuInInventory()){
                     bundleSku = bundleSku.getProduct().getDefaultSku();
                 }
                 if (InventoryType.CHECK_QUANTITY.equals(bundleSku.getInventoryType())) {
@@ -335,7 +330,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
                 for (DiscreteOrderItem discreteItem : discreteItems) {
                     Sku sku = discreteItem.getSku();
-                    if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                    if ( sku.getProduct().getEnableDefaultSkuInInventory()){
                         sku = sku.getProduct().getDefaultSku();
                     }
                     if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
@@ -414,7 +409,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     @Override
     public void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
         Sku skuForInventory = sku;
-        if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+        if ( sku.getProduct().getEnableDefaultSkuInInventory()){
             skuForInventory = sku.getProduct().getDefaultSku();
         }
         // First check if this Sku is available
