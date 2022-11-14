@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
@@ -59,11 +61,22 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
         Object item = context.parseExpression(tagAttributes.get("orderItem"));
         if (item instanceof DiscreteOrderItem) {
             DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
+            for (SkuProductOptionValueXref productOptionValueXref : orderItem.getSku().getProductOptionValueXrefs()) {
+                if(orderItem.getOrderItemAttributes().containsKey(productOptionValueXref.getProductOptionValue().getProductOption().getAttributeName())) {
+                    String label = productOptionValueXref.getProductOptionValue().getProductOption().getLabel();
+                    String optionValue = productOptionValueXref.getProductOptionValue().getAttributeValue();
+                    productOptionDisplayValues.put(label, optionValue);
+                }
 
+            }
             for (String i : orderItem.getOrderItemAttributes().keySet()) {
-                for (ProductOption option : orderItem.getProduct().getProductOptions()) {
-                    if (option.getAttributeName().equals(i) && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())) {
-                        productOptionDisplayValues.put(option.getLabel(), orderItem.getOrderItemAttributes().get(i).toString());
+                for (ProductOptionXref option : orderItem.getProduct().getProductOptionXrefs()) {
+                    String label = option.getProductOption().getLabel();
+                    if (option.getProductOption().getAttributeName().equals(i)
+                            && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())
+                            && !productOptionDisplayValues.containsKey(label)
+                    ) {
+                        productOptionDisplayValues.put(label, orderItem.getOrderItemAttributes().get(i).toString());
                     }
                 }
             }

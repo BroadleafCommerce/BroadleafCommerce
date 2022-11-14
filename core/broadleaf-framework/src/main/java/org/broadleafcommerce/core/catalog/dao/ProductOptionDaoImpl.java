@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -97,7 +97,10 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
                     root.get("productOptionValue").get("productOption").get("attributeName"),
                     root.get("productOptionValue"),
                     root.get("sku")));
-        criteria.where(builder.equal(root.get("sku").get("product").get("id"), productId));
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.and(builder.or(builder.equal(root.get("sku").get("archiveStatus").get("archived"), 'N'),
+                builder.isNull(root.get("sku").get("archiveStatus").get("archived"))), builder.equal(root.get("sku").get("product").get("id"), productId)));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         criteria.orderBy(builder.asc(root.get("productOptionValue").get("productOption").get("attributeName")));
 
         TypedQuery<AssignedProductOptionDTO> query = em.createQuery(criteria);

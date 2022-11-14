@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,11 +18,11 @@
 package org.broadleafcommerce.common.util;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.joda.time.DateTime;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -66,7 +66,7 @@ public class BLCPaymentMethodUtils {
      */
     public static List<String> getExpirationYearOptions() {
         List<String> expirationYears = new ArrayList<>();
-        DateTime dateTime = new DateTime();
+        LocalDateTime dateTime = LocalDateTime.now();
         for (int i = 0; i < 10; i++) {
             expirationYears.add(dateTime.plusYears(i).getYear() + "");
         }

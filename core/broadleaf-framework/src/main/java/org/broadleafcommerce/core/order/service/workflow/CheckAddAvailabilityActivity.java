@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.ProductSkuUsage;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -55,6 +57,9 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+
+    @Value("${enable.weave.use.default.sku.inventory:false}")
+    protected boolean enableUseDefaultSkuInventory = false;
     
     public CheckAddAvailabilityActivity() {
         setOrder(ORDER);
@@ -71,9 +76,11 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
         // No order item, this must be a new item add request
         Long skuId = request.getItemRequest().getSkuId();
         Sku sku = catalogService.findSkuById(skuId);
-        if(sku.getProduct().getEnableDefaultSkuInInventory()){
+
+        if(enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
             sku = sku.getProduct().getDefaultSku();
         }
+
         Order order = context.getSeedData().getOrder();
         Integer requestedQuantity = request.getItemRequest().getQuantity();
 
@@ -85,9 +92,11 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
             } else if (orderItem instanceof BundleOrderItem) {
                 skuFromOrder = ((BundleOrderItem) orderItem).getSku();
             }
-            if(skuFromOrder != null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
+
+            if(skuFromOrder != null && enableUseDefaultSkuInventory && ((ProductSkuUsage) skuFromOrder.getProduct()).getUseDefaultSkuInInventory()){
                 skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
+
             if (skuFromOrder != null && skuFromOrder.equals(sku)) {
                 skuItems.merge(sku, orderItem.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
             }

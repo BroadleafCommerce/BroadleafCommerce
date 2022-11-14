@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -122,6 +122,21 @@ public class AdminProductController extends AdminBasicEntityController {
             }
         }
     }
+
+
+    @Override
+    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) throws Exception {
+        Field overrideGeneratedUrl = entityForm.findField("overrideGeneratedUrl");
+        if (overrideGeneratedUrl != null) {
+           boolean overridenURL = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+           if (!overridenURL) {
+               Field url = entityForm.findField("url");
+               url.setReadOnly(true);
+           }
+
+        }
+    }
+
 
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
             String id, Map<String, String> pathVars) throws Exception {

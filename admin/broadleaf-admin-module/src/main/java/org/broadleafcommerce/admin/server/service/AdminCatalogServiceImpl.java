@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -154,7 +154,9 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
     public List<List<ProductOptionValue>> generatePermutations(int currentTypeIndex, List<ProductOptionValue> currentPermutation, List<ProductOption> options) {
         List<List<ProductOptionValue>> result = new ArrayList<List<ProductOptionValue>>();
         if (currentTypeIndex == options.size()) {
-            result.add(currentPermutation);
+            if (!currentPermutation.isEmpty()) {
+                result.add(currentPermutation);
+            }
             return result;
         }
 

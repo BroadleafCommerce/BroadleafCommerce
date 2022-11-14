@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -45,8 +45,8 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -497,17 +497,16 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     }
 
     protected Calendar dateToCalendar(Date date, TimeZone offerTimeZone) {
-        DateTimeZone offerDateTimeZone = DateTimeZone.forTimeZone(offerTimeZone);
-        LocalDateTime offerDateTime = new LocalDateTime(date, offerDateTimeZone);
+        LocalDateTime offerDateTime = LocalDateTime.ofInstant(date.toInstant(), offerTimeZone.toZoneId());
 
         Calendar calendar = new GregorianCalendar(offerTimeZone);
 
         calendar.set(Calendar.YEAR, offerDateTime.getYear());
-        calendar.set(Calendar.MONTH, offerDateTime.getMonthOfYear() - 1);
+        calendar.set(Calendar.MONTH, offerDateTime.getMonthValue() - 1);
         calendar.set(Calendar.DAY_OF_MONTH, offerDateTime.getDayOfMonth());
-        calendar.set(Calendar.HOUR_OF_DAY, offerDateTime.getHourOfDay());
-        calendar.set(Calendar.MINUTE, offerDateTime.getMinuteOfHour());
-        calendar.set(Calendar.SECOND, offerDateTime.getSecondOfMinute());
+        calendar.set(Calendar.HOUR_OF_DAY, offerDateTime.getHour());
+        calendar.set(Calendar.MINUTE, offerDateTime.getMinute());
+        calendar.set(Calendar.SECOND, offerDateTime.getSecond());
         calendar.get(Calendar.HOUR_OF_DAY);//do not delete this line
         calendar.get(Calendar.MINUTE);
 

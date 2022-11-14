@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -35,6 +35,8 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
@@ -66,6 +68,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -276,9 +279,39 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         // Get the products
         List<Product> products = getProducts(responseDocuments);
+        if (products != null && searchCriteria.getCategory() != null) {
+            filterProductsBasedOnInactiveCategory(products, searchCriteria.getCategory());
+        }
         result.setProducts(products);
 
         return result;
+    }
+
+    protected void filterProductsBasedOnInactiveCategory(List<Product> products, Category category) {
+        Iterator<Product> iterator = products.iterator();
+        while (iterator.hasNext()) {
+            Product product = iterator.next();
+            Optional<CategoryProductXref> defaultParent;
+            if (product.getAllParentCategoryXrefs().size() > 1) {
+                defaultParent = product.getAllParentCategoryXrefs()
+                        .stream().filter(t -> t.getDefaultReference() != null && t.getDefaultReference()).findFirst();
+            } else {
+                defaultParent = Optional.of(product.getAllParentCategoryXrefs().get(0));
+            }
+            if (defaultParent.isPresent() && defaultParent.get().getCategory().isActive()) {
+                Category parentCategory = defaultParent.get().getCategory();
+                while (parentCategory != null && !Objects.equals(parentCategory.getId(), category.getId())) {
+                    if (!parentCategory.isActive()) {
+                        iterator.remove();
+                        break;
+                    }
+                    Optional<CategoryXref> parentXref = parentCategory.getAllParentCategoryXrefs().stream().filter(CategoryXref::getDefaultReference).findFirst();
+                    parentCategory = parentXref.map(CategoryXref::getCategory).orElse(null);
+                }
+            } else if(defaultParent.isPresent() && !defaultParent.get().getCategory().isActive()) {
+                iterator.remove();
+            }
+        }
     }
 
     protected void filterEmptyFacets(List<SearchFacetDTO> facets) {

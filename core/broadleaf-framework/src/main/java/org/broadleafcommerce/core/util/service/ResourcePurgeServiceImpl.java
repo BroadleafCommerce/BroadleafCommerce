@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -104,8 +104,8 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
 
     private static final Log LOG = LogFactory.getLog(ResourcePurgeServiceImpl.class);
 
-    private static final Long BATCH_SIZE = 50L;
-    private static final Long PURGE_ERROR_CACHE_RETRY_SECONDS = System.currentTimeMillis() - 172800; //48 HOURS
+    protected static final Long BATCH_SIZE = 50L;
+    protected static final Long PURGE_ERROR_CACHE_RETRY_SECONDS = System.currentTimeMillis() - 172800; //48 HOURS
 
     protected PurgeErrorCache customerPurgeErrors = new PurgeErrorCache();
     protected PurgeErrorCache cartPurgeErrors = new PurgeErrorCache();
@@ -437,7 +437,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         customerService.deleteCustomer(customer);
     }
 
-    private class CartPurgeParams {
+    protected class CartPurgeParams {
 
         private Map<String, String> config;
         private String[] nameArray;
@@ -515,7 +515,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         }
     }
 
-    private class CustomerPurgeParams {
+    protected class CustomerPurgeParams {
 
         private Map<String, String> config;
         private Date dateCreatedMinThreshold;
@@ -585,8 +585,8 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
             return this;
         }
     }
-    
-    private class PurgeErrorCache {
+
+    protected class PurgeErrorCache {
 
         private Map<Long, Long> cache = new HashMap<Long, Long>();
         

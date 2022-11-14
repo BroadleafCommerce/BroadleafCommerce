@@ -20,12 +20,6 @@
             <distribution>repo</distribution>
             <comments>Fair Use Community License</comments>
         </license>
-        <license>
-            <name>Broadleaf End User License Agreement 1.1</name>
-            <url>http://license.broadleafcommerce.org/commercial_license-1.1.txt</url>
-            <distribution>repo</distribution>
-            <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
-        </license>
     </licenses>
     <developers>
         <developer>
@@ -121,10 +115,6 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
         </dependency>
 
         <!-- Tests -->

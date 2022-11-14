@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2022 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -131,7 +131,7 @@ public class PersistencePerspective implements Serializable {
     /**
      * Retrieve the list of fields to exclude from the admin presentation.
      * Implementations should use the excluded property of the AdminPresentation
-     * annotation instead, or use an AdminPresentationOverride if re-enabling a
+     * annotation instead, or use an AdminPresentationMergeOverride if re-enabling a
      * Broadleaf field is desired. If multiple datasources point to the same
      * entity, but different exclusion behavior is required, a custom persistence
      * handler may be employed with different inspect method implementations to
@@ -147,7 +147,7 @@ public class PersistencePerspective implements Serializable {
     /**
      * Set the list of fields to exclude from the admin presentation.
      * Implementations should use the excluded property of the AdminPresentation
-     * annotation instead, or use an AdminPresentationOverride if re-enabling a
+     * annotation instead, or use an AdminPresentationMergeOverride if re-enabling a
      * Broadleaf field is desired. If multiple datasources point to the same
      * entity, but different exclusion behavior is required, a custom persistence
      * handler may be employed with different inspect method implementations to
