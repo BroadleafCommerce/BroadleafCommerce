@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -32,6 +33,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
@@ -50,6 +52,8 @@ import javax.annotation.Resource;
  */
 @Component("blProductOptionsCustomPersistenceHandler")
 public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    private static final int MAX_BOOLEAN_VALUES = 2;
 
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
@@ -99,10 +103,8 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
             ProductOption adminInstance = (ProductOption) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
             adminInstance = (ProductOption) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            // validate "Use in Sku generation"
-            if (needsAllowedValue(adminInstance)) {
-                String errorMessage = "Must add at least 1 Allowed Value when Product Option is used in Sku generation";
-                entity.addValidationError("useInSkuGeneration", errorMessage);
+            // validate Product Option
+            if (validateProductOption(adminInstance, entity)) {
                 return entity;
             }
             
@@ -122,15 +124,28 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
      * @param adminInstance: The Product Option being validated
      * @return boolean: Default is false. Returns whether the Product Option needs any Allowed Values .
      */
-    protected boolean needsAllowedValue(ProductOption adminInstance) {
+    protected boolean validateProductOption(ProductOption adminInstance, Entity entity) {
         // validate "Use in Sku generation"
         // Check during a save (not in a replay operation) if "use in sku generation" is true
         // and that there are allowed values set
         if (adminInstance.getUseInSkuGeneration() && !sandBoxHelper.isReplayOperation()) {
             Long count = productOptionDao.countAllowedValuesForProductOptionById(adminInstance.getId());
-            return count.equals(0L);
+            if(count.equals(0L)){
+                String errorMessage = "Must add at least 1 Allowed Value when Product Option is used in Sku generation";
+                entity.addValidationError("useInSkuGeneration", errorMessage);
+                return true;
+            }
         }
         // Else either there are allowed values and/or "use in sku generation" is false
+
+        // Validate values and type
+        if (adminInstance.getType() != null && adminInstance.getType().getType().equals(ProductOptionType.BOOLEAN.getType())
+            && adminInstance.getAllowedValues().size() >= MAX_BOOLEAN_VALUES) {
+            String errorMessage = "The Product Option with 'Boolean' type can't has more than two values";
+            entity.addValidationError("type", errorMessage);
+            return true;
+        }
+
         return false;
     }
 }
