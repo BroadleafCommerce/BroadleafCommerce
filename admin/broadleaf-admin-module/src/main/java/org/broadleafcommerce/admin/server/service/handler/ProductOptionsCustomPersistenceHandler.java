@@ -33,7 +33,6 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
@@ -141,7 +140,7 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
         // Validate values and type
         if (adminInstance.getType() != null && adminInstance.getType().getType().equals(ProductOptionType.BOOLEAN.getType())
             && adminInstance.getAllowedValues().size() >= MAX_BOOLEAN_VALUES) {
-            String errorMessage = "The Product Option with 'Boolean' type can't has more than two values";
+            String errorMessage = "The Product Option with the 'Boolean' type can't have more than " + MAX_BOOLEAN_VALUES + " values";
             entity.addValidationError("type", errorMessage);
             return true;
         }
