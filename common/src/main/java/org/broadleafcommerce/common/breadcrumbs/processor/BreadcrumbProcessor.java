@@ -18,20 +18,17 @@
 
 package org.broadleafcommerce.common.breadcrumbs.processor;
 
+import com.google.common.collect.ImmutableMap;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.web.expression.BreadcrumbVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import com.google.common.collect.ImmutableMap;
-
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add a list of BreadcrumbDTOs to the model.
@@ -40,7 +37,7 @@ import javax.annotation.Resource;
  */
 @Component("blBreadcrumbProcessor")
 @ConditionalOnTemplating
-public class BreadcrumbProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class BreadcrumbProcessor implements BreadcrumbExpression {
 
     @Resource
     protected BreadcrumbVariableExpression breadcrumbVariableExpression;

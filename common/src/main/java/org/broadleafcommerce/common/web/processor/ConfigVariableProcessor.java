@@ -17,14 +17,12 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
+import com.google.common.collect.ImmutableMap;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.expression.PropertiesVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -46,7 +44,7 @@ import java.util.Map;
 @Deprecated
 @Component("blConfigVariableProcessor")
 @ConditionalOnTemplating
-public class ConfigVariableProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class ConfigVariableProcessor implements DataDrivenEnumerationExpression {
 
     @Override
     public String getName() {

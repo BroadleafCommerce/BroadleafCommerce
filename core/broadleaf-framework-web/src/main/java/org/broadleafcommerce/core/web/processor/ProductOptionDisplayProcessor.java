@@ -18,17 +18,14 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +35,7 @@ import java.util.Map;
  */
 @Component("blProductOptionDisplayProcessor")
 @ConditionalOnTemplating
-public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class ProductOptionDisplayProcessor implements OnePageCheckoutExpression {
 
     @Override
     public String getName() {

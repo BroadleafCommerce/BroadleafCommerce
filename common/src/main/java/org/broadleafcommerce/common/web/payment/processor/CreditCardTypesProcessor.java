@@ -18,19 +18,16 @@
 
 package org.broadleafcommerce.common.web.payment.processor;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableMap;
-
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * <p>The following processor will add any Payment Gateway specific Card Type 'codes' to the model if
@@ -57,7 +54,7 @@ import javax.annotation.Resource;
  */
 @Component("blCreditCardTypesProcessor")
 @ConditionalOnTemplating
-public class CreditCardTypesProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class CreditCardTypesProcessor implements CreditCardTypesExpression {
 
     protected static final Log LOG = LogFactory.getLog(CreditCardTypesProcessor.class);
 

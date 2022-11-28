@@ -25,17 +25,15 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the desired categories to the model. It does this by
@@ -50,7 +48,7 @@ import javax.annotation.Resource;
  */
 @Component("blCategoriesProcessor")
 @ConditionalOnTemplating
-public class CategoriesProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class CategoriesProcessor implements CategoriesExpression {
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;

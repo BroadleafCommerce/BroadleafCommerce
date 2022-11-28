@@ -27,7 +27,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierAttrProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafBindStatus;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
@@ -55,12 +54,9 @@ import java.util.Map;
  */
 @Component("blErrorsProcessor")
 @ConditionalOnTemplating
-public class ErrorsProcessor extends AbstractBroadleafVariableModifierAttrProcessor {
+public class ErrorsProcessor implements ErrorsExpression {
 
     protected static final Log LOG = LogFactory.getLog(ErrorsProcessor.class);
-
-    public static final String GENERAL_ERRORS_TAB_KEY = "generalErrors";
-    public static final String GENERAL_ERROR_FIELD_KEY = "generalError";
 
     @Value("${admin.form.validation.errors.hideTopLevelFieldErrors:false}")
     protected boolean hideTopLevelFieldErrors;
