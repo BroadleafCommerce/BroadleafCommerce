@@ -24,16 +24,14 @@ import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the product ratings and reviews to the model
@@ -42,7 +40,7 @@ import javax.annotation.Resource;
  */
 @Component("blRatingsProcessor")
 @ConditionalOnTemplating
-public class RatingsProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class RatingsProcessor implements CategoriesExpression {
 
     @Resource(name = "blRatingService")
     protected RatingService ratingService;

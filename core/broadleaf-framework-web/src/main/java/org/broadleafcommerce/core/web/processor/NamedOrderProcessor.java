@@ -23,16 +23,14 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.expression.OrderVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * <p>
@@ -56,7 +54,7 @@ import javax.annotation.Resource;
 @Deprecated
 @Component("blNamedOrderProcessor")
 @ConditionalOnTemplating
-public class NamedOrderProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class NamedOrderProcessor implements CategoriesExpression {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;

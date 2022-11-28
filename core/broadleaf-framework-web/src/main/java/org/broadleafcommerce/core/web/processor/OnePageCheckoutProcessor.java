@@ -46,13 +46,14 @@ import org.broadleafcommerce.core.web.checkout.service.CheckoutFormService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.service.CartStateService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -60,9 +61,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -88,7 +86,7 @@ import javax.servlet.http.HttpServletRequest;
 @Deprecated
 @Component("blOnePageCheckoutProcessor")
 @ConditionalOnTemplating
-public class OnePageCheckoutProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class OnePageCheckoutProcessor implements OnePageCheckoutExpression {
 
     @Resource(name = "blStateService")
     protected StateService stateService;

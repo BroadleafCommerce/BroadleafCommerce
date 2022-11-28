@@ -18,6 +18,8 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.collections4.map.LRUMap;
@@ -36,13 +38,10 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import javax.annotation.Resource;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -51,8 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
 
 /**
  * This processor will add the following information to the model, available for consumption by a template:
@@ -64,7 +61,7 @@ import javax.annotation.Resource;
  */
 @Component("blProductOptionsProcessor")
 @ConditionalOnTemplating
-public class ProductOptionsProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class ProductOptionsProcessor implements CategoriesExpression {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));

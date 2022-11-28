@@ -17,28 +17,26 @@
  */
 package org.broadleafcommerce.openadmin.processor;
 
+import com.google.common.collect.ImmutableMap;
+import org.broadleafcommerce.common.web.expression.BroadleafVariableModifierExpression;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
 import org.broadleafcommerce.openadmin.web.service.AdminFieldBuilderProcessorExtensionManager;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
-
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blAdminFieldBuilderProcessor")
 @ConditionalOnTemplating
-public class AdminFieldBuilderProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class AdminFieldBuilderProcessor implements BroadleafVariableModifierExpression {
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;

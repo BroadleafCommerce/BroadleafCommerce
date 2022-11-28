@@ -17,21 +17,18 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
+import com.google.common.collect.ImmutableMap;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
 import org.broadleafcommerce.common.web.expression.DataDrivenEnumVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableMap;
-
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -50,7 +47,7 @@ import javax.annotation.Resource;
 @Deprecated
 @Component("blDataDrivenEnumerationProcessor")
 @ConditionalOnTemplating
-public class DataDrivenEnumerationProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class DataDrivenEnumerationProcessor implements DataDrivenEnumerationExpression {
 
     @Resource(name = "blDataDrivenEnumerationService")
     protected DataDrivenEnumerationService enumService;

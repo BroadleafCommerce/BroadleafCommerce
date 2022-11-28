@@ -22,7 +22,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.security.core.Authentication;
@@ -31,10 +30,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
@@ -47,7 +45,7 @@ import javax.annotation.Resource;
  */
 @Component("blAdminModuleProcessor")
 @ConditionalOnTemplating
-public class AdminModuleProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class AdminModuleProcessor implements AdminModuleExpression {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
 

@@ -18,6 +18,7 @@
 
 package org.broadleafcommerce.cms.web.processor;
 
+import com.google.common.primitives.Ints;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -36,13 +37,12 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
 import org.broadleafcommerce.presentation.model.BroadleafAssignation;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
-import com.google.common.primitives.Ints;
-
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,9 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Processor used to display structured content that is maintained with the Broadleaf CMS.
@@ -94,11 +91,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component("blContentProcessor")
 @ConditionalOnTemplating
-public class ContentProcessor extends AbstractBroadleafVariableModifierProcessor {
+public class ContentProcessor implements ContentExpression {
 
     protected final Log LOG = LogFactory.getLog(getClass());
-    public static final String REQUEST_DTO = "blRequestDTO";
-    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
     @Resource(name = "blStructuredContentService")
     protected StructuredContentService structuredContentService;
@@ -342,6 +337,7 @@ public class ContentProcessor extends AbstractBroadleafVariableModifierProcessor
         return mvelParameters;
     }
 
+    @Override
     public boolean isSecure(HttpServletRequest request) {
         boolean secure = false;
         if (request != null) {
