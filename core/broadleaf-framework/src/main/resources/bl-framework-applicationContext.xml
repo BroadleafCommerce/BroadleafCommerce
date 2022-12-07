@@ -235,6 +235,10 @@
 
 	<bean id="blEntityIdentifierUtil" class="org.broadleafcommerce.core.util.EntityIdentifierUtil" />
 
+    <!-- Default instantiation is non-distributed.  Override this bean definition and provide a Zookeeper or CloudSolrClient instance
+     and, optionally, an Environment instance to make this a distributed component, backed by Zookeeper. -->
+    <bean id="blSolrIndexQueueProvider" class="org.broadleafcommerce.core.search.service.solr.indexer.DefaultSolrIndexQueueProvider"/>
+
     <bean id="blEntityDuplicationHelpers"
           class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">

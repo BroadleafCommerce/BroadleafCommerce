@@ -230,6 +230,17 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
      * @return Whether translations should be gathered for the provided locale.
      */
     protected boolean shouldTranslateLocale(String localeCode) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc.getLocale() != null && brc.getLocale().getLocaleCode().equals(localeCode)) {
+            return !brc.getLocale().getDefaultFlag();
+        }
+
+        org.broadleafcommerce.common.locale.domain.Locale defaultLocale =
+                (org.broadleafcommerce.common.locale.domain.Locale) brc.getAdditionalProperties().get("defaultLocale");
+        if (defaultLocale != null && defaultLocale.getLocaleCode().equals(localeCode)) {
+            return false;
+        }
+
         org.broadleafcommerce.common.locale.domain.Locale locale = localeService.findLocaleByCode(localeCode);
 
         if (locale == null) {
