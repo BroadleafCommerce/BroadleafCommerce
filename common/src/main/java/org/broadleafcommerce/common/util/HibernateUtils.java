@@ -55,6 +55,55 @@ public class HibernateUtils {
         }
         return t;
     }
+
+    /**
+     * During bulk operations such as reindexing we occasionally want things to be cached.  This allows us to surgically turn on caching where appropriate.
+     * If the {@link EntityManager} is null, the operation is executed without affecting the cache settings.
+     *
+     * @param operation
+     * @param em
+     * @return
+     * @throws G
+     */
+    public static <T> T executeWithCache(GenericOperation<T> operation, EntityManager em) throws Exception {
+        if (em == null) {
+            return operation.execute();
+        }
+        final Session session = em.unwrap(Session.class);
+        final CacheMode initialCacheMode = session.getCacheMode();
+        session.setCacheMode(CacheMode.NORMAL);
+        try {
+            return operation.execute();
+        } finally {
+            session.setCacheMode(initialCacheMode);
+        }
+    }
+
+    /**
+     * Attempts to execute the operation with L2 and query cache engaged.  This affects the {@link PersistenceUnit} with the provided name.
+     * If no {@link EntityManager} is bound to the thread for the provided {@link PersistenceUnit},
+     * then the operation is performed without modifying the cache mode.  Note that this does not create an {@link EntityManager} if one is not already initialized.
+     *
+     * @param operation
+     * @param persistenceUnitName
+     * @return
+     * @throws Exception
+     */
+    public static <T> T executeWithCache(GenericOperation<T> operation, String persistenceUnitName) throws Exception {
+        return executeWithCache(operation, getCurrentEntityManager(persistenceUnitName));
+    }
+
+    /**
+     * Attempts to execute the operation with L2 and query cache engaged.  This method uses the {@link PersistenceUnit} name "blPU".  If no {@link EntityManager} is bound to the thread,
+     * then the operation is performed without modifying the cache mode.  Note that this does not create an {@link EntityManager} if one is not already initialized.
+     *
+     * @param operation
+     * @return
+     * @throws Exception
+     */
+    public static <T> T executeWithCache(GenericOperation<T> operation) throws Exception {
+        return executeWithCache(operation, DEFAULT_ENTITY_MANAGER_NAME);
+    }
     
     /**
      * During bulk operations such as reindexing we don't always want things to be cached.  This allows us to surgically turn off caching where appropriate.
@@ -130,5 +179,28 @@ public class HibernateUtils {
      */
     public static EntityManager getCurrentDefaultEntityManager() {
         return getCurrentEntityManager(DEFAULT_ENTITY_MANAGER_NAME);
+    }
+
+    /**
+     * Calls the {@link EntityManager#clear()} method on the current default (blPU) {@link EntityManager}
+     * if it is bound to a thread via the {@link TransactionSynchronizationManager}. If not, it is ignored.
+     */
+    public static void clearDefaultEntityManager() {
+        final EntityManager em = getCurrentDefaultEntityManager();
+        if (em != null) {
+            em.clear();
+        }
+    }
+
+    /**
+     * Calls the {@link EntityManager#clear()} method on the current {@link EntityManager}
+     * with the provide persistence unit name if it is bound to a thread via
+     * the {@link TransactionSynchronizationManager}. If not, it is ignored.
+     */
+    public static void clearEntityManager(String persistenceUnitName) {
+        final EntityManager em = getCurrentEntityManager(persistenceUnitName);
+        if (em != null) {
+            em.clear();
+        }
     }
 }
