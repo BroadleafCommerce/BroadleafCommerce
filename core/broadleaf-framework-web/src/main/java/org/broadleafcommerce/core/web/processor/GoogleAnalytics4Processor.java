@@ -73,7 +73,8 @@ import java.util.Map.Entry;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-@Component("blGoogleUniversalAnalyticsProcessor")
+
+@Component("blGoogleAnalytics4Processor")
 @ConditionalOnTemplating
 public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementProcessor {
 
@@ -159,7 +160,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
                     }
                 }
 
-                sb.append("ga('" + trackerPrefix + "send', 'pageview');");
+                sb.append("gtag('" + trackerPrefix + "event', 'pageview');");
 
                 if (isIncludeLinkAttribution()) {
                     sb.append(getLinkAttributionJs(trackerPrefix));
@@ -213,7 +214,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * @return
      */
     protected String getLinkAttributionJs(String trackerPrefix) {
-        return "ga('" + trackerPrefix + "require', 'linkid', 'linkid.js');";
+        return "gtag('" + trackerPrefix + "require', 'linkid', 'linkid.js');";
     }
 
     /**
@@ -222,7 +223,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * @return
      */
     protected String getDisplayAdvertisingJs(String trackerPrefix) {
-        return "ga('" + trackerPrefix + "require', 'displayfeatures');";
+        return "gtag('" + trackerPrefix + "require', 'displayfeatures');";
     }
 
     /**
@@ -231,9 +232,9 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      */
     protected String getTransactionJs(Order order, String trackerPrefix) {
         StringBuffer sb = new StringBuffer();
-        sb.append("ga('" + trackerPrefix + "require', 'ecommerce', 'ecommerce.js');");
+        sb.append("gtag('" + trackerPrefix + "require', 'ecommerce', 'ecommerce.js');");
 
-        sb.append("ga('" + trackerPrefix + "ecommerce:addTransaction', {");
+        sb.append("gtag('" + trackerPrefix + "ecommerce:addTransaction', {");
         sb.append("'id': '" + order.getOrderNumber() + "'");
         if (StringUtils.isNotBlank(getAffiliation())) {
             sb.append(",'affiliation': '" + getAffiliation() + "'");
@@ -249,7 +250,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
 
         sb.append(getItemJs(order, trackerPrefix));
 
-        sb.append("ga('" + trackerPrefix + "ecommerce:send');");
+        sb.append("gtag('" + trackerPrefix + "ecommerce:send');");
         return sb.toString();
     }
 
@@ -263,7 +264,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
                 if (orderItem instanceof DiscreteOrderItem) {
                     if (SkuAccessor.class.isAssignableFrom(orderItem.getClass())) {
                         Sku sku = ((SkuAccessor) orderItem).getSku();
-                        sb.append("ga('" + trackerPrefix + "ecommerce:addItem', {");
+                        sb.append("gtag('" + trackerPrefix + "ecommerce:addItem', {");
                         sb.append("'id': '" + order.getOrderNumber() + "'");
                         sb.append(",'name': '" + sku.getName() + "'");
                         sb.append(",'sku': '" + sku.getId() + "'");
