@@ -304,12 +304,14 @@
         <property name="fromAddress" value="${adminUserNameEmail.fromAddress}"/>
         <property name="emailTemplate" value="${adminUserNameEmail.emailTemplate}"/>
         <property name="subject" value="${adminUserNameEmail.subject}"/>
+        <property name="emailType" value="ADMIN_FORGOT_USERNAME"/>
     </bean>
 
     <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
         <property name="fromAddress" value="${adminResetPassword.fromAddress}"/>
         <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
         <property name="subject" value="${adminResetPassword.subject}"/>
+        <property name="emailType" value="ADMIN_FORGOT_PASSWORD"/>
     </bean>
 
     <mo:override id="blMetadataOverrides"/>
