@@ -53,7 +53,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -834,19 +833,10 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Override
     public Date getActiveEndDate() {
-        Date returnDate = null;
-        if (SkuActiveDateConsiderationContext.hasDynamicActiveDates()) {
-            returnDate = SkuActiveDateConsiderationContext.getSkuActiveDatesService().getDynamicSkuActiveEndDate(this);
-        }
-
-        if (returnDate == null) {
-            if (activeEndDate == null && hasDefaultSku()) {
-                return lookupDefaultSku().getActiveEndDate();
-            } else {
-                return activeEndDate;
-            }
+        if (activeEndDate == null && hasDefaultSku()) {
+            return lookupDefaultSku().getActiveEndDate();
         } else {
-            return returnDate;
+            return activeEndDate;
         }
     }
 
