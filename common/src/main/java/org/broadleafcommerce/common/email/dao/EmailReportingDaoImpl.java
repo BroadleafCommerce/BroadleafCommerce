@@ -20,14 +20,22 @@ package org.broadleafcommerce.common.email.dao;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.domain.EmailTracking;
 import org.broadleafcommerce.common.email.domain.EmailTrackingClicks;
+import org.broadleafcommerce.common.email.domain.EmailTrackingImpl;
 import org.broadleafcommerce.common.email.domain.EmailTrackingOpens;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @author jfischer
@@ -59,6 +67,25 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
     public EmailTarget createTarget() {
         EmailTarget target = (EmailTarget) entityConfiguration.createEntityInstance("org.broadleafcommerce.common.email.domain.EmailTarget");
         return target;
+    }
+
+    @Override
+    public void clearAllRecordsOlderThan(LocalDateTime date) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<EmailTracking> criteria = builder.createQuery(EmailTracking.class);
+        Root<EmailTrackingImpl> EmailTrackingRoot = criteria.from(EmailTrackingImpl.class);
+
+        criteria.select(EmailTrackingRoot);
+
+        Query query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
+        for (Object emailTracking : query.getResultList()) {
+            EmailTracking emailTrackingImpl = (EmailTracking) emailTracking;
+            if (emailTrackingImpl.getDateSent().before(Timestamp.valueOf(date))) {
+                em.remove(emailTracking);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
