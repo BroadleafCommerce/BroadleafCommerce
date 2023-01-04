@@ -17,23 +17,19 @@
  */
 package org.broadleafcommerce.common.email.dao;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.domain.EmailTracking;
 import org.broadleafcommerce.common.email.domain.EmailTrackingClicks;
-import org.broadleafcommerce.common.email.domain.EmailTrackingImpl;
 import org.broadleafcommerce.common.email.domain.EmailTrackingOpens;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -43,6 +39,7 @@ import java.time.LocalDateTime;
  */
 @Repository("blEmailReportingDao")
 public class EmailReportingDaoImpl implements EmailReportingDao {
+    private static final Log LOG = LogFactory.getLog(EmailReportingDaoImpl.class);
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -71,21 +68,10 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
 
     @Override
     public void clearAllRecordsOlderThan(LocalDateTime date) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<EmailTracking> criteria = builder.createQuery(EmailTracking.class);
-        Root<EmailTrackingImpl> EmailTrackingRoot = criteria.from(EmailTrackingImpl.class);
-
-        criteria.select(EmailTrackingRoot);
-
-        Query query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-
-        for (Object emailTracking : query.getResultList()) {
-            EmailTracking emailTrackingImpl = (EmailTracking) emailTracking;
-            if (emailTrackingImpl.getDateSent().before(Timestamp.valueOf(date))) {
-                em.remove(emailTracking);
-            }
-        }
+        int deleteCount = em.createQuery("DELETE FROM BLC_EMAIL_TRACKING WHERE DATE_SENT <= :date")
+            .setParameter("date", Timestamp.valueOf(date))
+            .executeUpdate();
+        LOG.debug("clearAllRecordsOlderThan: " + deleteCount + " items was removed.");
     }
 
     @SuppressWarnings("unchecked")
