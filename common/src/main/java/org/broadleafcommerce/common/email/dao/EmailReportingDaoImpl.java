@@ -71,7 +71,7 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
         int deleteCount = em.createQuery("DELETE FROM BLC_EMAIL_TRACKING WHERE DATE_SENT <= :date")
             .setParameter("date", Timestamp.valueOf(date))
             .executeUpdate();
-        LOG.debug("clearAllRecordsOlderThan: " + deleteCount + " items was removed.");
+        LOG.info("Deleted " + deleteCount + " records from BLC_EMAIL_TRACKING with date_sent less than " + date);
     }
 
     @SuppressWarnings("unchecked")

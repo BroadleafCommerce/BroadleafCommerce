@@ -61,6 +61,7 @@ public class EmailTrackingImpl implements EmailTracking {
     protected String emailAddress;
 
     @Column(name = "DATE_SENT")
+    @Index(name="DATESENT_INDEX", columnNames = { "DATE_SENT" })
     protected Date dateSent;
 
     @Column(name = "TYPE")
