@@ -27,6 +27,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
@@ -132,6 +133,8 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
+
+import static org.broadleafcommerce.common.presentation.client.SupportedFieldType.BROADLEAF_ENUMERATION;
 
 /**
  * @author jfischer
@@ -678,6 +681,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     Object value = null;
                     try {
                         value = fieldManager.getFieldValue(entity, property);
+                        if(value != null && BROADLEAF_ENUMERATION == metadata.getFieldType()){
+                            try {
+                                Class<?> aClass = Class.forName(metadata.getEnumerationClass());
+                                Method method = aClass.getMethod("getInstance", String.class);
+                                value = method.invoke(null,value);
+                            } catch (NoSuchMethodException e) {
+                            }
+                        }
                     } catch (FieldNotAvailableException e) {
                         isFieldAccessible = false;
                     }
@@ -785,6 +796,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 strVal = getDecimalFormatter().format(value);
             } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
                 strVal = getDecimalFormatter().format(value);
+            } else if (BroadleafEnumerationType.class.isAssignableFrom(value.getClass())){
+                strVal = ((BroadleafEnumerationType)value).getFriendlyType();
             } else {
                 strVal = value.toString();
             }
