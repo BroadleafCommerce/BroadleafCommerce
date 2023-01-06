@@ -424,6 +424,7 @@
             maxWidth -= 70;
 
             $titlebar.find('.listgrid-friendly-name').css('max-width', maxWidth + 'px');
+            $(window).resize();
         },
 
         addInitializationHandler: function (fn) {
