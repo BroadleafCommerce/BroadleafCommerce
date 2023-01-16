@@ -411,6 +411,8 @@
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container.find('table:not([id$="-header"])'));
             }
+
+            $(window).resize();
         },
 
         getListGridCount: function ($container) {
@@ -424,7 +426,6 @@
             maxWidth -= 70;
 
             $titlebar.find('.listgrid-friendly-name').css('max-width', maxWidth + 'px');
-            $(window).resize();
         },
 
         addInitializationHandler: function (fn) {
