@@ -86,6 +86,8 @@ public class OrderDaoImpl implements OrderDao {
     public Order readOrderById(final Long orderId) {
         TypedQuery<Order> query = em.createQuery("SELECT o FROM OrderImpl o WHERE o.id= :orderId", Order.class);
         query.setParameter("orderId", orderId);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
         Order order = null;
         try {
             order = query.getSingleResult();
