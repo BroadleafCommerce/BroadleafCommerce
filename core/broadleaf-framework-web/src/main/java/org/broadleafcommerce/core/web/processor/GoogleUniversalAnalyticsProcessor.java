@@ -75,7 +75,6 @@ import java.util.Map.Entry;
  */
 
 /**
- * Created by mburyi
  * @deprecated use {@link GoogleAnalytics4Processor} instead
  */
 @Deprecated

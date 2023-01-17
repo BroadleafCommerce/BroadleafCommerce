@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -49,12 +49,12 @@ import java.util.Map.Entry;
 
 /**
  * <p>
- * Takes advantage of the new-stype analytics.js from Google Analytics rather than the deprected ga.js. This also
+ * Takes advantage of the new-type gtag.js from Google Analytics rather than the deprecated analytics.js. This also
  * supports a pre-processed <b>orderNumber</b> attribute that can be null, suitable for things like the order confirmation
  * page to send e-commerce transactions. Example usage:
  *
  * <pre>
- * &lt;google_universal_analytics ordernumber="${order?.orderNumber" /&gt;
+ * &lt;google_analytics_4 ordernumber="${order?.orderNumber" /&gt;
  * </pre>
  *
  * <p>
@@ -71,14 +71,14 @@ import java.util.Map.Entry;
  *
  * @param ordernumber the order number to look up for ecommerce tracking, such as on the confirmation page
  *
- * @author Phillip Verheyden (phillipuniverse)
+ * @author Markiian Buryi (MarekB01)
  */
 
 @Component("blGoogleAnalytics4Processor")
 @ConditionalOnTemplating
 public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementProcessor {
 
-    private static final Log LOG = LogFactory.getLog(GoogleUniversalAnalyticsProcessor.class);
+    private static final Log LOG = LogFactory.getLog(GoogleAnalytics4Processor.class);
 
     /**
      * Global value, intentionally only retrieved as a file property NOT via the system properties service
@@ -98,7 +98,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
 
     @Override
     public String getName() {
-        return "google_universal_analytics";
+        return "google_analytics_4";
     }
 
     @Override
