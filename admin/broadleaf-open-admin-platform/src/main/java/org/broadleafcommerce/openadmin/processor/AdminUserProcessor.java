@@ -21,7 +21,6 @@ package org.broadleafcommerce.openadmin.processor;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -40,7 +39,7 @@ import java.util.Map;
  */
 @Component("blAdminUserProcessor")
 @ConditionalOnTemplating
-public class AdminUserProcessor implements AdminModuleExpression {
+public class AdminUserProcessor implements AdminUserExpression {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
     
@@ -50,11 +49,6 @@ public class AdminUserProcessor implements AdminModuleExpression {
     @Override
     public String getName() {
         return "admin_user";
-    }
-    
-    @Override
-    public String getPrefix() {
-        return BroadleafDialectPrefix.BLC_ADMIN;
     }
     
     @Override
