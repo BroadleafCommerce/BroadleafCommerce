@@ -68,8 +68,8 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
 
     @Override
     public void clearAllRecordsOlderThan(LocalDateTime date) {
-        int deleteCount = em.createQuery("DELETE FROM BLC_EMAIL_TRACKING WHERE DATE_SENT <= :date")
-            .setParameter("date", Timestamp.valueOf(date))
+        int deleteCount = em.createNativeQuery("DELETE FROM BLC_EMAIL_TRACKING WHERE DATE_SENT <= ?1")
+            .setParameter(1, Timestamp.valueOf(date))
             .executeUpdate();
         LOG.info("Deleted " + deleteCount + " records from BLC_EMAIL_TRACKING with date_sent less than " + date);
     }
