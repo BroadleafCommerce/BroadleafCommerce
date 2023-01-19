@@ -605,7 +605,7 @@ input.color-picker-value {
 }
 .fieldset-card .titlebar .titlebar-title, .fieldset-card .titlebar .collapser {
     display: inline-block;
-    margin: 10px 0;
+    margin: 12px 0;
     position: relative;
 }
 .fieldset-card .fieldset-card-content {
