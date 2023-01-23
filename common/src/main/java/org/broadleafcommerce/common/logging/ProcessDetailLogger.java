@@ -72,7 +72,7 @@ public class ProcessDetailLogger {
 
     private static final SupportLogger LOGGER = SupportLogManager.getLogger("ProcessLogging", ProcessDetailLogger.class);
 
-    private Log processDetailLog;
+    protected Log processDetailLog;
 
     protected String logIdentifier;
 
@@ -105,15 +105,15 @@ public class ProcessDetailLogger {
     public void init(){
         if (!disableAllProcessDetailLogging) {
             processDetailLog = LogFactory.getLog(logIdentifier);
-            if (!ignoreNoProcessDetailLoggerConfiguration && !processDetailLog.isDebugEnabled()) {
+            if (!ignoreNoProcessDetailLoggerConfiguration && !processDetailLog.isDebugEnabled() && !processDetailLog.isInfoEnabled()) {
                 LOGGER.support("The system has detected that a ProcessDetailLogger instance was requested without " +
                         "backing " +
-                        "logger configuration at the debug level. In this case, process detail logs may not be sent " +
+                        "logger configuration at the debug or info level. In this case, process detail logs may not be sent " +
                         "to the " +
                         "appropriate logging file, or may appear in an unwanted location, " +
-                        "like the standard system log. You" +
+                        "like the standard system log. You " +
                         "can disable this log message by setting the ignore.no.process.detail.logger.configuration " +
-                        "property to true. A" +
+                        "property to true. A " +
                         "sample configuration for log4j (log4j.xml) that creates a rolling daily log looks like:\n\n" +
                         "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                         "<!DOCTYPE log4j:configuration SYSTEM \"log4j.dtd\">\n" +
@@ -136,7 +136,7 @@ public class ProcessDetailLogger {
                         "</appender>\n" +
                         "<logger name=\"com.broadleafcommerce.enterprise.workflow.process.detail\" " +
                         "additivity=\"false\">\n" +
-                        "<level value=\"debug\"/>\n" +
+                        "<level value=\"debug|info\"/>\n" +
                         "<appender-ref ref=\"rollingDailyEnterpriseWorkflow\"/>\n" +
                         "</logger>\n" +
                         "<root>\n" +
