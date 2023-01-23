@@ -52,7 +52,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager platformTransactionManager;
 
-    protected EntityManager em;
+    protected EntityManagerFactory emf;
 
     @Value("${streaming.transaction.lock.retry.max}")
     protected int retryMax = 10;
@@ -63,8 +63,12 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     @PostConstruct
     public void init() {
         if (getTransactionManager() instanceof JpaTransactionManager) {
-            em = ((JpaTransactionManager) getTransactionManager()).getEntityManagerFactory().createEntityManager();
+            emf = ((JpaTransactionManager) getTransactionManager()).getEntityManagerFactory();
         }
+    }
+
+    private EntityManager getEntityManager() {
+        return emf.createEntityManager();
     }
 
     @Override
@@ -77,6 +81,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     public <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
                                         streamOperation, Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G {
         //this should be a read operation, so doesn't need to be in a transaction
+        EntityManager em = getEntityManager();
         final Long totalCount = streamOperation.retrieveTotalCount();
         final Holder holder = new Holder();
         holder.setVal(0);
