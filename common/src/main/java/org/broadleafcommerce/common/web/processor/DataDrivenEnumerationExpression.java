@@ -17,11 +17,12 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
+import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 
-public interface DataDrivenEnumerationExpression {
+public interface DataDrivenEnumerationExpression extends BroadleafVariableExpression {
     String getName();
 
     int getPrecedence();

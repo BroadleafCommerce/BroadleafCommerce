@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
@@ -15,19 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.web.expression;
+package org.broadleafcommerce.core.web.processor;
 
+import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 
-public interface BroadleafVariableModifierExpression extends BroadleafVariableExpression {
-    public boolean useGlobalScope();
+public interface NamedOrderExpression extends BroadleafVariableExpression {
 
-    String getPrefix();
+    String getName();
 
     int getPrecedence();
 
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
-}
+    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
 
+}

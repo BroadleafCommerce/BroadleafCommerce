@@ -40,7 +40,7 @@ import java.util.Map;
  */
 @Component("blRatingsProcessor")
 @ConditionalOnTemplating
-public class RatingsProcessor implements CategoriesExpression {
+public class RatingsProcessor implements RatingsExpression {
 
     @Resource(name = "blRatingService")
     protected RatingService ratingService;

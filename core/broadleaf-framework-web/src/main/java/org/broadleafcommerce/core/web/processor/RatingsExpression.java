@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
@@ -15,22 +15,19 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.processor;
+package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 
-public interface ErrorsExpression extends BroadleafVariableExpression {
-    String GENERAL_ERRORS_TAB_KEY = "generalErrors";
-    String GENERAL_ERROR_FIELD_KEY = "generalError";
+public interface RatingsExpression extends BroadleafVariableExpression {
 
     String getName();
 
-    String getPrefix();
-
     int getPrecedence();
 
-    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context);
+    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
+
 }
