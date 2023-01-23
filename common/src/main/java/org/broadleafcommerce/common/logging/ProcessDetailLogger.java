@@ -105,10 +105,10 @@ public class ProcessDetailLogger {
     public void init(){
         if (!disableAllProcessDetailLogging) {
             processDetailLog = LogFactory.getLog(logIdentifier);
-            if (!ignoreNoProcessDetailLoggerConfiguration && !processDetailLog.isDebugEnabled() && !processDetailLog.isInfoEnabled()) {
+            if (!ignoreNoProcessDetailLoggerConfiguration && !isDebugEnabled()) {
                 LOGGER.support("The system has detected that a ProcessDetailLogger instance was requested without " +
                         "backing " +
-                        "logger configuration at the debug or info level. In this case, process detail logs may not be sent " +
+                        "logger configuration at the debug level. In this case, process detail logs may not be sent " +
                         "to the " +
                         "appropriate logging file, or may appear in an unwanted location, " +
                         "like the standard system log. You " +
@@ -136,7 +136,7 @@ public class ProcessDetailLogger {
                         "</appender>\n" +
                         "<logger name=\"com.broadleafcommerce.enterprise.workflow.process.detail\" " +
                         "additivity=\"false\">\n" +
-                        "<level value=\"debug|info\"/>\n" +
+                        "<level value=\"debug\"/>\n" +
                         "<appender-ref ref=\"rollingDailyEnterpriseWorkflow\"/>\n" +
                         "</logger>\n" +
                         "<root>\n" +
@@ -173,6 +173,10 @@ public class ProcessDetailLogger {
         }
     }
 
+    protected boolean isDebugEnabled() {
+        return processDetailLog.isDebugEnabled();
+    }
+
     /**
      * Log a message to the configured log file
      *
@@ -181,7 +185,7 @@ public class ProcessDetailLogger {
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, String messageTemplate, Object... templateVariables) {
-        if (!disableAllProcessDetailLogging && processDetailLog.isDebugEnabled()) {
+        if (!disableAllProcessDetailLogging && isDebugEnabled()) {
             String message = String.format(messageTemplate, processVariables(templateVariables));
             logProcessDetail(logContext, message);
         }
@@ -206,7 +210,7 @@ public class ProcessDetailLogger {
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, Throwable e, String messageTemplate, Object... templateVariables) {
-        if (!disableAllProcessDetailLogging && processDetailLog.isDebugEnabled()) {
+        if (!disableAllProcessDetailLogging && isDebugEnabled()) {
             String message = String.format(messageTemplate, processVariables(templateVariables));
             logProcessDetail(logContext, e, message);
         }
@@ -220,7 +224,7 @@ public class ProcessDetailLogger {
      * @param message a message to log
      */
     public void logProcessDetail(String logContext, Throwable e, String message) {
-        if (!disableAllProcessDetailLogging && processDetailLog.isDebugEnabled()) {
+        if (!disableAllProcessDetailLogging && isDebugEnabled()) {
             if (e == null) {
                 processDetailLog.debug(logContext == null ? message : logContext + " " + message);
             } else {
