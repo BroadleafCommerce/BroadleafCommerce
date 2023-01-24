@@ -131,7 +131,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
             }
         }
         finally {
-            if (em != null) {
+            if (em != null && em.isOpen()) {
                 em.close();
             }
         }
