@@ -70,7 +70,7 @@ import javax.annotation.PostConstruct;
  */
 public class ProcessDetailLogger {
 
-    private static final SupportLogger LOGGER = SupportLogManager.getLogger("ProcessLogging", ProcessDetailLogger.class);
+    protected static final SupportLogger LOGGER = SupportLogManager.getLogger("ProcessLogging", ProcessDetailLogger.class);
 
     protected Log processDetailLog;
 
@@ -105,7 +105,7 @@ public class ProcessDetailLogger {
     public void init(){
         if (!disableAllProcessDetailLogging) {
             processDetailLog = LogFactory.getLog(logIdentifier);
-            if (!ignoreNoProcessDetailLoggerConfiguration && !isDebugEnabled()) {
+            if (!ignoreNoProcessDetailLoggerConfiguration && !isProperLogLevelEnabled()) {
                 LOGGER.support("The system has detected that a ProcessDetailLogger instance was requested without " +
                         "backing " +
                         "logger configuration at the debug level. In this case, process detail logs may not be sent " +
@@ -173,7 +173,7 @@ public class ProcessDetailLogger {
         }
     }
 
-    protected boolean isDebugEnabled() {
+    protected boolean isProperLogLevelEnabled() {
         return processDetailLog.isDebugEnabled();
     }
 
@@ -185,7 +185,7 @@ public class ProcessDetailLogger {
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, String messageTemplate, Object... templateVariables) {
-        if (!disableAllProcessDetailLogging && isDebugEnabled()) {
+        if (!disableAllProcessDetailLogging && isProperLogLevelEnabled()) {
             String message = String.format(messageTemplate, processVariables(templateVariables));
             logProcessDetail(logContext, message);
         }
@@ -210,7 +210,7 @@ public class ProcessDetailLogger {
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, Throwable e, String messageTemplate, Object... templateVariables) {
-        if (!disableAllProcessDetailLogging && isDebugEnabled()) {
+        if (!disableAllProcessDetailLogging && isProperLogLevelEnabled()) {
             String message = String.format(messageTemplate, processVariables(templateVariables));
             logProcessDetail(logContext, e, message);
         }
@@ -224,12 +224,16 @@ public class ProcessDetailLogger {
      * @param message a message to log
      */
     public void logProcessDetail(String logContext, Throwable e, String message) {
-        if (!disableAllProcessDetailLogging && isDebugEnabled()) {
-            if (e == null) {
-                processDetailLog.debug(logContext == null ? message : logContext + " " + message);
-            } else {
-                processDetailLog.debug(logContext == null ? message : logContext + " " + message, e);
-            }
+        if (!disableAllProcessDetailLogging && isProperLogLevelEnabled()) {
+            logProcessDetailMessage(logContext, e, message);
+        }
+    }
+
+    protected void logProcessDetailMessage(String logContext, Throwable e, String message) {
+        if (e == null) {
+            processDetailLog.debug(logContext == null ? message : logContext + " " + message);
+        } else {
+            processDetailLog.debug(logContext == null ? message : logContext + " " + message, e);
         }
     }
 
