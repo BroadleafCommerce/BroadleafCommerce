@@ -85,48 +85,55 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         final Long totalCount = streamOperation.retrieveTotalCount();
         final Holder holder = new Holder();
         holder.setVal(0);
-        StreamCapableTransactionalOperation operation = new StreamCapableTransactionalOperationAdapter() {
-            @Override
-            public void execute() throws Throwable {
-                pagedItems = streamOperation.retrievePage(holder.getVal(), pageSize);
-                streamOperation.pagedExecute(pagedItems);
+        try {
+            StreamCapableTransactionalOperation operation = new StreamCapableTransactionalOperationAdapter() {
+                @Override
+                public void execute() throws Throwable {
+                    pagedItems = streamOperation.retrievePage(holder.getVal(), pageSize);
+                    streamOperation.pagedExecute(pagedItems);
 
-                int pagedItemCount = ((Collection) pagedItems[0]).size();
-                if (pagedItemCount == 0) {
-                    holder.setVal(totalCount.intValue());
-                } else {
-                    if (LOG.isDebugEnabled() && !isFinalPage(holder, pagedItemCount, totalCount) && (pagedItemCount != pageSize)) {
-                        LOG.debug(String.format("In the previous iteration of this streaming transactional operation, " +
-                                "(%s) pagedItems were processed when we were expecting a full page of (%s) items. " +
-                                "Please ensure that your StreamCapableTransactionalOperation#retrieveTotalCount() " +
-                                "and StreamCapableTransactionalOperation#retrievePage(int startPos, int pageSize) " +
-                                "queries contain the same conditions as to ultimately provide the number of entities " +
-                                "equal to the declared total count. Stream operation: %s",
-                                pagedItemCount, pageSize, streamOperation.getClass()));
-                    }
-
-                    if (pagedItemCount < pageSize) {
-                        holder.setVal(holder.getVal() + pageSize);
+                    int pagedItemCount = ((Collection) pagedItems[0]).size();
+                    if (pagedItemCount == 0) {
+                        holder.setVal(totalCount.intValue());
                     } else {
-                        holder.setVal(holder.getVal() + pagedItemCount);
+                        if (LOG.isDebugEnabled() && !isFinalPage(holder, pagedItemCount, totalCount) && (pagedItemCount != pageSize)) {
+                            LOG.debug(String.format("In the previous iteration of this streaming transactional operation, " +
+                                            "(%s) pagedItems were processed when we were expecting a full page of (%s) items. " +
+                                            "Please ensure that your StreamCapableTransactionalOperation#retrieveTotalCount() " +
+                                            "and StreamCapableTransactionalOperation#retrievePage(int startPos, int pageSize) " +
+                                            "queries contain the same conditions as to ultimately provide the number of entities " +
+                                            "equal to the declared total count. Stream operation: %s",
+                                    pagedItemCount, pageSize, streamOperation.getClass()));
+                        }
+
+                        if (pagedItemCount < pageSize) {
+                            holder.setVal(holder.getVal() + pageSize);
+                        } else {
+                            holder.setVal(holder.getVal() + pagedItemCount);
+                        }
                     }
                 }
-            }
 
-            private boolean isFinalPage(Holder holder, int pagedItemCount, Long totalCount) {
-                int processedItemCount = holder.getVal() + pagedItemCount;
+                private boolean isFinalPage(Holder holder, int pagedItemCount, Long totalCount) {
+                    int processedItemCount = holder.getVal() + pagedItemCount;
 
-                return processedItemCount >= totalCount;
+                    return processedItemCount >= totalCount;
+                }
+            };
+            while (holder.getVal() < totalCount) {
+                runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel, false, getTransactionManager());
+                if (em != null) {
+                    //The idea behind using this class is that it will likely process a lot of records. As such, it is necessary
+                    //to clear the level 1 cache after each iteration so that we don't run out of heap
+                    em.clear();
+                }
+                streamOperation.executeAfterCommit(((StreamCapableTransactionalOperationAdapter) operation).getPagedItems());
             }
-        };
-        while (holder.getVal() < totalCount) {
-            runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel, false, getTransactionManager());
+        }
+        finally {
             if (em != null) {
-                //The idea behind using this class is that it will likely process a lot of records. As such, it is necessary
-                //to clear the level 1 cache after each iteration so that we don't run out of heap
-                em.clear();
+                em.close();
             }
-            streamOperation.executeAfterCommit(((StreamCapableTransactionalOperationAdapter) operation).getPagedItems());
         }
     }
 
