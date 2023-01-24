@@ -70,9 +70,9 @@ import javax.annotation.PostConstruct;
  */
 public class ProcessDetailLogger {
 
-    private static final SupportLogger LOGGER = SupportLogManager.getLogger("ProcessLogging", ProcessDetailLogger.class);
+    protected static final SupportLogger LOGGER = SupportLogManager.getLogger("ProcessLogging", ProcessDetailLogger.class);
 
-    private Log processDetailLog;
+    protected Log processDetailLog;
 
     protected String logIdentifier;
 
@@ -105,15 +105,15 @@ public class ProcessDetailLogger {
     public void init(){
         if (!disableAllProcessDetailLogging) {
             processDetailLog = LogFactory.getLog(logIdentifier);
-            if (!ignoreNoProcessDetailLoggerConfiguration && !processDetailLog.isDebugEnabled()) {
+            if (!ignoreNoProcessDetailLoggerConfiguration && !isProperLogLevelEnabled()) {
                 LOGGER.support("The system has detected that a ProcessDetailLogger instance was requested without " +
                         "backing " +
                         "logger configuration at the debug level. In this case, process detail logs may not be sent " +
                         "to the " +
                         "appropriate logging file, or may appear in an unwanted location, " +
-                        "like the standard system log. You" +
+                        "like the standard system log. You " +
                         "can disable this log message by setting the ignore.no.process.detail.logger.configuration " +
-                        "property to true. A" +
+                        "property to true. A " +
                         "sample configuration for log4j (log4j.xml) that creates a rolling daily log looks like:\n\n" +
                         "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                         "<!DOCTYPE log4j:configuration SYSTEM \"log4j.dtd\">\n" +
@@ -173,6 +173,10 @@ public class ProcessDetailLogger {
         }
     }
 
+    protected boolean isProperLogLevelEnabled() {
+        return processDetailLog.isDebugEnabled();
+    }
+
     /**
      * Log a message to the configured log file
      *
@@ -181,7 +185,7 @@ public class ProcessDetailLogger {
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, String messageTemplate, Object... templateVariables) {
-        if (!disableAllProcessDetailLogging && processDetailLog.isDebugEnabled()) {
+        if (!disableAllProcessDetailLogging && isProperLogLevelEnabled()) {
             String message = String.format(messageTemplate, processVariables(templateVariables));
             logProcessDetail(logContext, message);
         }
@@ -206,7 +210,7 @@ public class ProcessDetailLogger {
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, Throwable e, String messageTemplate, Object... templateVariables) {
-        if (!disableAllProcessDetailLogging && processDetailLog.isDebugEnabled()) {
+        if (!disableAllProcessDetailLogging && isProperLogLevelEnabled()) {
             String message = String.format(messageTemplate, processVariables(templateVariables));
             logProcessDetail(logContext, e, message);
         }
@@ -220,12 +224,16 @@ public class ProcessDetailLogger {
      * @param message a message to log
      */
     public void logProcessDetail(String logContext, Throwable e, String message) {
-        if (!disableAllProcessDetailLogging && processDetailLog.isDebugEnabled()) {
-            if (e == null) {
-                processDetailLog.debug(logContext == null ? message : logContext + " " + message);
-            } else {
-                processDetailLog.debug(logContext == null ? message : logContext + " " + message, e);
-            }
+        if (!disableAllProcessDetailLogging && isProperLogLevelEnabled()) {
+            logProcessDetailMessage(logContext, e, message);
+        }
+    }
+
+    protected void logProcessDetailMessage(String logContext, Throwable e, String message) {
+        if (e == null) {
+            processDetailLog.debug(logContext == null ? message : logContext + " " + message);
+        } else {
+            processDetailLog.debug(logContext == null ? message : logContext + " " + message, e);
         }
     }
 
