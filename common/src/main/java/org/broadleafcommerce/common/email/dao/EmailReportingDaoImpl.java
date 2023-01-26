@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.email.dao;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.domain.EmailTracking;
 import org.broadleafcommerce.common.email.domain.EmailTrackingClicks;
@@ -28,6 +30,8 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @author jfischer
@@ -35,6 +39,7 @@ import javax.persistence.PersistenceContext;
  */
 @Repository("blEmailReportingDao")
 public class EmailReportingDaoImpl implements EmailReportingDao {
+    private static final Log LOG = LogFactory.getLog(EmailReportingDaoImpl.class);
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -59,6 +64,14 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
     public EmailTarget createTarget() {
         EmailTarget target = (EmailTarget) entityConfiguration.createEntityInstance("org.broadleafcommerce.common.email.domain.EmailTarget");
         return target;
+    }
+
+    @Override
+    public void clearAllRecordsOlderThan(LocalDateTime date) {
+        int deleteCount = em.createNativeQuery("DELETE FROM BLC_EMAIL_TRACKING WHERE DATE_SENT <= ?1")
+            .setParameter(1, Timestamp.valueOf(date))
+            .executeUpdate();
+        LOG.info("Deleted " + deleteCount + " records from BLC_EMAIL_TRACKING with date_sent less than " + date);
     }
 
     @SuppressWarnings("unchecked")

@@ -20,6 +20,8 @@ package org.broadleafcommerce.common.email.dao;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.domain.EmailTracking;
 
+import java.time.LocalDateTime;
+
 /**
  * @author jfischer
  *
@@ -31,5 +33,6 @@ public interface EmailReportingDao {
     public void recordClick(Long emailId, String customerId, String destinationUri, String queryString);
     public EmailTracking retrieveTracking(Long emailId);
     public EmailTarget createTarget();
+    public void clearAllRecordsOlderThan(LocalDateTime date);
 
 }
