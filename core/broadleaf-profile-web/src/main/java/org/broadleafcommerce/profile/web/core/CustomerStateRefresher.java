@@ -69,7 +69,7 @@ public class CustomerStateRefresher implements ApplicationListener<CustomerPersi
             }
             
             //Update CustomerState if the persisted Customer ID is the same
-            if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId().equals(dbCustomer.getId())) {
+            if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId() != null && CustomerState.getCustomer().getId().equals(dbCustomer.getId())) {
                 //Copy transient fields from the customer that existed in CustomerState, prior to the DB refresh, 
                 //to the customer that has been saved (merged) in the DB....
                 Customer preMergedCustomer = CustomerState.getCustomer();
