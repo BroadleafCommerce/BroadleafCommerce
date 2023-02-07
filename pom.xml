@@ -56,8 +56,8 @@
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>2.4.15</groovy.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
-        <broadleaf-presentation.version>1.3.5-SNAPSHOT</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>2.3.3-SNAPSHOT</hsqldb.database.starter.version>
+        <broadleaf-presentation.version>1.3.5-GA</broadleaf-presentation.version>
+        <hsqldb.database.starter.version>2.3.3-GA</hsqldb.database.starter.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
         <hibernate.version>5.4.33.Final</hibernate.version>
         <hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
