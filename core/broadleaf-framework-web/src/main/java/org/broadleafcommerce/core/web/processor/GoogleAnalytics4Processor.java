@@ -116,6 +116,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
             sb.append("window.dataLayer = window.dataLayer || [];");
             sb.append("function gtag(){dataLayer.push(arguments);}");
             sb.append("gtag('js', new Date());");
+            sb.append("gtag('config', 'TAG_ID');");
 
 
             String orderNumberExpression = tagAttributes.get("ordernumber");
@@ -135,7 +136,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
                 String id = tracker.getValue();
                 sb.append("gtag('config', '" + id + "'");
 
-                if (!"webProperty".equals(trackerName)) {
+                if (!"webProperty4".equals(trackerName)) {
                     trackerPrefix = trackerName + ".";
                     sb.append("'name': '" + trackerName + "'");
                     if (testLocal) {
@@ -153,12 +154,16 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
                         Map<String, String> setValuesMap = (Map<String, String>) request.getAttribute("blGAValuesMap");
                         if (setValuesMap != null) {
                             for (Map.Entry<String, String> entry : setValuesMap.entrySet()) {
-                                sb.append("gtag('" + trackerPrefix + "set',").append(entry.getKey()).append(",")
+                                sb.append("gtag('" + trackerPrefix + "event', set',").append(entry.getKey()).append(",")
                                         .append(entry.getValue()).append(");");
                             }
                         }
                     }
                 }
+
+                sb.append("gtag('" + trackerPrefix + "event', 'pageview');");
+
+                sb.append("gtag('" + trackerPrefix + "event', ecommerce:addTransaction', {");
 
                 sb.append("gtag('" + trackerPrefix + "event', 'pageview');");
 
@@ -183,7 +188,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
             return model;
         } else {
             LOG.warn("No trackers were found, not outputting Google Analytics script. Set the googleAnalytics.webPropertyId"
-                    + " and/or the googleAnalytics.masterWebPropertyId system properties to output Google Analytics");
+                    + " and/or the googleAnalytics.masterWebPropertyId4 system properties to output Google Analytics");
         }
         return null;
     }
@@ -214,7 +219,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * @return
      */
     protected String getLinkAttributionJs(String trackerPrefix) {
-        return "gtag('" + trackerPrefix + "require', 'linkid', 'linkid.js');";
+        return "gtag('" + trackerPrefix + "event', require', 'linkid', 'linkid.js');";
     }
 
     /**
@@ -232,9 +237,9 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      */
     protected String getTransactionJs(Order order, String trackerPrefix) {
         StringBuffer sb = new StringBuffer();
-        sb.append("gtag('" + trackerPrefix + "require', 'ecommerce', 'ecommerce.js');");
+        sb.append("gtag('" + trackerPrefix + "event', require', 'ecommerce', 'ecommerce.js');");
 
-        sb.append("gtag('" + trackerPrefix + "ecommerce:addTransaction', {");
+        sb.append("gtag('" + trackerPrefix + "event', ecommerce:addTransaction', {");
         sb.append("'id': '" + order.getOrderNumber() + "'");
         if (StringUtils.isNotBlank(getAffiliation())) {
             sb.append(",'affiliation': '" + getAffiliation() + "'");
@@ -250,7 +255,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
 
         sb.append(getItemJs(order, trackerPrefix));
 
-        sb.append("gtag('" + trackerPrefix + "ecommerce:send');");
+        sb.append("gtag('" + trackerPrefix + "event', ecommerce:send');");
         return sb.toString();
     }
 
@@ -264,7 +269,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
                 if (orderItem instanceof DiscreteOrderItem) {
                     if (SkuAccessor.class.isAssignableFrom(orderItem.getClass())) {
                         Sku sku = ((SkuAccessor) orderItem).getSku();
-                        sb.append("gtag('" + trackerPrefix + "ecommerce:addItem', {");
+                        sb.append("gtag('" + trackerPrefix + "event', ecommerce:addItem', {");
                         sb.append("'id': '" + order.getOrderNumber() + "'");
                         sb.append(",'name': '" + sku.getName() + "'");
                         sb.append(",'sku': '" + sku.getId() + "'");
@@ -309,19 +314,19 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
     }
 
     public String getAffiliation() {
-        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.affiliation");
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics4.affiliation");
     }
 
     public String getWebPropertyId() {
-        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.webPropertyId");
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics4.webPropertyId");
     }
 
     public boolean isIncludeLinkAttribution() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics.enableLinkAttribution", true);
+        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics4.enableLinkAttribution", true);
     }
 
     public boolean isIncludeDisplayAdvertising() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics.enableDisplayAdvertising", false);
+        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics4.enableDisplayAdvertising", false);
     }
 
 }
