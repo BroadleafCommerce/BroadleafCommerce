@@ -108,7 +108,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
 
     @Override
     public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Map<String, String> trackers = getTrackers();
         if (MapUtils.isNotEmpty(trackers)) {
 
@@ -236,7 +236,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * in the given <b>order</b>.
      */
     protected String getTransactionJs(Order order, String trackerPrefix) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("gtag('" + trackerPrefix + "event', require', 'ecommerce', 'ecommerce.js');");
 
         sb.append("gtag('" + trackerPrefix + "event', ecommerce:addTransaction', {");
@@ -260,7 +260,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
     }
 
     protected String getItemJs(Order order, String trackerPrefix) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem orderItem = fulfillmentGroupItem.getOrderItem();
