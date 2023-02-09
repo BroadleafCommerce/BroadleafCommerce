@@ -1080,10 +1080,9 @@ $(document).ready(function() {
                     }
 
                     if ($(element).is(':visible')) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($(element));
                         if ($(element).parents('#listGrid-main.org\\.broadleafcommerce\\.core\\.order\\.domain\\.Order').length > 0) {
                             fillUnusedPageBottomSpace($(element));
-                        } else {
-                            BLCAdmin.listGrid.paginate.updateGridSize($(element));
                         }
                     } else {
                         $(element).addClass('needsupdate');
