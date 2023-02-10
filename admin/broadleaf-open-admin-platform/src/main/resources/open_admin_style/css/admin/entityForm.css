@@ -263,11 +263,8 @@ button:disabled:hover, button.disabled:hover {
 .filter-info {
     float: right;
     text-align: right;
-    top: -5px;
 }
-.filter-info .button-group {
-    margin-top: 6px;
-}
+
 .filter-info > .filter-button {
     margin-top: 6px;
 }
