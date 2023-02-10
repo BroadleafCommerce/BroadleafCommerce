@@ -80,7 +80,7 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
         return true;
     }
 
-    private class ProductOptionValueDTO {
+    protected class ProductOptionValueDTO {
 
         private Long optionId;
         private Long valueId;
