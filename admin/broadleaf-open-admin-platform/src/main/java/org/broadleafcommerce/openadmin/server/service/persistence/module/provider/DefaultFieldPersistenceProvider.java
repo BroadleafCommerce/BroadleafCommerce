@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -59,7 +60,12 @@ public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAda
     @Override
     public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (extractValueRequest.getRequestedValue() != null) {
-            String val = extractValueRequest.getRequestedValue().toString();
+            String val;
+            if(extractValueRequest.getRequestedValue() instanceof BroadleafEnumerationType){
+                val = ((BroadleafEnumerationType)extractValueRequest.getRequestedValue()).getType();
+            }else {
+                val = extractValueRequest.getRequestedValue().toString();
+            }
             property.setValue(val);
             property.setDisplayValue(extractValueRequest.getDisplayVal());
         }

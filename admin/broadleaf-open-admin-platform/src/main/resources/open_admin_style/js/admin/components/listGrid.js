@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -411,6 +411,8 @@
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container.find('table:not([id$="-header"])'));
             }
+
+            $(window).resize();
         },
 
         getListGridCount: function ($container) {

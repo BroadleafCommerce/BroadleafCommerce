@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -605,7 +605,7 @@ input.color-picker-value {
 }
 .fieldset-card .titlebar .titlebar-title, .fieldset-card .titlebar .collapser {
     display: inline-block;
-    margin: 10px 0;
+    margin: 12px 0;
     position: relative;
 }
 .fieldset-card .fieldset-card-content {

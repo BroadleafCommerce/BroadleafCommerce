@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -100,6 +100,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -334,7 +335,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 enumMap.put(enumerationValue[0], enumerationValue[1]);
             }
 
-            fieldDTO.setValues(new JSONObject(enumMap).toString());
+            try {
+                fieldDTO.setValues(new JSONObject(enumMap).toString());
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
         } else if (field.getFieldType().equals("ADDITIONAL_FOREIGN_KEY")) {
             fieldDTO.setOperators("blcFilterOperators_Selectize");
             fieldDTO.setType("string");

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -40,7 +40,6 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
     public static final ProductOptionType TEXT  = new ProductOptionType("TEXT","Text");
     public static final ProductOptionType TEXTAREA = new ProductOptionType("TEXTAREA", "Textarea");
     public static final ProductOptionType BOOLEAN  = new ProductOptionType("BOOLEAN","Boolean");
-    public static final ProductOptionType DECIMAL  = new ProductOptionType("DECIMAL","Decimal");
     public static final ProductOptionType INTEGER  = new ProductOptionType("INTEGER","Integer");
     public static final ProductOptionType INPUT  = new ProductOptionType("INPUT","Input");
     public static final ProductOptionType PRODUCT  = new ProductOptionType("PRODUCT","Product");

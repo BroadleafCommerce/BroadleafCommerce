@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -73,9 +73,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model,
             RedirectAttributes redirectAttributes) {
-        preValidateCartOperation(model);
-        populateModelWithReferenceData(request, model);
-
+        if (CustomerState.getCustomer().getId() != null) {
+            preValidateCartOperation(model);
+            populateModelWithReferenceData(request, model);
+        }
         return getCheckoutView();
     }
 

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
+ * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -1362,18 +1362,26 @@ BLC.defaultErrorHandler = function(data) {
 		BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.staleContent);
     } else {
         var $data;
+        try {
+            if (data.responseText.trim) {
+                $data = $(data.responseText.trim());
+            } else {
+                $data = $(data.responseText);
+            }
 
-        if (data.responseText.trim) {
-            $data = $(data.responseText.trim());
-        } else {
-            $data = $(data.responseText);
-        }
-
-        if ($data.length == 1) {
-            BLCAdmin.showElementAsModal($data);
-        } else {
-            // This shouldn't happen, but it's here as a fallback just in case
-            BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.errorOccurred);
+            if ($data.length == 1) {
+                BLCAdmin.showElementAsModal($data);
+            } else {
+                // This shouldn't happen, but it's here as a fallback just in case
+                BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.errorOccurred);
+            }
+        } catch (e) {
+            $data = data.responseJSON;
+            if ($data !== undefined && $data.error) {
+                BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, $data.error);
+            } else {
+                BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.errorOccurred);
+            }
         }
     }
 };
