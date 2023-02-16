@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.processor;
 
 import com.google.common.collect.ImmutableMap;
-import org.broadleafcommerce.common.web.expression.BroadleafVariableModifierExpression;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
@@ -36,7 +35,7 @@ import java.util.Map;
  */
 @Component("blAdminFieldBuilderProcessor")
 @ConditionalOnTemplating
-public class AdminFieldBuilderProcessor implements BroadleafVariableModifierExpression {
+public class AdminFieldBuilderProcessor implements AdminFieldBuilderExpression {
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;

@@ -17,11 +17,12 @@
  */
 package org.broadleafcommerce.common.breadcrumbs.processor;
 
+import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 
-public interface BreadcrumbExpression {
+public interface BreadcrumbExpression extends BroadleafVariableExpression {
     String getName();
 
     int getPrecedence();

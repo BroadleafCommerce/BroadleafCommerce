@@ -17,14 +17,13 @@
  */
 package org.broadleafcommerce.openadmin.processor;
 
+import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 
-public interface AdminModuleExpression {
+public interface AdminModuleExpression extends BroadleafVariableExpression {
     String getName();
-
-    String getPrefix();
 
     int getPrecedence();
 

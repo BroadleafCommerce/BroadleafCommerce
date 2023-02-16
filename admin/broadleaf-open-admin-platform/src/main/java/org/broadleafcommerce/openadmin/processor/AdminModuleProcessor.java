@@ -22,7 +22,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.BroadleafDialectPrefix;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -59,12 +58,7 @@ public class AdminModuleProcessor implements AdminModuleExpression {
     public String getName() {
         return "admin_module";
     }
-    
-    @Override
-    public String getPrefix() {
-        return BroadleafDialectPrefix.BLC_ADMIN;
-    }
-    
+
     @Override
     public int getPrecedence() {
         return 10001;

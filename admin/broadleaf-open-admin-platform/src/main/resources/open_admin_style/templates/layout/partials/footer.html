@@ -4,11 +4,11 @@
 
     <script th:src="@{/js/admin/vendor/jquery-3.5.1.js}"></script>
 
-    <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
+    <blc:admin_user>
     <blc:form id="js-error-handling" method="POST" ></blc:form>
 
-    <input type="hidden" th:with="adminUser=${adminUser}" id="adminUser" name="adminUser" th:value="${adminUser.flatAdditionalFields}">
-
+    <input type="hidden" th:with="adminUser=${adminUser}" id="adminUser" name="adminUser" th:value="${flatAdditionalFields}">
+    </blc:admin_user>
     <blc:bundle name="adminlib.js"
                 mapping-prefix="/js/"
                 files="admin/vendor/jquery.fluidbox.min.js,

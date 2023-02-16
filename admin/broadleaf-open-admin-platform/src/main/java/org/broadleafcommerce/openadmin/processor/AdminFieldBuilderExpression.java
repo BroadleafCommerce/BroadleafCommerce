@@ -22,9 +22,7 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 
-public interface ErrorsExpression extends BroadleafVariableExpression {
-    String GENERAL_ERRORS_TAB_KEY = "generalErrors";
-    String GENERAL_ERROR_FIELD_KEY = "generalError";
+public interface AdminFieldBuilderExpression extends BroadleafVariableExpression {
 
     String getName();
 
@@ -32,5 +30,8 @@ public interface ErrorsExpression extends BroadleafVariableExpression {
 
     int getPrecedence();
 
-    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context);
+    boolean useGlobalScope();
+
+    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
+
 }

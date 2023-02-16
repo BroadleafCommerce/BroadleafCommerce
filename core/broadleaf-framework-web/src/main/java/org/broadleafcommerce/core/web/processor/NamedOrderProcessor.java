@@ -54,7 +54,7 @@ import java.util.Map;
 @Deprecated
 @Component("blNamedOrderProcessor")
 @ConditionalOnTemplating
-public class NamedOrderProcessor implements CategoriesExpression {
+public class NamedOrderProcessor implements NamedOrderExpression {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;

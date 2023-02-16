@@ -19,11 +19,12 @@
     <!--</div>-->
 
     <div class="account-info dropdown">
-        <blc_admin:admin_user resultVar="adminUser" ></blc_admin:admin_user>
-        <div class="dropdown-toggle" id="accountdrop" data-toggle="dropdown" aria-expanded="true">
-            <span th:text="'Welcome ' + ${adminUser.name} + '!'"></span>
-            <span class="caret"></span>
-        </div>
+        <blc:admin_user>
+            <div class="dropdown-toggle" id="accountdrop" data-toggle="dropdown" aria-expanded="true">
+                <span th:text="'Welcome ' + ${name} + '!'"></span>
+                <span class="caret"></span>
+            </div>
+        </blc:admin_user>
         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="accountdrop">
             <li><a th:href="@{/changePassword}" class="change-password">Change Password</a></li>
             <li><a th:href="@{/adminLogout.htm}" th:utext="#{header.logout}">Logout</a></li>

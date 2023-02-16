@@ -61,7 +61,7 @@ import java.util.Set;
  */
 @Component("blProductOptionsProcessor")
 @ConditionalOnTemplating
-public class ProductOptionsProcessor implements CategoriesExpression {
+public class ProductOptionsProcessor implements ProductOptionsExpression {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
