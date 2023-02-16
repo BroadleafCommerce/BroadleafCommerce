@@ -90,7 +90,13 @@ public class CheckoutFormServiceImpl implements CheckoutFormService {
                 shippingInfoForm.setAddress(firstShippableFulfillmentGroup.getAddress());
             } else {
                 //check for a default address for the customer
-                CustomerAddress defaultAddress = customerAddressService.findDefaultCustomerAddress(CustomerState.getCustomer().getId());
+                Long id = CustomerState.getCustomer().getId();
+                CustomerAddress defaultAddress;
+                if(id==-9999L){
+                    defaultAddress = customerAddressService.findDefaultCustomerAddress( CustomerState.getCustomer().getExternalId());
+                }else {
+                    defaultAddress = customerAddressService.findDefaultCustomerAddress(id);
+                }
                 if (defaultAddress != null) {
                     shippingInfoForm.setAddress(defaultAddress.getAddress());
                     shippingInfoForm.setAddressName(defaultAddress.getAddressName());

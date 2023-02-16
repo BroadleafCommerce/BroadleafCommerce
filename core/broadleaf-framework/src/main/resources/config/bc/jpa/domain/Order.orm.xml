@@ -23,7 +23,7 @@
 
     <named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID" >
         <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
-        WHERE order.customer.id = :customerId</query>
+        WHERE order.customerId = :customerId</query>
     </named-query>
     
     <named-query name="BC_READ_ORDER_BY_ORDER_NUMBER" >
@@ -35,27 +35,27 @@
         <query>
             SELECT order 
                FROM org.broadleafcommerce.core.order.domain.Order order
-            WHERE order.customer.id = :customerId
+            WHERE order.customerId = :customerId
                  AND order.status = :orderStatus  
         </query>
     </named-query>
 
     <named-query name="BC_READ_ORDER_BY_CUSTOMER_ID" >
         <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
-        WHERE order.customer.id = :customerId
+        WHERE order.customerId = :customerId
         AND order.id = :orderId</query>
     </named-query>
 
     <named-query name="BC_READ_ORDERS_BY_CUSTOMER_NAME_AND_STATUS">
         <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
-        WHERE order.customer.id = :customerId            
+        WHERE order.customerId = :customerId            
         AND order.status = :orderStatus
         AND order.name = :orderName</query>
     </named-query>
 
     <named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL">
         <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
-        WHERE order.customer.id = :customerId            
+        WHERE order.customerId = :customerId            
         AND order.status = :orderStatus
         AND order.name is null
         ORDER BY order.id desc</query>
@@ -65,7 +65,7 @@
         <query>
             SELECT order
             FROM  org.broadleafcommerce.core.order.domain.Order order
-            WHERE order.customer.id = :customerId
+            WHERE order.customerId = :customerId
                  AND order.name = :orderName
                  AND order.status = :orderStatus
                  AND (:locale is null OR order.locale = :locale)

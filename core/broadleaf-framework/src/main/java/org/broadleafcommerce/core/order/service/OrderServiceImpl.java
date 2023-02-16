@@ -216,7 +216,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
-        customer = customerService.saveCustomer(customer);
+//        customer = customerService.saveCustomer(customer);
         final Object lock = Objects.isNull(customer.getId()) ? customer : customer.getId();
         synchronized (lock) {
             return orderDao.createNewCartForCustomer(customer);

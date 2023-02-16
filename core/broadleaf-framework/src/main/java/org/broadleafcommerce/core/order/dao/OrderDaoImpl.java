@@ -244,7 +244,7 @@ public class OrderDaoImpl implements OrderDao {
             return readOrdersForCustomer(customer.getId());
         } else {
             final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
-            query.setParameter("customerId", customer.getId());
+            query.setParameter("customerId", String.valueOf(customer.getId()));
             query.setParameter("orderStatus", orderStatus.getType());
             return query.getResultList();
         }
@@ -262,7 +262,11 @@ public class OrderDaoImpl implements OrderDao {
     public Order readCartForCustomer(final Customer customer) {
         Order order = null;
         final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
-        query.setParameter("customerId", customer.getId());
+        if((customer.getId()!=null && customer.getId() == -9999L) || (customer.getId()==null && customer.getExternalId()!=null)) {
+            query.setParameter("customerId", customer.getExternalId());
+        }else{
+            query.setParameter("customerId", String.valueOf(customer.getId()));
+        }
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
@@ -326,7 +330,11 @@ public class OrderDaoImpl implements OrderDao {
 
         final Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
         query.setParameter("locale", locale);
-        query.setParameter("customerId", customer.getId());
+        if((customer.getId()!=null && customer.getId() == -9999L) || (customer.getId()==null && customer.getExternalId()!=null)) {
+            query.setParameter("customerId", customer.getExternalId());
+        }else{
+            query.setParameter("customerId", String.valueOf(customer.getId()));
+        }
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
 

@@ -41,4 +41,5 @@ public interface CustomerAddressService {
 
     Long readNumberOfAddresses();
 
+    CustomerAddress findDefaultCustomerAddress(String externalId);
 }

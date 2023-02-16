@@ -103,4 +103,9 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     public Long readNumberOfAddresses() {
         return customerAddressDao.readNumberOfAddresses();
     }
+
+    @Override
+    public CustomerAddress findDefaultCustomerAddress(String externalId) {
+        return null;
+    }
 }

@@ -430,4 +430,9 @@ public class NullOrderImpl implements Order {
     public Boolean hasValidationErrors() {
         return false;
     }
+
+    @Override
+    public void setCustomerId(String customerId) {
+
+    }
 }

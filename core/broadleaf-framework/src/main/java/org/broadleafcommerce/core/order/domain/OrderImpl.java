@@ -143,6 +143,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             order=FieldOrder.NAME)
     protected String name;
 
+/*
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
@@ -150,6 +151,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             order=FieldOrder.CUSTOMER)
     @AdminPresentationToOneLookup()
     protected Customer customer;
+*/
+    @Column(name = "CUSTOMER_ID")
+    protected String customerId;
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
@@ -381,12 +385,19 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Override
     public Customer getCustomer() {
+        CustomerImpl customer = new CustomerImpl();
+        customer.setExternalId(customerId);
+        customer.setId(-9999L);
         return customer;
     }
 
     @Override
     public void setCustomer(Customer customer) {
-        this.customer = customer;
+        this.customerId = customer.getExternalId();
+    }
+
+    public void setCustomerId(String customerId){
+        this.customerId = customerId;
     }
 
     @Override
@@ -830,6 +841,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             return id.equals(other.id);
         }
 
+/*
         if (customer == null) {
             if (other.customer != null) {
                 return false;
@@ -837,6 +849,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         } else if (!customer.equals(other.customer)) {
             return false;
         }
+*/
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         Date otherDateCreated = other.auditable != null ? other.auditable.getDateCreated() : null;
         if (myDateCreated == null) {
@@ -853,7 +866,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+//        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
@@ -886,7 +899,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         cloned.setOrderNumber(orderNumber);
         cloned.setTotalTax(getTotalTax());
         cloned.setSubmitDate(submitDate);
-        cloned.setCustomer(customer);
+        cloned.setCustomerId(customerId);
         cloned.setStatus(getStatus());
         cloned.setTotalFulfillmentCharges(getTotalFulfillmentCharges());
         cloned.setSubTotal(getSubTotal());
