@@ -3191,6 +3191,19 @@
                             }
                             else if (html[i] == '<' || i == htmlLength)
                             {
+                                if (i + 1 < htmlLength) {
+                                    //closing tag
+                                    if (html[i + 1] == '/') {
+                                        var closeTag = html.indexOf('>', i + 1);
+                                        if (closeTag > 0) {
+                                            var tagName = html.substring(i + 2, closeTag);
+                                            if (tagName.toLowerCase() === "style") {
+                                                c = closeTag + 1;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                                 c = 0;
                                 break;
                             }
