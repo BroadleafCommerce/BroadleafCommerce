@@ -44,7 +44,7 @@ import java.util.Map;
 @ConditionalOnTemplating
 public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModifierProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProductOptionDisplayProcessor.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ProductOptionDisplayProcessor.class);
 
     @Override
     public String getName() {
@@ -64,7 +64,6 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
     @Override
     public Map<String, Object> populateModelVariables(final String tagName, final Map<String, String> tagAttributes, final BroadleafTemplateContext context) {
 
-        // on our side, it is important to keep the order in which the product options should be displayed
         final Map<String, String> productOptionDisplayValues = new LinkedHashMap<>();
         final Object item = context.parseExpression(tagAttributes.get("orderItem"));
 
@@ -75,12 +74,10 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
             final Map<String, OrderItemAttribute> orderItemAttributes = orderItem.getOrderItemAttributes();
 
             // Do a search only on ProductOptionXrefs, and find the translation by matching user's input to one of the ProductOptionValues present on ProductOption.getAllowedValues().
-            // Here, in our customisation, the ProductOptionXrefs are searched in a specific order (by also using an additional attribute "sequence" on FlywireProductOptionXref)
             for (ProductOptionXref productOptionXref : product.getProductOptionXrefs()) {
                 final ProductOption productOption = productOptionXref.getProductOption();
                 final OrderItemAttribute itemAttribute = orderItemAttributes.get(productOption.getAttributeName());
 
-                // Translate and collect only those options for which a user input was selected (on orderItem) - on current BL implementation, empty options are still collected in the result
                 if (itemAttribute != null && !StringUtils.isEmpty(itemAttribute.getValue())) {
                     final String translatedLabel = productOption.getLabel();
                     final String translatedValue = translateItemAttributeValue(itemAttribute, productOption);
