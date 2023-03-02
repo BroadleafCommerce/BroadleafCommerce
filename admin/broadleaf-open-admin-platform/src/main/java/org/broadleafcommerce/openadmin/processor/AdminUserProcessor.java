@@ -57,18 +57,7 @@ public class AdminUserProcessor implements AdminUserExpression {
     }
 
     @Override
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        String resultVar = tagAttributes.get("resultVar");
-
-        Map<String, Object> newModelVars = new HashMap<>();
-        AdminUser user = getPersistentAdminUser();
-        if (user != null) {
-            newModelVars.put(resultVar, user);
-        }
-        return newModelVars;
-    }
-    
-    protected AdminUser getPersistentAdminUser() {
+    public AdminUser getUser() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
             Authentication auth = ctx.getAuthentication();
@@ -78,7 +67,6 @@ public class AdminUserProcessor implements AdminUserExpression {
                 return securityService.readAdminUserByUserName(temp.getUsername());
             }
         }
-
         return null;
     }
 

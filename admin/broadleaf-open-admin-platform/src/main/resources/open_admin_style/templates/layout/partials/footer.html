@@ -7,8 +7,7 @@
     <blc:admin_user>
     <blc:form id="js-error-handling" method="POST" ></blc:form>
 
-    <input type="hidden" th:with="adminUser=${adminUser}" id="adminUser" name="adminUser" th:value="${flatAdditionalFields}">
-    </blc:admin_user>
+    <input type="hidden" th:with="adminUser=${#admin_user.getUser()}" id="adminUser" name="adminUser" th:value="${flatAdditionalFields}">
     <blc:bundle name="adminlib.js"
                 mapping-prefix="/js/"
                 files="admin/vendor/jquery.fluidbox.min.js,

@@ -18,8 +18,10 @@
 package org.broadleafcommerce.openadmin.processor;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
+import java.util.List;
 import java.util.Map;
 
 public interface AdminModuleExpression extends BroadleafVariableExpression {
@@ -27,5 +29,5 @@ public interface AdminModuleExpression extends BroadleafVariableExpression {
 
     int getPrecedence();
 
-    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
+    List<AdminModule> getAllModules();
 }

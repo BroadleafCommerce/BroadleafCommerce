@@ -17,12 +17,11 @@
  */
 package org.broadleafcommerce.openadmin.processor;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,8 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
@@ -64,17 +62,9 @@ public class AdminModuleProcessor implements AdminModuleExpression {
         return 10001;
     }
     
-    @Override
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        String resultVar = tagAttributes.get("resultVar");
-
-        Map<String, Object> newModelVars = new HashMap<>();
+    public List<AdminModule> getAllModules() {
         AdminUser user = getPersistentAdminUser();
-        if (user != null) {
-            AdminMenu menu = adminNavigationService.buildMenu(user);
-            newModelVars.put(resultVar, menu);
-        }
-        return newModelVars;
+        return adminNavigationService.buildMenu(user).getAdminModules();
     }
     
     protected AdminUser getPersistentAdminUser() {

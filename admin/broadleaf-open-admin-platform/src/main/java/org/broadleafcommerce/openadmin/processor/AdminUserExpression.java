@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.processor;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
@@ -27,6 +28,5 @@ public interface AdminUserExpression extends BroadleafVariableExpression {
 
     int getPrecedence();
 
-    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
-
+    AdminUser getUser();
 }

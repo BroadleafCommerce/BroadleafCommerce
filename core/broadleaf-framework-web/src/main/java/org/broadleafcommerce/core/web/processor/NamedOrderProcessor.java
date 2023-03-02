@@ -23,14 +23,11 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.expression.OrderVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <p>
@@ -70,19 +67,14 @@ public class NamedOrderProcessor implements NamedOrderExpression {
     }
     
     @Override
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+    public Order getWishlist() {
         Customer customer = CustomerState.getCustomer();
-
-        String orderVar = tagAttributes.get("orderVar");
-        String orderName = tagAttributes.get("orderName");
+        String orderName = "wishlist";
 
         Order order = orderService.findNamedOrderForCustomer(orderName, customer);
-        Map<String, Object> newModelVars = new HashMap<>();
         if (order != null) {
-            newModelVars.put(orderVar, order);
-        } else {
-            newModelVars.put(orderVar, new NullOrderImpl());
+            return order;
         }
-        return newModelVars;
+        return new NullOrderImpl();
     }
 }
