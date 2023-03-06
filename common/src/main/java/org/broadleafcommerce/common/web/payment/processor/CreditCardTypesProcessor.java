@@ -18,11 +18,9 @@
 
 package org.broadleafcommerce.common.web.payment.processor;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -77,7 +75,7 @@ public class CreditCardTypesProcessor implements CreditCardTypesExpression {
     }
 
     @Override
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+    public Map<String, String> getTypes() {
         Map<String, String> creditCardTypes = new HashMap<>();
 
         try {
@@ -86,11 +84,7 @@ public class CreditCardTypesProcessor implements CreditCardTypesExpression {
             LOG.warn("Unable to Populate Credit Card Types Map for this Payment Module, or card type is not needed.");
         }
 
-        if (!creditCardTypes.isEmpty()) {
-            return ImmutableMap.of("paymentGatewayCardTypes", (Object) creditCardTypes);
-        } else {
-            return null;
-        }
+        return creditCardTypes;
     }
 
 }
