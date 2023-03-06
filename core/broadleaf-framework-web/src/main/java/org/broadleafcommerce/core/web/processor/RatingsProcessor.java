@@ -18,13 +18,11 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
@@ -56,13 +54,11 @@ public class RatingsProcessor implements RatingsExpression {
     }
 
     @Override
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        Object obj = context.parseExpression(tagAttributes.get("itemId"));
-        String itemId = obj.toString();
+    public Map<String, Object> getRatings(String itemId) {
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         Map<String, Object> newModelVars = new HashMap<>();
         if (ratingSummary != null) {
-            newModelVars.put(getRatingsVar(tagAttributes), ratingSummary);
+            newModelVars.put("ratingSummary", ratingSummary);
         }
 
         Customer customer = CustomerState.getCustomer();
@@ -74,13 +70,5 @@ public class RatingsProcessor implements RatingsExpression {
             newModelVars.put("currentCustomerReview", reviewDetail);
         }
         return newModelVars;
-    }
-
-    private String getRatingsVar(Map<String, String> tagAttributes) {
-        String ratingsVar = tagAttributes.get("ratingsVar");
-        if (StringUtils.isNotEmpty(ratingsVar)) {
-            return ratingsVar;
-        }
-        return "ratingSummary";
     }
 }
