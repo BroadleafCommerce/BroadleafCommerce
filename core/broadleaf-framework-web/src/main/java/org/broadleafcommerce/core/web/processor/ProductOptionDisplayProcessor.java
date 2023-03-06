@@ -18,13 +18,11 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -53,9 +51,8 @@ public class ProductOptionDisplayProcessor implements OnePageCheckoutExpression 
     }
 
     @Override
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+    public Map<String, String> getDisplayValues(Object item) {
         HashMap<String, String> productOptionDisplayValues = new HashMap<>();
-        Object item = context.parseExpression(tagAttributes.get("orderItem"));
         if (item instanceof DiscreteOrderItem) {
             DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
             for (SkuProductOptionValueXref productOptionValueXref : orderItem.getSku().getProductOptionValueXrefs()) {
@@ -78,7 +75,7 @@ public class ProductOptionDisplayProcessor implements OnePageCheckoutExpression 
                 }
             }
         }
-        return ImmutableMap.of("productOptionDisplayValues", (Object) productOptionDisplayValues);
+        return productOptionDisplayValues;
     }
 
 }

@@ -38,7 +38,6 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -83,18 +82,17 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
     }
 
     @Override
-    public Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        Long productId = (Long) context.parseExpression(tagAttributes.get("productId"));
+    public Map<String, Object> getData(Long productId) {
         Product product = catalogService.findProductById(productId);
         Map<String, Object> newModelVars = new HashMap<>();
         if (product != null) {
             addAllProductOptionsToModel(newModelVars, product);
-            addProductOptionPricingToModel(newModelVars, product, context, tagAttributes);
+            addProductOptionPricingToModel(newModelVars, product);
         }
         return newModelVars;
     }
 
-    protected void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product, BroadleafTemplateContext context, Map<String, String> tagAttributes) {
+    protected void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product) {
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<>();
         for (Sku sku : skus) {
@@ -106,13 +104,13 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
                 ProductOptionValue productOptionValue = skuProductOptionValueXref.getProductOptionValue();
                 productOptionValueIds.add(productOptionValue.getId());
             }
-            ProductOptionPricingDTO pricingDto = createPricingDto(sku, productOptionValueIds, tagAttributes, context);
+            ProductOptionPricingDTO pricingDto = createPricingDto(sku, productOptionValueIds);
             skuPricing.add(pricingDto);
         }
         writeJSONToModel(newModelVars, "skuPricing", skuPricing);
     }
 
-    protected ProductOptionPricingDTO createPricingDto(Sku sku, List<Long> productOptionValueIds, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+    protected ProductOptionPricingDTO createPricingDto(Sku sku, List<Long> productOptionValueIds) {
         Long[] values = new Long[productOptionValueIds.size()];
         productOptionValueIds.toArray(values);
 
@@ -122,9 +120,6 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
         // Check for Price Overrides
         ExtensionResultHolder<Money> priceHolder = new ExtensionResultHolder<>();
         priceHolder.setResult(currentPrice);
-        if (extensionManager != null) {
-            extensionManager.getProxy().modifyPriceForOverrides(sku, priceHolder, context, tagAttributes);
-        }
 
         dto.setPrice(BLCMoneyFormatUtils.formatPrice(priceHolder.getResult()));
         if (sku.getRetailPrice() != null) {
