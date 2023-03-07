@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.web.expression;
 
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.processor.ConfigVariableProcessor;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -36,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
  * This also includes properties that have been saved/overwritten in the database via {@link SystemProperty}.
  * 
  * @author Andre Azzolini (apazzolini)
- * @see {@link ConfigVariableProcessor}
  */
 @Component("blPropertiesVariableExpression")
 @ConditionalOnTemplating
