@@ -4,7 +4,6 @@
 
     <script th:src="@{/js/admin/vendor/jquery-3.5.1.js}"></script>
 
-    <blc:admin_user>
     <blc:form id="js-error-handling" method="POST" ></blc:form>
 
     <input type="hidden" th:with="adminUser=${#admin_user.getUser()}" id="adminUser" name="adminUser" th:value="${flatAdditionalFields}">

@@ -18,20 +18,16 @@
 package org.broadleafcommerce.openadmin.processor;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-
-import java.util.Map;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 
 public interface AdminFieldBuilderExpression extends BroadleafVariableExpression {
 
     String getName();
 
-    String getPrefix();
-
     int getPrecedence();
 
     boolean useGlobalScope();
 
-    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
+    public FieldWrapper getFieldWrapper(String fieldBuilder, String ceilingEntity);
 
 }
