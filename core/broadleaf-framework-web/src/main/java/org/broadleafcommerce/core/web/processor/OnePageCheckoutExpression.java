@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 
 import java.util.Map;
 
@@ -28,5 +27,5 @@ public interface OnePageCheckoutExpression extends BroadleafVariableExpression {
 
     boolean useGlobalScope();
 
-    Map<String, Object> populateModelVariables(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
+    Map<String, String> getDisplayValues(Object item);
 }
