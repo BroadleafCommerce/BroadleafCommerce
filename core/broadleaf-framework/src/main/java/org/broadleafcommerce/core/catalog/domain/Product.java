@@ -896,6 +896,10 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public List<Long> getParentCategoryHierarchyIds();
 
+    /**
+     * enables or disables that inventory will be tracked by default sku instead of alt sku in case of alt sku existence
+     * @param enableUseDefaultSkuInventory
+     */
     public void setEnableDefaultSkuInInventory(Boolean enableUseDefaultSkuInventory);
 
     public Boolean getEnableDefaultSkuInInventory();

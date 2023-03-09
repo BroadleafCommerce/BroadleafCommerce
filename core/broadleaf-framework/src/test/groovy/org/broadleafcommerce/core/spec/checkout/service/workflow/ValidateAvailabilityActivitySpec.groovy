@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.spec.checkout.service.workflow
 
+import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.checkout.service.workflow.ValidateAvailabilityActivity
 import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
@@ -64,6 +65,7 @@ class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
         DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> Spy(ProductImpl)
         mockSku.isActive() >> true
         context.seedData.order.orderItems << mockOrderItem
         mockOrderItem.getQuantity() >> 0
@@ -82,6 +84,7 @@ class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
         BundleOrderItemImpl mockOrderItem = Spy(BundleOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> Spy(ProductImpl)
         mockSku.isActive() >> true
         context.seedData.order.orderItems << mockOrderItem
         mockOrderItem.getQuantity() >> 0
@@ -118,6 +121,7 @@ class ValidateAvailabilityActivitySpec extends BaseCheckoutActivitySpec {
         DiscreteOrderItemImpl mockOrderItem = Spy(DiscreteOrderItemImpl)
         SkuImpl mockSku = Spy(SkuImpl)
         mockSku.getId() >> 1
+        mockSku.getProduct() >> Spy(ProductImpl)
         mockSku.isActive() >> true
         mockOrderItem.getQuantity() >> 0
         mockOrderItem.getId() >> null

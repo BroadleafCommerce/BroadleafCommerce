@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.ProductSkuUsage;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -30,7 +29,6 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -57,9 +55,6 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-
-    @Value("${enable.weave.use.default.sku.inventory:false}")
-    protected boolean enableUseDefaultSkuInventory = false;
     
     public CheckAddAvailabilityActivity() {
         setOrder(ORDER);
@@ -77,7 +72,7 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
         Long skuId = request.getItemRequest().getSkuId();
         Sku sku = catalogService.findSkuById(skuId);
 
-        if(enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+        if(sku.getProduct().getEnableDefaultSkuInInventory()){
             sku = sku.getProduct().getDefaultSku();
         }
 
@@ -93,7 +88,7 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
                 skuFromOrder = ((BundleOrderItem) orderItem).getSku();
             }
 
-            if(skuFromOrder != null && enableUseDefaultSkuInventory && ((ProductSkuUsage) skuFromOrder.getProduct()).getUseDefaultSkuInInventory()){
+            if(skuFromOrder != null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
                 skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
 

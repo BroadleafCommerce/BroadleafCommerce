@@ -29,6 +29,8 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -244,6 +246,9 @@ public class CheckoutTest extends TestNGSiteIntegrationSetup {
         newSku.setRetailPrice(new Money(14.99));
         newSku.setActiveStartDate(SystemTime.asDate());
         newSku.setDiscountable(false);
+        Product product = catalogService.saveProduct(new ProductImpl());
+        newSku.setDefaultProduct(product);
+        product.setDefaultSku(newSku);
         newSku = catalogService.saveSku(newSku);
         item.setSku(newSku);
 
