@@ -36,14 +36,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * Responsible for determining the SandBox to use for the current request. 
@@ -110,7 +109,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         Long previousSandBoxId = null;
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             previousSandBoxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
-            //hack ;)
+            // set a web request to scope session
             if (request.getParameter("blIncludeMyChanges") != null) {
                 request.setAttribute("blIncludeMyChanges", request.getParameter("blIncludeMyChanges"), WebRequest.SCOPE_SESSION);
             }
