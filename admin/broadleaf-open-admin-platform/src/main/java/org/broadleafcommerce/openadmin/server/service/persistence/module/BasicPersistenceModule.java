@@ -24,7 +24,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
@@ -573,7 +572,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             try {
                 Property p = new Property();
                 p.setName(MAIN_ENTITY_NAME_PROPERTY);
-                String mainEntityName = (String) MethodUtils.invokeMethod(entity, "getMainEntityName");
+                String mainEntityName = ((AdminMainEntity)entity).getMainEntityName();
                 p.setValue(mainEntityName);
                 props.add(p);
             } catch (Exception e) {
