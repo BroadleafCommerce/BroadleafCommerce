@@ -71,6 +71,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -709,21 +710,30 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public Map<String, Media> getMedia() {
-        return getDefaultSku().getSkuMedia();
+        return getDefaultSku().getSkuMediaXref()
+                .values()
+                .stream()
+                .collect(Collectors.toMap(SkuMediaXref::getKey, SkuMediaXref::getMedia));
     }
 
     @Override
     public void setMedia(Map<String, Media> media) {
-        getDefaultSku().setSkuMedia(media);
+        Sku defaultSku = getDefaultSku();
+        Map<String, SkuMediaXref> skuMediaXref = new HashMap<>();
+        media.forEach((key, value) -> skuMediaXref.put(key, new SkuMediaXrefImpl(defaultSku, value, key)));
+        defaultSku.setSkuMediaXref(skuMediaXref);
     }
 
     @Override
     public Map<String, Media> getAllSkuMedia() {
-        Map<String, Media> result = new HashMap<String, Media>();
-        result.putAll(getMedia());
+        Map<String, Media> result = new HashMap<>(getMedia());
         for (Sku additionalSku : getAdditionalSkus()) {
             if (!additionalSku.getId().equals(getDefaultSku().getId())) {
-                result.putAll(additionalSku.getSkuMedia());
+                result.putAll(additionalSku.getSkuMediaXref()
+                        .values()
+                        .stream()
+                        .collect(Collectors.toMap(SkuMediaXref::getKey, SkuMediaXref::getMedia))
+                );
             }
         }
         return result;

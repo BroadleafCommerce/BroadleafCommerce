@@ -118,9 +118,6 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @ClonePolicyCollectionOverride
     protected List<PageTemplateFieldGroupXref> fieldGroups = new ArrayList<PageTemplateFieldGroupXref>();
 
-    @Transient
-    protected List<FieldGroup> legacyFieldGroups = new ArrayList<FieldGroup>();
-
     @Override
     public Long getId() {
         return id;
@@ -169,27 +166,6 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @Override
     public void setLocale(Locale locale) {
         this.locale = locale;
-    }
-
-    @Override
-    @Deprecated
-    public List<FieldGroup> getFieldGroups() {
-        if (legacyFieldGroups.isEmpty()) {
-            for (PageTemplateFieldGroupXref xref : getFieldGroupXrefs()) {
-                legacyFieldGroups.add(xref.getFieldGroup());
-            }
-        }
-        return Collections.unmodifiableList(legacyFieldGroups);
-    }
-
-    @Override
-    @Deprecated
-    public void setFieldGroups(List<FieldGroup> fieldGroups) {
-        this.legacyFieldGroups.clear();
-        this.fieldGroups.clear();
-        for (FieldGroup group : fieldGroups) {
-            this.fieldGroups.add(new PageTemplateFieldGroupXrefImpl(this, group));
-        }
     }
 
     @Override

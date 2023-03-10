@@ -116,22 +116,6 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
     public void setStructuredContentType(@Nonnull StructuredContentType structuredContentType);
 
     /**
-     * @deprecated - use {@link #getStructuredContentFieldXrefs()}
-     * @return
-     */
-    @Nullable
-    @Deprecated
-    public Map<String, StructuredContentField> getStructuredContentFields();
-
-    /**
-     * @deprecated - Use {@link #setStructuredContentFieldXrefs(Map)}
-     *
-     * @param structuredContentFields
-     */
-    @Deprecated
-    public void setStructuredContentFields(@Nullable Map<String, StructuredContentField> structuredContentFields);
-
-    /**
      * <b>NOTE: This method is typically only used when wanting to persist new {@link StructuredContentField}s.
      * Users trying to get a field to render should typically invoke {@link #getFieldValues()}.</b>
      * 

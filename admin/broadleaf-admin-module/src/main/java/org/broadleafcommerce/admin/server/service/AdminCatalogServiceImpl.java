@@ -214,8 +214,6 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             additionalSku.setProduct(derivedProduct);
             catalogService.saveSku(additionalSku);
         }
-        
-        
         return true;
     }
     
