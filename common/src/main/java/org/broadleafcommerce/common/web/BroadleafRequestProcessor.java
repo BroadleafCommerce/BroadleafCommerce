@@ -168,6 +168,9 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                     if (isSandboxIdValid(sandboxId)) {
                         String queryString = "?" + SANDBOX_ID_PARAM + "=" + sandboxId;
                         url.append(queryString);
+                        if(hsr.getParameter("blIncludeMyChanges")!=null){
+                            url.append("&blIncludeMyChanges="+hsr.getParameter("blIncludeMyChanges"));
+                        }
                     }
 
                     response.sendRedirect(url.toString());
@@ -261,6 +264,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_SESSION);
             request.removeAttribute(BroadleafTimeZoneResolverImpl.TIMEZONE_VAR, WebRequest.SCOPE_SESSION);
             request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
+            request.removeAttribute("blIncludeMyChanges", WebRequest.SCOPE_SESSION);
 
             // From CustomerStateRequestProcessorImpl, using explicit String because it's out of module
             request.removeAttribute("_blc_anonymousCustomer", WebRequest.SCOPE_SESSION);

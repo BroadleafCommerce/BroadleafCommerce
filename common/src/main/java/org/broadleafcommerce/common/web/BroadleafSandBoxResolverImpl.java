@@ -110,6 +110,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         Long previousSandBoxId = null;
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             previousSandBoxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
+            //hack ;)
+            if (request.getParameter("blIncludeMyChanges") != null) {
+                request.setAttribute("blIncludeMyChanges", request.getParameter("blIncludeMyChanges"), WebRequest.SCOPE_SESSION);
+            }
         }
         SandBox currentSandbox = null;
         if (!sandBoxPreviewEnabled) {
@@ -139,6 +143,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 if (BLCRequestUtils.isOKtoUseSession(request)) {
                     request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_SESSION);
                     request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
+                    request.removeAttribute("blIncludeMyChanges", WebRequest.SCOPE_SESSION);
                 }
                 SystemTime.resetLocalTimeSource();
             }
