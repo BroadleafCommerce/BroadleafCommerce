@@ -40,14 +40,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 
@@ -66,6 +65,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public static final String SITE_DISABLE_SANDBOX_PREVIEW = "site.disable.sandbox.preview";
 
     private static final String SANDBOX_ID_PARAM = "blSandboxId";
+    private static final String INCLUDE_MY_CHANGES_VAR = "blIncludeMyChanges";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -168,8 +168,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                     if (isSandboxIdValid(sandboxId)) {
                         String queryString = "?" + SANDBOX_ID_PARAM + "=" + sandboxId;
                         url.append(queryString);
-                        if(hsr.getParameter("blIncludeMyChanges")!=null){
-                            url.append("&blIncludeMyChanges="+hsr.getParameter("blIncludeMyChanges"));
+                        if(hsr.getParameter(INCLUDE_MY_CHANGES_VAR) != null){
+                            url.append("&blIncludeMyChanges="+hsr.getParameter(INCLUDE_MY_CHANGES_VAR));
                         }
                     }
 
@@ -264,7 +264,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_SESSION);
             request.removeAttribute(BroadleafTimeZoneResolverImpl.TIMEZONE_VAR, WebRequest.SCOPE_SESSION);
             request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
-            request.removeAttribute("blIncludeMyChanges", WebRequest.SCOPE_SESSION);
+            request.removeAttribute(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR, WebRequest.SCOPE_SESSION);
 
             // From CustomerStateRequestProcessorImpl, using explicit String because it's out of module
             request.removeAttribute("_blc_anonymousCustomer", WebRequest.SCOPE_SESSION);
