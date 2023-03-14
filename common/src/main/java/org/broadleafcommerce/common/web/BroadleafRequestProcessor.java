@@ -65,7 +65,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public static final String SITE_DISABLE_SANDBOX_PREVIEW = "site.disable.sandbox.preview";
 
     private static final String SANDBOX_ID_PARAM = "blSandboxId";
-    private static final String INCLUDE_MY_CHANGES_VAR = "blIncludeMyChanges";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -168,8 +167,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                     if (isSandboxIdValid(sandboxId)) {
                         String queryString = "?" + SANDBOX_ID_PARAM + "=" + sandboxId;
                         url.append(queryString);
-                        if(hsr.getParameter(INCLUDE_MY_CHANGES_VAR) != null){
-                            url.append("&blIncludeMyChanges="+hsr.getParameter(INCLUDE_MY_CHANGES_VAR));
+                        if(hsr.getParameter(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR) != null){
+                            url.append("&"+BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR+"="+hsr.getParameter(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR));
                         }
                     }
 

@@ -76,8 +76,6 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     private static final String SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM = "blSandboxDisplayDateTimeHours";
     private static final String SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM = "blSandboxDisplayDateTimeMinutes";
     private static final String SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM = "blSandboxDisplayDateTimeAMPM";
-    private static final String INCLUDE_MY_CHANGES_VAR = "blIncludeMyChanges";
-
 
     /**
      * Request attribute to store the current sandbox
@@ -111,8 +109,8 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             previousSandBoxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
             // set a web request to scope session
-            if (request.getParameter(INCLUDE_MY_CHANGES_VAR) != null) {
-                request.setAttribute(INCLUDE_MY_CHANGES_VAR, Boolean.parseBoolean(request.getParameter("blIncludeMyChanges")), WebRequest.SCOPE_SESSION);
+            if (request.getParameter(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR) != null) {
+                request.setAttribute(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR, Boolean.parseBoolean(request.getParameter("blIncludeMyChanges")), WebRequest.SCOPE_SESSION);
             }
         }
         SandBox currentSandbox = null;
@@ -143,7 +141,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 if (BLCRequestUtils.isOKtoUseSession(request)) {
                     request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_SESSION);
                     request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
-                    request.removeAttribute(INCLUDE_MY_CHANGES_VAR, WebRequest.SCOPE_SESSION);
+                    request.removeAttribute(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR, WebRequest.SCOPE_SESSION);
                 }
                 SystemTime.resetLocalTimeSource();
             }
