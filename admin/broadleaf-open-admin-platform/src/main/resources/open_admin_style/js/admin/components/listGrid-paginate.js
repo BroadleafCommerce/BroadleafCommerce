@@ -766,7 +766,7 @@
             // If we're the only grid on the page, we should stretch to the bottom of the screen if we are not encapsulated
             // inside of an entity-form
             var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
-            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 &&
+            if (listGridsCount == 1 && $wrapper.length !== 0 && $wrapper.parents('.entity-form').length == 0 &&
                 $table.data('listgridtype') !== 'tree' &&
                 ($table.data('listgridtype') !== 'asset_grid' && $table.data('listgridtype') !== 'asset_grid_folder') ||
                 (BLCAdmin.assetGrid == undefined && ($table.data('listgridtype') === 'asset_grid' || $table.data('listgridtype') === 'asset_grid_folder'))) {
