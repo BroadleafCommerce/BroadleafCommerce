@@ -18,7 +18,7 @@
 
 package org.broadleafcommerce.common.payment.service;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>This is a utility service that aids in translating the Request Attribute and

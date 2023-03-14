@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.entity.service;
 import org.broadleafcommerce.common.entity.dto.EntityInformationDto;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+
 import java.util.List;
 import java.util.Set;
 

@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This persistence handler handles all {@link Sku} inspects and fetches where the `toOneLookup` custom criteria is on the

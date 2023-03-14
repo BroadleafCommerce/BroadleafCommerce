@@ -44,9 +44,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+
+import jakarta.annotation.Resource;
 
 /**
  * @deprecated Use {@link SolrSearchServiceImpl} 

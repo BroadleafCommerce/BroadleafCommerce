@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionManagerOperation;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;

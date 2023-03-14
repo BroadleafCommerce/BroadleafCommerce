@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.RequestContextFilter;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 /**
  * This is a convenient base class for launching a spring boot test against the admin application. The primary testing technologies

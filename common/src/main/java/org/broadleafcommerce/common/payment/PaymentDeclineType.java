@@ -18,11 +18,11 @@
 
 package org.broadleafcommerce.common.payment;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * when a payment returns in error, this value indicates whether it is a "soft" decline (apt to be retried) or a "hard" one.

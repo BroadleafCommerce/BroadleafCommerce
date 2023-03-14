@@ -59,9 +59,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+
+import jakarta.annotation.Resource;
 
 
 /**

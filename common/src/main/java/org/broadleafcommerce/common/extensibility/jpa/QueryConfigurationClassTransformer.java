@@ -17,19 +17,6 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa;
 
-import javassist.ClassPool;
-import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.AnnotationMemberValue;
-import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.ClassMemberValue;
-import javassist.bytecode.annotation.EnumMemberValue;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
-
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 
 import java.io.ByteArrayInputStream;
@@ -44,12 +31,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.persistence.LockModeType;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.NamedNativeQueries;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.QueryHint;
+import javassist.ClassPool;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.ClassMemberValue;
+import javassist.bytecode.annotation.EnumMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * Detects any externally registered {@link NamedQueries} or {@link NamedNativeQueries} and adds them to the first detected
@@ -94,7 +93,7 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
                 }
                 ConstPool constantPool = classFile.getConstPool();
                 ClassPool pool = ClassPool.getDefault();
-                pool.importPackage("javax.persistence");
+                pool.importPackage("jakarta.persistence");
                 pool.importPackage("java.lang");
                 List<?> attributes = classFile.getAttributes();
                 Iterator<?> itr = attributes.iterator();

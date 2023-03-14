@@ -37,14 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.metamodel.EntityType;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.metamodel.EntityType;
 
 /**
  * Service to help gather the correct {@link EntityManager} or {@link PlatformTransactionManager},
  *  based on a class and {@link TargetModeType}. This functionality is
- *  especially useful when multiple {@link javax.persistence.PersistenceUnit}s are in use.
+ *  especially useful when multiple {@link jakarta.persistence.PersistenceUnit}s are in use.
  *
  * Note: All "default" items reference blPU, which is used to manage most Broadleaf entities in the Admin.
  *

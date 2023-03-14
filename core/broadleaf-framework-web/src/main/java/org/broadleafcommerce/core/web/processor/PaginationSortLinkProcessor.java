@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Thymeleaf Processor that replaces the "href" attribute on an <a/> element, maintaining the current search criteria

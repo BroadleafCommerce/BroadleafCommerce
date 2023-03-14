@@ -24,7 +24,7 @@ import org.springframework.security.web.access.channel.InsecureChannelProcessor;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 /**
  * <p>Very similar to the {@link InsecureChannelProcessor} except that instead of relying on only the HttpServletRequest

@@ -39,7 +39,8 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)

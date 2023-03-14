@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
+
 import java.util.List;
 
 public interface ProductOptionValidationService {

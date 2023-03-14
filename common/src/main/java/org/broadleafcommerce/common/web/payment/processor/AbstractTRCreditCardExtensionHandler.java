@@ -29,8 +29,10 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayResolver;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransparentRedirectService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
+
 import java.util.Map;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * <p>An Abstract implementation of the TRCreditCardExtensionHandler.

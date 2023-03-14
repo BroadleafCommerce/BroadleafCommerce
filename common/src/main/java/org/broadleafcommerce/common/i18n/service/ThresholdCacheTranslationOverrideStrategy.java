@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Default {@link TranslationOverrideStrategy}. Should run last and will always return a result. Primarily supports multitenant

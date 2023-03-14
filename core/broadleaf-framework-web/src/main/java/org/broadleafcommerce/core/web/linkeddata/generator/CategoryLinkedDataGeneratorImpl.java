@@ -31,8 +31,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This generator generates structured data specific to the category pages.

@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.persistence.Table;
-
+import jakarta.persistence.Table;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;

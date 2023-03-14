@@ -30,8 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>Abstract controller that provides convenience methods and resource declarations to facilitate payment gateway
@@ -79,7 +80,7 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
      * <p>This method is intended to initiate the creation of a saved payment token.</p>
      *
      * <p>This assumes that the implementing gateway's {@link org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService}
-     * knows how to parse an incoming {@link javax.servlet.http.HttpServletRequest} into a
+     * knows how to parse an incoming {@link jakarta.servlet.http.HttpServletRequest} into a
      * {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO} which will then be used by the
      * customer profile engine to save a token to the user's account (e.g. wallet).</p>
      *

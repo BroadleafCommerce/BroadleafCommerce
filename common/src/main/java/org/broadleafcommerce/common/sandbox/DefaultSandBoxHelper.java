@@ -26,7 +26,7 @@ import com.google.common.collect.HashBiMap;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * @see org.broadleafcommerce.common.sandbox.SandBoxHelper

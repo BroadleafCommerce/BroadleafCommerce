@@ -30,7 +30,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.Objects;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Common functionality between checking availability between adds and updates

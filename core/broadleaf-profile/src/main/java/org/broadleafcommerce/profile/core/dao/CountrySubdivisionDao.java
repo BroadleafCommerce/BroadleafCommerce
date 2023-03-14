@@ -18,8 +18,10 @@
 package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
+
 import java.util.List;
-import javax.annotation.Nonnull;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * @author Elbert Bautista (elbertbautista)

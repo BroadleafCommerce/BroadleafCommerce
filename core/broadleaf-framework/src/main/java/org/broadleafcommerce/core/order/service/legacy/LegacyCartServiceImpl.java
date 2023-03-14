@@ -30,9 +30,10 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.annotation.Resource;
 
 /*
  * TODO setup other BLC items to be JMX managed resources like this one. This would include other services, and singleton beans

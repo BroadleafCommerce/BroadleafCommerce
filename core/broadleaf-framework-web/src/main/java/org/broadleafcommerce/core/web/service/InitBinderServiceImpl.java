@@ -28,7 +28,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 
 import java.beans.PropertyEditorSupport;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Chris Kittrell (ckittrell)

@@ -21,7 +21,7 @@ import com.google.common.collect.BiMap;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * Utility class for working with sandboxable entities. The functionality provided

@@ -17,12 +17,7 @@
  */
 package org.broadleafcommerce.core.spec.checkout.service.workflow
 
-import org.broadleafcommerce.core.catalog.domain.Product
-import org.broadleafcommerce.core.catalog.domain.ProductImpl
-import org.broadleafcommerce.core.catalog.domain.ProductOption
-import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl
-import org.broadleafcommerce.core.catalog.domain.ProductOptionXref
-import org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl
+import org.broadleafcommerce.core.catalog.domain.*
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType
 import org.broadleafcommerce.core.checkout.service.workflow.ValidateProductOptionsActivity
@@ -36,7 +31,6 @@ import org.broadleafcommerce.core.order.service.exception.ProductOptionValidatio
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException
 import org.broadleafcommerce.core.workflow.ActivityMessages
 import org.springframework.core.env.Environment
-
 
 /**
  * 

@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 
 /**

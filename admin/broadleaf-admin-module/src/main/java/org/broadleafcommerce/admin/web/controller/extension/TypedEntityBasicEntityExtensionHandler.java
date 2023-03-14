@@ -20,7 +20,6 @@ package org.broadleafcommerce.admin.web.controller.extension;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.TypedEntity;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -32,8 +31,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 /**
  * Adds special behavior specific for Typed Entities during any entity persistence flows.

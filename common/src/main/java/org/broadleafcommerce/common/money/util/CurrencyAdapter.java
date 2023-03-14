@@ -17,8 +17,9 @@
  */
 package org.broadleafcommerce.common.money.util;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.Currency;
+
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Unfortunately, JAXB doesn't know how to deal with java.util.Currency because it doesn't have a

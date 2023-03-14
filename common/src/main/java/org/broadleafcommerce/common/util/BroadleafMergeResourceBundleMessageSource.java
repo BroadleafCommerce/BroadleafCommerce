@@ -27,7 +27,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 
 /**

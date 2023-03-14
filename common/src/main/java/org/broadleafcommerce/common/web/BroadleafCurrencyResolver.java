@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.web;
 import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Author: jerryocanas

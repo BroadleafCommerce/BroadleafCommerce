@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.logging;
 
 import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * A simple bean that when declared in app context will cause a lifecycle

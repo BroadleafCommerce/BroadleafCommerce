@@ -18,8 +18,10 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.springframework.core.Ordered;
+
 import java.lang.reflect.Field;
-import javax.persistence.EntityManager;
+
+import jakarta.persistence.EntityManager;
 
 /**
  * This interface is responsible for modifying the behavior of {@link FieldManager#setFieldValue(Object, String, Object)}

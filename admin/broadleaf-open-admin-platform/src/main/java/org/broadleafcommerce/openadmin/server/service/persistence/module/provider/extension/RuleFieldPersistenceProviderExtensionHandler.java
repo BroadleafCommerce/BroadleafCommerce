@@ -20,7 +20,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
 /**
  * For internal usage. Allows extending API calls without subclassing the entity.

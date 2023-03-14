@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Checks to make sure that the TargetItemCriteria is not empty if required

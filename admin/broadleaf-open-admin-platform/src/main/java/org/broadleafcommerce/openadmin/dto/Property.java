@@ -17,10 +17,11 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.Serializable;
 import java.util.Date;

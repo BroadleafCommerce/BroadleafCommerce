@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Service("blProductOptionValidationService")
 public class ProductOptionValidationServiceImpl implements ProductOptionValidationService  {

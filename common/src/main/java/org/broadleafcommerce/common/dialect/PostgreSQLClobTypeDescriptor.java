@@ -34,6 +34,16 @@ public class PostgreSQLClobTypeDescriptor extends ClobTypeDescriptor {
     public <X> ValueExtractor<X> getExtractor(JavaTypeDescriptor<X> javaTypeDescriptor) {
         return new BasicExtractor<X>(javaTypeDescriptor, this) {
             @Override
+            public X extract(ResultSet resultSet, int i, WrapperOptions wrapperOptions) throws SQLException {
+                return javaTypeDescriptor.wrap(resultSet.getString(i), wrapperOptions);
+            }
+
+            @Override
+            public X extract(CallableStatement callableStatement, String s, WrapperOptions wrapperOptions) throws SQLException {
+                return this.doExtract(callableStatement, s, wrapperOptions);
+            }
+
+            @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {
                 return javaTypeDescriptor.wrap(rs.getString(name), options);
             }

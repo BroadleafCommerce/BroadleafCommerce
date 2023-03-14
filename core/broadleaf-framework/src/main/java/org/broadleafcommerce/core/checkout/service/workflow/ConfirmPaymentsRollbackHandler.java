@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Rolls back all payments that have been processed or were confirmed in {@link ValidateAndConfirmPaymentActivity}.

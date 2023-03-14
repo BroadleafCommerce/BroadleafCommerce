@@ -41,12 +41,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityListeners;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -737,7 +736,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 Annotation[] items = attr.getAnnotations();
                 for (Annotation annotation : items) {
                     String typeName = annotation.getTypeName();
-                    if (typeName.equals(javax.persistence.Cache.class.getName())
+                    if (typeName.equals(jakarta.persistence.Cache.class.getName())
                             || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                         templateCache = annotation;
                         break;
@@ -757,7 +756,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     Annotation[] items = attr.getAnnotations();
                     for (Annotation annotation : items) {
                         String typeName = annotation.getTypeName();
-                        if (typeName.equals(javax.persistence.Cache.class.getName())
+                        if (typeName.equals(jakarta.persistence.Cache.class.getName())
                                 || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                             logger.debug("Stripping out previous Cache annotation at the class level - will merge into new EntityListeners");
                             // Since we are replacing the existing, we just drop the existing cache setting

@@ -63,9 +63,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author bpolster

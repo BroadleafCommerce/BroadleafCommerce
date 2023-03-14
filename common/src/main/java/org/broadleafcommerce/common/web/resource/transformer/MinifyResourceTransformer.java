@@ -27,7 +27,7 @@ import org.springframework.web.servlet.resource.ResourceTransformerChain;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A {@link org.springframework.web.servlet.resource.ResourceTransformer} that minifies
@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component("blMinifyResourceTransformer")
 public class MinifyResourceTransformer implements ResourceTransformer, Ordered {
 
-    @javax.annotation.Resource(name = "blResourceMinificationService")
+    @jakarta.annotation.Resource(name = "blResourceMinificationService")
     protected ResourceMinificationService minifyService;
 
     private int order = BroadleafResourceTransformerOrder.BLC_MINIFY_RESOURCE_TRANSFORMER;

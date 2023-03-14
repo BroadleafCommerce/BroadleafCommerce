@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.linkeddata.generator;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This linked data generator provides structured metadata relevant for a page's SEO.

@@ -22,8 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
+import org.hibernate.cache.spi.CacheImplementor;
+import org.hibernate.cache.spi.TimestampsCache;
 import org.hibernate.cache.spi.UpdateTimestampsCache;
-import org.hibernate.engine.spi.CacheImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.query.NativeQuery;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * The purpose for this class is to provide an alternate approach to an HQL UPDATE query for batch updates on Hibernate filtered
@@ -82,7 +83,7 @@ public class UpdateExecutor {
         List<Long[]> runs = buildRuns(ids);
         for (Long[] run : runs) {
             String queryString = String.format(template, buildInClauseTemplate(run.length));
-            NativeQuery<?> query = em.unwrap(Session.class).createSQLQuery(queryString);
+            NativeQuery<?> query = em.unwrap(Session.class).createNativeQuery(queryString);
             int counter = 1;
             if (!ArrayUtils.isEmpty(params)) {
                 for (Object param : params) {
@@ -125,7 +126,7 @@ public class UpdateExecutor {
         List<Long[]> runs = buildRuns(ids);
         for (Long[] run : runs) {
             String queryString = String.format(template, buildInClauseTemplate(run.length));
-            NativeQuery<?> query = em.unwrap(Session.class).createSQLQuery(queryString);
+            NativeQuery<?> query = em.unwrap(Session.class).createNativeQuery(queryString);
             //only check for null - an empty string is a valid value for tableSpace
             if (tableSpace != null) {
                 query.addSynchronizedQuerySpace(tableSpace);
@@ -162,14 +163,14 @@ public class UpdateExecutor {
         SharedSessionContractImplementor session = em.unwrap(SharedSessionContractImplementor.class);
         CacheImplementor hibernateCache = session.getFactory().getCache();
         for (Long id : ids) {
-            hibernateCache.evictEntity(entityType, id);
+            hibernateCache.evict(entityType, id);
         }
         //update the timestamp cache for the table so that queries will be refreshed
         PersistentClass metadata = HibernateMappingProvider.getMapping(entityType.getName());
         String tableName = metadata.getTable().getName();
-        UpdateTimestampsCache timestampsCache = hibernateCache.getUpdateTimestampsCache();
+        TimestampsCache timestampsCache = hibernateCache.getTimestampsCache();
         if (timestampsCache != null) {
-            timestampsCache.invalidate(new Serializable[]{tableName}, session);
+            timestampsCache.invalidate(new String[]{tableName}, session);
         }
     }
 

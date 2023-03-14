@@ -23,7 +23,7 @@ import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * {@code CategoryXrefDao} provides persistence access to the relationship

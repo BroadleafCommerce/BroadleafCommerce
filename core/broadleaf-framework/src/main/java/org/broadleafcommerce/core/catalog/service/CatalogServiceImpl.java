@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {

@@ -25,8 +25,8 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.offer.weave.LegacyOfferUses;
 import org.hibernate.annotations.Parent;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 /**
  * Holds the backwards compatibility field for uses. Also hold the backwards compatibility mutator implementations

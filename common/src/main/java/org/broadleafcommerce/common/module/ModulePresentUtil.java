@@ -26,7 +26,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * <p>

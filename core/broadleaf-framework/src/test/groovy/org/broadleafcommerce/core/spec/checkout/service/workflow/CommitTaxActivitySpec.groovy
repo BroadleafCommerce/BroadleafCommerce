@@ -17,12 +17,9 @@
  */
 package org.broadleafcommerce.core.spec.checkout.service.workflow
 
-import static org.junit.Assert.*
-
 import org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity
 import org.broadleafcommerce.core.order.domain.OrderImpl
 import org.broadleafcommerce.core.pricing.service.TaxService
-
 
 class CommitTaxActivitySpec extends BaseCheckoutActivitySpec {
 

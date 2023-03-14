@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This will check the availability and quantities (if applicable) all order items in checkout request.

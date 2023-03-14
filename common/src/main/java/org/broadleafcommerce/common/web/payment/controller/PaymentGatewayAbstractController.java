@@ -34,8 +34,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>Abstract controller that provides convenience methods and resource declarations to facilitate payment gateway
@@ -138,7 +138,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
      *
      * The assumption is that the implementing gateway's controller that extends this class
      * will have implemented a {@link org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService}
-     * with the ability to translate an {@link javax.servlet.http.HttpServletRequest} into a
+     * with the ability to translate an {@link jakarta.servlet.http.HttpServletRequest} into a
      * {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO} which will then be used by the framework
      * to create the appropriate order payments and transactions as well as invoke the checkout workflow
      * if configured to do so.

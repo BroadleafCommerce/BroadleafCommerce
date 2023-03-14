@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-
 /**
  * Modifies Username/EmailAddress fields based on the 'use.email.for.site.login' property
  *

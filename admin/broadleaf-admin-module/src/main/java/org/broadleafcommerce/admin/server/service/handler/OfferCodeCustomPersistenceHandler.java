@@ -31,8 +31,9 @@ import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 @Component("blOfferCodeCustomPersistenceHandler")
 public class OfferCodeCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {

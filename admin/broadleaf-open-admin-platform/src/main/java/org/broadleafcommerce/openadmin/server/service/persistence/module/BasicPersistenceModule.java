@@ -125,14 +125,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 import static org.broadleafcommerce.common.presentation.client.SupportedFieldType.BROADLEAF_ENUMERATION;
 
@@ -426,7 +426,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         fieldManager.setFieldValue(instance, property.getName(), null);
                                     }
                                 }
-                            } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
+                            } catch (ParentEntityPersistenceException | jakarta.validation.ValidationException e) {
                                 entityPersistenceException = e;
                                 cleanupFailedPersistenceAttempt(instance);
                                 break;

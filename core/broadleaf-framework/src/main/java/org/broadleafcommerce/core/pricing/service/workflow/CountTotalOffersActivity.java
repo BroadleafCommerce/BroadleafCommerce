@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This class is used in conjunction with the {@link DetermineOfferChangeActivity} to determine if the number

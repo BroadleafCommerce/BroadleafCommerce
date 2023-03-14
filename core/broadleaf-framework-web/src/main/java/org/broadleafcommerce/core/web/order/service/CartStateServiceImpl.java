@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Chris Kittrell (ckittrell)

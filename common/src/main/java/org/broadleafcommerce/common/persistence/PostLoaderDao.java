@@ -21,7 +21,7 @@ package org.broadleafcommerce.common.persistence;
  * Utility class for working with proxied entities.
  *
  * The {@link DefaultPostLoaderDao} in core delegates functionally to
- * {@link javax.persistence.EntityManager}, while more interesting
+ * {@link jakarta.persistence.EntityManager}, while more interesting
  * functionality is provided by the enterprise version.
  *
  * @see DefaultPostLoaderDao

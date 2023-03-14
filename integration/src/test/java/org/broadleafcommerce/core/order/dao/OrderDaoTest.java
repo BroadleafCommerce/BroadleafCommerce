@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class OrderDaoTest extends TestNGSiteIntegrationSetup {
 

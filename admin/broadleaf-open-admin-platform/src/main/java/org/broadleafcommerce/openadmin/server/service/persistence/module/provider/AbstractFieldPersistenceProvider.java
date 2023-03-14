@@ -27,8 +27,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 /**
  * @author Jeff Fischer

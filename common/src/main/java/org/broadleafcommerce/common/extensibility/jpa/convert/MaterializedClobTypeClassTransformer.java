@@ -35,11 +35,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.annotation.Resource;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
-
+import jakarta.annotation.Resource;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.MappedSuperclass;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;

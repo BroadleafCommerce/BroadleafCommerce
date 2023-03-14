@@ -21,7 +21,7 @@ package org.broadleafcommerce.common.payment.service;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>The purpose of this class, is to provide an API that will translate a web response

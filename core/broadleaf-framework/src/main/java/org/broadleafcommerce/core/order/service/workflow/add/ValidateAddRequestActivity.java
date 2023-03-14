@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Component("blValidateAddRequestActivity")
 public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {

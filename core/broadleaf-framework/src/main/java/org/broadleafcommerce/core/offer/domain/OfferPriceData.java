@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferPriceDataIdentifierType;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;

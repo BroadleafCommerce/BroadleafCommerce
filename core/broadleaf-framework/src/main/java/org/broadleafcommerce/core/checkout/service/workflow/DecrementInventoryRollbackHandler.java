@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Decrements inventory that was put on by the {@link DecrementInventoryActivity}

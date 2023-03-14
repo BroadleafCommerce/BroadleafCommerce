@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.service.discount;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

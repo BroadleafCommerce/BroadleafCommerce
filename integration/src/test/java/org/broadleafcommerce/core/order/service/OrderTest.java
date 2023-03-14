@@ -48,7 +48,7 @@ import org.testng.annotations.Test;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class OrderTest extends OrderBaseTest {
 

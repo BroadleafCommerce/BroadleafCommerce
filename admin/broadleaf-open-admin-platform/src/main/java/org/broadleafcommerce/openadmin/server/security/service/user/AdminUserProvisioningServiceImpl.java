@@ -27,15 +27,16 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityHelp
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * This component allows for the default provisioning of an AdminUser and roles in the Broadleaf database, based on the 

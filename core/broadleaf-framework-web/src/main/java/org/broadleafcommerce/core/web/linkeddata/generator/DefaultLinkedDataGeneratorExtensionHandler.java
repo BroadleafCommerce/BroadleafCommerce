@@ -19,8 +19,8 @@ package org.broadleafcommerce.core.web.linkeddata.generator;
 
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 /**
  * @author Nathan Moore (nathanmoore).

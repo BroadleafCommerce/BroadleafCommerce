@@ -23,7 +23,7 @@ import org.springframework.web.servlet.resource.VersionStrategy;
 
 import java.util.HashMap;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @Component("blVersionResourceResolverStrategyMap")
 public class BLVersionResourceResolverDefaultStrategyMap<T, V> extends HashMap<String, VersionStrategy> {

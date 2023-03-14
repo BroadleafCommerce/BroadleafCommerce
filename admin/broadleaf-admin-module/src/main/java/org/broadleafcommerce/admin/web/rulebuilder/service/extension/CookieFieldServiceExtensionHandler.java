@@ -26,7 +26,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldS
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Add configured cookies as fields to request-based rule builder.

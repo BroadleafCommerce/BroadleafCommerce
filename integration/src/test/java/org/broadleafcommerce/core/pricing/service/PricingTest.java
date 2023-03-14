@@ -71,7 +71,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class PricingTest extends TestNGSiteIntegrationSetup {

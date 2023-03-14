@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class CatalogTest extends TestNGSiteIntegrationSetup {

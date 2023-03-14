@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A {@link ResourceResolver} that replaces system properties in BLC-system-property.js 
@@ -59,7 +59,7 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
 
     private int order = BroadleafResourceResolverOrder.BLC_SYSTEM_PROPERTY_RESOURCE_RESOLVER;
 
-    @javax.annotation.Resource(name = "blBaseUrlResolver")
+    @jakarta.annotation.Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
 
     @Override

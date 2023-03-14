@@ -130,10 +130,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author Andre Azzolini (apazzolini)

@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Created by bpolster.

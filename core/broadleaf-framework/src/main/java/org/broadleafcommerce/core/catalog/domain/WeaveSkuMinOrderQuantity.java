@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 
 public class WeaveSkuMinOrderQuantity implements SkuMinOrderQuantity {
 

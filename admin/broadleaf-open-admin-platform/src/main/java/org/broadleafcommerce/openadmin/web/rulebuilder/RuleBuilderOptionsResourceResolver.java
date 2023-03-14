@@ -28,7 +28,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -43,7 +43,7 @@ public class RuleBuilderOptionsResourceResolver implements ResourceResolver {
     protected static final String RULE_BUILDER_OPTIONS_JS_PATH="admin/components/ruleBuilder-options.js";
 
 
-    @javax.annotation.Resource(name = "blRuleBuilderEnumOptionsExtensionListeners")
+    @jakarta.annotation.Resource(name = "blRuleBuilderEnumOptionsExtensionListeners")
     protected List<RuleBuilderEnumOptionsExtensionListener> listeners = new ArrayList<RuleBuilderEnumOptionsExtensionListener>();
 
     @Override

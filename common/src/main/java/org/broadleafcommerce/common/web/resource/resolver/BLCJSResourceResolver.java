@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A {@link ResourceResolver} that replaces the //BLC-SERVLET-CONTEXT and //BLC-SITE-BASEURL" 
@@ -61,7 +61,7 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
     private static final String BLC_JS_NAME = "BLC.js";
     protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    @javax.annotation.Resource(name = "blBaseUrlResolver")
+    @jakarta.annotation.Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
 
     private int order = BroadleafResourceResolverOrder.BLC_JS_RESOURCE_RESOLVER;

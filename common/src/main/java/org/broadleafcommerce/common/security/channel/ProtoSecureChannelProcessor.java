@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 /**
  * <p>Very similar to the {@link SecureChannelProcessor} except that instead of relying on only the HttpServletRequest this

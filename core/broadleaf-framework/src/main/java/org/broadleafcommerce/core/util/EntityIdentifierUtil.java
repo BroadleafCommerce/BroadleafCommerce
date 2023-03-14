@@ -34,7 +34,7 @@ public class EntityIdentifierUtil {
 
     
     /**
-     * Determine the field name with the @id annotation (javax.persistence.Id)
+     * Determine the field name with the @id annotation (jakarta.persistence.Id)
      * 
      * @param entity Object reference of the entity/bean where the property is to be searched
      * @return String representing the field name or null if the entity does not have an @Id annotation
@@ -44,7 +44,7 @@ public class EntityIdentifierUtil {
     }
 
     /**
-     * Determine the field name with the @id annotation (javax.persistence.Id)
+     * Determine the field name with the @id annotation (jakarta.persistence.Id)
      * 
      * @param clazz Class reference of the entity/bean where the property is to be searched
      * @return String representing the field name or null if the entity does not have an @Id annotation
@@ -96,10 +96,10 @@ public class EntityIdentifierUtil {
     }
 
     /**
-     * Determine the Reflection Field with the @id annotation (javax.persistence.Id)
+     * Determine the Reflection Field with the @id annotation (jakarta.persistence.Id)
      * This assumes the @Id annotation will be on the property
      * 
-     * @param entity Object reference of the entity/bean where the property is to be searched
+     * @param clazz Object reference of the entity/bean where the property is to be searched
      * @return String representing the field name or null if the entity does not have an @Id annotation
      */
     protected Field findIdentifierField(Class<?> clazz) {
@@ -107,7 +107,7 @@ public class EntityIdentifierUtil {
         for( Field field : fields ) {
             Annotation annotations[] = field.getDeclaredAnnotations();
             for( Annotation annotation : annotations ) {
-                if( annotation instanceof javax.persistence.Id )
+                if( annotation instanceof jakarta.persistence.Id )
                     return field;
             }
         }

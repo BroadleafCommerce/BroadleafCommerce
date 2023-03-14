@@ -50,16 +50,16 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
 
     private static final String GENERATED_RESOURCE_CACHE_NAME = "generatedResourceCache";
 
-    @javax.annotation.Resource(name="blStatisticsService")
+    @jakarta.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
-    @javax.annotation.Resource(name="blStreamingTransactionCapableUtil")
+    @jakarta.annotation.Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
-    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
+    @jakarta.annotation.Resource(name = "blResourceRequestExtensionManager")
     protected ResourceRequestExtensionManager extensionManager;
     
-    @javax.annotation.Resource(name = "blCacheManager")
+    @jakarta.annotation.Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
 
     protected Cache<String, Resource> generatedResourceCache;

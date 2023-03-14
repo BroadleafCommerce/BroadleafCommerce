@@ -35,7 +35,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A ResourceResolver that handles using the theme as part of the cache key and adds in
@@ -62,10 +62,10 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
 
     private final Cache cache;
 
-    @javax.annotation.Resource(name = "blSpringCacheManager")
+    @jakarta.annotation.Resource(name = "blSpringCacheManager")
     private CacheManager cacheManager;
 
-    @javax.annotation.Resource(name = "blBroadleafContextUtil")
+    @jakarta.annotation.Resource(name = "blBroadleafContextUtil")
     protected BroadleafContextUtil blcContextUtil;
     
     private static final String DEFAULT_CACHE_NAME = "blResourceCacheElements";

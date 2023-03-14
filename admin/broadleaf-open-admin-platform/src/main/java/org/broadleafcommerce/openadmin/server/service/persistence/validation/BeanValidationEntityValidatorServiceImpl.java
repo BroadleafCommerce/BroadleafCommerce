@@ -28,8 +28,8 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 /**
  * <p>Implementation of the {@link EntityValidatorService} that runs entities through JSR-303 validations. The default

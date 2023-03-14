@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 
 import java.util.Locale;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Test basic core translation use cases. Confirms core is configured correctly and operational.

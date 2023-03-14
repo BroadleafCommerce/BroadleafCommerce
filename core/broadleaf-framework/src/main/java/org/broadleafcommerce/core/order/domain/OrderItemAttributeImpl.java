@@ -29,8 +29,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.lang.reflect.Method;
+
+import jakarta.persistence.*;
 
 /**
  * Arbitrary attributes to add to an order-item.

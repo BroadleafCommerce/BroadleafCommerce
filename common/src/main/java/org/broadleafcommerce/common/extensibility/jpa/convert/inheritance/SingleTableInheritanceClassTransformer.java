@@ -35,6 +35,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import javassist.ClassPool;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -43,11 +47,6 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.IntegerMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 
 /**
  * 
@@ -134,7 +133,7 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
                 }
                 Annotation inheritance = new Annotation(Inheritance.class.getName(), constantPool);
                 ClassPool pool = ClassPool.getDefault();
-                pool.importPackage("javax.persistence");
+                pool.importPackage("jakarta.persistence");
                 pool.importPackage("java.lang");
                 EnumMemberValue strategy = (EnumMemberValue) Annotation.createMemberValue(constantPool, pool.makeClass("InheritanceType"));
                 strategy.setType(InheritanceType.class.getName());

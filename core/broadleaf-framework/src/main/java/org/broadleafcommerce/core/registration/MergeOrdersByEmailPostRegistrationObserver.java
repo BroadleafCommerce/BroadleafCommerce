@@ -28,10 +28,11 @@ import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObser
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 @Component("blMergeOrdersByEmailPostRegistrationObserver")
 public class MergeOrdersByEmailPostRegistrationObserver implements PostRegistrationObserver {

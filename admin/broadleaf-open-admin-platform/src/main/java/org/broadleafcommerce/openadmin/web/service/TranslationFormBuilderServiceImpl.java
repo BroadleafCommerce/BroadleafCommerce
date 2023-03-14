@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Service("blTranslationFormBuilderService")
 public class TranslationFormBuilderServiceImpl implements TranslationFormBuilderService {

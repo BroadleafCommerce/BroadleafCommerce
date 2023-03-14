@@ -20,11 +20,12 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.core.search.domain.SearchSynonym;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 @Repository("blSearchSynonymDao")
 public class SearchSynonymDaoImpl implements SearchSynonymDao {

@@ -70,7 +70,7 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class CheckoutTest extends TestNGSiteIntegrationSetup {
     

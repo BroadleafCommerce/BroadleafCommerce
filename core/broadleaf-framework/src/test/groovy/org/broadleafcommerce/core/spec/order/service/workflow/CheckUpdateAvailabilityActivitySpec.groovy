@@ -21,15 +21,11 @@ import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
-import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException
-import org.broadleafcommerce.core.inventory.service.type.InventoryType
 import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.workflow.CheckUpdateAvailabilityActivity
-
-
 
 /*
  * 1a) orderItem instanceOf DiscreteOrderItem

@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.notification.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -70,7 +70,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * An implementation of SearchService that uses Solr.

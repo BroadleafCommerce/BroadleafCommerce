@@ -21,18 +21,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessorImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Enums;
-
 import java.math.RoundingMode;
-import java.util.Arrays;
-import javax.annotation.PostConstruct;
+
+import jakarta.annotation.PostConstruct;
 
 @Service("blPromotableItemFactory")
 public class PromotableItemFactoryImpl implements PromotableItemFactory {

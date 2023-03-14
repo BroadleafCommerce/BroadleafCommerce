@@ -52,7 +52,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Service for handeling security with Ajax components.  Serves two functions.

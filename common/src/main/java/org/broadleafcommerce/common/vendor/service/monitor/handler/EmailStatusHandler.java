@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.vendor.service.monitor.StatusHandler;
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class EmailStatusHandler implements StatusHandler {
 

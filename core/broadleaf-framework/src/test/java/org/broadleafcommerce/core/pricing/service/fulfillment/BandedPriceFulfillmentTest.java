@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.pricing.service.fulfillment;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -48,6 +47,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.TestCase;
 
 /**
  * 

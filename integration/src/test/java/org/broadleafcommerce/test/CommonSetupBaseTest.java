@@ -54,7 +54,7 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
 

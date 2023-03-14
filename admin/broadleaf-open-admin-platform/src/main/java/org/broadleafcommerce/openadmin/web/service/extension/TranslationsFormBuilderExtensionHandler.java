@@ -29,8 +29,8 @@ import org.broadleafcommerce.openadmin.web.service.AbstractFormBuilderExtensionH
 import org.broadleafcommerce.openadmin.web.service.FormBuilderExtensionManager;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 @Service("blTranslationsFormBuilderExtensionHandler")
 public class TranslationsFormBuilderExtensionHandler extends AbstractFormBuilderExtensionHandler {

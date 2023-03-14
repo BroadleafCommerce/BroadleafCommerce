@@ -27,7 +27,7 @@ import org.springframework.transaction.TransactionStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.EntityType;
 
 /**
  * Utility class that can be substituted for StreamingTransactionCapableUtil to allow targeted testing of

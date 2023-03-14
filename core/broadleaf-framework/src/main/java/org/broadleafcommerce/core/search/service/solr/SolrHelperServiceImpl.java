@@ -96,8 +96,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.jms.IllegalStateException;
+import jakarta.annotation.Resource;
 
 /**
  * Provides utility methods that are used by other Solr service classes

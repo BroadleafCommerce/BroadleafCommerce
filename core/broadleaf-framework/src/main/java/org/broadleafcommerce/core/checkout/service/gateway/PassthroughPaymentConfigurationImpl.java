@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.checkout.service.gateway;
 
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayConfiguration;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.springframework.stereotype.Service;
 
 /**

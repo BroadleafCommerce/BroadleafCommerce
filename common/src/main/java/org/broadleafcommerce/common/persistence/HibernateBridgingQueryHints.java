@@ -118,7 +118,7 @@ public class HibernateBridgingQueryHints {
     /**
      * Apply a JPA query timeout, which is defined in <b>milliseconds</b>.
      */
-    public static final String TIMEOUT_JPA = "javax.persistence.query.timeout";
+    public static final String TIMEOUT_JPA = "jakarta.persistence.query.timeout";
 
     /**
      * All constants within this inner class only appear in Hibernate 5.2+ (Broadleaf 6.0+) and
@@ -130,9 +130,9 @@ public class HibernateBridgingQueryHints {
 
         /**
          * Available to apply lock mode to a native SQL query since JPA requires that
-         * {@link javax.persistence.Query#setLockMode} throw an IllegalStateException if called for a native query.
+         * {@link jakarta.persistence.Query#setLockMode} throw an IllegalStateException if called for a native query.
          * <p/>
-         * Accepts a {@link javax.persistence.LockModeType} or a {@link org.hibernate.LockMode}
+         * Accepts a {@link jakarta.persistence.LockModeType} or a {@link org.hibernate.LockMode}
          */
         public static final String NATIVE_LOCKMODE = "org.hibernate.lockMode";
 
@@ -143,14 +143,14 @@ public class HibernateBridgingQueryHints {
          * Note: Currently, attributes that are not specified are treated as FetchType.LAZY or FetchType.EAGER depending
          * on the attribute's definition in metadata, rather than forcing FetchType.LAZY.
          */
-        public static final String FETCHGRAPH = "javax.persistence.fetchgraph";
+        public static final String FETCHGRAPH = "jakarta.persistence.fetchgraph";
 
         /**
          * Hint providing a "loadgraph" EntityGraph.  Attributes explicitly specified as AttributeNodes are treated as
          * FetchType.EAGER (via join fetch or subsequent select).  Attributes that are not specified are treated as
          * FetchType.LAZY or FetchType.EAGER depending on the attribute's definition in metadata
          */
-        public static final String LOADGRAPH = "javax.persistence.loadgraph";
+        public static final String LOADGRAPH = "jakarta.persistence.loadgraph";
 
         /**
          * Hint to enable/disable the follow-on-locking mechanism provided by {@link org.hibernate.dialect.Dialect#useFollowOnLocking(QueryParameters)}.

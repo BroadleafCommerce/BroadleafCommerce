@@ -22,9 +22,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
 import java.util.Iterator;
 import java.util.Set;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Nick Crum ncrum

@@ -43,7 +43,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 /**
  * Many components in the Broadleaf Framework can benefit from creating and manipulating temporary files as well
  * as storing and accessing files in a remote repository (such as AmazonS3).

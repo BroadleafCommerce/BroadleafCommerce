@@ -31,8 +31,8 @@ import org.springframework.web.servlet.resource.VersionStrategy;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Wraps Spring's {@link VersionResourceResolver} but adds in support to disable with 
@@ -56,10 +56,10 @@ public class BroadleafVersionResourceResolver extends VersionResourceResolver im
     @Value("${resource.versioning.enabled:true}")
     protected boolean resourceVersioningEnabled;
 
-    @javax.annotation.Resource(name = "blResourceBundlingService")
+    @jakarta.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
 
-    @javax.annotation.Resource(name = "blVersionResourceResolverStrategyMap")
+    @jakarta.annotation.Resource(name = "blVersionResourceResolverStrategyMap")
     protected Map<String, VersionStrategy> versionStrategyMap;
 
     @Override

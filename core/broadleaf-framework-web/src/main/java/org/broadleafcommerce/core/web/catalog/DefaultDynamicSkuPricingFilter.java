@@ -25,8 +25,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashMap;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Register this filter via Spring DelegatingFilterProxy, or register your own implementation

@@ -19,8 +19,9 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import jakarta.annotation.Resource;
 
 /**
  * Factory class that returns the appropriate RuleBuilderFieldService

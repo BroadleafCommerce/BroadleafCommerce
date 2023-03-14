@@ -21,8 +21,8 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 public interface OfferCodeDaoExtensionHandler extends ExtensionHandler {
 
@@ -33,7 +33,7 @@ public interface OfferCodeDaoExtensionHandler extends ExtensionHandler {
      * ExtensionResultStatusType.NOT_HANDLED.
      * 
      * ExtensionResultStatusType.HANDLED or ExtensionResultStatusType.HANDLED_STOP is returned, 
-     * the resultHolder must be set with a valid instance of javax.persistence.Query. The cacheable and 
+     * the resultHolder must be set with a valid instance of jakarta.persistence.Query. The cacheable and
      * cacheRegion properties are hints and may be ignored by the implementor.
      * 
      * 

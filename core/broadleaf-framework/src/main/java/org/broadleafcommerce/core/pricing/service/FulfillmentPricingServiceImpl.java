@@ -28,10 +28,11 @@ import org.broadleafcommerce.core.pricing.service.fulfillment.provider.Fulfillme
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import jakarta.annotation.Resource;
 
 @Service("blFulfillmentPricingService")
 public class FulfillmentPricingServiceImpl implements FulfillmentPricingService {

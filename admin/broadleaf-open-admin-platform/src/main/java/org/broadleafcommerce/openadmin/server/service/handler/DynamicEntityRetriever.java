@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.openadmin.server.service.handler;
 
+import org.broadleafcommerce.openadmin.dto.Entity;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.broadleafcommerce.openadmin.dto.Entity;
 
 /**
  * @author Jeff Fischer

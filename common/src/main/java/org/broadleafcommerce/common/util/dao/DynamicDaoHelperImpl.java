@@ -43,10 +43,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-
-import javassist.util.proxy.Proxy;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
 import javassist.util.proxy.ProxyFactory;
 
 
@@ -247,7 +245,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         Map<String, Object> response = new HashMap<>();
         SessionFactory sessionFactory = entityManager.unwrap(Session.class).getSessionFactory();
-        boolean isEntity = sessionFactory.getMetamodel().entity(entityClass.getName()) != null;
+        boolean isEntity = sessionFactory.getMetamodel().entity(entityClass) != null;
         if (!isEntity) {
             return null;
         }

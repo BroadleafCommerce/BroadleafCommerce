@@ -19,8 +19,8 @@ package org.broadleafcommerce.common.security.util;
 
 import org.owasp.esapi.ESAPI;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface CookieUtils {
     String CUSTOMER_COOKIE_NAME = "customerId";

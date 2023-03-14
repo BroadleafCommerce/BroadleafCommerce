@@ -36,8 +36,8 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 
 /**
  * Validates that a rule can be parsed out successfully. Most of this comes from {@link RuleFieldPersistenceProvider}.

@@ -20,23 +20,27 @@ package org.broadleafcommerce.common.security.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component("blCookieUtils")
 public class GenericCookieUtilsImpl implements CookieUtils {
+
     private static final Log LOG = LogFactory.getLog(GenericCookieUtilsImpl.class);
-    
     protected final String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
+    @Resource
+    protected SystemPropertiesService systemPropertiesService;
 
     @Override
     public Boolean shouldUseSecureCookieIfApplicable() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("cookies.use.secure", false);
+        return systemPropertiesService.resolveBooleanSystemProperty("cookies.use.secure", false);
     }
     
     @Override

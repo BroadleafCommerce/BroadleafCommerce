@@ -27,7 +27,7 @@ import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 
 /**

@@ -26,9 +26,17 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * The idea of this class if to iterate over props of the passed class and if found prop with annotation @OneToMany

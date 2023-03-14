@@ -17,11 +17,9 @@
  */
 package org.broadleafcommerce.browsertest.spec
 
+import geb.spock.GebSpec
 import org.broadleafcommerce.browsertest.page.AdminLoginPage
 import org.broadleafcommerce.browsertest.page.AdminPage
-
-import geb.spock.GebSpec
-
 
 class OpenAdminSpec extends GebSpec {
 

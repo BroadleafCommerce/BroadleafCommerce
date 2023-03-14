@@ -23,7 +23,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Convenient class to get the active customer from the current request. This state is kept up-to-date in regards to the database

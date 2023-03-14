@@ -24,7 +24,7 @@ import org.broadleafcommerce.test.TestNGAdminIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class AdminRoleTest extends TestNGAdminIntegrationSetup {
     @Resource

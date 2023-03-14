@@ -24,8 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import jakarta.annotation.Resource;
 
 @Component("blCustomerPhoneValidator")
 public class CustomerPhoneValidator implements Validator {

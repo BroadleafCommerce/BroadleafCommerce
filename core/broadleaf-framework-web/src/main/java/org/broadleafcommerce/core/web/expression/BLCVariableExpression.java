@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Exposes "blc" to expressions to the Thymeleaf expression context.

@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.util;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+
 import java.util.Locale;
 
 public class AbstractBroadleafMergeResourceExtensionHandler extends AbstractExtensionHandler implements BroadleafMergeResourceExtensionHandler {

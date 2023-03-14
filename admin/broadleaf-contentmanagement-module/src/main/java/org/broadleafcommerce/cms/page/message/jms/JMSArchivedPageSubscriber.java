@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.cms.page.message.jms;
 
-import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-
 import org.broadleafcommerce.cms.page.service.PageService;
+
+import jakarta.annotation.Resource;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.TextMessage;
 
 /**
  * Receives JMS message with a String that indicates the cache key

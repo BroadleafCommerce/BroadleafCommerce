@@ -23,7 +23,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Provides methods that facilitate interactions with SearchFacetDTOs and SearchFacetResultDTOs

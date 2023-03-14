@@ -28,8 +28,9 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)

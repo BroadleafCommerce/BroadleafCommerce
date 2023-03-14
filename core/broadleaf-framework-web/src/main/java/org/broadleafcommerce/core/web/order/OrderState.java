@@ -23,7 +23,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.HashMap;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This class is used as a request-scope container for the current

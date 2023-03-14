@@ -28,7 +28,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Component("blUdateOrderMultishipOptionActivity")
 public class UpdateOrderMultishipOptionActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {

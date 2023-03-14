@@ -40,10 +40,10 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.TableGenerator;
-import javax.persistence.metamodel.EntityType;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.metamodel.EntityType;
 
 /**
  * Detect inconsistencies between the values in the SEQUENCE_GENERATOR and the primary

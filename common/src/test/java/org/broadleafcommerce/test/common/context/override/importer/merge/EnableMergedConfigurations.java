@@ -18,6 +18,7 @@
 package org.broadleafcommerce.test.common.context.override.importer.merge;
 
 import org.springframework.context.annotation.Import;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

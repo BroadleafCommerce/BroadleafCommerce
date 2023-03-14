@@ -34,7 +34,7 @@ import org.springframework.web.servlet.resource.ResourceTransformerChain;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Wraps Spring's {@link CachingResourceResolver} but adds in support to disable with 
@@ -51,7 +51,7 @@ public class BroadleafCachingResourceTransformer extends CachingResourceTransfor
     protected static final Log LOG = LogFactory.getLog(BroadleafCachingResourceTransformer.class);
     private int order = BroadleafResourceTransformerOrder.BLC_CACHE_RESOURCE_TRANSFORMER;
     
-    @javax.annotation.Resource(name = "blSpringCacheManager")
+    @jakarta.annotation.Resource(name = "blSpringCacheManager")
     private CacheManager cacheManager;
     
     private static final String DEFAULT_CACHE_NAME = "blResourceTransformerCacheElements";

@@ -22,10 +22,9 @@ package org.broadleafcommerce.test
 
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest
+import spock.lang.Specification
 
 import javax.annotation.Resource
-
-import spock.lang.Specification
 
 /**
  * 

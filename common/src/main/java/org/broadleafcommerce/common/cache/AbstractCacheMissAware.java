@@ -30,9 +30,10 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+
+import jakarta.annotation.Resource;
 
 
 /**

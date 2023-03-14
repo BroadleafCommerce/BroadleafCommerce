@@ -25,8 +25,8 @@ import org.springframework.core.env.Environment;
 
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 public class XssRequestWrapper extends HttpServletRequestWrapper {
 

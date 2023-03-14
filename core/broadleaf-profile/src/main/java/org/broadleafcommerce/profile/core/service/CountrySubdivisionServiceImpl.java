@@ -21,8 +21,10 @@ import org.broadleafcommerce.profile.core.dao.CountrySubdivisionDao;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)
