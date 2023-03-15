@@ -24,14 +24,12 @@ import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.cache.spi.CacheImplementor;
 import org.hibernate.cache.spi.TimestampsCache;
-import org.hibernate.cache.spi.UpdateTimestampsCache;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.LongType;
 import org.hibernate.type.Type;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

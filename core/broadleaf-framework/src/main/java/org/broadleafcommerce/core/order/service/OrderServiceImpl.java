@@ -426,7 +426,7 @@ public class OrderServiceImpl implements OrderService {
                     extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
                 }
                 if (!autoFlushSaveCart) {
-                    session.setFlushMode(current);
+                    session.setFlushMode(current.toJpaFlushMode());
                 }
                 TransactionUtils.finalizeTransaction(status, transactionManager, false);
             } catch (RuntimeException ex) {
