@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.hibernate.Session;
 import org.hibernate.cache.spi.CacheImplementor;
 import org.hibernate.cache.spi.TimestampsCache;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.jpa.TypedParameterValue;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.LongType;
@@ -85,20 +86,20 @@ public class UpdateExecutor {
             int counter = 1;
             if (!ArrayUtils.isEmpty(params)) {
                 for (Object param : params) {
-                    query.setParameter(counter, param, types[counter - 1]);
+                    query.setParameter(counter, new TypedParameterValue(types[counter - 1], param));
                     counter++;
                 }
             }
             for (Long id : run) {
-                query.setParameter(counter, id, LongType.INSTANCE);
+                query.setParameter(counter, new TypedParameterValue(LongType.INSTANCE, id));
                 counter++;
             }
             FlushMode mode = em.unwrap(Session.class).getHibernateFlushMode();
-            em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+            em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL.toJpaFlushMode());
             try {
                 response += query.executeUpdate();
             } finally {
-                em.unwrap(Session.class).setFlushMode(mode);
+                em.unwrap(Session.class).setFlushMode(mode.toJpaFlushMode());
             }
         }
         return response;
@@ -132,20 +133,20 @@ public class UpdateExecutor {
             int counter = 1;
             if (!ArrayUtils.isEmpty(params)) {
                 for (Object param : params) {
-                    query.setParameter(counter, param, types[counter - 1]);
+                    query.setParameter(counter, new TypedParameterValue(types[counter - 1], param));
                     counter++;
                 }
             }
             for (Long id : run) {
-                query.setParameter(counter, id, LongType.INSTANCE);
+                query.setParameter(counter, new TypedParameterValue(LongType.INSTANCE, id));
                 counter++;
             }
             FlushMode mode = em.unwrap(Session.class).getHibernateFlushMode();
-            em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+            em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL.toJpaFlushMode());
             try {
                 response += query.executeUpdate();
             } finally {
-                em.unwrap(Session.class).setFlushMode(mode);
+                em.unwrap(Session.class).setFlushMode(mode.toJpaFlushMode());
             }
         }
         return response;
@@ -189,11 +190,11 @@ public class UpdateExecutor {
      * to guarantee compatibility across platforms (i.e. some db platforms will throw a error if there are more
      * than a 1000 entries in an sql IN clause).
      *
-     * @param ids
-     * @return
+     * @param ids all ids
+     * @return list of bunch ids
      */
     private static List<Long[]> buildRuns(List<Long> ids) {
-        List<Long[]> runs = new ArrayList<Long[]>();
+        List<Long[]> runs = new ArrayList<>();
         Long[] all = ids.toArray(new Long[ids.size()]);
         int test = all.length;
         int pos = 0;
