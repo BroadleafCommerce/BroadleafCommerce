@@ -305,7 +305,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                         iterator.remove();
                         break;
                     }
-                    Optional<CategoryXref> parentXref = parentCategory.getAllParentCategoryXrefs().stream().filter(CategoryXref::getDefaultReference).findFirst();
+                    Optional<CategoryXref> parentXref = parentCategory.getAllParentCategoryXrefs().stream()
+                            .filter(xref -> xref.getDefaultReference() != null && xref.getDefaultReference()).findFirst();
                     parentCategory = parentXref.map(CategoryXref::getCategory).orElse(null);
                 }
             } else if(defaultParent.isPresent() && !defaultParent.get().getCategory().isActive()) {
