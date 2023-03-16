@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -51,6 +52,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * @author Phillip Verheyden
@@ -93,7 +95,7 @@ public class SkuFeeImpl implements SkuFee {
     protected Boolean taxable = Boolean.FALSE;
     
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "EXPRESSION", length = Integer.MAX_VALUE - 1)
     protected String expression;
 

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import jakarta.persistence.FlushModeType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -412,7 +413,7 @@ public class OrderServiceImpl implements OrderService {
             status = TransactionUtils.createTransaction("saveOrder",
                                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             Session session = em.unwrap(Session.class);
-            FlushMode current = session.getHibernateFlushMode();
+            FlushModeType current = session.getFlushMode();
             try {
                 if (!autoFlushSaveCart) {
                     //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
@@ -434,7 +435,7 @@ public class OrderServiceImpl implements OrderService {
                 throw ex;
             } finally {
                 if (!autoFlushSaveCart && !session.getFlushMode().equals(current)) {
-                    session.setHibernateFlushMode(current);
+                    session.setFlushMode(current);
                 }
             }
         }

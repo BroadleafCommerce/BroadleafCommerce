@@ -34,6 +34,8 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.MapKeyJdbcType;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
@@ -58,6 +60,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * @author Jerry Ocanas (jocanas)
@@ -112,7 +115,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     
     @Column(name = "RAW_RESPONSE", length = Integer.MAX_VALUE - 1)
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Raw_Response")
     protected String rawResponse;
     
@@ -140,9 +143,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @ElementCollection
     @MapKeyColumn(name="FIELD_NAME")
-    @MapKeyType(@Type(type = "java.lang.String"))
+    @MapKeyJdbcType(LongVarcharJdbcType.class)
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
     @BatchSize(size = 50)
