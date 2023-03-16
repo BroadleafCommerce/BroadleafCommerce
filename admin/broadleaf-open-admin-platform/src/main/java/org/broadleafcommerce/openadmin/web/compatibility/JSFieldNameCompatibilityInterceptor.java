@@ -23,8 +23,8 @@ import org.broadleafcommerce.openadmin.server.service.JSCompatibilityHelper;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * @author Jeff Fischer
  */
-public class JSFieldNameCompatibilityInterceptor extends HandlerInterceptorAdapter {
+public class JSFieldNameCompatibilityInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView

@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -38,6 +39,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * Created by bpolster.
@@ -78,7 +80,7 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     @AdminPresentation
     @Column (name = "LOB_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
     protected String lobValue;
 
     @Override

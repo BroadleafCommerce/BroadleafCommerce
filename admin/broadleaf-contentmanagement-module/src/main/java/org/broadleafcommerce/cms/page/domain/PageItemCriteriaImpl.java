@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -41,6 +42,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * 
@@ -78,7 +80,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria, ProfileEntity {
     protected Integer quantity;
     
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "ORDER_ITEM_MATCH_RULE", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Order_Item_Match_Rule", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;

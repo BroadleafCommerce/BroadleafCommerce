@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -37,6 +38,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 
 /**
@@ -70,7 +72,7 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
     protected Long id;
     
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
     protected String matchRule;
 

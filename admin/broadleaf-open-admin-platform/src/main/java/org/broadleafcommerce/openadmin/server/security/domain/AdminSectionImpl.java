@@ -55,7 +55,7 @@ import jakarta.persistence.ManyToOne;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ADMIN_SECTION")
+@Table(appliesTo = "BLC_ADMIN_SECTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
 @AdminPresentationClass(friendlyName = "AdminSectionImpl_baseAdminSection")
 @DirectCopyTransform({

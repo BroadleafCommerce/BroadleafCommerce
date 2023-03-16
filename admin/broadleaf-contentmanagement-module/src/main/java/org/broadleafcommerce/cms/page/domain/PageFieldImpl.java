@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -42,6 +43,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * Created by bpolster.
@@ -83,7 +85,7 @@ public class PageFieldImpl implements PageField, ProfileEntity {
 
     @Column(name = "LOB_VALUE", length = Integer.MAX_VALUE-1)
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
     @AdminPresentation
     protected String lobValue;
 

@@ -27,7 +27,7 @@ import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfigura
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
@@ -41,8 +41,9 @@ public class NonAutoconfigMultiPartConfiguration {
     @Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     @ConditionalOnMissingBean
     public MultipartResolver multipartResolver(Environment env) {
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(env.getProperty("asset.server.max.uploadable.file.size", long.class, StaticAssetStorageServiceImpl.DEFAULT_ASSET_UPLOAD_SIZE));
+        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
+//TODO need to move it to the spring property
+//        resolver.setMaxUploadSize(env.getProperty("asset.server.max.uploadable.file.size", long.class, StaticAssetStorageServiceImpl.DEFAULT_ASSET_UPLOAD_SIZE));
         return resolver;
     }
 }

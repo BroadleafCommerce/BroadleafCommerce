@@ -160,11 +160,13 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             bundleUrl = "/" + bundleUrl;
         }
 
-        HttpServletRequest request = context.getRequest();
+        
+        //TODO update presentation
+//        HttpServletRequest request = context.getRequest();
         String contextPath = "";
-        if (request != null) {
-            contextPath = request.getContextPath();
-        }
+//        if (request != null) {
+//            contextPath = request.getContextPath();
+//        }
         if (StringUtils.isNotEmpty(contextPath)) {
             bundleUrl = contextPath + bundleUrl;
         }
