@@ -36,7 +36,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Table;
 
 /**
  * The idea of this class if to iterate over props of the passed class and if found prop with annotation @OneToMany

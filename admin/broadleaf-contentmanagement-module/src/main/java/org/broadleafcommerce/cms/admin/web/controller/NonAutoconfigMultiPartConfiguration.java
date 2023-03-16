@@ -15,12 +15,8 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- *
- */
 package org.broadleafcommerce.cms.admin.web.controller;
 
-import org.broadleafcommerce.cms.file.service.StaticAssetStorageServiceImpl;
 import org.broadleafcommerce.common.config.PostAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;

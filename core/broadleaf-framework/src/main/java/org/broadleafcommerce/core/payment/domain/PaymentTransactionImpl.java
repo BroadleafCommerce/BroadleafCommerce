@@ -36,10 +36,9 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.MapKeyJdbcType;
-import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -60,7 +59,6 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * @author Jerry Ocanas (jocanas)

@@ -70,7 +70,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -102,7 +102,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * @author bTaylor

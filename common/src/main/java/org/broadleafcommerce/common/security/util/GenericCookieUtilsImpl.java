@@ -21,8 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;

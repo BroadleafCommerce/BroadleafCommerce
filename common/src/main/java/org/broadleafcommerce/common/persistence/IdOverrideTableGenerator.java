@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.persistence;
 
-import org.apache.commons.collections.MapUtils;
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.enhanced.TableGenerator;

@@ -84,7 +84,7 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
         try {
             return query.getResultList();
         } catch (NoResultException e) {
-            return new ArrayList<URLHandler>();
+            return new ArrayList<>();
         }
     }
 

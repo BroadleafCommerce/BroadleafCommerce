@@ -67,7 +67,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -110,7 +110,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a

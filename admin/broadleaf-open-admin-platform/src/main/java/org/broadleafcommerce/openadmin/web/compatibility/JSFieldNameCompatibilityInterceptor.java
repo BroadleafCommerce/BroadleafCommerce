@@ -37,8 +37,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JSFieldNameCompatibilityInterceptor implements HandlerInterceptor {
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView
-            modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
         if (modelAndView != null) {
             Entity entity = (Entity) modelAndView.getModelMap().get("entity");
             EntityForm entityForm = (EntityForm) modelAndView.getModelMap().get("entityForm");

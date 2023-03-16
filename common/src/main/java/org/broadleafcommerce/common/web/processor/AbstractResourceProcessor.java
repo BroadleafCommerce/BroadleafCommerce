@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An abstract tag replacement processor that provides methods to help get resource/bundle information

@@ -38,13 +38,10 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.MapKeyJdbcType;
-import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +61,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
