@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.reflect.ConstructorUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.springframework.beans.BeanUtils;
 

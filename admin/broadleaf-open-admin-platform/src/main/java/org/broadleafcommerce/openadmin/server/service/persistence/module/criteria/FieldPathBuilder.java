@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.hibernate.internal.SessionFactoryImpl;

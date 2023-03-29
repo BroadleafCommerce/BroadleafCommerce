@@ -18,7 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -173,7 +173,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 currentProperty = property;
                 property.setRawValue(property.getValue());
                 property.setValue(exploitProtectionService.cleanStringWithResults(property.getValue()));
-                property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
+                property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml4(property.getValue()));
             } catch (CleanStringException e) {
                 StringBuilder sb = new StringBuilder();
                 for (int j = 0; j < e.getCleanResults().getNumberOfErrors(); j++) {

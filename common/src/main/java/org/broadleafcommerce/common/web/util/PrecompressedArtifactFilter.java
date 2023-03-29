@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.web.util;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.web.filter.GenericFilterBean;

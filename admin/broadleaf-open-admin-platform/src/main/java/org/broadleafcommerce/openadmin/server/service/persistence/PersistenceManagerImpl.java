@@ -268,7 +268,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         try {
             Class<?> clazz = Class.forName(entityClass);
             Class<?>[] entities = getUpDownInheritance(clazz);
-            if (!org.apache.commons.lang.ArrayUtils.isEmpty(entities)) {
+            if (!ArrayUtils.isEmpty(entities)) {
                 Map<String, Object> idData = getDynamicEntityDao().getIdMetadata(entities[0]);
                 if (idData != null) {
                     response = (String) idData.get("name");

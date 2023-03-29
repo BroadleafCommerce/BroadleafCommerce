@@ -39,7 +39,7 @@
     </named-query>
     
     <named-query name="BC_BATCH_UPDATE_MODULE_CONFIG_DEFAULT" >
-        <query>UPDATE org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+        <query>UPDATE org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration config
                SET config.isDefault = false
                WHERE config.configType = :configType
         </query>

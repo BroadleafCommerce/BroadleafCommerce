@@ -20,10 +20,10 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-    
+
     <!-- Package scanning for @Configuration classes that have Broadleaf @Bean overrides. This ensures
         that client-based beans can override any Broadleaf beans defined in XML, component scanning, or @Bean methods -->
     <import resource="autoconfiguration-overrides.xml"/>
-    <context:component-scan base-package="org.broadleafoverrides.admin.config" />
-    
+    <context:component-scan base-package="org.broadleafoverrides.admin.config"/>
+
 </beans>

@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.server.util;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.dto.override.GroupMetadataOverride;
 import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;

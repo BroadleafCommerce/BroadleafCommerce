@@ -20,20 +20,19 @@
  */
 package org.broadleafcommerce.test
 
+import jakarta.annotation.Resource
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest
 import spock.lang.Specification
 
-import javax.annotation.Resource
-
 /**
- * 
- * 
+ *
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @BroadleafSiteIntegrationTest
 class SpockExampleTest extends Specification {
-    
+
     @Resource
     private CatalogService catalogService
 

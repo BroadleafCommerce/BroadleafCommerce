@@ -58,7 +58,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=512m ${surefire.argLine}</argLine>
+                            <argLine>-Xmx1024m ${surefire.argLine}</argLine>
                         </configuration>
                     </execution>
                 </executions>
@@ -190,7 +190,7 @@
                  caution as tests will likely fail with deadlocks, etc -->
             <!-- If you want to use TestNG elsewhere, you should be using the latest version
                 and not use this version -->
-            <version>6.1</version>
+            <version>7.7.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

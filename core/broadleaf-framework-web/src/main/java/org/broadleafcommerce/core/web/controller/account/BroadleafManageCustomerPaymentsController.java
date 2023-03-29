@@ -18,7 +18,7 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
 import org.broadleafcommerce.core.web.controller.account.validator.AccountPaymentInfoFormValidator;

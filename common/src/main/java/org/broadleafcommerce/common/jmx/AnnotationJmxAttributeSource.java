@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.jmx;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jmx.export.metadata.InvalidMetadataException;
 import org.springframework.jmx.export.metadata.ManagedResource;
 

@@ -65,12 +65,6 @@ public class StatusExposingServletResponse extends HttpServletResponseWrapper {
         this.httpStatus = SC_OK;
     }
 
-    @Override
-    public void setStatus(int status, String string) {
-        super.setStatus(status, string);
-        this.httpStatus = status;
-    }
-
     public int getStatus() {
         return httpStatus;
     }

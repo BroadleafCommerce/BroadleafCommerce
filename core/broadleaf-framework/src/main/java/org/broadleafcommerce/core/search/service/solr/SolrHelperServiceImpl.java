@@ -21,7 +21,7 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -437,7 +437,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if(propertyValueInternal instanceof String){
             String enabled = environment.getProperty("exploitProtection.xssEnabled", "false");
             if(Boolean.parseBoolean(enabled)){
-                return StringEscapeUtils.unescapeHtml((String) propertyValueInternal);
+                return StringEscapeUtils.unescapeHtml4((String) propertyValueInternal);
             }
         }
         return propertyValueInternal;

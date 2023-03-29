@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /**
  * @author Andre Azzolini (apazzolini)

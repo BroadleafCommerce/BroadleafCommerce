@@ -206,7 +206,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                             pui.getPersistenceUnitName().equals(((BroadleafPersistenceUnitDeclaringClassTransformer) transformer).getPersistenceUnitName())
                         );
                     if (isTransformerQualified) {
-                        pui.addTransformer(transformer);
+                        if (this.getLoadTimeWeaver() == null) {
+                            weaverRegistered = false;
+                        } else {
+                            pui.addTransformer(transformer);
+                        }
                     }
                 } catch (Exception e) {
                     weaverRegistered = handleClassTransformerRegistrationProblem(transformer, e);

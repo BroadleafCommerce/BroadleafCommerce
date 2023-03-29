@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.util.BLCRequestUtils;

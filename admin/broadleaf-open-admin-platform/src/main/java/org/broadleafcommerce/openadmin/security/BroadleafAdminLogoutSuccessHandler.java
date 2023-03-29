@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.security;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.springframework.security.core.Authentication;

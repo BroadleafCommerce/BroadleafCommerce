@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service.user;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUserDetails;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;

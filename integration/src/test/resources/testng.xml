@@ -15,7 +15,7 @@
   between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
   #L%
   -->
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="BroadleafCommerce Test Suite" verbose="2" parallel="false">
     <test name="commerce-integrationtest">
         <packages>
@@ -23,7 +23,7 @@
             <package name="org.broadleafcommerce.core.catalog.service"></package>
             <package name="org.broadleafcommerce.core.checkout.service"></package>
             <package name="org.broadleafcommerce.common.email.service"></package>
-            <package name="org.broadleafcommerce.profile.extensibility"></package>
+            <package name="org.broadleafcommerce.common.extensibility"></package>
             <package name="org.broadleafcommerce.core.inventory.service"></package>
             <package name="org.broadleafcommerce.layout"></package>
             <package name="org.broadleafcommerce.core.offer.service"></package>

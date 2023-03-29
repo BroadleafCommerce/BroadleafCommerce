@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.web.controller.catalog;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;

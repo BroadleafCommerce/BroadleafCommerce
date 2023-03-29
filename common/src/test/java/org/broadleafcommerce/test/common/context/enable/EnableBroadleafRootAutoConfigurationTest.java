@@ -64,7 +64,7 @@ public class EnableBroadleafRootAutoConfigurationTest {
     
     @Test
     public void cannotFindAdminBean() {
-        Assert.assertFalse(ctx.containsBean("site"));
+        Assert.assertFalse(ctx.containsBean("admin"));
     }
     
 }
