@@ -51,7 +51,7 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             mav.addObject("showDebugMessage", showDebugMessage);
             if (showDebugMessage) {
                 StringBuilder sb2 = new StringBuilder("An error has occured");
-                if (!enableStacktrace) {
+                if (enableStacktrace) {
                     appendStackTrace(ex, sb2);
                 }
                 mav.addObject("debugMessage", sb2.toString());
