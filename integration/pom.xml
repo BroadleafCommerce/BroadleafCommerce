@@ -230,12 +230,6 @@
             <version>1.6.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <version>1.14.3</version>
-        </dependency>
-
         <!-- Spock/Groovy Test Dependencies -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
