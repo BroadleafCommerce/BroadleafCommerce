@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -87,6 +87,9 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Value("${disabled.file.extensions}")
     protected String disabledFileExtensions;
+
+    @Value("${allowed.file.extensions}")
+    protected String allowedFileExtensions;
 
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
@@ -205,11 +208,17 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     public void validateFileExtension(MultipartFile file) throws IOException {
         final String extension = getFileExtension(file);
-        if (disabledFileExtensions != null && !disabledFileExtensions.isEmpty()) {
+        //if we have whitelist, don't care about blacklist
+        if (StringUtils.isNotEmpty(allowedFileExtensions)) {
+            final List<String> extensions = Arrays.asList(allowedFileExtensions.toLowerCase().split("\\s*,\\s*"));
+            if (!extensions.contains(extension)) {
+                LOG.error("Invalid extension type of file " + file.getName() + ". Only following is allowed:" + allowedFileExtensions);
+                throw new IOException("Not allowed extension type of file.");
+            }
+        } else if (disabledFileExtensions != null && !disabledFileExtensions.isEmpty()) {
             final List<String> extensions = Arrays.asList(disabledFileExtensions.toLowerCase().split("\\s*,\\s*"));
-            LOG.info("Disabled file extensions:" + disabledFileExtensions);
             if (extensions.contains(extension)) {
-                LOG.error("Invalid extension type of file " + file.getName());
+                LOG.error("Invalid extension type of file " + file.getName() + ". Disabled files:" + disabledFileExtensions);
                 throw new IOException("Invalid extension type of file.");
             }
         }
@@ -223,7 +232,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             staticAssetStorageService.validateFileSize(file);
             String fileName = normalizeFileExtension(file);
             boolean b = validateFileName(fileName);
-            if(b){
+            if (b) {
                 fileName = fileName.replaceAll("[" + String.valueOf(notAllowedCharsInFileName) + "]", replacementString);
             }
             return createStaticAsset(file.getInputStream(), fileName, file.getSize(), properties);
@@ -234,8 +243,8 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     protected boolean validateFileName(String fileName) {
         boolean result = StringUtils.containsAny(fileName, notAllowedCharsInFileName);
-        if(exceptionOnInvalidChar && result){
-            throw new RuntimeException("File contains illegal chars. Illegal chars are:[" + String.valueOf(notAllowedCharsInFileName)+"]");
+        if (exceptionOnInvalidChar && result) {
+            throw new RuntimeException("File contains illegal chars. Illegal chars are:[" + String.valueOf(notAllowedCharsInFileName) + "]");
         }
         return result;
     }
@@ -421,5 +430,21 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     public void setShouldAcceptNonImageAsset(boolean accept) {
         shouldAcceptNonImageAsset = accept;
+    }
+
+    public String getDisabledFileExtensions() {
+        return disabledFileExtensions;
+    }
+
+    public void setDisabledFileExtensions(String disabledFileExtensions) {
+        this.disabledFileExtensions = disabledFileExtensions;
+    }
+
+    public String getAllowedFileExtensions() {
+        return allowedFileExtensions;
+    }
+
+    public void setAllowedFileExtensions(String allowedFileExtensions) {
+        this.allowedFileExtensions = allowedFileExtensions;
     }
 }
