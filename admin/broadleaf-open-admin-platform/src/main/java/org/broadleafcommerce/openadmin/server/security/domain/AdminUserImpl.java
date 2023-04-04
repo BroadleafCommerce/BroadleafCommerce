@@ -127,10 +127,10 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
                             @ConfigurationItem(itemName = "otherField", itemValue = "passwordConfirm")
                     }
                     ), @ValidationConfiguration(
-                            validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.AdminUserRegexValidator",
+                            validationImplementation = "blAdminRegexValidator",
                     configurationItems = {
-                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchProvidedRegex"),
-                            @ConfigurationItem(itemName = "regex", itemValue = "passwordMatchesRegex")
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordComplexityNotSatisfiedError"),
+                            @ConfigurationItem(itemName = "regexPropertyName", itemValue = "admin.password.regex.validation")
                     }
             )
             })
