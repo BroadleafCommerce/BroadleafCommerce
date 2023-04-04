@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -34,6 +35,8 @@ import java.util.Map;
 public class AdminRegexValidator extends ValidationConfigurationBasedPropertyValidator {
 
     protected static final Log LOG = LogFactory.getLog(AdminRegexValidator.class);
+    public static final String REGEX_CONFIG_PROPERTY = "regex";
+    public static final String REGEX_PROPERTY_NAME_CONFIG_PROPERTY = "regexPropertyName";
 
     @Resource("blSystemPropertiesService")
     protected SystemPropertiesService propertiesService;
@@ -46,20 +49,24 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
                                     BasicFieldMetadata propertyMetadata,
                                     String propertyName,
                                     String value) {
-        String regexExpression = validationConfiguration.get("regex");
-        if (propertiesService == null && StringUtils.isEmpty(regexExpression)){
-            LOG.warn("regex validator for field "+propertyName+" is not applied because dependency is not injected, most probably because you used validationImplementation = " +
+        String regexExpression = validationConfiguration.get(REGEX_CONFIG_PROPERTY);
+        if (propertiesService == null && StringUtils.isEmpty(regexExpression)) {
+            LOG.warn("regex validator for field " + propertyName + " is not applied because dependency is not injected, most probably because you used validationImplementation = " +
                     "\"FULLY_QUALIFIED_CLASSNAME\" instead of validationImplementation = \"SPRING_BEAN_NAME\", and regex was not specified");
             return true;
         }
-        if (StringUtils.isEmpty(validationConfiguration.get("regexPropertyName")) || StringUtils.isEmpty(propertiesService.resolveSystemProperty(validationConfiguration.get("regexPropertyName")))) {
-            LOG.warn("RegEx is not defined");
+        if (StringUtils.isNotEmpty(validationConfiguration.get(REGEX_PROPERTY_NAME_CONFIG_PROPERTY))
+                && StringUtils.isNotEmpty(propertiesService.resolveSystemProperty(validationConfiguration.get(REGEX_PROPERTY_NAME_CONFIG_PROPERTY)))) {
+            regexExpression = propertiesService.resolveSystemProperty(validationConfiguration.get(REGEX_PROPERTY_NAME_CONFIG_PROPERTY));
+        }
+        if (StringUtils.isEmpty(regexExpression)) {
+            LOG.error("regex validator for field " + propertyName + " is not applied because regex not specified neither via regex property nor via regexPropertyName(or property is empty)");
         }
 
         try {
-            String regex = propertiesService.resolveSystemProperty(validationConfiguration.get("regexPropertyName"));
+            String regex = propertiesService.resolveSystemProperty(regexExpression);
             return value != null && value.matches(regex);
-        } catch (Exception e){
+        } catch (Exception e) {
             LOG.error(e);
             return false;
         }
