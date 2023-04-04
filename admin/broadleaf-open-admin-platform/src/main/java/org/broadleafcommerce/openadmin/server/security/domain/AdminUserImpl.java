@@ -45,12 +45,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -67,6 +61,11 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * 
@@ -127,7 +126,13 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
                             @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
                             @ConfigurationItem(itemName = "otherField", itemValue = "passwordConfirm")
                     }
-                    )
+                    ), @ValidationConfiguration(
+                            validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.AdminUserRegexValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchProvidedRegex"),
+                            @ConfigurationItem(itemName = "regex", itemValue = "passwordMatchesRegex")
+                    }
+            )
             })
     protected String password;
 
