@@ -51,7 +51,7 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
                                     String value) {
         String regexExpression = validationConfiguration.get(REGEX_CONFIG_PROPERTY);
         if (propertiesService == null && StringUtils.isEmpty(regexExpression)) {
-            LOG.warn("regex validator for field " + propertyName + " is not applied because dependency is not injected, most probably because you used validationImplementation = " +
+            LOG.error("regex validator for field " + propertyName + " is not applied because dependency is not injected, most probably because you used validationImplementation = " +
                     "\"FULLY_QUALIFIED_CLASSNAME\" instead of validationImplementation = \"SPRING_BEAN_NAME\", and regex was not specified");
             return true;
         }
@@ -61,6 +61,7 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
         }
         if (StringUtils.isEmpty(regexExpression)) {
             LOG.error("regex validator for field " + propertyName + " is not applied because regex not specified neither via regex property nor via regexPropertyName(or property is empty)");
+            return true;
         }
 
         try {
