@@ -71,20 +71,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -101,6 +87,19 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author bTaylor
@@ -725,11 +724,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public List<CategoryXref> getChildCategoryXrefs() {
-        if (childCategoryXrefs.isEmpty()) {
-            for (CategoryXref category : allChildCategoryXrefs) {
-                if (category.getSubCategory().isActive()) {
-                    childCategoryXrefs.add(category);
-                }
+        childCategoryXrefs.clear();
+        for (CategoryXref category : allChildCategoryXrefs) {
+            if (category.getSubCategory().isActive()) {
+                childCategoryXrefs.add(category);
             }
         }
         return Collections.unmodifiableList(childCategoryXrefs);
