@@ -38,7 +38,7 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
     public static final String REGEX_CONFIG_PROPERTY = "regex";
     public static final String REGEX_PROPERTY_NAME_CONFIG_PROPERTY = "regexPropertyName";
 
-    @Resource("blSystemPropertiesService")
+    @Resource(name = "blSystemPropertiesService")
     protected SystemPropertiesService propertiesService;
 
     @Override
@@ -65,8 +65,7 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
         }
 
         try {
-            String regex = propertiesService.resolveSystemProperty(regexExpression);
-            return value != null && value.matches(regex);
+            return value != null && value.matches(regexExpression);
         } catch (Exception e) {
             LOG.error(e);
             return false;
