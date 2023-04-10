@@ -102,7 +102,7 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
      * results in the translation provided by DynamicTranslationProvider for itemAttribute's value.
      * In order to find that ProductOptionValue, a search on ProductOption.getAllowedValues() must be made.
      */
-    private String translateItemAttributeValue(OrderItemAttribute itemAttribute, ProductOption productOption) {
+    protected String translateItemAttributeValue(OrderItemAttribute itemAttribute, ProductOption productOption) {
         String attributeValue = itemAttribute.getValue();
         if (CollectionUtils.isNotEmpty(productOption.getAllowedValues())) {
             for (ProductOptionValue allowedValue : productOption.getAllowedValues()) {
