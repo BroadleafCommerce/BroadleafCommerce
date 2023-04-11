@@ -60,13 +60,13 @@ import java.util.Map.Entry;
  * <p>
  * This processor also supports:
  * <ul>
- *  <li>Multiple trackers (extensible via {@link #getTrackers()} or by setting the {@code googleAnalytics.masterWebPropertyId}
- *      and {@code googleAnalytics.webPropertyId})</li>
+ *  <li>Multiple trackers (extensible via {@link #getTrackers()} or by setting the {@code googleAnalytics4.masterWebPropertyId}
+ *      and {@code googleAnalytics4.webPropertyId})</li>
  *  <li>Affiliates for e-commerce ({@ googleAnalytics.affiliation property})</li>
  *  <li><a href="https://support.google.com/analytics/answer/2558867?hl=en&utm_id=ad">Link attribution</a>
- *      ({@code googleAnalytics.enableLinkAttribution} system property, default {@code true})</li>
+ *      ({@code googleAnalytics4.enableLinkAttribution} system property, default {@code true})</li>
  *  <li><a href="https://support.google.com/analytics/answer/3450482">Display Advertising</a>
- *      ({@code googleAnalytics.enableDisplayAdvertising} system property, default {@code false})</li>
+ *      ({@code googleAnalytics4.enableDisplayAdvertising} system property, default {@code false})</li>
  * </ul>
  *
  * @param ordernumber the order number to look up for ecommerce tracking, such as on the confirmation page
@@ -93,7 +93,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * This will force the domain to 127.0.0.1 which is useful to determine if the Google Analytics tag is sending
      * a request to Google
      */
-    @Value("${googleAnalytics.testLocal}")
+    @Value("${googleAnalytics4.testLocal}")
     protected boolean testLocal = false;
 
     @Override
@@ -112,7 +112,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
         Map<String, String> trackers = getTrackers();
         if (MapUtils.isNotEmpty(trackers)) {
 
-            sb.append("async src=\"https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-Y\"");
+            sb.append("async src=\"https://www.googletagmanager.com/gtag/js?id=\"");
             sb.append("window.dataLayer = window.dataLayer || [];");
             sb.append("function gtag(){dataLayer.push(arguments);}");
             sb.append("gtag('js', new Date());");
