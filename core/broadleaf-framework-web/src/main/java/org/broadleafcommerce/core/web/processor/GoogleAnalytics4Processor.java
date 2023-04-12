@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -41,11 +40,10 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateNonVoidElement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -70,7 +68,6 @@ import java.util.Map.Entry;
  * </ul>
  *
  * @param ordernumber the order number to look up for ecommerce tracking, such as on the confirmation page
- *
  * @author Markiian Buryi (MarekB01)
  */
 
@@ -83,8 +80,14 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
     /**
      * Global value, intentionally only retrieved as a file property NOT via the system properties service
      */
-    @Value("${googleAnalytics.masterWebPropertyId}")
-    protected String masterWebPropertyId;
+    @Value("${googleAnalytics.masterWebPropertyId:null}")
+    protected String universalAnalyticsPropertyId;
+
+    @Value("${googleAnalytics.webPropertyId:null}")
+    protected String universalAnalyticsWebPropertyId;
+
+    @Value("${googleAnalytics4.tagIdForProperty:null}")
+    protected String tagId;
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -93,7 +96,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * This will force the domain to 127.0.0.1 which is useful to determine if the Google Analytics tag is sending
      * a request to Google
      */
-    @Value("${googleAnalytics4.testLocal}")
+    @Value("${googleAnalytics.testLocal:false}")
     protected boolean testLocal = false;
 
     @Override
@@ -109,81 +112,62 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
     @Override
     public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
         StringBuilder sb = new StringBuilder();
-        Map<String, String> trackers = getTrackers();
-        if (MapUtils.isNotEmpty(trackers)) {
+        if (StringUtils.isNotEmpty(getTagIdForProperty())) {
+            tagId = getTagIdForProperty();
+        }
+        if (StringUtils.isNotEmpty(getWebPropertyId())) {
+            universalAnalyticsWebPropertyId = getWebPropertyId();
+        }
 
-            sb.append("async src=\"https://www.googletagmanager.com/gtag/js?id=\"");
+        if (StringUtils.isNotEmpty(tagId) || StringUtils.isNotEmpty(universalAnalyticsPropertyId) || StringUtils.isNotEmpty(universalAnalyticsWebPropertyId)) {
             sb.append("window.dataLayer = window.dataLayer || [];");
             sb.append("function gtag(){dataLayer.push(arguments);}");
             sb.append("gtag('js', new Date());");
-            sb.append("gtag('config', 'TAG_ID');");
+            if (testLocal) {
+                sb.append("gtag('set', 'cookie_domain', 'none');");
+            }
+            if (isIncludeLinkAttribution()) {
+                sb.append("gtag('set', 'link_attribution', true);");
+            }
+            if (isIncludeDisplayAdvertising()) {
+                sb.append("gtag('set', 'allow_google_signals', true);");
+            }
+            if (StringUtils.isNotEmpty(universalAnalyticsPropertyId)) {
+                sb.append("gtag('config', '" + universalAnalyticsPropertyId + "');");
+            }
+            if (StringUtils.isNotEmpty(universalAnalyticsWebPropertyId)) {
+                sb.append("gtag('config', '" + universalAnalyticsWebPropertyId + "');");
+            }
+            if (StringUtils.isNotEmpty(tagId)) {
+                sb.append("gtag('config', '" + tagId + "');");
+            }
 
 
             String orderNumberExpression = tagAttributes.get("ordernumber");
             String orderNumber = null;
             if (orderNumberExpression != null) {
-                orderNumber = (String) context.parseExpression(orderNumberExpression);
+                orderNumber = context.parseExpression(orderNumberExpression);
             }
 
-            Order order = null;
             if (orderNumber != null) {
-                order = orderService.findOrderByOrderNumber(orderNumber);
-            }
-
-            for (Entry<String, String> tracker : trackers.entrySet()) {
-                String trackerName = tracker.getKey();
-                String trackerPrefix = "";
-                String id = tracker.getValue();
-                sb.append("gtag('config', '" + id + "'");
-
-                if (!"webProperty4".equals(trackerName)) {
-                    trackerPrefix = trackerName + ".";
-                    sb.append("'name': '" + trackerName + "'");
-                    if (testLocal) {
-                        sb.append(",");
-                    }
-                }
-                if (testLocal) {
-                    sb.append("'cookieDomain': 'none'");
-                }
-                sb.append("});");
-
-                if ("webProperty".equals(trackerName)) {
-                    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-                    if (request != null) {
-                        Map<String, String> setValuesMap = (Map<String, String>) request.getAttribute("blGAValuesMap");
-                        if (setValuesMap != null) {
-                            for (Map.Entry<String, String> entry : setValuesMap.entrySet()) {
-                                sb.append("gtag('" + trackerPrefix + "event', set',").append(entry.getKey()).append(",")
-                                        .append(entry.getValue()).append(");");
-                            }
-                        }
-                    }
-                }
-
-                sb.append("gtag('" + trackerPrefix + "event', 'pageview');");
-
-                sb.append("gtag('" + trackerPrefix + "event', ecommerce:addTransaction', {");
-
-                sb.append("gtag('" + trackerPrefix + "event', 'pageview');");
-
-                if (isIncludeLinkAttribution()) {
-                    sb.append(getLinkAttributionJs(trackerPrefix));
-                }
-                if (isIncludeDisplayAdvertising()) {
-                    sb.append(getDisplayAdvertisingJs(trackerPrefix));
-                }
-
+                Order order = orderService.findOrderByOrderNumber(orderNumber);
                 if (order != null) {
-                    sb.append(getTransactionJs(order, trackerPrefix));
+                    sb.append(getTransactionJs(order));
                 }
             }
 
             // Add contentNode to the document
             BroadleafTemplateModel model = context.createModel();
+            Map<String, String> attrs = new HashMap<>();
+            attrs.put("asynch", null);
+            String analyticsProperty = StringUtils.isNotEmpty(universalAnalyticsPropertyId) ? universalAnalyticsPropertyId : universalAnalyticsWebPropertyId;
+            String idToUse = StringUtils.isNotEmpty(analyticsProperty) ? analyticsProperty : tagId;
+            attrs.put("src", "https://www.googletagmanager.com/gtag/js?id=" + idToUse);
+            BroadleafTemplateElement importScript = context.createStandaloneElement("script", attrs, true);
             BroadleafTemplateNonVoidElement scriptTag = context.createNonVoidElement("script");
             BroadleafTemplateElement script = context.createTextElement(sb.toString());
             scriptTag.addChild(script);
+            model.addElement(importScript);
             model.addElement(scriptTag);
             return model;
         } else {
@@ -194,93 +178,56 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
     }
 
     /**
-     * Grabs a map of trackers keyed by the tracker name with the analytics ID as the value
-     */
-    protected Map<String, String> getTrackers() {
-        Map<String, String> trackers = new HashMap<>();
-        if (shouldShowMasterTracker()) {
-            trackers.put("master", getMasterWebPropertyId());
-        }
-        if (StringUtils.isNotBlank(getWebPropertyId())) {
-            trackers.put("webProperty", getWebPropertyId());
-        }
-
-        return trackers;
-    }
-
-    protected boolean shouldShowMasterTracker() {
-        String masterWebPropertyId = getMasterWebPropertyId();
-        return (StringUtils.isNotBlank(masterWebPropertyId) && (!"UA-XXXXXXX-X".equals(masterWebPropertyId)));
-    }
-
-    /**
-     * Builds the linke attribution Javascript
-     * @param tracker the name of the tracker that is using the link attribution
-     * @return
-     */
-    protected String getLinkAttributionJs(String trackerPrefix) {
-        return "gtag('" + trackerPrefix + "event', require', 'linkid', 'linkid.js');";
-    }
-
-    /**
-     * Builds the display advertising Javascript for the given tracker
-     * @param tracker
-     * @return
-     */
-    protected String getDisplayAdvertisingJs(String trackerPrefix) {
-        return "gtag('" + trackerPrefix + "require', 'displayfeatures');";
-    }
-
-    /**
+     * /**
      * Builds the transaction analytics for the given tracker name. Invokes {@link #getItemJs(Order, String) for each item
      * in the given <b>order</b>.
      */
-    protected String getTransactionJs(Order order, String trackerPrefix) {
+    protected String getTransactionJs(Order order) {
         StringBuilder sb = new StringBuilder();
-        sb.append("gtag('" + trackerPrefix + "event', require', 'ecommerce', 'ecommerce.js');");
+        sb.append("gtag('event', purchase',{");
 
-        sb.append("gtag('" + trackerPrefix + "event', ecommerce:addTransaction', {");
-        sb.append("'id': '" + order.getOrderNumber() + "'");
+        sb.append("transaction_id: '" + order.getOrderNumber() + "'");
         if (StringUtils.isNotBlank(getAffiliation())) {
-            sb.append(",'affiliation': '" + getAffiliation() + "'");
+            sb.append(",affiliation: '" + getAffiliation() + "'");
         }
-        sb.append(",'revenue': '" + order.getTotal() + "'");
-        sb.append(",'shipping':'" + order.getTotalShipping() + "'");
-        sb.append(",'tax': '" + order.getTotalTax() + "'");
+        sb.append(",value: " + order.getTotal());
+        sb.append(",shipping:" + order.getTotalShipping() + "");
+        sb.append(",tax: " + order.getTotalTax());
 
         if (order.getCurrency() != null) {
-            sb.append(",'currency': '" + order.getCurrency().getCurrencyCode() + "'");
+            sb.append(",currency: '" + order.getCurrency().getCurrencyCode() + "'");
         }
+
+        sb.append(getItemJs(order));
+
         sb.append("});");
-
-        sb.append(getItemJs(order, trackerPrefix));
-
-        sb.append("gtag('" + trackerPrefix + "event', ecommerce:send');");
         return sb.toString();
     }
 
-    protected String getItemJs(Order order, String trackerPrefix) {
+    protected String getItemJs(Order order) {
         StringBuilder sb = new StringBuilder();
+        sb.append(",items:[");
+        String comma = "";
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+
                 OrderItem orderItem = fulfillmentGroupItem.getOrderItem();
-
-
                 if (orderItem instanceof DiscreteOrderItem) {
                     if (SkuAccessor.class.isAssignableFrom(orderItem.getClass())) {
+                        sb.append(comma).append("{");
                         Sku sku = ((SkuAccessor) orderItem).getSku();
-                        sb.append("gtag('" + trackerPrefix + "event', ecommerce:addItem', {");
-                        sb.append("'id': '" + order.getOrderNumber() + "'");
-                        sb.append(",'name': '" + sku.getName() + "'");
-                        sb.append(",'sku': '" + sku.getId() + "'");
-                        sb.append(",'category': '" + getVariation(orderItem) + "'");
-                        sb.append(",'price': '" + orderItem.getAveragePrice() + "'");
-                        sb.append(",'quantity': '" + orderItem.getQuantity() + "'");
-                        sb.append("});");
+                        sb.append("item_id: '" + sku.getId() + "'");
+                        sb.append(",item_name: '" + sku.getName() + "'");
+                        sb.append(",item_category: '" + getVariation(orderItem) + "'");
+                        sb.append(",price: " + orderItem.getAveragePrice());
+                        sb.append(",quantity: " + orderItem.getQuantity());
+                        sb.append("}");
+                        comma = ",";
                     }
                 }
             }
         }
+        sb.append("]");
         return sb.toString();
     }
 
@@ -305,24 +252,21 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
         return result.substring(0, result.length() - 1);
     }
 
-    public String getMasterWebPropertyId() {
-        return masterWebPropertyId;
-    }
-
-    public void setMasterWebPropertyId(String masterWebPropertyId) {
-        this.masterWebPropertyId = masterWebPropertyId;
-    }
-
-    public String getAffiliation() {
-        return BLCSystemProperty.resolveSystemProperty("googleAnalytics4.affiliation");
+    public String getTagIdForProperty() {
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics4.tagIdForProperty");
     }
 
     public String getWebPropertyId() {
-        return BLCSystemProperty.resolveSystemProperty("googleAnalytics4.webPropertyId");
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.webPropertyId");
+    }
+
+
+    public String getAffiliation() {
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.affiliation");
     }
 
     public boolean isIncludeLinkAttribution() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics4.enableLinkAttribution", true);
+        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics.enableLinkAttribution", true);
     }
 
     public boolean isIncludeDisplayAdvertising() {
