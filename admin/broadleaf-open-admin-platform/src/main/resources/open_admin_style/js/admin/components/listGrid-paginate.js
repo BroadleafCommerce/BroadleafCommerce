@@ -664,6 +664,10 @@
         
         updateGridSize : function($tbody) {
             var $table = $tbody.closest('table.list-grid-table');
+            //no table found, page might not have tables
+            if ($table.length === 0) {
+                return;
+            }
             var $headerTable = $table.closest('.listgrid-container').find('.listgrid-header-wrapper table');
             var rowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody);
             var thWidths = [];
