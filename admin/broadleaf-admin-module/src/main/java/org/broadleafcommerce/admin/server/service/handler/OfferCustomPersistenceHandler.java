@@ -236,7 +236,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                     Number parsedValue = nf.parse(((DecimalFormat) nf).getPositivePrefix()+value + ((DecimalFormat) nf).getPositiveSuffix());
                     discountValue.setValue(nf.format(parsedValue));
                 } catch (ParseException e) {
-                    LOG.error(e);
+                    LOG.error("Error happened",e);
                     discountValue.setValue(nf.format(new BigDecimal(value)));
                 }
             }

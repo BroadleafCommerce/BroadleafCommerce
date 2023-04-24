@@ -195,7 +195,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                 try {
                     urlProcessor = lookupProcessorFromCache(requestURIWithoutContext);
                 } catch (ExecutionException e) {
-                    LOG.error(e);
+                    LOG.error("Error happened",e);
                 }
             }
 

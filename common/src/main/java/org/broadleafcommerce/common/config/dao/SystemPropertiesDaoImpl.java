@@ -100,7 +100,7 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware<SystemProper
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
             return em.createQuery(criteria).setHint(QueryHints.HINT_CACHEABLE, Boolean.TRUE).getResultList();
         } catch (NoResultException e) {
-            LOG.error(e);
+            LOG.error("Error happened",e);
             return new ArrayList<SystemProperty>();
         } finally {
             if (queryExtensionManager != null) {

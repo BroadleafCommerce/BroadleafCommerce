@@ -210,7 +210,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     try {
                         solrConfiguration.getAdminServer().request(car);
                     } catch (Exception e) {
-                        LOG.error(e);
+                        LOG.error("Error happened",e);
                         throw new ServiceException("Unable to swap cores", e);
                     }
                 } else {

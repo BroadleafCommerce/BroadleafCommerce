@@ -412,7 +412,7 @@ public class AdminProductController extends AdminBasicEntityController {
                     .map(ProductOption::getAttributeName)
                     .anyMatch(attributeName -> attributeName.equals(addProductOption.getAttributeName()));
             } catch (Exception e) {
-                LOG.error(e);
+                LOG.error("Error happened",e);
             }
             if (isAttributeNameExist) {
                 return new JsonResponse(response)

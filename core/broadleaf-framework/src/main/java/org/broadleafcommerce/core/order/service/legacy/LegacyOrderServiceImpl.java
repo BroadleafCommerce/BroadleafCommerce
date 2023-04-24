@@ -973,7 +973,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
                 try {
                     updateItemQuantity(order, item, priceOrder);
                 } catch (ItemNotFoundException e) {
-                    LOG.error(e);
+                    LOG.error("Error happened",e);
                 }
                 return findMatchingItem(order, newOrderItem);
             }

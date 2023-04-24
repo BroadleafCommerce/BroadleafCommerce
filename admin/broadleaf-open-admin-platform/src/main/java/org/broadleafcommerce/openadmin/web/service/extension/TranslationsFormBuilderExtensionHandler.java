@@ -67,7 +67,7 @@ public class TranslationsFormBuilderExtensionHandler extends AbstractFormBuilder
                 return ExtensionResultStatusType.HANDLED;
             }
         } catch (ClassNotFoundException e) {
-            LOG.error(e);
+            LOG.error("Error happened",e);
         }
         return ExtensionResultStatusType.NOT_HANDLED;
     }
