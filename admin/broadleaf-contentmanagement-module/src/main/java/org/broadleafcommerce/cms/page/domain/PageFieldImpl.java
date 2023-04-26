@@ -26,10 +26,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -82,9 +81,8 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     @AdminPresentation
     protected String stringValue;
 
-    @Column(name = "LOB_VALUE", length = Integer.MAX_VALUE-1)
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
+    @Column(name = "LOB_VALUE", length = Length.LONG32 - 1)
     @AdminPresentation
     protected String lobValue;
 

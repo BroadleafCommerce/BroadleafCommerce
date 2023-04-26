@@ -32,12 +32,12 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.MapKeyJdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
@@ -134,10 +134,9 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @ElementCollection()
     @MapKeyJdbcType(LongVarcharJdbcType.class)
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
-    @Column(name = "FIELD_VALUE", length = Integer.MAX_VALUE - 1)
+    @Column(name = "FIELD_VALUE", length = Length.LONG32 - 1)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @AdminPresentationMap(friendlyName = "CustomerPaymentImpl_additionalFields",

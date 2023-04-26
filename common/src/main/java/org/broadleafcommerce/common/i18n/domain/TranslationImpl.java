@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -92,9 +93,8 @@ public class TranslationImpl implements Serializable, Translation {
     @AdminPresentation(friendlyName = "TranslationImpl_LocaleCode", prominent = true)
     protected String localeCode;
 
-    @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
-//    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "TRANSLATED_VALUE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "TranslationImpl_TranslatedValue", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String translatedValue;
 

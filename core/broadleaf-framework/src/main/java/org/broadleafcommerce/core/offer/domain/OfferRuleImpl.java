@@ -22,12 +22,11 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -69,8 +68,7 @@ public class OfferRuleImpl implements OfferRule {
     protected Long id;
     
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
+    @Column(name = "MATCH_RULE", length = Length.LONG32 - 1)
     protected String matchRule;
 
     /* (non-Javadoc)

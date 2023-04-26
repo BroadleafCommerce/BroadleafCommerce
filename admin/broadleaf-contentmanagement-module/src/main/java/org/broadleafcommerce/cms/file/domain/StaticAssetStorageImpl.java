@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -59,8 +60,8 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Index(name="STATIC_ASSET_ID_INDEX", columnNames={"STATIC_ASSET_ID"})
     protected Long staticAssetId;
 
-    @Column (name = "FILE_DATA", length = Integer.MAX_VALUE - 1)
     @Lob
+    @Column (name = "FILE_DATA", length = Length.LONG32 - 1)
     protected Blob fileData;
 
     @Override

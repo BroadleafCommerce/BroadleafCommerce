@@ -32,9 +32,9 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.MapKeyJdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
@@ -110,10 +110,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Payment_IP_Address", order=4000)
     protected String customerIpAddress;
-    
-    @Column(name = "RAW_RESPONSE", length = Integer.MAX_VALUE - 1)
+
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
+    @Column(name = "RAW_RESPONSE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Raw_Response")
     protected String rawResponse;
     
@@ -143,8 +142,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @MapKeyColumn(name="FIELD_NAME")
     @MapKeyJdbcType(LongVarcharJdbcType.class)
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
+    @Column(name="FIELD_VALUE", length = Length.LONG32 - 1)
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields", isSimpleValue = UnspecifiedBooleanType.TRUE,

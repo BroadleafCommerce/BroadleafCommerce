@@ -59,15 +59,14 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -232,8 +231,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected String description;
 
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
+    @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description",
         group = GroupName.General, order = FieldOrder.LONG_DESCRIPTION,
         largeEntry = true, 

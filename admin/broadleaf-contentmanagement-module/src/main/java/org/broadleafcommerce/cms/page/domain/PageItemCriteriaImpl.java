@@ -26,10 +26,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -79,8 +78,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria, ProfileEntity {
     protected Integer quantity;
     
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Integer.MAX_VALUE - 1)
+    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Order_Item_Match_Rule", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
     
