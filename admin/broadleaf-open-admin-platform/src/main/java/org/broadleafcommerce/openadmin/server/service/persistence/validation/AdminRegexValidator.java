@@ -67,7 +67,7 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
         try {
             return value != null && value.matches(regexExpression);
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("An error has occurred ",e);
             return false;
         }
     }
