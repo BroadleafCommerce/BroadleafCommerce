@@ -237,8 +237,9 @@
 
         <!-- Spock/Groovy Test Dependencies -->
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
+            <type>pom</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -247,7 +248,7 @@
             <version>${spock.spring.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.codehaus.groovy</groupId>
+                    <groupId>org.apache.groovy</groupId>
                     <artifactId>groovy-all</artifactId>
                 </exclusion>
             </exclusions>

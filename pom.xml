@@ -50,11 +50,11 @@
         <lombok.version>1.18.24</lombok.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <geb.version>1.0</geb.version>
-        <spock.core.version>1.1-groovy-2.4</spock.core.version>
-        <spock.spring.version>1.1-groovy-2.4</spock.spring.version>
+        <spock.core.version>2.4-M1-groovy-4.0</spock.core.version>
+        <spock.spring.version>2.4-M1-groovy-4.0</spock.spring.version>
         <selenium.version>2.43.1</selenium.version>
         <project.uri>${project.baseUri}</project.uri>
-        <groovy.version>2.4.15</groovy.version>
+        <groovy.version>4.0.11</groovy.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
         <broadleaf-presentation.version>1.4.0-SNAPSHOT</broadleaf-presentation.version>
         <hsqldb.database.starter.version>2.4.0-SNAPSHOT</hsqldb.database.starter.version>
@@ -889,9 +889,10 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.groovy</groupId>
+                <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
                 <version>${groovy.version}</version>
+                <type>pom</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
