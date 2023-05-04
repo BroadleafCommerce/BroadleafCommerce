@@ -230,6 +230,10 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         translatable = true)
     protected String description;
 
+    //if you are going to remove @Lob you need to adjust
+    //com.broadleafcommerce.enterprise.audit.service.render.DiffRendererImpl#supportsType
+    //as it now relates on CLOB. Probably you can change signature and pass old/new values
+    //and check them for length, if some will exceed some value (255?) consider it large
     @Lob
     @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description",

@@ -22,6 +22,7 @@ import org.hibernate.boot.spi.MetadataImplementor;
 import org.hibernate.boot.spi.SessionFactoryBuilderFactory;
 import org.hibernate.boot.spi.SessionFactoryBuilderImplementor;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
 import org.springframework.lang.NonNull;
 
@@ -99,10 +100,9 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         if (metadata == null) {
             return propertyNames;
         }
-        Iterator propertyIterator = metadata.getPropertyClosureIterator();
-        while (propertyIterator.hasNext()) {
-            org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
-            propertyNames.add(prop.getName());
+        List<Property> properties = metadata.getProperties();
+        for (Property property : properties) {
+            propertyNames.add(property.getName());
         }
         return propertyNames;
     }
