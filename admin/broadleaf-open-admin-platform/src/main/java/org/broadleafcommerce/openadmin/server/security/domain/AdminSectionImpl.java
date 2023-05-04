@@ -31,7 +31,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +46,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  *
@@ -55,7 +55,7 @@ import jakarta.persistence.ManyToOne;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo = "BLC_ADMIN_SECTION")
+@Table(name = "BLC_ADMIN_SECTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
 @AdminPresentationClass(friendlyName = "AdminSectionImpl_baseAdminSection")
 @DirectCopyTransform({
