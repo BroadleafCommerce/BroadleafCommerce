@@ -787,6 +787,13 @@
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>
                 <version>${sunxml.version}</version>
+                <exclusions>
+                    <!-- This brings in a very old version of Woodstox -->
+                    <exclusion>
+                        <groupId>com.fasterxml.woodstox</groupId>
+                        <artifactId>woodstox-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- XML Libraries -->
