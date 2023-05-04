@@ -36,8 +36,8 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.jpa.AvailableSettings;
 import org.hibernate.jpa.QueryHints;
+import org.hibernate.cfg.AvailableSettings;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,7 +100,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderByIdIgnoreCache(final Long orderId) {
         Map<String, Object> m = new HashMap<>();
-        m.put(AvailableSettings.SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
+        m.put(AvailableSettings.JAKARTA_SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
         return em.find(OrderImpl.class, orderId, m);
     }
 

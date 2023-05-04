@@ -27,7 +27,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
-import org.hibernate.type.SingleColumnType;
+import org.hibernate.type.AbstractStandardBasicType;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -207,7 +207,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 if (idMetaData != null) {
                     Object idFldName = idMetaData.get("name");
                     Object type = idMetaData.get("type");
-                    if ((idFldName instanceof String) && (type instanceof SingleColumnType)) {
+                    if ((idFldName instanceof String) && (type instanceof AbstractStandardBasicType)) {
                         criteria.orderBy(criteriaBuilder.asc(original.get((String) idFldName)));
                     }
                 }

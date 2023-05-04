@@ -135,7 +135,6 @@
                 <ref bean="blAnnotationDirectCopyClassTransformer"/>
                 <ref bean="blEntityMarkerClassTransformer"/>
                 <ref bean="blConditionalFieldAnnotationClassTransformer"/>
-                <ref bean="blMaterializedClobTypeClassTransformer"/>
             </list>
         </property>
     </bean>

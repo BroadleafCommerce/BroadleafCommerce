@@ -45,7 +45,6 @@ import org.broadleafcommerce.openadmin.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator;
 import org.hibernate.mapping.PersistentClass;
-import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -542,7 +541,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Property prop = entity.findProperty(idProperty);
             if (prop != null) {
                 Serializable identifier;
-                if (!(((Type) idMetadata.get("type")) instanceof StringType)) {
+                if (!(((Type) idMetadata.get("type")).getReturnedClass().isAssignableFrom(String.class))) {
                     identifier = Long.parseLong(prop.getValue());
                 } else {
                     identifier = prop.getValue();

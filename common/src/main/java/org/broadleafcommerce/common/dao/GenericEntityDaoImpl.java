@@ -28,9 +28,7 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.type.AbstractSingleColumnStandardBasicType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
+import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -92,11 +90,11 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
         //We need to get PU dynamically to handle cases when class is not in blPU, e.g ScheduledJobImpl
         EntityManager emForClass = getEntityManager(clazz);
         Map<String, Object> md = daoHelper.getIdMetadata(clazz, emForClass);
-        AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
-
-        if (type instanceof LongType) {
+        Type type = (Type)md.get("type");
+        Class<?> returnedClass = type.getReturnedClass();
+        if (returnedClass.isAssignableFrom(Long.class)) {
             id = Long.parseLong(String.valueOf(id));
-        } else if (type instanceof IntegerType) {
+        } else if (returnedClass.isAssignableFrom(Integer.class)) {
             id = Integer.parseInt(String.valueOf(id));
         }
 

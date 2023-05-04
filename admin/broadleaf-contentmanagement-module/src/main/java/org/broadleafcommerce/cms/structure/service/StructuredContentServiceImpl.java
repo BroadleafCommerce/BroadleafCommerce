@@ -50,8 +50,7 @@ import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
+
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -129,19 +128,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     @Override
-    public List<StructuredContent> findContentItems(Criteria c) {
-        return c.list();
-    }
-
-    @Override
     public List<StructuredContent> findAllContentItems() {
         return structuredContentDao.findAllContentItems();
-    }
-
-    @Override
-    public Long countContentItems(Criteria c) {
-        c.setProjection(Projections.rowCount());
-        return (Long) c.uniqueResult();
     }
 
     /**
