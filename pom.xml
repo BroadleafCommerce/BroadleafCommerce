@@ -66,7 +66,7 @@
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <sunxml.version>4.0.2</sunxml.version>
-        <eclipse.jetty.version>9.4.51.v20230217</eclipse.jetty.version>
+        <eclipse.jetty.version>11.0.14</eclipse.jetty.version>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
