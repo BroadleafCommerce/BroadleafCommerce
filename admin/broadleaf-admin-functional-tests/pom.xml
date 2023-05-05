@@ -95,8 +95,8 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <type>pom</type>
             <scope>compile</scope>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.gebish</groupId>

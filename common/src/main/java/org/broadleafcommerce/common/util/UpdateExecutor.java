@@ -88,7 +88,7 @@ public class UpdateExecutor {
             int counter = 1;
             if (!ArrayUtils.isEmpty(params)) {
                 for (Object param : params) {
-                    query.setParameter(counter, new TypedParameterValue( types[counter - 1], param));
+                    query.setParameter(counter, new TypedParameterValue(types[counter - 1], param));
                     counter++;
                 }
             }

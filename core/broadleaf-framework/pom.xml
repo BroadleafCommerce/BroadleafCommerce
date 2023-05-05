@@ -121,8 +121,8 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <type>pom</type>
             <scope>test</scope>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>

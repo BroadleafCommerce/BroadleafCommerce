@@ -95,7 +95,7 @@ public class AdminSectionImpl implements AdminSection {
     @ManyToOne(optional=false, targetEntity = AdminModuleImpl.class)
     @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "ADMIN_MODULE_ID")
-    @Index(name="ADMINSECTION_MODULE_INDEX", columnNames={"ADMIN_MODULE_ID"})
+    @Index(name = "ADMINSECTION_MODULE_INDEX", columnNames = {"ADMIN_MODULE_ID"})
     protected AdminModule module;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
