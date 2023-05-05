@@ -21,9 +21,11 @@
 package org.broadleafcommerce.test.config;
 
 import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
  * Configuration class holder for all of the configuration for scanning all Broadleaf non-servlet beans for an integration test.
@@ -42,5 +44,16 @@ import org.springframework.context.annotation.ImportResource;
     })
 @ComponentScan({"org.broadleafcommerce.profile.web.controller", "org.broadleafcommerce.profile.web.core.service.login"})
 public class SiteTestContextConfiguration {
-
+    //need this bean because it seems that in spring 6 default request matcher bean
+    //is MvcRequestMatcher that requires HandlerMappingIntrospector as constructor arg
+    //oob spring knows that bean and requires under the name: mvcHandlerMappingIntrospector
+    //By default it is created in WebMvcConfigurationSupport which will be a part of config
+    //with mvc autoconfiguration, but for whatever reason we don't use it, but use
+    //@WebAppConfiguration in BroadleafSiteIntegrationTest.
+    //Basically required because we have bl-applicationContext-test-security.xml, where
+    //spring security is configured, specifically <sec:intercept-url pattern="/account/**" access="ROLE_USER" />
+    @Bean
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+        return new HandlerMappingIntrospector();
+    }
 }
