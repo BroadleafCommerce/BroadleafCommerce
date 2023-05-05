@@ -44,7 +44,7 @@
     
     <named-query name="BC_CLEAR_DEFAULT_ADDRESS_BY_IDS">
     	<query>
-    		UPDATE org.broadleafcommerce.profile.core.domain.Address a
+    		UPDATE org.broadleafcommerce.profile.core.domain.AddressImpl a
             SET a.isDefault = false
             WHERE a.id in :addressIds
     	</query>

@@ -37,9 +37,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.pricing.domain.ShippingRate;
-import org.broadleafcommerce.core.pricing.domain.ShippingRateImpl;
-import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -75,9 +72,7 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
-    @Resource
-    protected ShippingRateService shippingRateService;
+
 
     @Resource
     private OrderDao orderDao;
@@ -245,28 +240,6 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
         bundle = (ProductBundle) catalogService.saveProduct(bundle);
         
         return bundle;
-    }
-    
-
-    public void createShippingRates() {
-        ShippingRate sr = new ShippingRateImpl();
-        sr.setFeeType("SHIPPING");
-        sr.setFeeSubType("ALL");
-        sr.setFeeBand(1);
-        sr.setBandUnitQuantity(BigDecimal.valueOf(29.99));
-        sr.setBandResultQuantity(BigDecimal.valueOf(8.5));
-        sr.setBandResultPercent(0);
-        ShippingRate sr2 = new ShippingRateImpl();
-        
-        sr2.setFeeType("SHIPPING");
-        sr2.setFeeSubType("ALL");
-        sr2.setFeeBand(2);
-        sr2.setBandUnitQuantity(BigDecimal.valueOf(999999.99));
-        sr2.setBandResultQuantity(BigDecimal.valueOf(8.5));
-        sr2.setBandResultPercent(0);
-        
-        shippingRateService.save(sr);
-        shippingRateService.save(sr2);
     }
 
 }
