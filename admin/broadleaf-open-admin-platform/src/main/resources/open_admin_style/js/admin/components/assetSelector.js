@@ -172,7 +172,8 @@ $(document).ready(function() {
         var $modal = BLCAdmin.getModalSkeleton();
         var hiddenInput = $(this).closest('.asset-selector-container').find(":input:hidden.mediaItem");
         var parent = $(this).closest('.field-group');
-        var primaryData = JSON.parse(hiddenInput.val());        var primaryDatum = primaryData['id'];
+        var primaryData = JSON.parse(hiddenInput.val());
+        var primaryDatum = primaryData['id'];
         var linkTitleTranslations ="<a class=\"show-translations\" href=\"" + BLC.servletContext + "/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=media__title&isRte=false&fieldType=STRING\">"+
             "<i class=\"blc-icon-globe\" style=\"color: #94AF39; \">"+"</i>"+
             "<span>"+" Translations"+"</span>"+"</a>";
