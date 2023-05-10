@@ -392,9 +392,12 @@
 
             // update date fields
             $("[data-fieldname='dateLabel']").find('.column-text').each(function () {
-                var day = moment.utc($(this).html()).local();
-                if (day.isValid()) {
-                    $(this).html(day.fromNow());
+                var dateString = $(this).html().trim();
+                if (!dateString.match(/[a-zA-Z]/)) {
+                    var day = moment.utc(dateString).local();
+                    if (day.isValid()) {
+                        $(this).html(day.fromNow());
+                    }
                 }
             });
 
