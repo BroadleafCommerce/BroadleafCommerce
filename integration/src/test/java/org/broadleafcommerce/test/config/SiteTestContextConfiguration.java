@@ -21,6 +21,7 @@
 package org.broadleafcommerce.test.config;
 
 import org.broadleafcommerce.common.config.EnableBroadleafSiteRootAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +54,7 @@ public class SiteTestContextConfiguration {
     //Basically required because we have bl-applicationContext-test-security.xml, where
     //spring security is configured, specifically <sec:intercept-url pattern="/account/**" access="ROLE_USER" />
     @Bean
+    @ConditionalOnMissingBean
     public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();
     }
