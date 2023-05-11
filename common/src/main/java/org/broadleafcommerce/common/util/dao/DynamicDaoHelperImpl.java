@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ProxyDetectionException;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
@@ -245,7 +246,15 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         Map<String, Object> response = new HashMap<>();
         SessionFactory sessionFactory = entityManager.unwrap(Session.class).getSessionFactory();
-        boolean isEntity = sessionFactory.getMetamodel().entity(entityClass) != null;
+        boolean isEntity = true;
+        try {
+            // or maybe insteaf of try-catch it is better to check if
+            // ((SessionImpl) session).getTypeConfiguration().getBasicTypeForJavaType(itemClass);
+            // is not null? if so this is a "primitive" not entity...
+            sessionFactory.getMetamodel().entity(entityClass);
+        }catch (IllegalArgumentException ex){
+            isEntity = false;
+        }
         if (!isEntity) {
             return null;
         }

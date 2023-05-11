@@ -179,8 +179,12 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         if (securityRoot != null) {
             ceilingMarker = securityRoot;
         }
-
         Class<Serializable> ceilingClass = determineRoot(dynamicEntityDao, ceilingMarker, filterMappings);
+        if(isCount || isMax){
+            try {
+                ceilingMarker = (Class<Serializable>) Class.forName(Long.class.getName());
+            } catch (ClassNotFoundException e) {}
+        }
         CriteriaQuery<Serializable> criteria = criteriaBuilder.createQuery(ceilingMarker);
         Root<Serializable> original = criteria.from(ceilingClass);
 
