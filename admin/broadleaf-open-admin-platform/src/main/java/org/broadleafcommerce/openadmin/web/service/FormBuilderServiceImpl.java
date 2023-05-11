@@ -97,6 +97,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -312,7 +313,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 enumMap.put(enumerationValues[i][0], enumerationValues[i][1]);
             }
 
-            fieldDTO.setValues(new JSONObject(enumMap).toString());
+            try {
+                fieldDTO.setValues(new JSONObject(enumMap).toString());
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
         } else if (field.getFieldType().equals("ADDITIONAL_FOREIGN_KEY")) {
             fieldDTO.setOperators("blcFilterOperators_Selectize");
             fieldDTO.setType("string");
