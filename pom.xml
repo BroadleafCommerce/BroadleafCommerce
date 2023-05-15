@@ -795,11 +795,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.woodstox</groupId>
-                <artifactId>woodstox-core</artifactId>
-                <version>6.5.1</version>
-            </dependency>
             <!-- XML Libraries -->
             <dependency>
                 <groupId>org.apache.xmlbeans</groupId>
