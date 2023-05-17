@@ -19,6 +19,9 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
@@ -37,11 +40,8 @@ import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
-
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,6 +53,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -66,6 +67,9 @@ import javax.persistence.Transient;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemAdjustmentImpl_baseOrderItemAdjustment")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
+})
 public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
@@ -85,7 +89,6 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    @Index(name="OIADJUST_ITEM_INDEX", columnNames={"ORDER_ITEM_ID"})
     @AdminPresentation(excluded = true)
     protected OrderItem orderItem;
 

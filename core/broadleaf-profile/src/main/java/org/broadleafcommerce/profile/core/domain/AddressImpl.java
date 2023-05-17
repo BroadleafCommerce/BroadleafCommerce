@@ -19,6 +19,9 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -34,7 +37,6 @@ import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
@@ -101,6 +103,15 @@ import javax.persistence.Table;
 )
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name="ADDRESS_COUNTRY_INDEX", columnList="COUNTY"),
+                @javax.persistence.Index(name="ADDRESS_ISO_COUNTRY_IDX", columnList="ISO_COUNTRY_ALPHA2"),
+                @javax.persistence.Index(name="ADDRESS_PHONE_PRI_IDX", columnList="PHONE_PRIMARY_ID"),
+                @javax.persistence.Index(name="ADDRESS_PHONE_SEC_IDX", columnList="PHONE_SECONDARY_ID"),
+                @javax.persistence.Index(name="ADDRESS_PHONE_FAX_IDX", columnList="PHONE_FAX_ID")
+        })
+})
 public class AddressImpl implements Address {
 
     private static final long serialVersionUID = 1L;
@@ -169,7 +180,6 @@ public class AddressImpl implements Address {
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
     @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
-    @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
     @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
     @AdminPresentationToOneLookup
     protected ISOCountry isoCountryAlpha2;
@@ -184,17 +194,14 @@ public class AddressImpl implements Address {
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_PRIMARY_ID")
-    @Index(name="ADDRESS_PHONE_PRI_IDX", columnNames={"PHONE_PRIMARY_ID"})
     protected Phone phonePrimary;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_SECONDARY_ID")
-    @Index(name="ADDRESS_PHONE_SEC_IDX", columnNames={"PHONE_SECONDARY_ID"})
     protected Phone phoneSecondary;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_FAX_ID")
-    @Index(name="ADDRESS_PHONE_FAX_IDX", columnNames={"PHONE_FAX_ID"})
     protected Phone phoneFax;
 
     @Column(name = "IS_DEFAULT")

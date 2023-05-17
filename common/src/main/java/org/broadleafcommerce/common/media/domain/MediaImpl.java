@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -47,7 +46,8 @@ import javax.persistence.Table;
 @Table(name="BLC_MEDIA")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blMediaElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "MEDIA_URL_INDEX", columnList = "URL"),
+                @javax.persistence.Index(name = "MEDIA_TITLE_INDEX", columnList = "TITLE")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
@@ -68,13 +68,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     protected Long id;
 
     @Column(name = "URL", nullable = false)
-    @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Url", order = 1, gridOrder = 4, prominent = true,
             fieldType = SupportedFieldType.ASSET_LOOKUP)
     protected String url;
     
     @Column(name = "TITLE")
-    @Index(name="MEDIA_TITLE_INDEX", columnNames={"TITLE"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order = 2, gridOrder = 2, prominent = true, translatable = true)
     protected String title;
     

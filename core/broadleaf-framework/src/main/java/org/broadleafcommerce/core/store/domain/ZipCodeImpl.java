@@ -16,7 +16,10 @@
  * #L%
  */
 package org.broadleafcommerce.core.store.domain;
-import org.hibernate.annotations.Index;
+
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +32,15 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ZIP_CODE")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name="ZIPCODE_ZIP_INDEX", columnList="ZIPCODE"),
+                @javax.persistence.Index(name="ZIPCODE_STATE_INDEX", columnList="ZIP_STATE"),
+                @javax.persistence.Index(name="ZIPCODE_CITY_INDEX", columnList="ZIP_CITY"),
+                @javax.persistence.Index(name="ZIPCODE_LONGITUDE_INDEX", columnList="ZIP_LONGITUDE"),
+                @javax.persistence.Index(name="ZIPCODE_LATITUDE_INDEX", columnList="ZIP_LATITUDE")
+        })
+})
 public class ZipCodeImpl implements Serializable, ZipCode {
 
     private static final long serialVersionUID = 1L;
@@ -38,23 +50,18 @@ public class ZipCodeImpl implements Serializable, ZipCode {
     private String id;
 
     @Column(name = "ZIPCODE", insertable = false, updatable = false)
-    @Index(name="ZIPCODE_ZIP_INDEX", columnNames={"ZIPCODE"})
     private Integer zipcode;
 
     @Column(name = "ZIP_STATE", insertable = false, updatable = false)
-    @Index(name="ZIPCODE_STATE_INDEX", columnNames={"ZIP_STATE"})
     private String zipState;
 
     @Column(name = "ZIP_CITY")
-    @Index(name="ZIPCODE_CITY_INDEX", columnNames={"ZIP_CITY"})
     private String zipCity;
 
     @Column(name = "ZIP_LONGITUDE")
-    @Index(name="ZIPCODE_LONGITUDE_INDEX", columnNames={"ZIP_LONGITUDE"})
     private double zipLongitude;
 
     @Column(name = "ZIP_LATITUDE")
-    @Index(name="ZIPCODE_LATITUDE_INDEX", columnNames={"ZIP_LATITUDE"})
     private double zipLatitude;
 
     public String getId() {

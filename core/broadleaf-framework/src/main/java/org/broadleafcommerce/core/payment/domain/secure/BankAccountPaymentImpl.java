@@ -18,9 +18,11 @@
 package org.broadleafcommerce.core.payment.domain.secure;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -40,6 +42,9 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BANK_ACCOUNT_PAYMENT")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "BANKACCOUNT_INDEX", columnList = "REFERENCE_NUMBER")})
+})
 public class BankAccountPaymentImpl implements BankAccountPayment {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +75,6 @@ public class BankAccountPaymentImpl implements BankAccountPayment {
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER", nullable=false)
-    @Index(name="BANKACCOUNT_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @Column(name = "ACCOUNT_NUMBER", nullable=false)

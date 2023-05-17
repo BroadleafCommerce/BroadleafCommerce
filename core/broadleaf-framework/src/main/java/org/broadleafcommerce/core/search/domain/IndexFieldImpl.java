@@ -33,13 +33,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Where;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,6 +47,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Chad Harchar (charchar)
@@ -62,7 +60,8 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
 })
 public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdminPresentation, AdminMainEntity {
 
@@ -89,7 +88,6 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
             prominent = true,
             group = GroupName.General,
             tooltip = "IndexFieldImpl_searchable_tooltip")
-    @Index(name="INDEX_FIELD_SEARCHABLE_INDEX", columnNames={"SEARCHABLE"})
     protected Boolean searchable;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)

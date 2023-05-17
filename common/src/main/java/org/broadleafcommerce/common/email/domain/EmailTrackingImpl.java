@@ -17,13 +17,11 @@
  */
 package org.broadleafcommerce.common.email.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +29,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author jfischer
@@ -38,6 +39,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_EMAIL_TRACKING")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "EMAILTRACKING_INDEX", columnList = "EMAIL_ADDRESS"),
+                @javax.persistence.Index(name = "DATESENT_INDEX", columnList = "DATE_SENT")})
+})
 public class EmailTrackingImpl implements EmailTracking {
 
     /** The Constant serialVersionUID. */
@@ -57,11 +62,9 @@ public class EmailTrackingImpl implements EmailTracking {
     protected Long id;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name="EMAILTRACKING_INDEX", columnNames={"EMAIL_ADDRESS"})
     protected String emailAddress;
 
     @Column(name = "DATE_SENT")
-    @Index(name="DATESENT_INDEX", columnNames = { "DATE_SENT" })
     protected Date dateSent;
 
     @Column(name = "TYPE")

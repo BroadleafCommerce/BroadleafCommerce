@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -52,21 +53,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -81,6 +69,15 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -88,7 +85,13 @@ import javax.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {
+                @javax.persistence.Index(name="OFFER_NAME_INDEX", columnList="OFFER_NAME"),
+                @javax.persistence.Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnList =  "MARKETING_MESSAGE" ),
+                @javax.persistence.Index(name="OFFER_TYPE_INDEX", columnList="OFFER_TYPE"),
+                @javax.persistence.Index(name="OFFER_DISCOUNT_INDEX", columnList="OFFER_DISCOUNT_TYPE"),
+                @javax.persistence.Index(name="idx_BLOF_START_DATE", columnList="START_DATE")
+        }),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {
@@ -120,7 +123,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
 
     @Column(name = "OFFER_NAME", nullable=false)
-    @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Name",
         group = GroupName.Description, order = FieldOrder.Name,
         prominent = true, gridOrder = 1, translatable = true,
@@ -134,14 +136,12 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected String description;
 
     @Column(name = "MARKETING_MESSAGE")
-    @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSAGE" })
     @AdminPresentation(friendlyName = "OfferImpl_marketingMessage",
         group = GroupName.Marketing, order = FieldOrder.Message,
         translatable = true, defaultValue = "")
     protected String marketingMessage;
 
     @Column(name = "OFFER_TYPE", nullable=false)
-    @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Type",
         group = GroupName.Description, order = FieldOrder.OfferType,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
@@ -150,7 +150,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
-    @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type",
         group = GroupName.Description, order = FieldOrder.DiscountType,
         requiredOverride = RequiredOverride.REQUIRED,
@@ -171,7 +170,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected Integer priority;
 
     @Column(name = "START_DATE")
-    @Index(name="idx_BLOF_START_DATE", columnNames={"START_DATE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date",
         group = GroupName.ActivityRange, order = FieldOrder.StartDate,
         prominent = true, gridOrder = 2,

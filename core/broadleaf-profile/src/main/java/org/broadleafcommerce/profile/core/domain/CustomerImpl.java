@@ -47,13 +47,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -70,6 +64,10 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -91,7 +89,11 @@ import javax.persistence.Transient;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name = "CUSTOMER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
+                @javax.persistence.Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList = "CHALLENGE_QUESTION_ID")
+        })
 })
 public class CustomerImpl implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
 
@@ -120,7 +122,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     protected String password;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name = "CUSTOMER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
     @AdminPresentation(friendlyName = "CustomerImpl_Email_Address",
             group = GroupName.Customer, order = FieldOrder.EMAIL,
             prominent = true, gridOrder = 1000)
@@ -146,7 +147,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
-    @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",
             excluded = true)
     protected ChallengeQuestion challengeQuestion;

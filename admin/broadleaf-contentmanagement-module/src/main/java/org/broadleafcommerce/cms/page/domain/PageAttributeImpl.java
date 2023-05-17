@@ -47,7 +47,7 @@ import javax.persistence.Table;
 @Table(name="BLC_PAGE_ATTRIBUTES")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "PAGEATTRIBUTE_NAME_INDEX", columnList = "NAME"), @javax.persistence.Index(name = "PAGEATTRIBUTE_INDEX", columnList = "PAGE_ID")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageAttributeImpl implements PageAttribute, ProfileEntity {
@@ -68,7 +68,6 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
     protected Long id;
     
     @Column(name = "FIELD_NAME", nullable = false)
-    @Index(name="PAGEATTRIBUTE_NAME_INDEX", columnNames = { "NAME" })
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 

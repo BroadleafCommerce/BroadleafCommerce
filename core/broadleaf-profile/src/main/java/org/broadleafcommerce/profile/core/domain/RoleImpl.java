@@ -17,11 +17,13 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -38,6 +40,11 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ROLE")
 @AdminPresentationClass(friendlyName = "RoleImpl")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name="ROLE_NAME_INDEX", columnList="ROLE_NAME")
+        })
+})
 public class RoleImpl implements Role {
 
     private static final long serialVersionUID = 1L;
@@ -56,7 +63,6 @@ public class RoleImpl implements Role {
     protected Long id;
 
     @Column(name = "ROLE_NAME", nullable = false)
-    @Index(name="ROLE_NAME_INDEX", columnNames={"ROLE_NAME"})
     @AdminPresentation(friendlyName = "rolesTitle",prominent = true)
     protected String roleName;
 

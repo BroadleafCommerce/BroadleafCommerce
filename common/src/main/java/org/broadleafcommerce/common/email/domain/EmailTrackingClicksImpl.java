@@ -17,11 +17,11 @@
  */
 package org.broadleafcommerce.common.email.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @author jfischer
@@ -37,6 +38,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_EMAIL_TRACKING_CLICKS")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "TRACKINGCLICKS_TRACKING_INDEX", columnList = "EMAIL_TRACKING_ID"),
+                @javax.persistence.Index(name = "TRACKINGCLICKS_CUSTOMER_INDEX", columnList = "CUSTOMER_ID") })
+})
 public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
     /** The Constant serialVersionUID. */
@@ -57,14 +62,12 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
     @ManyToOne(optional=false, targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
-    @Index(name="TRACKINGCLICKS_TRACKING_INDEX", columnNames={"EMAIL_TRACKING_ID"})
     protected EmailTracking emailTracking;
 
     @Column(nullable=false, name = "DATE_CLICKED")
     protected Date dateClicked;
 
     @Column(name = "CUSTOMER_ID")
-    @Index(name="TRACKINGCLICKS_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected String customerId;
 
     @Column(name = "DESTINATION_URI")

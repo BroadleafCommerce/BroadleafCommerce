@@ -40,14 +40,9 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.proxy.HibernateProxy;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -63,6 +58,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -71,7 +69,9 @@ import javax.persistence.Transient;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
 @SQLDelete(sql="UPDATE BLC_OFFER_CODE SET ARCHIVED = 'Y' WHERE OFFER_CODE_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFERCODE_OFFER_INDEX", columnList = "OFFER_ID"),
+                @javax.persistence.Index(name = "OFFERCODE_CODE_INDEX", columnList = "OFFER_CODE"),
+                @javax.persistence.Index(name = "OFFER_CODE_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferCodeImpl implements OfferCode {
@@ -94,14 +94,12 @@ public class OfferCodeImpl implements OfferCode {
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order=2000,
             prominent = true, gridOrder = 2000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
-    @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
     @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true, gridOrder = 1000,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blRegexPropertyValidator",
                     configurationItems = {
@@ -135,7 +133,6 @@ public class OfferCodeImpl implements OfferCode {
     protected int uses;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name = "OFFER_CODE_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
     @AdminPresentation(friendlyName = "OfferCodeImpl_Email_Address")
     protected String emailAddress;
 

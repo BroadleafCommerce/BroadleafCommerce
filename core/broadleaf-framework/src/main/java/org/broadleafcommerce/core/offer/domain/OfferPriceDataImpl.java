@@ -38,12 +38,8 @@ import org.broadleafcommerce.core.offer.service.type.OfferPriceDataIdentifierTyp
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,6 +52,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name = "BLC_OFFER_PRICE_DATA")
@@ -64,7 +62,7 @@ import javax.persistence.Table;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferPriceDataImpl_baseOfferPriceData")
 @SQLDelete(sql="UPDATE BLC_OFFER_PRICE_DATA SET ARCHIVED = 'Y' WHERE OFFER_PRICE_DATA_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFER_PRICE_DATA_OFFER_INDEX", columnList = "OFFER_ID")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferPriceDataImpl implements OfferPriceData {
@@ -87,7 +85,6 @@ public class OfferPriceDataImpl implements OfferPriceData {
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="OFFER_PRICE_DATA_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer", order = 1000)
     @AdminPresentationToOneLookup()
     protected Offer offer;

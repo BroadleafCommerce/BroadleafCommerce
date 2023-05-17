@@ -20,6 +20,9 @@ package org.broadleafcommerce.core.payment.domain;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentLogEventType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
@@ -27,11 +30,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,6 +43,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @deprecated - payment logs should now be captured as raw responses in Payment Transaction line items
@@ -52,6 +53,16 @@ import javax.persistence.TemporalType;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAYMENT_LOG")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name="PAYMENTLOG_USER_INDEX", columnList="USER_NAME"),
+                @javax.persistence.Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnList="ORDER_PAYMENT_ID"),
+                @javax.persistence.Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+                @javax.persistence.Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REF_NUM"),
+                @javax.persistence.Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnList="TRANSACTION_TYPE"),
+                @javax.persistence.Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnList="LOG_TYPE")
+        })
+})
 public class PaymentLogImpl implements PaymentLog {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +81,6 @@ public class PaymentLogImpl implements PaymentLog {
     protected Long id;
 
     @Column(name = "USER_NAME", nullable=false)
-    @Index(name="PAYMENTLOG_USER_INDEX", columnNames={"USER_NAME"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_User_Name", order = 1, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String userName;
 
@@ -80,22 +90,18 @@ public class PaymentLogImpl implements PaymentLog {
     protected Date transactionTimestamp;
 
     @Column(name = "ORDER_PAYMENT_ID")
-    @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
     @AdminPresentation(excluded = true, readOnly = true)
     protected Long orderPaymentId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @Column(name = "ORDER_PAYMENT_REF_NUM")
-    @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"ORDER_PAYMENT_REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Payment_Ref_Number", order = 4, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String orderPaymentReferenceNumber;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
-    @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Transaction_Type", order = 5, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String transactionType;
 
@@ -108,7 +114,6 @@ public class PaymentLogImpl implements PaymentLog {
     protected String exceptionMessage;
 
     @Column(name = "LOG_TYPE", nullable=false)
-    @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnNames={"LOG_TYPE"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Type", order = 8, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String logType;
 

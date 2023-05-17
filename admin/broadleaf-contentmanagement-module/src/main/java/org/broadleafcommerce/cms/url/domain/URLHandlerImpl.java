@@ -36,7 +36,6 @@ import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -57,7 +56,8 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blUrlHandler")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "INCOMING_URL_INDEX", columnList = "INCOMING_URL"),
+                @javax.persistence.Index(name = "IS_REGEX_HANDLER_INDEX", columnList = "IS_REGEX")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, ProfileEntity, URLHandlerAdminPresentation {
@@ -81,7 +81,6 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = GroupName.General, prominent = true,
             helpText = "urlHandlerIncoming_help", defaultValue = "")
     @Column(name = "INCOMING_URL", nullable = false)
-    @Index(name = "INCOMING_URL_INDEX", columnNames = {"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
@@ -100,7 +99,6 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @AdminPresentation(friendlyName = "URLHandlerImpl_isRegexHandler", order = 1, group = GroupName.General, prominent = true,
             groupOrder = 1,
             helpText = "urlHandlerIsRegexHandler_help")
-    @Index(name = "IS_REGEX_HANDLER_INDEX", columnNames = {"IS_REGEX"})
     protected Boolean isRegex = false;
 
     @Override

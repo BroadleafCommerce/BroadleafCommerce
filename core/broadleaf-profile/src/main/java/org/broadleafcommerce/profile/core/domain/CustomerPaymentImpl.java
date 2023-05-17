@@ -20,6 +20,9 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -36,13 +39,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -60,6 +59,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
@@ -75,6 +76,11 @@ import javax.persistence.UniqueConstraint;
         @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentAdminPresentation.TabName.BillingAddress),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentAdminPresentation.TabOrder.BillingAddress)
+        })
+})
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnList="PAYMENT_TYPE")
         })
 })
 public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdminPresentation {
@@ -109,7 +115,6 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     protected String paymentToken;
 
     @Column(name = "PAYMENT_TYPE")
-    @Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Type",
             group = GroupName.Payment, order = FieldOrder.PAYMENT_TYPE,
             fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,

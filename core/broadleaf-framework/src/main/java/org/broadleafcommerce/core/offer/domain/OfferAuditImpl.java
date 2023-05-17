@@ -21,11 +21,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,10 +34,18 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "BLC_OFFER_AUDIT")
 @Inheritance(strategy=InheritanceType.JOINED)
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFERAUDIT_OFFER_INDEX", columnList = "OFFER_ID"),
+                @javax.persistence.Index(name = "OFFERAUDIT_CUSTOMER_INDEX", columnList = "CUSTOMER_ID, OFFER_ID"),
+                @javax.persistence.Index(name = "OFFERAUDIT_ACCOUNT_INDEX", columnList = "ACCOUNT_ID, OFFER_ID"),
+                @javax.persistence.Index(name = "OFFERAUDIT_ORDER_INDEX", columnList = "ORDER_ID"),
+                @javax.persistence.Index(name = "OFFERAUDIT_OFFER_CODE_INDEX", columnList = "OFFER_CODE_ID")})
+})
 public class OfferAuditImpl implements OfferAudit {
 
     public static final long serialVersionUID = 1L;
@@ -58,23 +66,18 @@ public class OfferAuditImpl implements OfferAudit {
     protected Long id;
 
     @Column(name = "OFFER_ID")
-    @Index(name="OFFERAUDIT_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Long offerId;
 
     @Column(name = "CUSTOMER_ID")
-    @Index(name = "OFFERAUDIT_CUSTOMER_INDEX", columnNames = { "CUSTOMER_ID, OFFER_ID" })
     protected Long customerId;
 
     @Column(name = "ACCOUNT_ID")
-    @Index(name = "OFFERAUDIT_ACCOUNT_INDEX", columnNames = { "ACCOUNT_ID, OFFER_ID" })
     protected Long accountId;
 
     @Column(name = "ORDER_ID")
-    @Index(name="OFFERAUDIT_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Long orderId;
     
     @Column(name = "OFFER_CODE_ID")
-    @Index(name="OFFERAUDIT_OFFER_CODE_INDEX", columnNames={"OFFER_CODE_ID"})
     protected Long offerCodeId;
     
     @Column(name = "REDEEMED_DATE")

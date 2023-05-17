@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
@@ -52,7 +51,7 @@ import javax.persistence.Table;
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentTypeImpl_baseStructuredContentType")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "SC_TYPE_NAME_INDEX", columnList = "NAME")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class StructuredContentTypeImpl implements StructuredContentType, AdminMainEntity, ProfileEntity {
@@ -74,7 +73,6 @@ public class StructuredContentTypeImpl implements StructuredContentType, AdminMa
 
     @Column (name = "NAME")
     @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Name", order = 1, gridOrder = 1, group = "StructuredContentTypeImpl_Details", prominent = true)
-    @Index(name="SC_TYPE_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     @Column (name = "DESCRIPTION")

@@ -32,10 +32,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,6 +41,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -52,8 +50,8 @@ import javax.persistence.Table;
 @DirectCopyTransform({
     @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
     @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
-
+    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
 })
 public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity {
     
@@ -78,7 +76,6 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     
     // This is a broadleaf enumeration
     @Column(name = "ENTITY_TYPE", nullable = false)
-    @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     @AdminPresentation(friendlyName = "FieldImpl_EntityType",
             group = GroupName.General, order = FieldOrder.ENTITY_TYPE,
             prominent = true, gridOrder = 1,

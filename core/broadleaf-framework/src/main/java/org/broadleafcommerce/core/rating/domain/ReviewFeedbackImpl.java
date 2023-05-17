@@ -17,14 +17,16 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,10 +36,17 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_REVIEW_FEEDBACK")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name="REVIEWFEED_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+                @javax.persistence.Index(name="REVIEWFEED_DETAIL_INDEX", columnList="REVIEW_DETAIL_ID")
+        })
+})
 public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,7 +66,6 @@ public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="REVIEWFEED_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName="ReviewFeedback_customer")
     @AdminPresentationToOneLookup
     protected Customer customer;
@@ -68,7 +76,6 @@ public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
 
     @ManyToOne(optional = false, targetEntity = ReviewDetailImpl.class)
     @JoinColumn(name = "REVIEW_DETAIL_ID")
-    @Index(name="REVIEWFEED_DETAIL_INDEX", columnNames={"REVIEW_DETAIL_ID"})
     @AdminPresentationToOneLookup
     @AdminPresentation(friendlyName = "ReviewFeedback_reviewDetail")
     protected ReviewDetail reviewDetail;

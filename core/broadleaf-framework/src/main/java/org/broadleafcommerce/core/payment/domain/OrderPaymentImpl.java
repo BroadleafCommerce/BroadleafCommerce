@@ -50,15 +50,10 @@ import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.context.ApplicationContext;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -72,6 +67,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -104,7 +102,14 @@ import javax.persistence.Table;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderPaymentImpl_baseOrderPayment")
 @SQLDelete(sql="UPDATE BLC_ORDER_PAYMENT SET ARCHIVED = 'Y' WHERE ORDER_PAYMENT_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name = "ORDERPAYMENT_ORDER_INDEX" , columnList = "ORDER_ID"),
+                @javax.persistence.Index(name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"),
+                @javax.persistence.Index(name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID"),
+                @javax.persistence.Index(name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE")
+        })
+
 })
 public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable {
 
@@ -125,13 +130,11 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
 
     @ManyToOne(targetEntity = OrderImpl.class, optional = true)
     @JoinColumn(name = "ORDER_ID", nullable = true)
-    @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     protected Order order;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address billingAddress;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
@@ -140,12 +143,10 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
-    @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Reference_Number")
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
-    @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
     @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true,
             fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType")

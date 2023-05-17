@@ -19,6 +19,9 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
@@ -38,11 +41,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
-
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +54,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_FG_ADJUSTMENT")
@@ -67,6 +68,10 @@ import javax.persistence.Transient;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupAdjustmentImpl_baseFulfillmentGroupAdjustment")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "FGADJUSTMENT_INDEX", columnList = "FULFILLMENT_GROUP_ID"),
+                @javax.persistence.Index(name = "FGADJUSTMENT_OFFER_INDEX", columnList = "OFFER_ID")})
+})
 public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
@@ -86,13 +91,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    @Index(name="FGADJUSTMENT_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     @AdminPresentation(excluded = true)
     protected FulfillmentGroup fulfillmentGroup;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="FGADJUSTMENT_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_Offer", order=1000,
             prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()

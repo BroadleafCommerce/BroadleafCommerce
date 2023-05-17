@@ -18,6 +18,9 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
@@ -27,11 +30,8 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
-
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,11 +43,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "CANDIDATE_ORDER_INDEX", columnList = "ORDER_ID"),
+                @javax.persistence.Index(name = "CANDIDATE_ORDEROFFER_INDEX", columnList = "OFFER_ID")})
+})
 public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     public static final long serialVersionUID = 1L;
@@ -67,12 +72,10 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    @Index(name="CANDIDATE_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="CANDIDATE_ORDEROFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)

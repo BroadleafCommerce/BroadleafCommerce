@@ -17,6 +17,9 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -24,11 +27,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,11 +38,18 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_RATING_SUMMARY")
 @AdminPresentationClass(friendlyName = "RatingSummary", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
+                @javax.persistence.Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")})
+})
 public class RatingSummaryImpl implements RatingSummary, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,12 +68,10 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     protected Long id;
 
     @Column(name = "ITEM_ID", nullable = false)
-    @Index(name="RATINGSUMM_ITEM_INDEX", columnNames={"ITEM_ID"})
     @AdminPresentation(friendlyName = "RatingSummary_itemId", prominent = true)
     protected String itemId;
 
     @Column(name = "RATING_TYPE", nullable = false)
-    @Index(name="RATINGSUMM_TYPE_INDEX", columnNames={"RATING_TYPE"})
     @AdminPresentation(friendlyName = "RatingSummary_ratingType",
         prominent = true,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,

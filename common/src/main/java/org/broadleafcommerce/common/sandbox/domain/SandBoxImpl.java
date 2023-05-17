@@ -34,7 +34,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -60,7 +59,7 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @SQLDelete(sql="UPDATE BLC_SANDBOX SET ARCHIVED = 'Y' WHERE SANDBOX_ID = ?")
 @DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
+    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY, indexes = {@javax.persistence.Index(name = "SANDBOX_NAME_INDEX", columnList = "SANDBOX_NAME")})
 })
 public class SandBoxImpl implements SandBox, AdminMainEntity {
 
@@ -82,7 +81,6 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     protected Long id;
     
     @Column(name = "SANDBOX_NAME")
-    @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
     @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = SandboxAdminPresentation.GroupName.Description, prominent = true, 
             gridOrder = 2000, order = 1000,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blSandBoxNameValidator") })

@@ -38,11 +38,7 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -54,6 +50,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -79,7 +77,8 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "SEARCH_FACET_INDEX", columnList = "SEARCH_FACET_ID")})
 })
 public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
 
@@ -99,7 +98,6 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
 
     @ManyToOne(targetEntity = SearchFacetImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SEARCH_FACET_ID")
-    @Index(name = "SEARCH_FACET_INDEX", columnNames = { "SEARCH_FACET_ID" })
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected SearchFacet searchFacet = new SearchFacetImpl();
 

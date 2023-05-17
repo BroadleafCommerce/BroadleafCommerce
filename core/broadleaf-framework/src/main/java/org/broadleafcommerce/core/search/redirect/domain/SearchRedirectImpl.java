@@ -33,10 +33,7 @@ import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,6 +43,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.Date;
 
 /**
  * @author priyeshpatel
@@ -57,7 +55,8 @@ import javax.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "SEARCH_ACTIVE_INDEX", columnList = "ACTIVE_START_DATE, ACTIVE_END_DATE")})
 })
 public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable, AdminMainEntity, SearchRedirectAdminPresentation {
     
@@ -103,7 +102,6 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    @Index(name="SEARCH_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 4000, group = GroupName.Dates,
             tooltip = "skuEndDateTooltip",
             groupOrder = 1,

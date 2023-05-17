@@ -19,6 +19,9 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -26,7 +29,6 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
@@ -62,6 +64,11 @@ import javax.persistence.UniqueConstraint;
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"))
     }
 )
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
+                @javax.persistence.Index(name="CUSTPHONE_PHONE_INDEX", columnList="PHONE_ID")
+        })
+})
 public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPresentation {
 
     private static final long serialVersionUID = 1L;
@@ -92,7 +99,6 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
     @JoinColumn(name = "PHONE_ID")
-    @Index(name="CUSTPHONE_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
 
     @Override
