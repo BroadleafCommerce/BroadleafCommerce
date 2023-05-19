@@ -93,6 +93,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -109,6 +110,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+
+import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -334,9 +337,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
      */
-    @OneToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.PERSIST,org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.REFRESH})
-    @JoinColumn(name = "DEFAULT_PRODUCT_ID")
+    //todo: 6.3 cascade refresh was deleted due to potential hiberante issue, when after a clone process
+    //we refresh original & clone records, and after refresh it will be flushed at some point
+    //and during flush there will be exception about shared collection in sku.skuPriceData
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "DEFAULT_PRODUCT_ID", foreignKey = @ForeignKey(NO_CONSTRAINT))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @IgnoreEnterpriseBehavior
     protected Product defaultProduct;
@@ -345,7 +350,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
      * This relationship will be non-null if and only if this Sku is contained in the list of
      * additional Skus for a Product (for Skus based on ProductOptions)
      */
-    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDL_PRODUCT_ID")
     protected Product product;
 

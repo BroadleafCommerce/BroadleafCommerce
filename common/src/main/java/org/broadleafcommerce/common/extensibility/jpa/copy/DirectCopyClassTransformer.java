@@ -46,6 +46,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -102,7 +103,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -316,7 +317,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             error.printStackTrace();
             throw error;
         } catch (Exception e) {
-            throw new RuntimeException("Unable to transform class", e);
+            throw new TransformerException("Unable to transform class", e);
         } finally {
             if (clazz != null) {
                 try {

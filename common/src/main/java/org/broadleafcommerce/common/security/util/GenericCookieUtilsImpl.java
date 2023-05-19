@@ -90,6 +90,7 @@ public class GenericCookieUtilsImpl implements CookieUtils {
             sb.append("; SameSite=None");
         }
 
+        //todo: 6.3
         // ESAPI.httpUtilities().addHeader(response, "Set-Cookie", sb.toString());
         // wait for ESAPI update to Jakarta
         response.addHeader("Set-Cookie", sb.toString());

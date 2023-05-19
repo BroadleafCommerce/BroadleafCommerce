@@ -46,7 +46,7 @@
         <spring.version>6.0.8</spring.version>
         <spring.security.version>6.0.3</spring.security.version>
         <spring.boot.version>3.0.6</spring.boot.version>
-        <jackson.version>2.14.2</jackson.version>
+        <jackson.version>2.15.0</jackson.version>
         <lombok.version>1.18.24</lombok.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <geb.version>1.0</geb.version>
@@ -60,7 +60,7 @@
         <hsqldb.database.starter.version>2.4.0-SNAPSHOT</hsqldb.database.starter.version>
         <hsqldb.version>2.7.1</hsqldb.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
-        <hibernate.version>6.1.7.Final</hibernate.version>
+        <hibernate.version>6.2.2.Final</hibernate.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <jakarta.version>6.0.0</jakarta.version>
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
@@ -815,7 +815,7 @@
             <!-- Allow JAXB Annotations with Jackson -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
                 <version>${jackson.version}</version>
                 <exclusions>
                     <exclusion>

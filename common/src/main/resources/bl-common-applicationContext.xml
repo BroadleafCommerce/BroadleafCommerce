@@ -50,15 +50,22 @@
                 <bean class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern">
                     <property name="patterns">
                         <array>
+                            <value>.*HibernateAccessOptimizer.*</value>
                             <value>org\.apache.*</value>
+                            <value>org\.jboss.*</value>
+                            <value>org\.ehcache.*</value>
+                            <value>com\.ctc.*</value>
+                            <value>jdk.*</value>
                             <value>org\.springframework.*</value>
                             <value>javassist.*</value>
                             <value>javax.*</value>
+                            <value>jakarta.*</value>
                             <value>org.broadleafcommerce.openadmin.web.compatibility.JSCompatibilityRequestWrapper</value>
                             <value>org\.hibernate.*</value>
                             <value>org\.quartz.*</value>
                             <value>org\.terracotta.*</value>
                             <value>java.*</value>
+                            <value>com\.fasterxml.*</value>
                         </array>
                     </property>
                 </bean>

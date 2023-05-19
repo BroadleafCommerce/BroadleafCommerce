@@ -77,6 +77,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -88,6 +89,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Transient;
 
+import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
 
 /**
@@ -232,10 +234,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
     protected Boolean isFeaturedProduct = false;
 
-    @OneToOne(targetEntity = SkuImpl.class, cascade = {CascadeType.ALL})
+    @ManyToOne(targetEntity = SkuImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL})
-    @JoinColumn(name = "DEFAULT_SKU_ID")
+    @JoinColumn(name = "DEFAULT_SKU_ID", foreignKey = @ForeignKey(NO_CONSTRAINT))
     @ClonePolicy(toOneProperty = "defaultProduct")
     protected Sku defaultSku;
 

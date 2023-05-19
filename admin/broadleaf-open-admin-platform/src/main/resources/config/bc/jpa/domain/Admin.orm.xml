@@ -65,9 +65,13 @@
         </query>
     </named-query>
 
+<!-- todo: 6.3 a change to "FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl adminPermission"
+            from FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+            was due to hibernate issue https://hibernate.atlassian.net/browse/HHH-16582
+-->
     <named-query name="BC_COUNT_PERMISSIONS_FOR_USER_BY_TYPE_AND_CEILING_ENTITY" >
         <query>SELECT COUNT(adminPermission)
-               FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl adminPermission
                LEFT OUTER JOIN adminPermission.allChildPermissions childPermission
                LEFT OUTER JOIN childPermission.qualifiedEntities childQualifiedEntity
                LEFT OUTER JOIN adminPermission.qualifiedEntities qualifiedEntity

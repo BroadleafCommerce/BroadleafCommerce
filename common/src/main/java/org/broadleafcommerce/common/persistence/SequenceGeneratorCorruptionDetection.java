@@ -114,6 +114,7 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
             String tableName = null;
             String segmentColumnName = null;
             String valueColumnName = null;
+            Long incrementSize = null;
             if (genericAnnot != null && genericAnnot.strategy().equals(IdOverrideTableGenerator.class.getName())) {
                 //This is a BLC style ID generator
                 for (Parameter param : genericAnnot.parameters()) {
@@ -128,6 +129,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                     }
                     if (param.name().equals("value_column_name")) {
                         valueColumnName = param.value();
+                    }
+                    if (param.name().equals("increment_size")) {
+                        incrementSize = Long.valueOf(param.value());
                     }
                 }
 
@@ -196,7 +200,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 } finally {
                     context.setInternalIgnoreFilters(false);
                 }
-
+                if(incrementSize==null){
+                    incrementSize = (long) IdOverrideTableGenerator.DEFAULT_INCREMENT_SIZE;
+                }
                 if (CollectionUtils.isNotEmpty(results) && results.get(0) != null) {
                     LOG.debug(String.format("Checking for sequence corruption on entity %s", segmentValue));
                     Long maxEntityId = BLCNumberUtils.toLong(results.get(0));
@@ -204,7 +210,8 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                         String invalidSequenceDetectedMsg = String.format("The sequence value for %s in %s was found as %d (or an entry did not exist) but the actual max sequence in"
                             + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId);
                         if (automaticallyCorrectInconsistencies) {
-                            long newMaxId = maxEntityId + 10;
+                            //todo: 6.3 this change was due to hibernate issue https://hibernate.atlassian.net/browse/HHH-16634
+                            long newMaxId = maxEntityId + incrementSize+1L;
                             if (sequenceEntryExists) {
                                 invalidSequenceDetectedMsg += String.format(". Updating the sequence value" + " to %d", newMaxId);
                                 LOG.info(invalidSequenceDetectedMsg);

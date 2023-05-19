@@ -34,6 +34,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import jakarta.persistence.Table;
+import jakarta.persistence.spi.TransformerException;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -46,7 +47,7 @@ import javassist.bytecode.annotation.StringMemberValue;
  * entity before Hibernate sees it. This allows us to safely change/alter the names
  * of Tables for entities on patch releases.
  * <p>
- * Example of changing the Table name of {@link Product} to "BLC_ALTER_PRODUCT"
+ * Example of changing the Table name of {@link org.broadleafcommerce.core.catalog.domain.ProductImpl} to "BLC_ALTER_PRODUCT"
  * <p>
  * In applicationContext.xml
  * <p>
@@ -104,7 +105,8 @@ public class AlterTableNameClassTransformer extends AbstractClassTransformer imp
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null || StringUtils.isBlank(getTargetedClass()) || StringUtils.isBlank(getTableName())) {
             return null;
@@ -133,7 +135,7 @@ public class AlterTableNameClassTransformer extends AbstractClassTransformer imp
 
             } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new IllegalClassFormatException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + ex.getMessage());
+                throw new TransformerException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + ex.getMessage());
             }
         }
         return classBytes;

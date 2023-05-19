@@ -37,6 +37,7 @@ import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.QueryHint;
+import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
@@ -80,7 +81,7 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain
-            protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            protectionDomain, byte[] classfileBuffer) throws TransformerException {
         if (className == null || isExecuted) {
             return null;
         }
@@ -112,7 +113,7 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
                 return bos.toByteArray();
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new IllegalClassFormatException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + e.getMessage());
+                throw new TransformerException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + e.getMessage());
             }
         } else {
             return null;
