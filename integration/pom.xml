@@ -58,7 +58,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=512m ${surefire.argLine}</argLine>
+                            <argLine>-Xmx1024m ${surefire.argLine}</argLine>
                         </configuration>
                     </execution>
                 </executions>
@@ -126,7 +126,7 @@
                                 <configuration>
                                     <argLine>
                                         -Xmx1024m
-                                        -XX:MaxPermSize=512m -Xdebug
+                                        -Xdebug
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
                                         -agentpath:${jrebel.path}
                                         -Drebel.log.stdout=true
