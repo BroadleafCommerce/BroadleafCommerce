@@ -210,8 +210,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                         String invalidSequenceDetectedMsg = String.format("The sequence value for %s in %s was found as %d (or an entry did not exist) but the actual max sequence in"
                             + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId);
                         if (automaticallyCorrectInconsistencies) {
-                            //todo: 6.3 this change was due to hibernate issue https://hibernate.atlassian.net/browse/HHH-16634
-                            long newMaxId = maxEntityId + incrementSize+1L;
+                            //with hibernate 6 formulat is maxId+allocationSize+1
+                            //https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc#defaults-for-implicit-sequence-generators
+                            long newMaxId = maxEntityId + incrementSize + 1L;
                             if (sequenceEntryExists) {
                                 invalidSequenceDetectedMsg += String.format(". Updating the sequence value" + " to %d", newMaxId);
                                 LOG.info(invalidSequenceDetectedMsg);
