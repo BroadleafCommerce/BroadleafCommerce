@@ -112,8 +112,9 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
         if (!result.success || StringUtils.isBlank(compiled)) {
             StringBuilder errorString = new StringBuilder("\n");
             if (result.errors != null) {
-                for (int i = 0; i < result.errors.length; i++) {
-                    errorString.append(result.errors[i].description + "\n");
+                for (int i = 0; i < result.errors.size(); i++) {
+                    errorString.append(result.errors.get(i).getDescription())
+                            .append("\n");
                 }
             }
             throw new ResourceMinificationException("Error minifying js file " + filename + errorString);

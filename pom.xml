@@ -52,7 +52,7 @@
         <geb.version>1.0</geb.version>
         <spock.core.version>1.1-groovy-2.4</spock.core.version>
         <spock.spring.version>1.1-groovy-2.4</spock.spring.version>
-        <selenium.version>2.43.1</selenium.version>
+        <selenium.version>2.53.1</selenium.version>
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>2.4.21</groovy.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
@@ -920,8 +920,24 @@
                         <artifactId>commons-io</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-codec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.aggregate</groupId>
+                        <artifactId>jetty-all</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.xerial.snappy</groupId>
                         <artifactId>snappy-java</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpcore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1360,7 +1376,13 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
+                <version>4.5.14</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
