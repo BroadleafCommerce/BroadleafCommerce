@@ -67,7 +67,7 @@
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>2.4.21</groovy.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
-        <broadleaf-presentation.version>1.1.5-GA</broadleaf-presentation.version>
+        <broadleaf-presentation.version>1.1.6-GA</broadleaf-presentation.version>
         <hsqldb.database.starter.version>2.0.4-GA</hsqldb.database.starter.version>
         <closure.compiler.version>v20190215</closure.compiler.version>
         <hibernate.version>5.3.25.Final</hibernate.version>
