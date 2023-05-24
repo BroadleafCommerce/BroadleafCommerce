@@ -26,6 +26,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldMa
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
@@ -38,7 +39,7 @@ public abstract class AbstractFieldPersistenceProvider implements FieldPersisten
     protected Class<?> getListFieldType(Serializable instance, FieldManager fieldManager, Property property, PersistenceManager persistenceManager) {
         Class<?> returnType = null;
         Field field = fieldManager.getField(instance.getClass(), property.getName());
-        java.lang.reflect.Type type = field.getGenericType();
+        Type type = field.getGenericType();
         if (type instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) type;
             Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[0];
@@ -53,7 +54,7 @@ public abstract class AbstractFieldPersistenceProvider implements FieldPersisten
     protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property, PersistenceManager persistenceManager) {
         Class<?> returnType = null;
         Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR)));
-        java.lang.reflect.Type type = field.getGenericType();
+        Type type = field.getGenericType();
         if (type instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) type;
             Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];

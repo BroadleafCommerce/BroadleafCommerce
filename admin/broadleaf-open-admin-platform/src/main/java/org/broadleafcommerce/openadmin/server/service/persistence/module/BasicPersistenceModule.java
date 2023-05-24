@@ -105,6 +105,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -1629,7 +1630,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property) {
         Class<?> returnType = null;
         Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR)));
-        java.lang.reflect.Type type = field.getGenericType();
+        Type type = field.getGenericType();
         if (type instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) type;
             Class<?> clazz;

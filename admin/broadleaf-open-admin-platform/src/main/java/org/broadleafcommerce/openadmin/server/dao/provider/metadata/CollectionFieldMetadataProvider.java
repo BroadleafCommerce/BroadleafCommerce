@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -409,7 +410,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             if (field.getGenericType() instanceof ParameterizedType) {
                 try {
                     ParameterizedType pt = (ParameterizedType) field.getGenericType();
-                    java.lang.reflect.Type collectionType = pt.getActualTypeArguments()[0];
+                    Type collectionType = pt.getActualTypeArguments()[0];
                     String ceilingEntityName = ((Class<?>) collectionType).getName();
                     ceiling = entityConfiguration.lookupEntityClass(ceilingEntityName).getName();
                     break checkCeiling;
