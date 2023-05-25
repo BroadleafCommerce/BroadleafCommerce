@@ -55,6 +55,7 @@
                             <value>org\.jboss.*</value>
                             <value>org\.ehcache.*</value>
                             <value>com\.ctc.*</value>
+                            <value>org\.reactivestreams.*</value>
                             <value>jdk.*</value>
                             <value>org\.springframework.*</value>
                             <value>javassist.*</value>
