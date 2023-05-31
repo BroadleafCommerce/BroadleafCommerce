@@ -63,15 +63,14 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "BLC_OFFER_CODE")
+@Table(name = "BLC_OFFER_CODE", indexes = {@javax.persistence.Index(name = "OFFERCODE_CODE_INDEX", columnList = "OFFER_CODE"),
+        @javax.persistence.Index(name = "OFFER_CODE_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
 @SQLDelete(sql="UPDATE BLC_OFFER_CODE SET ARCHIVED = 'Y' WHERE OFFER_CODE_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFERCODE_OFFER_INDEX", columnList = "OFFER_ID"),
-                @javax.persistence.Index(name = "OFFERCODE_CODE_INDEX", columnList = "OFFER_CODE"),
-                @javax.persistence.Index(name = "OFFER_CODE_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFERCODE_OFFER_INDEX", columnList = "OFFER_ID")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferCodeImpl implements OfferCode {

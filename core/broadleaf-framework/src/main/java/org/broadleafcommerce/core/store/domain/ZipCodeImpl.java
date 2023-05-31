@@ -31,15 +31,15 @@ import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ZIP_CODE")
+@Table(name = "BLC_ZIP_CODE", indexes = {
+        @javax.persistence.Index(name="ZIPCODE_ZIP_INDEX", columnList="ZIPCODE"),
+        @javax.persistence.Index(name="ZIPCODE_STATE_INDEX", columnList="ZIP_STATE"),
+        @javax.persistence.Index(name="ZIPCODE_CITY_INDEX", columnList="ZIP_CITY"),
+        @javax.persistence.Index(name="ZIPCODE_LONGITUDE_INDEX", columnList="ZIP_LONGITUDE"),
+        @javax.persistence.Index(name="ZIPCODE_LATITUDE_INDEX", columnList="ZIP_LATITUDE")
+})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="ZIPCODE_ZIP_INDEX", columnList="ZIPCODE"),
-                @javax.persistence.Index(name="ZIPCODE_STATE_INDEX", columnList="ZIP_STATE"),
-                @javax.persistence.Index(name="ZIPCODE_CITY_INDEX", columnList="ZIP_CITY"),
-                @javax.persistence.Index(name="ZIPCODE_LONGITUDE_INDEX", columnList="ZIP_LONGITUDE"),
-                @javax.persistence.Index(name="ZIPCODE_LATITUDE_INDEX", columnList="ZIP_LATITUDE")
-        })
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class ZipCodeImpl implements Serializable, ZipCode {
 

@@ -80,18 +80,18 @@ import java.util.Map;
 import java.util.Set;
 
 @Entity
-@Table(name = "BLC_OFFER")
+@Table(name = "BLC_OFFER", indexes = {
+        @javax.persistence.Index(name="OFFER_NAME_INDEX", columnList="OFFER_NAME"),
+        @javax.persistence.Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnList =  "MARKETING_MESSAGE" ),
+        @javax.persistence.Index(name="OFFER_TYPE_INDEX", columnList="OFFER_TYPE"),
+        @javax.persistence.Index(name="OFFER_DISCOUNT_INDEX", columnList="OFFER_DISCOUNT_TYPE"),
+        @javax.persistence.Index(name="idx_BLOF_START_DATE", columnList="START_DATE")
+})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {
-                @javax.persistence.Index(name="OFFER_NAME_INDEX", columnList="OFFER_NAME"),
-                @javax.persistence.Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnList =  "MARKETING_MESSAGE" ),
-                @javax.persistence.Index(name="OFFER_TYPE_INDEX", columnList="OFFER_TYPE"),
-                @javax.persistence.Index(name="OFFER_DISCOUNT_INDEX", columnList="OFFER_DISCOUNT_TYPE"),
-                @javax.persistence.Index(name="idx_BLOF_START_DATE", columnList="START_DATE")
-        }),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {

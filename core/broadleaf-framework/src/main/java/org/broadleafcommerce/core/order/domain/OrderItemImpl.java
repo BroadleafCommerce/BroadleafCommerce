@@ -91,7 +91,7 @@ import java.util.Map;
 @Entity
 @EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_ITEM")
+@Table(name = "BLC_ORDER_ITEM", indexes = {@javax.persistence.Index(name="ORDERITEM_TYPE_INDEX", columnList="ORDER_ITEM_TYPE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -108,7 +108,6 @@ import java.util.Map;
                 @javax.persistence.Index(name = "ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
                 @javax.persistence.Index(name="ORDERITEM_MESSAGE_INDEX", columnList="PERSONAL_MESSAGE_ID"),
                 @javax.persistence.Index(name="ORDERITEM_GIFT_INDEX", columnList="GIFT_WRAP_ITEM_ID"),
-                @javax.persistence.Index(name="ORDERITEM_TYPE_INDEX", columnList="ORDER_ITEM_TYPE"),
                 @javax.persistence.Index(name="ORDERITEM_PARENT_INDEX", columnList="PARENT_ORDER_ITEM_ID")
         })
 })

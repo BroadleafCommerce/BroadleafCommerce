@@ -44,11 +44,13 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_RATING_SUMMARY")
+@Table(name = "BLC_RATING_SUMMARY", indexes = {
+        @javax.persistence.Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
+        @javax.persistence.Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")
+})
 @AdminPresentationClass(friendlyName = "RatingSummary", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
-                @javax.persistence.Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class RatingSummaryImpl implements RatingSummary, Serializable {
 

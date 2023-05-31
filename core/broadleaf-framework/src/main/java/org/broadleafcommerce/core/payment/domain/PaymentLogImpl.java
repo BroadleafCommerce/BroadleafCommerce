@@ -52,15 +52,16 @@ import java.util.Date;
 @Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PAYMENT_LOG")
+@Table(name = "BLC_PAYMENT_LOG", indexes = {
+        @javax.persistence.Index(name="PAYMENTLOG_USER_INDEX", columnList="USER_NAME"),
+        @javax.persistence.Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnList="ORDER_PAYMENT_ID"),
+        @javax.persistence.Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REF_NUM"),
+        @javax.persistence.Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnList="TRANSACTION_TYPE"),
+        @javax.persistence.Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnList="LOG_TYPE")
+})
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="PAYMENTLOG_USER_INDEX", columnList="USER_NAME"),
-                @javax.persistence.Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnList="ORDER_PAYMENT_ID"),
-                @javax.persistence.Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-                @javax.persistence.Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REF_NUM"),
-                @javax.persistence.Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnList="TRANSACTION_TYPE"),
-                @javax.persistence.Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnList="LOG_TYPE")
+                @javax.persistence.Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnList="CUSTOMER_ID")
         })
 })
 public class PaymentLogImpl implements PaymentLog {

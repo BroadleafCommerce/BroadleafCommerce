@@ -42,13 +42,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_COUNTRY_SUB")
+@Table(name = "BLC_COUNTRY_SUB", indexes = {
+        @javax.persistence.Index(name = "COUNTRY_SUB_NAME_IDX", columnList = "NAME"),
+        @javax.persistence.Index(name = "COUNTRY_SUB_ALT_ABRV_IDX", columnList = "ALT_ABBREVIATION")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCountryElements")
 @AdminPresentationClass(friendlyName = "CountrySubdivisionImpl_baseSubdivision")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "COUNTRY_SUB_NAME_IDX", columnList = "NAME"),
-        @javax.persistence.Index(name = "COUNTRY_SUB_ALT_ABRV_IDX", columnList = "ALT_ABBREVIATION")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class CountrySubdivisionImpl implements CountrySubdivision, AdminMainEntity {
 

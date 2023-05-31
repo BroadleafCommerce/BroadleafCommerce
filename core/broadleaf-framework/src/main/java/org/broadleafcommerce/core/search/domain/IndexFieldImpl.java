@@ -56,12 +56,12 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_INDEX_FIELD")
+@Table(name = "BLC_INDEX_FIELD", indexes = {@javax.persistence.Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdminPresentation, AdminMainEntity {
 

@@ -41,9 +41,9 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CREDIT_CARD_PAYMENT")
+@Table(name = "BLC_CREDIT_CARD_PAYMENT", indexes = {@javax.persistence.Index(name = "CREDITCARD_INDEX", columnList = "REFERENCE_NUMBER")})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "CREDITCARD_INDEX", columnList = "REFERENCE_NUMBER")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class CreditCardPaymentInfoImpl implements CreditCardPayment {
 

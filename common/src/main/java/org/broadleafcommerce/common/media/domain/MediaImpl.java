@@ -43,11 +43,11 @@ import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_MEDIA")
+@Table(name="BLC_MEDIA", indexes = {@javax.persistence.Index(name = "MEDIA_URL_INDEX", columnList = "URL"),
+        @javax.persistence.Index(name = "MEDIA_TITLE_INDEX", columnList = "TITLE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blMediaElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "MEDIA_URL_INDEX", columnList = "URL"),
-                @javax.persistence.Index(name = "MEDIA_TITLE_INDEX", columnList = "TITLE")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {

@@ -55,11 +55,11 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SANDBOX")
+@Table(name="BLC_SANDBOX", indexes = {@javax.persistence.Index(name = "SANDBOX_NAME_INDEX", columnList = "SANDBOX_NAME")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @SQLDelete(sql="UPDATE BLC_SANDBOX SET ARCHIVED = 'Y' WHERE SANDBOX_ID = ?")
 @DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY, indexes = {@javax.persistence.Index(name = "SANDBOX_NAME_INDEX", columnList = "SANDBOX_NAME")})
+    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class SandBoxImpl implements SandBox, AdminMainEntity {
 

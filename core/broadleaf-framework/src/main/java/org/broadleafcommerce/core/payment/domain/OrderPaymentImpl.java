@@ -73,7 +73,10 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_PAYMENT")
+@Table(name = "BLC_ORDER_PAYMENT", indexes = {
+        @javax.persistence.Index(name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"),
+        @javax.persistence.Index(name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE")
+})
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "", mergeEntries =
@@ -105,9 +108,7 @@ import java.util.List;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
                 @javax.persistence.Index(name = "ORDERPAYMENT_ORDER_INDEX" , columnList = "ORDER_ID"),
-                @javax.persistence.Index(name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"),
-                @javax.persistence.Index(name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID"),
-                @javax.persistence.Index(name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE")
+                @javax.persistence.Index(name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID")
         })
 
 })

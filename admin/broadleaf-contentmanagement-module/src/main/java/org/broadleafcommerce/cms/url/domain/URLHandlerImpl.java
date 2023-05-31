@@ -52,12 +52,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_URL_HANDLER")
+@Table(name = "BLC_URL_HANDLER", indexes = {@javax.persistence.Index(name = "INCOMING_URL_INDEX", columnList = "INCOMING_URL"),
+        @javax.persistence.Index(name = "IS_REGEX_HANDLER_INDEX", columnList = "IS_REGEX")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blUrlHandler")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "INCOMING_URL_INDEX", columnList = "INCOMING_URL"),
-                @javax.persistence.Index(name = "IS_REGEX_HANDLER_INDEX", columnList = "IS_REGEX")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, ProfileEntity, URLHandlerAdminPresentation {

@@ -38,10 +38,10 @@ import java.util.Set;
  *
  */
 @Entity
-@Table(name = "BLC_EMAIL_TRACKING")
+@Table(name = "BLC_EMAIL_TRACKING", indexes = {@javax.persistence.Index(name = "EMAILTRACKING_INDEX", columnList = "EMAIL_ADDRESS"),
+        @javax.persistence.Index(name = "DATESENT_INDEX", columnList = "DATE_SENT")})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "EMAILTRACKING_INDEX", columnList = "EMAIL_ADDRESS"),
-                @javax.persistence.Index(name = "DATESENT_INDEX", columnList = "DATE_SENT")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class EmailTrackingImpl implements EmailTracking {
 

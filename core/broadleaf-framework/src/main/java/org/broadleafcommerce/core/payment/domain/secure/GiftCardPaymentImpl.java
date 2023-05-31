@@ -36,9 +36,9 @@ import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_GIFT_CARD_PAYMENT")
+@Table(name = "BLC_GIFT_CARD_PAYMENT", indexes = {@javax.persistence.Index(name = "GIFTCARD_INDEX", columnList = "REFERENCE_NUMBER")})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "GIFTCARD_INDEX", columnList = "REFERENCE_NUMBER")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class GiftCardPaymentImpl implements GiftCardPayment {
 

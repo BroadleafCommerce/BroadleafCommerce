@@ -54,7 +54,9 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ADDRESS")
+@Table(name = "BLC_ADDRESS", indexes = {
+        @javax.persistence.Index(name="ADDRESS_COUNTRY_INDEX", columnList="COUNTY"),
+})
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "phonePrimary", mergeEntries =
@@ -105,7 +107,6 @@ import javax.persistence.Table;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="ADDRESS_COUNTRY_INDEX", columnList="COUNTY"),
                 @javax.persistence.Index(name="ADDRESS_ISO_COUNTRY_IDX", columnList="ISO_COUNTRY_ALPHA2"),
                 @javax.persistence.Index(name="ADDRESS_PHONE_PRI_IDX", columnList="PHONE_PRIMARY_ID"),
                 @javax.persistence.Index(name="ADDRESS_PHONE_SEC_IDX", columnList="PHONE_SECONDARY_ID"),

@@ -37,14 +37,14 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "BLC_OFFER_AUDIT")
+@Table(name = "BLC_OFFER_AUDIT", indexes = {@javax.persistence.Index(name = "OFFERAUDIT_OFFER_INDEX", columnList = "OFFER_ID"),
+        @javax.persistence.Index(name = "OFFERAUDIT_CUSTOMER_INDEX", columnList = "CUSTOMER_ID, OFFER_ID"),
+        @javax.persistence.Index(name = "OFFERAUDIT_ACCOUNT_INDEX", columnList = "ACCOUNT_ID, OFFER_ID"),
+        @javax.persistence.Index(name = "OFFERAUDIT_ORDER_INDEX", columnList = "ORDER_ID"),
+        @javax.persistence.Index(name = "OFFERAUDIT_OFFER_CODE_INDEX", columnList = "OFFER_CODE_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFERAUDIT_OFFER_INDEX", columnList = "OFFER_ID"),
-                @javax.persistence.Index(name = "OFFERAUDIT_CUSTOMER_INDEX", columnList = "CUSTOMER_ID, OFFER_ID"),
-                @javax.persistence.Index(name = "OFFERAUDIT_ACCOUNT_INDEX", columnList = "ACCOUNT_ID, OFFER_ID"),
-                @javax.persistence.Index(name = "OFFERAUDIT_ORDER_INDEX", columnList = "ORDER_ID"),
-                @javax.persistence.Index(name = "OFFERAUDIT_OFFER_CODE_INDEX", columnList = "OFFER_CODE_ID")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class OfferAuditImpl implements OfferAudit {
 

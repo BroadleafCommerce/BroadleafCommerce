@@ -51,12 +51,11 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_REVIEW_DETAIL")
+@Table(name = "BLC_REVIEW_DETAIL", indexes = {@javax.persistence.Index(name="REVIEWDETAIL_STATUS_INDEX", columnList="REVIEW_STATUS")})
 @AdminPresentationClass(friendlyName = "ReviewDetail", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
                 @javax.persistence.Index(name="REVIEWDETAIL_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-                @javax.persistence.Index(name="REVIEWDETAIL_STATUS_INDEX", columnList="REVIEW_STATUS"),
                 @javax.persistence.Index(name="REVIEWDETAIL_SUMMARY_INDEX", columnList="RATING_SUMMARY_ID"),
                 @javax.persistence.Index(name="REVIEWDETAIL_RATING_INDEX", columnList="RATING_DETAIL_ID")
         })

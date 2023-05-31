@@ -38,12 +38,12 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ROLE")
+@Table(name = "BLC_ROLE", indexes = {
+        @javax.persistence.Index(name="ROLE_NAME_INDEX", columnList="ROLE_NAME")
+})
 @AdminPresentationClass(friendlyName = "RoleImpl")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="ROLE_NAME_INDEX", columnList="ROLE_NAME")
-        })
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class RoleImpl implements Role {
 

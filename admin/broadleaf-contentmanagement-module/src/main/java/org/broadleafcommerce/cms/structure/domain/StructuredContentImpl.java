@@ -78,7 +78,9 @@ import java.util.Set;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SC")
+@Table(name = "BLC_SC", indexes = {
+        @javax.persistence.Index(name = "CONTENT_NAME_INDEX_ARCHIVED", columnList = "CONTENT_NAME, SC_TYPE_ID, ARCHIVED_FLAG"),
+        @javax.persistence.Index(name = "CONTENT_PRIORITY_INDEX", columnList="PRIORITY")})
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationMergeOverrides(value = { 
     @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
@@ -132,7 +134,7 @@ import java.util.Set;
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "CONTENT_NAME_INDEX_ARCHIVED", columnList = "CONTENT_NAME, SC_TYPE_ID, ARCHIVED_FLAG")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
@@ -159,7 +161,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     @Column(name = "CONTENT_NAME", nullable = false)
-    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "ARCHIVED_FLAG", "SC_TYPE_ID"})
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
@@ -173,7 +174,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Column(name = "PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
-    @Index(name="CONTENT_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})

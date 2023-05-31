@@ -65,7 +65,9 @@ import java.util.Map;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }))
+@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }), indexes = {
+        @javax.persistence.Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnList="PAYMENT_TYPE")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
 {
@@ -79,9 +81,7 @@ import java.util.Map;
         })
 })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnList="PAYMENT_TYPE")
-        })
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdminPresentation {
 

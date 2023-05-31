@@ -99,7 +99,12 @@ import java.util.Map;
 @Entity
 @EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER")
+@Table(name = "BLC_ORDER", indexes = {
+        @javax.persistence.Index(name = "ORDER_NAME_INDEX", columnList = "NAME"),
+        @javax.persistence.Index(name = "ORDER_STATUS_INDEX", columnList = "ORDER_STATUS"),
+        @javax.persistence.Index(name = "ORDER_NUMBER_INDEX", columnList = "ORDER_NUMBER"),
+        @javax.persistence.Index(name = "ORDER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -110,11 +115,7 @@ import java.util.Map;
 )
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps=true, indexes = {
-                @javax.persistence.Index(name = "ORDER_NAME_INDEX", columnList = "NAME"),
                 @javax.persistence.Index(name = "ORDER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
-                @javax.persistence.Index(name = "ORDER_STATUS_INDEX", columnList = "ORDER_STATUS"),
-                @javax.persistence.Index(name = "ORDER_NUMBER_INDEX", columnList = "ORDER_NUMBER"),
-                @javax.persistence.Index(name = "ORDER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")
         }),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })

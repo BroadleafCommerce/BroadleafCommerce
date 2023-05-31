@@ -60,10 +60,10 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SITE")
+@Table(name = "BLC_SITE", indexes = {@javax.persistence.Index(name = "BLC_SITE_ID_VAL_INDEX", columnList = "SITE_IDENTIFIER_VALUE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSiteElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER, indexes = {@javax.persistence.Index(name = "BLC_SITE_ID_VAL_INDEX", columnList = "SITE_IDENTIFIER_VALUE")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
 })

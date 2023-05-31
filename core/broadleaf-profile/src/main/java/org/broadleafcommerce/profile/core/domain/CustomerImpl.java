@@ -72,7 +72,7 @@ import java.util.Map;
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER")
+@Table(name = "BLC_CUSTOMER", indexes = {@javax.persistence.Index(name = "CUSTOMER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides(
     {
@@ -91,7 +91,6 @@ import java.util.Map;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name = "CUSTOMER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
                 @javax.persistence.Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList = "CHALLENGE_QUESTION_ID")
         })
 })
