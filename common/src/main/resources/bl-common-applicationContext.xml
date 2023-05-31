@@ -62,6 +62,7 @@
                             <value>org\.hibernate.*</value>
                             <value>org\.quartz.*</value>
                             <value>org\.terracotta.*</value>
+                            <value>org\.ehcache.*</value>
                             <value>java.*</value>
                         </array>
                     </property>
