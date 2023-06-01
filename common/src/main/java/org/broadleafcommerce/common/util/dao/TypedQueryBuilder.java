@@ -38,7 +38,8 @@ import jakarta.persistence.TypedQuery;
  */
 public class TypedQueryBuilder<T> {
     
-    protected Class<T> rootClass;
+    protected Class rootClass;
+    protected Class<T> returnClass;
     protected String rootAlias;
     protected List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
     protected List<TQJoin> joins = new ArrayList<TQJoin>();
@@ -52,6 +53,10 @@ public class TypedQueryBuilder<T> {
      * @param rootAlias
      */
     public TypedQueryBuilder(Class<T> rootClass, String rootAlias) {
+        this(rootClass, rootAlias, rootClass);
+    }
+
+    public TypedQueryBuilder(Class<? extends T> rootClass, String rootAlias, Class<T> returnClass) {
         this.rootClass = rootClass;
         this.rootAlias = rootAlias;
     }
@@ -171,7 +176,7 @@ public class TypedQueryBuilder<T> {
      * @return the TypedQuery
      */
     public TypedQuery<T> toQuery(EntityManager em) {
-        TypedQuery<T> q = em.createQuery(toQueryString(), rootClass);
+        TypedQuery<T> q = em.createQuery(toQueryString(), returnClass);
         fillParameterMap(q);
         return q;
     }
