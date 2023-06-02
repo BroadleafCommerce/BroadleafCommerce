@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
@@ -15,24 +15,18 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.web.filter;
+package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.common.web.BroadleafTimeZoneResolverImpl;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.WebRequest;
+import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 
-import java.util.TimeZone;
+import java.util.Date;
 
-/**
- * 
- * @author Phillip Verheyden (phillipuniverse)
- */
-@Component("blAdminTimeZoneResolver")
-public class BroadleafAdminTimeZoneResolver extends BroadleafTimeZoneResolverImpl {
+public interface DateExpression extends BroadleafVariableExpression {
 
-    @Override
-    public TimeZone resolveTimeZone(WebRequest request) {
-        //TODO: eventually this should support a using a timezone from the currently logged in Admin user preferences
-        return super.resolveTimeZone(request);
-    }
+    String getName();
+
+    int getPrecedence();
+
+    String renderWithContextTimeZone(Date date);
+
 }
