@@ -660,7 +660,7 @@
             var filters = JSON.parse($('#' + hiddenId).val());
             var inputs = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
             if (inputs.length) {
-                for (var i in inputs) {
+                for (var i=0;i<inputs.length;i++) {
                     var input = inputs[i];
                     input.value = encodeURIComponent(input.value);
                 }
