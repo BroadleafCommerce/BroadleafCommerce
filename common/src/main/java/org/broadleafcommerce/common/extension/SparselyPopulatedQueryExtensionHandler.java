@@ -158,6 +158,19 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     ExtensionResultStatusType getCacheKey(String qualifier, ResultType resultType, ExtensionResultHolder<String> response);
 
     /**
+     * Build the cache keys to be used for either the STANDARD or TEMPLATE style cache, driven by the resultType.
+     * If current site(BRC.getSite) is the TEMPLATE then find all sites that are children(they have parent site=current)
+     * And use them to construct a list of keys. This can be helpful when you do a change on a template site and
+     * need to invalidate cached items for standard sites.
+     *
+     * @param qualifier the suffix for the cache key
+     * @param resultType the type of cache key to create (STANDARD or TEMPLATE)
+     * @param response the response container
+     * @return the status of the extension operation
+     */
+    ExtensionResultStatusType getCacheKeys(String qualifier, ResultType resultType, ExtensionResultHolder<List<String>> response);
+
+    /**
      * Build a list of cache keys that are related to a TEMPLATE template site
      *
      * @param qualifier the suffix for the cache key
