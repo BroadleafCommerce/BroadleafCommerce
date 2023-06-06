@@ -74,6 +74,10 @@ public class EffectsManager {
     }
 
     public BufferedImage renderEffect(String effectName, Double factor, UnmarshalledParameter[] parameters, BufferedImage src) throws Exception {
+        return renderEffect(effectName, factor, parameters, src, null);
+    }
+
+    public BufferedImage renderEffect(String effectName, Double factor, UnmarshalledParameter[] parameters, BufferedImage src, String formatName) throws Exception {
         /*
          * retrieve the injected filter, instantiate the filter instance using reflection and execute the operation
          */
@@ -102,7 +106,10 @@ public class EffectsManager {
         args[types.length-1] = null;
         Constructor constructor = filterClass.getConstructor(types);
         Object filterInstance = constructor.newInstance(args);
-        
+
+        Method setImageFormatMethod = filterClass.getMethod("setImageFormat", String.class);
+        setImageFormatMethod.invoke(filterInstance, formatName);
+
         Method filterMethod = filterClass.getMethod("filter", new Class[]{BufferedImage.class, BufferedImage.class});
         Object result = filterMethod.invoke(filterInstance, new Object[]{src, null});
         

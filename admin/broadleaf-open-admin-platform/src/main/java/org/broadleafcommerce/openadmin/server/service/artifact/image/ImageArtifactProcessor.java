@@ -115,7 +115,7 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
             }
 
             for (Operation operation : operations){
-                image = effectsManager.renderEffect(operation.getName(), operation.getFactor(), operation.getParameters(), image);
+                image = effectsManager.renderEffect(operation.getName(), operation.getFactor(), operation.getParameters(), image, formatName);
             }
 
             if (formatName.toLowerCase().equals("gif")) {
