@@ -35,6 +35,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -44,8 +45,8 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_PAGE_ATTRIBUTES", indexes = {
-        @javax.persistence.Index(name = "PAGEATTRIBUTE_NAME_INDEX", columnList = "NAME"),
-        @javax.persistence.Index(name = "PAGEATTRIBUTE_INDEX", columnList = "PAGE_ID")})
+        @Index(name = "PAGEATTRIBUTE_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "PAGEATTRIBUTE_INDEX", columnList = "PAGE_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
