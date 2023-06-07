@@ -20,9 +20,6 @@ package org.broadleafcommerce.core.payment.domain;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentLogEventType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
@@ -32,10 +29,14 @@ import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -43,8 +44,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @deprecated - payment logs should now be captured as raw responses in Payment Transaction line items
@@ -53,16 +52,12 @@ import java.util.Date;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAYMENT_LOG", indexes = {
-        @javax.persistence.Index(name="PAYMENTLOG_USER_INDEX", columnList="USER_NAME"),
-        @javax.persistence.Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnList="ORDER_PAYMENT_ID"),
-        @javax.persistence.Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REF_NUM"),
-        @javax.persistence.Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnList="TRANSACTION_TYPE"),
-        @javax.persistence.Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnList="LOG_TYPE")
-})
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnList="CUSTOMER_ID")
-        })
+        @Index(name="PAYMENTLOG_USER_INDEX", columnList="USER_NAME"),
+        @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnList="ORDER_PAYMENT_ID"),
+        @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REF_NUM"),
+        @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnList="TRANSACTION_TYPE"),
+        @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnList="LOG_TYPE"),
+        @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnList="CUSTOMER_ID")
 })
 public class PaymentLogImpl implements PaymentLog {
 

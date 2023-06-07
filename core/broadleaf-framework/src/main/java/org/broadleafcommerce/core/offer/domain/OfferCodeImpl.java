@@ -44,6 +44,10 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -51,6 +55,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -58,19 +63,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity
-@Table(name = "BLC_OFFER_CODE", indexes = {@javax.persistence.Index(name = "OFFERCODE_CODE_INDEX", columnList = "OFFER_CODE"),
-        @javax.persistence.Index(name = "OFFER_CODE_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")})
+@Table(name = "BLC_OFFER_CODE", indexes = {
+        @Index(name = "OFFERCODE_CODE_INDEX", columnList = "OFFER_CODE"),
+        @Index(name = "OFFER_CODE_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "OFFERCODE_OFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
 @SQLDelete(sql="UPDATE BLC_OFFER_CODE SET ARCHIVED = 'Y' WHERE OFFER_CODE_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFERCODE_OFFER_INDEX", columnList = "OFFER_ID")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferCodeImpl implements OfferCode {

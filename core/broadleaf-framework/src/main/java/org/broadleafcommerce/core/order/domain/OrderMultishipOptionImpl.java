@@ -19,9 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
@@ -33,6 +30,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -41,11 +39,8 @@ import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_MULTISHIP_OPTION")
+@Table(name = "BLC_ORDER_MULTISHIP_OPTION", indexes = {@Index(name = "MULTISHIP_OPTION_ORDER_INDEX", columnList = "ORDER_ID")})
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "MULTISHIP_OPTION_ORDER_INDEX", columnList = "ORDER_ID")})
-})
 public class OrderMultishipOptionImpl implements OrderMultishipOption {
 
     private static final long serialVersionUID = 1L;

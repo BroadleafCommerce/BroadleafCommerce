@@ -17,32 +17,29 @@
  */
 package org.broadleafcommerce.common.email.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author jfischer
  *
  */
 @Entity
-@Table(name = "BLC_EMAIL_TRACKING", indexes = {@javax.persistence.Index(name = "EMAILTRACKING_INDEX", columnList = "EMAIL_ADDRESS"),
-        @javax.persistence.Index(name = "DATESENT_INDEX", columnList = "DATE_SENT")})
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
-})
+@Table(name = "BLC_EMAIL_TRACKING", indexes = {
+        @Index(name = "EMAILTRACKING_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "DATESENT_INDEX", columnList = "DATE_SENT")})
 public class EmailTrackingImpl implements EmailTracking {
 
     /** The Constant serialVersionUID. */

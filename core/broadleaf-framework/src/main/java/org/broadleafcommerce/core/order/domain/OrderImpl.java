@@ -69,6 +69,13 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -77,6 +84,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -89,21 +97,16 @@ import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER", indexes = {
-        @javax.persistence.Index(name = "ORDER_NAME_INDEX", columnList = "NAME"),
-        @javax.persistence.Index(name = "ORDER_STATUS_INDEX", columnList = "ORDER_STATUS"),
-        @javax.persistence.Index(name = "ORDER_NUMBER_INDEX", columnList = "ORDER_NUMBER"),
-        @javax.persistence.Index(name = "ORDER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")
+        @Index(name = "ORDER_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "ORDER_STATUS_INDEX", columnList = "ORDER_STATUS"),
+        @Index(name = "ORDER_NUMBER_INDEX", columnList = "ORDER_NUMBER"),
+        @Index(name = "ORDER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "ORDER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
@@ -114,9 +117,7 @@ import java.util.Map;
     }
 )
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps=true, indexes = {
-                @javax.persistence.Index(name = "ORDER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
-        }),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiable, Previewable, OrderAdminPresentation {

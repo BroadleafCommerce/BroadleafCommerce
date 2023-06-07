@@ -22,9 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
@@ -37,27 +34,27 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
 
 @Entity
-@Table(name = "BLC_CANDIDATE_ITEM_OFFER")
+@Table(name = "BLC_CANDIDATE_ITEM_OFFER", indexes = {
+        @Index(name = "CANDIDATE_ITEM_INDEX", columnList = "ORDER_ITEM_ID"),
+        @Index(name = "CANDIDATE_ITEMOFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "CANDIDATE_ITEM_INDEX", columnList = "ORDER_ITEM_ID"),
-                @javax.persistence.Index(name = "CANDIDATE_ITEMOFFER_INDEX", columnList = "OFFER_ID")})
-})
 public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     public static final Log LOG = LogFactory.getLog(CandidateItemOfferImpl.class);

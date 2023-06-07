@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -32,11 +29,17 @@ import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -44,22 +47,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_REVIEW_DETAIL", indexes = {@javax.persistence.Index(name="REVIEWDETAIL_STATUS_INDEX", columnList="REVIEW_STATUS")})
-@AdminPresentationClass(friendlyName = "ReviewDetail", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="REVIEWDETAIL_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-                @javax.persistence.Index(name="REVIEWDETAIL_SUMMARY_INDEX", columnList="RATING_SUMMARY_ID"),
-                @javax.persistence.Index(name="REVIEWDETAIL_RATING_INDEX", columnList="RATING_DETAIL_ID")
-        })
+@Table(name = "BLC_REVIEW_DETAIL", indexes = {
+        @Index(name="REVIEWDETAIL_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+        @Index(name="REVIEWDETAIL_SUMMARY_INDEX", columnList="RATING_SUMMARY_ID"),
+        @Index(name="REVIEWDETAIL_RATING_INDEX", columnList="RATING_DETAIL_ID"),
+        @Index(name="REVIEWDETAIL_STATUS_INDEX", columnList="REVIEW_STATUS")
 })
+@AdminPresentationClass(friendlyName = "ReviewDetail", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
     private static final long serialVersionUID = 1L;

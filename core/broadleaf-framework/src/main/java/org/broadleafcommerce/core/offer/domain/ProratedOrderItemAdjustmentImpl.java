@@ -19,9 +19,6 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -39,20 +36,22 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUST")
+@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUST", indexes = {@Index(name = "POIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -62,9 +61,6 @@ import java.math.BigDecimal;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemAdjustmentImpl_baseProratedOrderItemAdjustment")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "POIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
-})
 public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;

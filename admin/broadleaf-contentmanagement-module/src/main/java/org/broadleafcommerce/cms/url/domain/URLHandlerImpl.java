@@ -42,6 +42,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
@@ -52,8 +53,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_URL_HANDLER", indexes = {@javax.persistence.Index(name = "INCOMING_URL_INDEX", columnList = "INCOMING_URL"),
-        @javax.persistence.Index(name = "IS_REGEX_HANDLER_INDEX", columnList = "IS_REGEX")})
+@Table(name = "BLC_URL_HANDLER", indexes = {
+        @Index(name = "INCOMING_URL_INDEX", columnList = "INCOMING_URL"),
+        @Index(name = "IS_REGEX_HANDLER_INDEX", columnList = "IS_REGEX")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blUrlHandler")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
 @DirectCopyTransform({

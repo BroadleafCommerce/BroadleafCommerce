@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -37,11 +38,9 @@ import java.util.Date;
  *
  */
 @Entity
-@Table(name = "BLC_EMAIL_TRACKING_CLICKS")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "TRACKINGCLICKS_TRACKING_INDEX", columnList = "EMAIL_TRACKING_ID"),
-                @javax.persistence.Index(name = "TRACKINGCLICKS_CUSTOMER_INDEX", columnList = "CUSTOMER_ID") })
-})
+@Table(name = "BLC_EMAIL_TRACKING_CLICKS", indexes = {
+        @Index(name = "TRACKINGCLICKS_TRACKING_INDEX", columnList = "EMAIL_TRACKING_ID"),
+        @Index(name = "TRACKINGCLICKS_CUSTOMER_INDEX", columnList = "CUSTOMER_ID") })
 public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
     /** The Constant serialVersionUID. */

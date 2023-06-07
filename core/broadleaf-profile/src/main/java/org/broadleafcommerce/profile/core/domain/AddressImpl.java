@@ -19,9 +19,6 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -45,6 +42,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -55,7 +53,11 @@ import javax.persistence.Table;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADDRESS", indexes = {
-        @javax.persistence.Index(name="ADDRESS_COUNTRY_INDEX", columnList="COUNTY"),
+        @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnList="ISO_COUNTRY_ALPHA2"),
+        @Index(name="ADDRESS_PHONE_PRI_IDX", columnList="PHONE_PRIMARY_ID"),
+        @Index(name="ADDRESS_PHONE_SEC_IDX", columnList="PHONE_SECONDARY_ID"),
+        @Index(name="ADDRESS_PHONE_FAX_IDX", columnList="PHONE_FAX_ID"),
+        @Index(name="ADDRESS_COUNTRY_INDEX", columnList="COUNTY")
 })
 @AdminPresentationMergeOverrides(
     {
@@ -105,14 +107,6 @@ import javax.persistence.Table;
 )
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="ADDRESS_ISO_COUNTRY_IDX", columnList="ISO_COUNTRY_ALPHA2"),
-                @javax.persistence.Index(name="ADDRESS_PHONE_PRI_IDX", columnList="PHONE_PRIMARY_ID"),
-                @javax.persistence.Index(name="ADDRESS_PHONE_SEC_IDX", columnList="PHONE_SECONDARY_ID"),
-                @javax.persistence.Index(name="ADDRESS_PHONE_FAX_IDX", columnList="PHONE_FAX_ID")
-        })
-})
 public class AddressImpl implements Address {
 
     private static final long serialVersionUID = 1L;

@@ -55,27 +55,31 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.context.ApplicationContext;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT", indexes = {
-        @javax.persistence.Index(name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"),
-        @javax.persistence.Index(name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE")
+        @Index(name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"),
+        @Index(name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE"),
+        @Index(name = "ORDERPAYMENT_ORDER_INDEX" , columnList = "ORDER_ID"),
+        @Index(name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID")
 })
 @AdminPresentationMergeOverrides(
     {
@@ -105,12 +109,7 @@ import java.util.List;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderPaymentImpl_baseOrderPayment")
 @SQLDelete(sql="UPDATE BLC_ORDER_PAYMENT SET ARCHIVED = 'Y' WHERE ORDER_PAYMENT_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name = "ORDERPAYMENT_ORDER_INDEX" , columnList = "ORDER_ID"),
-                @javax.persistence.Index(name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID")
-        })
-
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable {
 

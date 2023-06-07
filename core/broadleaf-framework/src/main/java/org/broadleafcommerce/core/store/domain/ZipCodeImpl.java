@@ -17,29 +17,24 @@
  */
 package org.broadleafcommerce.core.store.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ZIP_CODE", indexes = {
-        @javax.persistence.Index(name="ZIPCODE_ZIP_INDEX", columnList="ZIPCODE"),
-        @javax.persistence.Index(name="ZIPCODE_STATE_INDEX", columnList="ZIP_STATE"),
-        @javax.persistence.Index(name="ZIPCODE_CITY_INDEX", columnList="ZIP_CITY"),
-        @javax.persistence.Index(name="ZIPCODE_LONGITUDE_INDEX", columnList="ZIP_LONGITUDE"),
-        @javax.persistence.Index(name="ZIPCODE_LATITUDE_INDEX", columnList="ZIP_LATITUDE")
-})
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
+        @Index(name="ZIPCODE_ZIP_INDEX", columnList="ZIPCODE"),
+        @Index(name="ZIPCODE_STATE_INDEX", columnList="ZIP_STATE"),
+        @Index(name="ZIPCODE_CITY_INDEX", columnList="ZIP_CITY"),
+        @Index(name="ZIPCODE_LONGITUDE_INDEX", columnList="ZIP_LONGITUDE"),
+        @Index(name="ZIPCODE_LATITUDE_INDEX", columnList="ZIP_LATITUDE")
 })
 public class ZipCodeImpl implements Serializable, ZipCode {
 

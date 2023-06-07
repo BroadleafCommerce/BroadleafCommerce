@@ -41,28 +41,30 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
-@Table(name = "BLC_OFFER_PRICE_DATA")
+@Table(name = "BLC_OFFER_PRICE_DATA", indexes = {@Index(name = "OFFER_PRICE_DATA_OFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferPriceDataImpl_baseOfferPriceData")
 @SQLDelete(sql="UPDATE BLC_OFFER_PRICE_DATA SET ARCHIVED = 'Y' WHERE OFFER_PRICE_DATA_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "OFFER_PRICE_DATA_OFFER_INDEX", columnList = "OFFER_ID")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferPriceDataImpl implements OfferPriceData {

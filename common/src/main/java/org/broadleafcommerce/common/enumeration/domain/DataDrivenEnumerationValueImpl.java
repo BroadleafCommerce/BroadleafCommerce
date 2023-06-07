@@ -34,6 +34,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -45,11 +46,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_DATA_DRVN_ENUM_VAL", indexes = {@javax.persistence.Index(name = "ENUM_VAL_KEY_INDEX", columnList = "ENUM_KEY")})
+@Table(name="BLC_DATA_DRVN_ENUM_VAL", indexes = {
+        @Index(name = "ENUM_VAL_KEY_INDEX", columnList = "ENUM_KEY"),
+        @Index(name = "HIDDEN_INDEX", columnList = "HIDDEN")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
 @AdminPresentationClass(friendlyName = "DataDrivenEnumerationValueImpl_friendyName")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true, indexes = {@javax.persistence.Index(name = "HIDDEN_INDEX", columnList = "HIDDEN")}),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValue {

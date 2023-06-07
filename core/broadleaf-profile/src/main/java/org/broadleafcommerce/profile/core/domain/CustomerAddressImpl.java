@@ -19,9 +19,6 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -45,6 +42,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -54,7 +52,7 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class, CustomerAddressPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ADDRESS")
+@Table(name = "BLC_CUSTOMER_ADDRESS", indexes = {@Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnList="ADDRESS_ID")})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides(
     {
@@ -68,11 +66,6 @@ import javax.persistence.Table;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @SQLDelete(sql = "UPDATE BLC_CUSTOMER_ADDRESS SET ARCHIVED = 'Y' WHERE CUSTOMER_ADDRESS_ID = ?")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnList="ADDRESS_ID")
-        })
-})
 public class CustomerAddressImpl implements CustomerAddress {
 
     private static final long serialVersionUID = 1L;

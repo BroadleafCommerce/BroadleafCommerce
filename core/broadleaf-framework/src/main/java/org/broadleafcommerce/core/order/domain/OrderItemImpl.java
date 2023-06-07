@@ -62,6 +62,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -72,6 +79,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -80,18 +88,19 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Entity
 @EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_ITEM", indexes = {@javax.persistence.Index(name="ORDERITEM_TYPE_INDEX", columnList="ORDER_ITEM_TYPE")})
+@Table(name = "BLC_ORDER_ITEM", indexes = {
+        @Index(name="ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
+        @Index(name="ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
+        @Index(name="ORDERITEM_MESSAGE_INDEX", columnList="PERSONAL_MESSAGE_ID"),
+        @Index(name="ORDERITEM_GIFT_INDEX", columnList="GIFT_WRAP_ITEM_ID"),
+        @Index(name="ORDERITEM_PARENT_INDEX", columnList="PARENT_ORDER_ITEM_ID"),
+        @Index(name="ORDERITEM_TYPE_INDEX", columnList="ORDER_ITEM_TYPE")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -103,13 +112,6 @@ import java.util.Map;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true,indexes = {
-                @javax.persistence.Index(name = "ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
-                @javax.persistence.Index(name = "ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
-                @javax.persistence.Index(name="ORDERITEM_MESSAGE_INDEX", columnList="PERSONAL_MESSAGE_ID"),
-                @javax.persistence.Index(name="ORDERITEM_GIFT_INDEX", columnList="GIFT_WRAP_ITEM_ID"),
-                @javax.persistence.Index(name="ORDERITEM_PARENT_INDEX", columnList="PARENT_ORDER_ITEM_ID")
-        })
 })
 public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 

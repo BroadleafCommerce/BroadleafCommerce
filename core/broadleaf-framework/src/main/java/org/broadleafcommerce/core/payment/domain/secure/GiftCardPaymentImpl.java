@@ -18,9 +18,6 @@
 package org.broadleafcommerce.core.payment.domain.secure;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -29,6 +26,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
@@ -36,10 +34,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_GIFT_CARD_PAYMENT", indexes = {@javax.persistence.Index(name = "GIFTCARD_INDEX", columnList = "REFERENCE_NUMBER")})
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
-})
+@Table(name = "BLC_GIFT_CARD_PAYMENT", indexes = {@Index(name = "GIFTCARD_INDEX", columnList = "REFERENCE_NUMBER")})
 public class GiftCardPaymentImpl implements GiftCardPayment {
 
     private static final long serialVersionUID = 1L;

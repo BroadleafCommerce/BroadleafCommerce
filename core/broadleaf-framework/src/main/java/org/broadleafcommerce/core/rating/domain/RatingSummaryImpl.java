@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -29,29 +26,28 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_RATING_SUMMARY", indexes = {
-        @javax.persistence.Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
-        @javax.persistence.Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")
+        @Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
+        @Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")
 })
 @AdminPresentationClass(friendlyName = "RatingSummary", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
-})
 public class RatingSummaryImpl implements RatingSummary, Serializable {
 
     private static final long serialVersionUID = 1L;

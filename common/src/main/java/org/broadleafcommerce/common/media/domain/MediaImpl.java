@@ -37,14 +37,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_MEDIA", indexes = {@javax.persistence.Index(name = "MEDIA_URL_INDEX", columnList = "URL"),
-        @javax.persistence.Index(name = "MEDIA_TITLE_INDEX", columnList = "TITLE")})
+@Table(name="BLC_MEDIA", indexes = {
+        @Index(name = "MEDIA_URL_INDEX", columnList = "URL"),
+        @Index(name = "MEDIA_TITLE_INDEX", columnList = "TITLE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blMediaElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),

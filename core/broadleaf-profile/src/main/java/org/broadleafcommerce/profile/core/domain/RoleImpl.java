@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
@@ -31,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
@@ -38,13 +36,8 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ROLE", indexes = {
-        @javax.persistence.Index(name="ROLE_NAME_INDEX", columnList="ROLE_NAME")
-})
+@Table(name = "BLC_ROLE", indexes = {@Index(name="ROLE_NAME_INDEX", columnList="ROLE_NAME")})
 @AdminPresentationClass(friendlyName = "RoleImpl")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
-})
 public class RoleImpl implements Role {
 
     private static final long serialVersionUID = 1L;

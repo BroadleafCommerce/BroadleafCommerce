@@ -31,6 +31,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -40,12 +41,9 @@ import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_REVIEW_FEEDBACK")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="REVIEWFEED_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-                @javax.persistence.Index(name="REVIEWFEED_DETAIL_INDEX", columnList="REVIEW_DETAIL_ID")
-        })
+@Table(name = "BLC_REVIEW_FEEDBACK", indexes = {
+        @Index(name="REVIEWFEED_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+        @Index(name="REVIEWFEED_DETAIL_INDEX", columnList="REVIEW_DETAIL_ID")
 })
 public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
 

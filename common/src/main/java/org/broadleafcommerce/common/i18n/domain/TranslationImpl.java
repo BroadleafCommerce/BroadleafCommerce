@@ -33,25 +33,25 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Table;
 import org.hibernate.annotations.Type;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
-import java.io.Serializable;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@javax.persistence.Table(name = "BLC_TRANSLATION", indexes = {@javax.persistence.Index(name = "TRANSLATION_INDEX", columnList =  "ENTITY_TYPE, ENTITY_ID, FIELD_NAME, LOCALE_CODE")})
+@Table(name = "BLC_TRANSLATION", indexes = {@Index(name = "TRANSLATION_INDEX", columnList =  "ENTITY_TYPE, ENTITY_ID, FIELD_NAME, LOCALE_CODE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blTranslationElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "TranslationImpl_baseTranslation")
-//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
-@Table(appliesTo = "BLC_TRANSLATION")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),

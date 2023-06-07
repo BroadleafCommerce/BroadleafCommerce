@@ -44,6 +44,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -60,7 +61,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SITE", indexes = {@javax.persistence.Index(name = "BLC_SITE_ID_VAL_INDEX", columnList = "SITE_IDENTIFIER_VALUE")})
+@Table(name = "BLC_SITE", indexes = {@Index(name = "BLC_SITE_ID_VAL_INDEX", columnList = "SITE_IDENTIFIER_VALUE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSiteElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER),

@@ -49,6 +49,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -65,12 +66,10 @@ import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_DISCRETE_ORDER_ITEM")
+@Table(name = "BLC_DISCRETE_ORDER_ITEM", indexes = {
+        @Index(name = "DISCRETE_SKU_INDEX", columnList = "SKU_ID"),
+        @Index(name = "DISCRETE_PRODUCT_INDEX", columnList = "PRODUCT_ID")})
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemImpl_discreteOrderItem")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "DISCRETE_SKU_INDEX", columnList = "SKU_ID"),
-        @javax.persistence.Index(name = "DISCRETE_PRODUCT_INDEX", columnList = "PRODUCT_ID")})
-})
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;

@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -29,6 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -38,12 +36,9 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ROLE")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="CUSTROLE_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-                @javax.persistence.Index(name="CUSTROLE_ROLE_INDEX", columnList="ROLE_ID")
-        })
+@Table(name = "BLC_CUSTOMER_ROLE",  indexes = {
+        @Index(name="CUSTROLE_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+        @Index(name="CUSTROLE_ROLE_INDEX", columnList="ROLE_ID")
 })
 public class CustomerRoleImpl implements CustomerRole {
 

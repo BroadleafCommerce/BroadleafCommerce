@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
@@ -29,6 +26,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -36,12 +34,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "BLC_CUSTOMER_OFFER_XREF")
+@Table(name = "BLC_CUSTOMER_OFFER_XREF", indexes = {
+        @Index(name = "CUSTOFFER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
+        @Index(name = "CUSTOFFER_OFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "CUSTOFFER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
-                @javax.persistence.Index(name = "CUSTOFFER_OFFER_INDEX", columnList = "OFFER_ID")})
-})
 public class CustomerOfferImpl implements CustomerOffer {
 
     public static final long serialVersionUID = 1L;

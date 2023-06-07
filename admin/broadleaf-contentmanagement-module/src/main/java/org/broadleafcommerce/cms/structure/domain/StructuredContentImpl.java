@@ -44,8 +44,14 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -55,6 +61,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -66,12 +73,6 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Created by bpolster.
@@ -79,8 +80,9 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC", indexes = {
-        @javax.persistence.Index(name = "CONTENT_NAME_INDEX_ARCHIVED", columnList = "CONTENT_NAME, SC_TYPE_ID, ARCHIVED_FLAG"),
-        @javax.persistence.Index(name = "CONTENT_PRIORITY_INDEX", columnList="PRIORITY")})
+        @Index(name = "CONTENT_PRIORITY_INDEX", columnList="PRIORITY"),
+        @Index(name="SC_OFFLN_FLG_INDX", columnList="OFFLINE_FLAG")
+})
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationMergeOverrides(value = { 
     @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
@@ -134,7 +136,8 @@ import java.util.Set;
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true,
+                indexes = {@Index(name = "CONTENT_NAME_INDEX_ARCHIVED", columnList = "CONTENT_NAME, SC_TYPE_ID, ARCHIVED_FLAG")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
@@ -213,7 +216,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     @Column(name = "OFFLINE_FLAG")
-    @Index(name="SC_OFFLN_FLG_INDX", columnNames={"OFFLINE_FLAG"})
     protected Boolean offlineFlag = false;
 
     @Transient

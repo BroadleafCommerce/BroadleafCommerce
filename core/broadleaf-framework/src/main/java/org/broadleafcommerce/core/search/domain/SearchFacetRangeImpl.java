@@ -45,6 +45,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -55,7 +56,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SEARCH_FACET_RANGE")
+@Table(name = "BLC_SEARCH_FACET_RANGE", indexes = {@Index(name = "SEARCH_FACET_INDEX", columnList = "SEARCH_FACET_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @AdminPresentationMergeOverrides(
@@ -77,8 +78,7 @@ import java.math.BigDecimal;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {@javax.persistence.Index(name = "SEARCH_FACET_INDEX", columnList = "SEARCH_FACET_ID")})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
 

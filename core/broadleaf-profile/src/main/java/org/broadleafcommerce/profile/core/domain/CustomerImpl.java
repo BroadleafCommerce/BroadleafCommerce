@@ -49,6 +49,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -56,6 +61,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -64,15 +70,13 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER", indexes = {@javax.persistence.Index(name = "CUSTOMER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS")})
+@Table(name = "BLC_CUSTOMER", indexes = {
+        @Index(name = "CUSTOMER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList = "CHALLENGE_QUESTION_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides(
     {
@@ -89,10 +93,7 @@ import java.util.Map;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList = "CHALLENGE_QUESTION_ID")
-        })
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
 public class CustomerImpl implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
 

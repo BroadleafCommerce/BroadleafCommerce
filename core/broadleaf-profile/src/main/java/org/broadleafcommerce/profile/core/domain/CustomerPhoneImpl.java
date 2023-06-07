@@ -37,6 +37,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -47,7 +48,9 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @EntityListeners(value = {CustomerPhonePersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(name="CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
+@Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(name="CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PHONE_NAME" }),
+        indexes = {@Index(name="CUSTPHONE_PHONE_INDEX", columnList="PHONE_ID")}
+)
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
@@ -64,11 +67,6 @@ import javax.persistence.UniqueConstraint;
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"))
     }
 )
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true, indexes = {
-                @javax.persistence.Index(name="CUSTPHONE_PHONE_INDEX", columnList="PHONE_ID")
-        })
-})
 public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPresentation {
 
     private static final long serialVersionUID = 1L;
