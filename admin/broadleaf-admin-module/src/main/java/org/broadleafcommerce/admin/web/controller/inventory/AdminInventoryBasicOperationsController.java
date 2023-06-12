@@ -66,7 +66,7 @@ public class AdminInventoryBasicOperationsController extends AdminBasicOperation
             List<SectionCrumb> sectionCrumbs = this.getSectionCrumbs(request, (String) null, (String) null);
             if (CollectionUtils.isNotEmpty(sectionCrumbs)) {
                 FulfillmentType defaultFulfillmentType = getDefaultFulfillmentType(sectionCrumbs.get(0));
-                if (queryString.length() > 0) {
+                if (queryString.length() > 0 && defaultFulfillmentType!=null) {
                     queryString += "&fulfillmentType=" + defaultFulfillmentType.getType();
                 }
             }
