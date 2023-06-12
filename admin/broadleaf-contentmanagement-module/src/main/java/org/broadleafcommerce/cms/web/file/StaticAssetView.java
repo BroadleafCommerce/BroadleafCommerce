@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.cms.web.file;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,19 +67,19 @@ public class StaticAssetView implements View {
                     Calendar last = Calendar.getInstance();
                     last.setTime(new Date(lastModified));
                     Calendar check = Calendar.getInstance();
-                    check.add(Calendar.SECOND, -2 * new Long(cacheSeconds).intValue());
+                    check.add(Calendar.SECOND, -2 * Long.valueOf(cacheSeconds).intValue());
                     if (check.compareTo(last) < 0) {
                         response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                         return;
                     }
                 } else {
                     Calendar check = Calendar.getInstance();
-                    check.add(Calendar.SECOND, -1 * new Long(cacheSeconds).intValue());
+                    check.add(Calendar.SECOND, -1 * Long.valueOf(cacheSeconds).intValue());
                     response.setDateHeader ("Last-Modified", check.getTimeInMillis());
                 }
                 Calendar cal = Calendar.getInstance();
                 long year = cacheSeconds * 365;
-                cal.add(Calendar.SECOND, new Long(year).intValue());
+                cal.add(Calendar.SECOND, Long.valueOf(year).intValue());
                 response.setDateHeader ("Expires", cal.getTimeInMillis());
             }
             OutputStream os = response.getOutputStream();

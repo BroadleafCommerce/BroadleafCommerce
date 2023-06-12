@@ -520,7 +520,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                                 }
                                 break;
                             case BOOLEAN:
-                                value = new Boolean(originalValue);
+                                value = Boolean.valueOf(originalValue);
                                 break;
                             case DECIMAL:
                                 value = new BigDecimal(originalValue);

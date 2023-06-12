@@ -648,7 +648,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 for (Count value : facet.getValues()) {
                     SearchFacetResultDTO resultDTO = new SearchFacetResultDTO();
                     resultDTO.setFacet(facetDTO.getFacet());
-                    resultDTO.setQuantity(new Long(value.getCount()).intValue());
+                    resultDTO.setQuantity(Long.valueOf(value.getCount()).intValue());
                     resultDTO.setValue(value.getName());
                     facetDTO.getFacetValues().add(resultDTO);
                 }

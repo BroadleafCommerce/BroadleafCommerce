@@ -138,7 +138,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
 
     private static final long serialVersionUID = 1L;
 
-    private static final Integer ZERO = new Integer(0);
+    private static final Integer ZERO = 0;
 
     @Id
     @GeneratedValue(generator = "PageId")

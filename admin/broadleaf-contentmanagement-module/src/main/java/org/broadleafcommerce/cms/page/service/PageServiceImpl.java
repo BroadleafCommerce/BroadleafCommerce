@@ -53,7 +53,6 @@ import javax.cache.CacheManager;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * @author Brian Polster (bpolster)
  * @author Nathan Moore (nathandmoore)

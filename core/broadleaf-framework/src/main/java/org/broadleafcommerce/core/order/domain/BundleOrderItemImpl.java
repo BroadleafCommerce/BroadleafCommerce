@@ -86,7 +86,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Sale_Price", order=2, group = "BundleOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
 
-    @ManyToOne(targetEntity = SkuImpl.class)
+    @ManyToOne(targetEntity = SkuImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "SKU_ID")
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
             group = OrderItemImpl.Presentation.Group.Name.Catalog,

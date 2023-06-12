@@ -68,6 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -919,12 +920,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
-        Collections.sort(cloned, new Comparator<CustomPersistenceHandler>() {
-            @Override
-            public int compare(CustomPersistenceHandler o1, CustomPersistenceHandler o2) {
-                return new Integer(o1.getOrder()).compareTo(new Integer(o2.getOrder()));
-            }
-        });
+        cloned.sort(Comparator.comparingInt(Ordered::getOrder));
         return cloned;
     }
     

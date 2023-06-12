@@ -590,18 +590,13 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         
         public Long add(Long entry) {
             if (! cache.containsKey(entry)) {
-                return cache.put(entry, new Long(System.currentTimeMillis()));
+                return cache.put(entry, Long.valueOf(System.currentTimeMillis()));
             }
             return null;
         }
         
         public Set<Long> getEntriesSince(long expiredTime) {
-            for(Iterator<Map.Entry<Long, Long>> item = cache.entrySet().iterator(); item.hasNext(); ) {
-                Map.Entry<Long, Long> entry = item.next();
-                if(entry.getValue().longValue() < expiredTime) {
-                  item.remove();
-                }
-            }
+            cache.entrySet().removeIf(entry -> entry.getValue() < expiredTime);
             return cache.keySet();
         }
 
