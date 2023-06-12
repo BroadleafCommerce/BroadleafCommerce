@@ -418,6 +418,23 @@
             return null;
         },
 
+        getQueryVariableFromStoredField: function (variable, hiddenId) {
+            var field = $('#query-params-for-filters' + hiddenId);
+            if (field) {
+                var query = field.val();
+                if (query) {
+                    var vars = query.split('&');
+                    for (var i = 0; i < vars.length; i++) {
+                        var pair = vars[i].split('=');
+                        if (decodeURIComponent(pair[0]) == variable) {
+                            return decodeURIComponent(pair[1]);
+                        }
+                    }
+                }
+            }
+            return null;
+        },
+
         /**
          * A custom pre-init query builder field handler to modify the filters object
          * in order to support a Boolean Radio button widget in the Query Builder.
@@ -882,10 +899,15 @@
 
                 // check for existing rules in the url
                 var queryString = BLCAdmin.filterBuilders.getQueryVariable(field.id);
+                var ignoreModal = false;
+                if (queryString == null) {
+                    queryString = BLCAdmin.filterBuilders.getQueryVariableFromStoredField(field.id, hiddenId);
+                    var ignoreModal = true;
+                }
                 // make sure its not modal
                 var modal = BLCAdmin.currentModal();
 
-                if ((queryString != null) && (modal == undefined)) {
+                if ((queryString != null) && (ignoreModal || modal == undefined)) {
                     var numInputs = 1;
                     // is this a 'BETWEEN' filter?
                     if (queryString.indexOf('|') > 0) {
