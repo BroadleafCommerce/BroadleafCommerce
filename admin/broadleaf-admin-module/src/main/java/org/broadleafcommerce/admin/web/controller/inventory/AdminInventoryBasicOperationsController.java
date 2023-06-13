@@ -18,6 +18,7 @@
 package org.broadleafcommerce.admin.web.controller.inventory;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -62,9 +63,9 @@ public class AdminInventoryBasicOperationsController extends AdminBasicOperation
         String queryString = requestParams.entrySet().stream().flatMap(
                 k -> k.getValue().stream().map(v -> new AbstractMap.SimpleEntry<String, String>(k.getKey(), v))
         ).map(e -> e.getKey() + '=' + e.getValue()).collect(Collectors.joining("&"));
-        if (!queryString.contains("fulfillmentType=") && requestParams.containsKey("inventoryParameter")) {
+        if (!queryString.contains("fulfillmentType=") && StringUtils.isNotEmpty(request.getParameter("inventoryParameter"))) {
             List<SectionCrumb> sectionCrumbs = this.getSectionCrumbs(request, (String) null, (String) null);
-            if (CollectionUtils.isNotEmpty(sectionCrumbs)) {
+            if (CollectionUtils.isNotEmpty(sectionCrumbs) && sectionCrumbs.get(0).getSectionIdentifier().equals("inventory")) {
                 FulfillmentType defaultFulfillmentType = getDefaultFulfillmentType(sectionCrumbs.get(0));
                 if (queryString.length() > 0 && defaultFulfillmentType!=null) {
                     queryString += "&fulfillmentType=" + defaultFulfillmentType.getType();
@@ -81,7 +82,8 @@ public class AdminInventoryBasicOperationsController extends AdminBasicOperation
         super.modifyFetchPersistencePackageRequest(ppr, pathVars);
         Optional<FilterAndSortCriteria> fType = Arrays.stream(ppr.getFilterAndSortCriteria())
                 .filter(f -> f.getPropertyId().equals("fulfillmentType")).findFirst();
-        Optional<FilterAndSortCriteria> inventoryParameter = Arrays.stream(ppr.getFilterAndSortCriteria()).filter(t -> t.getPropertyId().equals("inventoryParameter")).findFirst();
+        Optional<FilterAndSortCriteria> inventoryParameter = Arrays.stream(ppr.getFilterAndSortCriteria())
+                .filter(t -> t.getPropertyId().equals("inventoryParameter")).findFirst();
 
         if (!fType.isPresent() && inventoryParameter.isPresent()) {
             SectionCrumb[] sectionCrumbs = ppr.getSectionCrumbs();
