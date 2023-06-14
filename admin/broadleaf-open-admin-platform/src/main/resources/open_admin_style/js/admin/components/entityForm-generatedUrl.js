@@ -75,25 +75,22 @@
             var sourceFieldName = $generatedUrlContainer.data('source-field');
             $generatedUrlContainer.closest('form').find('#field-' + sourceFieldName + " input").off('keyup');
         },
-        
-        convertToUrlFragment : function convertToUrlFragment(val, options) {
+
+        convertToUrlFragment: function convertToUrlFragment(val, options) {
             var valPostFix = "";
             if (val.toString().indexOf('.') != -1) {
                 var valFragments = val.split('.');
-                valPostFix = valFragments[valFragments.length - 1];
-                val = val.substring(0,val.length - valPostFix.length)
-                if(valPostFix){
-                    valPostFix="."+valPostFix
-                }
+                valPostFix = "." + valFragments[valFragments.length - 1];
+                valFragments[valFragments.length - 1] = valPostFix;
+                val = valFragments.join('');
             }
 
             if (options != null && options.allowSlash) {
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase() + valPostFix;
+                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_/]/gi, '').toLowerCase();
             } else {
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase() + valPostFix;
+                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
             }
         }
-
     };
 
     BLCAdmin.addInitializationHandler(function($container) {
