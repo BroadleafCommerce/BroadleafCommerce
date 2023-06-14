@@ -78,18 +78,18 @@
 
         convertToUrlFragment: function convertToUrlFragment(val, options) {
             var valPostFix = "";
-            if (val.toString().indexOf('.') != -1) {
+            if (val.toString().indexOf('.') !== -1) {
                 var valFragments = val.split('.');
-                valPostFix = "." + valFragments[valFragments.length - 1];
+                valPostFix = "." + valFragments[valFragments.length - 1].replace(/[^.\w]/g, '');
                 valFragments[valFragments.length - 1] = valPostFix;
-                val = valFragments.join('');
+                val = valFragments.join('.');
             }
-
             if (options != null && options.allowSlash) {
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_/]/gi, '').toLowerCase();
+                val = val.replace(/[^.\w\s-/]/g, '');
             } else {
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
+                val = val.replace(/[^.\w\s-]/g, '');
             }
+            return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).toLowerCase().replace(/\.{2,}/g, '.');
         }
     };
 
