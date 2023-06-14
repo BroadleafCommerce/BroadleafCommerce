@@ -39,6 +39,16 @@ import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.management.ObjectName;
@@ -48,9 +58,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.*;
 
 /**
  * Merges jars, class names and mapping file names from several persistence.xml files. The
