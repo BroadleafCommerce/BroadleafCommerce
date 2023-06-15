@@ -333,6 +333,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 return 0;
             }
         });
+        Arrays.sort(sortedProperties, (o1, o2) -> {
+            if (o1.getName().contains(".") && !o2.getName().contains(".")) {
+                return 1;
+            } else if (o2.getName().contains(".") && !o1.getName().contains(".")) {
+                return -1;
+            }
+            return 0;
+        });
         Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
         FlushMode originalFlushMode = session.getHibernateFlushMode();
         try {
