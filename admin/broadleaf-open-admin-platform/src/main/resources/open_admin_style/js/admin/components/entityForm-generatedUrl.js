@@ -80,12 +80,12 @@
             var valPostFix = "";
             if (val.toString().indexOf('.') !== -1) {
                 var valFragments = val.split('.');
-                valPostFix = "." + valFragments[valFragments.length - 1].replace(/[^.\w]/g, '');
-                valFragments[valFragments.length - 1] = valPostFix;
+                valPostFix = "." + valFragments[valFragments.length - 1].replace(/ /g, '-');
+                valFragments[valFragments.length - 1] = valFragments[valFragments.length - 1].replace(/ /g, '-');
                 val = valFragments.join('.');
             }
             if (options != null && options.allowSlash) {
-                val = val.replace(/[^.\w\s-/]/g, '');
+                val = val.replace(/[^.\w\s/]/g, '');
             } else {
                 val = val.replace(/[^.\w\s-]/g, '');
             }
