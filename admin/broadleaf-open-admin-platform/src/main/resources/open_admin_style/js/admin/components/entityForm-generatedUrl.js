@@ -80,12 +80,12 @@
             var valPostFix = "";
             if (val.toString().indexOf('.') !== -1) {
                 var valFragments = val.split('.');
-                valPostFix = "." + valFragments[valFragments.length - 1].replace(/ /g, '-');
-                valFragments[valFragments.length - 1] = valFragments[valFragments.length - 1].replace(/ /g, BLC.systemProperty.urlFragmentSeparator);
+                valPostFix = "_" + valFragments[valFragments.length - 1].replace(/ /g, '-');
+                valFragments[valFragments.length - 1] = valFragments[valFragments.length - 1].replace(/ /g, '-');
                 if (valPostFix.endsWith('.')) {
                     valPostFix = valPostFix.slice(0, -1);
                 }
-                val = valFragments.join('.');
+                val = valFragments.join('_');
             }
             if (options != null && options.allowSlash) {
                 val = val.replace(/[^.\w\s/]/g, '');
