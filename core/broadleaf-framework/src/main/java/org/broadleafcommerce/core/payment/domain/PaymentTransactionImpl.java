@@ -127,7 +127,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @JoinColumn(name = "ORDER_PAYMENT")
     @AdminPresentation(excluded = true)
     protected OrderPayment orderPayment;
-    
+
     /**
      * Necessary for operations on a payment that require something to have happened beforehand. For instance, an AUTHORIZE
      * would not have a parent but a CAPTURE must have an AUTHORIZE parent and a REFUND must have a CAPTURE parent
@@ -139,16 +139,15 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected PaymentTransaction parentTransaction;
 
     @ElementCollection
-    @MapKeyColumn(name="FIELD_NAME")
-    @MapKeyJdbcType(LongVarcharJdbcType.class)
-    @Lob
-    @Column(name="FIELD_VALUE", length = Length.LONG32 - 1)
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
+    @MapKeyColumn(name="FIELD_NAME")
+    @Column(name="FIELD_VALUE", length = Length.LONG32 - 1)
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields", isSimpleValue = UnspecifiedBooleanType.TRUE,
         forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
+
 
     @Column(name = "SAVE_TOKEN")
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Save_Token")

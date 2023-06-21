@@ -131,13 +131,10 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
             group = GroupName.Payment, order = FieldOrder.IS_DEFAULT)
     protected boolean isDefault = false;
 
-    @ElementCollection()
-    @MapKeyJdbcType(LongVarcharJdbcType.class)
-    @Lob
+    @ElementCollection
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
     @Column(name = "FIELD_VALUE", length = Length.LONG32 - 1)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @AdminPresentationMap(friendlyName = "CustomerPaymentImpl_additionalFields",
             tab = TabName.Payment,
