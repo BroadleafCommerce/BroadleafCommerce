@@ -23,18 +23,18 @@
     version="2.0">
 
     <named-query name="BC_FIND_STORE_BY_STORE_NAME" >
-        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
+        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.StoreImpl store
             WHERE store.name = :storeName</query>
     </named-query>
 
     <named-query name="BC_FIND_ALL_STORES" >
-        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
+        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.StoreImpl store
             WHERE (store.archiveStatus.archived IS NULL OR store.archiveStatus.archived = :archived)
         </query>
     </named-query>
 
     <named-query name="BC_FIND_ALL_STORES_BY_STATE" >
-        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
+        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.StoreImpl store
             WHERE store.address.isoCountrySubdivision = :state
             AND (store.archiveStatus.archived IS NULL OR store.archiveStatus.archived = :archived)
         </query>

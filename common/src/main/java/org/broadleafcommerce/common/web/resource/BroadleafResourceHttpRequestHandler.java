@@ -37,7 +37,6 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Provides a PostConstruct method that sorts the {@link ResourceResolver}, {@link ResourceTransformer}, 
  * or location ({@link Resource}) collections based on the {@link Ordered} interface.
- * 
  *  
  * @author bpolster
  *

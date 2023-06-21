@@ -22,7 +22,9 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_FIRST_SKU" >
-        <query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku WHERE sku.id = (SELECT MIN(smallSku.id) FROM org.broadleafcommerce.core.catalog.domain.SkuImpl smallSku)</query>
+        <query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.SkuImpl sku
+            WHERE sku.id = (SELECT MIN(smallSku.id) FROM org.broadleafcommerce.core.catalog.domain.SkuImpl smallSku)
+        </query>
     </named-query>
 
     <named-query name="BC_READ_ALL_SKUS">
@@ -31,7 +33,7 @@
 
     <named-query name="BC_READ_SKU_BY_OUTGOING_URL" >
         <query>SELECT sku
-               FROM org.broadleafcommerce.core.catalog.domain.Sku sku
+               FROM org.broadleafcommerce.core.catalog.domain.SkuImpl sku
                LEFT JOIN sku.product product
                LEFT JOIN sku.defaultProduct defaultProduct
                WHERE (defaultProduct.url = :url

@@ -32,12 +32,7 @@ public class SortedListFactoryBean extends ListFactoryBean {
     @Override
     protected List createInstance() {
         List response = super.createInstance();
-        Collections.sort(response, new Comparator<Ordered>() {
-            @Override
-            public int compare(Ordered o1, Ordered o2) {
-                return new Integer(o1.getOrder()).compareTo(o2.getOrder());
-            }
-        });
+        response.sort(Comparator.comparingInt(Ordered::getOrder));
 
         return response;
     }

@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -60,7 +61,7 @@ public class AdminUserDaoImpl implements AdminUserDao {
     
     @Override
     public List<AdminUser> readAdminUsersByIds(Set<Long> ids) {
-        TypedQueryBuilder<AdminUser> tqb = new TypedQueryBuilder<AdminUser>(AdminUser.class, "au");
+        TypedQueryBuilder<AdminUser> tqb = new TypedQueryBuilder<>(AdminUserImpl.class, "au", AdminUser.class);
 
         if (ids != null && !ids.isEmpty()) {
             tqb.addRestriction("au.id", "in", ids);

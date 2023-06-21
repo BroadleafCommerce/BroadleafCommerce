@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.config.EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfiguration;
@@ -35,7 +32,6 @@ import jakarta.servlet.ServletContainerInitializer;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 
 /**
  * <p>

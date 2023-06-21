@@ -102,7 +102,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
     @Override
     @Deprecated
     public List<SandBox> retrieveAllUserSandBoxes(Long authorId) {
-        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sb")
+        TypedQuery<SandBox> query = new TypedQueryBuilder<>(SandBoxImpl.class, "sb", SandBox.class)
             .addRestriction("sb.author", "=", authorId)
             .addRestriction("sb.sandboxType", "=", SandBoxType.USER.getType())
             .addRestriction("sb.archiveStatus.archived", "==", null)

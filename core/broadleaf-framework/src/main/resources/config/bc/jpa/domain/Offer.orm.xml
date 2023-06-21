@@ -23,17 +23,17 @@
 
 
     <named-query name="BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID" >
-        <query>SELECT customerOffer FROM org.broadleafcommerce.core.offer.domain.CustomerOffer customerOffer
+        <query>SELECT customerOffer FROM org.broadleafcommerce.core.offer.domain.CustomerOfferImpl customerOffer
         WHERE customerOffer.customer.id = :customerId</query>
     </named-query>
 
     <named-query name="BC_READ_OFFER_CODE_BY_CODE" >
-        <query>SELECT offerCode FROM org.broadleafcommerce.core.offer.domain.OfferCode offerCode
+        <query>SELECT offerCode FROM org.broadleafcommerce.core.offer.domain.OfferCodeImpl offerCode
         WHERE offerCode.offerCode = :code AND (offerCode.archiveStatus.archived IS NULL OR offerCode.archiveStatus.archived = 'N') </query>
     </named-query>
 
     <named-query name="BC_READ_ALL_OFFERS" >
-        <query>SELECT offer FROM org.broadleafcommerce.core.offer.domain.Offer offer</query>
+        <query>SELECT offer FROM org.broadleafcommerce.core.offer.domain.OfferImpl offer</query>
     </named-query>
 
 </entity-mappings>

@@ -16,9 +16,6 @@
  * #L%
  */
 package org.broadleafcommerce.test.junit;
-/**
- * 
- */
 
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;

@@ -199,7 +199,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Deprecated
     @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
-        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAuditImpl.class, "offerAudit", OfferAudit.class)
                 .addRestriction("offerAudit.customerId", "=", customerId)
                 .addRestriction("offerAudit.offerId", "=", offerId)
                 .toCountQuery(em);
@@ -237,7 +237,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Deprecated
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
-        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAuditImpl.class, "offerAudit", OfferAudit.class)
                 .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
                 .toCountQuery(em);
 
@@ -246,7 +246,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public List<OfferAudit> readOfferAuditsByOrderId(Long orderId) {
-        TypedQuery<OfferAudit> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+        TypedQuery<OfferAudit> query = new TypedQueryBuilder<>(OfferAuditImpl.class, "offerAudit", OfferAudit.class)
                 .addRestriction("offerAudit.orderId", "=", orderId)
                 .toQuery(em);
         

@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.search.dao.FieldDao;
@@ -25,7 +22,6 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceImpl;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
-
 
 /**
  * Mainly a marker interface denoting that the entity should be indexed for search

@@ -25,22 +25,22 @@
     <named-query name="BC_READ_CATEGORY_XREF_BY_CATEGORYID">
         <query>
             SELECT categoryXref FROM org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl categoryXref
-             WHERE category.id = :categoryId
+            WHERE category.id = :categoryId
         </query>
     </named-query>
 
     <named-query name="BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID">
         <query>
             SELECT categoryXref FROM org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl categoryXref
-             WHERE categoryXref.subCategory.id = :subCategoryId
+            WHERE categoryXref.subCategory.id = :subCategoryId
         </query>
     </named-query>
 
     <named-query name="BC_READ_CATEGORY_XREF_BY_IDS">
         <query>
             SELECT categoryXref FROM org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl categoryXref
-             WHERE categoryXref.category.id = :categoryId
-               AND categoryXref.subCategory.id = :subCategoryId
+            WHERE categoryXref.category.id = :categoryId
+            AND categoryXref.subCategory.id = :subCategoryId
         </query>
     </named-query>
 

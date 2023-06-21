@@ -53,11 +53,10 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
 
     @Override
     public CountrySubdivision findSubdivisionByCountryAndAltAbbreviation(@Nonnull String countryAbbreviation, @Nonnull String altAbbreviation) {
-        TypedQuery<CountrySubdivision> query = new TypedQueryBuilder<CountrySubdivision>(CountrySubdivision.class, "cSub")
+        TypedQuery<CountrySubdivision> query = new TypedQueryBuilder<>(CountrySubdivisionImpl.class, "cSub", CountrySubdivision.class)
                 .addRestriction("cSub.country.abbreviation", "=", countryAbbreviation)
                 .addRestriction("cSub.alternateAbbreviation", "=", altAbbreviation)
                 .toQuery(em);
-
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
@@ -67,11 +66,10 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
 
     @Override
     public CountrySubdivision findSubdivisionByCountryAndName(@Nonnull String countryAbbreviation, @Nonnull String name) {
-        TypedQuery<CountrySubdivision> query = new TypedQueryBuilder<CountrySubdivision>(CountrySubdivision.class, "cSub")
+        TypedQuery<CountrySubdivision> query = new TypedQueryBuilder<>(CountrySubdivisionImpl.class, "cSub", CountrySubdivision.class)
                 .addRestriction("cSub.country.abbreviation", "=", countryAbbreviation)
                 .addRestriction("cSub.name", "=", name)
                 .toQuery(em);
-
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {

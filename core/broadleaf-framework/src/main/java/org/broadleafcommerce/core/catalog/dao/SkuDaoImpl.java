@@ -94,10 +94,9 @@ public class SkuDaoImpl implements SkuDao {
 
     @Override
     public Sku readSkuByExternalId(String externalId) {
-        TypedQuery<Sku> query = new TypedQueryBuilder<Sku>(Sku.class, "sku")
+        TypedQuery<Sku> query = new TypedQueryBuilder<>(SkuImpl.class, "sku", Sku.class)
                 .addRestriction("sku.externalId", "=", externalId)
                 .toQuery(em);
-
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
@@ -107,7 +106,7 @@ public class SkuDaoImpl implements SkuDao {
 
     @Override
     public Sku readSkuByUpc(String upc) {
-        TypedQuery<Sku> query = new TypedQueryBuilder<Sku>(Sku.class, "sku")
+        TypedQuery<Sku> query = new TypedQueryBuilder<Sku>(SkuImpl.class, "sku", Sku.class)
                 .addRestriction("sku.upc", "=", upc)
                 .toQuery(em);
         try {

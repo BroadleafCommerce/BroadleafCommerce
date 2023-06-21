@@ -59,6 +59,7 @@ public class TypedQueryBuilder<T> {
     public TypedQueryBuilder(Class<? extends T> rootClass, String rootAlias, Class<T> returnClass) {
         this.rootClass = rootClass;
         this.rootAlias = rootAlias;
+        this.returnClass = returnClass;
     }
     
     /**

@@ -48,7 +48,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import javassist.util.proxy.ProxyFactory;
 
-
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
     public static final String HIBERNATE_PROXY = "$HibernateProxy";

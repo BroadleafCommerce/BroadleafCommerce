@@ -45,8 +45,8 @@
         <property name="alwaysUseFullPath" value="true"></property>
         <property name="mappings">
             <map>
-                <entry key="/*/${asset.server.url.prefix.internal}/*" value-ref="blStaticAssetViewController"/>
-                <entry key="/${asset.server.url.prefix.internal}/*" value-ref="blStaticAssetViewController"/>
+                <entry key="/*/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
+                <entry key="/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
             </map>
         </property>
     </bean>

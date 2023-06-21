@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.common.SolrInputDocument;
@@ -34,7 +31,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Extension handler for indexing operations in Solr. Implementors should extend from {@link AbstractSolrIndexServiceExtensionHandler}

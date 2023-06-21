@@ -22,12 +22,12 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_ALL_FULFILLMENT_OPTIONS" >
-        <query>SELECT fulfillmentOption FROM org.broadleafcommerce.core.order.domain.FulfillmentOption fulfillmentOption</query>
+        <query>SELECT fulfillmentOption FROM org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl fulfillmentOption</query>
     </named-query>
     
     
     <named-query name="BC_READ_ALL_FULFILLMENT_OPTIONS_BY_TYPE" >
-        <query>SELECT fulfillmentOption FROM org.broadleafcommerce.core.order.domain.FulfillmentOption fulfillmentOption 
+        <query>SELECT fulfillmentOption FROM org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl fulfillmentOption
         WHERE fulfillmentOption.fulfillmentType = :fulfillmentType</query>
     </named-query>
     

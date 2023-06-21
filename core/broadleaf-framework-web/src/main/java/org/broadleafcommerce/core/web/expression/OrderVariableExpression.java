@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.web.expression;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
@@ -27,7 +24,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 
 import jakarta.annotation.Resource;
-
 
 /**
  * 

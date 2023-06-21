@@ -106,10 +106,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order readOrderByExternalId(String orderExternalId) {
-        TypedQuery<Order> query = new TypedQueryBuilder<Order>(Order.class, "ord")
+        TypedQuery<Order> query = new TypedQueryBuilder<>(OrderImpl.class, "ord", Order.class)
                 .addRestriction("ord.embeddedOmsOrder.externalId", "=", orderExternalId)
                 .toQuery(em);
-
         try {
             return query.getSingleResult();
             //potentially we can get exception because externalId field is added in oms module that is not mandatory to have
