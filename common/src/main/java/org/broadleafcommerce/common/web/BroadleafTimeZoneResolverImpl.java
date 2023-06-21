@@ -54,8 +54,8 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
         // Second, check for a request parameter
         if (timeZone == null && BLCRequestUtils.getURLorHeaderParameter(request, TIMEZONE_CODE_PARAM) != null) {
             String timeZoneCode = BLCRequestUtils.getURLorHeaderParameter(request, TIMEZONE_CODE_PARAM);
-            timeZone = TimeZone.getTimeZone(timeZoneCode);
-
+            TimeZone timeZoneImpl = TimeZone.getTimeZone(timeZoneCode);
+            timeZone = new TimeZoneWrapper(timeZoneImpl);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find TimeZone by param " + timeZoneCode + " resulted in " + timeZone);
             }
@@ -72,8 +72,8 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
 
         // Finally, use the default
         if (timeZone == null) {
-            timeZone = TimeZone.getDefault();
-
+            TimeZone timeZoneImpl = TimeZone.getDefault();
+            timeZone = new TimeZoneWrapper(timeZoneImpl);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("timezone set to default timezone " + timeZone);
             }
