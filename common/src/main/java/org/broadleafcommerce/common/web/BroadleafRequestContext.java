@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.web;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;

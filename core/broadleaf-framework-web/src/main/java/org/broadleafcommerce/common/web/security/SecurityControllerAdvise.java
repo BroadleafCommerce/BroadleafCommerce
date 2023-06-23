@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
@@ -15,24 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.web.filter;
+package org.broadleafcommerce.common.web.security;
 
-import org.broadleafcommerce.common.web.BroadleafTimeZoneResolverImpl;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.WebRequest;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.TimeZone;
+import jakarta.servlet.http.HttpSession;
 
-/**
- * 
- * @author Phillip Verheyden (phillipuniverse)
- */
-@Component("blAdminTimeZoneResolver")
-public class BroadleafAdminTimeZoneResolver extends BroadleafTimeZoneResolverImpl {
+@ControllerAdvice("blSecurityControllerAdvise")
+public class SecurityControllerAdvise {
 
-    @Override
-    public TimeZone resolveTimeZone(WebRequest request) {
-        //TODO: eventually this should support a using a timezone from the currently logged in Admin user preferences
-        return super.resolveTimeZone(request);
+    @ModelAttribute("session")
+    HttpSession session() {
+        BroadleafRequestContext context =  BroadleafRequestContext.getBroadleafRequestContext();
+        return context.getRequest() != null ? context.getRequest().getSession() : null;
     }
+
 }

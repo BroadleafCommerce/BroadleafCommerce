@@ -80,7 +80,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(targetEntity = SkuImpl.class, fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
@@ -88,7 +88,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = ProductImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
@@ -96,12 +96,12 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentationToOneLookup()
     protected Product product;
 
-    @ManyToOne(targetEntity = BundleOrderItemImpl.class)
+    @ManyToOne(targetEntity = BundleOrderItemImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected BundleOrderItem bundleOrderItem;
 
-    @ManyToOne(targetEntity = SkuBundleItemImpl.class)
+    @ManyToOne(targetEntity = SkuBundleItemImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;

@@ -64,14 +64,14 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Discrete_Order_Items",
             tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
             tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
     protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
     
-    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Item_Fee_Prices",
             tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
@@ -94,7 +94,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentationToOneLookup()
     protected Sku sku;  
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class)
+    @ManyToOne(targetEntity = ProductBundleImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID")
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
             group = OrderItemImpl.Presentation.Group.Name.Catalog,

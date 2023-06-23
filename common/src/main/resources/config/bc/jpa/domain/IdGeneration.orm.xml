@@ -23,7 +23,7 @@
 
     <named-query name="BC_FIND_NEXT_ID" >
         <query>
-            SELECT idGeneration FROM org.broadleafcommerce.common.id.domain.IdGeneration idGeneration
+            SELECT idGeneration FROM org.broadleafcommerce.common.id.domain.IdGenerationImpl idGeneration
             WHERE idGeneration.type = :idType
         </query>
     </named-query>

@@ -35,12 +35,12 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
     private final Log LOG = LogFactory.getLog(BroadleafTimeZoneResolverImpl.class);
     
     /**
-     * Parameter/Attribute name for the current language
+     * Parameter/Attribute name for the current time
      */
     public static String TIMEZONE_VAR = "blTimeZone";
 
     /**
-     * Parameter/Attribute name for the current language
+     * Parameter/Attribute name for the current time
      */
     public static String TIMEZONE_CODE_PARAM = "blTimeZoneCode";
 

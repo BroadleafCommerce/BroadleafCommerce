@@ -297,11 +297,11 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     Field sortFieldDef = fieldManager.getField(instance.getClass(), adornedTargetList.getSortField());
                     int add = (adornedLastOrdering == null) ? 0 : 1;
                     if (sortFieldDef.getType().isAssignableFrom(Long.class)) {
-                        adornedLastOrdering = (adornedLastOrdering == null) ? new Long(0) : adornedLastOrdering;
-                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), new Long(((Long) adornedLastOrdering).longValue() + add));
+                        adornedLastOrdering = (adornedLastOrdering == null) ? Long.valueOf(0) : adornedLastOrdering;
+                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Long.valueOf(((Long) adornedLastOrdering).longValue() + add));
                     } else if (sortFieldDef.getType().isAssignableFrom(Integer.class)) {
-                        adornedLastOrdering = (adornedLastOrdering == null) ? new Integer(0) : adornedLastOrdering;
-                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), new Integer(((Integer) adornedLastOrdering).intValue() + add));
+                        adornedLastOrdering = (adornedLastOrdering == null) ? Integer.valueOf(0) : adornedLastOrdering;
+                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Integer.valueOf(((Integer) adornedLastOrdering).intValue() + add));
                     } else if (sortFieldDef.getType().isAssignableFrom(BigDecimal.class)) {
                         adornedLastOrdering = (adornedLastOrdering == null) ? BigDecimal.ZERO : adornedLastOrdering;
                         fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), ((BigDecimal) adornedLastOrdering).add(new BigDecimal(add)));
