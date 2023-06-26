@@ -4,7 +4,7 @@
 </comment>
 
 <th:block th:if="${!#strings.isEmpty(listGrid.templateOverride)}">
-    <th:block th:include="${listGrid.templateOverride}" th:with="listGrid=${listGrid}"></th:block>
+    <th:block th:insert="~{${listGrid.templateOverride}}" th:with="listGrid=${listGrid}"></th:block>
 </th:block>
 
 <th:block th:unless="${!#strings.isEmpty(listGrid.templateOverride)}">

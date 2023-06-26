@@ -10,10 +10,10 @@
          th:classappend="${!field.isVisible}? 'hidden'">
 
         <th:block th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
-            <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+            <div th:replace="~{${'fields/' + #strings.toLowerCase(field.fieldType)}}"></div>
         </th:block>
         <th:block th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
-            <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
+            <div th:replace="~{${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}}"></div>
         </th:block>
 
         <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}"></span>
@@ -25,7 +25,7 @@
              th:class="'col6 field-group' + ${(field.isDirty ? ' dirty' : '')} + ${(field.disabled ? ' disabled' : '')} + ${(#fields.hasErrors('fields[__${field.name}__].value') ? ' has-error' : '')}"
              blc_admin:component_id="${field}"
              th:classappend="${!field.isVisible}? 'hidden'">
-            <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+            <div th:replace="~{${'fields/' + #strings.toLowerCase(field.fieldType)}}"></div>
         </div>
         <th:block th:with="associatedFieldName=${field.associatedFieldName}">
             <div th:class="'col6 field-group' + ${(field.isDirty ? ' dirty' : '')} + ${(field.disabled ? ' disabled' : '')} + ${(#fields.hasErrors('fields[__${field.name}__].value') ? ' has-error' : '')}"
@@ -33,7 +33,7 @@
                  blc_admin:component_id="${field}"
                  th:unless="*{fields['__${associatedFieldName}__']} == null"
                  th:with="field=*{fields['__${associatedFieldName}__']}">
-                <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+                <div th:replace="~{${'fields/' + #strings.toLowerCase(field.fieldType)}}"></div>
             </div>
         </th:block>
     </div>
@@ -41,10 +41,10 @@
 
 <th:block th:if="${groupItem.isCustomField()}" th:with="field=${groupItem.field}">
     <th:block th:if="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
-        <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldType)}"></div>
+        <div th:replace="~{${'fields/' + #strings.toLowerCase(field.fieldType)}}"></div>
     </th:block>
     <th:block th:unless="${field.fieldComponentRenderer == null or #strings.equals(field.fieldComponentRenderer, 'UNKNOWN')}">
-        <div th:replace="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}"></div>
+        <div th:replace="~{${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}}"></div>
     </th:block>
 </th:block>
 
@@ -61,19 +61,19 @@
             <th:block th:if="${listGrid.manualFetch}">
                 <span class="listgrid-total-records" th:text="#{listgrid.manualFetch}"></span>
             </th:block>
-            <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
+            <th:block th:insert="~{components/listGridToolbar}" th:with="listGrid=${listGrid}"></th:block>
             <th:block th:if="${listGrid.helpText}" != null>
             <div class="field-help-listgrid" th:text="${listGrid.helpText}"></div>
             </th:block>
         </div>
 
         <div class="fieldgroup-listgrid-wrapper" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-            <th:block th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
+            <th:block th:insert="~{components/listGrid}" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
         </div>
     </div>
     <div th:if="${listGrid.selectType} == 'selectize'"
          class="field-group" th:id="${listGrid.subCollectionFieldName}">
-        <th:block th:include="components/selectizeLabelBar" th:with="listGrid=${listGrid}"></th:block>
-        <th:block th:include="components/selectizeCollection" th:with="listGrid=${listGrid}"></th:block>
+        <th:block th:insert="~{components/selectizeLabelBar}" th:with="listGrid=${listGrid}"></th:block>
+        <th:block th:insert="~{components/selectizeCollection}" th:with="listGrid=${listGrid}"></th:block>
     </div>
 </th:block>

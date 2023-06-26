@@ -83,7 +83,7 @@
             </div>
         </div>
         <div class="asset-listgrid-wrapper" style="display: none;">
-            <div class="asset-listgrid listgrid-container"  th:include="components/mediaListGrid" th:with="listGrid=${listGrid}"></div>
+            <div class="asset-listgrid listgrid-container"  th:insert="~{components/mediaListGrid}" th:with="listGrid=${listGrid}"></div>
         </div>
     </div>
 </div>

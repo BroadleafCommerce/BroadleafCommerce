@@ -5,7 +5,7 @@
 
         <div class="listgrid-criteria" th:attr="data-field-index=${index}">
             <div class="listgrid-criteria-container">
-                <div th:remove="element" th:replace="${'fields/filter/' + #strings.toLowerCase(fieldType)}"></div>
+                <div th:remove="element" th:replace="~{${'fields/filter/' + #strings.toLowerCase(fieldType)}}"></div>
             </div>
         </div>
 

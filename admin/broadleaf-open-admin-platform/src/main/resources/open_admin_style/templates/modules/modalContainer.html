@@ -72,7 +72,7 @@
     </div>
     
     <div class="modal-body">
-        <th:block th:include="${'views/' + viewType}" th:with="inModal=(${showActions == null}? true : false)"></th:block>
+        <th:block th:insert="~{${'views/' + viewType}}" th:with="inModal=(${showActions == null}? true : false)"></th:block>
     </div>
     
 </div>

@@ -1,9 +1,9 @@
 <div class="adorned-select-wrapper">
-    <th:block th:include="components/entityForm" th:with="additionalClasses='modal-form'"></th:block>
+    <th:block th:insert="~{components/entityForm}" th:with="additionalClasses='modal-form'"></th:block>
 
     <div class="content-yield">
         <th:block th:if="${treeListGrid}">
-            <th:block th:include="components/treeListGrid"
+            <th:block th:insert="~{components/treeListGrid}"
                  th:object="${treeListGrid}"
                  th:with="inModal=${inModal != null and inModal}, isLookup=${isLookup != null and isLookup}"></th:block>
         </th:block>
@@ -16,10 +16,10 @@
                     <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.record} + ')'"></span>
                     <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.records} + ')'"></span>
                 </div>
-                <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
+                <th:block th:insert="~{components/listGridToolbar}" th:with="listGrid=${listGrid}"></th:block>
             </div>
             <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-                <th:block th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
+                <th:block th:insert="~{components/listGrid}" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
             </div>
         </div>
     </div>

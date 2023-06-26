@@ -1,6 +1,6 @@
 <head>
     
-    <div th:replace="layout/partials/preHeadContent" ></div>
+    <div th:replace="~{layout/partials/preHeadContent}" ></div>
 
     <meta th:if="${#httpSession?.maxInactiveInterval != null and #httpSession?.maxInactiveInterval &gt; 0}"
           http-equiv="refresh"
@@ -76,6 +76,6 @@
 
     <script type="text/javascript" th:src="@{/js/admin/blc-admin-js-check.js(v=6.1.7)}"></script>
 
-    <div th:replace="layout/partials/postHeadContent" ></div>
+    <div th:replace="~{layout/partials/postHeadContent}" ></div>
     
 </head>

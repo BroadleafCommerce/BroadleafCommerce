@@ -1,6 +1,6 @@
 <header class="site-bar">
 
-    <li th:replace="layout/partials/additionalHeaderMenu" ></li>
+    <li th:replace="~{layout/partials/additionalHeaderMenu}" ></li>
 
     <!--<div class="alert-box">-->
         <!--<div class="dropdown">-->
@@ -54,10 +54,10 @@
     </div>
 
     <th:block th:if="${customRibbon == null or #strings.equals(customRibbon, '')}">
-        <div th:replace="layout/partials/sandboxRibbon"></div>
+        <div th:replace="~{layout/partials/sandboxRibbon}"></div>
     </th:block>
     <th:block th:unless="${customRibbon == null or #strings.equals(customRibbon, '')}">
-        <div th:replace="${customRibbon}"></div>
+        <div th:replace="~{${customRibbon}}"></div>
     </th:block>
 </header>
 <div id="lightbox" style="display: none;">
