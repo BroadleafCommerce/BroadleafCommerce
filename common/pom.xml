@@ -261,6 +261,10 @@
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -422,6 +426,11 @@
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
             <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-reload4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
 </project>

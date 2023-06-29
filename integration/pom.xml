@@ -241,8 +241,8 @@
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
+            <artifactId>slf4j-reload4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- Spock/Groovy Test Dependencies -->
@@ -306,6 +306,14 @@
                     <groupId>org.yaml</groupId>
                     <artifactId>snakeyaml</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.jayway.jsonpath</groupId>
+                    <artifactId>json-path</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -319,6 +327,12 @@
             <artifactId>archunit</artifactId>
             <version>0.11.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
