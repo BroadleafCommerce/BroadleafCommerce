@@ -66,7 +66,6 @@
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <sunxml.version>4.0.2</sunxml.version>
         <eclipse.jetty.version>12.0.0.beta1</eclipse.jetty.version>
-        <slf4j.version>1.7.36</slf4j.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
