@@ -384,7 +384,7 @@ var BLC = (function($) {
         var urlParams = null;
         if (indexOfQ >= 0) {
             urlParams = baseUrl.substring(indexOfQ + 1);
-            if (urlParams != null && urlParams != '') {
+            if (urlParams != null && urlParams != '' && urlParams.indexOf("=")>0) {
                 var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g, "\":\"")));
                 if (params.includes('|')) {
                     params = params.replace(/\|/g, '%7C');

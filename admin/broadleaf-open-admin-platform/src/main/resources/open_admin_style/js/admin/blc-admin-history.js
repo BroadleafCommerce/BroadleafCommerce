@@ -59,7 +59,9 @@
                 if (params.includes('|')) {
                     params = params.replace(/\|/g, '%7C');
                 }
-                paramObj = JSON.parse('{"' + params + '"}');
+                if(params.indexOf(":")>0) {
+                    paramObj = JSON.parse('{"' + params + '"}');
+                }
             }
             
             if (value == null || value === "") {
