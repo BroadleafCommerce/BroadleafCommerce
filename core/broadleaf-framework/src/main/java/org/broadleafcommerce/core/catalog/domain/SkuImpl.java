@@ -65,7 +65,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.lang.reflect.InvocationHandler;
@@ -96,6 +95,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -107,7 +107,6 @@ import jakarta.persistence.MapKey;
 import jakarta.persistence.MapKeyClass;
 import jakarta.persistence.MapKeyJoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -139,12 +138,16 @@ import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SKU")
-//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
-@org.hibernate.annotations.Table(appliesTo = "BLC_SKU", indexes = {
-    @Index(name = "SKU_URL_KEY_INDEX",
-        columnNames = { "URL_KEY" }
-    )
+@Table(name = "BLC_SKU", indexes = {
+        @Index(name = "SKU_URL_KEY_INDEX", columnList = "URL_KEY"),
+        @Index(name="SKU_EXTERNAL_ID_INDEX", columnList="EXTERNAL_ID"),
+        @Index(name = "SKU_UPC_INDEX", columnList =  "UPC" ),
+        @Index(name = "SKU_NAME_INDEX", columnList = "NAME"),
+        @Index(name="SKU_TAXABLE_INDEX", columnList="TAXABLE_FLAG"),
+        @Index(name="SKU_DISCOUNTABLE_INDEX", columnList="DISCOUNTABLE_FLAG"),
+        @Index(name = "SKU_AVAILABLE_INDEX", columnList = "AVAILABLE_FLAG"),
+        @Index(name="SKU_ACTIVE_START_INDEX", columnList = "ACTIVE_START_DATE"),
+        @Index(name="SKU_ACTIVE_END_INDEX",columnList = "ACTIVE_END_DATE")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @DirectCopyTransform({
@@ -172,7 +175,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected Long id;
 
     @Column(name = "EXTERNAL_ID")
-    @Index(name="SKU_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ExternalID",
         group = GroupName.Miscellaneous, order = FieldOrder.EXTERNAL_ID,
         tooltip = "SkuImpl_Sku_ExternalID_Tooltip")
@@ -191,7 +193,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected String displayTemplate;
 
     @Column(name = "UPC")
-    @Index(name = "SKU_UPC_INDEX", columnNames = { "UPC" })
     @AdminPresentation(friendlyName = "SkuImpl_Sku_UPC",
             group = GroupName.Miscellaneous, order = FieldOrder.UPC)
     protected String upc;
@@ -218,7 +219,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected BigDecimal cost;
 
     @Column(name = "NAME")
-    @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name",
         group = GroupName.General, order = FieldOrder.NAME,
         prominent = true, gridOrder = 1, columnWidth = "260px",
@@ -253,13 +253,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected String taxCode;
 
     @Column(name = "TAXABLE_FLAG")
-    @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable",
             group = GroupName.Financial, order = FieldOrder.TAXABLE)
     protected Character taxable;
 
     @Column(name = "DISCOUNTABLE_FLAG")
-    @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable",
         group = GroupName.Discountable,
         helpText = "SkuImpl_Sku_Discountable_helptext",
@@ -267,13 +265,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected Character discountable;
 
     @Column(name = "AVAILABLE_FLAG")
-    @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
     @AdminPresentation(excluded = true)
     @Deprecated
     protected Character available;
 
     @Column(name = "ACTIVE_START_DATE")
-    @Index(name="SKU_ACTIVE_START_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
         group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_START_DATE,
         tooltip = "skuStartDateTooltip",
@@ -281,7 +277,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @Index(name="SKU_ACTIVE_END_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date",
         group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_END_DATE,
         tooltip = "skuEndDateTooltip",
@@ -310,14 +305,15 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSkuMedia")
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
-        tab = TabName.Media,
-        keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
-        deleteEntityUponRemove = true,
-        mediaField = "media.url",
-        toOneTargetProperty = "media",
-        toOneParentProperty = "sku",
-        forceFreeFormKeys = true
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_Sku_Media",
+            tab = TabName.Media,
+            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+            deleteEntityUponRemove = true,
+            mediaField = "media.url",
+            toOneTargetProperty = "media",
+            toOneParentProperty = "sku",
+            forceFreeFormKeys = true
     )
     @AdminPresentationMapFields(
         mapDisplayFields = {
@@ -357,8 +353,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "skuAttributesTitle",
-            tab = TabName.Advanced, order = 1000)
+    @AdminPresentationCollection(friendlyName = "skuAttributesTitle", tab = TabName.Advanced, order = 1000)
     protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
     @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL, mappedBy = "sku")

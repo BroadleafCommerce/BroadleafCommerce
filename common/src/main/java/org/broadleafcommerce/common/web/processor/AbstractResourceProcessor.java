@@ -281,7 +281,6 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
         final String event = attributes.bundleCompletedEvent();
         return "var " + event + "Event = new CustomEvent('" + event + "');" +
                 "document.dispatchEvent(" + event + "Event);";
-
     }
 
     /**
