@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -47,47 +46,54 @@ import javax.servlet.http.HttpServletResponse;
  * To use: extend this class and provide @RequestMapping annotations
  *
  * @see org.broadleafcommerce.core.web.controller.account.BroadleafRegisterController
- * @author elbertbautista
+ * @author Markiian Buryi
  *
  */
-public class BroadleafSocialRegisterController extends BroadleafRegisterController {
+public class BroadleafOauthRegisterController extends BroadleafRegisterController {
 
     private final OAuth2AuthorizedClientService authorizedClientService;
 
-    public BroadleafSocialRegisterController(OAuth2AuthorizedClientService authorizedClientService) {
+    public BroadleafOauthRegisterController(OAuth2AuthorizedClientService authorizedClientService) {
         this.authorizedClientService = authorizedClientService;
     }
 
     @RequestMapping
     public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request,
                            HttpServletResponse response, Model model) {
-        assert (authorizedClientService != null);
-        OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
-                registerCustomerForm.getProviderId(),
-                registerCustomerForm.getOAuth2UserRequest().getClientRegistration().getRegistrationId()
-        );
-        if (authorizedClient != null) {
-            OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) SecurityContextHolder
-                    .getContext().getAuthentication();
-            Customer customer = registerCustomerForm.getCustomer();
-            OAuth2User oauth2User = authenticationToken.getPrincipal();
-            customer.setFirstName(oauth2User.getAttribute("firstName"));
-            customer.setLastName(oauth2User.getAttribute("lastName"));
-            customer.setEmailAddress(oauth2User.getAttribute("email"));
-            if (isUseEmailForLogin()) {
-                customer.setUsername(oauth2User.getAttribute("email"));
-            } else {
-                customer.setUsername(oauth2User.getAttribute("username"));
+        try {
+            assert (authorizedClientService != null);
+            OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
+                    registerCustomerForm.getProviderId(),
+                    registerCustomerForm.getOAuth2UserRequest().getClientRegistration().getRegistrationId()
+            );
+
+            if (authorizedClient != null) {
+                OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) SecurityContextHolder
+                        .getContext().getAuthentication();
+                Customer customer = registerCustomerForm.getCustomer();
+                OAuth2User oauth2User = authenticationToken.getPrincipal();
+                customer.setFirstName(oauth2User.getAttribute("firstName"));
+                customer.setLastName(oauth2User.getAttribute("lastName"));
+                customer.setEmailAddress(oauth2User.getAttribute("email"));
+                if (isUseEmailForLogin()) {
+                    customer.setUsername(oauth2User.getAttribute("email"));
+                } else {
+                    customer.setUsername(oauth2User.getAttribute("username"));
+                }
             }
+        } catch (NullPointerException e) {
+            model.addAttribute("error", "An error occurred while processing the registration. Please try again.");
+            return "errorPage";
         }
 
         return super.register(registerCustomerForm, request, response, model);
     }
 
+
     @RequestMapping(params = "action=register")
     public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors,
                                   HttpServletRequest request, HttpServletResponse response, Model model,
-                                  RedirectAttributes redirectAttributes) throws ServiceException, PricingException {
+                                  RedirectAttributes redirectAttributes) throws PricingException {
         if (isUseEmailForLogin()) {
             Customer customer = registerCustomerForm.getCustomer();
             customer.setUsername(customer.getEmailAddress());
