@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import javax.persistence.Index;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -33,7 +33,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Where;
 
@@ -46,6 +45,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -58,7 +58,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_INDEX_FIELD")
+@Table(name = "BLC_INDEX_FIELD", indexes = {@Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
@@ -89,7 +89,6 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
             prominent = true,
             group = GroupName.General,
             tooltip = "IndexFieldImpl_searchable_tooltip")
-    @Index(name="INDEX_FIELD_SEARCHABLE_INDEX", columnNames={"SEARCHABLE"})
     protected Boolean searchable;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)

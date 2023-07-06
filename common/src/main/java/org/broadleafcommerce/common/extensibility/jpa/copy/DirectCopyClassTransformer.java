@@ -10,44 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.jpa.IndexAnnotationDto;
-import org.broadleafcommerce.common.extensibility.jpa.SkipDefaultConstructorCheck;
-import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-import org.broadleafcommerce.common.logging.LifeCycleEvent;
-import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto;
-import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager;
-
-import java.io.ByteArrayInputStream;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityListeners;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -66,6 +34,36 @@ import javassist.bytecode.annotation.BooleanMemberValue;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.IndexAnnotationDto;
+import org.broadleafcommerce.common.extensibility.jpa.SkipDefaultConstructorCheck;
+import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.logging.LifeCycleEvent;
+import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto;
+import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityListeners;
+import javax.persistence.Index;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import java.io.ByteArrayInputStream;
+import java.lang.instrument.IllegalClassFormatException;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -885,7 +883,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
     }
 
     /**
-     * 
+     *
      * @param classToTransform the class that will be transformed at runtime
      * @param contributingClass the class that should be bytecode-merged into <b>classToTransform</b>
      * @return
@@ -894,7 +892,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         xformTemplates.put(classToTransform, contributingClass);
         return this;
     }
-    
+
     public void setXformTemplates(Map<String, String> xformTemplates) {
         this.xformTemplates = xformTemplates;
     }
@@ -984,3 +982,4 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         }
     }
 }
+

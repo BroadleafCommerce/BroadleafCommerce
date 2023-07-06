@@ -27,7 +27,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -37,6 +36,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -45,7 +45,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "BLC_CANDIDATE_FG_OFFER")
+@Table(name = "BLC_CANDIDATE_FG_OFFER",indexes = {
+        @Index(name = "CANDIDATE_FG_INDEX", columnList = "FULFILLMENT_GROUP_ID"),
+        @Index(name = "CANDIDATE_FGOFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentGroupOffer {
@@ -67,12 +69,10 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    @Index(name="CANDIDATE_FG_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="CANDIDATE_FGOFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)

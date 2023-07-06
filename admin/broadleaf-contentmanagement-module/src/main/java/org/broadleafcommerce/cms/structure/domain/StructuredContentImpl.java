@@ -44,7 +44,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Collections;
@@ -62,6 +61,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -79,7 +79,10 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SC")
+@Table(name = "BLC_SC", indexes = {
+        @Index(name = "CONTENT_PRIORITY_INDEX", columnList="PRIORITY"),
+        @Index(name="SC_OFFLN_FLG_INDX", columnList="OFFLINE_FLAG")
+})
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationMergeOverrides(value = { 
     @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
@@ -133,7 +136,8 @@ import javax.persistence.Transient;
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true,
+                indexes = {@Index(name = "CONTENT_NAME_INDEX_ARCHIVED", columnList = "CONTENT_NAME, SC_TYPE_ID, ARCHIVED_FLAG")}),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
@@ -160,7 +164,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     @Column(name = "CONTENT_NAME", nullable = false)
-    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "ARCHIVED_FLAG", "SC_TYPE_ID"})
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
@@ -174,7 +177,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Column(name = "PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
-    @Index(name="CONTENT_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
@@ -214,7 +216,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     @Column(name = "OFFLINE_FLAG")
-    @Index(name="SC_OFFLN_FLG_INDX", columnNames={"OFFLINE_FLAG"})
     protected Boolean offlineFlag = false;
 
     @Transient

@@ -26,12 +26,12 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -43,7 +43,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_COUNTRY_SUB")
+@Table(name = "BLC_COUNTRY_SUB", indexes = {
+        @Index(name = "COUNTRY_SUB_NAME_IDX", columnList = "NAME"),
+        @Index(name = "COUNTRY_SUB_ALT_ABRV_IDX", columnList = "ALT_ABBREVIATION")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCountryElements")
 @AdminPresentationClass(friendlyName = "CountrySubdivisionImpl_baseSubdivision")
 @DirectCopyTransform({
@@ -58,12 +61,10 @@ public class CountrySubdivisionImpl implements CountrySubdivision, AdminMainEnti
     protected String abbreviation;
 
     @Column(name = "NAME", nullable = false)
-    @Index(name="COUNTRY_SUB_NAME_IDX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "CountrySubdivisionImpl_Name", order=9, group = "CountrySubdivisionImpl_Address", prominent = true, translatable = true)
     protected String name;
 
     @Column(name = "ALT_ABBREVIATION")
-    @Index(name="COUNTRY_SUB_ALT_ABRV_IDX", columnNames={"ALT_ABBREVIATION"})
     @AdminPresentation(friendlyName = "CountrySubdivisionImpl_AltAbbreviation", order=10, group = "CountrySubdivisionImpl_Address", prominent = true)
     protected String alternateAbbreviation;
 

@@ -67,7 +67,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -85,6 +84,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -101,7 +101,13 @@ import javax.persistence.Transient;
 @Entity
 @EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER")
+@Table(name = "BLC_ORDER", indexes = {
+        @Index(name = "ORDER_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "ORDER_STATUS_INDEX", columnList = "ORDER_STATUS"),
+        @Index(name = "ORDER_NUMBER_INDEX", columnList = "ORDER_NUMBER"),
+        @Index(name = "ORDER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "ORDER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -138,21 +144,18 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "NAME")
-    @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = GroupName.General,
             order=FieldOrder.NAME)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-    @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName = "OrderImpl_Customer", group = GroupName.Customer,
             order=FieldOrder.CUSTOMER)
     @AdminPresentationToOneLookup()
     protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
-    @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = GroupName.General,
             order=FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
@@ -190,7 +193,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
-    @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = GroupName.General,
             order = FieldOrder.ORDERNUMBER,
             prominent = true,
@@ -198,7 +200,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = GroupName.Customer,
             order=FieldOrder.EMAILADDRESS)
     protected String emailAddress;

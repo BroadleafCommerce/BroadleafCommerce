@@ -36,13 +36,13 @@ import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
@@ -53,7 +53,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_URL_HANDLER")
+@Table(name = "BLC_URL_HANDLER", indexes = {
+        @Index(name = "INCOMING_URL_INDEX", columnList = "INCOMING_URL"),
+        @Index(name = "IS_REGEX_HANDLER_INDEX", columnList = "IS_REGEX")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blUrlHandler")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
 @DirectCopyTransform({
@@ -81,7 +83,6 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = GroupName.General, prominent = true,
             helpText = "urlHandlerIncoming_help", defaultValue = "")
     @Column(name = "INCOMING_URL", nullable = false)
-    @Index(name = "INCOMING_URL_INDEX", columnNames = {"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
@@ -100,7 +101,6 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @AdminPresentation(friendlyName = "URLHandlerImpl_isRegexHandler", order = 1, group = GroupName.General, prominent = true,
             groupOrder = 1,
             helpText = "urlHandlerIsRegexHandler_help")
-    @Index(name = "IS_REGEX_HANDLER_INDEX", columnNames = {"IS_REGEX"})
     protected Boolean isRegex = false;
 
     @Override

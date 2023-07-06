@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.List;
@@ -41,19 +40,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD")
+@Table(name = "BLC_FIELD", indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
     @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
     @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
     @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
-
 })
 public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity {
     
@@ -78,7 +77,6 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     
     // This is a broadleaf enumeration
     @Column(name = "ENTITY_TYPE", nullable = false)
-    @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     @AdminPresentation(friendlyName = "FieldImpl_EntityType",
             group = GroupName.General, order = FieldOrder.ENTITY_TYPE,
             prominent = true, gridOrder = 1,

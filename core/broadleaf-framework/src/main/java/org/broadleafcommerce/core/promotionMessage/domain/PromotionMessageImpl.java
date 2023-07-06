@@ -46,7 +46,6 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -58,6 +57,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -65,7 +65,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "BLC_PROMOTION_MESSAGE")
+@Table(name = "BLC_PROMOTION_MESSAGE", indexes = {@Index(name = "PROMOTION_MESSAGE_NAME_INDEX", columnList = "NAME")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @SQLDelete(sql="UPDATE BLC_PROMOTION_MESSAGE SET ARCHIVED = 'Y' WHERE PROMOTION_MESSAGE_ID = ?")
@@ -133,7 +133,6 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     protected Long id;
 
     @Column(name = "NAME")
-    @Index(name="PROMOTION_MESSAGE_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Name",
         tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Name,

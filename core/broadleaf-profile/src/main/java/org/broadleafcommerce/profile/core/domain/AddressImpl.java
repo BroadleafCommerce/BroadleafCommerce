@@ -34,7 +34,6 @@ import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
@@ -43,6 +42,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -52,7 +52,13 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ADDRESS")
+@Table(name = "BLC_ADDRESS", indexes = {
+        @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnList="ISO_COUNTRY_ALPHA2"),
+        @Index(name="ADDRESS_PHONE_PRI_IDX", columnList="PHONE_PRIMARY_ID"),
+        @Index(name="ADDRESS_PHONE_SEC_IDX", columnList="PHONE_SECONDARY_ID"),
+        @Index(name="ADDRESS_PHONE_FAX_IDX", columnList="PHONE_FAX_ID"),
+        @Index(name="ADDRESS_COUNTRY_INDEX", columnList="COUNTY")
+})
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "phonePrimary", mergeEntries =
@@ -169,7 +175,6 @@ public class AddressImpl implements Address {
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class)
     @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
-    @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
     @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
     @AdminPresentationToOneLookup
     protected ISOCountry isoCountryAlpha2;
@@ -184,17 +189,14 @@ public class AddressImpl implements Address {
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_PRIMARY_ID")
-    @Index(name="ADDRESS_PHONE_PRI_IDX", columnNames={"PHONE_PRIMARY_ID"})
     protected Phone phonePrimary;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_SECONDARY_ID")
-    @Index(name="ADDRESS_PHONE_SEC_IDX", columnNames={"PHONE_SECONDARY_ID"})
     protected Phone phoneSecondary;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_FAX_ID")
-    @Index(name="ADDRESS_PHONE_FAX_IDX", columnNames={"PHONE_FAX_ID"})
     protected Phone phoneFax;
 
     @Column(name = "IS_DEFAULT")

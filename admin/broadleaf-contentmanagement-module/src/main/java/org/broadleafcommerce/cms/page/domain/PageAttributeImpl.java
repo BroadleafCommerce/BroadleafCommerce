@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
@@ -36,6 +35,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -44,7 +44,9 @@ import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_PAGE_ATTRIBUTES")
+@Table(name="BLC_PAGE_ATTRIBUTES", indexes = {
+        @Index(name = "PAGEATTRIBUTE_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "PAGEATTRIBUTE_INDEX", columnList = "PAGE_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
@@ -68,7 +70,6 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
     protected Long id;
     
     @Column(name = "FIELD_NAME", nullable = false)
-    @Index(name="PAGEATTRIBUTE_NAME_INDEX", columnNames = { "NAME" })
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
@@ -77,7 +78,6 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
 
     @ManyToOne(targetEntity = PageImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PAGE_ID")
-    @Index(name="PAGEATTRIBUTE_INDEX", columnNames = { "PAGE_ID" })
     protected Page page;
     
     @Override

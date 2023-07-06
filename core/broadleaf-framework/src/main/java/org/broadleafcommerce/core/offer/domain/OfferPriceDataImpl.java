@@ -38,7 +38,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferPriceDataIdentifierTyp
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -51,6 +50,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -58,7 +58,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "BLC_OFFER_PRICE_DATA")
+@Table(name = "BLC_OFFER_PRICE_DATA", indexes = {@Index(name = "OFFER_PRICE_DATA_OFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferPriceDataImpl_baseOfferPriceData")
@@ -87,7 +87,6 @@ public class OfferPriceDataImpl implements OfferPriceData {
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="OFFER_PRICE_DATA_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer", order = 1000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
