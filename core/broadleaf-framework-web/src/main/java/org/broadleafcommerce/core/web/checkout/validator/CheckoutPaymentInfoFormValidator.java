@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.checkout.validator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
-import org.owasp.esapi.ESAPI;
+import org.owasp.encoder.esapi.ESAPIEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -47,7 +47,7 @@ public class CheckoutPaymentInfoFormValidator extends PaymentInfoFormValidator {
             super.validate(obj, errors);
 
             String emailAddress = paymentInfoForm.getEmailAddress();
-            emailAddress = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false")) ? ESAPI.encoder().decodeForHTML(emailAddress) : emailAddress;
+            emailAddress = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false")) ? ESAPIEncoder.getInstance().decodeForHTML(emailAddress) : emailAddress;
             if (!EmailValidator.getInstance().isValid(emailAddress)) {
                 errors.rejectValue("emailAddress", "emailAddress.invalid", null, null);
                 if (StringUtils.isNotEmpty(emailAddress)) {

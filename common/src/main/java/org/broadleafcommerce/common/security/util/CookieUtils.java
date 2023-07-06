@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.security.util;
 
-import org.owasp.esapi.ESAPI;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,13 +35,7 @@ public interface CookieUtils {
     String getCookieValue(HttpServletRequest request, String cookieName);
 
     /**
-     *  Uses a cookie value of "CookieInvalidationPlaceholderValue" because the later call to 
-     *  {@link ESAPI#httpUtilities()#addHeader(HttpServletResponse, String, String)} 
-     *  fails if the value is <code>null</code> or an empty String. If an empty cookie value is passed, 
-     *  this is considered a request to remove the cookie and <code>maxAge</code> is set to 0 to force the removal.
-     *  In addition, calls to {@link ESAPI#httpUtilities()#killCookie(HttpServletRequest, HttpServletResponse, String)} 
-     *  have shown to be ineffective while this approach for removing cookies works.
-     *  
+     *
      *  @param response
      *  @param cookieName 
      *  @param cookieValue 

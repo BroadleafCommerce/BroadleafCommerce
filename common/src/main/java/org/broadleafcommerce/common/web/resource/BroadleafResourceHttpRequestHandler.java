@@ -71,7 +71,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             throws ServletException, IOException {
         
         try {
-            blcContextUtil.establishThinRequestContext();
+            blcContextUtil.establishThinRequestContext(true);
             super.handleRequest(request, response);
         } finally {
             blcContextUtil.clearThinRequestContext();

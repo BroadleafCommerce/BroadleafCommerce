@@ -21,7 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.owasp.encoder.esapi.ESAPIEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.regex.Pattern;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
@@ -35,6 +38,8 @@ public class GenericCookieUtilsImpl implements CookieUtils {
     protected final String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
     @Resource
     protected SystemPropertiesService systemPropertiesService;
+
+    protected Pattern cookieValuePattern = Pattern.compile("^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ \"]*$");
 
     @Override
     public Boolean shouldUseSecureCookieIfApplicable() {
@@ -90,10 +95,17 @@ public class GenericCookieUtilsImpl implements CookieUtils {
             sb.append("; SameSite=None");
         }
 
-        //todo: 6.3
-        // ESAPI.httpUtilities().addHeader(response, "Set-Cookie", sb.toString());
-        // wait for ESAPI update to Jakarta
-        response.addHeader("Set-Cookie", sb.toString());
+        String string = sb.toString();
+        if (string.length() < 4096) {
+            String canonicalize = ESAPIEncoder.getInstance().canonicalize(string);
+            if (cookieValuePattern.matcher(canonicalize).matches()) {
+                response.addHeader("Set-Cookie", canonicalize);
+            } else {
+                LOG.warn("Attempt to set Cookie[" + cookieName + "]=" + string + " . It doesn't match allowed pattern and this is considered security rules violation");
+            }
+        } else {
+            LOG.warn("Attempt to set Cookie name:" + cookieName + " cookie length exceeds 4096");
+        }
     }
     
     @Override

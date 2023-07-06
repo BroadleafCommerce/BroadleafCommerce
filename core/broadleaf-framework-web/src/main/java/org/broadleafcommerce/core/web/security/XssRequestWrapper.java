@@ -18,8 +18,12 @@
 package org.broadleafcommerce.core.web.security;
 
 import org.apache.commons.lang3.StringUtils;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.ValidationException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.security.service.AntisamyService;
+import org.broadleafcommerce.common.security.service.AntisamyServiceImpl;
+import org.owasp.encoder.esapi.ESAPIEncoder;
+import org.owasp.validator.html.CleanResults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 
@@ -27,13 +31,17 @@ import java.util.regex.Pattern;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.validation.ValidationException;
 
 public class XssRequestWrapper extends HttpServletRequestWrapper {
 
     protected final Environment environment;
     private String[] whiteListParamNames;
-    private final int MAX_INPUT_LENGTH = ESAPI.securityConfiguration().getIntProp("HttpUtilities.BroadleafMaxInputLength");
-    private final String BLC_PARAM_VALUE_INPUT_TYPE = "BroadleafHttpParameterValue";
+    private final int MAX_PARAMETER_LENGTH = 99999;
+
+    private static final Log LOG = LogFactory.getLog(XssRequestWrapper.class);
+
+    protected Pattern parameterPatter = Pattern.compile("^[a-zA-Z0-9.\\-\\/+=@_ #']*$");
 
     @Value("${custom.strip.xss:false}")
     protected boolean customStripXssEnabled;
@@ -60,9 +68,14 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         int count = values.length;
         String[] encodedValues = new String[count];
         for (int i = 0; i < count; i++) {
-            encodedValues[i] = stripXss(values[i], BLC_PARAM_VALUE_INPUT_TYPE);
+            try {
+                encodedValues[i] = stripXss(values[i]);
+            }catch (jakarta.validation.ValidationException ex){
+                if(values[i]!=null){
+                    encodedValues[i] = stripXss(values[i].substring(MAX_PARAMETER_LENGTH));
+                }
+            }
         }
-
         return encodedValues;
     }
 
@@ -84,7 +97,15 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         if(checkWhitelist(parameter)){
             return value;
         }
-        return stripXss(value, BLC_PARAM_VALUE_INPUT_TYPE);
+        try {
+            return stripXss(value);
+        } catch (jakarta.validation.ValidationException exception) {
+            LOG.error("Parameter " + parameter + " value too long", exception);
+            if (value != null) {
+                return stripXss(value.substring(MAX_PARAMETER_LENGTH));
+            }
+        }
+        return value;
     }
 
     protected String stripXss(String value) {
@@ -155,19 +176,35 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         if (StringUtils.isEmpty(esapiInputType)) {
             return stripXssAsHTML(value);
         }
-
-        try {
-            return ESAPI.validator().getValidInput("Value: " + value, value, esapiInputType, MAX_INPUT_LENGTH, true, true);
-        } catch (ValidationException e) {
-            return stripXssAsHTML(value);
+        if (value != null && value.length() < MAX_PARAMETER_LENGTH) {
+            String canonicalize = ESAPIEncoder.getInstance().canonicalize(value);
+            if (!parameterPatter.matcher(canonicalize).matches()) {
+                return canonicalize;
+            } else {
+                return stripXssAsHTML(value);
+            }
+        } else if (value != null && value.length() >= MAX_PARAMETER_LENGTH) {
+            throw new ValidationException("Parameter value to long, max=" + MAX_PARAMETER_LENGTH);
         }
+        return value;
     }
 
     protected String stripXssAsHTML(String value) {
         try {
-            return ESAPI.validator().getValidSafeHTML("Value: " + value, value, MAX_INPUT_LENGTH, true);
-        } catch (ValidationException e2) {
-            return ESAPI.encoder().encodeForHTML(value);
+            if(value!=null && value.length()<MAX_PARAMETER_LENGTH) {
+                String canonicalize = ESAPIEncoder.getInstance().canonicalize(value);
+                AntisamyService instance = AntisamyServiceImpl.getInstance();
+                CleanResults scan = instance.getAntiSamy().scan(canonicalize, instance.getAntiSamyPolicy());
+                if (scan.getErrorMessages().size() > 0) {
+                    throw new ValidationException("Input value failed validation against antisamy policy");
+                }
+                return scan.getCleanHTML().trim();
+            }else if(value!=null && value.length()>=MAX_PARAMETER_LENGTH){
+                throw new ValidationException("Parameter value to long, max=" + MAX_PARAMETER_LENGTH);
+            }
+        } catch (Exception e2) {
+            return ESAPIEncoder.getInstance().encodeForHTML(value);
         }
+        return value;
     }
 }

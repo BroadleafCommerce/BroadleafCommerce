@@ -71,6 +71,10 @@ public class BroadleafContextUtil {
         establishThinRequestContextInternal(true, true);
     }
 
+    public void establishThinRequestContext(boolean forceCreate) {
+        establishThinRequestContextInternal(true, true, forceCreate);
+    }
+
     /**
      * Creates a BroadleafRequestContext without a Sandbox
      * @see #establishThinRequestContextInternal(boolean, boolean)
@@ -97,8 +101,15 @@ public class BroadleafContextUtil {
      * @param includeSandBox
      */
     protected void establishThinRequestContextInternal(boolean includeTheme, boolean includeSandBox) {
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        establishThinRequestContextInternal(includeTheme, includeSandBox, false);
+    }
 
+    protected void establishThinRequestContextInternal(boolean includeTheme, boolean includeSandBox, boolean forceCreate) {
+        if(forceCreate) {
+            //remove old
+            BroadleafRequestContext.setBroadleafRequestContext(null);
+        }
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getRequest() == null) {
             ServletRequestAttributes requestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
             if (requestAttributes != null) {
