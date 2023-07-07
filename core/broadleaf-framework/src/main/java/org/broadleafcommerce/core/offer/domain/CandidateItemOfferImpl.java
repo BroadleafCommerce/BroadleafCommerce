@@ -31,7 +31,6 @@ import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -50,7 +49,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(name = "BLC_CANDIDATE_ITEM_OFFER")
+@Table(name = "BLC_CANDIDATE_ITEM_OFFER", indexes = {
+        @Index(name = "CANDIDATE_ITEM_INDEX", columnList = "ORDER_ITEM_ID"),
+        @Index(name = "CANDIDATE_ITEMOFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
@@ -73,12 +74,10 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    @Index(name="CANDIDATE_ITEM_INDEX", columnNames={"ORDER_ITEM_ID"})
     protected OrderItem orderItem;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="CANDIDATE_ITEMOFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)

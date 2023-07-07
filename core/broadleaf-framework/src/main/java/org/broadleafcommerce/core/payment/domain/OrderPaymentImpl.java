@@ -50,7 +50,6 @@ import org.broadleafcommerce.core.payment.service.type.OrderPaymentStatus;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -75,7 +74,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_PAYMENT")
+@Table(name = "BLC_ORDER_PAYMENT", indexes = {
+        @Index(name = "ORDERPAYMENT_REFERENCE_INDEX" , columnList = "REFERENCE_NUMBER"),
+        @Index(name = "ORDERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE"),
+        @Index(name = "ORDERPAYMENT_ORDER_INDEX" , columnList = "ORDER_ID"),
+        @Index(name = "ORDERPAYMENT_ADDRESS_INDEX" , columnList = "ADDRESS_ID")
+})
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "", mergeEntries =
@@ -125,13 +129,11 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
 
     @ManyToOne(targetEntity = OrderImpl.class, optional = true)
     @JoinColumn(name = "ORDER_ID", nullable = true)
-    @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     protected Order order;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address billingAddress;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
@@ -140,12 +142,10 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
-    @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Reference_Number")
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
-    @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
     @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true,
             fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType")

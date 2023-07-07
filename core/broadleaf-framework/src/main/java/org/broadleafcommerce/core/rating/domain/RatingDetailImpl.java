@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
@@ -40,7 +39,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_RATING_DETAIL")
+@Table(name = "BLC_RATING_DETAIL", indexes = {@Index(name = "RATING_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")})
 public class RatingDetailImpl implements RatingDetail, Serializable {
 
     @Id
@@ -66,7 +65,6 @@ public class RatingDetailImpl implements RatingDetail, Serializable {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="RATING_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName = "RatingDetail_customer", prominent = true)
     @AdminPresentationToOneLookup
     protected Customer customer;

@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.CascadeType;
@@ -46,7 +45,9 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_DATA_DRVN_ENUM_VAL")
+@Table(name="BLC_DATA_DRVN_ENUM_VAL", indexes = {
+        @Index(name = "ENUM_VAL_KEY_INDEX", columnList = "ENUM_KEY"),
+        @Index(name = "HIDDEN_INDEX", columnList = "HIDDEN")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
 @AdminPresentationClass(friendlyName = "DataDrivenEnumerationValueImpl_friendyName")
 @DirectCopyTransform({
@@ -75,7 +76,6 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     protected DataDrivenEnumeration type;
 
     @Column(name = "ENUM_KEY")
-    @Index(name = "ENUM_VAL_KEY_INDEX", columnNames = {"ENUM_KEY"})
     @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Key", order = 1, gridOrder = 1, prominent = true)
     protected String key;
 
@@ -84,7 +84,6 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     protected String display;
 
     @Column(name = "HIDDEN")
-    @Index(name = "HIDDEN_INDEX", columnNames = {"HIDDEN"})
     @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Hidden", order = 3, gridOrder = 3, prominent = true)
     protected Boolean hidden = false;
 

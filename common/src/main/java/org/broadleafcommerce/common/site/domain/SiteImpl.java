@@ -36,7 +36,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.lang.reflect.Method;
@@ -62,7 +61,7 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SITE")
+@Table(name = "BLC_SITE", indexes = {@Index(name = "BLC_SITE_ID_VAL_INDEX", columnList = "SITE_IDENTIFIER_VALUE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSiteElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER),
@@ -102,7 +101,6 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     @Column (name = "SITE_IDENTIFIER_VALUE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order = 3000,
             gridOrder = 3, prominent = true, requiredOverride=RequiredOverride.REQUIRED, group = GroupName.General)
-    @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
     @Column(name = "DEACTIVATED")

@@ -64,7 +64,9 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_DISCRETE_ORDER_ITEM")
+@Table(name = "BLC_DISCRETE_ORDER_ITEM", indexes = {
+        @Index(name = "DISCRETE_SKU_INDEX", columnList = "SKU_ID"),
+        @Index(name = "DISCRETE_PRODUCT_INDEX", columnList = "PRODUCT_ID")})
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemImpl_discreteOrderItem")
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
@@ -82,7 +84,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     
     @ManyToOne(targetEntity = SkuImpl.class, fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
-    @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
@@ -90,7 +91,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @ManyToOne(targetEntity = ProductImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()

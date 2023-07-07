@@ -20,6 +20,9 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -65,7 +68,9 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }))
+@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }),
+        indexes = {@Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnList="PAYMENT_TYPE")}
+)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
 {
@@ -110,7 +115,6 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     protected String paymentToken;
 
     @Column(name = "PAYMENT_TYPE")
-    @Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Type",
             group = GroupName.Payment, order = FieldOrder.PAYMENT_TYPE,
             fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,

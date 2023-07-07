@@ -35,7 +35,6 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.lang.reflect.Method;
@@ -59,7 +58,9 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULFILLMENT_GROUP_ITEM")
+@Table(name = "BLC_FULFILLMENT_GROUP_ITEM", indexes = {
+        @Index(name = "FGITEM_FG_INDEX", columnList = "FULFILLMENT_GROUP_ID"),
+        @Index(name = "FGITEM_STATUS_INDEX", columnList = "STATUS")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -88,7 +89,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    @Index(name="FGITEM_FG_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;
 
     //this needs to stay OrderItem in order to provide backwards compatibility for those implementations that place a BundleOrderItem
@@ -103,7 +103,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     protected int quantity;
 
     @Column(name = "STATUS")
-    @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Status", prominent = true, order = 3000, gridOrder = 3000)
     private String status;
     

@@ -38,7 +38,6 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
@@ -57,7 +56,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SEARCH_FACET_RANGE")
+@Table(name = "BLC_SEARCH_FACET_RANGE", indexes = {@Index(name = "SEARCH_FACET_INDEX", columnList = "SEARCH_FACET_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @AdminPresentationMergeOverrides(
@@ -99,7 +98,6 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
 
     @ManyToOne(targetEntity = SearchFacetImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SEARCH_FACET_ID")
-    @Index(name = "SEARCH_FACET_INDEX", columnNames = { "SEARCH_FACET_ID" })
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected SearchFacet searchFacet = new SearchFacetImpl();
 

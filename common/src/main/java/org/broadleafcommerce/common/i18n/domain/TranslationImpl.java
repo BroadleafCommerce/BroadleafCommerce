@@ -48,8 +48,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_TRANSLATION",  indexes = {
-        @Index(name = "TRANSLATION_INDEX", columnList = "ENTITY_TYPE, ENTITY_ID, FIELD_NAME, LOCALE_CODE" )})
+@Table(name = "BLC_TRANSLATION", indexes = {@Index(name = "TRANSLATION_INDEX", columnList =  "ENTITY_TYPE, ENTITY_ID, FIELD_NAME, LOCALE_CODE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blTranslationElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "TranslationImpl_baseTranslation")
 @DirectCopyTransform({

@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -52,7 +51,7 @@ import jakarta.persistence.Table;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class, CustomerAddressPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ADDRESS")
+@Table(name = "BLC_CUSTOMER_ADDRESS", indexes = {@Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnList="ADDRESS_ID")})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides(
     {
@@ -95,7 +94,6 @@ public class CustomerAddressImpl implements CustomerAddress {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = AddressImpl.class, optional=false)
     @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
 
     @Embedded

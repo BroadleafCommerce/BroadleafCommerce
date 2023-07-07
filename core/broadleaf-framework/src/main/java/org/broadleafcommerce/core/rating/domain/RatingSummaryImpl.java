@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
@@ -44,7 +43,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_RATING_SUMMARY")
+@Table(name = "BLC_RATING_SUMMARY", indexes = {
+        @Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
+        @Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")
+})
 @AdminPresentationClass(friendlyName = "RatingSummary", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class RatingSummaryImpl implements RatingSummary, Serializable {
 
@@ -64,12 +66,10 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     protected Long id;
 
     @Column(name = "ITEM_ID", nullable = false)
-    @Index(name="RATINGSUMM_ITEM_INDEX", columnNames={"ITEM_ID"})
     @AdminPresentation(friendlyName = "RatingSummary_itemId", prominent = true)
     protected String itemId;
 
     @Column(name = "RATING_TYPE", nullable = false)
-    @Index(name="RATINGSUMM_TYPE_INDEX", columnNames={"RATING_TYPE"})
     @AdminPresentation(friendlyName = "RatingSummary_ratingType",
         prominent = true,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,

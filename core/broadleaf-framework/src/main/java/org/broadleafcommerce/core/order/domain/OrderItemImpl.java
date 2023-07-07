@@ -93,7 +93,14 @@ import jakarta.persistence.Transient;
 @Entity
 @EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_ITEM")
+@Table(name = "BLC_ORDER_ITEM", indexes = {
+        @Index(name="ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
+        @Index(name="ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
+        @Index(name="ORDERITEM_MESSAGE_INDEX", columnList="PERSONAL_MESSAGE_ID"),
+        @Index(name="ORDERITEM_GIFT_INDEX", columnList="GIFT_WRAP_ITEM_ID"),
+        @Index(name="ORDERITEM_PARENT_INDEX", columnList="PARENT_ORDER_ITEM_ID"),
+        @Index(name="ORDERITEM_TYPE_INDEX", columnList="ORDER_ITEM_TYPE")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
     {
@@ -104,7 +111,7 @@ import jakarta.persistence.Transient;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
 })
 public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
@@ -130,7 +137,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @ManyToOne(targetEntity = CategoryImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
             group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
@@ -138,7 +144,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     @AdminPresentationToOneLookup()
     protected Order order;
@@ -176,13 +181,11 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @Index(name="ORDERITEM_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @Index(name="ORDERITEM_GIFT_INDEX", columnNames={"GIFT_WRAP_ITEM_ID"})
     @AdminPresentation(excluded = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
@@ -218,7 +221,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<OrderItemPriceDetail>();
 
     @Column(name = "ORDER_ITEM_TYPE")
-    @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
     protected String orderItemType;
 
     @Column(name = "ITEM_TAXABLE_FLAG")
@@ -257,7 +259,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
-    @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
     protected OrderItem parentOrderItem;
 
     @Column(name = "HAS_VALIDATION_ERRORS")

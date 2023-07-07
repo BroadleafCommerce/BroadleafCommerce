@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -51,7 +50,14 @@ import jakarta.persistence.TemporalType;
 @Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PAYMENT_LOG")
+@Table(name = "BLC_PAYMENT_LOG", indexes = {
+        @Index(name="PAYMENTLOG_USER_INDEX", columnList="USER_NAME"),
+        @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnList="ORDER_PAYMENT_ID"),
+        @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnList="ORDER_PAYMENT_REF_NUM"),
+        @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnList="TRANSACTION_TYPE"),
+        @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnList="LOG_TYPE"),
+        @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnList="CUSTOMER_ID")
+})
 public class PaymentLogImpl implements PaymentLog {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +76,6 @@ public class PaymentLogImpl implements PaymentLog {
     protected Long id;
 
     @Column(name = "USER_NAME", nullable=false)
-    @Index(name="PAYMENTLOG_USER_INDEX", columnNames={"USER_NAME"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_User_Name", order = 1, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String userName;
 
@@ -80,22 +85,18 @@ public class PaymentLogImpl implements PaymentLog {
     protected Date transactionTimestamp;
 
     @Column(name = "ORDER_PAYMENT_ID")
-    @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
     @AdminPresentation(excluded = true, readOnly = true)
     protected Long orderPaymentId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @Column(name = "ORDER_PAYMENT_REF_NUM")
-    @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"ORDER_PAYMENT_REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Payment_Ref_Number", order = 4, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String orderPaymentReferenceNumber;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
-    @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Transaction_Type", order = 5, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String transactionType;
 
@@ -108,7 +109,6 @@ public class PaymentLogImpl implements PaymentLog {
     protected String exceptionMessage;
 
     @Column(name = "LOG_TYPE", nullable=false)
-    @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnNames={"LOG_TYPE"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Type", order = 8, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String logType;
 

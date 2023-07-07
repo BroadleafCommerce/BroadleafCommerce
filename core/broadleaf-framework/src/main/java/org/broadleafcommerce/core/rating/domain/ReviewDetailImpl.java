@@ -27,7 +27,6 @@ import org.broadleafcommerce.core.rating.service.type.ReviewStatusType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
@@ -50,7 +49,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_REVIEW_DETAIL")
+@Table(name = "BLC_REVIEW_DETAIL", indexes = {
+        @Index(name="REVIEWDETAIL_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
+        @Index(name="REVIEWDETAIL_SUMMARY_INDEX", columnList="RATING_SUMMARY_ID"),
+        @Index(name="REVIEWDETAIL_RATING_INDEX", columnList="RATING_DETAIL_ID"),
+        @Index(name="REVIEWDETAIL_STATUS_INDEX", columnList="REVIEW_STATUS")
+})
 @AdminPresentationClass(friendlyName = "ReviewDetail", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
@@ -71,7 +75,6 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="REVIEWDETAIL_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentationToOneLookup
     @AdminPresentation(friendlyName = "ReviewDetail_customer")
     protected Customer customer;
@@ -85,7 +88,6 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
     protected String reviewText;
 
     @Column(name = "REVIEW_STATUS", nullable = false)
-    @Index(name="REVIEWDETAIL_STATUS_INDEX", columnNames={"REVIEW_STATUS"})
     @AdminPresentation(friendlyName = "ReviewDetail_status",
         prominent = true,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
@@ -102,7 +104,6 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
     @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
     @JoinColumn(name = "RATING_SUMMARY_ID")
-    @Index(name="REVIEWDETAIL_SUMMARY_INDEX", columnNames={"RATING_SUMMARY_ID"})
     protected RatingSummary ratingSummary;
 
     @OneToMany(mappedBy = "reviewDetail", targetEntity = ReviewFeedbackImpl.class, cascade = {CascadeType.ALL})
@@ -111,7 +112,6 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
     @OneToOne(targetEntity = RatingDetailImpl.class)
     @JoinColumn(name = "RATING_DETAIL_ID")
-    @Index(name="REVIEWDETAIL_RATING_INDEX", columnNames={"RATING_DETAIL_ID"})
     @AdminPresentation(friendlyName = "ReviewDetail_ratingDetail")
     @AdminPresentationToOneLookup
     protected RatingDetail ratingDetail;
