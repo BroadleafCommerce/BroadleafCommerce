@@ -30,6 +30,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
@@ -41,7 +42,7 @@ import jakarta.persistence.Table;
         @Index(name = "OFFERAUDIT_ACCOUNT_INDEX", columnList = "ACCOUNT_ID, OFFER_ID"),
         @Index(name = "OFFERAUDIT_ORDER_INDEX", columnList = "ORDER_ID"),
         @Index(name = "OFFERAUDIT_OFFER_CODE_INDEX", columnList = "OFFER_CODE_ID")})
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class OfferAuditImpl implements OfferAudit {
 
     public static final long serialVersionUID = 1L;

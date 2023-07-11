@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePatte
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashSet;

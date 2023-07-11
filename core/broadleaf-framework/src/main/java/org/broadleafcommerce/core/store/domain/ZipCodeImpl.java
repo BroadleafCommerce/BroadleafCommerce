@@ -17,15 +17,12 @@
  */
 package org.broadleafcommerce.core.store.domain;
 
-import org.hibernate.annotations.Index;
-
-import java.io.Serializable;
-
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
@@ -33,11 +30,11 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ZIP_CODE", indexes = {
-        @Index(name="ZIPCODE_ZIP_INDEX", columnList="ZIPCODE"),
-        @Index(name="ZIPCODE_STATE_INDEX", columnList="ZIP_STATE"),
-        @Index(name="ZIPCODE_CITY_INDEX", columnList="ZIP_CITY"),
-        @Index(name="ZIPCODE_LONGITUDE_INDEX", columnList="ZIP_LONGITUDE"),
-        @Index(name="ZIPCODE_LATITUDE_INDEX", columnList="ZIP_LATITUDE")
+        @Index(name = "ZIPCODE_ZIP_INDEX", columnList = "ZIPCODE"),
+        @Index(name = "ZIPCODE_STATE_INDEX", columnList = "ZIP_STATE"),
+        @Index(name = "ZIPCODE_CITY_INDEX", columnList = "ZIP_CITY"),
+        @Index(name = "ZIPCODE_LONGITUDE_INDEX", columnList = "ZIP_LONGITUDE"),
+        @Index(name = "ZIPCODE_LATITUDE_INDEX", columnList = "ZIP_LATITUDE")
 })
 public class ZipCodeImpl implements Serializable, ZipCode {
 

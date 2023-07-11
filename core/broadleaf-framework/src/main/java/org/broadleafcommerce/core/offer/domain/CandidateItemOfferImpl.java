@@ -41,6 +41,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -52,7 +53,7 @@ import jakarta.persistence.Transient;
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER", indexes = {
         @Index(name = "CANDIDATE_ITEM_INDEX", columnList = "ORDER_ITEM_ID"),
         @Index(name = "CANDIDATE_ITEMOFFER_INDEX", columnList = "OFFER_ID")})
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 

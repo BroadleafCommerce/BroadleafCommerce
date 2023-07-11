@@ -20,7 +20,6 @@ package org.broadleafcommerce.common.util;
 import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.core.Ordered;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 

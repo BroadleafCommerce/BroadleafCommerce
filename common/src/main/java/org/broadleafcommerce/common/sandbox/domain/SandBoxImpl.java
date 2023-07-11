@@ -47,6 +47,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -56,11 +57,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SANDBOX", indexes = {@Index(name = "SANDBOX_NAME_INDEX", columnList = "SANDBOX_NAME")})
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
-@SQLDelete(sql="UPDATE BLC_SANDBOX SET ARCHIVED = 'Y' WHERE SANDBOX_ID = ?")
+@Table(name = "BLC_SANDBOX", indexes = {@Index(name = "SANDBOX_NAME_INDEX", columnList = "SANDBOX_NAME")})
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSandBoxElements")
+@SQLDelete(sql = "UPDATE BLC_SANDBOX SET ARCHIVED = 'Y' WHERE SANDBOX_ID = ?")
 @DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 public class SandBoxImpl implements SandBox, AdminMainEntity {
 

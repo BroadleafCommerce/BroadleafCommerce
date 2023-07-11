@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.currency.domain;
 
-
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -107,7 +106,7 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity
 
     @Override
     public void setDefaultFlag(boolean defaultFlag) {
-        this.defaultFlag = new Boolean(defaultFlag);
+        this.defaultFlag = Boolean.valueOf(defaultFlag);
     }
 
     @Override

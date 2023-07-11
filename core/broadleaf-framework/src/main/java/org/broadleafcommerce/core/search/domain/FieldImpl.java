@@ -40,6 +40,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
@@ -49,15 +50,12 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_FIELD", indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
 })
 public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity {
-    
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
@@ -153,12 +151,12 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public Boolean getOverrideGeneratedPropertyName() {
-        return overrideGeneratedPropertyName  == null ? false : overrideGeneratedPropertyName;
+        return overrideGeneratedPropertyName != null && overrideGeneratedPropertyName;
     }
 
     @Override
     public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName) {
-        this.overrideGeneratedPropertyName = overrideGeneratedPropertyName == null ? false : overrideGeneratedPropertyName;
+        this.overrideGeneratedPropertyName = overrideGeneratedPropertyName != null && overrideGeneratedPropertyName;
     }
 
     @Override
@@ -183,7 +181,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public Boolean getTranslatable() {
-        return translatable == null ? false : translatable;
+        return translatable != null && translatable;
     }
 
     @Override

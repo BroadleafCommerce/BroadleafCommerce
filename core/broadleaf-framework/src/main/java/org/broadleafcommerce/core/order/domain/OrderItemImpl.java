@@ -59,7 +59,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -80,6 +79,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -89,25 +89,24 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
-
 @Entity
 @EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM", indexes = {
-        @Index(name="ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
-        @Index(name="ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
-        @Index(name="ORDERITEM_MESSAGE_INDEX", columnList="PERSONAL_MESSAGE_ID"),
-        @Index(name="ORDERITEM_GIFT_INDEX", columnList="GIFT_WRAP_ITEM_ID"),
-        @Index(name="ORDERITEM_PARENT_INDEX", columnList="PARENT_ORDER_ITEM_ID"),
-        @Index(name="ORDERITEM_TYPE_INDEX", columnList="ORDER_ITEM_TYPE")
+        @Index(name = "ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
+        @Index(name = "ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
+        @Index(name = "ORDERITEM_MESSAGE_INDEX", columnList = "PERSONAL_MESSAGE_ID"),
+        @Index(name = "ORDERITEM_GIFT_INDEX", columnList = "GIFT_WRAP_ITEM_ID"),
+        @Index(name = "ORDERITEM_PARENT_INDEX", columnList = "PARENT_ORDER_ITEM_ID"),
+        @Index(name = "ORDERITEM_TYPE_INDEX", columnList = "ORDER_ITEM_TYPE")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
+        {
+                @AdminPresentationMergeOverride(name = "", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                        booleanOverrideValue = true))
+        }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({

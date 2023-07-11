@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.logging.SupportLogger;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.schema.internal.script.SingleLineSqlScriptExtractor;
 
-
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;

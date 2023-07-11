@@ -20,9 +20,6 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -38,12 +35,8 @@ import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKeyJdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,33 +49,34 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
+@EntityListeners(value = {TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }),
-        indexes = {@Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnList="PAYMENT_TYPE")}
+@Table(name = "BLC_CUSTOMER_PAYMENT",
+        uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = {"CUSTOMER_ID", "PAYMENT_TOKEN"}),
+        indexes = {@Index(name = "CUSTOMERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE")}
 )
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
-{
-        @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3000)
-        }),
-        @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentAdminPresentation.TabName.BillingAddress),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentAdminPresentation.TabOrder.BillingAddress)
+        {
+                @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3000)
+                }),
+                @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentAdminPresentation.TabName.BillingAddress),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentAdminPresentation.TabOrder.BillingAddress)
+                })
         })
-})
 public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdminPresentation {
 
     private static final long serialVersionUID = 1L;

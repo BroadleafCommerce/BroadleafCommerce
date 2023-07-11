@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -33,6 +30,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -42,8 +40,8 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_REVIEW_FEEDBACK", indexes = {
-        @Index(name="REVIEWFEED_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-        @Index(name="REVIEWFEED_DETAIL_INDEX", columnList="REVIEW_DETAIL_ID")
+        @Index(name = "REVIEWFEED_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
+        @Index(name = "REVIEWFEED_DETAIL_INDEX", columnList = "REVIEW_DETAIL_ID")
 })
 public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
 

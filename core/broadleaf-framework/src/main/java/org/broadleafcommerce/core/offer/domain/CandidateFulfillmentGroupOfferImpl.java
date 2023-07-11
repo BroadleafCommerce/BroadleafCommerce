@@ -36,6 +36,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -44,10 +45,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(name = "BLC_CANDIDATE_FG_OFFER",indexes = {
+@Table(name = "BLC_CANDIDATE_FG_OFFER", indexes = {
         @Index(name = "CANDIDATE_FG_INDEX", columnList = "FULFILLMENT_GROUP_ID"),
         @Index(name = "CANDIDATE_FGOFFER_INDEX", columnList = "OFFER_ID")})
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentGroupOffer {
 

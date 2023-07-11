@@ -26,6 +26,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -35,7 +36,9 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
-@Table(name = "BLC_EMAIL_TRACKING_OPENS", indexes = {@Index(name = "TRACKINGOPEN_TRACKING", columnList = "EMAIL_TRACKING_ID")})
+@Table(name = "BLC_EMAIL_TRACKING_OPENS", indexes = {
+        @Index(name = "TRACKINGOPEN_TRACKING", columnList = "EMAIL_TRACKING_ID")
+})
 public class EmailTrackingOpensImpl implements EmailTrackingOpens {
 
     /** The Constant serialVersionUID. */

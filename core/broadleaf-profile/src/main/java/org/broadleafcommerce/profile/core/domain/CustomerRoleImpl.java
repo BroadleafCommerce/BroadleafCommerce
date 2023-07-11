@@ -26,6 +26,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -33,11 +34,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
+@EntityListeners(value = {TemporalTimestampListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ROLE",  indexes = {
-        @Index(name="CUSTROLE_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-        @Index(name="CUSTROLE_ROLE_INDEX", columnList="ROLE_ID")
+@Table(name = "BLC_CUSTOMER_ROLE", indexes = {
+        @Index(name = "CUSTROLE_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
+        @Index(name = "CUSTROLE_ROLE_INDEX", columnList = "ROLE_ID")
 })
 public class CustomerRoleImpl implements CustomerRole {
 

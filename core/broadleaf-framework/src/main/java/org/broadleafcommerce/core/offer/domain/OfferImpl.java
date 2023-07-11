@@ -74,6 +74,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.MapKey;
@@ -83,17 +84,17 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_OFFER", indexes = {
-        @Index(name="OFFER_NAME_INDEX", columnList="OFFER_NAME"),
-        @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnList =  "MARKETING_MESSAGE" ),
-        @Index(name="OFFER_TYPE_INDEX", columnList="OFFER_TYPE"),
-        @Index(name="OFFER_DISCOUNT_INDEX", columnList="OFFER_DISCOUNT_TYPE"),
-        @Index(name="idx_BLOF_START_DATE", columnList="START_DATE")
+        @Index(name = "OFFER_NAME_INDEX", columnList = "OFFER_NAME"),
+        @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnList = "MARKETING_MESSAGE"),
+        @Index(name = "OFFER_TYPE_INDEX", columnList = "OFFER_TYPE"),
+        @Index(name = "OFFER_DISCOUNT_INDEX", columnList = "OFFER_DISCOUNT_TYPE"),
+        @Index(name = "idx_BLOF_START_DATE", columnList = "START_DATE")
 })
-@Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
-@SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
+@SQLDelete(sql = "UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {

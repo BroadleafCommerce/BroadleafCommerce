@@ -47,6 +47,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -58,15 +59,13 @@ import jakarta.persistence.Transient;
 @Table(name = "BLC_ORDER_ADJUSTMENT", indexes = {
         @Index(name = "ORDERADJUST_ORDER_INDEX", columnList = "ORDER_ID"),
         @Index(name = "ORDERADJUST_OFFER_INDEX", columnList = "OFFER_ID")})
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderAdjustmentImpl_baseOrderAdjustment")
 public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentifiable {
 
