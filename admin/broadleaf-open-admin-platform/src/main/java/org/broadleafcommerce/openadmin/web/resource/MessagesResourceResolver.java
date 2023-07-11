@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +31,8 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Generated resource resolver for Admin Javascript Messages

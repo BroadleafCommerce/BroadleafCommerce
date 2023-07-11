@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -30,16 +31,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -56,7 +57,7 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     @GeneratedValue(generator = "RatingSummaryId")
     @GenericGenerator(
         name="RatingSummaryId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="RatingSummaryImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.RatingSummaryImpl")
@@ -78,7 +79,7 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
 
     @Column(name = "AVERAGE_RATING", nullable = false)
     @AdminPresentation(friendlyName = "RatingSummary_averageRating", prominent = true)
-    protected Double averageRating = new Double(0);
+    protected Double averageRating = 0.0;
 
     @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class, cascade = {CascadeType.ALL})
     @AdminPresentationCollection(friendlyName = "RatingSummary_ratings")
@@ -109,14 +110,14 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     @Override
     public void resetAverageRating() {
         if (ratings == null || ratings.isEmpty()) {
-            this.averageRating = new Double(0);
+            this.averageRating = 0.0;
         } else {
             double sum = 0;
             for (RatingDetail detail : ratings) {
                 sum += detail.getRating();
             }
 
-            this.averageRating = new Double(sum / ratings.size());
+            this.averageRating = sum / ratings.size();
         }
     }
 

@@ -24,20 +24,20 @@
 
     <named-query name="BC_READ_ALL_STRUCTURED_CONTENT_TYPES">
         <query>SELECT structuredContentType
-            FROM org.broadleafcommerce.cms.structure.domain.StructuredContentType structuredContentType
+            FROM org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl structuredContentType
         </query>
     </named-query>
 
     <named-query name="BC_READ_STRUCTURED_CONTENT_TYPE_BY_NAME">
         <query>SELECT structuredContentType
-            FROM org.broadleafcommerce.cms.structure.domain.StructuredContentType structuredContentType
+            FROM org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl structuredContentType
             WHERE structuredContentType.name = :name
         </query>
     </named-query>
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME">
         <query>SELECT structuredContent
-            FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
+            FROM org.broadleafcommerce.cms.structure.domain.StructuredContentImpl structuredContent
             WHERE structuredContent.structuredContentType = :contentType AND
             (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
             structuredContent.contentName = :contentName AND
@@ -48,7 +48,7 @@
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE">
         <query>SELECT structuredContent
-            FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
+            FROM org.broadleafcommerce.cms.structure.domain.StructuredContentImpl structuredContent
             WHERE structuredContent.structuredContentType = :contentType AND
             (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
             structuredContent.offlineFlag = false
@@ -58,7 +58,7 @@
 
     <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME">
         <query>SELECT structuredContent
-            FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
+            FROM org.broadleafcommerce.cms.structure.domain.StructuredContentImpl structuredContent
             WHERE (structuredContent.locale = :fullLocale OR structuredContent.locale = :languageOnlyLocale ) AND
             structuredContent.contentName = :contentName AND
             structuredContent.offlineFlag = false

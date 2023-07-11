@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This class is being un-deprecated because we want the query for the customer to happen through Hibernate instead of

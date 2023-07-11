@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.profile.core.domain.Phone;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 
 import java.beans.PropertyEditorSupport;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Chris Kittrell (ckittrell)

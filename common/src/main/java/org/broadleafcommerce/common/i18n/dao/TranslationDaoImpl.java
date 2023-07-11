@@ -31,8 +31,6 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.hibernate.jpa.QueryHints;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 import org.springframework.stereotype.Repository;
 
@@ -40,14 +38,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Repository("blTranslationDao")
 public class TranslationDaoImpl implements TranslationDao {
@@ -148,8 +146,8 @@ public class TranslationDaoImpl implements TranslationDao {
         Map<String, Object> idMetadata = getIdPropertyMetadata(entityType);
         String idProperty = (String) idMetadata.get("name");
         Type idType = (Type) idMetadata.get("type");
-
-        if (!(idType instanceof LongType || idType instanceof StringType)) {
+        Class<?> returnedClass = idType.getReturnedClass();
+        if (!(returnedClass.isAssignableFrom(Long.class) || returnedClass.isAssignableFrom(String.class))) {
             throw new UnsupportedOperationException("Only ID types of String and Long are currently supported");
         }
 
@@ -160,9 +158,9 @@ public class TranslationDaoImpl implements TranslationDao {
             throw new RuntimeException("Error reading id property", e);
         }
 
-        if (idType instanceof StringType) {
+        if (returnedClass.isAssignableFrom(String.class)) {
             return (String) idValue;
-        } else if (idType instanceof LongType) {
+        } else if (returnedClass.isAssignableFrom(Long.class)) {
             return getUpdatedEntityId(entityType, (Long) idValue);
         }
 

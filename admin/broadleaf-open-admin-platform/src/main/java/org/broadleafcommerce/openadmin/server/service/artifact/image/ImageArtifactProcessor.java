@@ -40,7 +40,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.Deflater;
 
-import javax.annotation.Resource;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -48,6 +47,8 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+
+import jakarta.annotation.Resource;
 
 /**
  * Created by IntelliJ IDEA.

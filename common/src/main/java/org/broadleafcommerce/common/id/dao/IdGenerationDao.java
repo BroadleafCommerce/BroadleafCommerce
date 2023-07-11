@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.id.dao;
 
 import org.broadleafcommerce.common.id.domain.IdGeneration;
 
-import javax.persistence.OptimisticLockException;
+import jakarta.persistence.OptimisticLockException;
 
 
 public interface IdGenerationDao {

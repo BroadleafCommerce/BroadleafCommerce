@@ -30,7 +30,7 @@ import org.springframework.security.web.access.channel.SecureChannelProcessor;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 /**
  * <p>This class is designed to work in both a load-balanced and non load-balanced environment by replacing the existing

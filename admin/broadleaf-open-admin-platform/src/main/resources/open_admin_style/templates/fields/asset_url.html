@@ -18,7 +18,7 @@
     <br />
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
         <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
     </label>
     <input type="text" disabled="disabled"
            th:field="*{fields['__${field.name}__'].value}"/>

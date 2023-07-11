@@ -17,15 +17,7 @@
  */
 package org.broadleafcommerce.core.spec.order.service.workflow.add
 
-import org.broadleafcommerce.core.catalog.domain.ProductImpl
-import org.broadleafcommerce.core.catalog.domain.ProductOption
-import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl
-import org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl
-import org.broadleafcommerce.core.catalog.domain.Sku
-import org.broadleafcommerce.core.catalog.domain.SkuImpl
-import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref
-import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl
+import org.broadleafcommerce.core.catalog.domain.*
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType

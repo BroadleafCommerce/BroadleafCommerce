@@ -25,8 +25,8 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.lang.reflect.Field;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 public class AdminAuditableListener extends AbstractAuditableListener {
 

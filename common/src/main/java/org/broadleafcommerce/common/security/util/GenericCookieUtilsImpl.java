@@ -20,23 +20,30 @@ package org.broadleafcommerce.common.security.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.owasp.esapi.ESAPI;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.owasp.encoder.esapi.ESAPIEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.regex.Pattern;
+
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component("blCookieUtils")
 public class GenericCookieUtilsImpl implements CookieUtils {
+
     private static final Log LOG = LogFactory.getLog(GenericCookieUtilsImpl.class);
-    
     protected final String COOKIE_INVALIDATION_PLACEHOLDER_VALUE = "CookieInvalidationPlaceholderValue";
+    @Resource
+    protected SystemPropertiesService systemPropertiesService;
+
+    protected Pattern cookieValuePattern = Pattern.compile("^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ \"]*$");
 
     @Override
     public Boolean shouldUseSecureCookieIfApplicable() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("cookies.use.secure", false);
+        return systemPropertiesService.resolveBooleanSystemProperty("cookies.use.secure", false);
     }
     
     @Override
@@ -88,7 +95,17 @@ public class GenericCookieUtilsImpl implements CookieUtils {
             sb.append("; SameSite=None");
         }
 
-        ESAPI.httpUtilities().addHeader(response, "Set-Cookie", sb.toString());
+        String string = sb.toString();
+        if (string.length() < 4096) {
+            String canonicalize = ESAPIEncoder.getInstance().canonicalize(string);
+            if (cookieValuePattern.matcher(canonicalize).matches()) {
+                response.addHeader("Set-Cookie", canonicalize);
+            } else {
+                LOG.warn("Attempt to set Cookie[" + cookieName + "]=" + string + " . It doesn't match allowed pattern and this is considered security rules violation");
+            }
+        } else {
+            LOG.warn("Attempt to set Cookie name:" + cookieName + " cookie length exceeds 4096");
+        }
     }
     
     @Override

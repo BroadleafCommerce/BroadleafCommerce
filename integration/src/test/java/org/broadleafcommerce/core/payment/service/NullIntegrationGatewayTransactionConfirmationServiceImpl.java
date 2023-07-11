@@ -18,8 +18,6 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -29,6 +27,8 @@ import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayTransa
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)

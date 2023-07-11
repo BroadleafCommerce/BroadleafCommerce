@@ -23,7 +23,7 @@
 
     <named-query name="BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE" >
         <query>SELECT ratingSummary 
-               FROM org.broadleafcommerce.core.rating.domain.RatingSummary ratingSummary
+               FROM org.broadleafcommerce.core.rating.domain.RatingSummaryImpl ratingSummary
                WHERE ratingSummary.ratingTypeStr = :ratingType
                AND ratingSummary.itemId IN (:itemIds)
         </query>
@@ -31,7 +31,7 @@
 
     <named-query name="BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE" >
         <query>SELECT ratingSummary 
-               FROM org.broadleafcommerce.core.rating.domain.RatingSummary ratingSummary
+               FROM org.broadleafcommerce.core.rating.domain.RatingSummaryImpl ratingSummary
                WHERE ratingSummary.ratingTypeStr = :ratingType
                AND ratingSummary.itemId = :itemId
         </query>
@@ -39,7 +39,7 @@
     
     <named-query name="BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
         <query>SELECT ratingDetail
-               FROM org.broadleafcommerce.core.rating.domain.RatingDetail ratingDetail
+               FROM org.broadleafcommerce.core.rating.domain.RatingDetailImpl ratingDetail
                WHERE ratingDetail.customer.id = :customerId
                AND ratingDetail.ratingSummary.id = :ratingSummaryId
         </query>
@@ -47,7 +47,7 @@
     
     <named-query name="BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
         <query>SELECT reviewDetail 
-               FROM org.broadleafcommerce.core.rating.domain.ReviewDetail reviewDetail
+               FROM org.broadleafcommerce.core.rating.domain.ReviewDetailImpl reviewDetail
                WHERE reviewDetail.customer.id = :customerId
                AND reviewDetail.ratingSummary.id = :ratingSummaryId
         </query>
@@ -56,7 +56,7 @@
     <named-query name="BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_ITEM_ID">
         <query>
             SELECT reviewDetail
-            FROM org.broadleafcommerce.core.rating.domain.ReviewDetail reviewDetail
+            FROM org.broadleafcommerce.core.rating.domain.ReviewDetailImpl reviewDetail
             WHERE reviewDetail.customer.id = :customerId
                 AND reviewDetail.ratingSummary.itemId = :itemId
         </query>

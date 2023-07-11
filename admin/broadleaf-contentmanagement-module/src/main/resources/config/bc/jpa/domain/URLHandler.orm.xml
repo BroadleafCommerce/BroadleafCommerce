@@ -25,7 +25,7 @@
 
     <named-query name="BC_READ_BY_INCOMING_URL">
         <query>SELECT handler
-            FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
+            FROM org.broadleafcommerce.cms.url.domain.URLHandlerImpl handler
             WHERE
             handler.incomingURL = :incomingURL
         </query>
@@ -33,7 +33,7 @@
 
     <named-query name="BC_READ_ALL_REGEX_HANDLERS">
         <query>SELECT handler
-            FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
+            FROM org.broadleafcommerce.cms.url.domain.URLHandlerImpl handler
             WHERE
             handler.isRegex = true
         </query>

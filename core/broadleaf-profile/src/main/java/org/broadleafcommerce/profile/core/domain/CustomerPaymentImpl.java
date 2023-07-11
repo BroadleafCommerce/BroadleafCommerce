@@ -20,9 +20,6 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -35,52 +32,51 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class })
+@EntityListeners(value = {TemporalTimestampListener.class, CustomerPaymentPersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }),
-        indexes = {@Index(name="CUSTOMERPAYMENT_TYPE_INDEX", columnList="PAYMENT_TYPE")}
+@Table(name = "BLC_CUSTOMER_PAYMENT",
+        uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = {"CUSTOMER_ID", "PAYMENT_TOKEN"}),
+        indexes = {@Index(name = "CUSTOMERPAYMENT_TYPE_INDEX", columnList = "PAYMENT_TYPE")}
 )
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
-{
-        @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3000)
-        }),
-        @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentAdminPresentation.TabName.BillingAddress),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentAdminPresentation.TabOrder.BillingAddress)
+        {
+                @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3000)
+                }),
+                @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentAdminPresentation.TabName.BillingAddress),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentAdminPresentation.TabOrder.BillingAddress)
+                })
         })
-})
 public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdminPresentation {
 
     private static final long serialVersionUID = 1L;
@@ -133,14 +129,10 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
             group = GroupName.Payment, order = FieldOrder.IS_DEFAULT)
     protected boolean isDefault = false;
 
-    @ElementCollection()
-    @MapKeyType(@Type(type = "java.lang.String"))
-    @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @ElementCollection
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
-    @Column(name = "FIELD_VALUE", length = Integer.MAX_VALUE - 1)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Column(name = "FIELD_VALUE", length = Length.LONG32 - 1)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @AdminPresentationMap(friendlyName = "CustomerPaymentImpl_additionalFields",
             tab = TabName.Payment,

@@ -27,8 +27,8 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 
 /**
  * This class is meant as a template to provide overriding of the annotations on fields in 

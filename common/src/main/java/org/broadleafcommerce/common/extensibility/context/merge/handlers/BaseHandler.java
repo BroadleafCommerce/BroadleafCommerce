@@ -46,7 +46,7 @@ public abstract class BaseHandler implements MergeHandler, Comparable<Object> {
     }
 
     public int compareTo(Object arg0) {
-        return new Integer(getPriority()).compareTo(new Integer(((MergeHandler) arg0).getPriority()));
+        return Integer.compare(getPriority(), ((MergeHandler) arg0).getPriority());
     }
 
     public MergeHandler[] getChildren() {

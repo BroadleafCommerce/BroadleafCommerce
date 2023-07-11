@@ -17,12 +17,11 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.service.OrderService;
 
+import jakarta.annotation.Resource;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its children. 

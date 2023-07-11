@@ -42,7 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATION;
 

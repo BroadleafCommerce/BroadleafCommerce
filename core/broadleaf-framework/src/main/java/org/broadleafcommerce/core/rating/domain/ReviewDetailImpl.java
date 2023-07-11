@@ -34,27 +34,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_REVIEW_DETAIL", indexes = {
-        @Index(name="REVIEWDETAIL_CUSTOMER_INDEX", columnList="CUSTOMER_ID"),
-        @Index(name="REVIEWDETAIL_SUMMARY_INDEX", columnList="RATING_SUMMARY_ID"),
-        @Index(name="REVIEWDETAIL_RATING_INDEX", columnList="RATING_DETAIL_ID"),
-        @Index(name="REVIEWDETAIL_STATUS_INDEX", columnList="REVIEW_STATUS")
+        @Index(name = "REVIEWDETAIL_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
+        @Index(name = "REVIEWDETAIL_SUMMARY_INDEX", columnList = "RATING_SUMMARY_ID"),
+        @Index(name = "REVIEWDETAIL_RATING_INDEX", columnList = "RATING_DETAIL_ID"),
+        @Index(name = "REVIEWDETAIL_STATUS_INDEX", columnList = "REVIEW_STATUS")
 })
 @AdminPresentationClass(friendlyName = "ReviewDetail", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class ReviewDetailImpl implements ReviewDetail, Serializable {

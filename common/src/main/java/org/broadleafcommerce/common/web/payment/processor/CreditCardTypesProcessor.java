@@ -23,9 +23,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 /**
  * <p>The following processor will add any Payment Gateway specific Card Type 'codes' to the model if

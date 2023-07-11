@@ -19,11 +19,9 @@ package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 

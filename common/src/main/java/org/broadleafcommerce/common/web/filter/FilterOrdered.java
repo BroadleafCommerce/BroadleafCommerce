@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.web.filter;
 
 /**
  * For Spring Boot implementations, use the {@link org.springframework.core.Ordered} interface, in conjunction with these
- * order values, on any {@link javax.servlet.Filter} implementation beans instantiated through Spring. This serves to setup
+ * order values, on any {@link jakarta.servlet.Filter} implementation beans instantiated through Spring. This serves to setup
  * proper overall http filtering ordering in relation to Spring Security filter chain execution.
  * </p>
  * If fine-grained ordering control is required for a custom Filter bean before or after an existing Broadleaf filter

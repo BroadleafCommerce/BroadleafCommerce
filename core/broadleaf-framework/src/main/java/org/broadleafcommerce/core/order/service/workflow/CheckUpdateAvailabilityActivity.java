@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.order.service.workflow;
 
 import org.apache.commons.logging.Log;
@@ -37,7 +34,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Very similar to the {@link CheckAddAvailabilityActivity} but in the blUpdateItemWorkflow instead

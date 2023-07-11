@@ -45,9 +45,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 
@@ -133,7 +133,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
         Locale locale = localeResolver.resolveLocale(request);
         brc.setLocale(locale);
-        TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
+
         BroadleafRequestedCurrencyDto currencyDto = currencyResolver.resolveCurrency(request);
         // Assumes BroadleafProcess
         RequestDTO requestDTO = (RequestDTO) request.getAttribute(REQUEST_DTO_PARAM_NAME, WebRequest.SCOPE_REQUEST);
@@ -204,6 +204,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         brc.setTheme(theme);
 
         brc.setMessageSource(messageSource);
+        TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {

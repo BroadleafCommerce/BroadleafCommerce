@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This processor outputs a SCRIPT tag with JSON data that can be used to update a mostly cached page followed by

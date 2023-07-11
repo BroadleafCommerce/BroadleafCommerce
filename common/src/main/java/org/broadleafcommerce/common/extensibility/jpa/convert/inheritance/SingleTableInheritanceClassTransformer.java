@@ -28,13 +28,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -43,11 +47,6 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.IntegerMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 
 /**
  * 
@@ -94,7 +93,8 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
             return null;
@@ -134,7 +134,7 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
                 }
                 Annotation inheritance = new Annotation(Inheritance.class.getName(), constantPool);
                 ClassPool pool = ClassPool.getDefault();
-                pool.importPackage("javax.persistence");
+                pool.importPackage("jakarta.persistence");
                 pool.importPackage("java.lang");
                 EnumMemberValue strategy = (EnumMemberValue) Annotation.createMemberValue(constantPool, pool.makeClass("InheritanceType"));
                 strategy.setType(InheritanceType.class.getName());
@@ -165,7 +165,7 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
                 return bos.toByteArray();
             } catch(Exception ex) {
                 ex.printStackTrace();
-                throw new IllegalClassFormatException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + ex.getMessage());
+                throw new TransformerException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + ex.getMessage());
             }
         } else {
             return null;

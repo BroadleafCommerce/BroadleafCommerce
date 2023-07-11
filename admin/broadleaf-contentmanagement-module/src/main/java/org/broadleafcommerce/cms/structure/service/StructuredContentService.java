@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
-import org.hibernate.Criteria;
 
 import java.util.List;
 import java.util.Map;
@@ -71,40 +70,12 @@ public interface StructuredContentService {
      */
     List<StructuredContentType> retrieveAllStructuredContentTypes();
 
-    /**
-     * This method is intended to be called solely from the CMS admin.    Similar methods
-     * exist that are intended for other clients (e.g. lookupStructuredContentItemsBy....
-     * <br>
-     * Returns content items for the passed in sandbox that match the passed in criteria.
-     * The criteria acts as a where clause to be used in the search for content items.
-     * Implementations should automatically add criteria such that no archived items
-     * are returned from this method.
-     * <br>
-     * The SandBox parameter impacts the results as follows.  If a <code>SandBoxType</code> of
-     * production is passed in, only those items in that SandBox are returned.
-     * <br>
-     * If a non-production SandBox is passed in, then the method will return the items associatd
-     * with the related production SandBox and then merge in the results of the passed in SandBox.
-     *
-     * @param sandbox - the sandbox to find structured content items (null indicates items that are in production for
-     *                  sites that are single tenant.
-     * @param criteria - the criteria used to search for content
-     * @return
-     */
-    List<StructuredContent> findContentItems(Criteria criteria);
     
     /**
      * Finds all content items regardless of the {@link Sandbox} they are a member of
      * @return
      */
     List<StructuredContent> findAllContentItems();
-    
-    /**
-     * Follows the same rules as {@link #findContentItems(org.broadleafcommerce.common.sandbox.domain.SandBox, org.hibernate.Criteria) findContentItems}.
-     *
-     * @return the count of items in this sandbox that match the passed in Criteria
-     */
-    Long countContentItems(Criteria c);
 
     /**
      * Saves the given <b>type</b> and returns the merged instance

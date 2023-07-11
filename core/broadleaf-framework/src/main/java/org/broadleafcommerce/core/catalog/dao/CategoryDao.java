@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * {@code CategoryDao} provides persistence access to {@code Category} instances.

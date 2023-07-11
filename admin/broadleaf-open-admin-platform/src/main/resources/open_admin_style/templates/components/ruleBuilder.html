@@ -90,7 +90,7 @@
             th:classappend="${!field.required ? 'query-builder-rules-header' : 'query-builder-rules-header required'}"
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.displayType == 'RADIO') OR field.displayType == 'MODAL') ? 'display: none;' : ''}">
             <span th:text="#{${field.friendlyName}}"></span>
-            <span th:replace="components/fieldTooltip"></span>
+            <span th:replace="~{components/fieldTooltip}"></span>
         </h4>
 
         <div class="query-builder-rules-container"

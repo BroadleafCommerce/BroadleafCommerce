@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Service("blTaxService")
 public class TaxServiceImpl implements TaxService {

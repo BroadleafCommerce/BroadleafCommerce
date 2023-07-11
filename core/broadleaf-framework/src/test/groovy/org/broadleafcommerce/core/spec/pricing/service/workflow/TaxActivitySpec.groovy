@@ -21,21 +21,16 @@
 package org.broadleafcommerce.core.spec.pricing.service.workflow
 
 import org.broadleafcommerce.core.pricing.service.TaxService
-import org.broadleafcommerce.core.pricing.service.module.TaxModule
 import org.broadleafcommerce.core.pricing.service.workflow.TaxActivity
-
 
 class TaxActivitySpec extends BasePricingActivitySpec {
 
-    TaxModule mockTaxModule
     TaxService mockTaxService
 
     def "Test TaxActivity with a provided TaxService and TaxModule"() {
         setup: "Prepare mock objects"
-        mockTaxModule = Mock()
         mockTaxService = Mock()
         activity = new TaxActivity().with() {
-            taxModule = mockTaxModule
             taxService = mockTaxService
             it
         }
@@ -44,23 +39,7 @@ class TaxActivitySpec extends BasePricingActivitySpec {
         context = activity.execute(context)
 
         then: "mockTaxService should be invoked but mockTaxModule should not"
-        0 * mockTaxModule.calculateTaxForOrder(_) >> context.seedData
         1 * mockTaxService.calculateTaxForOrder(_) >> context.seedData
-    }
-
-    def "Test TaxActivity with a provided TaxModule"() {
-        setup: "Prepare mock object"
-        mockTaxModule = Mock()
-        activity = new TaxActivity().with() {
-            taxModule = mockTaxModule
-            it
-        }
-
-        when: "I execute TaxActivity"
-        context = activity.execute(context)
-
-        then: "mockTaxModule should be invoked"
-        1 * mockTaxModule.calculateTaxForOrder(_) >> context.seedData
     }
 
     def "Test TaxActivity with a provided TaxService"() {

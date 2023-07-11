@@ -17,17 +17,19 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.lang.StringUtils;
-import org.owasp.esapi.ESAPI;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class UrlUtil {
 
     protected static final String VALID_SCHEME_CHARS =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
+
+    protected static Pattern redirectPattern = Pattern.compile("^\\/admin.*|\\/login.*$");
 
     public static String generateUrlKey(String toConvert) {
         if (toConvert != null) {
@@ -84,7 +86,7 @@ public class UrlUtil {
         String scheme = request.getScheme() + "://";
         String relativeUrl = url.replace(scheme, "").replace(serverName, "").replace(port, "");
 
-        if (!"/".equals(relativeUrl) && !ESAPI.validator().isValidRedirectLocation("Redirect", relativeUrl, false)) {
+        if (!"/".equals(relativeUrl) && !redirectPattern.matcher(relativeUrl).matches()) {
             throw new IOException("Redirect failed");
         }
     }

@@ -48,10 +48,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 
+import jakarta.annotation.Resource;
 
 /**
  * @author Brian Polster (bpolster)

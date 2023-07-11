@@ -25,8 +25,8 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class BroadleafRatingsController {
 

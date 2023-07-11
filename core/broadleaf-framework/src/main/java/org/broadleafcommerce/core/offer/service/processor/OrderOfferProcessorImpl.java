@@ -57,7 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author jfischer, bpolster
@@ -133,7 +133,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * can be applied to the Order, OrderItem, or FulfillmentGroup.
      *
      * @param offer
-     * @param order
+     * @param promotableOrder
      * @param orderItem
      * @return true if offer can be applied, otherwise false
      */
@@ -146,7 +146,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * can be applied to the Order, OrderItem, or FulfillmentGroup.
      *
      * @param offer
-     * @param order
+     * @param promotableOrder
      * @param fulfillmentGroup
      * @return true if offer can be applied, otherwise false
      */
@@ -159,7 +159,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * can be applied to the Order, OrderItem, or FulfillmentGroup.
      *
      * @param offer
-     * @param order
+     * @param promotableOrder
      * @param promotableOrderItem
      * @param promotableFulfillmentGroup
      * @return true if offer can be applied, otherwise false
@@ -263,7 +263,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     /**
      * Called when the system must determine whether to apply order or item adjustments.
      * @param promotableOrder
-     * @param orderOffersApplied
      */
     protected void compareAndAdjustOrderAndItemOffers(PromotableOrder promotableOrder) {
         Money orderAdjustmentTotal = promotableOrder.calculateOrderAdjustmentTotal();
@@ -424,7 +423,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             if (promotableQualifier != null) {
                 // Offer was used as a qualifier on previous run.   Update quantity if needed.
                 if (orderItemQualifier.getQuantity() != promotableQualifier.getQuantity()) {
-                    orderItemQualifier.setQuantity(new Long(promotableQualifier.getQuantity()));
+                    orderItemQualifier.setQuantity(Long.valueOf(promotableQualifier.getQuantity()));
                 }
             } else {
                 unmatchedQualifiersMap.put(orderItemQualifier.getId(), orderItemQualifier);

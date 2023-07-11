@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.workflow.BaseActivity
 import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl
 import org.broadleafcommerce.core.workflow.ProcessContext
 import org.broadleafcommerce.profile.core.domain.CustomerImpl
-
 import spock.lang.Specification
 
 class BasePricingActivitySpec extends Specification {

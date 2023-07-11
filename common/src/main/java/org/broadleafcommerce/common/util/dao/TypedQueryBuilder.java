@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 
 /**
  * Utility class to construct typed query-language queries. This has an advantage over CriteriaQuery in that it will
@@ -38,7 +38,8 @@ import javax.persistence.TypedQuery;
  */
 public class TypedQueryBuilder<T> {
     
-    protected Class<T> rootClass;
+    protected Class rootClass;
+    protected Class<T> returnClass;
     protected String rootAlias;
     protected List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
     protected List<TQJoin> joins = new ArrayList<TQJoin>();
@@ -52,8 +53,13 @@ public class TypedQueryBuilder<T> {
      * @param rootAlias
      */
     public TypedQueryBuilder(Class<T> rootClass, String rootAlias) {
+        this(rootClass, rootAlias, rootClass);
+    }
+
+    public TypedQueryBuilder(Class<? extends T> rootClass, String rootAlias, Class<T> returnClass) {
         this.rootClass = rootClass;
         this.rootAlias = rootAlias;
+        this.returnClass = returnClass;
     }
     
     /**
@@ -171,7 +177,7 @@ public class TypedQueryBuilder<T> {
      * @return the TypedQuery
      */
     public TypedQuery<T> toQuery(EntityManager em) {
-        TypedQuery<T> q = em.createQuery(toQueryString(), rootClass);
+        TypedQuery<T> q = em.createQuery(toQueryString(), returnClass);
         fillParameterMap(q);
         return q;
     }

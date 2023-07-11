@@ -25,9 +25,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Comparator;
 import java.util.List;
+
+import jakarta.annotation.Resource;
 
 @Service("blSkuMediaService")
 public class SkuMediaServiceImpl implements SkuMediaService {

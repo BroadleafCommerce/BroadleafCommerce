@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 /**
  * Default implementation of {@link QueryHelper}. Utilizes the {@link BroadleafRequestContext} to store query hints

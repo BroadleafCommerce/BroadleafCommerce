@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Validates that a ProductBundle cannot have its own Default Sku selected as a Sku Bundle Item

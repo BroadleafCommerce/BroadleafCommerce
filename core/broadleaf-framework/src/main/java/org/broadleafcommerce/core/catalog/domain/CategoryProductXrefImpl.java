@@ -32,16 +32,15 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
 
@@ -88,12 +87,18 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     @Column(name = "CATEGORY_PRODUCT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    //todo: 6.3 cascade refresh was deleted due to potential hiberante issue, when after a clone process
+    //we refresh original & clone records, and after refresh it will be flushed at some point
+    //and during flush there will be exception about shared collection in sku.skuPriceData
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category = new CategoryImpl();
 
+    //todo: 6.3 cascade refresh was deleted due to potential hiberante issue, when after a clone process
+    //we refresh original & clone records, and after refresh it will be flushed at some point
+    //and during flush there will be exception about shared collection in sku.skuPriceData
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product = new ProductImpl();
 

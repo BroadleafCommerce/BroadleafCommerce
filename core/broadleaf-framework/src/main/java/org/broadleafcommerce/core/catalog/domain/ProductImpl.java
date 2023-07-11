@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -57,7 +56,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -72,22 +70,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
+import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
 
 /**
@@ -110,14 +111,10 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@javax.persistence.Table(name = "BLC_PRODUCT")
-//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
-@org.hibernate.annotations.Table(appliesTo = "BLC_PRODUCT", indexes = {
-        @Index(name = "PRODUCT_URL_INDEX",
-                columnNames = {"URL", "URL_KEY"}
-        ),
-        @Index(name = "PRODUCT_URL_KEY_INDEX",
-                columnNames = {"URL_KEY"})
+@Table(name = "BLC_PRODUCT", indexes = {
+        @Index(name = "PRODUCT_URL_INDEX", columnList = "URL, URL_KEY"),
+        @Index(name = "PRODUCT_URL_KEY_INDEX", columnList = "URL_KEY"),
+        @Index(name = "PRODUCT_CATEGORY_INDEX", columnList = "DEFAULT_CATEGORY_ID")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationMergeOverrides(
@@ -232,10 +229,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
     protected Boolean isFeaturedProduct = false;
 
-    @OneToOne(targetEntity = SkuImpl.class, cascade = {CascadeType.ALL})
+    @ManyToOne(targetEntity = SkuImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL})
-    @JoinColumn(name = "DEFAULT_SKU_ID")
+    @JoinColumn(name = "DEFAULT_SKU_ID", foreignKey = @ForeignKey(NO_CONSTRAINT))
     @ClonePolicy(toOneProperty = "defaultProduct")
     protected Sku defaultSku;
 
@@ -305,7 +302,6 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
-    @Index(name = "PRODUCT_CATEGORY_INDEX", columnNames = {"DEFAULT_CATEGORY_ID"})
     @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = FieldOrder.DEFAULT_CATEGORY,
             group = GroupName.General,
             prominent = true, gridOrder = 2,
@@ -362,7 +358,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
-    public Boolean getEnableDefaultSkuInInventory(){
+    public Boolean getEnableDefaultSkuInInventory() {
         return this.enableDefaultSkuInventory == null ? false : this.enableDefaultSkuInventory;
     }
 
@@ -1163,7 +1159,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public <G extends Product> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        boolean isPropagation = context.getCopyHints().get("PROPAGATION") != null && "TRUE".equalsIgnoreCase((String)context.getCopyHints().get("PROPAGATION"));
+        boolean isPropagation = context.getCopyHints().get("PROPAGATION") != null && "TRUE".equalsIgnoreCase((String) context.getCopyHints().get("PROPAGATION"));
 
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -1182,14 +1178,14 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setEnableDefaultSkuInInventory(enableDefaultSkuInventory);
         if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
             cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
-        } else if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
+        } else if (context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
             cloned.setDefaultCategory(defaultCategory);
         }
         cloned.setModel(model);
         if (defaultSku != null) {
             cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
         }
-        if(context.getToCatalog().getId().equals(context.getFromCatalog().getId()) || isPropagation) {
+        if (context.getToCatalog().getId().equals(context.getFromCatalog().getId()) || isPropagation) {
             for (Sku entry : additionalSkus) {
                 Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
                 cloned.getAdditionalSkus().add(clonedEntry);
@@ -1205,7 +1201,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             ProductAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             attributeMap.put(entry.getKey(), clonedEntry);
         }
-        if(attributeMap.size()>0) {
+        if (attributeMap.size() > 0) {
             cloned.setProductAttributes(attributeMap);
         }
 

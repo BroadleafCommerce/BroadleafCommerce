@@ -1,8 +1,8 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
 </label>
-<div th:replace="components/fieldTranslation" ></div>
+<div th:replace="~{components/fieldTranslation}" ></div>
 
 <div class="redactor-field"
      th:classappend="${field.readOnly ? 'disabled' : ''}"

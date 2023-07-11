@@ -20,8 +20,9 @@ package org.broadleafcommerce.common.payment.service;
 
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>This default implementation produces the Request Attributes and Request Paremeters

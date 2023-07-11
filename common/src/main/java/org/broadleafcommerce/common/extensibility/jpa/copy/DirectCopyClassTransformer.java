@@ -17,6 +17,36 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.IndexAnnotationDto;
+import org.broadleafcommerce.common.extensibility.jpa.SkipDefaultConstructorCheck;
+import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.logging.LifeCycleEvent;
+import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto;
+import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager;
+
+import java.io.ByteArrayInputStream;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -34,36 +64,6 @@ import javassist.bytecode.annotation.BooleanMemberValue;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.jpa.IndexAnnotationDto;
-import org.broadleafcommerce.common.extensibility.jpa.SkipDefaultConstructorCheck;
-import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-import org.broadleafcommerce.common.logging.LifeCycleEvent;
-import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto;
-import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityListeners;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import java.io.ByteArrayInputStream;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -103,7 +103,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -321,7 +321,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             error.printStackTrace();
             throw error;
         } catch (Exception e) {
-            throw new RuntimeException("Unable to transform class", e);
+            throw new TransformerException("Unable to transform class", e);
         } finally {
             if (clazz != null) {
                 try {
@@ -791,7 +791,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 Annotation[] items = attr.getAnnotations();
                 for (Annotation annotation : items) {
                     String typeName = annotation.getTypeName();
-                    if (typeName.equals(javax.persistence.Cache.class.getName())
+                    if (typeName.equals(jakarta.persistence.Cache.class.getName())
                             || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                         templateCache = annotation;
                         break;
@@ -811,7 +811,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     Annotation[] items = attr.getAnnotations();
                     for (Annotation annotation : items) {
                         String typeName = annotation.getTypeName();
-                        if (typeName.equals(javax.persistence.Cache.class.getName())
+                        if (typeName.equals(jakarta.persistence.Cache.class.getName())
                                 || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                             logger.debug("Stripping out previous Cache annotation at the class level - will merge into new EntityListeners");
                             // Since we are replacing the existing, we just drop the existing cache setting
@@ -982,4 +982,3 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         }
     }
 }
-

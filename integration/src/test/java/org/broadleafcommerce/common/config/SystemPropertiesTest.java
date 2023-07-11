@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.cache.AbstractCacheMissAware;
@@ -39,7 +36,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.cache.Cache;
-
 
 /**
  * Tests for the interactions between the system properties service as apart of the Spring Environment

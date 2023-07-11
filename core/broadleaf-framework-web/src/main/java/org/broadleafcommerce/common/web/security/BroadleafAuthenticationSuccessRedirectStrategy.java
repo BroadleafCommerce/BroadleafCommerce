@@ -26,8 +26,8 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * If the incoming request is an ajax request, the system will add the desired redirect path to the session and

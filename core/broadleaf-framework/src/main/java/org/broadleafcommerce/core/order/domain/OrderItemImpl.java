@@ -69,45 +69,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM", indexes = {
-        @Index(name="ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
-        @Index(name="ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
-        @Index(name="ORDERITEM_MESSAGE_INDEX", columnList="PERSONAL_MESSAGE_ID"),
-        @Index(name="ORDERITEM_GIFT_INDEX", columnList="GIFT_WRAP_ITEM_ID"),
-        @Index(name="ORDERITEM_PARENT_INDEX", columnList="PARENT_ORDER_ITEM_ID"),
-        @Index(name="ORDERITEM_TYPE_INDEX", columnList="ORDER_ITEM_TYPE")
+        @Index(name = "ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
+        @Index(name = "ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
+        @Index(name = "ORDERITEM_MESSAGE_INDEX", columnList = "PERSONAL_MESSAGE_ID"),
+        @Index(name = "ORDERITEM_GIFT_INDEX", columnList = "GIFT_WRAP_ITEM_ID"),
+        @Index(name = "ORDERITEM_PARENT_INDEX", columnList = "PARENT_ORDER_ITEM_ID"),
+        @Index(name = "ORDERITEM_TYPE_INDEX", columnList = "ORDER_ITEM_TYPE")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
+        {
+                @AdminPresentationMergeOverride(name = "", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                        booleanOverrideValue = true))
+        }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({
@@ -135,7 +134,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Embedded
     protected Auditable auditable = new Auditable();
 
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
     @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
             group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)

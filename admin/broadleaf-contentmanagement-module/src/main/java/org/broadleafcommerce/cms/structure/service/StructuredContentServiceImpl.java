@@ -20,7 +20,7 @@ package org.broadleafcommerce.cms.structure.service;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.SetUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
@@ -50,8 +50,6 @@ import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -63,9 +61,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author bpolster
@@ -128,19 +127,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     @Override
-    public List<StructuredContent> findContentItems(Criteria c) {
-        return c.list();
-    }
-
-    @Override
     public List<StructuredContent> findAllContentItems() {
         return structuredContentDao.findAllContentItems();
-    }
-
-    @Override
-    public Long countContentItems(Criteria c) {
-        c.setProjection(Projections.rowCount());
-        return (Long) c.uniqueResult();
     }
 
     /**
@@ -531,7 +519,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                                 }
                                 break;
                             case BOOLEAN:
-                                value = new Boolean(originalValue);
+                                value = Boolean.valueOf(originalValue);
                                 break;
                             case DECIMAL:
                                 value = new BigDecimal(originalValue);

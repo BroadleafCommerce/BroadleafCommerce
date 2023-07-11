@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * <p>Checks the offers being used in the order to make sure that the customer

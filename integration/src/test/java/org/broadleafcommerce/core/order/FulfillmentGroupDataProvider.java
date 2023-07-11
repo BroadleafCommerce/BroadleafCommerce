@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
-import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.testng.annotations.DataProvider;
 
 public class FulfillmentGroupDataProvider {
@@ -41,7 +40,7 @@ public class FulfillmentGroupDataProvider {
         FulfillmentGroupImpl sos = new FulfillmentGroupImpl();
         sos.setReferenceNumber("123456789");
         sos.setMethod("standard");
-        sos.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        sos.setService("BANDED_SHIPPING");
         return new Object[][] { { sos } };
     }
 }

@@ -20,7 +20,7 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Implementations of this interface contain item rule data that is used for targeting

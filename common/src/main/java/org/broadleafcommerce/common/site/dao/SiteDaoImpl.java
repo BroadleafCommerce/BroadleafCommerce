@@ -31,13 +31,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 @Repository("blSiteDao")
 public class SiteDaoImpl implements SiteDao {
@@ -65,10 +65,9 @@ public class SiteDaoImpl implements SiteDao {
     
     @Override
     public Catalog retrieveCatalogByName(String name) {
-        TypedQuery<Catalog> catalogByName = new TypedQueryBuilder<>(Catalog.class, "c")
+        TypedQuery<Catalog> catalogByName = new TypedQueryBuilder<>(CatalogImpl.class, "c", Catalog.class)
             .addRestriction("c.name", "=", name)
             .toQuery(em);
-        
         List<Catalog> catalogs = catalogByName.getResultList();
         if (CollectionUtils.isNotEmpty(catalogs)) {
             return catalogs.get(0);
@@ -178,7 +177,7 @@ public class SiteDaoImpl implements SiteDao {
     
     @Override
     public List<Catalog> retrieveAllCatalogs() {
-        TypedQuery<Catalog> q = new TypedQueryBuilder<>(Catalog.class, "c")
+        TypedQuery<Catalog> q = new TypedQueryBuilder<>(CatalogImpl.class, "c", Catalog.class)
                 .toQuery(em);
         return q.getResultList();
     }

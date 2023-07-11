@@ -15,26 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.test
 
+import jakarta.annotation.Resource
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest
-
-import javax.annotation.Resource
-
 import spock.lang.Specification
 
 /**
- * 
- * 
+ *
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @BroadleafSiteIntegrationTest
 class SpockExampleTest extends Specification {
-    
+
     @Resource
     private CatalogService catalogService
 

@@ -32,32 +32,31 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
 
 /**
  * @author Jerry Ocanas (jocanas)
@@ -109,10 +108,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Payment_IP_Address", order=4000)
     protected String customerIpAddress;
-    
-    @Column(name = "RAW_RESPONSE", length = Integer.MAX_VALUE - 1)
+
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "RAW_RESPONSE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Raw_Response")
     protected String rawResponse;
     
@@ -127,7 +125,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @JoinColumn(name = "ORDER_PAYMENT")
     @AdminPresentation(excluded = true)
     protected OrderPayment orderPayment;
-    
+
     /**
      * Necessary for operations on a payment that require something to have happened beforehand. For instance, an AUTHORIZE
      * would not have a parent but a CAPTURE must have an AUTHORIZE parent and a REFUND must have a CAPTURE parent
@@ -139,17 +137,15 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected PaymentTransaction parentTransaction;
 
     @ElementCollection
-    @MapKeyColumn(name="FIELD_NAME")
-    @MapKeyType(@Type(type = "java.lang.String"))
-    @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
-    @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
+    @MapKeyColumn(name="FIELD_NAME")
+    @Column(name="FIELD_VALUE", length = Length.LONG32 - 1)
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields", isSimpleValue = UnspecifiedBooleanType.TRUE,
         forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
+
 
     @Column(name = "SAVE_TOKEN")
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Save_Token")

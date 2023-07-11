@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This activity handles both adds and updates. In both cases, this will check the availability and quantities (if applicable)

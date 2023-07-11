@@ -38,8 +38,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 /**
  * @author Jeff Fischer

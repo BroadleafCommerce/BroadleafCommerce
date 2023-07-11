@@ -26,8 +26,8 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 
 /**
  * Manages execution of field value modification for reads and writes against one or more modifiers. See {@link FieldManagerModifier}.

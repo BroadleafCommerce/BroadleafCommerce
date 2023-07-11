@@ -29,8 +29,8 @@ import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Dimension implements Serializable, MultiTenantCloneable<Dimension> {

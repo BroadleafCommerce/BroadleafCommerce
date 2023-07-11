@@ -28,8 +28,8 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.hibernate.Criteria;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
@@ -37,8 +37,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.EntityManager;
 
 /**
  *
@@ -120,7 +120,7 @@ public interface DynamicEntityDao {
 
     List<String> getPropertyNames(Class<?> entityClass);
 
-    Criteria createCriteria(Class<?> entityClass);
+    JpaCriteriaQuery<?> createCriteria(Class<?> entityClass);
 
     Field[] getAllFields(Class<?> targetClass);
 

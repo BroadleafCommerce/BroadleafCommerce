@@ -43,12 +43,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-
-import javassist.util.proxy.Proxy;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
 import javassist.util.proxy.ProxyFactory;
-
 
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
@@ -247,7 +244,15 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         entityClass = getNonProxyImplementationClassIfNecessary(entityClass);
         Map<String, Object> response = new HashMap<>();
         SessionFactory sessionFactory = entityManager.unwrap(Session.class).getSessionFactory();
-        boolean isEntity = sessionFactory.getMetamodel().entity(entityClass.getName()) != null;
+        boolean isEntity = true;
+        try {
+            // or maybe insteaf of try-catch it is better to check if
+            // ((SessionImpl) session).getTypeConfiguration().getBasicTypeForJavaType(itemClass);
+            // is not null? if so this is a "primitive" not entity...
+            sessionFactory.getMetamodel().entity(entityClass);
+        }catch (IllegalArgumentException ex){
+            isEntity = false;
+        }
         if (!isEntity) {
             return null;
         }

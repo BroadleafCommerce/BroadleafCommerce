@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.offer.weave;
 
 import org.broadleafcommerce.core.offer.domain.LegacyOfferUsesImpl;
 
-import javax.persistence.Embedded;
+import jakarta.persistence.Embedded;
 
 /**
  * Provide a template class that holds interfaces, fields and methods to be optionally, dynamically introduced

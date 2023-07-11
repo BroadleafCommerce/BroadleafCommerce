@@ -22,8 +22,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityManager;
 
 /**
  * @author Chris Kittrell (ckittrell)

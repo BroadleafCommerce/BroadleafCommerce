@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.weave;
 
-import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 
 /**

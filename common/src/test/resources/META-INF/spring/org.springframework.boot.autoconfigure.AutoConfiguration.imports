@@ -1,0 +1,9 @@
+
+org.broadleafcommerce.test.common.condition.CommonTestRegistration
+
+org.broadleafcommerce.test.common.properties.sources.ProfileAwareProperties
+org.broadleafcommerce.test.common.properties.sources.ProfileAwareSharedProperties
+
+org.broadleafcommerce.test.common.properties.sources.CommonFrameworkTestProperties
+
+org.broadleafcommerce.test.common.context.autoconfig.BaseAutoConfiguration

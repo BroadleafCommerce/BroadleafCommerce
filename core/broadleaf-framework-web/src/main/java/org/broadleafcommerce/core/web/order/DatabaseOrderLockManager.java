@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * An implementation of the {@link OrderLockManager} that relies on the database to provide synchronization

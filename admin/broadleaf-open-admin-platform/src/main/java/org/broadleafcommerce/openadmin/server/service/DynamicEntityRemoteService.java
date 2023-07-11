@@ -18,10 +18,11 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.service.PersistenceService;
@@ -38,9 +39,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
-import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 
@@ -48,7 +47,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author jfischer
@@ -174,7 +173,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 currentProperty = property;
                 property.setRawValue(property.getValue());
                 property.setValue(exploitProtectionService.cleanStringWithResults(property.getValue()));
-                property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
+                property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml4(property.getValue()));
             } catch (CleanStringException e) {
                 StringBuilder sb = new StringBuilder();
                 for (int j = 0; j < e.getCleanResults().getNumberOfErrors(); j++) {

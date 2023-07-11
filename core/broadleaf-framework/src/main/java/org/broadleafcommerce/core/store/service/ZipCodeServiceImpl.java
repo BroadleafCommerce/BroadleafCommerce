@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.store.dao.ZipCodeDao;
 import org.broadleafcommerce.core.store.domain.ZipCode;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Service("blZipCodeService")
 public class ZipCodeServiceImpl implements ZipCodeService {

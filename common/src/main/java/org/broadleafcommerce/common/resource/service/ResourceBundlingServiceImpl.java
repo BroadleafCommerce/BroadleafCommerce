@@ -58,11 +58,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.http.HttpServletRequest;
-
 import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.KeyLockManagers;
 import de.jkeylockmanager.manager.LockCallback;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @see ResourceBundlingService
@@ -79,10 +78,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
      *  This has to use an @Resource annotation because Spring's @Autowired cannot work with the type erasure from the
      *  Map<String, List<String>> type.
      */
-    @javax.annotation.Resource(name = "blAdditionalBundleFiles")
+    @jakarta.annotation.Resource(name = "blAdditionalBundleFiles")
     protected Map<String, List<String>> additionalBundleFiles;
             
-    @javax.annotation.Resource(name = "blFileService")
+    @jakarta.annotation.Resource(name = "blFileService")
     protected BroadleafFileService fileService;
 
     /**
@@ -94,7 +93,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     @Autowired
     protected ApplicationContext appctx;
 
-    @javax.annotation.Resource(name="blStatisticsService")
+    @jakarta.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
     @Autowired

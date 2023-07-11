@@ -19,7 +19,6 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.broadleafcommerce.common.util.EfficientLRUMap;
 
 import java.util.concurrent.ConcurrentHashMap;
 

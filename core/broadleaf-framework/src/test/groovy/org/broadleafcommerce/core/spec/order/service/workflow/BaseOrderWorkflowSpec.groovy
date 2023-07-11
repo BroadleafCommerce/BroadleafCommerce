@@ -26,9 +26,7 @@ import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl
 import org.broadleafcommerce.core.workflow.ProcessContext
 import org.broadleafcommerce.profile.core.domain.Customer
 import org.broadleafcommerce.profile.core.domain.CustomerImpl
-
 import spock.lang.Specification
-
 
 class BaseOrderWorkflowSpec extends Specification{
 

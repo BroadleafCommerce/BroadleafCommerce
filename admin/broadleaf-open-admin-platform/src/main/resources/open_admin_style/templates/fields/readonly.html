@@ -1,6 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
 </label>
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;" th:switch="*{fields['__${field.name}__'].fieldType}">
 

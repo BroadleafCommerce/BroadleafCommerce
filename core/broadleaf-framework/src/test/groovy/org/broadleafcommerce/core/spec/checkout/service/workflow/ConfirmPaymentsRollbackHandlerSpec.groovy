@@ -25,22 +25,7 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType
 import org.broadleafcommerce.common.payment.PaymentTransactionType
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO
-import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayClientTokenService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider
-import org.broadleafcommerce.common.payment.service.PaymentGatewayCreditCardService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayCustomerService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayFraudService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayHostedService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayReportingService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayRollbackService
-import org.broadleafcommerce.common.payment.service.PaymentGatewaySubscriptionService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransparentRedirectService
-import org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService
+import org.broadleafcommerce.common.payment.service.*
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException
 import org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldExtensionHandler
 import org.broadleafcommerce.common.web.payment.processor.CreditCardTypesExtensionHandler
@@ -58,7 +43,6 @@ import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOServic
 import org.broadleafcommerce.core.pricing.service.exception.PricingException
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException
 import org.broadleafcommerce.core.workflow.state.RollbackHandler
-
 
 class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
 

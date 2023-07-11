@@ -31,11 +31,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpSession;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import jakarta.servlet.http.HttpSession;
 
 import static org.broadleafcommerce.common.web.BroadleafSandBoxResolverImpl.CLIENT_TIMEZONE;
 

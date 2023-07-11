@@ -10,25 +10,25 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 </th:block>
 
-<head th:replace="layout/partials/head" ></head>
+<head th:replace="~{layout/partials/head}" ></head>
 
 <body>
 <blc:google_end_tag_manager></blc:google_end_tag_manager>
 
 <div class="app-content">
 
-    <div class="side-nav" th:replace="layout/partials/leftNav" ></div>
+    <div class="side-nav" th:replace="~{layout/partials/leftNav}" ></div>
 
     <div class="content">
-        <div th:replace="layout/partials/header" ></div>
+        <div th:replace="~{layout/partials/header}" ></div>
 
         <div class="section-content sandboxed">
-            <div th:replace="layout/partials/secondLeftNav" ></div>
-            <div th:replace="${templateName}" ></div>
+            <div th:replace="~{layout/partials/secondLeftNav}" ></div>
+            <div th:replace="~{${templateName}}" ></div>
         </div>
     </div>
 
-    <footer th:replace="layout/partials/footer" ></footer>
+    <footer th:replace="~{layout/partials/footer}" ></footer>
 
 </div>
     

@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Component("blCrossSaleProductCustomPersistenceHandler")
 public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {

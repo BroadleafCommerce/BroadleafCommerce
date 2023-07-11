@@ -36,75 +36,73 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
+@EntityListeners(value = {TemporalTimestampListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADDRESS", indexes = {
-        @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnList="ISO_COUNTRY_ALPHA2"),
-        @Index(name="ADDRESS_PHONE_PRI_IDX", columnList="PHONE_PRIMARY_ID"),
-        @Index(name="ADDRESS_PHONE_SEC_IDX", columnList="PHONE_SECONDARY_ID"),
-        @Index(name="ADDRESS_PHONE_FAX_IDX", columnList="PHONE_FAX_ID"),
-        @Index(name="ADDRESS_COUNTRY_INDEX", columnList="COUNTY")
+        @Index(name = "ADDRESS_ISO_COUNTRY_IDX", columnList = "ISO_COUNTRY_ALPHA2"),
+        @Index(name = "ADDRESS_PHONE_PRI_IDX", columnList = "PHONE_PRIMARY_ID"),
+        @Index(name = "ADDRESS_PHONE_SEC_IDX", columnList = "PHONE_SECONDARY_ID"),
+        @Index(name = "ADDRESS_PHONE_FAX_IDX", columnList = "PHONE_FAX_ID"),
+        @Index(name = "ADDRESS_COUNTRY_INDEX", columnList = "COUNTY")
 })
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "phonePrimary", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                    booleanOverrideValue = true)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "phoneSecondary", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                    booleanOverrideValue = true)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "phoneFax", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                    booleanOverrideValue = true)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "phonePrimary.phoneNumber", mergeEntries = {
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                    booleanOverrideValue = false),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
-                                    intOverrideValue = 1300),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                                    overrideValue = "NOT_REQUIRED"),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
-                                                overrideValue = "PhoneImpl_Primary_Phone")}),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                        intOverrideValue = 1300),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "NOT_REQUIRED"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                        overrideValue = "PhoneImpl_Primary_Phone")}),
         @AdminPresentationMergeOverride(name = "phoneSecondary.phoneNumber", mergeEntries = {
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                    booleanOverrideValue = false),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
-                                    intOverrideValue = 1400),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                                    overrideValue = "NOT_REQUIRED"),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
-                                                overrideValue = "PhoneImpl_Secondary_Phone")}),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                        intOverrideValue = 1400),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "NOT_REQUIRED"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                        overrideValue = "PhoneImpl_Secondary_Phone")}),
         @AdminPresentationMergeOverride(name = "phoneFax.phoneNumber", mergeEntries = {
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                    booleanOverrideValue = false),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
-                                    intOverrideValue = 1500),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                                    overrideValue = "NOT_REQUIRED"),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
-                                                overrideValue = "PhoneImpl_Fax_Phone")}),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                        intOverrideValue = 1500),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "NOT_REQUIRED"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                        overrideValue = "PhoneImpl_Fax_Phone")}),
         @AdminPresentationMergeOverride(name = "state", mergeEntries =
-                    @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                            booleanOverrideValue = true)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "country", mergeEntries =
-                    @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                            booleanOverrideValue = true))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                booleanOverrideValue = true))
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
 public class AddressImpl implements Address {

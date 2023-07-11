@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePatte
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,14 +32,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import jakarta.annotation.Resource;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.spi.TransformerException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
-
-import javax.annotation.Resource;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
 
 /**
  * <p>
@@ -64,7 +63,8 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
     protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
             return null;
@@ -95,7 +95,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
             }
         } catch (Exception e) {
             LOG.error(e);
-            throw new IllegalClassFormatException("Unable to mark " + convertedClassName + " as transformed.");
+            throw new TransformerException("Unable to mark " + convertedClassName + " as transformed.");
         }
         
         // We don't need to transform anything, so we'll return null

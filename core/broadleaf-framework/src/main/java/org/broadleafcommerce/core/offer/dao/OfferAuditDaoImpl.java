@@ -37,16 +37,16 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Repository("blOfferAuditDao")
 public class OfferAuditDaoImpl implements OfferAuditDao {
@@ -199,7 +199,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Deprecated
     @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
-        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAuditImpl.class, "offerAudit", OfferAudit.class)
                 .addRestriction("offerAudit.customerId", "=", customerId)
                 .addRestriction("offerAudit.offerId", "=", offerId)
                 .toCountQuery(em);
@@ -237,7 +237,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Deprecated
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
-        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+        TypedQuery<Long> query = new TypedQueryBuilder<>(OfferAuditImpl.class, "offerAudit", OfferAudit.class)
                 .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
                 .toCountQuery(em);
 
@@ -246,7 +246,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public List<OfferAudit> readOfferAuditsByOrderId(Long orderId) {
-        TypedQuery<OfferAudit> query = new TypedQueryBuilder<>(OfferAudit.class, "offerAudit")
+        TypedQuery<OfferAudit> query = new TypedQueryBuilder<>(OfferAuditImpl.class, "offerAudit", OfferAudit.class)
                 .addRestriction("offerAudit.orderId", "=", orderId)
                 .toQuery(em);
         

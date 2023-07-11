@@ -22,12 +22,12 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ID" >
-        <query>SELECT mso FROM org.broadleafcommerce.core.order.domain.OrderMultishipOption mso
+        <query>SELECT mso FROM org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl mso
         WHERE mso.order.id = :orderId</query>
     </named-query>
     
     <named-query name="BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ITEM_ID" >
-        <query>SELECT mso FROM org.broadleafcommerce.core.order.domain.OrderMultishipOption mso
+        <query>SELECT mso FROM org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl mso
         WHERE mso.orderItem.id = :orderItemId</query>
     </named-query>
 

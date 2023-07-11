@@ -15,19 +15,15 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- *
- */
 package org.broadleafcommerce.cms.admin.web.controller;
 
-import org.broadleafcommerce.cms.file.service.StaticAssetStorageServiceImpl;
 import org.broadleafcommerce.common.config.PostAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
@@ -41,8 +37,9 @@ public class NonAutoconfigMultiPartConfiguration {
     @Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     @ConditionalOnMissingBean
     public MultipartResolver multipartResolver(Environment env) {
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(env.getProperty("asset.server.max.uploadable.file.size", long.class, StaticAssetStorageServiceImpl.DEFAULT_ASSET_UPLOAD_SIZE));
+        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
+//TODO need to move it to the spring property
+//        resolver.setMaxUploadSize(env.getProperty("asset.server.max.uploadable.file.size", long.class, StaticAssetStorageServiceImpl.DEFAULT_ASSET_UPLOAD_SIZE));
         return resolver;
     }
 }

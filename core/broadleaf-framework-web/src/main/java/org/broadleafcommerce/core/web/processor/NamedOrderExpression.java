@@ -19,9 +19,6 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-
-import java.util.Map;
 
 public interface NamedOrderExpression extends BroadleafVariableExpression {
 

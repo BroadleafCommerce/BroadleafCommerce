@@ -1,5 +1,4 @@
 <div class="listgrid-container" th:id="${listGrid.subCollectionFieldName}">
     <label th:unless="${#strings.isEmpty(listGrid.friendlyName)}" th:classappend="${listGrid.hideFriendlyName} ? hidden : ''" th:text="#{${listGrid.friendlyName}}" ></label>
-    <!--<th:block th:include="components/listGridToolbar"></th:block>-->
-    <th:block th:include="components/listGrid"></th:block>
+    <th:block th:insert="~{components/listGrid}"></th:block>
 </div>

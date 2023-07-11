@@ -15,14 +15,10 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.test.junit;
 
 import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-
 
 /**
  * The {@literal @}Transactional version of the {@link JUnitAdminIntegrationSetup}

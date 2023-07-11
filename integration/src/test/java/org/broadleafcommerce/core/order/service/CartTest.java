@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class CartTest extends OrderBaseTest {
     

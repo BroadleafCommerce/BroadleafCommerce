@@ -24,12 +24,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl
 import org.broadleafcommerce.common.money.Money
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl
-import org.broadleafcommerce.core.order.domain.OrderItem
-import org.broadleafcommerce.core.order.domain.OrderItemImpl
+import org.broadleafcommerce.core.order.domain.*
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity
 
 class FulfillmentItemPricingActivitySpec extends BasePricingActivitySpec {

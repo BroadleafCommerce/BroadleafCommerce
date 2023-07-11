@@ -28,9 +28,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.validation.Val
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 @Component("blOfferQualifyingCriteriaValidator")
 public class OfferQualifyingCriteriaValidator extends ValidationConfigurationBasedPropertyValidator {

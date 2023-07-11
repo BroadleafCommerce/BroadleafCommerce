@@ -20,8 +20,7 @@ package org.broadleafcommerce.common.util;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Convenience methods for interacting with the request

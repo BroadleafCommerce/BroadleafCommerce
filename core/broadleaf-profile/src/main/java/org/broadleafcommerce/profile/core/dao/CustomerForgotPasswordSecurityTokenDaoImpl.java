@@ -17,17 +17,18 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken;
+import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
+
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 /**
  * 
@@ -50,7 +51,7 @@ public class CustomerForgotPasswordSecurityTokenDaoImpl implements CustomerForgo
 
     @Override
     public List<CustomerForgotPasswordSecurityToken> readUnusedTokensByCustomerId(Long customerId) {
-        TypedQuery<CustomerForgotPasswordSecurityToken> query = new TypedQueryBuilder<CustomerForgotPasswordSecurityToken>(CustomerForgotPasswordSecurityToken.class, "token")
+        TypedQuery<CustomerForgotPasswordSecurityToken> query = new TypedQueryBuilder<>(CustomerForgotPasswordSecurityTokenImpl.class, "token", CustomerForgotPasswordSecurityToken.class)
                 .addRestriction("token.customerId", "=", customerId)
                 .addRestriction("token.tokenUsedFlag", "=", false)
                 .toQuery(em);

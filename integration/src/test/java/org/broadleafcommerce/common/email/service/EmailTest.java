@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class EmailTest extends TestNGSiteIntegrationSetup {
 

@@ -23,7 +23,7 @@ import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Service("blPhoneService")
 public class PhoneServiceImpl implements PhoneService {

@@ -1,8 +1,7 @@
 <div th:if="${#lists.isEmpty(listGrid.records) and !isFilter and !listGrid.promptSearch}" class="content-yield" id="main">
-    <div th:replace="components/emptyMainListGrid"></div>
+    <div th:replace="~{components/emptyMainListGrid}"></div>
 </div>
 <div th:unless="${#lists.isEmpty(listGrid.records) and !isFilter and !listGrid.promptSearch}" class="content-yield listgrid-container" id="main">
-    <th:block th:include="${listGrid.searchFieldsTemplateOverride == null ? 'components/searchFields' : listGrid.searchFieldsTemplateOverride}" th:object="${listGrid}"></th:block>
-    <!--<th:block th:include="components/listGridToolbar" th:object="${listGrid}"/>-->
-    <th:block th:include="components/listGrid" th:object="${listGrid}"></th:block>
+    <th:block th:insert="~{${listGrid.searchFieldsTemplateOverride == null ? 'components/searchFields' : listGrid.searchFieldsTemplateOverride}}" th:object="${listGrid}"></th:block>
+    <th:block th:insert="~{components/listGrid}" th:object="${listGrid}"></th:block>
 </div>

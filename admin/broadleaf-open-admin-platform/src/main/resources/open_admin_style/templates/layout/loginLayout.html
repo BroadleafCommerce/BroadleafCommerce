@@ -10,7 +10,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 </th:block>
 
-<head th:replace="layout/partials/loginHead" ></head>
+<head th:replace="~{layout/partials/loginHead}" ></head>
 
 <body class="login">
     <blc:google_end_tag_manager></blc:google_end_tag_manager>
@@ -23,12 +23,12 @@
 
         <div class="clear"></div>
 
-        <div id="messages" th:include="${templateName}::messages" ></div>
+        <div id="messages" th:insert="~{${templateName}::messages}" ></div>
 
         <div id="js-warning" th:text="#{admin.login.requiresJs}" onload="" ></div>
 
         <div id="js-visible" style="display: none;">
-            <div th:replace="${templateName}::form" ></div>
+            <div th:replace="~{${templateName}::form}" ></div>
         </div>
 
     </div> <!--  /login-container -->

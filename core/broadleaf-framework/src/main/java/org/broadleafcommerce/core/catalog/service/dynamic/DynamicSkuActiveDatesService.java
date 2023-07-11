@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.Date;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * <p>Interface for dynamically determining the activity dates.</p>

@@ -28,7 +28,7 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 
 import java.util.Collection;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This is used to map LDAP principal and authorities into BLC security model.

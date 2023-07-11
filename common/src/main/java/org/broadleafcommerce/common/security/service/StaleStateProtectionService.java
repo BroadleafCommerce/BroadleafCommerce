@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.security.service;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This service is responsible for monitoring key changes in state for a given session. If it is detected that a key state

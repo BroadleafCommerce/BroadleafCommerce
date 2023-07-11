@@ -37,8 +37,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 
 /**
  * @author Andre Azzolini (apazzolini)

@@ -42,7 +42,7 @@ import java.util.Set;
 @ConditionalOnEhCache
 public class DefaultEhCacheUriProvider extends DefaultJCacheUriProvider implements ApplicationContextAware, InitializingBean {
 
-    @javax.annotation.Resource(name = "blMergedCacheConfigLocations")
+    @jakarta.annotation.Resource(name = "blMergedCacheConfigLocations")
     protected Set<String> mergedCacheConfigLocations;
 
     protected URI cacheManagerUri = new File(System.getProperty("java.io.tmpdir"), "broadleaf-merged-jcache.xml").toURI();

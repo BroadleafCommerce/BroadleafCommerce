@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.convert.inheritance;
 
-import javax.persistence.DiscriminatorType;
+import jakarta.persistence.DiscriminatorType;
 
 /**
  * 

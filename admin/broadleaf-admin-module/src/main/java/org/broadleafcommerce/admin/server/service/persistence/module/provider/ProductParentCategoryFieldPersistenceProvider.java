@@ -19,8 +19,7 @@ package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.admin.server.service.persistence.module.provider.extension
-        .ProductParentCategoryFieldPersistenceProviderExtensionManager;
+import org.broadleafcommerce.admin.server.service.persistence.module.provider.extension.ProductParentCategoryFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -40,7 +39,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This field persistence provider manages the default CategoryProductXref reference for a Product instance through

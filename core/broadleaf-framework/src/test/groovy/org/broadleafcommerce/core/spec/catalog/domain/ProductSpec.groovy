@@ -17,15 +17,8 @@
  */
 package org.broadleafcommerce.core.spec.catalog.domain
 
-import org.broadleafcommerce.core.catalog.domain.Product
-import org.broadleafcommerce.core.catalog.domain.ProductImpl
-import org.broadleafcommerce.core.catalog.domain.ProductOption
-import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl
-import org.broadleafcommerce.core.catalog.domain.ProductOptionXref
-import org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl
-
+import org.broadleafcommerce.core.catalog.domain.*
 import spock.lang.Specification
-
 
 class ProductSpec extends Specification {
     

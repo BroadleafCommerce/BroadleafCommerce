@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.test.common.context.enable;
 
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
@@ -64,7 +61,7 @@ public class EnableBroadleafRootAutoConfigurationTest {
     
     @Test
     public void cannotFindAdminBean() {
-        Assert.assertFalse(ctx.containsBean("site"));
+        Assert.assertFalse(ctx.containsBean("admin"));
     }
     
 }

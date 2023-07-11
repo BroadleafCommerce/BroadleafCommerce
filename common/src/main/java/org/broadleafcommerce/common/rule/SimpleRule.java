@@ -17,8 +17,9 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import javax.annotation.Nonnull;
 import java.io.Serializable;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Represents a class containing an MVEL rule

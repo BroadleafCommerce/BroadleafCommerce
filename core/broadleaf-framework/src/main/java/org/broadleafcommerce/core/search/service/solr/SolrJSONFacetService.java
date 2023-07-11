@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
+
 import java.util.Map;
 
 /**

@@ -33,8 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
 
 /**
  * An abstract tag replacement processor that provides methods to help get resource/bundle information
@@ -160,11 +159,13 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             bundleUrl = "/" + bundleUrl;
         }
 
-        HttpServletRequest request = context.getRequest();
+        
+        //TODO update presentation
+//        HttpServletRequest request = context.getRequest();
         String contextPath = "";
-        if (request != null) {
-            contextPath = request.getContextPath();
-        }
+//        if (request != null) {
+//            contextPath = request.getContextPath();
+//        }
         if (StringUtils.isNotEmpty(contextPath)) {
             bundleUrl = contextPath + bundleUrl;
         }
@@ -280,7 +281,6 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
         final String event = attributes.bundleCompletedEvent();
         return "var " + event + "Event = new CustomEvent('" + event + "');" +
                 "document.dispatchEvent(" + event + "Event);";
-
     }
 
     /**

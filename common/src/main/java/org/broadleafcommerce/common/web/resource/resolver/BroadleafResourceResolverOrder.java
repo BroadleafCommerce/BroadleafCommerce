@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.web.resource.resolver;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.core.Ordered;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Constants representing out of box Broadleaf Resource Resolvers.

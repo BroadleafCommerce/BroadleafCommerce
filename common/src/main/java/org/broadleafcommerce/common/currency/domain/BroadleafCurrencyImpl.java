@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.currency.domain;
 
-
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -27,13 +26,13 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * Author: jerryocanas Date: 9/6/12
@@ -107,7 +106,7 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity
 
     @Override
     public void setDefaultFlag(boolean defaultFlag) {
-        this.defaultFlag = new Boolean(defaultFlag);
+        this.defaultFlag = Boolean.valueOf(defaultFlag);
     }
 
     @Override

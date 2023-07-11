@@ -19,9 +19,6 @@ package org.broadleafcommerce.openadmin.processor;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-
-import java.util.Map;
 
 public interface AdminUserExpression extends BroadleafVariableExpression {
     String getName();

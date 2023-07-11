@@ -20,8 +20,8 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.SimpleRule;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Implementations hold the values for a rule used to determine if a <code>StructuredContent</code>

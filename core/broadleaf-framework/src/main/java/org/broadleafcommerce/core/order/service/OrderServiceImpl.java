@@ -92,9 +92,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.PersistenceContext;
 
 /**
  * @author apazzolini
@@ -412,7 +413,7 @@ public class OrderServiceImpl implements OrderService {
             status = TransactionUtils.createTransaction("saveOrder",
                                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             Session session = em.unwrap(Session.class);
-            FlushMode current = session.getHibernateFlushMode();
+            FlushModeType current = session.getFlushMode();
             try {
                 if (!autoFlushSaveCart) {
                     //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
@@ -434,7 +435,7 @@ public class OrderServiceImpl implements OrderService {
                 throw ex;
             } finally {
                 if (!autoFlushSaveCart && !session.getFlushMode().equals(current)) {
-                    session.setHibernateFlushMode(current);
+                    session.setFlushMode(current);
                 }
             }
         }

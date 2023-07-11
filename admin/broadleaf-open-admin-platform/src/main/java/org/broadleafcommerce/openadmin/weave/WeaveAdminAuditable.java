@@ -25,8 +25,8 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 
 import java.util.Date;
 
-import javax.persistence.Embedded;
-import javax.persistence.EntityListeners;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EntityListeners;
 
 /**
  * @author by ckittrell

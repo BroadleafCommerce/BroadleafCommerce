@@ -18,25 +18,12 @@
 package org.broadleafcommerce.core.spec.order.service.workflow
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao
-import org.broadleafcommerce.core.order.domain.BundleOrderItem
-import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl
-import org.broadleafcommerce.core.order.domain.Order
-import org.broadleafcommerce.core.order.domain.OrderImpl
-import org.broadleafcommerce.core.order.domain.OrderItem
-import org.broadleafcommerce.core.order.domain.OrderItemImpl
+import org.broadleafcommerce.core.order.domain.*
 import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService
 import org.broadleafcommerce.core.order.service.OrderService
-import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
 import org.broadleafcommerce.core.order.service.workflow.AddWorkflowPriceOrderIfNecessaryActivity
-
-
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
 
 /*
  * 1) request.getMultishipOptionsToBeDelete() not empty

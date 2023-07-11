@@ -18,8 +18,6 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.collections4.map.LRUMap;
@@ -40,7 +38,9 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -49,6 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import jakarta.annotation.Resource;
 
 /**
  * This processor will add the following information to the model, available for consumption by a template:

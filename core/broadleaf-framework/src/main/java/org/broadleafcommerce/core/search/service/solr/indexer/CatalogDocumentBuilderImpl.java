@@ -52,7 +52,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Default implementation of the {@link DocumentBuilder} to build {@link SolrInputDocument}s from {@link Product}s.

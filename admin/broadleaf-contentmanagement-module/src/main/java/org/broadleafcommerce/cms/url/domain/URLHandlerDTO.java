@@ -21,7 +21,6 @@ import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 
-
 /**
  * A bean representation of a URLHandler
  *
@@ -110,7 +109,7 @@ public class URLHandlerDTO implements URLHandler {
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
         cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
-        cloned.setRegexHandler(new Boolean(isRegex));
+        cloned.setRegexHandler(Boolean.valueOf(isRegex));
         return createResponse;
     }
 }

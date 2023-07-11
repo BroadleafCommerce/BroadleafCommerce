@@ -1,7 +1,7 @@
 <th:block th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
         <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
     </label>
 
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}" th:disabled="${field.readOnly}">
@@ -27,7 +27,7 @@
 
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
         <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
     </label>
 
     <div class="foreign-key-value-container">

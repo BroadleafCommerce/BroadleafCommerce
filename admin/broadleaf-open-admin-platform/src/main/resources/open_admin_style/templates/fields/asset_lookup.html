@@ -3,12 +3,12 @@
 
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
         <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
     </label>
 
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" ></span>
     <a class="show-asset-freeform-url" href="#" th:text="'(' + #{Freeform_URL} + ')'" ></a>
-    <div th:replace="components/fieldTranslation"></div>
+    <div th:replace="~{components/fieldTranslation}"></div>
     <br/>
 
     <input type="hidden" class="mediaUrl mediaItem twelve" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />

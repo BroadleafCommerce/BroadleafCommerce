@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class PricingServiceActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 

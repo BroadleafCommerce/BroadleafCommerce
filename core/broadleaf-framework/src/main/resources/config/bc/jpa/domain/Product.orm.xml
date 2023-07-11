@@ -22,18 +22,19 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_ALL_PRODUCTS" >
-        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product ORDER BY product.id</query>
+        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.ProductImpl product
+            ORDER BY product.id</query>
     </named-query>
 
     <named-query name="BC_READ_PRODUCTS_BY_NAME" >
-        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product
+        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.ProductImpl product
             WHERE product.defaultSku.name LIKE :name
             AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
             ORDER BY product.id</query>
     </named-query>
     
     <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >
-        <query>SELECT productBundle FROM org.broadleafcommerce.core.catalog.domain.ProductBundle productBundle
+        <query>SELECT productBundle FROM org.broadleafcommerce.core.catalog.domain.ProductBundleImpl productBundle
         WHERE productBundle.autoBundle = :autoBundle
         AND productBundle.defaultSku.activeStartDate &lt;= :currentDate
         AND (productBundle.defaultSku.activeEndDate &gt; :currentDate OR productBundle.defaultSku.activeEndDate IS NULL)
@@ -59,7 +60,7 @@
     
     <named-query name="BC_READ_PRODUCTS_BY_OUTGOING_URL" >
         <query>SELECT product
-               FROM org.broadleafcommerce.core.catalog.domain.Product product
+               FROM org.broadleafcommerce.core.catalog.domain.ProductImpl product
                WHERE (product.url = :url OR product.urlKey = :urlKey)
                AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate IS NULL)
                AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')

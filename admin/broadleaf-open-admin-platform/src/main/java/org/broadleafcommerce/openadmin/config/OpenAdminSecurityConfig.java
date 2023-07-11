@@ -15,10 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
-
 package org.broadleafcommerce.openadmin.config;
 
 import org.springframework.beans.factory.annotation.Autowired;

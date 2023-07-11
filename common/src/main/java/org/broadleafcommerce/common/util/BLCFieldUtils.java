@@ -18,7 +18,7 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;

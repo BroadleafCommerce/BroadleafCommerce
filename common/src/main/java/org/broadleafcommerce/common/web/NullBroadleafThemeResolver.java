@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.site.domain.ThemeDTO;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Returns null for the Site (typical for non-multi-site implementations of

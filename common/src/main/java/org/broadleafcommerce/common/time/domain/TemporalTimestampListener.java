@@ -19,16 +19,17 @@ package org.broadleafcommerce.common.time.domain;
 
 import org.broadleafcommerce.common.time.SystemTime;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 public class TemporalTimestampListener {
 

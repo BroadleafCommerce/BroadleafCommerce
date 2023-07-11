@@ -29,8 +29,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * The utility methods in this class provide a way to ignore the currently configured site/catalog contexts and instead

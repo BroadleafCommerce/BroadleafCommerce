@@ -18,8 +18,6 @@
 package org.broadleafcommerce.common.file.service;
 
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
-import org.broadleafcommerce.common.file.service.BroadleafFileServiceImpl;
-import org.broadleafcommerce.common.file.service.FileSystemFileServiceProvider;
 
 import java.io.File;
 import java.io.FileWriter;

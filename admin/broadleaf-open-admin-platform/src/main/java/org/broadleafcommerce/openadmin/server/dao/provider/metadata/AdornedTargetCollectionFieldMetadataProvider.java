@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
@@ -50,12 +50,13 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.ManyToOne;
+import jakarta.persistence.ManyToOne;
 
 /**
  * @author Jeff Fischer
@@ -449,7 +450,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             {
                 try {
                     ParameterizedType pt = (ParameterizedType) field.getGenericType();
-                    java.lang.reflect.Type collectionType = pt.getActualTypeArguments()[0];
+                    Type collectionType = pt.getActualTypeArguments()[0];
                     collectionTarget = (Class<?>) collectionType;
                     // Only check entityConfiguration if it's an interface since I can't determine what the
                     // Hibernate class is from that

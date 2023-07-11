@@ -20,13 +20,15 @@ package org.broadleafcommerce.openadmin.server.security.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
+import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
+
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 /**
  * 
@@ -49,7 +51,7 @@ public class ForgotPasswordSecurityTokenDaoImpl implements ForgotPasswordSecurit
 
     @Override
     public List<ForgotPasswordSecurityToken> readUnusedTokensByAdminUserId(Long adminUserId) {
-        TypedQuery<ForgotPasswordSecurityToken> query = new TypedQueryBuilder<ForgotPasswordSecurityToken>(ForgotPasswordSecurityToken.class, "token")
+        TypedQuery<ForgotPasswordSecurityToken> query = new TypedQueryBuilder<>(ForgotPasswordSecurityTokenImpl.class, "token", ForgotPasswordSecurityToken.class)
                 .addRestriction("token.adminUserId", "=", adminUserId)
                 .addRestriction("token.tokenUsedFlag", "=", false)
                 .toQuery(em);

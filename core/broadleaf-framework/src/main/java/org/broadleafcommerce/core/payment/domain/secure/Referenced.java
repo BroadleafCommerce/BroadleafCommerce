@@ -23,7 +23,7 @@ import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 
 import java.io.Serializable;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * <p>The main interface used to store extra-secure data such as credit card, bank accounts and gift card data. All entities

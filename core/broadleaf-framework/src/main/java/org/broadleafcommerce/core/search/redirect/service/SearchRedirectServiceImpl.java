@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDao;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Created by ppatel.

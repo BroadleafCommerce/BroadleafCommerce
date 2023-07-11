@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -59,38 +59,14 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -108,6 +84,33 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.MapKeyClass;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -135,12 +138,16 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SKU")
-//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
-@org.hibernate.annotations.Table(appliesTo = "BLC_SKU", indexes = {
-    @Index(name = "SKU_URL_KEY_INDEX",
-        columnNames = { "URL_KEY" }
-    )
+@Table(name = "BLC_SKU", indexes = {
+        @Index(name = "SKU_URL_KEY_INDEX", columnList = "URL_KEY"),
+        @Index(name="SKU_EXTERNAL_ID_INDEX", columnList="EXTERNAL_ID"),
+        @Index(name = "SKU_UPC_INDEX", columnList =  "UPC" ),
+        @Index(name = "SKU_NAME_INDEX", columnList = "NAME"),
+        @Index(name="SKU_TAXABLE_INDEX", columnList="TAXABLE_FLAG"),
+        @Index(name="SKU_DISCOUNTABLE_INDEX", columnList="DISCOUNTABLE_FLAG"),
+        @Index(name = "SKU_AVAILABLE_INDEX", columnList = "AVAILABLE_FLAG"),
+        @Index(name="SKU_ACTIVE_START_INDEX", columnList = "ACTIVE_START_DATE"),
+        @Index(name="SKU_ACTIVE_END_INDEX",columnList = "ACTIVE_END_DATE")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @DirectCopyTransform({
@@ -168,7 +175,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected Long id;
 
     @Column(name = "EXTERNAL_ID")
-    @Index(name="SKU_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ExternalID",
         group = GroupName.Miscellaneous, order = FieldOrder.EXTERNAL_ID,
         tooltip = "SkuImpl_Sku_ExternalID_Tooltip")
@@ -187,7 +193,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected String displayTemplate;
 
     @Column(name = "UPC")
-    @Index(name = "SKU_UPC_INDEX", columnNames = { "UPC" })
     @AdminPresentation(friendlyName = "SkuImpl_Sku_UPC",
             group = GroupName.Miscellaneous, order = FieldOrder.UPC)
     protected String upc;
@@ -214,7 +219,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected BigDecimal cost;
 
     @Column(name = "NAME")
-    @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name",
         group = GroupName.General, order = FieldOrder.NAME,
         prominent = true, gridOrder = 1, columnWidth = "260px",
@@ -229,9 +233,12 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         translatable = true)
     protected String description;
 
+    //if you are going to remove @Lob you need to adjust
+    //com.broadleafcommerce.enterprise.audit.service.render.DiffRendererImpl#supportsType
+    //as it now relates on CLOB. Probably you can change signature and pass old/new values
+    //and check them for length, if some will exceed some value (255?) consider it large
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
-    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
+    @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description",
         group = GroupName.General, order = FieldOrder.LONG_DESCRIPTION,
         largeEntry = true, 
@@ -246,13 +253,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected String taxCode;
 
     @Column(name = "TAXABLE_FLAG")
-    @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable",
             group = GroupName.Financial, order = FieldOrder.TAXABLE)
     protected Character taxable;
 
     @Column(name = "DISCOUNTABLE_FLAG")
-    @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable",
         group = GroupName.Discountable,
         helpText = "SkuImpl_Sku_Discountable_helptext",
@@ -260,13 +265,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected Character discountable;
 
     @Column(name = "AVAILABLE_FLAG")
-    @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
     @AdminPresentation(excluded = true)
     @Deprecated
     protected Character available;
 
     @Column(name = "ACTIVE_START_DATE")
-    @Index(name="SKU_ACTIVE_START_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
         group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_START_DATE,
         tooltip = "skuStartDateTooltip",
@@ -274,7 +277,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @Index(name="SKU_ACTIVE_END_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date",
         group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_END_DATE,
         tooltip = "skuEndDateTooltip",
@@ -303,14 +305,15 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSkuMedia")
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
-        tab = TabName.Media,
-        keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
-        deleteEntityUponRemove = true,
-        mediaField = "media.url",
-        toOneTargetProperty = "media",
-        toOneParentProperty = "sku",
-        forceFreeFormKeys = true
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_Sku_Media",
+            tab = TabName.Media,
+            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+            deleteEntityUponRemove = true,
+            mediaField = "media.url",
+            toOneTargetProperty = "media",
+            toOneParentProperty = "sku",
+            forceFreeFormKeys = true
     )
     @AdminPresentationMapFields(
         mapDisplayFields = {
@@ -330,9 +333,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
      */
-    @OneToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.PERSIST,org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.REFRESH})
-    @JoinColumn(name = "DEFAULT_PRODUCT_ID")
+    //todo: 6.3 cascade refresh was deleted due to potential hiberante issue, when after a clone process
+    //we refresh original & clone records, and after refresh it will be flushed at some point
+    //and during flush there will be exception about shared collection in sku.skuPriceData
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "DEFAULT_PRODUCT_ID", foreignKey = @ForeignKey(NO_CONSTRAINT))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @IgnoreEnterpriseBehavior
     protected Product defaultProduct;
@@ -341,15 +346,14 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
      * This relationship will be non-null if and only if this Sku is contained in the list of
      * additional Skus for a Product (for Skus based on ProductOptions)
      */
-    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDL_PRODUCT_ID")
     protected Product product;
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "skuAttributesTitle",
-            tab = TabName.Advanced, order = 1000)
+    @AdminPresentationCollection(friendlyName = "skuAttributesTitle", tab = TabName.Advanced, order = 1000)
     protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
     @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL, mappedBy = "sku")

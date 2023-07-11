@@ -22,16 +22,10 @@ import org.broadleafcommerce.common.locale.service.LocaleService
 import org.broadleafcommerce.common.sandbox.SandBoxHelper
 import org.broadleafcommerce.core.catalog.dao.ProductDao
 import org.broadleafcommerce.core.catalog.dao.SkuDao
-import org.broadleafcommerce.core.catalog.domain.ProductImpl
-import org.broadleafcommerce.core.catalog.domain.Sku
-import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.search.dao.IndexFieldDao
 import org.broadleafcommerce.core.search.dao.SolrIndexDao
-import org.broadleafcommerce.core.search.domain.Field
-import org.broadleafcommerce.core.search.domain.FieldEntity
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService
 import org.broadleafcommerce.core.search.service.solr.SolrHelperServiceImpl
-import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl

@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -30,7 +30,7 @@ import org.broadleafcommerce.core.order.service.exception.ProductOptionValidatio
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
-import org.owasp.esapi.ESAPI;
+import org.owasp.encoder.esapi.ESAPIEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Service("blProductOptionValidationService")
 public class ProductOptionValidationServiceImpl implements ProductOptionValidationService  {
@@ -74,8 +74,8 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
             throw new RequiredAttributeNotProvidedException(message, attributeName);
         } else {
             String validationString = productOption.getValidationString();
-            validationString = xssExploitProtectionEnabled ? ESAPI.encoder().decodeForHTML(validationString) : validationString;
-            value = siteXssWrapperEnabled ? ESAPI.encoder().decodeForHTML(value) : value;
+            validationString = xssExploitProtectionEnabled ? ESAPIEncoder.getInstance().decodeForHTML(validationString) : validationString;
+            value = siteXssWrapperEnabled ? ESAPIEncoder.getInstance().decodeForHTML(value) : value;
 
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
                 String errorMessage = productOption.getErrorMessage();

@@ -29,7 +29,8 @@ import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)

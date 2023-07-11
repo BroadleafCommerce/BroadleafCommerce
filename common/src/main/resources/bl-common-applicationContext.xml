@@ -18,14 +18,10 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <import resource="bl-common-applicationContext-persistence.xml"/>
     <import resource="bl-common-applicationContext-wrapper.xml"/>
@@ -54,15 +50,23 @@
                 <bean class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern">
                     <property name="patterns">
                         <array>
+                            <value>.*HibernateAccessOptimizer.*</value>
                             <value>org\.apache.*</value>
+                            <value>org\.jboss.*</value>
+                            <value>org\.ehcache.*</value>
+                            <value>com\.ctc.*</value>
+                            <value>org\.reactivestreams.*</value>
+                            <value>jdk.*</value>
                             <value>org\.springframework.*</value>
                             <value>javassist.*</value>
                             <value>javax.*</value>
+                            <value>jakarta.*</value>
                             <value>org.broadleafcommerce.openadmin.web.compatibility.JSCompatibilityRequestWrapper</value>
                             <value>org\.hibernate.*</value>
                             <value>org\.quartz.*</value>
                             <value>org\.terracotta.*</value>
                             <value>java.*</value>
+                            <value>com\.fasterxml.*</value>
                         </array>
                     </property>
                 </bean>
@@ -103,11 +107,11 @@
             	<value>javassist.bytecode.annotation.BooleanMemberValue</value>
             	<value>javassist.bytecode.annotation.MemberValue</value>
             	<value>javassist.bytecode.annotation.StringMemberValue</value>
-            	<value>javax.annotation.Resource</value>
-            	<value>javax.persistence.EntityListeners</value>
-            	<value>javax.persistence.Embeddable</value>
-            	<value>javax.persistence.Entity</value>
-            	<value>javax.persistence.MappedSuperclass</value>
+            	<value>jakarta.annotation.Resource</value>
+            	<value>jakarta.persistence.EntityListeners</value>
+            	<value>jakarta.persistence.Embeddable</value>
+            	<value>jakarta.persistence.Entity</value>
+            	<value>jakarta.persistence.MappedSuperclass</value>
             	<value>org.apache.commons.lang3.StringUtils</value>
             	<value>org.broadleafcommerce.common.logging.LifeCycleEvent</value>
             	<value>org.broadleafcommerce.common.logging.SupportLogManager</value>
@@ -139,7 +143,6 @@
                 <ref bean="blAnnotationDirectCopyClassTransformer"/>
                 <ref bean="blEntityMarkerClassTransformer"/>
                 <ref bean="blConditionalFieldAnnotationClassTransformer"/>
-                <ref bean="blMaterializedClobTypeClassTransformer"/>
             </list>
         </property>
     </bean>

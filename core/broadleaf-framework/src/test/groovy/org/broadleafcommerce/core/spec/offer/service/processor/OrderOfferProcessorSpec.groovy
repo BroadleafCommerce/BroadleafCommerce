@@ -18,11 +18,7 @@
 package org.broadleafcommerce.core.spec.offer.service.processor
 
 import org.apache.commons.collections.map.MultiValueMap
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl
-import org.broadleafcommerce.core.catalog.domain.ProductAttribute
-import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl
-import org.broadleafcommerce.core.catalog.domain.ProductImpl
-import org.broadleafcommerce.core.catalog.domain.SkuImpl
+import org.broadleafcommerce.core.catalog.domain.*
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl

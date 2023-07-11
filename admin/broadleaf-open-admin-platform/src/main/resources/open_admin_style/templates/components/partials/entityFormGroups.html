@@ -14,7 +14,7 @@
     </a>
     <div class="fieldset-card-content" th:classappend="${(group.collapsed ? 'content-collapsed' : '')}">
         <th:block  th:each="groupItem, groupItemStat : ${group.groupItems}">
-            <div th:replace="components/partials/entityFormFields"></div>
+            <div th:replace="~{components/partials/entityFormFields}"></div>
         </th:block>
     </div>
 </div>

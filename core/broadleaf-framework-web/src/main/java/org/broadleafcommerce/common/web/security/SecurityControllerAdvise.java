@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
@@ -15,19 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.pricing.service;
+package org.broadleafcommerce.common.web.security;
 
-import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
-/**
- * @deprecated Should use the {@link FulfillmentOption} paradigm, implemented in {@link FulfillmentPricingService}
- * @see {@link FulfillmentPricingService}, {@link FulfillmentOption}
- */
-@Deprecated
-public interface ShippingService {
-    
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException;
-    
+import jakarta.servlet.http.HttpSession;
+
+@ControllerAdvice("blSecurityControllerAdvise")
+public class SecurityControllerAdvise {
+
+    @ModelAttribute("session")
+    HttpSession session() {
+        BroadleafRequestContext context =  BroadleafRequestContext.getBroadleafRequestContext();
+        return context.getRequest() != null ? context.getRequest().getSession() : null;
+    }
+
 }

@@ -19,9 +19,10 @@ package org.broadleafcommerce.core.web.money;
 
 import org.broadleafcommerce.common.money.CurrencyConversionService;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletRequest;
 import java.util.HashMap;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletRequest;
 
 public interface CurrencyConversionPricingFilter extends Filter {
     

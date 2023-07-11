@@ -16,8 +16,9 @@
  * #L%
  */
 package org.broadleafcommerce.test.common.properties;
-import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
+
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

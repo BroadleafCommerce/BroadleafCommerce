@@ -28,41 +28,42 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @EntityListeners(value = {CustomerPhonePersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(name="CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PHONE_NAME" }),
-        indexes = {@Index(name="CUSTPHONE_PHONE_INDEX", columnList="PHONE_ID")}
+@Table(name = "BLC_CUSTOMER_PHONE",
+        uniqueConstraints = @UniqueConstraint(name = "CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = {"CUSTOMER_ID", "PHONE_NAME"}),
+        indexes = {@Index(name = "CUSTPHONE_PHONE_INDEX", columnList = "PHONE_ID")}
 )
 @AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerPhoneAdminPresentation.GroupName.PhoneInfo),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER, intOverrideValue = 2000),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true)}),
-        @AdminPresentationMergeOverride(name = "phone.isDefault", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerPhoneAdminPresentation.GroupName.Defaults)),
-        @AdminPresentationMergeOverride(name = "phone.countryCode", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")),
-        @AdminPresentationMergeOverride(name = "phone.extension", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")),
-        @AdminPresentationMergeOverride(name = "phone.isActive", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"))
-    }
+        {
+                @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerPhoneAdminPresentation.GroupName.PhoneInfo),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER, intOverrideValue = 2000),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true)}),
+                @AdminPresentationMergeOverride(name = "phone.isDefault", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerPhoneAdminPresentation.GroupName.Defaults)),
+                @AdminPresentationMergeOverride(name = "phone.countryCode", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")),
+                @AdminPresentationMergeOverride(name = "phone.extension", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")),
+                @AdminPresentationMergeOverride(name = "phone.isActive", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"))
+        }
 )
 public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPresentation {
 

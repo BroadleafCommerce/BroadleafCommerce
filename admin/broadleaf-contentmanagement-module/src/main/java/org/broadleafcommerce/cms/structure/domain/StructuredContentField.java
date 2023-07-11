@@ -21,8 +21,8 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Holds the values for custom fields that are part of a <code>StructuredContent</code> item.

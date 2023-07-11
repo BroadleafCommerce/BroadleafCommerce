@@ -9,7 +9,7 @@
     <div class="override-label">
         <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
             <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
         </label>
 
         <a class="override-generated-fieldValue" href="#" th:text="'(' + #{Override_Generated_FieldValue-__${overriddenFieldValue ? 'enabled' : 'disabled'}__} + ')'"

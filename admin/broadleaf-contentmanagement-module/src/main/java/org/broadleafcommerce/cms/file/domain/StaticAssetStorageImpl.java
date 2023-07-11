@@ -17,20 +17,21 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.sql.Blob;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 
 /**
  * Created by jfischer
@@ -59,8 +60,8 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Index(name="STATIC_ASSET_ID_INDEX", columnNames={"STATIC_ASSET_ID"})
     protected Long staticAssetId;
 
-    @Column (name = "FILE_DATA", length = Integer.MAX_VALUE - 1)
     @Lob
+    @Column (name = "FILE_DATA", length = Length.LONG32 - 1)
     protected Blob fileData;
 
     @Override

@@ -23,7 +23,9 @@
     version="2.0">
 
     <named-query name="BC_FIND_ZIP_CODE_BY_ZIP_CODE" >
-        <query>SELECT zip FROM org.broadleafcommerce.core.store.domain.ZipCode zip WHERE zip.zipcode = :zipCode</query>
+        <query>SELECT zip FROM org.broadleafcommerce.core.store.domain.ZipCodeImpl zip
+            WHERE zip.zipcode = :zipCode
+        </query>
     </named-query>
 
 </entity-mappings>

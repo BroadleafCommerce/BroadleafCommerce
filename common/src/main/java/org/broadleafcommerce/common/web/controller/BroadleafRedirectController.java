@@ -21,8 +21,8 @@ import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.ui.Model;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This controller works in conjunction with the broadleaf-ajax style redirect.

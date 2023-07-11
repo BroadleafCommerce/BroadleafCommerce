@@ -15,13 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.test.common.condition;
 
 import org.broadleafcommerce.common.module.BroadleafModuleRegistration;
-
 
 /**
  * Test registration for {@link ConditionalOnModuleTest}

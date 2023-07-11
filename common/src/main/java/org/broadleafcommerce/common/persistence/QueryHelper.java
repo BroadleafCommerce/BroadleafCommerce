@@ -19,8 +19,8 @@ package org.broadleafcommerce.common.persistence;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 /**
  * Provide a helper component for assigning custom hints during query execution. These hints may be inspected by one or more

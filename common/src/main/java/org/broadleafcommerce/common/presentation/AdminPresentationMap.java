@@ -25,7 +25,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.persistence.MapKey;
+import jakarta.persistence.MapKey;
 
 /**
  * This annotation is used to describe a persisted map structure for use in the

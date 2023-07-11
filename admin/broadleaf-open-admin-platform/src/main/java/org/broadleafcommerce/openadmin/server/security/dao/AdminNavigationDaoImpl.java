@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -29,13 +30,13 @@ import org.springframework.web.util.UrlPathHelper;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -77,9 +78,9 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     
     @Override
     public AdminModule readAdminModuleByModuleKey(String moduleKey) {
-        TypedQuery<AdminModule> q = new TypedQueryBuilder<AdminModule>(AdminModule.class, "am")
-            .addRestriction("am.moduleKey", "=", moduleKey)
-            .toQuery(em);
+        TypedQuery<AdminModule> q = new TypedQueryBuilder<>(AdminModuleImpl.class, "am", AdminModule.class)
+                .addRestriction("am.moduleKey", "=", moduleKey)
+                .toQuery(em);
         return q.getSingleResult();
     }
 

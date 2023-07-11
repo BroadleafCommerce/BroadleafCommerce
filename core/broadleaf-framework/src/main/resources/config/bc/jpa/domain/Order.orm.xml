@@ -82,8 +82,8 @@
 
     <named-query name="BC_ORDER_LOCK_ACQUIRE">
         <query>
-            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
-            SET orderLock.locked = 'Y', orderLock.lastUpdated = :currentTime
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLockImpl orderLock
+            SET orderLock.locked = cast('Y' as Character), orderLock.lastUpdated = :currentTime
             WHERE orderLock.orderLockPK.orderId = :orderId
               AND (orderLock.locked = 'N' OR orderLock.lastUpdated &lt; :timeout)
               AND orderLock.orderLockPK.key = :key
@@ -92,8 +92,8 @@
 
     <named-query name="BC_ORDER_LOCK_RELEASE">
         <query>
-            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
-            SET orderLock.locked = 'N'
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLockImpl orderLock
+            SET orderLock.locked = cast('N' as Character)
             WHERE orderLock.orderLockPK.orderId = :orderId
                AND orderLock.orderLockPK.key = :key
         </query>

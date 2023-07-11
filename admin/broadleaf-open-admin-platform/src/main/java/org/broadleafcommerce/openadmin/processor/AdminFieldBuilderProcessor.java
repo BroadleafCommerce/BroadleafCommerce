@@ -24,7 +24,7 @@ import org.broadleafcommerce.openadmin.web.service.AdminFieldBuilderProcessorExt
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)

@@ -17,13 +17,14 @@
  */
 package org.broadleafcommerce.profile.util.dao;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
 import org.easymock.classextension.EasyMock;
 
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.Query;
+import junit.framework.TestCase;
 
 /**
  * 

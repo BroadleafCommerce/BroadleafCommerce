@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.notification.service.type.Notification;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 /**

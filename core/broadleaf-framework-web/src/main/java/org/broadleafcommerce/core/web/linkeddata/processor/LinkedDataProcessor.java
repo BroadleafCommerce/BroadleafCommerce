@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This processor replaces linkedData tags with metadata for search engine optimization. The
@@ -52,7 +52,8 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
     public BroadleafTemplateModel getReplacementModel(final String s, final Map<String, String> map, 
                                                       final BroadleafTemplateContext context) {
         String linkedDataText = "<script type=\"application/ld+json\">\n" +
-                                    getData(context.getRequest()) +
+                                //TODO update presentation
+//                                    getData(context.getRequest()) +
                                 "\n</script>";
 
         final BroadleafTemplateModel model = context.createModel();

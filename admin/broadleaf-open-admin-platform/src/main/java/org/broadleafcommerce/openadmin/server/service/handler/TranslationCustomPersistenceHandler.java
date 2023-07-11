@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Custom persistence handler for Translations, it verifies on "add" that the combination of the 4 "key" fields

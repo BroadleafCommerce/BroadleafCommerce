@@ -21,7 +21,7 @@ package org.broadleafcommerce.common.service;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * CRUD methods for generic entities
@@ -107,7 +107,7 @@ public interface GenericEntityService {
     boolean sessionContains(Object object);
 
     /**
-     * Whether or not this object is an {@link javax.persistence.Entity} and whether or not it already has an id assigned
+     * Whether or not this object is an {@link jakarta.persistence.Entity} and whether or not it already has an id assigned
      * @param object
      * @return
      */
