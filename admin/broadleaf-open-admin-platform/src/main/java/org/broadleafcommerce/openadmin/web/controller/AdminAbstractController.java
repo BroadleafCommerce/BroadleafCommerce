@@ -464,10 +464,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                     List<String> values = entry.getValue();
                     List<String> collapsedValues = new ArrayList<>();
                     for (String value : values) {
-                        String decoded = null;
+                        String decoded = value;
                         try {
                             decoded = eps.cleanString(URLDecoder.decode(value, "UTF-8"));
-                        } catch (UnsupportedEncodingException | ServiceException e) {
+                        } catch (Exception e) {
                             LOG.info("Could not decode value", e);
                         }
                         if (decoded.contains(FILTER_VALUE_SEPARATOR)) {
