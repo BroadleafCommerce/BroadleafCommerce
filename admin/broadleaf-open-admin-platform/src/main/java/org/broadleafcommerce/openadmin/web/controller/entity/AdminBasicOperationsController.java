@@ -132,6 +132,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
 
         ExtensionResultStatusType extensionResultStatusType = extensionManager.getProxy().buildLookupListGrid(ppr, targetClassMetadata, ppr.getCeilingEntityClassname(), sectionCrumbs, model, requestParams);
         if (extensionResultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
+            declareForceUseAdditionStatusFilter();
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
 
             ListGrid listGrid = null;
