@@ -35,6 +35,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,9 +50,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 
@@ -107,12 +108,11 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "permissionListTitle",
             group = GroupName.Permissions, order = FieldOrder.PERMISSIONS,
-            addType = AddMethodType.SELECTIZE_LOOKUP,
-            selectizeVisibleField = "name",
+            addType = AddMethodType.LOOKUP,
             manyToField = "allRoles",
             customCriteria = "includeFriendlyOnly",
             operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
-    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
+    protected Set<AdminPermission> allPermissions= new HashSet<AdminPermission>();
 
 
     @Override
