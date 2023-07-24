@@ -18,12 +18,19 @@
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.OfferValueModifierExtensionManager;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
@@ -48,7 +55,13 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
     @Resource(name = "blOfferValueModifierExtensionManager")
     protected OfferValueModifierExtensionManager offerModifierExtensionManager;
-    
+
+    @Resource
+    protected CatalogService catalogService;
+
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
+
     public OfferActivity() {
         setOrder(ORDER);
     }
@@ -66,6 +79,19 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
         if (CollectionUtils.isNotEmpty(offers) && offerModifierExtensionManager != null) {
             offerModifierExtensionManager.getProxy().modifyOfferValues(offers, order);
+        }
+
+        for (Offer offer : offers) {
+            OfferType offerType = offer.getType();
+//            Sku sku = catalogService.findProductsByName("Free gift").stream().findFirst().get().getDefaultSku();
+//
+//            DiscreteOrderItem item = new DiscreteOrderItemImpl();
+//            item.setSku(sku);
+//            item.setQuantity(1);
+//            item.setOrder(order);
+//            item.setOrderItemType(OrderItemType.DISCRETE);
+//            item = (DiscreteOrderItem) orderItemService.saveOrderItem(item);
+//            order.addOrderItem(item);
         }
 
         order = offerService.applyAndSaveOffersToOrder(offers, order);

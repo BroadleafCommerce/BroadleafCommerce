@@ -35,6 +35,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
@@ -43,6 +44,11 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAdminPresentation;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
 import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -77,6 +83,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -384,6 +392,22 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             friendlyName = "OfferImpl_Offer_Price_Data",
             group = GroupName.Description, order = FieldOrder.OfferType + 10)
     protected List<OfferPriceData> offerPriceData = new ArrayList<>();
+
+    @ManyToOne(targetEntity = ProductImpl.class)
+    @JoinColumn(name = "TARGET_PRODUCT_ID")
+    @AdminPresentation(friendlyName = "Target product",
+            order = 10000,
+            group = GroupName.Description)
+    @AdminPresentationToOneLookup()
+    protected Product targetProduct;
+
+    public Product getTargetProduct() {
+        return targetProduct;
+    }
+
+    public void setTargetProduct(Product targetProduct) {
+        this.targetProduct = targetProduct;
+    }
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();

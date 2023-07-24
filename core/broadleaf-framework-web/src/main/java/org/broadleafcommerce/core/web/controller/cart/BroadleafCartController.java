@@ -19,14 +19,20 @@ package org.broadleafcommerce.core.web.controller.cart;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
+import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -37,7 +43,10 @@ import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
+import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.service.solr.MvelToSearchCriteriaConversionService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +58,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -70,6 +81,12 @@ public class BroadleafCartController extends AbstractCartController {
 
     @Value("${automatically.add.complete.items}")
     protected boolean automaticallyAddCompleteItems;
+
+    @Resource(name="blMvelToSearchCriteriaConversionService")
+    protected MvelToSearchCriteriaConversionService conversionService;
+
+    @Resource(name="blProductDao")
+    protected ProductDao productDao;
 
     /**
      * Renders the cart page.
@@ -389,6 +406,25 @@ public class BroadleafCartController extends AbstractCartController {
                     if (offerCode != null) {
                         try {
                             orderService.addOfferCode(cart, offerCode, false);
+                            Product product = offerCode.getOffer().getTargetProduct();
+
+                            Set<OfferTargetCriteriaXref> targetItemCriteriaXref = offerCode.getOffer().getTargetItemCriteriaXref();
+                            String matchRule = targetItemCriteriaXref.stream().findFirst().get().getOfferItemCriteria().getMatchRule();
+                            matchRule = matchRule.replace("orderItem", "product");
+                            SearchCriteria searchCriteria = conversionService.convert(matchRule);
+
+                            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+                            orderItemRequestDTO.setQuantity(1);
+                            orderItemRequestDTO.setSkuId(product.getDefaultSku().getId());
+                            orderItemRequestDTO.setProductId(product.getId());
+                            orderItemRequestDTO.setCategoryId(product.getCategory().getId());
+
+                            try {
+                                cart = orderService.addItem(cart.getId(), orderItemRequestDTO, false);
+                            } catch (AddToCartException e) {
+                                throw new RuntimeException(e);
+                            }
+                            cart = orderService.save(cart, true);
                             promoAdded = true;
                         } catch (OfferException e) {
                             if (e instanceof OfferMaxUseExceededException) {

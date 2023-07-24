@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType;
 import org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -35,6 +36,10 @@ import java.util.Map;
 import java.util.Set;
 
 public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> {
+
+    Product getTargetProduct();
+
+    void setTargetProduct(Product targetProduct);
 
     public void setId(Long id);
 
