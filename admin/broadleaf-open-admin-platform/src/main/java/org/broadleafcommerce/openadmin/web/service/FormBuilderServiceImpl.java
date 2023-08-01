@@ -188,13 +188,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected boolean useTranslationSearch;
 
     @Resource(name = "blExploitProtectionService")
-    ExploitProtectionService exploitProtectionService;
+    protected ExploitProtectionService exploitProtectionService;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN
     };
     
-    protected static final VisibilityEnum[] GRID_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
+    public static final VisibilityEnum[] GRID_HIDDEN_VISIBILITIES = new VisibilityEnum[] {
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.GRID_HIDDEN 
     };
 
