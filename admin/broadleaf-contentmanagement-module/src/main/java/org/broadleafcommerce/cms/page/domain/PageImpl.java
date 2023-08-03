@@ -17,6 +17,23 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -25,6 +42,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -49,24 +67,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 /**
  * Created by bpolster.
@@ -144,7 +144,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     @GeneratedValue(generator = "PageId")
     @GenericGenerator(
             name="PageId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                 @Parameter(name="segment_value", value="PageImpl"),
                 @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageImpl")

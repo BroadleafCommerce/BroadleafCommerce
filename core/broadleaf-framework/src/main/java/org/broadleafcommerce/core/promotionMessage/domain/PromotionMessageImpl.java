@@ -17,6 +17,18 @@
  */
 package org.broadleafcommerce.core.promotionMessage.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -31,6 +43,7 @@ import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
@@ -50,19 +63,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.util.Date;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "BLC_PROMOTION_MESSAGE", indexes = {@Index(name = "PROMOTION_MESSAGE_NAME_INDEX", columnList = "NAME")})
@@ -122,7 +122,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @GeneratedValue(generator= "PromotionMessageId")
     @GenericGenerator(
         name="PromotionMessageId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="PromotionMessageImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl")

@@ -17,19 +17,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,6 +27,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * The Class OrderAttributeImpl
@@ -66,7 +66,7 @@ public class OrderAttributeImpl implements OrderAttribute {
     @GeneratedValue(generator= "OrderAttributeId")
     @GenericGenerator(
         name="OrderAttributeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OrderAttributeImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.OrderAttributeImpl")

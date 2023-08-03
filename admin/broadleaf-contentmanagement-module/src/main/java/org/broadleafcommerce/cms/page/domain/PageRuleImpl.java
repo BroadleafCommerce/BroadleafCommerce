@@ -10,22 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.page.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.hibernate.Length;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,11 +25,19 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.Length;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
- * 
  * @author bpolster
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -53,18 +51,18 @@ public class PageRuleImpl implements PageRule, ProfileEntity {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "PageRuleId")
+    @GeneratedValue(generator = "PageRuleId")
     @GenericGenerator(
-        name="PageRuleId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PageRuleImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageRuleImpl")
-        }
+            name = "PageRuleId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PageRuleImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageRuleImpl")
+            }
     )
     @Column(name = "PAGE_RULE_ID")
     protected Long id;
-    
+
     @Lob
     @Column(name = "MATCH_RULE", length = Length.LONG32 - 1)
     protected String matchRule;
@@ -107,11 +105,11 @@ public class PageRuleImpl implements PageRule, ProfileEntity {
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PageRuleImpl other = (PageRuleImpl) obj;
-        
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        
+
         if (matchRule == null) {
             if (other.matchRule != null)
                 return false;

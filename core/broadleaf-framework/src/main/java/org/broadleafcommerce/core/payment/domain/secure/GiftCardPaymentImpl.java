@@ -17,11 +17,6 @@
  */
 package org.broadleafcommerce.core.payment.domain.secure;
 
-import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +26,11 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -57,7 +57,7 @@ public class GiftCardPaymentImpl implements GiftCardPayment {
     @GeneratedValue(generator = "GiftCardPaymentId")
     @GenericGenerator(
             name="GiftCardPaymentId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type= IdOverrideTableGenerator.class,
             parameters = {
                 @Parameter(name="segment_value", value="GiftCardPaymentImpl"),
                 @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl")

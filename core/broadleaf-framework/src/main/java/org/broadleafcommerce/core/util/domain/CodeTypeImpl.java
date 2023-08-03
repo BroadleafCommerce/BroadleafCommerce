@@ -10,17 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.util.domain;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,11 +25,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_CODE_TYPES")
-@Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @Deprecated
 public class CodeTypeImpl implements CodeType {
 
@@ -43,20 +43,20 @@ public class CodeTypeImpl implements CodeType {
     @Id
     @GeneratedValue(generator = "CodeTypeId", strategy = GenerationType.TABLE)
     @GenericGenerator(
-        name="CodeTypeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CodeTypeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.util.domain.CodeTypeImpl")
-        }
+            name = "CodeTypeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CodeTypeImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.util.domain.CodeTypeImpl")
+            }
     )
     @Column(name = "CODE_ID")
     protected Long id;
 
-    @Column(name = "CODE_TYPE", nullable=false)
+    @Column(name = "CODE_TYPE", nullable = false)
     protected String codeType;
 
-    @Column(name = "CODE_KEY", nullable=false)
+    @Column(name = "CODE_KEY", nullable = false)
     protected String key;
 
     @Column(name = "CODE_DESC")
@@ -107,7 +107,7 @@ public class CodeTypeImpl implements CodeType {
 
     @Override
     public Boolean isModifiable() {
-        if(modifiable == null)
+        if (modifiable == null)
             return null;
         return modifiable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
@@ -119,7 +119,7 @@ public class CodeTypeImpl implements CodeType {
 
     @Override
     public void setModifiable(Boolean modifiable) {
-        if(modifiable == null) {
+        if (modifiable == null) {
             this.modifiable = null;
         } else {
             this.modifiable = modifiable ? 'Y' : 'N';
@@ -177,6 +177,6 @@ public class CodeTypeImpl implements CodeType {
             return false;
         return true;
     }
-    
-    
+
+
 }

@@ -17,18 +17,18 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_SEARCH_SYNONYM")
@@ -39,7 +39,7 @@ public class SearchSynonymImpl implements SearchSynonym {
     @GeneratedValue(generator = "SearchSynonymId")
     @GenericGenerator(
         name="SearchSynonymId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="SearchSynonymImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchSynonymImpl")

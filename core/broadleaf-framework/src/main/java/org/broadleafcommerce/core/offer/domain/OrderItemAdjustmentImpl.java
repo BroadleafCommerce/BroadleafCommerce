@@ -17,10 +17,22 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -42,18 +54,6 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_ADJUSTMENT", indexes = {@Index(name = "OIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
@@ -72,7 +72,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     @GeneratedValue(generator= "OrderItemAdjustmentId")
     @GenericGenerator(
         name="OrderItemAdjustmentId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OrderItemAdjustmentImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl")

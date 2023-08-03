@@ -17,19 +17,6 @@
  */
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +26,19 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
 
 /**
  * 
@@ -60,7 +60,7 @@ public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements Fu
     @GeneratedValue(generator= "FulfillmentWeightBandId")
     @GenericGenerator(
         name="FulfillmentWeightBandId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="FulfillmentWeightBandImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl")

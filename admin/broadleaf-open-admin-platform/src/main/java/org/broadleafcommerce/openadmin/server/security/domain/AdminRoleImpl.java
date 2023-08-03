@@ -10,19 +10,31 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
@@ -39,27 +51,13 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_ROLE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINROLE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
@@ -73,38 +71,40 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     @Id
     @GeneratedValue(generator = "AdminRoleId")
     @GenericGenerator(
-        name="AdminRoleId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="AdminRoleImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl")
-        }
+            name = "AdminRoleId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "AdminRoleImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl")
+            }
     )
     @Column(name = "ADMIN_ROLE_ID")
     @AdminPresentation(friendlyName = "AdminRoleImpl_Admin_Role_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @Column(name = "NAME", nullable=false)
+    @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "AdminRoleImpl_Name",
             group = GroupName.RoleDetails, order = FieldOrder.NAME)
     protected String name;
 
-    @Column(name = "DESCRIPTION", nullable=false)
+    @Column(name = "DESCRIPTION", nullable = false)
     @AdminPresentation(friendlyName = "AdminRoleImpl_Description",
             group = GroupName.RoleDetails, order = FieldOrder.DESCRIPTION,
             prominent = true)
     protected String description;
 
-    /** All users that have this role */
+    /**
+     * All users that have this role
+     */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     protected Set<AdminUser> allUsers = new HashSet<AdminUser>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "permissionListTitle",
             group = GroupName.Permissions, order = FieldOrder.PERMISSIONS,
@@ -112,7 +112,7 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
             manyToField = "allRoles",
             customCriteria = "includeFriendlyOnly",
             operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
-    protected Set<AdminPermission> allPermissions= new HashSet<AdminPermission>();
+    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
 
 
     @Override

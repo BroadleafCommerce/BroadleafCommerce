@@ -10,18 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.field.domain;
-
-import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,16 +26,23 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * Created by jfischer
+ *
  * @deprecated use {@link DataDrivenEnumerationValueImpl} instead
  */
 @Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_ENUM_ITEM")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 public class FieldEnumerationItemImpl implements FieldEnumerationItem {
 
     private static final long serialVersionUID = 1L;
@@ -49,23 +50,23 @@ public class FieldEnumerationItemImpl implements FieldEnumerationItem {
     @Id
     @GeneratedValue(generator = "FieldEnumerationItemId")
     @GenericGenerator(
-        name="FieldEnumerationItemId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FieldEnumerationItemImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl")
-        }
+            name = "FieldEnumerationItemId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FieldEnumerationItemImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl")
+            }
     )
     @Column(name = "FLD_ENUM_ITEM_ID")
     protected Long id;
 
-    @Column (name = "NAME")
+    @Column(name = "NAME")
     protected String name;
 
-    @Column (name = "FRIENDLY_NAME")
+    @Column(name = "FRIENDLY_NAME")
     protected String friendlyName;
 
-    @Column(name="FLD_ORDER")
+    @Column(name = "FLD_ORDER")
     protected int fieldOrder;
 
     @ManyToOne(targetEntity = FieldEnumerationImpl.class)

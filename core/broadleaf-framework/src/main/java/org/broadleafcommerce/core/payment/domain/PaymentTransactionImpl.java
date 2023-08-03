@@ -17,12 +17,27 @@
  */
 package org.broadleafcommerce.core.payment.domain;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -42,21 +57,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.Table;
 
 /**
  * @author Jerry Ocanas (jocanas)
@@ -80,7 +80,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @GeneratedValue(generator = "PaymentTransactionId")
     @GenericGenerator(
         name="PaymentTransactionId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="PaymentTransactionImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl")

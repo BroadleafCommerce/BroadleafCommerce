@@ -17,6 +17,18 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -25,6 +37,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -39,19 +52,6 @@ import org.hibernate.annotations.Where;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 /**
  * @author Chad Harchar (charchar)
@@ -72,7 +72,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     @GeneratedValue(generator = "IndexFieldId")
     @GenericGenerator(
             name="IndexFieldId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type= IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name="segment_value", value="IndexFieldImpl"),
                     @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.IndexFieldImpl")

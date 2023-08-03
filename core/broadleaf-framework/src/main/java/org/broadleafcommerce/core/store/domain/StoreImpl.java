@@ -17,7 +17,19 @@
  */
 package org.broadleafcommerce.core.store.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -31,18 +43,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "BLC_STORE")
@@ -58,7 +58,7 @@ public class StoreImpl implements Store {
     @GeneratedValue(generator= "StoreId")
     @GenericGenerator(
             name="StoreId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type= IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name="segment_value", value="StoreImpl"),
                     @Parameter(name="entity_name", value="org.broadleafcommerce.core.store.domain.StoreImpl")

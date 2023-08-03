@@ -10,20 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,30 +26,38 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_ADMIN_USER_ADDTL_FIELDS")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+@Table(name = "BLC_ADMIN_USER_ADDTL_FIELDS")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
 public class AdminUserAttributeImpl implements AdminUserAttribute {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(generator= "AdminUserAttributeId")
+    @GeneratedValue(generator = "AdminUserAttributeId")
     @GenericGenerator(
-        name="AdminUserAttributeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="AdminUserAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttributeImpl")
-        }
+            name = "AdminUserAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "AdminUserAttributeImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttributeImpl")
+            }
     )
     @Column(name = "ATTRIBUTE_ID")
     protected Long id;
-    
+
     @Column(name = "FIELD_NAME", nullable = false)
-    @Index(name="ADMINUSERATTRIBUTE_NAME_INDEX", columnNames = { "NAME" })
+    @Index(name = "ADMINUSERATTRIBUTE_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
@@ -66,9 +66,9 @@ public class AdminUserAttributeImpl implements AdminUserAttribute {
 
     @ManyToOne(targetEntity = AdminUserImpl.class, optional = false)
     @JoinColumn(name = "ADMIN_USER_ID")
-    @Index(name="ADMINUSERATTRIBUTE_INDEX", columnNames = { "ADMIN_USER_ID" })
+    @Index(name = "ADMINUSERATTRIBUTE_INDEX", columnNames = {"ADMIN_USER_ID"})
     protected AdminUser adminUser;
-    
+
     @Override
     public Long getId() {
         return id;

@@ -17,20 +17,6 @@
  */
 package org.broadleafcommerce.common.sandbox.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,6 +27,20 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * This class is required mostly as a workaround for an issue in Hibernate. It's obscure, but I'll try to explain.
@@ -76,7 +76,7 @@ public class SandBoxManagementImpl implements AdminMainEntity, SandBoxManagement
     @GeneratedValue(generator = "SandBoxMgmtId")
     @GenericGenerator(
         name="SandBoxMgmtId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="SandBoxManagementImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl")

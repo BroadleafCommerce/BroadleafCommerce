@@ -10,24 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.structure.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.hibernate.Length;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,12 +25,22 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.Length;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,24 +49,24 @@ import jakarta.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 public class StructuredContentRuleImpl implements StructuredContentRule, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "SCRuleId")
+    @GeneratedValue(generator = "SCRuleId")
     @GenericGenerator(
-        name="SCRuleId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StructuredContentRuleImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl")
-        }
+            name = "SCRuleId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StructuredContentRuleImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl")
+            }
     )
     @Column(name = "SC_RULE_ID")
     protected Long id;
-    
+
     @Lob
     @Column(name = "MATCH_RULE", length = Length.LONG32 - 1)
     protected String matchRule;
@@ -111,11 +109,11 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         StructuredContentRuleImpl other = (StructuredContentRuleImpl) obj;
-        
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        
+
         if (matchRule == null) {
             if (other.matchRule != null)
                 return false;
@@ -140,6 +138,6 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
         }
         StructuredContentRule cloned = createResponse.getClone();
         cloned.setMatchRule(matchRule);
-        return  createResponse;
+        return createResponse;
     }
 }

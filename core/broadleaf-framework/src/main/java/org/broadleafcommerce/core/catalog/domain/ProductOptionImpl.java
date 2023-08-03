@@ -17,6 +17,17 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -27,6 +38,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -48,18 +60,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Lob;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION")
@@ -76,7 +76,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @GeneratedValue(generator= "ProductOptionId")
     @GenericGenerator(
         name="ProductOptionId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="ProductOptionImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductOptionImpl")

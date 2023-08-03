@@ -17,11 +17,21 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -35,16 +45,6 @@ import org.hibernate.annotations.Parameter;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -67,7 +67,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     @GeneratedValue(generator = "DiscreteOrderItemFeePriceId")
     @GenericGenerator(
         name="DiscreteOrderItemFeePriceId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="DiscreteOrderItemFeePriceImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl")

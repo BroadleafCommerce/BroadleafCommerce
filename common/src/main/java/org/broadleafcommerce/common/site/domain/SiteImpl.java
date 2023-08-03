@@ -17,31 +17,6 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -56,6 +31,31 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -78,7 +78,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     @GeneratedValue(generator = "SiteId")
     @GenericGenerator(
         name="SiteId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="SiteImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.site.domain.SiteImpl")

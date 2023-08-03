@@ -10,13 +10,26 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -26,6 +39,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -46,72 +60,58 @@ import org.hibernate.annotations.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.Table;
-
 /**
  * Created by bpolster.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(value = { AdminAuditableListener.class })
+@EntityListeners(value = {AdminAuditableListener.class})
 @Table(name = "BLC_STATIC_ASSET")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationMergeOverrides(value = { 
-    @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.updatedBy.id",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.createdBy.name",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.updatedBy.name",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.dateCreated",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = StaticAssetAdminPresentation.GroupName.File_Details)
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.dateUpdated",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = StaticAssetAdminPresentation.GroupName.File_Details)
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "sandbox",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)
-        }
-    )
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
+@AdminPresentationMergeOverrides(value = {
+        @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.updatedBy.id",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.createdBy.name",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.updatedBy.name",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.dateCreated",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = StaticAssetAdminPresentation.GroupName.File_Details)
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.dateUpdated",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = StaticAssetAdminPresentation.GroupName.File_Details)
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "sandbox",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)
+                }
+        )
 })
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
@@ -124,12 +124,12 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
     @Id
     @GeneratedValue(generator = "StaticAssetId")
     @GenericGenerator(
-        name="StaticAssetId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StaticAssetImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.file.domain.StaticAssetImpl")
-        }
+            name = "StaticAssetId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StaticAssetImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.file.domain.StaticAssetImpl")
+            }
     )
     @Column(name = "STATIC_ASSET_ID")
     protected Long id;
@@ -144,7 +144,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
             prominent = true)
     protected String name;
 
-    @Column(name ="FULL_URL", nullable = false)
+    @Column(name = "FULL_URL", nullable = false)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL",
             group = GroupName.Image,
             order = FieldOrder.URL,
@@ -152,7 +152,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
             requiredOverride = RequiredOverride.REQUIRED,
             fieldType = SupportedFieldType.ASSET_URL,
             prominent = true)
-    @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
+    @Index(name = "ASST_FULL_URL_INDX", columnNames = {"FULL_URL"})
     protected String fullUrl;
 
     @Column(name = "TITLE", nullable = true)
@@ -194,8 +194,8 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
     @JoinTable(name = "BLC_ASSET_DESC_MAP", joinColumns = @JoinColumn(name = "STATIC_ASSET_ID"),
             inverseJoinColumns = @JoinColumn(name = "STATIC_ASSET_DESC_ID"))
     @MapKeyColumn(name = "MAP_KEY")
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @BatchSize(size = 20)
     @AdminPresentationMap(
             excluded = true,
@@ -206,7 +206,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
             mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
             mapKeyOptionEntityValueField = "localeCode")
-    protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
+    protected Map<String, StaticAssetDescription> contentMessageValues = new HashMap<String, StaticAssetDescription>();
 
     @Column(name = "STORAGE_TYPE")
     @AdminPresentation(excluded = true)
@@ -332,9 +332,9 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
         cloned.setMimeType(mimeType);
         cloned.setTitle(title);
         cloned.setStorageType(getStorageType());
-        for(Map.Entry<String, StaticAssetDescription> entry : contentMessageValues.entrySet()){
+        for (Map.Entry<String, StaticAssetDescription> entry : contentMessageValues.entrySet()) {
             CreateResponse<StaticAssetDescription> clonedDescRsp = entry.getValue().createOrRetrieveCopyInstance(context);
-            cloned.getContentMessageValues().put(entry.getKey(),clonedDescRsp.getClone());
+            cloned.getContentMessageValues().put(entry.getKey(), clonedDescRsp.getClone());
         }
 
         return createResponse;

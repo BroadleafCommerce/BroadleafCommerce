@@ -17,16 +17,16 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 
 
 /**
@@ -40,7 +40,7 @@ public class SearchInterceptImpl implements SearchIntercept {
     @GeneratedValue(generator = "SearchInterceptId")
     @GenericGenerator(
         name="SearchInterceptId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="SearchInterceptImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchInterceptImpl")

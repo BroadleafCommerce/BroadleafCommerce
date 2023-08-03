@@ -10,39 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.page.domain;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -57,6 +30,33 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -64,7 +64,7 @@ import jakarta.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_TMPLT")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageTemplateImpl_basePageTemplate")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
@@ -78,31 +78,31 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @Id
     @GeneratedValue(generator = "PageTemplateId")
     @GenericGenerator(
-        name="PageTemplateId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PageTemplateImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageTemplateImpl")
-        }
+            name = "PageTemplateId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PageTemplateImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageTemplateImpl")
+            }
     )
     @Column(name = "PAGE_TMPLT_ID")
-    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Id", 
-        visibility = VisibilityEnum.HIDDEN_ALL, 
-        readOnly = true)
+    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Id",
+            visibility = VisibilityEnum.HIDDEN_ALL,
+            readOnly = true)
     protected Long id;
 
-    @Column (name = "TMPLT_NAME")
-    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Name", 
-        prominent = true, gridOrder = 1)
+    @Column(name = "TMPLT_NAME")
+    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Name",
+            prominent = true, gridOrder = 1)
     protected String templateName;
 
-    @Column (name = "TMPLT_DESCR")
+    @Column(name = "TMPLT_DESCR")
     protected String templateDescription;
 
-    @Column (name = "TMPLT_PATH")
-    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Path", 
-        visibility = VisibilityEnum.HIDDEN_ALL, 
-        readOnly = true)
+    @Column(name = "TMPLT_PATH")
+    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Path",
+            visibility = VisibilityEnum.HIDDEN_ALL,
+            readOnly = true)
     protected String templatePath;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
@@ -111,8 +111,8 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @Deprecated
     protected Locale locale;
 
-    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = { CascadeType.ALL }, mappedBy = "pageTemplate")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = {CascadeType.ALL}, mappedBy = "pageTemplate")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
     @ClonePolicyCollectionOverride

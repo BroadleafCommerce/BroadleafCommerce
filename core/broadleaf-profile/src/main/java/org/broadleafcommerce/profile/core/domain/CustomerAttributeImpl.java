@@ -10,22 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.core.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,42 +26,62 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_CUSTOMER_ATTRIBUTE")
+@Table(name = "BLC_CUSTOMER_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
 public class CustomerAttributeImpl implements CustomerAttribute {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 1L;
 
-    /** The id. */
+    /**
+     * The id.
+     */
     @Id
-    @GeneratedValue(generator= "CustomerAttributeId")
+    @GeneratedValue(generator = "CustomerAttributeId")
     @GenericGenerator(
-        name="CustomerAttributeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CustomerAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl")
-        }
+            name = "CustomerAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CustomerAttributeImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl")
+            }
     )
     @Column(name = "CUSTOMER_ATTR_ID")
     protected Long id;
-    
-    /** The name. */
-    @Column(name = "NAME", nullable=false)
+
+    /**
+     * The name.
+     */
+    @Column(name = "NAME", nullable = false)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
-    /** The value. */
+    /**
+     * The value.
+     */
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", order = 2, group = "ProductAttributeImpl_Description", prominent = true)
     protected String value;
-  
-    /** The customer. */
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
+
+    /**
+     * The customer.
+     */
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 

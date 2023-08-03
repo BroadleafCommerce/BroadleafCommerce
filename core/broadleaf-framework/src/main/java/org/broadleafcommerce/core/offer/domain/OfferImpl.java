@@ -17,6 +17,21 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -31,6 +46,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -55,8 +71,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,21 +80,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_OFFER", indexes = {
@@ -107,7 +106,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @GeneratedValue(generator= "OfferId")
     @GenericGenerator(
         name="OfferId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OfferImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferImpl")

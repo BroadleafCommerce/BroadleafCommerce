@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +25,15 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "BLC_OFFER_AUDIT", indexes = {
@@ -53,7 +53,7 @@ public class OfferAuditImpl implements OfferAudit {
     @GeneratedValue(generator = "OfferAuditId")
     @GenericGenerator(
             name="OfferAuditId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type= IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name="segment_value", value="OfferAuditImpl"),
                     @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferAuditImpl")

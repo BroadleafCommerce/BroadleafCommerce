@@ -17,6 +17,18 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -26,6 +38,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -43,19 +56,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 /**
  * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
@@ -78,7 +78,7 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @GeneratedValue(generator = "SkuBundleItemId")
     @GenericGenerator(
         name="SkuBundleItemId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
             @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl")

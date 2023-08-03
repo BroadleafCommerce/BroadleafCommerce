@@ -17,6 +17,14 @@
  */
 package org.broadleafcommerce.core.inventory.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -29,14 +37,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
 
 /**
  * The Class SkuAvailabilityImpl is the default implementation of {@link SkuAvailability}.
@@ -70,7 +70,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     @GeneratedValue(generator = "SkuAvailabilityId")
     @GenericGenerator(
         name="SkuAvailabilityId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="SkuAvailabilityImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl")

@@ -10,25 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.page.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.Length;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -42,6 +29,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.Length;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * Created by bpolster.
@@ -49,10 +49,10 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_FLD")
-@EntityListeners(value = { AdminAuditableListener.class })
+@EntityListeners(value = {AdminAuditableListener.class})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 
 })
@@ -63,21 +63,21 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     @Id
     @GeneratedValue(generator = "PageFieldId")
     @GenericGenerator(
-        name="PageFieldId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PageFieldImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageFieldImpl")
-        }
+            name = "PageFieldId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PageFieldImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageFieldImpl")
+            }
     )
     @Column(name = "PAGE_FLD_ID")
     protected Long id;
 
-    @Column (name = "FLD_KEY")
+    @Column(name = "FLD_KEY")
     @AdminPresentation
     protected String fieldKey;
 
-    @Column (name = "VALUE")
+    @Column(name = "VALUE")
     @AdminPresentation
     protected String stringValue;
 

@@ -17,11 +17,25 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -37,20 +51,6 @@ import org.hibernate.annotations.Parameter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -71,7 +71,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     @GeneratedValue(generator = "FulfillmentGroupFeeId")
     @GenericGenerator(
         name="FulfillmentGroupFeeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="FulfillmentGroupFeeImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl")

@@ -17,19 +17,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
-import org.broadleafcommerce.common.persistence.PostLoaderDao;
-import org.broadleafcommerce.common.util.HibernateUtils;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.proxy.HibernateProxy;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,6 +27,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.PostLoaderDao;
+import org.broadleafcommerce.common.util.HibernateUtils;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.proxy.HibernateProxy;
 
 @Entity
 @Table(name = "BLC_ITEM_OFFER_QUALIFIER")
@@ -54,7 +54,7 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     @GeneratedValue(generator = "OrderItemQualifierId")
     @GenericGenerator(
         name = "OrderItemQualifierId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
             @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl")

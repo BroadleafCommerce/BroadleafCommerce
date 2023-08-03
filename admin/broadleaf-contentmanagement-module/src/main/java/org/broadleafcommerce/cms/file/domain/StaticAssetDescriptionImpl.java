@@ -10,25 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.file.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +25,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * Created by bpolster.
@@ -45,8 +45,8 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATIC_ASSET_DESC")
-@EntityListeners(value = { AdminAuditableListener.class })
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@EntityListeners(value = {AdminAuditableListener.class})
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
@@ -57,21 +57,21 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @Id
     @GeneratedValue(generator = "StaticAssetDescriptionId")
     @GenericGenerator(
-        name="StaticAssetDescriptionId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StaticAssetDescriptionImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl")
-        }
+            name = "StaticAssetDescriptionId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StaticAssetDescriptionImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl")
+            }
     )
     @Column(name = "STATIC_ASSET_DESC_ID")
     protected Long id;
 
-    @Column (name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "StaticAssetDescriptionImpl_Description", prominent = true)
     protected String description;
 
-    @Column (name = "LONG_DESCRIPTION")
+    @Column(name = "LONG_DESCRIPTION")
     @AdminPresentation(friendlyName = "StaticAssetDescriptionImpl_Long_Description", largeEntry = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected String longDescription;
 

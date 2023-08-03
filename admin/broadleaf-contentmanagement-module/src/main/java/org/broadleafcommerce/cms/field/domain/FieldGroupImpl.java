@@ -10,31 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.field.domain;
-
-import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXref;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXrefImpl;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -46,6 +27,25 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXref;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXrefImpl;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -53,7 +53,7 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_GROUP")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
@@ -64,35 +64,35 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Id
     @GeneratedValue(generator = "FieldGroupId")
     @GenericGenerator(
-        name="FieldGroupId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FieldGroupImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.field.domain.FieldGroupImpl")
-        }
+            name = "FieldGroupId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FieldGroupImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.field.domain.FieldGroupImpl")
+            }
     )
     @Column(name = "FLD_GROUP_ID")
     protected Long id;
 
-    @Column (name = "NAME")
+    @Column(name = "NAME")
     protected String name;
 
-    @Column (name = "INIT_COLLAPSED_FLAG")
+    @Column(name = "INIT_COLLAPSED_FLAG")
     protected Boolean initCollapsedFlag = false;
 
-    @OneToMany(mappedBy = "fieldGroup", targetEntity = FieldDefinitionImpl.class, cascade = { CascadeType.ALL })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @OneToMany(mappedBy = "fieldGroup", targetEntity = FieldDefinitionImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("fieldOrder")
     @BatchSize(size = 20)
     @ClonePolicyCollectionOverride
     @ClonePolicyArchive
     protected List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
 
-    @Column (name = "IS_MASTER_FIELD_GROUP")
+    @Column(name = "IS_MASTER_FIELD_GROUP")
     protected Boolean isMasterFieldGroup = false;
 
     @OneToMany(targetEntity = StructuredContentFieldGroupXrefImpl.class, mappedBy = "fieldGroup", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
     @ClonePolicyCollectionOverride
@@ -166,7 +166,7 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
             cloned.getFieldDefinitions().add(clonedDef);
         }
         for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
-            CreateResponse<StructuredContentFieldGroupXref>  clonedDef = entry.createOrRetrieveCopyInstance(context);
+            CreateResponse<StructuredContentFieldGroupXref> clonedDef = entry.createOrRetrieveCopyInstance(context);
             clonedDef.getClone().setFieldGroup(cloned);
             cloned.getFieldGroupXrefs().add(clonedDef.getClone());
         }

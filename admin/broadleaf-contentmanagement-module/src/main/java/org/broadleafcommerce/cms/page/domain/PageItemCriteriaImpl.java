@@ -10,25 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.page.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.Length;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,51 +28,62 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.Length;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
- * 
  * @author bpolster
- *
  */
 @Entity
 @Table(name = "BLC_PAGE_ITEM_CRITERIA")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 @AdminPresentationClass(friendlyName = "PageItemCriteriaImpl_basePageItemCriteria")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageItemCriteriaImpl implements PageItemCriteria, ProfileEntity {
-    
+
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "PageItemCriteriaId")
+    @GeneratedValue(generator = "PageItemCriteriaId")
     @GenericGenerator(
-        name="PageItemCriteriaId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PageItemCriteriaImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageItemCriteriaImpl")
-        }
+            name = "PageItemCriteriaId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PageItemCriteriaImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageItemCriteriaImpl")
+            }
     )
     @Column(name = "PAGE_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Item_Criteria_Id", group = "PageItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Item_Criteria_Id", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
-    @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Quantity", group = "PageItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
+
+    @Column(name = "QUANTITY", nullable = false)
+    @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Quantity", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Integer quantity;
-    
+
     @Lob
     @Column(name = "ORDER_ITEM_MATCH_RULE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Order_Item_Match_Rule", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
-    
+
     @ManyToOne(targetEntity = PageImpl.class)
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", joinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_ID"))
     protected Page page;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -145,11 +143,11 @@ public class PageItemCriteriaImpl implements PageItemCriteria, ProfileEntity {
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PageItemCriteriaImpl other = (PageItemCriteriaImpl) obj;
-        
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        
+
         if (orderItemMatchRule == null) {
             if (other.orderItemMatchRule != null)
                 return false;

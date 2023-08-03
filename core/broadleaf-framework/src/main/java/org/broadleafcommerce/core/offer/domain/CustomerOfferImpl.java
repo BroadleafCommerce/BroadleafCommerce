@@ -17,11 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +27,11 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_CUSTOMER_OFFER_XREF", indexes = {
@@ -46,7 +46,7 @@ public class CustomerOfferImpl implements CustomerOffer {
     @GeneratedValue(generator= "CustomerOfferId")
     @GenericGenerator(
         name="CustomerOfferId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="CustomerOfferImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl")

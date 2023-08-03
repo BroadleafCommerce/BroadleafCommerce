@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -37,6 +28,15 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -49,7 +49,7 @@ public class OfferInfoImpl implements OfferInfo {
     @GeneratedValue(generator= "OfferInfoId")
     @GenericGenerator(
         name="OfferInfoId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OfferInfoImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferInfoImpl")

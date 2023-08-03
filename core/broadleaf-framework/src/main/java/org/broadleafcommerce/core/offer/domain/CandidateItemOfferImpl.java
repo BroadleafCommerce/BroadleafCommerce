@@ -10,13 +10,24 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -24,6 +35,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -37,18 +49,6 @@ import org.hibernate.proxy.HibernateProxy;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER", indexes = {
         @Index(name = "CANDIDATE_ITEM_INDEX", columnList = "ORDER_ITEM_ID"),
@@ -61,14 +61,14 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "CandidateItemOfferId")
+    @GeneratedValue(generator = "CandidateItemOfferId")
     @GenericGenerator(
-        name="CandidateItemOfferId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CandidateItemOfferImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl")
-        }
+            name = "CandidateItemOfferId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CandidateItemOfferImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl")
+            }
     )
     @Column(name = "CANDIDATE_ITEM_OFFER_ID")
     protected Long id;
@@ -77,11 +77,11 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
-    @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
+    @Column(name = "DISCOUNTED_PRICE", precision = 19, scale = 5)
     private BigDecimal discountedPrice;
 
     @Transient
@@ -135,17 +135,17 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
         return deproxiedOffer;
     }
-    
+
     @Override
     public Money getDiscountedPrice() {
         return discountedPrice == null ? null : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrderItem().getOrder().getCurrency());
     }
-    
+
     @Override
     public void setDiscountedPrice(Money discountedPrice) {
         this.discountedPrice = discountedPrice.getAmount();
     }
-    
+
     public void checkCloneable(CandidateItemOffer itemOffer) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemOffer.getClass().getName().startsWith("org.broadleafcommerce")) {
@@ -153,7 +153,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
         }
     }
-    
+
     @Override
     public CandidateItemOffer clone() {
         //instantiate from the fully qualified name via reflection
@@ -172,10 +172,10 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        
+
         return candidateItemOffer;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -239,6 +239,6 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         cloned.setOrderItem(orderItem);
         // TODO clone here?
         cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
-        return  createResponse;
+        return createResponse;
     }
 }

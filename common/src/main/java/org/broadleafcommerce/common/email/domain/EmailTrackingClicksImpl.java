@@ -17,11 +17,6 @@
  */
 package org.broadleafcommerce.common.email.domain;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +25,11 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 /**
  * @author jfischer
@@ -48,7 +48,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     @GeneratedValue(generator = "ClickId")
     @GenericGenerator(
         name="ClickId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="EmailTrackingClicksImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl")

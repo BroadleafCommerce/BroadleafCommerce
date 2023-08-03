@@ -10,13 +10,21 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.search.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -25,6 +33,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -35,15 +44,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -61,17 +61,17 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     @Id
     @GeneratedValue(generator = "FieldId")
     @GenericGenerator(
-        name="FieldId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FieldImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.FieldImpl")
-        }
+            name = "FieldId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FieldImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.FieldImpl")
+            }
     )
     @Column(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general",visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
+
     // This is a broadleaf enumeration
     @Column(name = "ENTITY_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "FieldImpl_EntityType",
@@ -82,7 +82,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
             defaultValue = "org.broadleafcommerce.core.catalog.domain.ProductImpl",
             requiredOverride = RequiredOverride.REQUIRED)
     protected String entityType;
-    
+
     @Column(name = "FRIENDLY_NAME")
     @AdminPresentation(friendlyName = "FieldImpl_friendlyName",
             group = GroupName.General, order = FieldOrder.FRIENDLY_NAME,

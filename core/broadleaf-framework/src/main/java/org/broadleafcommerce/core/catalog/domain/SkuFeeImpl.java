@@ -17,27 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
-import org.hibernate.Length;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -51,6 +30,27 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
+import org.hibernate.Length;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author Phillip Verheyden
@@ -71,7 +71,7 @@ public class SkuFeeImpl implements SkuFee {
     @GeneratedValue(generator = "SkuFeeId")
     @GenericGenerator(
         name = "SkuFeeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="SkuFeeImpl"),
             @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.SkuFeeImpl")

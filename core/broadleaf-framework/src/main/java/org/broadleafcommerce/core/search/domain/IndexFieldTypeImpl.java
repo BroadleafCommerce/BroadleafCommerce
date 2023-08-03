@@ -17,11 +17,21 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -40,16 +50,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 /**
  * @author Nick Crum (ncrum)
@@ -89,7 +89,7 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
     @GeneratedValue(generator = "IndexFieldTypeId")
     @GenericGenerator(
             name="IndexFieldTypeId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type= IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name="segment_value", value="IndexFieldTypeImpl"),
                     @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl")

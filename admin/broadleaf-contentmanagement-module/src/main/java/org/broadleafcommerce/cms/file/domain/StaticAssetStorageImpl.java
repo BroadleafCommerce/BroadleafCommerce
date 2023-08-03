@@ -10,19 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.file.domain;
-
-import org.hibernate.Length;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-
-import java.sql.Blob;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +25,13 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.Length;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.sql.Blob;
 
 /**
  * Created by jfischer
@@ -46,22 +46,22 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Id
     @GeneratedValue(generator = "StaticAssetStorageId")
     @GenericGenerator(
-        name="StaticAssetStorageId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StaticAssetStorageImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl")
-        }
+            name = "StaticAssetStorageId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StaticAssetStorageImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl")
+            }
     )
     @Column(name = "STATIC_ASSET_STRG_ID")
     protected Long id;
 
-    @Column(name ="STATIC_ASSET_ID", nullable = false)
-    @Index(name="STATIC_ASSET_ID_INDEX", columnNames={"STATIC_ASSET_ID"})
+    @Column(name = "STATIC_ASSET_ID", nullable = false)
+    @Index(name = "STATIC_ASSET_ID_INDEX", columnNames = {"STATIC_ASSET_ID"})
     protected Long staticAssetId;
 
     @Lob
-    @Column (name = "FILE_DATA", length = Length.LONG32 - 1)
+    @Column(name = "FILE_DATA", length = Length.LONG32 - 1)
     protected Blob fileData;
 
     @Override

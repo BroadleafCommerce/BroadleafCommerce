@@ -10,27 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.structure.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.Length;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,48 +27,61 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.Length;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Table(name = "BLC_SC_ITEM_CRITERIA")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 @AdminPresentationClass(friendlyName = "StructuredContentItemCriteriaImpl_baseStructuredContentItemCriteria")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 public class StructuredContentItemCriteriaImpl implements StructuredContentItemCriteria, ProfileEntity {
-    
+
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "SCItemCriteriaId")
+    @GeneratedValue(generator = "SCItemCriteriaId")
     @GenericGenerator(
-        name="SCItemCriteriaId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StructuredContentItemCriteriaImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
-        }
+            name = "SCItemCriteriaId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StructuredContentItemCriteriaImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
+            }
     )
     @Column(name = "SC_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Item_Criteria_Id", group = "StructuredContentItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Item_Criteria_Id", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
-    @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Quantity", group = "StructuredContentItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
+
+    @Column(name = "QUANTITY", nullable = false)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Quantity", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Integer quantity;
-    
+
     @Lob
     @Column(name = "ORDER_ITEM_MATCH_RULE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
-    
+
     @ManyToOne(targetEntity = StructuredContentImpl.class)
     @JoinColumn(name = "SC_ID")
     protected StructuredContent structuredContent;
@@ -147,11 +145,11 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         StructuredContentItemCriteriaImpl other = (StructuredContentItemCriteriaImpl) obj;
-        
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        
+
         if (orderItemMatchRule == null) {
             if (other.orderItemMatchRule != null)
                 return false;

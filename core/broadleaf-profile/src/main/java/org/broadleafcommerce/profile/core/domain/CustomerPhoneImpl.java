@@ -10,23 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.core.domain;
-
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,6 +30,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @EntityListeners(value = {CustomerPhonePersistedEntityListener.class})
@@ -72,12 +72,12 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     @Id
     @GeneratedValue(generator = "CustomerPhoneId")
     @GenericGenerator(
-        name="CustomerPhoneId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CustomerPhoneImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl")
-        }
+            name = "CustomerPhoneId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CustomerPhoneImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl")
+            }
     )
     @Column(name = "CUSTOMER_PHONE_ID")
     protected Long id;
@@ -88,12 +88,12 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
             groupOrder = 1, prominent = true, gridOrder = 1)
     protected String phoneName;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional = false)
     @JoinColumn(name = "PHONE_ID")
     protected Phone phone;
 

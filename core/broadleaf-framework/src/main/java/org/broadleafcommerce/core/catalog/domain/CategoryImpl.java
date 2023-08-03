@@ -17,6 +17,22 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -36,6 +52,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
@@ -84,23 +101,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 /**
  * @author bTaylor
@@ -164,7 +164,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @GeneratedValue(generator= "CategoryId")
     @GenericGenerator(
         name="CategoryId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="CategoryImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryImpl")
