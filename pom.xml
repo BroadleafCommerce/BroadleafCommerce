@@ -43,9 +43,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.9.0</ehcache3.version>
-        <spring.version>5.3.27</spring.version>
-        <spring.security.version>5.8.3</spring.security.version>
-        <spring.boot.version>2.7.12</spring.boot.version>
+        <spring.version>5.3.29</spring.version>
+        <spring.security.version>5.8.5</spring.security.version>
+        <spring.boot.version>2.7.14</spring.boot.version>
         <jackson-bom.version>2.15.2</jackson-bom.version>
         <lombok.version>1.18.28</lombok.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
