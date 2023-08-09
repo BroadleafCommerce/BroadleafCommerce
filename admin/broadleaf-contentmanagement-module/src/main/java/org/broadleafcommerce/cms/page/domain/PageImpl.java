@@ -10,30 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -68,73 +51,123 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 /**
  * Created by bpolster.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE")
-@EntityListeners(value = { AdminAuditableListener.class })
-@AdminPresentationMergeOverrides(value = { 
-    @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.updatedBy.id",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.createdBy.name",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.updatedBy.name",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.dateCreated",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "auditable.dateUpdated",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "pageTemplate.templateDescription",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "pageTemplate.templateName",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)
-        }
-    ),
-    @AdminPresentationMergeOverride(name = "pageTemplate.locale",
-        mergeEntries = { 
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)
-        }
-    )
+@EntityListeners(value = {AdminAuditableListener.class})
+@AdminPresentationMergeOverrides(value = {
+        @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.updatedBy.id",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.createdBy.name",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.updatedBy.name",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.dateCreated",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "auditable.dateUpdated",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "pageTemplate.templateDescription",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "pageTemplate.templateName",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)
+                }
+        ),
+        @AdminPresentationMergeOverride(name = "pageTemplate.locale",
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)
+                }
+        )
 })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
-public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity, PageAdminPresentation {
+public class PageImpl
+        implements Page, AdminMainEntity, Locatable, ProfileEntity, PageAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -143,44 +176,49 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     @Id
     @GeneratedValue(generator = "PageId")
     @GenericGenerator(
-            name="PageId",
+            name = "PageId",
             type = IdOverrideTableGenerator.class,
             parameters = {
-                @Parameter(name="segment_value", value="PageImpl"),
-                @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageImpl")
+                    @Parameter(name = "segment_value", value = "PageImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.page.domain.PageImpl")
             }
-        )
+    )
     @Column(name = "PAGE_ID")
     protected Long id;
 
     @ManyToOne(targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName = "PageImpl_Page_Template", order = 4000,
-        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, prominent = true,
-        requiredOverride = RequiredOverride.REQUIRED)
+            group = PageAdminPresentation.GroupName.Misc,
+            groupOrder = PageAdminPresentation.GroupOrder.Misc, prominent = true,
+            requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "templateName")
     protected PageTemplate pageTemplate;
 
-    @Column (name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "PageImpl_Description", order = 1000,
-        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
+            group = PageAdminPresentation.GroupName.Basic,
+            groupOrder = PageAdminPresentation.GroupOrder.Basic,
             requiredOverride = RequiredOverride.REQUIRED,
-        prominent = true, gridOrder = 1)
+            prominent = true, gridOrder = 1)
     protected String description;
 
-    @Column (name = "FULL_URL")
-    @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
+    @Column(name = "FULL_URL")
+    @Index(name = "PAGE_FULL_URL_INDEX", columnNames = {"FULL_URL"})
     @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 3000,
-        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
-        prominent = true, gridOrder = 2,
-        validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
+            group = PageAdminPresentation.GroupName.Basic,
+            groupOrder = PageAdminPresentation.GroupOrder.Basic,
+            prominent = true, gridOrder = 2,
+            validationConfigurations = {
+                    @ValidationConfiguration(validationImplementation = "blUriPropertyValidator")})
     protected String fullUrl;
 
-    @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = {CascadeType.ALL})
     @MapKey(name = "fieldKey")
     @BatchSize(size = 20)
     @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "pageFields")
-    protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
+    protected Map<String, PageField> pageFields = new HashMap<String, PageField>();
 
     @Column(name = "PRIORITY")
     @Deprecated
@@ -188,17 +226,19 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
 
     @Column(name = "OFFLINE_FLAG")
     @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
-        group = GroupName.Misc, defaultValue = "false")
+            group = GroupName.Misc, defaultValue = "false")
     protected Boolean offlineFlag = false;
 
     /*
      * This will not work with Enterprise workflows.  Do not use.
      */
     @ManyToMany(targetEntity = PageRuleImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_PAGE_RULE_MAP", 
-               joinColumns = @JoinColumn(name = "BLC_PAGE_PAGE_ID", referencedColumnName = "PAGE_ID"), 
-               inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID", referencedColumnName = "PAGE_RULE_ID"))
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @JoinTable(name = "BLC_PAGE_RULE_MAP",
+            joinColumns = @JoinColumn(name = "BLC_PAGE_PAGE_ID", referencedColumnName = "PAGE_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID",
+                    referencedColumnName = "PAGE_RULE_ID"))
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @Deprecated
     protected Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
@@ -206,47 +246,53 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     /*
      * This will not work with Enterprise workflows. Do not use.
      */
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class,
+            cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF",
-        joinColumns = @JoinColumn(name = "PAGE_ID"),
-        inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
+            joinColumns = @JoinColumn(name = "PAGE_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
     @Deprecated
     @IgnoreEnterpriseBehavior
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 
     @Column(name = "EXCLUDE_FROM_SITE_MAP")
     @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 1800,
-        tab = TabName.Seo, group = GroupName.Sitemap, defaultValue = "false")
+            tab = TabName.Seo, group = GroupName.Sitemap, defaultValue = "false")
     protected Boolean excludeFromSiteMap = false;
 
-    @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class,
+            cascade = {CascadeType.ALL})
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PageImpl_Page_Attributes_Title",
-        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "PageAttributeImpl_Name"
+            deleteEntityUponRemove = true, forceFreeFormKeys = true,
+            keyPropertyFriendlyName = "PageAttributeImpl_Name"
     )
-    protected Map<String, PageAttribute> additionalAttributes = new HashMap<String, PageAttribute>();
+    protected Map<String, PageAttribute> additionalAttributes =
+            new HashMap<String, PageAttribute>();
 
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "PageImpl_activeStartDate", order = 5000,
-        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
-        excluded = true)
+            group = PageAdminPresentation.GroupName.Basic,
+            groupOrder = PageAdminPresentation.GroupOrder.Basic,
+            excluded = true)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "PageImpl_activeEndDate", order = 6000,
-        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
-        excluded = true)
+            group = PageAdminPresentation.GroupName.Basic,
+            groupOrder = PageAdminPresentation.GroupOrder.Basic,
+            excluded = true)
     protected Date activeEndDate;
 
-    @Column (name = "META_TITLE")
+    @Column(name = "META_TITLE")
     @AdminPresentation(friendlyName = "PageImpl_metaTitle", order = 2000,
-        tab = TabName.Seo, group = GroupName.Tags, largeEntry = true)
+            tab = TabName.Seo, group = GroupName.Tags, largeEntry = true)
     protected String metaTitle;
 
-    @Column (name = "META_DESCRIPTION")
+    @Column(name = "META_DESCRIPTION")
     @AdminPresentation(friendlyName = "PageImpl_metaDescription", order = 3000,
-        tab = TabName.Seo, group = GroupName.Tags, largeEntry = true)
+            tab = TabName.Seo, group = GroupName.Tags, largeEntry = true)
     protected String metaDescription;
 
     @Override
@@ -301,12 +347,12 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
 
     @Override
     public Boolean getOfflineFlag() {
-        return offlineFlag == null ? false : offlineFlag;
+        return offlineFlag != null && offlineFlag;
     }
 
     @Override
     public void setOfflineFlag(Boolean offlineFlag) {
-        this.offlineFlag = offlineFlag == null ? false : offlineFlag;
+        this.offlineFlag = offlineFlag != null && offlineFlag;
     }
 
     @Override
@@ -356,7 +402,8 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     }
 
     @Override
-    public <G extends Page> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends Page> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -372,18 +419,21 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
         cloned.setMetaDescription(metaDescription);
         cloned.setOfflineFlag(offlineFlag);
         cloned.setMetaTitle(metaTitle);
-        for(Map.Entry<String, PageField> entry : pageFields.entrySet()){
-            CreateResponse<PageField> clonedPageField = entry.getValue().createOrRetrieveCopyInstance(context);
+        for (Map.Entry<String, PageField> entry : pageFields.entrySet()) {
+            CreateResponse<PageField> clonedPageField =
+                    entry.getValue().createOrRetrieveCopyInstance(context);
             PageField pageField = clonedPageField.getClone();
-            cloned.getPageFields().put(entry.getKey(),pageField);
+            cloned.getPageFields().put(entry.getKey(), pageField);
         }
-        for(Map.Entry<String,PageRule> entry : pageMatchRules.entrySet()){
-            CreateResponse<PageRule> clonedRsp = entry.getValue().createOrRetrieveCopyInstance(context);
+        for (Map.Entry<String, PageRule> entry : pageMatchRules.entrySet()) {
+            CreateResponse<PageRule> clonedRsp =
+                    entry.getValue().createOrRetrieveCopyInstance(context);
             PageRule clonedRule = clonedRsp.getClone();
-            cloned.getPageMatchRules().put(entry.getKey(),clonedRule);
+            cloned.getPageMatchRules().put(entry.getKey(), clonedRule);
         }
-        if (pageTemplate != null){
-            CreateResponse<PageTemplate> clonedTemplateRsp = pageTemplate.createOrRetrieveCopyInstance(context);
+        if (pageTemplate != null) {
+            CreateResponse<PageTemplate> clonedTemplateRsp =
+                    pageTemplate.createOrRetrieveCopyInstance(context);
             cloned.setPageTemplate(clonedTemplateRsp.getClone());
         }
         return createResponse;

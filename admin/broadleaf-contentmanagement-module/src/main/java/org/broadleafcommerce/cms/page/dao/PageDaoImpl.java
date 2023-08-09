@@ -58,7 +58,7 @@ import jakarta.persistence.criteria.Root;
 @Repository("blPageDao")
 public class PageDaoImpl implements PageDao {
 
-    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+    private static final SandBox DUMMY_SANDBOX = new SandBoxImpl();
 
     {
         DUMMY_SANDBOX.setId(-1l);

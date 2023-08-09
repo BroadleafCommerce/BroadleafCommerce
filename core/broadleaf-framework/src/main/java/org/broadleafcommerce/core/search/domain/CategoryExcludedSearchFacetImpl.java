@@ -136,9 +136,9 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
 
         if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null) return false;
         if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (searchFacet != null ? !searchFacet.equals(that.searchFacet) : that.searchFacet != null) return false;
-
-        return true;
+        return searchFacet != null
+                ? searchFacet.equals(that.searchFacet)
+                : that.searchFacet == null;
     }
 
     @Override

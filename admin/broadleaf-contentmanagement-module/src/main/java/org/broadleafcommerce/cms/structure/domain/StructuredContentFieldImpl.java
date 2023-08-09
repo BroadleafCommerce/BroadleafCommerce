@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -39,6 +30,16 @@ import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+
 /**
  * Created by bpolster.
  */
@@ -47,7 +48,8 @@ import org.hibernate.annotations.Parameter;
 @Table(name = "BLC_SC_FLD")
 @EntityListeners(value = {AdminAuditableListener.class})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class StructuredContentFieldImpl implements StructuredContentField, ProfileEntity {
@@ -61,7 +63,8 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentFieldImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl")
             }
     )
     @Column(name = "SC_FLD_ID")
@@ -141,7 +144,8 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     }
 
     @Override
-    public <G extends StructuredContentField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentField> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

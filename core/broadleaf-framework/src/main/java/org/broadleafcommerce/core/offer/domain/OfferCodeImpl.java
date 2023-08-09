@@ -10,28 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -64,6 +49,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 @Entity
 @Table(name = "BLC_OFFER_CODE", indexes = {
         @Index(name = "OFFERCODE_CODE_INDEX", columnList = "OFFER_CODE"),
@@ -71,10 +72,12 @@ import java.util.List;
         @Index(name = "OFFERCODE_OFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE,
+        friendlyName = "OfferCodeImpl_baseOfferCode")
 @SQLDelete(sql = "UPDATE BLC_OFFER_CODE SET ARCHIVED = 'Y' WHERE OFFER_CODE_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferCodeImpl implements OfferCode {
@@ -82,32 +85,37 @@ public class OfferCodeImpl implements OfferCode {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "OfferCodeId")
+    @GeneratedValue(generator = "OfferCodeId")
     @GenericGenerator(
-        name="OfferCodeId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OfferCodeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferCodeImpl")
-        }
+            name = "OfferCodeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OfferCodeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferCodeImpl")
+            }
     )
     @Column(name = "OFFER_CODE_ID")
     @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code_Id")
     protected Long id;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order=2000,
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order = 2000,
             prominent = true, gridOrder = 2000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
-    @Column(name = "OFFER_CODE", nullable=false)
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true, gridOrder = 1000,
-            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blRegexPropertyValidator",
-                    configurationItems = {
-                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "The name can contain alphanumeric or \"()-=*.?;,+/:&_\" symbols with a maximum length of 255"),
-                            @ConfigurationItem(itemName = "regularExpression", itemValue = "^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]{1,255}$")})})
+    @Column(name = "OFFER_CODE", nullable = false)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true,
+            gridOrder = 1000,
+            validationConfigurations = {
+                    @ValidationConfiguration(validationImplementation = "blRegexPropertyValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE,
+                                            itemValue = "The name can contain alphanumeric or \"()-=*.?;,+/:&_\" symbols with a maximum length of 255"),
+                                    @ConfigurationItem(itemName = "regularExpression",
+                                            itemValue = "^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]{1,255}$")})})
     protected String offerCode;
 
     @Column(name = "START_DATE")
@@ -117,13 +125,14 @@ public class OfferCodeImpl implements OfferCode {
 
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order = 4000,
-        validationConfigurations = {
-            @ValidationConfiguration(
-                validationImplementation = "blAfterStartDateValidator",
-                configurationItems = {
-                    @ConfigurationItem(itemName = "otherField", itemValue = "offerCodeStartDate")
-                    }) 
-        })
+            validationConfigurations = {
+                    @ValidationConfiguration(
+                            validationImplementation = "blAfterStartDateValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(itemName = "otherField",
+                                            itemValue = "offerCodeStartDate")
+                            })
+            })
     protected Date offerCodeEndDate;
 
     @Column(name = "MAX_USES")
@@ -141,9 +150,10 @@ public class OfferCodeImpl implements OfferCode {
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-    
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy="addedOfferCodes", targetEntity = OrderImpl.class)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "addedOfferCodes",
+            targetEntity = OrderImpl.class)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     protected List<Order> orders = new ArrayList<>();
 
     @Transient
@@ -151,7 +161,7 @@ public class OfferCodeImpl implements OfferCode {
 
     @Transient
     protected Offer deproxiedOffer;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -205,12 +215,12 @@ public class OfferCodeImpl implements OfferCode {
     public void setMaxUses(int maxUses) {
         this.maxUses = maxUses;
     }
-    
+
     @Override
     public boolean isUnlimitedUse() {
         return getMaxUses() == 0;
     }
-    
+
     @Override
     public boolean isLimitedUse() {
         return getMaxUses() > 0;
@@ -267,16 +277,16 @@ public class OfferCodeImpl implements OfferCode {
     public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
-    
+
     @Override
     public Character getArchived() {
-       ArchiveStatus temp;
-       if (archiveStatus == null) {
-           temp = new ArchiveStatus();
-       } else {
-           temp = archiveStatus;
-       }
-       return temp.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
@@ -293,7 +303,8 @@ public class OfferCodeImpl implements OfferCode {
         // If the start date for this offer code has not been set, just delegate to the offer to determine if the code is
         // active rather than requiring the user to set offer code dates as well
         if (offerCodeStartDate == null) {
-            datesActive = DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
+            datesActive =
+                    DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
         } else {
             datesActive = DateUtil.isActive(offerCodeStartDate, offerCodeEndDate, true);
         }
@@ -303,30 +314,31 @@ public class OfferCodeImpl implements OfferCode {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(offer)
-            .append(offerCode)
-            .append(emailAddress)
-            .build();
+                .append(offer)
+                .append(offerCode)
+                .append(emailAddress)
+                .build();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (o != null && getClass().isAssignableFrom(o.getClass())) {
             OfferCodeImpl that = (OfferCodeImpl) o;
             return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.offer, that.offer)
-                .append(this.offerCode, that.offerCode)
-                .append(this.emailAddress, that.emailAddress)
-                .build();
+                    .append(this.id, that.id)
+                    .append(this.offer, that.offer)
+                    .append(this.offerCode, that.offerCode)
+                    .append(this.emailAddress, that.emailAddress)
+                    .build();
         }
-        
+
         return false;
     }
 
 
     @Override
-    public <G extends OfferCode> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OfferCode> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -342,6 +354,6 @@ public class OfferCodeImpl implements OfferCode {
         cloned.setOfferCode(offerCode);
         cloned.setUses(uses);
         cloned.setEmailAddress(emailAddress);
-        return  createResponse;
+        return createResponse;
     }
 }

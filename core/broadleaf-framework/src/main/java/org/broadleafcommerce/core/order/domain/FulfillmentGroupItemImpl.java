@@ -261,7 +261,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     }
 
     public void checkCloneable(FulfillmentGroupItem fulfillmentGroupItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = fulfillmentGroupItem.getClass().getMethod("clone", new Class[]{});
+        Method cloneMethod = fulfillmentGroupItem.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
@@ -349,13 +349,9 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
 
         if (orderItem == null) {
-            if (other.orderItem != null) {
-                return false;
-            }
-        } else if (!orderItem.equals(other.orderItem)) {
-            return false;
-        }
-        return true;
+            return other.orderItem == null;
+        } else
+            return orderItem.equals(other.orderItem);
     }
 
     @Override

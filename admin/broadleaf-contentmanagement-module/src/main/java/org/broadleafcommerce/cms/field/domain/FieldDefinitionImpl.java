@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
@@ -45,6 +36,16 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 /**
  * Created by bpolster.
  */
@@ -53,7 +54,8 @@ import org.hibernate.annotations.Parameter;
 @Table(name = "BLC_FLD_DEF")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
@@ -68,7 +70,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldDefinitionImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl")
             }
     )
     @Column(name = "FLD_DEF_ID")
@@ -79,7 +82,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected String name;
 
     @Column(name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000, prominent = true, gridOrder = 2000)
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000,
+            prominent = true, gridOrder = 2000)
     protected String friendlyName;
 
     @Column(name = "FLD_TYPE")
@@ -112,7 +116,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected Boolean textAreaFlag = false;
 
     @Column(name = "REQUIRED_FLAG")
-    @AdminPresentation(friendlyName = "FieldDefinitionImpl_requiredFlag", order = 4000, gridOrder = 4000, defaultValue = "false")
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_requiredFlag", order = 4000,
+            gridOrder = 4000, defaultValue = "false")
     protected Boolean requiredFlag = false;
 
     @ManyToOne(targetEntity = DataDrivenEnumerationImpl.class)
@@ -179,7 +184,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
 
     @Override
     public String getAdditionalForeignKeyClass() {
-        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+        if (fieldType == null || !fieldType.startsWith(
+                SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
             return null;
         }
 
@@ -188,8 +194,10 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
 
     @Override
     public void setAdditionalForeignKeyClass(String className) {
-        if (fieldType == null || !SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType)) {
-            throw new IllegalArgumentException("Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
+        if (fieldType == null || !SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString()
+                .equals(fieldType)) {
+            throw new IllegalArgumentException(
+                    "Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
         }
 
         this.fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|' + className;
@@ -217,7 +225,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
 
     @Override
     public Boolean getHiddenFlag() {
-        return hiddenFlag == null ? false : hiddenFlag;
+        return hiddenFlag != null && hiddenFlag;
     }
 
     @Override
@@ -369,7 +377,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     }
 
     @Override
-    public <G extends FieldDefinition> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+    public <G extends FieldDefinition> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context)
             throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -388,7 +397,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         cloned.setTextAreaFlag(textAreaFlag);
         cloned.setRequiredFlag(requiredFlag);
         if (dataDrivenEnumeration != null) {
-            cloned.setDataDrivenEnumeration(dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setDataDrivenEnumeration(
+                    dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setAllowMultiples(allowMultiples);
         if (fieldGroup != null) {

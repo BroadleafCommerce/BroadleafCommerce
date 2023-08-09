@@ -17,6 +17,13 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,12 +33,6 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 /**
  * Created by jfischer
@@ -54,7 +55,8 @@ public class FieldEnumerationItemImpl implements FieldEnumerationItem {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldEnumerationItemImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl")
             }
     )
     @Column(name = "FLD_ENUM_ITEM_ID")

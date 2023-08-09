@@ -169,10 +169,8 @@ public class PersonalMessageImpl implements PersonalMessage {
         } else if (!messageFrom.equals(other.messageFrom))
             return false;
         if (messageTo == null) {
-            if (other.messageTo != null)
-                return false;
-        } else if (!messageTo.equals(other.messageTo))
-            return false;
-        return true;
+            return other.messageTo == null;
+        } else
+            return messageTo.equals(other.messageTo);
     }
 }

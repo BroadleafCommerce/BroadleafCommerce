@@ -58,11 +58,7 @@ public class OrderLockImpl implements OrderLock {
 
     @Override
     public Boolean getLocked() {
-        if (locked == null || locked == 'N') {
-            return false;
-        } else {
-            return true;
-        }
+        return locked != null && locked != 'N';
     }
 
     @Override

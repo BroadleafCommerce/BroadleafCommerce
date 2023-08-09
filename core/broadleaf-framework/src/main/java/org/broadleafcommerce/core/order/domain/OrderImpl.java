@@ -754,7 +754,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     
     @Override
     public Boolean getTaxOverride() {
-        return taxOverride == null ? false : taxOverride;
+        return taxOverride != null && taxOverride;
     }
 
     @Override
@@ -839,13 +839,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         Date otherDateCreated = other.auditable != null ? other.auditable.getDateCreated() : null;
         if (myDateCreated == null) {
-            if (otherDateCreated != null) {
-                return false;
-            }
-        } else if (!myDateCreated.equals(otherDateCreated)) {
-            return false;
-        }
-        return true;
+            return otherDateCreated == null;
+        } else
+            return myDateCreated.equals(otherDateCreated);
     }
 
     @Override

@@ -10,24 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
@@ -44,6 +33,18 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER", indexes = {
         @Index(name = "CANDIDATE_ORDER_INDEX", columnList = "ORDER_ID"),
@@ -55,14 +56,15 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "CandidateOrderOfferId")
+    @GeneratedValue(generator = "CandidateOrderOfferId")
     @GenericGenerator(
-        name="CandidateOrderOfferId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="CandidateOrderOfferImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl")
-        }
+            name = "CandidateOrderOfferId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CandidateOrderOfferImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl")
+            }
     )
     @Column(name = "CANDIDATE_ORDER_OFFER_ID")
     protected Long id;
@@ -71,11 +73,11 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
-    @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
+    @Column(name = "DISCOUNTED_PRICE", precision = 19, scale = 5)
     protected BigDecimal discountedPrice;
 
     @Transient
@@ -123,9 +125,11 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrder().getCurrency());
+        return discountedPrice == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrder().getCurrency());
     }
-    
+
     @Override
     public void setDiscountedPrice(Money discountedPrice) {
         this.discountedPrice = discountedPrice.getAmount();

@@ -210,11 +210,9 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
         } else if (!destinationUri.equals(other.destinationUri))
             return false;
         if (emailTracking == null) {
-            if (other.emailTracking != null)
-                return false;
-        } else if (!emailTracking.equals(other.emailTracking))
-            return false;
-        return true;
+            return other.emailTracking == null;
+        } else
+            return emailTracking.equals(other.emailTracking);
     }
 
 }

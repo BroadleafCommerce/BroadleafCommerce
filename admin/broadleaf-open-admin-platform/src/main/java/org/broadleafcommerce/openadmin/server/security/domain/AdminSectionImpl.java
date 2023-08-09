@@ -17,18 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -47,6 +35,19 @@ import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * @author elbertbautista
@@ -70,24 +71,29 @@ public class AdminSectionImpl implements AdminSection {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminSectionImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl")
             }
     )
     @Column(name = "ADMIN_SECTION_ID")
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Admin_Section_ID", group = "AdminSectionImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Admin_Section_ID",
+            group = "AdminSectionImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
     @Index(name = "ADMINSECTION_NAME_INDEX", columnNames = {"NAME"})
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Name", order = 1, group = "AdminSectionImpl_Section", prominent = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Name", order = 1,
+            group = "AdminSectionImpl_Section", prominent = true)
     protected String name;
 
     @Column(name = "SECTION_KEY", nullable = false, unique = true)
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Section_Key", order = 2, group = "AdminSectionImpl_Section", prominent = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Section_Key", order = 2,
+            group = "AdminSectionImpl_Section", prominent = true)
     protected String sectionKey;
 
     @Column(name = "URL", nullable = true)
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Url", order = 3, group = "AdminSectionImpl_Section", prominent = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Url", order = 3,
+            group = "AdminSectionImpl_Section", prominent = true)
     protected String url;
 
     @ManyToOne(optional = false, targetEntity = AdminModuleImpl.class)
@@ -97,7 +103,11 @@ public class AdminSectionImpl implements AdminSection {
     protected AdminModule module;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
-    @JoinTable(name = "BLC_ADMIN_SEC_PERM_XREF", joinColumns = @JoinColumn(name = "ADMIN_SECTION_ID", referencedColumnName = "ADMIN_SECTION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @JoinTable(name = "BLC_ADMIN_SEC_PERM_XREF",
+            joinColumns = @JoinColumn(name = "ADMIN_SECTION_ID",
+                    referencedColumnName = "ADMIN_SECTION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
     @BatchSize(size = 50)
     protected List<AdminPermission> permissions = new ArrayList<AdminPermission>();
@@ -109,7 +119,8 @@ public class AdminSectionImpl implements AdminSection {
      */
     @Deprecated
     @Column(name = "DISPLAY_CONTROLLER", nullable = true)
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order = 4, group = "AdminSectionImpl_Section")
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order = 4,
+            group = "AdminSectionImpl_Section")
     protected String displayController;
 
     /**
@@ -119,24 +130,29 @@ public class AdminSectionImpl implements AdminSection {
      */
     @Deprecated
     @Column(name = "USE_DEFAULT_HANDLER", nullable = true)
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order = 5, group = "AdminSectionImpl_Section")
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order = 5,
+            group = "AdminSectionImpl_Section")
     protected Boolean useDefaultHandler = Boolean.TRUE;
 
     @Column(name = "CEILING_ENTITY", nullable = true)
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Ceiling_Entity", order = 6, group = "AdminSectionImpl_Section")
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Ceiling_Entity", order = 6,
+            group = "AdminSectionImpl_Section")
     protected String ceilingEntity;
 
     @Column(name = "DISPLAY_ORDER", nullable = true)
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Order", order = 7, group = "AdminSectionImpl_Section",
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Order", order = 7,
+            group = "AdminSectionImpl_Section",
             prominent = true)
     protected Integer displayOrder;
 
     @Column(name = "FOLDERABLE")
-    @AdminPresentation(friendlyName = "AdminSectionImpl_Folderable", order = 8, group = "AdminSectionImpl_Section")
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Folderable", order = 8,
+            group = "AdminSectionImpl_Section")
     protected Boolean folderable;
 
     @Column(name = "FOLDERED_BY_DEFAULT")
-    @AdminPresentation(friendlyName = "AdminSectionImpl_FolderedByDefault", order = 9, group = "AdminSectionImpl_Section")
+    @AdminPresentation(friendlyName = "AdminSectionImpl_FolderedByDefault", order = 9,
+            group = "AdminSectionImpl_Section")
     protected Boolean folderedByDefault;
 
     @Override

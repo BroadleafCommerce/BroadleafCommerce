@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
@@ -36,6 +27,16 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -58,7 +59,8 @@ public class CustomerAttributeImpl implements CustomerAttribute {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerAttributeImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl")
             }
     )
     @Column(name = "CUSTOMER_ATTR_ID")
@@ -75,7 +77,8 @@ public class CustomerAttributeImpl implements CustomerAttribute {
      * The value.
      */
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", order = 2, group = "ProductAttributeImpl_Description", prominent = true)
+    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", order = 2,
+            group = "ProductAttributeImpl_Description", prominent = true)
     protected String value;
 
     /**
@@ -182,7 +185,8 @@ public class CustomerAttributeImpl implements CustomerAttribute {
     }
 
     @Override
-    public <G extends CustomerAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CustomerAttribute> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

@@ -17,6 +17,11 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -28,10 +33,6 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 @Entity
 @EntityListeners(value = {TemporalTimestampListener.class})
@@ -51,7 +52,8 @@ public class CustomerRoleImpl implements CustomerRole {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerRoleImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.CustomerRoleImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.CustomerRoleImpl")
             }
     )
     @Column(name = "CUSTOMER_ROLE_ID")

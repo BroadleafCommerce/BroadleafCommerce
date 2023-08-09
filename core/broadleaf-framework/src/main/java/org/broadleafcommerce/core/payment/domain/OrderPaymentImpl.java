@@ -10,26 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.payment.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -73,6 +60,20 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT", indexes = {
@@ -104,7 +105,8 @@ import java.util.List;
                         booleanOverrideValue = true)
         })
 })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderPaymentImpl_baseOrderPayment")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "OrderPaymentImpl_baseOrderPayment")
 @SQLDelete(sql = "UPDATE BLC_ORDER_PAYMENT SET ARCHIVED = 'Y' WHERE ORDER_PAYMENT_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
@@ -116,12 +118,13 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Id
     @GeneratedValue(generator = "OrderPaymentId")
     @GenericGenerator(
-        name="OrderPaymentId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OrderPaymentImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.OrderPaymentImpl")
-        }
+            name = "OrderPaymentId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderPaymentImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.payment.domain.OrderPaymentImpl")
+            }
     )
     @Column(name = "ORDER_PAYMENT_ID")
     protected Long id;
@@ -131,13 +134,14 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @AdminPresentation(excluded = true)
     protected Order order;
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
     protected Address billingAddress;
 
-    @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Amount", order=2000, gridOrder = 2000, prominent=true,
-            fieldType=SupportedFieldType.MONEY)
+    @Column(name = "AMOUNT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Amount", order = 2000,
+            gridOrder = 2000, prominent = true,
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
@@ -145,29 +149,34 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true,
-            fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType")
-    protected String type;
-    
-    @Column(name = "GATEWAY_TYPE")
-    @AdminPresentation(friendlyName = "OrderPaymentImpl_Gateway_Type", order=1000, gridOrder = 1000, prominent=true,
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Type", order = 3000,
+            gridOrder = 3000, prominent = true,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType")
+            broadleafEnumeration = "org.broadleafcommerce.common.payment.PaymentType")
+    protected String type;
+
+    @Column(name = "GATEWAY_TYPE")
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Gateway_Type", order = 1000,
+            gridOrder = 1000, prominent = true,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.payment.PaymentGatewayType")
     protected String gatewayType;
 
-    @OneToMany(mappedBy = "orderPayment", targetEntity = PaymentTransactionImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderPayment", targetEntity = PaymentTransactionImpl.class,
+            cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Where(clause = "archived != 'Y'")
-    @AdminPresentationCollection(friendlyName="OrderPaymentImpl_Details",
+    @AdminPresentationCollection(friendlyName = "OrderPaymentImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-    
+
     @Override
     public Money getAmount() {
-        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
+        return amount == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
     }
 
     @Override
@@ -224,7 +233,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     public void setType(PaymentType type) {
         this.type = type == null ? null : type.getType();
     }
-    
+
     @Override
     public PaymentGatewayType getGatewayType() {
         return PaymentGatewayType.getInstance(gatewayType);
@@ -244,7 +253,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     public void setTransactions(List<PaymentTransaction> transactions) {
         this.transactions = transactions;
     }
-    
+
     @Override
     public void addTransaction(PaymentTransaction transaction) {
         getTransactions().add(transaction);
@@ -273,9 +282,9 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
 
     @Override
     public PaymentTransaction getAuthorizeTransaction() {
-        for (PaymentTransaction tx : getTransactions()){
+        for (PaymentTransaction tx : getTransactions()) {
             if (PaymentTransactionType.AUTHORIZE.equals(tx.getType())
-                    || PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())){
+                    || PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
                 return tx;
             }
         }
@@ -285,19 +294,19 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Override
     public Money getTransactionAmountForType(PaymentTransactionType type) {
         Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
-        for (PaymentTransaction tx : getTransactions()){
+        for (PaymentTransaction tx : getTransactions()) {
             if (type.equals(tx.getType())) {
                 amount = amount.add(tx.getAmount());
             }
         }
         return amount;
     }
-    
+
     @Override
     public Money getSuccessfulTransactionAmountForType(PaymentTransactionType type) {
         Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
-        for (PaymentTransaction tx : getTransactions()){
-            if (type.equals(tx.getType()) && tx.getSuccess()){
+        for (PaymentTransaction tx : getTransactions()) {
+            if (type.equals(tx.getType()) && tx.getSuccess()) {
                 amount = amount.add(tx.getAmount());
             }
         }
@@ -311,16 +320,17 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             return null;
         }
 
-        OrderPaymentStatusService svc = ctx.getBean("blOrderPaymentStatusService", OrderPaymentStatusService.class);
+        OrderPaymentStatusService svc =
+                ctx.getBean("blOrderPaymentStatusService", OrderPaymentStatusService.class);
         return svc.determineOrderPaymentStatus(this);
     }
 
     @Override
     public boolean isConfirmed() {
-        for (PaymentTransaction tx : getTransactions()){
+        for (PaymentTransaction tx : getTransactions()) {
             if ((PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType()) ||
                     PaymentTransactionType.AUTHORIZE.equals(tx.getType()))
-                    && tx.getSuccess()){
+                    && tx.getSuccess()) {
                 return true;
             }
         }
@@ -347,16 +357,16 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
         }
         return null;
     }
-    
+
     @Override
     public Character getArchived() {
-       ArchiveStatus temp;
-       if (archiveStatus == null) {
-           temp = new ArchiveStatus();
-       } else {
-           temp = archiveStatus;
-       }
-       return temp.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
@@ -371,17 +381,17 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     public boolean isActive() {
         return 'Y' != getArchived();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             OrderPaymentImpl that = (OrderPaymentImpl) obj;
             return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.referenceNumber, that.referenceNumber)
-                .append(this.type, that.type)
-                .append(this.archiveStatus, that.archiveStatus)
-                .build();
+                    .append(this.id, that.id)
+                    .append(this.referenceNumber, that.referenceNumber)
+                    .append(this.type, that.type)
+                    .append(this.archiveStatus, that.archiveStatus)
+                    .build();
         }
         return false;
     }
@@ -389,21 +399,24 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(referenceNumber)
-            .append(type)
-            .append(archiveStatus)
-            .build();
+                .append(referenceNumber)
+                .append(type)
+                .append(archiveStatus)
+                .build();
     }
 
     @Override
-    public <G extends OrderPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OrderPayment> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         OrderPayment cloned = createResponse.getClone();
         //some payment types will not have a billing address, e.g. cash on delivery
-        cloned.setBillingAddress(billingAddress == null ? null : billingAddress.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setBillingAddress(billingAddress == null
+                ? null
+                : billingAddress.createOrRetrieveCopyInstance(context).getClone());
         cloned.setReferenceNumber(referenceNumber);
         cloned.setAmount(amount == null ? null : new Money(amount));
         cloned.setOrder(order);
@@ -412,7 +425,8 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
         cloned.setArchived(getArchived());
         for (PaymentTransaction transaction : transactions) {
             if (transaction.isActive()) {
-                PaymentTransaction cpt = transaction.createOrRetrieveCopyInstance(context).getClone();
+                PaymentTransaction cpt =
+                        transaction.createOrRetrieveCopyInstance(context).getClone();
                 cpt.setOrderPayment(cloned);
                 cloned.getTransactions().add(cpt);
             }
@@ -429,6 +443,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
                 public static final String Advanced = "PaymentInfoImpl_Advanced_Tab";
             }
 
+
             public static class Order {
                 public static final int Address = 2000;
                 public static final int Log = 4000;
@@ -436,15 +451,18 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             }
         }
 
+
         public static class Group {
             public static class Name {
                 public static final String Items = "PaymentInfoImpl_Items";
             }
 
+
             public static class Order {
                 public static final int Items = 1000;
             }
         }
+
 
         public static class FieldOrder {
             public static final int REFNUMBER = 3000;

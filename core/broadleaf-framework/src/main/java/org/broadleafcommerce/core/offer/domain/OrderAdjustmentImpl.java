@@ -17,17 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
@@ -55,6 +44,18 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 @Entity
 @Table(name = "BLC_ORDER_ADJUSTMENT", indexes = {
         @Index(name = "ORDERADJUST_ORDER_INDEX", columnList = "ORDER_ID"),
@@ -66,7 +67,8 @@ import java.math.BigDecimal;
         @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
                 booleanOverrideValue = true))
 })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderAdjustmentImpl_baseOrderAdjustment")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "OrderAdjustmentImpl_baseOrderAdjustment")
 public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
@@ -79,7 +81,8 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
             ,
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderAdjustmentImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl")
             }
     )
     @Column(name = "ORDER_ADJUSTMENT_ID")
@@ -121,7 +124,8 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
         this.offer = offer;
         this.reason = reason;
         if (offer != null) {
-            this.isFutureCredit = OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType());
+            this.isFutureCredit =
+                    OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType());
         }
     }
 
@@ -180,7 +184,9 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
 
     @Override
     public Money getValue() {
-        return value == null ? null : BroadleafCurrencyUtils.getMoney(value, getOrder().getCurrency());
+        return value == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(value, getOrder().getCurrency());
     }
 
     @Override

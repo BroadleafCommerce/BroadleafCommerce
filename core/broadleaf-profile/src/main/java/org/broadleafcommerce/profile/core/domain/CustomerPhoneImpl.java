@@ -17,6 +17,18 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,39 +42,42 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 @Entity
 @EntityListeners(value = {CustomerPhonePersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE",
-        uniqueConstraints = @UniqueConstraint(name = "CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = {"CUSTOMER_ID", "PHONE_NAME"}),
+        uniqueConstraints = @UniqueConstraint(name = "CSTMR_PHONE_UNIQUE_CNSTRNT",
+                columnNames = {"CUSTOMER_ID", "PHONE_NAME"}),
         indexes = {@Index(name = "CUSTPHONE_PHONE_INDEX", columnList = "PHONE_ID")}
 )
 @AdminPresentationMergeOverrides(
         {
                 @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerPhoneAdminPresentation.GroupName.PhoneInfo),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER, intOverrideValue = 2000),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true)}),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.GROUP,
+                                overrideValue = CustomerPhoneAdminPresentation.GroupName.PhoneInfo),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.ORDER,
+                                intOverrideValue = 2000),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.PROMINENT,
+                                booleanOverrideValue = true)}),
                 @AdminPresentationMergeOverride(name = "phone.isDefault", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerPhoneAdminPresentation.GroupName.Defaults)),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                        overrideValue = CustomerPhoneAdminPresentation.GroupName.Defaults)),
                 @AdminPresentationMergeOverride(name = "phone.countryCode", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                        overrideValue = "HIDDEN_ALL")),
                 @AdminPresentationMergeOverride(name = "phone.extension", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                        overrideValue = "HIDDEN_ALL")),
                 @AdminPresentationMergeOverride(name = "phone.isActive", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL"))
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                        overrideValue = "HIDDEN_ALL"))
         }
 )
 public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPresentation {
@@ -76,7 +91,8 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerPhoneImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl")
             }
     )
     @Column(name = "CUSTOMER_PHONE_ID")
@@ -88,7 +104,8 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
             groupOrder = 1, prominent = true, gridOrder = 1)
     protected String phoneName;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
@@ -180,7 +197,8 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     }
 
     @Override
-    public <G extends CustomerPhone> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CustomerPhone> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

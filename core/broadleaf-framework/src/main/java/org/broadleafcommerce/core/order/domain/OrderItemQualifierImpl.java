@@ -158,9 +158,9 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
             if (other.orderItem != null) return false;
         } else if (!orderItem.equals(other.orderItem)) return false;
         if (quantity == null) {
-            if (other.quantity != null) return false;
-        } else if (!quantity.equals(other.quantity)) return false;
-        return true;
+            return other.quantity == null;
+        } else
+            return quantity.equals(other.quantity);
     }
 
 }

@@ -162,7 +162,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     
     @Override
     public Boolean isTaxable() {
-        return feeTaxable == null ? true : feeTaxable;
+        return feeTaxable == null || feeTaxable;
     }
 
     @Override
@@ -264,13 +264,9 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
             return false;
         }
         if (reportingCode == null) {
-            if (other.reportingCode != null) {
-                return false;
-            }
-        } else if (!reportingCode.equals(other.reportingCode)) {
-            return false;
-        }
-        return true;
+            return other.reportingCode == null;
+        } else
+            return reportingCode.equals(other.reportingCode);
     }
 
 }

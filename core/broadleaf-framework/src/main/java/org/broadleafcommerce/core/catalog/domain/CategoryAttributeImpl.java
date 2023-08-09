@@ -10,23 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -42,48 +32,62 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 /**
- * 
  * @author Phillip Verheyden
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_CATEGORY_ATTRIBUTE")
+@Table(name = "BLC_CATEGORY_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
 @AdminPresentationClass(friendlyName = "baseCategoryAttribute")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategoryAttributeImpl implements CategoryAttribute {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(generator= "CategoryAttributeId")
+    @GeneratedValue(generator = "CategoryAttributeId")
     @GenericGenerator(
-        name="CategoryAttributeId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="CategoryAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl")
-        }
+            name = "CategoryAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CategoryAttributeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl")
+            }
     )
     @Column(name = "CATEGORY_ATTRIBUTE_ID")
     protected Long id;
-    
-    @Column(name = "NAME", nullable=false)
-    @Index(name="CATEGORYATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order=-1, group = "ProductAttributeImpl_Description", prominent=true, gridOrder = 1)
+
+    @Column(name = "NAME", nullable = false)
+    @Index(name = "CATEGORYATTRIBUTE_NAME_INDEX", columnNames = {"NAME"})
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order = -1,
+            group = "ProductAttributeImpl_Description", prominent = true, gridOrder = 1)
     protected String name;
 
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order = 2,
+            group = "ProductAttributeImpl_Description", prominent = true)
     protected String value;
-    
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
+
+    @ManyToOne(targetEntity = CategoryImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="CATEGORYATTRIBUTE_INDEX", columnNames={"CATEGORY_ID"})
+    @Index(name = "CATEGORYATTRIBUTE_INDEX", columnNames = {"CATEGORY_ID"})
     protected Category category;
 
     @Override
@@ -174,7 +178,8 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     }
 
     @Override
-    public <G extends CategoryAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CategoryAttribute> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -185,6 +190,6 @@ public class CategoryAttributeImpl implements CategoryAttribute {
         }
         cloned.setName(name);
         cloned.setValue(value);
-        return  createResponse;
+        return createResponse;
     }
 }

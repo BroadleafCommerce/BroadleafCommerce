@@ -17,14 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -38,6 +30,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+
 
 /**
  * @author jfischer
@@ -46,7 +47,8 @@ import org.hibernate.annotations.Parameter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_RULE")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
@@ -61,7 +63,8 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentRuleImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl")
             }
     )
     @Column(name = "SC_RULE_ID")
@@ -115,11 +118,9 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
         }
 
         if (matchRule == null) {
-            if (other.matchRule != null)
-                return false;
-        } else if (!matchRule.equals(other.matchRule))
-            return false;
-        return true;
+            return other.matchRule == null;
+        } else
+            return matchRule.equals(other.matchRule);
     }
 
     @Override
@@ -131,7 +132,8 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
     }
 
     @Override
-    public <G extends StructuredContentRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentRule> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

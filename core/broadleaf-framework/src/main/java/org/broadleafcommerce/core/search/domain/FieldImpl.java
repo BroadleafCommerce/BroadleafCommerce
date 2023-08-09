@@ -17,14 +17,6 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -45,9 +37,19 @@ import org.hibernate.annotations.Parameter;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD", indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
+@Table(name = "BLC_FIELD",
+        indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
@@ -65,11 +67,13 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.FieldImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.FieldImpl")
             }
     )
     @Column(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     // This is a broadleaf enumeration
@@ -156,7 +160,8 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName) {
-        this.overrideGeneratedPropertyName = overrideGeneratedPropertyName != null && overrideGeneratedPropertyName;
+        this.overrideGeneratedPropertyName =
+                overrideGeneratedPropertyName != null && overrideGeneratedPropertyName;
     }
 
     @Override
@@ -192,13 +197,15 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     @Deprecated
     @Override
     public List<SearchConfig> getSearchConfigs() {
-        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
+        throw new UnsupportedOperationException(
+                "The default Field implementation does not support search configs");
     }
 
     @Deprecated
     @Override
     public void setSearchConfigs(List<SearchConfig> searchConfigs) {
-        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
+        throw new UnsupportedOperationException(
+                "The default Field implementation does not support search configs");
     }
 
     @Override
@@ -207,7 +214,8 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     }
 
     @Override
-    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws
+    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws
             CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -235,7 +243,8 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
         }
         Field other = (Field) obj;
 
-        return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
+        return getEntityType().getType().equals(other.getEntityType().getType())
+                && getPropertyName().equals(other.getPropertyName());
 
     }
 

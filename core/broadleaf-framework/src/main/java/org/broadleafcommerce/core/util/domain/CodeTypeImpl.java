@@ -171,11 +171,9 @@ public class CodeTypeImpl implements CodeType {
         } else if (!key.equals(other.key))
             return false;
         if (modifiable == null) {
-            if (other.modifiable != null)
-                return false;
-        } else if (!modifiable.equals(other.modifiable))
-            return false;
-        return true;
+            return other.modifiable == null;
+        } else
+            return modifiable.equals(other.modifiable);
     }
 
 

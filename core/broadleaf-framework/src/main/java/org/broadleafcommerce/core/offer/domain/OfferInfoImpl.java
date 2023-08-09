@@ -10,12 +10,22 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.domain;
+
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -28,15 +38,6 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -46,22 +47,24 @@ public class OfferInfoImpl implements OfferInfo {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "OfferInfoId")
+    @GeneratedValue(generator = "OfferInfoId")
     @GenericGenerator(
-        name="OfferInfoId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OfferInfoImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferInfoImpl")
-        }
+            name = "OfferInfoId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OfferInfoImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferInfoImpl")
+            }
     )
     @Column(name = "OFFER_INFO_ID")
     protected Long id;
 
     @ElementCollection
-    @MapKeyColumn(name="FIELD_NAME")
-    @Column(name="FIELD_VALUE")
-    @CollectionTable(name="BLC_OFFER_INFO_FIELDS", joinColumns=@JoinColumn(name="OFFER_INFO_FIELDS_ID"))
+    @MapKeyColumn(name = "FIELD_NAME")
+    @Column(name = "FIELD_VALUE")
+    @CollectionTable(name = "BLC_OFFER_INFO_FIELDS",
+            joinColumns = @JoinColumn(name = "OFFER_INFO_FIELDS_ID"))
     @BatchSize(size = 50)
     protected Map<String, String> fieldValues = new HashMap<String, String>();
 
@@ -116,16 +119,16 @@ public class OfferInfoImpl implements OfferInfo {
     }
 
     @Override
-    public <G extends OfferInfo> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OfferInfo> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         OfferInfo cloned = createResponse.getClone();
-        for(Map.Entry<String,String> entry : fieldValues.entrySet())
-        {
-            cloned.getFieldValues().put(entry.getKey(),entry.getValue());
+        for (Map.Entry<String, String> entry : fieldValues.entrySet()) {
+            cloned.getFieldValues().put(entry.getKey(), entry.getValue());
         }
-        return  createResponse;
+        return createResponse;
     }
 }

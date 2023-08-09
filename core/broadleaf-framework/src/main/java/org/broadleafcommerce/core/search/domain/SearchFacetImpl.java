@@ -285,7 +285,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
 
     @Override
     public Boolean getRequiresAllDependentFacets() {
-        return requiresAllDependentFacets == null ? false : requiresAllDependentFacets;
+        return requiresAllDependentFacets != null && requiresAllDependentFacets;
     }
 
     @Override

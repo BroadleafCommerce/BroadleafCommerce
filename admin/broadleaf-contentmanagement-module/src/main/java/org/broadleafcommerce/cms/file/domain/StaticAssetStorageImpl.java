@@ -17,6 +17,14 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.Length;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.sql.Blob;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,13 +33,6 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.hibernate.Length;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-
-import java.sql.Blob;
 
 /**
  * Created by jfischer
@@ -50,7 +51,8 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "StaticAssetStorageImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl")
             }
     )
     @Column(name = "STATIC_ASSET_STRG_ID")

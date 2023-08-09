@@ -129,7 +129,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     }
 
     public void checkCloneable(OrderItemAttribute itemAttribute) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = itemAttribute.getClass().getMethod("clone", new Class[]{});
+        Method cloneMethod = itemAttribute.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemAttribute.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");

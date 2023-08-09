@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,13 +32,14 @@ import jakarta.persistence.Table;
 
 /**
  * CategorySiteMapGenerator is controlled by this configuration.
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 @Entity
 @Table(name = "BLC_CAT_SITE_MAP_GEN_CFG")
 @AdminPresentationClass(friendlyName = "CategorySiteMapGeneratorConfigurationImpl")
-public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CategorySiteMapGeneratorConfiguration {
+public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl
+        implements CategorySiteMapGeneratorConfiguration {
 
     private static final long serialVersionUID = 1L;
 
@@ -94,7 +95,8 @@ public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorC
         if (obj == null || !getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
-        CategorySiteMapGeneratorConfigurationImpl rhs = (CategorySiteMapGeneratorConfigurationImpl) obj;
+        CategorySiteMapGeneratorConfigurationImpl rhs =
+                (CategorySiteMapGeneratorConfigurationImpl) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(this.rootCategory, rhs.rootCategory)

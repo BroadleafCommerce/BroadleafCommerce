@@ -260,7 +260,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     }
 
     public void checkCloneable(Site site) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = site.getClass().getMethod("clone", new Class[]{});
+        Method cloneMethod = site.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !site.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
@@ -283,7 +283,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             clone.setSiteResolutionType(getSiteResolutionType());
             clone.setSiteIdentifierValue(getSiteIdentifierValue());
             clone.setDefaultLocale(getDefaultLocale());
-            ((Status) clone).setArchived(getArchived());
+            clone.setArchived(getArchived());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -303,9 +303,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
         SiteImpl site = (SiteImpl) o;
 
-        if (id != null && site.id != null && id.equals(site.id)) return true;
-
-        return false;
+        return id != null && site.id != null && id.equals(site.id);
     }
 
     @Override

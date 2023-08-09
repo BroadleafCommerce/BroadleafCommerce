@@ -17,16 +17,6 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXref;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXrefImpl;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -47,6 +37,17 @@ import org.hibernate.annotations.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+
 /**
  * Created by bpolster.
  */
@@ -55,7 +56,8 @@ import java.util.List;
 @Table(name = "BLC_FLD_GROUP")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true)
 })
 public class FieldGroupImpl implements FieldGroup, ProfileEntity {
 
@@ -68,7 +70,8 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldGroupImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.field.domain.FieldGroupImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.field.domain.FieldGroupImpl")
             }
     )
     @Column(name = "FLD_GROUP_ID")
@@ -80,7 +83,8 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Column(name = "INIT_COLLAPSED_FLAG")
     protected Boolean initCollapsedFlag = false;
 
-    @OneToMany(mappedBy = "fieldGroup", targetEntity = FieldDefinitionImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "fieldGroup", targetEntity = FieldDefinitionImpl.class,
+            cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("fieldOrder")
     @BatchSize(size = 20)
@@ -91,12 +95,14 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @Column(name = "IS_MASTER_FIELD_GROUP")
     protected Boolean isMasterFieldGroup = false;
 
-    @OneToMany(targetEntity = StructuredContentFieldGroupXrefImpl.class, mappedBy = "fieldGroup", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(targetEntity = StructuredContentFieldGroupXrefImpl.class, mappedBy = "fieldGroup",
+            cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
     @ClonePolicyCollectionOverride
-    protected List<StructuredContentFieldGroupXref> fieldGroupXrefs = new ArrayList<StructuredContentFieldGroupXref>();
+    protected List<StructuredContentFieldGroupXref> fieldGroupXrefs =
+            new ArrayList<StructuredContentFieldGroupXref>();
 
     @Override
     public List<StructuredContentFieldGroupXref> getFieldGroupXrefs() {
@@ -149,7 +155,8 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     }
 
     @Override
-    public <G extends FieldGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+    public <G extends FieldGroup> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context)
             throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -162,11 +169,13 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
         cloned.setInitCollapsedFlag(initCollapsedFlag);
 
         for (FieldDefinition fieldDefinition : fieldDefinitions) {
-            FieldDefinition clonedDef = fieldDefinition.createOrRetrieveCopyInstance(context).getClone();
+            FieldDefinition clonedDef =
+                    fieldDefinition.createOrRetrieveCopyInstance(context).getClone();
             cloned.getFieldDefinitions().add(clonedDef);
         }
         for (StructuredContentFieldGroupXref entry : fieldGroupXrefs) {
-            CreateResponse<StructuredContentFieldGroupXref> clonedDef = entry.createOrRetrieveCopyInstance(context);
+            CreateResponse<StructuredContentFieldGroupXref> clonedDef =
+                    entry.createOrRetrieveCopyInstance(context);
             clonedDef.getClone().setFieldGroup(cloned);
             cloned.getFieldGroupXrefs().add(clonedDef.getClone());
         }

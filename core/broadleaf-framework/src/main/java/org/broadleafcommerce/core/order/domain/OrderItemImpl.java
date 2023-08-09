@@ -619,7 +619,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Boolean isTaxable() {
-        return itemTaxable == null ? true : itemTaxable;
+        return itemTaxable == null || itemTaxable;
     }
 
     @Override
@@ -865,7 +865,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
+        Method cloneMethod = orderItem.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") &&
                 !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
@@ -1032,13 +1032,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             return false;
         }
         if (parentOrderItem == null) {
-            if (other.parentOrderItem != null) {
-                return false;
-            }
-        } else if (!parentOrderItem.equals(other.parentOrderItem)) {
-            return false;
-        }
-        return true;
+            return other.parentOrderItem == null;
+        } else
+            return parentOrderItem.equals(other.parentOrderItem);
     }
 
     @Override

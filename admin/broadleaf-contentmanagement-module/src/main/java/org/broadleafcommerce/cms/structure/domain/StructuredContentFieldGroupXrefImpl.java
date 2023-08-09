@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -35,6 +26,16 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * @author Phillip Verheyden (phillipuniverse)
@@ -53,8 +54,10 @@ public class StructuredContentFieldGroupXrefImpl implements StructuredContentFie
             name = "StructuredContentFieldGroupXrefId",
             type = IdOverrideTableGenerator.class,
             parameters = {
-                    @Parameter(name = "segment_value", value = "StructuredContentFieldGroupXrefImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXrefImpl")
+                    @Parameter(name = "segment_value",
+                            value = "StructuredContentFieldGroupXrefImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXrefImpl")
             }
     )
     @Column(name = "BLC_SC_FLDGRP_XREF_ID")
@@ -102,7 +105,8 @@ public class StructuredContentFieldGroupXrefImpl implements StructuredContentFie
     }
 
     @Override
-    public <G extends StructuredContentFieldGroupXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentFieldGroupXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -111,10 +115,12 @@ public class StructuredContentFieldGroupXrefImpl implements StructuredContentFie
         StructuredContentFieldGroupXref cloned = createResponse.getClone();
         cloned.setGroupOrder(groupOrder);
 
-        CreateResponse<StructuredContentFieldTemplate> clonedTemplate = template.createOrRetrieveCopyInstance(context);
+        CreateResponse<StructuredContentFieldTemplate> clonedTemplate =
+                template.createOrRetrieveCopyInstance(context);
         cloned.setTemplate(clonedTemplate.getClone());
 
-        CreateResponse<FieldGroup> clonedFieldGroup = fieldGroup.createOrRetrieveCopyInstance(context);
+        CreateResponse<FieldGroup> clonedFieldGroup =
+                fieldGroup.createOrRetrieveCopyInstance(context);
         cloned.setFieldGroup(clonedFieldGroup.getClone());
 
         return createResponse;

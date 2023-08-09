@@ -10,12 +10,18 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.payment.domain.secure;
+
+import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,26 +32,22 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_BANK_ACCOUNT_PAYMENT", indexes = {@Index(name = "BANKACCOUNT_INDEX", columnList = "REFERENCE_NUMBER")})
+@Table(name = "BLC_BANK_ACCOUNT_PAYMENT",
+        indexes = {@Index(name = "BANKACCOUNT_INDEX", columnList = "REFERENCE_NUMBER")})
 public class BankAccountPaymentImpl implements BankAccountPayment {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Rather than constructing directly, use {@link SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}
+     * Rather than constructing directly, use
+     * {@link
+     * SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}
      * so that the appropriate {@link EncryptionModule} can be hooked up to this entity
      */
     protected BankAccountPaymentImpl() {
@@ -59,23 +61,24 @@ public class BankAccountPaymentImpl implements BankAccountPayment {
     @Id
     @GeneratedValue(generator = "BankPaymentId")
     @GenericGenerator(
-            name="BankPaymentId",
-            type= IdOverrideTableGenerator.class,
+            name = "BankPaymentId",
+            type = IdOverrideTableGenerator.class,
             parameters = {
-                @Parameter(name="segment_value", value="BankAccountPaymentImpl"),
-                @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl")
+                    @Parameter(name = "segment_value", value = "BankAccountPaymentImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl")
             }
-        )
+    )
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
-    @Column(name = "REFERENCE_NUMBER", nullable=false)
+    @Column(name = "REFERENCE_NUMBER", nullable = false)
     protected String referenceNumber;
 
-    @Column(name = "ACCOUNT_NUMBER", nullable=false)
+    @Column(name = "ACCOUNT_NUMBER", nullable = false)
     protected String accountNumber;
 
-    @Column(name = "ROUTING_NUMBER", nullable=false)
+    @Column(name = "ROUTING_NUMBER", nullable = false)
     protected String routingNumber;
 
     @Override
@@ -163,11 +166,9 @@ public class BankAccountPaymentImpl implements BankAccountPayment {
         } else if (!referenceNumber.equals(other.referenceNumber))
             return false;
         if (routingNumber == null) {
-            if (other.routingNumber != null)
-                return false;
-        } else if (!routingNumber.equals(other.routingNumber))
-            return false;
-        return true;
+            return other.routingNumber == null;
+        } else
+            return routingNumber.equals(other.routingNumber);
     }
 
 }

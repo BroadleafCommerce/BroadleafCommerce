@@ -17,14 +17,6 @@
  */
 package org.broadleafcommerce.common.config.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -44,11 +36,19 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+
 /**
  * Allows the storage and retrieval of System Properties in the database
  * <p/>
- * User: Kelly Tisdell
- * Date: 6/20/12
+ * User: Kelly Tisdell Date: 6/20/12
  */
 @Entity
 @Table(name = "BLC_SYSTEM_PROPERTY", indexes = {
@@ -60,7 +60,8 @@ import org.hibernate.annotations.Parameter;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX)
 })
-public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, SystemPropertyAdminPresentation {
+public class SystemPropertyImpl
+        implements SystemProperty, AdminMainEntity, SystemPropertyAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,7 +72,8 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "SystemPropertyImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.config.domain.SystemPropertyImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.common.config.domain.SystemPropertyImpl")
             }
     )
     @Column(name = "BLC_SYSTEM_PROPERTY_ID")
@@ -82,7 +84,8 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
             group = GroupName.General, order = FieldOrder.ATTRIBUTE_NAME,
             prominent = true, gridOrder = 1000,
             requiredOverride = RequiredOverride.REQUIRED,
-            validationConfigurations = @ValidationConfiguration(validationImplementation = "blSystemPropertyAttributeNameValidator"))
+            validationConfigurations = @ValidationConfiguration(
+                    validationImplementation = "blSystemPropertyAttributeNameValidator"))
     protected String name;
 
     @Column(name = "OVERRIDE_GENERATED_PROP_NAME")
@@ -213,7 +216,8 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
     }
 
     @Override
-    public <G extends SystemProperty> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends SystemProperty> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping(PreviewTemplateController.REQUEST_MAPPING_PREFIX + "**")
 public class PreviewTemplateController {
-    private String templatePathPrefix = "templates";
+    private final String templatePathPrefix = "templates";
     public static final String REQUEST_MAPPING_PREFIX = "/preview/";
     
     @RequestMapping

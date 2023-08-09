@@ -10,12 +10,18 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.payment.domain.secure;
+
+import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,11 +32,6 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -56,13 +57,13 @@ public class GiftCardPaymentImpl implements GiftCardPayment {
     @Id
     @GeneratedValue(generator = "GiftCardPaymentId")
     @GenericGenerator(
-            name="GiftCardPaymentId",
-            type= IdOverrideTableGenerator.class,
+            name = "GiftCardPaymentId",
+            type = IdOverrideTableGenerator.class,
             parameters = {
-                @Parameter(name="segment_value", value="GiftCardPaymentImpl"),
-                @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl")
+                    @Parameter(name = "segment_value", value = "GiftCardPaymentImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl")
             }
-        )
+    )
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
@@ -160,11 +161,9 @@ public class GiftCardPaymentImpl implements GiftCardPayment {
         } else if (!pin.equals(other.pin))
             return false;
         if (referenceNumber == null) {
-            if (other.referenceNumber != null)
-                return false;
-        } else if (!referenceNumber.equals(other.referenceNumber))
-            return false;
-        return true;
+            return other.referenceNumber == null;
+        } else
+            return referenceNumber.equals(other.referenceNumber);
     }
 
 }

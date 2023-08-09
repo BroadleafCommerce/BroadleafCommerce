@@ -10,23 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -43,13 +33,25 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategoryXrefImpl implements CategoryXref {
@@ -58,23 +60,24 @@ public class CategoryXrefImpl implements CategoryXref {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "CategoryXrefId")
+    @GeneratedValue(generator = "CategoryXrefId")
     @GenericGenerator(
-        name="CategoryXrefId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="CategoryXrefImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl")
-        }
+            name = "CategoryXrefId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CategoryXrefImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl")
+            }
     )
     @Column(name = "CATEGORY_XREF_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category = new CategoryImpl();
 
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SUB_CATEGORY_ID")
     protected Category subCategory = new CategoryImpl();
 
@@ -138,14 +141,19 @@ public class CategoryXrefImpl implements CategoryXref {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if (!getClass().isAssignableFrom(o.getClass())) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (!getClass().isAssignableFrom(o.getClass()))
+            return false;
 
         CategoryXrefImpl that = (CategoryXrefImpl) o;
 
-        if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (subCategory != null ? !subCategory.equals(that.subCategory) : that.subCategory != null) return false;
+        if (category != null ? !category.equals(that.category) : that.category != null)
+            return false;
+        if (subCategory != null ? !subCategory.equals(that.subCategory) : that.subCategory != null)
+            return false;
 
         return true;
     }
@@ -158,7 +166,8 @@ public class CategoryXrefImpl implements CategoryXref {
     }
 
     @Override
-    public <G extends CategoryXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CategoryXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

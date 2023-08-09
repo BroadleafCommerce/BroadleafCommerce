@@ -17,14 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -36,6 +28,15 @@ import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+
 /**
  * @author bpolster
  */
@@ -43,7 +44,8 @@ import org.hibernate.annotations.Parameter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_RULE")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageRuleImpl implements PageRule, ProfileEntity {
@@ -57,7 +59,8 @@ public class PageRuleImpl implements PageRule, ProfileEntity {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "PageRuleImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageRuleImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.page.domain.PageRuleImpl")
             }
     )
     @Column(name = "PAGE_RULE_ID")
@@ -111,11 +114,9 @@ public class PageRuleImpl implements PageRule, ProfileEntity {
         }
 
         if (matchRule == null) {
-            if (other.matchRule != null)
-                return false;
-        } else if (!matchRule.equals(other.matchRule))
-            return false;
-        return true;
+            return other.matchRule == null;
+        } else
+            return matchRule.equals(other.matchRule);
     }
 
     @Override
@@ -127,7 +128,8 @@ public class PageRuleImpl implements PageRule, ProfileEntity {
     }
 
     @Override
-    public <G extends PageRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends PageRule> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

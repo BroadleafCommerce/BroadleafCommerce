@@ -17,16 +17,6 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.annotations.BatchSize;
@@ -37,6 +27,17 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 
 /**
  * Created by jfischer
@@ -59,7 +60,8 @@ public class FieldEnumerationImpl implements FieldEnumeration {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldEnumerationImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl")
             }
     )
     @Column(name = "FLD_ENUM_ID")
@@ -68,8 +70,10 @@ public class FieldEnumerationImpl implements FieldEnumeration {
     @Column(name = "NAME")
     protected String name;
 
-    @OneToMany(mappedBy = "fieldEnumeration", targetEntity = FieldEnumerationItemImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "fieldEnumeration", targetEntity = FieldEnumerationItemImpl.class,
+            cascade = {CascadeType.ALL})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("fieldOrder")
     @BatchSize(size = 20)

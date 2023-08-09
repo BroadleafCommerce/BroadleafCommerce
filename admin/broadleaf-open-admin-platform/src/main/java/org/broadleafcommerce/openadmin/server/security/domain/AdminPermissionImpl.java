@@ -17,19 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -58,6 +45,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 /**
  * @author jfischer
  */
@@ -67,7 +68,8 @@ import java.util.Set;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
 @AdminPresentationClass(friendlyName = "AdminPermissionImpl_baseAdminPermission")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINPERMISSION)
+        @DirectCopyTransformMember(
+                templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINPERMISSION)
 })
 public class AdminPermissionImpl implements AdminPermission {
 
@@ -81,15 +83,18 @@ public class AdminPermissionImpl implements AdminPermission {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminPermissionImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl")
             }
     )
     @Column(name = "ADMIN_PERMISSION_ID")
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Admin_Permission_ID", group = "AdminPermissionImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Admin_Permission_ID",
+            group = "AdminPermissionImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Name", order = 3000, group = "AdminPermissionImpl_Permission")
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Name", order = 3000,
+            group = "AdminPermissionImpl_Permission")
     protected String name;
 
     @Column(name = "PERMISSION_TYPE", nullable = false)
@@ -100,44 +105,67 @@ public class AdminPermissionImpl implements AdminPermission {
     protected String type;
 
     @Column(name = "DESCRIPTION", nullable = false)
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Description", order = 1000, group = "AdminPermissionImpl_Permission",
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Description", order = 1000,
+            group = "AdminPermissionImpl_Permission",
             prominent = true, gridOrder = 2000)
     protected String description;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
-    @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
+    @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF",
+            joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID",
+                    referencedColumnName = "ADMIN_ROLE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     @AdminPresentation(excluded = true)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
-    @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"))
+    @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF",
+            joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ADMIN_USER_ID",
+                    referencedColumnName = "ADMIN_USER_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     @AdminPresentation(excluded = true)
     protected Set<AdminUser> allUsers = new HashSet<AdminUser>();
 
-    @OneToMany(mappedBy = "adminPermission", targetEntity = AdminPermissionQualifiedEntityImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "adminPermission",
+            targetEntity = AdminPermissionQualifiedEntityImpl.class, cascade = {CascadeType.ALL},
+            orphanRemoval = true)
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "entityPermissionsTitle",
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP,
+            friendlyName = "entityPermissionsTitle",
             order = 2000)
-    protected List<AdminPermissionQualifiedEntity> qualifiedEntities = new ArrayList<AdminPermissionQualifiedEntity>();
+    protected List<AdminPermissionQualifiedEntity> qualifiedEntities =
+            new ArrayList<AdminPermissionQualifiedEntity>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
-    @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF",
+            joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "childPermissionsTitle",
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP,
+            friendlyName = "childPermissionsTitle",
             order = 1000,
             manyToField = "allParentPermissions",
-            operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
+            operationTypes = @AdminPresentationOperationTypes(
+                    removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected List<AdminPermission> allChildPermissions = new ArrayList<AdminPermission>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
-    @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF", joinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF",
+            joinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
     @BatchSize(size = 50)
     protected List<AdminPermission> allParentPermissions = new ArrayList<AdminPermission>();
@@ -219,11 +247,14 @@ public class AdminPermissionImpl implements AdminPermission {
         this.allUsers = allUsers;
     }
 
-    public void checkCloneable(AdminPermission adminPermission) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = adminPermission.getClass().getMethod("clone", new Class[]{});
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminPermission.getClass().getName().startsWith("org.broadleafcommerce")) {
+    public void checkCloneable(AdminPermission adminPermission)
+            throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = adminPermission.getClass().getMethod("clone", new Class[] {});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !adminPermission.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+            throw new CloneNotSupportedException(
+                    "Custom extensions and implementations should implement clone.");
         }
     }
 
@@ -235,7 +266,9 @@ public class AdminPermissionImpl implements AdminPermission {
             try {
                 checkCloneable(clone);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+                LOG.warn(
+                        "Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                                + clone.getClass().getName(), e);
             }
             clone.setId(id);
             clone.setName(name);

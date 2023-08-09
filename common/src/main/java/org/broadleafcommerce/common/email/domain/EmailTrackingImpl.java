@@ -211,11 +211,9 @@ public class EmailTrackingImpl implements EmailTracking {
         } else if (!emailTrackingOpens.equals(other.emailTrackingOpens))
             return false;
         if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        return true;
+            return other.type == null;
+        } else
+            return type.equals(other.type);
     }
 
 }

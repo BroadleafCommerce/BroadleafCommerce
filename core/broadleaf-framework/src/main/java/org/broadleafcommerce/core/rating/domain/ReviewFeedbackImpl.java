@@ -10,12 +10,22 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.rating.domain;
+
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,15 +37,6 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -50,19 +51,20 @@ public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
     @Id
     @GeneratedValue(generator = "ReviewFeedbackId")
     @GenericGenerator(
-        name="ReviewFeedbackId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="ReviewFeedbackImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl")
-        }
+            name = "ReviewFeedbackId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ReviewFeedbackImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl")
+            }
     )
     @Column(name = "REVIEW_FEEDBACK_ID")
     protected Long id;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName="ReviewFeedback_customer")
+    @AdminPresentation(friendlyName = "ReviewFeedback_customer")
     @AdminPresentationToOneLookup
     protected Customer customer;
 

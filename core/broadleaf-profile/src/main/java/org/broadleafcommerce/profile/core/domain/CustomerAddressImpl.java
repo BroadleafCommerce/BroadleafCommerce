@@ -17,19 +17,6 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
@@ -49,18 +36,37 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 @Entity
-@EntityListeners(value = {TemporalTimestampListener.class, CustomerAddressPersistedEntityListener.class})
+@EntityListeners(
+        value = {TemporalTimestampListener.class, CustomerAddressPersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ADDRESS", indexes = {@Index(name = "CUSTOMERADDRESS_ADDRESS_INDEX", columnList = "ADDRESS_ID")})
+@Table(name = "BLC_CUSTOMER_ADDRESS",
+        indexes = {@Index(name = "CUSTOMERADDRESS_ADDRESS_INDEX", columnList = "ADDRESS_ID")})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "address.firstName", mergeEntries =
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "address.lastName", mergeEntries =
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "address.addressLine1", mergeEntries =
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true))
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
+                booleanOverrideValue = true))
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @SQLDelete(sql = "UPDATE BLC_CUSTOMER_ADDRESS SET ARCHIVED = 'Y' WHERE CUSTOMER_ADDRESS_ID = ?")
@@ -75,7 +81,8 @@ public class CustomerAddressImpl implements CustomerAddress {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerAddressImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.CustomerAddressImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.CustomerAddressImpl")
             }
     )
     @Column(name = "CUSTOMER_ADDRESS_ID")
@@ -83,15 +90,18 @@ public class CustomerAddressImpl implements CustomerAddress {
 
     @Column(name = "ADDRESS_NAME")
     @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order = 1,
-            group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true, gridOrder = 1)
+            group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true,
+            gridOrder = 1)
     protected String addressName;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = AddressImpl.class, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+            targetEntity = AddressImpl.class, optional = false)
     @JoinColumn(name = "ADDRESS_ID")
     protected Address address;
 
@@ -224,7 +234,8 @@ public class CustomerAddressImpl implements CustomerAddress {
 
 
     @Override
-    public <G extends CustomerAddress> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CustomerAddress> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

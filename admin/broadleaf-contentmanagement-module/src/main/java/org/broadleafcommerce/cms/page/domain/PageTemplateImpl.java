@@ -17,19 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
@@ -58,6 +45,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 /**
  * Created by bpolster.
  */
@@ -65,9 +66,11 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_TMPLT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageTemplateImpl_basePageTemplate")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "PageTemplateImpl_basePageTemplate")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileEntity {
@@ -82,7 +85,8 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "PageTemplateImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageTemplateImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.page.domain.PageTemplateImpl")
             }
     )
     @Column(name = "PAGE_TMPLT_ID")
@@ -111,12 +115,14 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @Deprecated
     protected Locale locale;
 
-    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = {CascadeType.ALL}, mappedBy = "pageTemplate")
+    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = {CascadeType.ALL},
+            mappedBy = "pageTemplate")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("groupOrder")
     @BatchSize(size = 20)
     @ClonePolicyCollectionOverride
-    protected List<PageTemplateFieldGroupXref> fieldGroups = new ArrayList<PageTemplateFieldGroupXref>();
+    protected List<PageTemplateFieldGroupXref> fieldGroups =
+            new ArrayList<PageTemplateFieldGroupXref>();
 
     @Transient
     protected List<FieldGroup> legacyFieldGroups = new ArrayList<FieldGroup>();
@@ -208,7 +214,8 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     }
 
     @Override
-    public <G extends PageTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends PageTemplate> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -219,7 +226,8 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
         cloned.setTemplatePath(templatePath);
         cloned.setLocale(locale);
         for (PageTemplateFieldGroupXref fieldGroup : fieldGroups) {
-            CreateResponse<PageTemplateFieldGroupXref> clonedGroupResponse = fieldGroup.createOrRetrieveCopyInstance(context);
+            CreateResponse<PageTemplateFieldGroupXref> clonedGroupResponse =
+                    fieldGroup.createOrRetrieveCopyInstance(context);
             PageTemplateFieldGroupXref clonedGroup = clonedGroupResponse.getClone();
             cloned.getFieldGroupXrefs().add(clonedGroup);
         }

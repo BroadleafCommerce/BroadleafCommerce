@@ -17,14 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -38,6 +30,15 @@ import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 /**
  * @author elbertbautista
@@ -58,24 +59,29 @@ public class AdminModuleImpl implements AdminModule {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminModuleImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl")
             }
     )
     @Column(name = "ADMIN_MODULE_ID")
-    @AdminPresentation(friendlyName = "AdminModuleImpl_Admin_Module_ID", group = "AdminModuleImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AdminModuleImpl_Admin_Module_ID",
+            group = "AdminModuleImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
     @Index(name = "ADMINMODULE_NAME_INDEX", columnNames = {"NAME"})
-    @AdminPresentation(friendlyName = "AdminModuleImpl_Name", order = 1, group = "AdminModuleImpl_Module", prominent = true)
+    @AdminPresentation(friendlyName = "AdminModuleImpl_Name", order = 1,
+            group = "AdminModuleImpl_Module", prominent = true)
     protected String name;
 
     @Column(name = "MODULE_KEY", nullable = false)
-    @AdminPresentation(friendlyName = "AdminModuleImpl_Module_Key", order = 2, group = "AdminModuleImpl_Module", prominent = true)
+    @AdminPresentation(friendlyName = "AdminModuleImpl_Module_Key", order = 2,
+            group = "AdminModuleImpl_Module", prominent = true)
     protected String moduleKey;
 
     @Column(name = "ICON", nullable = true)
-    @AdminPresentation(friendlyName = "AdminModuleImpl_Icon", order = 3, group = "AdminModuleImpl_Module", prominent = true)
+    @AdminPresentation(friendlyName = "AdminModuleImpl_Icon", order = 3,
+            group = "AdminModuleImpl_Module", prominent = true)
     protected String icon;
 
     @OneToMany(mappedBy = "module", targetEntity = AdminSectionImpl.class)
@@ -84,7 +90,8 @@ public class AdminModuleImpl implements AdminModule {
     protected List<AdminSection> sections = new ArrayList<AdminSection>();
 
     @Column(name = "DISPLAY_ORDER", nullable = true)
-    @AdminPresentation(friendlyName = "AdminModuleImpl_Display_Order", order = 4, group = "AdminModuleImpl_Module", prominent = true)
+    @AdminPresentation(friendlyName = "AdminModuleImpl_Display_Order", order = 4,
+            group = "AdminModuleImpl_Module", prominent = true)
     protected Integer displayOrder;
 
     @Override

@@ -17,18 +17,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -43,6 +31,19 @@ import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 /**
  * Created by bpolster.
  */
@@ -51,8 +52,10 @@ import org.hibernate.annotations.Parameter;
 @Table(name = "BLC_PAGE_FLD")
 @EntityListeners(value = {AdminAuditableListener.class})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 
 })
@@ -67,7 +70,8 @@ public class PageFieldImpl implements PageField, ProfileEntity {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "PageFieldImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageFieldImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.page.domain.PageFieldImpl")
             }
     )
     @Column(name = "PAGE_FLD_ID")
@@ -113,7 +117,8 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     @Override
     public String getValue() {
         if (stringValue != null && stringValue.length() > 0) {
-            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, stringValue);
+            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey,
+                    stringValue);
         } else {
             return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, lobValue);
         }
@@ -146,7 +151,8 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     }
 
     @Override
-    public <G extends PageField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends PageField> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
 
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {

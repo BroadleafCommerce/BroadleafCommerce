@@ -10,23 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
@@ -47,16 +37,30 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_MEDIA_MAP")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSkuMedia")
-@AdminPresentationClass(excludeFromPolymorphism = false, populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(excludeFromPolymorphism = false,
+        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneable<SkuMediaXrefImpl> {
+public class SkuMediaXrefImpl
+        implements SkuMediaXref, Media, MultiTenantCloneable<SkuMediaXrefImpl> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -72,20 +76,21 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
     }
 
     @Id
-    @GeneratedValue(generator= "SkuMediaId")
+    @GeneratedValue(generator = "SkuMediaId")
     @GenericGenerator(
-        name="SkuMediaId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="SkuMediaXrefImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl")
-        }
+            name = "SkuMediaId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SkuMediaXrefImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl")
+            }
     )
     @Column(name = "SKU_MEDIA_ID")
     protected Long id;
 
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = SkuImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "BLC_SKU_SKU_ID")
     @AdminPresentation(excluded = true)
     protected Sku sku;
@@ -96,7 +101,7 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
     @ClonePolicy
     protected Media media;
 
-    @Column(name = "MAP_KEY", nullable=false)
+    @Column(name = "MAP_KEY", nullable = false)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String key;
 
@@ -208,7 +213,8 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
     }
 
     @Override
-    public <G extends SkuMediaXrefImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends SkuMediaXrefImpl> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

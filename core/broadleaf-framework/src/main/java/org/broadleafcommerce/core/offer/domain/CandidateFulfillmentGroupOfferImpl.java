@@ -10,24 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
@@ -44,6 +33,18 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 @Entity
 @Table(name = "BLC_CANDIDATE_FG_OFFER", indexes = {
         @Index(name = "CANDIDATE_FG_INDEX", columnList = "FULFILLMENT_GROUP_ID"),
@@ -55,14 +56,16 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "CandidateFGOfferId")
+    @GeneratedValue(generator = "CandidateFGOfferId")
     @GenericGenerator(
-        name="CandidateFGOfferId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="CandidateFulfillmentGroupOfferImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl")
-        }
+            name = "CandidateFGOfferId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value",
+                            value = "CandidateFulfillmentGroupOfferImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl")
+            }
     )
     @Column(name = "CANDIDATE_FG_OFFER_ID")
     protected Long id;
@@ -71,11 +74,11 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
-    @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
+    @Column(name = "DISCOUNTED_PRICE", precision = 19, scale = 5)
     protected BigDecimal discountedPrice;
 
     @Transient
@@ -116,9 +119,12 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
 
     @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : BroadleafCurrencyUtils.getMoney(discountedPrice, getFulfillmentGroup().getOrder().getCurrency());
+        return discountedPrice == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(discountedPrice,
+                        getFulfillmentGroup().getOrder().getCurrency());
     }
-    
+
     @Override
     public void setDiscountedPrice(Money discountedPrice) {
         this.discountedPrice = discountedPrice.getAmount();

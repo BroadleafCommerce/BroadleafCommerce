@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,15 +51,18 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUST", indexes = {@Index(name = "POIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
+@Table(name = "BLC_PRORATED_ORDER_ITEM_ADJUST",
+        indexes = {@Index(name = "POIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
         @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
                 booleanOverrideValue = true))
 })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemAdjustmentImpl_baseProratedOrderItemAdjustment")
-public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustment, CurrencyCodeIdentifiable {
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "OrderItemAdjustmentImpl_baseProratedOrderItemAdjustment")
+public class ProratedOrderItemAdjustmentImpl
+        implements ProratedOrderItemAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
 
@@ -70,7 +73,8 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProratedOrderItemAdjustmentImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl")
             }
     )
     @Column(name = "PRORATED_ORDER_ITEM_ADJUST_ID")
@@ -81,30 +85,32 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
     @AdminPresentation(excluded = true)
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
     @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Offer", order = 1000,
             group = "OrderItemAdjustmentImpl_Description", prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
-    @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason", order = 2000)
+    @Column(name = "ADJUSTMENT_REASON", nullable = false)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason",
+            order = 2000)
     protected String reason;
 
-    @Column(name = "PRORATED_ADJUSTMENT_VALUE", nullable=false, precision = 19, scale = 5)
+    @Column(name = "PRORATED_ADJUSTMENT_VALUE", nullable = false, precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Value", order = 3000,
             fieldType = SupportedFieldType.MONEY, prominent = true,
             gridOrder = 2000)
     protected BigDecimal value = Money.ZERO.getAmount();
 
-    @Column(name = "PRORATED_QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Quantity", order = 4000,
+    @Column(name = "PRORATED_QUANTITY", nullable = false)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Quantity",
+            order = 4000,
             gridOrder = 3000, prominent = true)
     protected int quantity;
 
     @Override
-    public void init(OrderItem orderItem, Offer offer, String reason){
+    public void init(OrderItem orderItem, Offer offer, String reason) {
         this.orderItem = orderItem;
         this.offer = offer;
         this.reason = reason;
@@ -151,7 +157,9 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
 
     @Override
     public Money getValue() {
-        return value == null ? null : BroadleafCurrencyUtils.getMoney(value, getOrderItem().getOrder().getCurrency());
+        return value == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(value, getOrderItem().getOrder().getCurrency());
     }
 
     @Override

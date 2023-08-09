@@ -10,25 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -57,6 +45,19 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 /**
  * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
  */
@@ -66,7 +67,8 @@ import java.math.BigDecimal;
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPresentation {
@@ -77,42 +79,46 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @Id
     @GeneratedValue(generator = "SkuBundleItemId")
     @GenericGenerator(
-        name="SkuBundleItemId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
-            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl")
-        }
+            name = "SkuBundleItemId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl")
+            }
     )
     @Column(name = "SKU_BUNDLE_ITEM_ID")
-    @AdminPresentation(friendlyName = "SkuBundleItemImpl_ID", group = GroupName.General, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SkuBundleItemImpl_ID", group = GroupName.General,
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @Column(name = "QUANTITY", nullable=false)
+    @Column(name = "QUANTITY", nullable = false)
     @AdminPresentation(friendlyName = "bundleItemQuantity",
-        group = GroupName.General, order = FieldOrder.QUANTITY,
-        prominent = true, gridOrder = FieldOrder.QUANTITY,
-        requiredOverride = RequiredOverride.REQUIRED)
+            group = GroupName.General, order = FieldOrder.QUANTITY,
+            prominent = true, gridOrder = FieldOrder.QUANTITY,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected Integer quantity;
 
-    @Column(name = "ITEM_SALE_PRICE", precision=19, scale=5)
+    @Column(name = "ITEM_SALE_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "bundleItemSalePrice",
-        group = GroupName.General, order = FieldOrder.ITEM_SALE_PRICE,
-        prominent = true, gridOrder = FieldOrder.ITEM_SALE_PRICE,
-        tooltip="bundleItemSalePriceTooltip", 
-        fieldType = SupportedFieldType.MONEY)
+            group = GroupName.General, order = FieldOrder.ITEM_SALE_PRICE,
+            prominent = true, gridOrder = FieldOrder.ITEM_SALE_PRICE,
+            tooltip = "bundleItemSalePriceTooltip",
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class, optional = false, cascade = CascadeType.REFRESH)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class, optional = false,
+            cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID", referencedColumnName = "PRODUCT_ID")
     protected ProductBundle bundle;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
     @AdminPresentation(friendlyName = "Sku",
-        group = GroupName.General, order = FieldOrder.SKU,
-        prominent = true, gridOrder = FieldOrder.SKU,
-        validationConfigurations = @ValidationConfiguration(validationImplementation = "blProductBundleSkuBundleItemValidator"))
+            group = GroupName.General, order = FieldOrder.SKU,
+            prominent = true, gridOrder = FieldOrder.SKU,
+            validationConfigurations = @ValidationConfiguration(
+                    validationImplementation = "blProductBundleSkuBundleItemValidator"))
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
@@ -149,10 +155,10 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-   
-    public Money getDynamicSalePrice(Sku sku, BigDecimal salePrice) {   
+
+    public Money getDynamicSalePrice(Sku sku, BigDecimal salePrice) {
         Money returnPrice = null;
-        
+
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             if (dynamicPrices != null) {
                 returnPrice = dynamicPrices.getSalePrice();
@@ -166,12 +172,13 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
             }
         } else {
             if (salePrice != null) {
-                returnPrice = new Money(salePrice,Money.defaultCurrency());
+                returnPrice = new Money(salePrice, Money.defaultCurrency());
             }
         }
-        
-        return returnPrice;   
+
+        return returnPrice;
     }
+
     @Override
     public void setSalePrice(Money salePrice) {
         if (salePrice != null) {
@@ -193,14 +200,14 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
 
     @Override
     public Money getRetailPrice() {
-         return getSku().getRetailPrice();
-     }
+        return getSku().getRetailPrice();
+    }
 
     @Override
     public ProductBundle getBundle() {
         // We deproxy the bundle to allow logic introduced by filters to still take place (this can be an issue since
         // the bundle is lazy loaded).
-        if(deproxiedBundle == null) {
+        if (deproxiedBundle == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
             Long id = bundle.getId();
             if (postLoaderDao != null && id != null) {
@@ -265,7 +272,8 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     }
 
     @Override
-    public <G extends SkuBundleItem> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends SkuBundleItem> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -278,7 +286,8 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }
         if (bundle != null) {
-            cloned.setBundle((ProductBundle) bundle.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setBundle(
+                    (ProductBundle) bundle.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
     }

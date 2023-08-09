@@ -17,16 +17,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -43,19 +33,33 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 /**
  * @author jfischer
  */
 @Entity
 @Table(name = "BLC_SC_ITEM_CRITERIA")
 @Inheritance(strategy = InheritanceType.JOINED)
-@AdminPresentationClass(friendlyName = "StructuredContentItemCriteriaImpl_baseStructuredContentItemCriteria")
+@AdminPresentationClass(
+        friendlyName = "StructuredContentItemCriteriaImpl_baseStructuredContentItemCriteria")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
-public class StructuredContentItemCriteriaImpl implements StructuredContentItemCriteria, ProfileEntity {
+public class StructuredContentItemCriteriaImpl
+        implements StructuredContentItemCriteria, ProfileEntity {
 
     public static final long serialVersionUID = 1L;
 
@@ -66,20 +70,27 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentItemCriteriaImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
             }
     )
     @Column(name = "SC_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Item_Criteria_Id", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Item_Criteria_Id",
+            group = "StructuredContentItemCriteriaImpl_Description",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "QUANTITY", nullable = false)
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Quantity", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Quantity",
+            group = "StructuredContentItemCriteriaImpl_Description",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Integer quantity;
 
     @Lob
     @Column(name = "ORDER_ITEM_MATCH_RULE", length = Length.LONG32 - 1)
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule",
+            group = "StructuredContentItemCriteriaImpl_Description",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
 
     @ManyToOne(targetEntity = StructuredContentImpl.class)
@@ -131,7 +142,8 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
+        result =
+                prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
         result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
         return result;
     }
@@ -156,11 +168,9 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         } else if (!orderItemMatchRule.equals(other.orderItemMatchRule))
             return false;
         if (quantity == null) {
-            if (other.quantity != null)
-                return false;
-        } else if (!quantity.equals(other.quantity))
-            return false;
-        return true;
+            return other.quantity == null;
+        } else
+            return quantity.equals(other.quantity);
     }
 
     @Override
@@ -173,14 +183,16 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     }
 
     @Override
-    public <G extends StructuredContentItemCriteria> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentItemCriteria> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         StructuredContentItemCriteria cloned = createResponse.getClone();
         if (structuredContent != null) {
-            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setStructuredContent(
+                    structuredContent.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setMatchRule(orderItemMatchRule);
         cloned.setQuantity(quantity);

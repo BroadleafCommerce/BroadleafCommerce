@@ -10,22 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.search.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -51,6 +42,16 @@ import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 /**
  * @author Nick Crum (ncrum)
  */
@@ -65,22 +66,43 @@ import java.io.Serializable;
 })
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "indexField.field.friendlyName", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_indexField"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "NOT_REQUIRED" )
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.PROMINENT,
+                        booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.GRIDORDER,
+                        intOverrideValue = 3),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                        overrideValue = "FORM_HIDDEN"),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                        overrideValue = "IndexFieldTypeImpl_indexField"),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "NOT_REQUIRED")
         }),
         @AdminPresentationMergeOverride(name = "indexField.searchable", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_searchable")
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.PROMINENT,
+                        booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.GRIDORDER,
+                        intOverrideValue = 3),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                        overrideValue = "FORM_HIDDEN"),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                        overrideValue = "IndexFieldTypeImpl_searchable")
         })
 })
-@AdminPresentationClass(friendlyName = "IndexFieldTypeImpl_friendly", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(friendlyName = "IndexFieldTypeImpl_friendly",
+        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -88,30 +110,34 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
     @Id
     @GeneratedValue(generator = "IndexFieldTypeId")
     @GenericGenerator(
-            name="IndexFieldTypeId",
-            type= IdOverrideTableGenerator.class,
+            name = "IndexFieldTypeId",
+            type = IdOverrideTableGenerator.class,
             parameters = {
-                    @Parameter(name="segment_value", value="IndexFieldTypeImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl")
+                    @Parameter(name = "segment_value", value = "IndexFieldTypeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.IndexFieldTypeImpl")
             }
     )
     @Column(name = "INDEX_FIELD_TYPE_ID")
-    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_ID", group = "IndexFieldTypeTypeImpl_description",
-            visibility= VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_ID",
+            group = "IndexFieldTypeTypeImpl_description",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
+
     @Column(name = "FIELD_TYPE")
-    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_fieldType", group = "IndexFieldTypeImpl_description", order = 4, prominent = true, gridOrder = 4,
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_fieldType",
+            group = "IndexFieldTypeImpl_description", order = 4, prominent = true, gridOrder = 4,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
             requiredOverride = RequiredOverride.REQUIRED,
             defaultValue = "t")
     protected String fieldType;
 
-    @ManyToOne(optional=false, targetEntity = IndexFieldImpl.class)
+    @ManyToOne(optional = false, targetEntity = IndexFieldImpl.class)
     @JoinColumn(name = "INDEX_FIELD_ID")
-    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_indexField", group = "IndexFieldTypeImpl_description",
-            order=3, gridOrder = 3, visibility=VisibilityEnum.FORM_HIDDEN)
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_indexField",
+            group = "IndexFieldTypeImpl_description",
+            order = 3, gridOrder = 3, visibility = VisibilityEnum.FORM_HIDDEN)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "field.friendlyName")
     protected IndexField indexField;
 
@@ -124,7 +150,7 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public FieldType getFieldType() {
         return FieldType.getInstance(fieldType);
@@ -146,14 +172,16 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
     }
 
     @Override
-    public <G extends IndexFieldType> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends IndexFieldType> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         IndexFieldType indexFieldType = createResponse.getClone();
         if (indexField != null) {
-            indexFieldType.setIndexField(indexField.createOrRetrieveCopyInstance(context).getClone());
+            indexFieldType.setIndexField(
+                    indexField.createOrRetrieveCopyInstance(context).getClone());
         }
 
         if (fieldType != null) {

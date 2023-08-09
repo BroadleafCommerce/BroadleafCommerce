@@ -767,7 +767,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
 
     @Override
     public Boolean getShippingOverride() {
-        return shippingOverride == null ? false : shippingOverride;
+        return shippingOverride != null && shippingOverride;
     }
 
     @Override
@@ -849,13 +849,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             return false;
         }
         if (fulfillmentGroupItems == null) {
-            if (other.fulfillmentGroupItems != null) {
-                return false;
-            }
-        } else if (!fulfillmentGroupItems.equals(other.fulfillmentGroupItems)) {
-            return false;
-        }
-        return true;
+            return other.fulfillmentGroupItems == null;
+        } else
+            return fulfillmentGroupItems.equals(other.fulfillmentGroupItems);
     }
 
     public static class Presentation {

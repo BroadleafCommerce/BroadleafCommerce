@@ -10,26 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -48,6 +35,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_REVIEW_DETAIL", indexes = {
@@ -56,7 +57,8 @@ import java.util.List;
         @Index(name = "REVIEWDETAIL_RATING_INDEX", columnList = "RATING_DETAIL_ID"),
         @Index(name = "REVIEWDETAIL_STATUS_INDEX", columnList = "REVIEW_STATUS")
 })
-@AdminPresentationClass(friendlyName = "ReviewDetail", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(friendlyName = "ReviewDetail",
+        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -64,12 +66,13 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
     @Id
     @GeneratedValue(generator = "ReviewDetailId")
     @GenericGenerator(
-        name="ReviewDetailId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="ReviewDetailImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.ReviewDetailImpl")
-        }
+            name = "ReviewDetailId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ReviewDetailImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.rating.domain.ReviewDetailImpl")
+            }
     )
     @Column(name = "REVIEW_DETAIL_ID")
     private Long id;
@@ -90,9 +93,9 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
     @Column(name = "REVIEW_STATUS", nullable = false)
     @AdminPresentation(friendlyName = "ReviewDetail_status",
-        prominent = true,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.core.rating.service.type.ReviewStatusType")
+            prominent = true,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.rating.service.type.ReviewStatusType")
     protected String reviewStatus;
 
     @Column(name = "HELPFUL_COUNT", nullable = false)
@@ -107,7 +110,8 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
     @JoinColumn(name = "RATING_SUMMARY_ID")
     protected RatingSummary ratingSummary;
 
-    @OneToMany(mappedBy = "reviewDetail", targetEntity = ReviewFeedbackImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "reviewDetail", targetEntity = ReviewFeedbackImpl.class,
+            cascade = {CascadeType.ALL})
     @AdminPresentationCollection(friendlyName = "ReviewDetail_feedback")
     protected List<ReviewFeedback> reviewFeedback;
 
@@ -119,7 +123,11 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
 
     public ReviewDetailImpl() {}
 
-    public ReviewDetailImpl(Customer customer, Date reivewSubmittedDate, RatingDetail ratingDetail, String reviewText, RatingSummary ratingSummary) {
+    public ReviewDetailImpl(Customer customer,
+            Date reivewSubmittedDate,
+            RatingDetail ratingDetail,
+            String reviewText,
+            RatingSummary ratingSummary) {
         super();
         this.customer = customer;
         this.reivewSubmittedDate = reivewSubmittedDate;

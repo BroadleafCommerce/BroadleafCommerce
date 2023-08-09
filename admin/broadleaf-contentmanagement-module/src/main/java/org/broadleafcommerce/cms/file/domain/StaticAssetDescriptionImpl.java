@@ -17,14 +17,6 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -38,6 +30,15 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
 /**
  * Created by bpolster.
@@ -61,7 +62,8 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "StaticAssetDescriptionImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl")
             }
     )
     @Column(name = "STATIC_ASSET_DESC_ID")
@@ -72,7 +74,8 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     protected String description;
 
     @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName = "StaticAssetDescriptionImpl_Long_Description", largeEntry = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "StaticAssetDescriptionImpl_Long_Description",
+            largeEntry = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected String longDescription;
 
     @Override
@@ -115,7 +118,8 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     }
 
     @Override
-    public <G extends StaticAssetDescription> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StaticAssetDescription> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

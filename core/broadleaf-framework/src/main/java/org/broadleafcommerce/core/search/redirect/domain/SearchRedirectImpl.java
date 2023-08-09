@@ -10,22 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.search.redirect.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -47,53 +38,67 @@ import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 /**
  * @author priyeshpatel
- * 
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SEARCH_INTERCEPT", indexes = {@Index(name = "SEARCH_ACTIVE_INDEX", columnList = "ACTIVE_START_DATE, ACTIVE_END_DATE")})
+@Table(name = "BLC_SEARCH_INTERCEPT", indexes = {
+        @Index(name = "SEARCH_ACTIVE_INDEX", columnList = "ACTIVE_START_DATE, ACTIVE_END_DATE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
 })
-public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable, AdminMainEntity, SearchRedirectAdminPresentation {
-    
+public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable, AdminMainEntity,
+        SearchRedirectAdminPresentation {
+
     private static final long serialVersionUID = 1L;
-    
+
     @Transient
     private static final Log LOG = LogFactory.getLog(SearchRedirectImpl.class);
-    
+
     @Id
     @GeneratedValue(generator = "SearchRedirectID")
     @GenericGenerator(
-        name="SearchRedirectID",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="SearchRedirectImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl")
-        }
+            name = "SearchRedirectID",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SearchRedirectImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl")
+            }
     )
     @Column(name = "SEARCH_REDIRECT_ID")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
+
     @Column(name = "PRIORITY")
     @AdminPresentation(excluded = true)
     protected Integer searchPriority;
 
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "")
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000,
+            group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "")
     @Column(name = "SEARCH_TERM", nullable = false)
     protected String searchTerm;
-    
+
     @Column(name = "URL", nullable = false)
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "")
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000,
+            group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "")
     protected String url;
 
     /** The active start date. */
-    @Column(name = "ACTIVE_START_DATE" )
+    @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
             order = 3000, group = GroupName.Dates,
             tooltip = "skuStartDateTooltip", groupOrder = 1,
@@ -110,11 +115,12 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
                     @ValidationConfiguration(
                             validationImplementation = "blAfterStartDateValidator",
                             configurationItems = {
-                                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
+                                    @ConfigurationItem(itemName = "otherField",
+                                            itemValue = "activeStartDate")
                             })
             })
     protected Date activeEndDate;
-    
+
     @Override
     public Date getActiveStartDate() {
         return activeStartDate;
@@ -164,7 +170,7 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
     @Override
     public Integer getSearchPriority() {
         return searchPriority;
@@ -178,13 +184,16 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
     @Override
     public boolean isActive() {
         Long date = SystemTime.asMillis(true);
-        boolean isNullActiveStartDateActive = BLCSystemProperty.resolveBooleanSystemProperty("searchRedirect.is.null.activeStartDate.active");
+        boolean isNullActiveStartDateActive = BLCSystemProperty.resolveBooleanSystemProperty(
+                "searchRedirect.is.null.activeStartDate.active");
 
         boolean isActive;
         if (isNullActiveStartDateActive) {
-            isActive = (getActiveStartDate() == null || getActiveStartDate().getTime() <= date) && (getActiveEndDate() == null || getActiveEndDate().getTime() > date);
+            isActive = (getActiveStartDate() == null || getActiveStartDate().getTime() <= date) && (
+                    getActiveEndDate() == null || getActiveEndDate().getTime() > date);
         } else {
-            isActive = (getActiveStartDate() != null && getActiveStartDate().getTime() <= date) && (getActiveEndDate() == null || getActiveEndDate().getTime() > date);
+            isActive = (getActiveStartDate() != null && getActiveStartDate().getTime() <= date) && (
+                    getActiveEndDate() == null || getActiveEndDate().getTime() > date);
         }
 
         if (LOG.isDebugEnabled() && !isActive) {

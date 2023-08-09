@@ -146,10 +146,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @Override
     public boolean isRegexHandler() {
         if (isRegex == null) {
-            if (hasRegExCharacters(getIncomingURL())) {
-                return true;
-            }
-            return false;
+            return hasRegExCharacters(getIncomingURL());
         }
         return isRegex;
     }
@@ -215,7 +212,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
         cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
-        cloned.setRegexHandler(isRegex==null?false:isRegex);
+        cloned.setRegexHandler(isRegex != null && isRegex);
         return createResponse;
     }
 
