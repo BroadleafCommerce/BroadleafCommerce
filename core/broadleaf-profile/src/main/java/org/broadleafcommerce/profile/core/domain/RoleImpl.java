@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,14 +49,15 @@ public class RoleImpl implements Role {
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "RoleImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.RoleImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.RoleImpl")
             }
     )
     @Column(name = "ROLE_ID")
     protected Long id;
 
     @Column(name = "ROLE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "rolesTitle",prominent = true)
+    @AdminPresentation(friendlyName = "rolesTitle", prominent = true)
     protected String roleName;
 
     @Override

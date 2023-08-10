@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -49,11 +50,14 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_DATA_DRVN_ENUM", indexes = {@Index(name = "ENUM_KEY_INDEX", columnList = "ENUM_KEY")})
+@Table(name = "BLC_DATA_DRVN_ENUM",
+        indexes = {@Index(name = "ENUM_KEY_INDEX", columnList = "ENUM_KEY")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "DataDrivenEnumerationImpl_friendyName")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "DataDrivenEnumerationImpl_friendyName")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
@@ -63,29 +67,35 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     @Id
     @GeneratedValue(generator = "DataDrivenEnumerationId")
     @GenericGenerator(
-        name="DataDrivenEnumerationId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="DataDrivenEnumerationImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl")
-        }
+            name = "DataDrivenEnumerationId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "DataDrivenEnumerationImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl")
+            }
     )
     @Column(name = "ENUM_ID")
     protected Long id;
-    
+
     @Column(name = "ENUM_KEY")
-    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Key", order = 1, gridOrder = 1, prominent = true)
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Key", order = 1, gridOrder = 1,
+            prominent = true)
     protected String key;
-    
+
     @Column(name = "MODIFIABLE")
-    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Modifiable", order = 2, gridOrder = 2, prominent = true)
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Modifiable", order = 2,
+            gridOrder = 2, prominent = true)
     protected Boolean modifiable = false;
 
-    @OneToMany(mappedBy = "type", targetEntity = DataDrivenEnumerationValueImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "type", targetEntity = DataDrivenEnumerationValueImpl.class,
+            cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "DataDrivenEnumerationImpl_Enum_Values", order = 3)
-    protected List<DataDrivenEnumerationValue> enumValues = new ArrayList<DataDrivenEnumerationValue>();
-    
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST,
+            friendlyName = "DataDrivenEnumerationImpl_Enum_Values", order = 3)
+    protected List<DataDrivenEnumerationValue> enumValues =
+            new ArrayList<DataDrivenEnumerationValue>();
+
     @Override
     public Long getId() {
         return id;
@@ -145,7 +155,8 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     }
 
     @Override
-    public <G extends DataDrivenEnumeration> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+    public <G extends DataDrivenEnumeration> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context)
             throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -155,7 +166,8 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
         cloned.setKey(key);
         cloned.setModifiable(modifiable);
         for (DataDrivenEnumerationValue value : enumValues) {
-            DataDrivenEnumerationValue clonedValue = value.createOrRetrieveCopyInstance(context).getClone();
+            DataDrivenEnumerationValue clonedValue =
+                    value.createOrRetrieveCopyInstance(context).getClone();
             cloned.getEnumValues().add(clonedValue);
         }
         return createResponse;

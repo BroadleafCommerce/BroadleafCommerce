@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -51,9 +52,10 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_DEF")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
@@ -64,79 +66,82 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     @Id
     @GeneratedValue(generator = "FieldDefinitionId")
     @GenericGenerator(
-        name="FieldDefinitionId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FieldDefinitionImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl")
-        }
+            name = "FieldDefinitionId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FieldDefinitionImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl")
+            }
     )
     @Column(name = "FLD_DEF_ID")
     protected Long id;
 
-    @Column (name = "NAME")
+    @Column(name = "NAME")
     @AdminPresentation(fieldType = SupportedFieldType.HIDDEN)
     protected String name;
 
-    @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000, prominent = true, gridOrder = 2000)
+    @Column(name = "FRIENDLY_NAME")
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000,
+            prominent = true, gridOrder = 2000)
     protected String friendlyName;
 
-    @Column (name = "FLD_TYPE")
-    @AdminPresentation(fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType",
-        prominent = true, gridOrder = 3000, order = 1000,
-        requiredOverride = RequiredOverride.REQUIRED,
-        friendlyName = "FieldDefinitionImpl_fieldType")
+    @Column(name = "FLD_TYPE")
+    @AdminPresentation(fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType",
+            prominent = true, gridOrder = 3000, order = 1000,
+            requiredOverride = RequiredOverride.REQUIRED,
+            friendlyName = "FieldDefinitionImpl_fieldType")
     protected String fieldType;
 
-    @Column (name = "SECURITY_LEVEL")
+    @Column(name = "SECURITY_LEVEL")
     protected String securityLevel;
 
-    @Column (name = "HIDDEN_FLAG")
+    @Column(name = "HIDDEN_FLAG")
     protected Boolean hiddenFlag = false;
 
-    @Column (name = "VLDTN_REGEX")
+    @Column(name = "VLDTN_REGEX")
     protected String validationRegEx;
 
-    @Column (name = "VLDTN_ERROR_MSSG_KEY")
+    @Column(name = "VLDTN_ERROR_MSSG_KEY")
     protected String validationErrorMesageKey;
 
-    @Column (name = "MAX_LENGTH")
+    @Column(name = "MAX_LENGTH")
     protected Integer maxLength;
 
-    @Column (name = "COLUMN_WIDTH")
+    @Column(name = "COLUMN_WIDTH")
     protected String columnWidth;
 
-    @Column (name = "TEXT_AREA_FLAG")
+    @Column(name = "TEXT_AREA_FLAG")
     protected Boolean textAreaFlag = false;
-    
+
     @Column(name = "REQUIRED_FLAG")
-    @AdminPresentation(friendlyName = "FieldDefinitionImpl_requiredFlag", order = 4000,gridOrder = 4000, defaultValue = "false")
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_requiredFlag", order = 4000,
+            gridOrder = 4000, defaultValue = "false")
     protected Boolean requiredFlag = false;
 
     @ManyToOne(targetEntity = DataDrivenEnumerationImpl.class)
     @JoinColumn(name = "ENUM_ID")
     protected DataDrivenEnumeration dataDrivenEnumeration;
 
-    @Column (name = "ALLOW_MULTIPLES")
+    @Column(name = "ALLOW_MULTIPLES")
     protected Boolean allowMultiples = false;
 
     @ManyToOne(targetEntity = FieldGroupImpl.class)
     @JoinColumn(name = "FLD_GROUP_ID")
     protected FieldGroup fieldGroup;
 
-    @Column(name="FLD_ORDER")
+    @Column(name = "FLD_ORDER")
     @AdminPresentation(friendlyName = "FieldDefinitionImpl_fieldOrder", order = 3000)
     protected Integer fieldOrder = 0;
 
-    @Column (name = "TOOLTIP")
+    @Column(name = "TOOLTIP")
     protected String tooltip;
 
-    @Column (name = "HELP_TEXT")
+    @Column(name = "HELP_TEXT")
     protected String helpText;
 
-    @Column (name = "HINT")
+    @Column(name = "HINT")
     protected String hint;
 
     @Override
@@ -164,11 +169,11 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         if (fieldType == null) {
             return null;
         }
-        
+
         if (fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
             return SupportedFieldType.ADDITIONAL_FOREIGN_KEY;
         }
-        
+
         return SupportedFieldType.valueOf(fieldType);
     }
 
@@ -176,28 +181,31 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     public String getFieldTypeVal() {
         return fieldType;
     }
-    
+
     @Override
     public String getAdditionalForeignKeyClass() {
-        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+        if (fieldType == null || !fieldType.startsWith(
+                SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
             return null;
         }
-        
+
         return fieldType.substring(fieldType.indexOf('|') + 1);
     }
-    
+
     @Override
     public void setAdditionalForeignKeyClass(String className) {
-        if (fieldType == null || !SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType)) {
-            throw new IllegalArgumentException("Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
+        if (fieldType == null || !SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString()
+                .equals(fieldType)) {
+            throw new IllegalArgumentException(
+                    "Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
         }
-        
+
         this.fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|' + className;
     }
 
     @Override
     public void setFieldType(SupportedFieldType fieldType) {
-        this.fieldType = fieldType!=null?fieldType.toString():null;
+        this.fieldType = fieldType != null ? fieldType.toString() : null;
     }
 
     @Override
@@ -217,7 +225,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
 
     @Override
     public Boolean getHiddenFlag() {
-        return hiddenFlag == null ? false : hiddenFlag;
+        return hiddenFlag != null && hiddenFlag;
     }
 
     @Override
@@ -264,7 +272,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     public void setTextAreaFlag(Boolean textAreaFlag) {
         this.textAreaFlag = textAreaFlag;
     }
-    
+
     @Override
     public Boolean getRequiredFlag() {
         return requiredFlag;
@@ -369,7 +377,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     }
 
     @Override
-    public <G extends FieldDefinition> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+    public <G extends FieldDefinition> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context)
             throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -388,7 +397,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         cloned.setTextAreaFlag(textAreaFlag);
         cloned.setRequiredFlag(requiredFlag);
         if (dataDrivenEnumeration != null) {
-            cloned.setDataDrivenEnumeration(dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setDataDrivenEnumeration(
+                    dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setAllowMultiples(allowMultiples);
         if (fieldGroup != null) {

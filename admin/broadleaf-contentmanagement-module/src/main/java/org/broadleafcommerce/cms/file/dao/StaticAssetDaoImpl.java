@@ -45,7 +45,7 @@ import jakarta.persistence.criteria.Root;
 @Repository("blStaticAssetDao")
 public class StaticAssetDaoImpl implements StaticAssetDao {
 
-    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+    private static final SandBox DUMMY_SANDBOX = new SandBoxImpl();
     {
         DUMMY_SANDBOX.setId(-1l);
     }

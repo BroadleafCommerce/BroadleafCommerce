@@ -34,7 +34,7 @@ public interface PromotionMessageDTOService {
      * @param promotionMessages
      * @return the converted map of {@link PromotionMessageDTO}s
      */
-    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages);
+    Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages);
 
     /**
      * Converts {@link PromotionMessage}s to {@link PromotionMessageDTO}s.
@@ -43,6 +43,6 @@ public interface PromotionMessageDTOService {
      * @param offer
      * @return the converted map of {@link PromotionMessageDTO}s
      */
-    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages, Offer offer);
+    Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages, Offer offer);
 
 }

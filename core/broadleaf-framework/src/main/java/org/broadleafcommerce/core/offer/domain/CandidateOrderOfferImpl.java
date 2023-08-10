@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -55,14 +56,15 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "CandidateOrderOfferId")
+    @GeneratedValue(generator = "CandidateOrderOfferId")
     @GenericGenerator(
-        name="CandidateOrderOfferId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CandidateOrderOfferImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl")
-        }
+            name = "CandidateOrderOfferId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CandidateOrderOfferImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl")
+            }
     )
     @Column(name = "CANDIDATE_ORDER_OFFER_ID")
     protected Long id;
@@ -71,11 +73,11 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
-    @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
+    @Column(name = "DISCOUNTED_PRICE", precision = 19, scale = 5)
     protected BigDecimal discountedPrice;
 
     @Transient
@@ -123,9 +125,11 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrder().getCurrency());
+        return discountedPrice == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrder().getCurrency());
     }
-    
+
     @Override
     public void setDiscountedPrice(Money discountedPrice) {
         this.discountedPrice = discountedPrice.getAmount();

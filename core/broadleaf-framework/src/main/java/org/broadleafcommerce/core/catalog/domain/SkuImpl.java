@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -113,25 +113,24 @@ import jakarta.persistence.Transient;
 import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
 /**
- * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
- * specific item that can be sold including any specific attributes of the item
- * such as color or size. <br>
+ * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a specific item that can
+ * be sold including any specific attributes of the item such as color or size. <br>
  * <br>
- * If you want to add fields specific to your implementation of
- * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the SkuImpl then you should implement
- * your own version of {@link Sku}.<br>
+ * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
+ * this class and add your fields. If you need to make significant changes to the SkuImpl then you
+ * should implement your own version of {@link Sku}.<br>
  * <br>
- * This implementation uses a Hibernate implementation of JPA configured through
- * annotations. The Entity references the following tables: BLC_SKU,
- * BLC_SKU_IMAGE
+ * This implementation uses a Hibernate implementation of JPA configured through annotations. The
+ * Entity references the following tables: BLC_SKU, BLC_SKU_IMAGE
  *
  * !!!!!!!!!!!!!!!!!
- * <p>For admin required field validation, if this Sku is apart of an additionalSkus list (meaning it is not a defaultSku) then
- * it should have no required restrictions on it. All additional Skus can delegate to the defaultSku of the related product
- * for all of its fields. For this reason, if you would like to mark more fields as required then rather than using
- * {@link AdminPresentation#requiredOverride()}, use the mo:overrides section in bl-admin-applicationContext.xml for Product
- * and reference each required field like 'defaultSku.name' or 'defaultSku.retailPrice'.</p>
+ * <p>For admin required field validation, if this Sku is apart of an additionalSkus list (meaning
+ * it is not a defaultSku) then
+ * it should have no required restrictions on it. All additional Skus can delegate to the defaultSku
+ * of the related product for all of its fields. For this reason, if you would like to mark more
+ * fields as required then rather than using {@link AdminPresentation#requiredOverride()}, use the
+ * mo:overrides section in bl-admin-applicationContext.xml for Product and reference each required
+ * field like 'defaultSku.name' or 'defaultSku.retailPrice'.</p>
  *
  * @author btaylor
  * @see {@link Sku}
@@ -140,35 +139,37 @@ import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU", indexes = {
         @Index(name = "SKU_URL_KEY_INDEX", columnList = "URL_KEY"),
-        @Index(name="SKU_EXTERNAL_ID_INDEX", columnList="EXTERNAL_ID"),
-        @Index(name = "SKU_UPC_INDEX", columnList =  "UPC" ),
+        @Index(name = "SKU_EXTERNAL_ID_INDEX", columnList = "EXTERNAL_ID"),
+        @Index(name = "SKU_UPC_INDEX", columnList = "UPC"),
         @Index(name = "SKU_NAME_INDEX", columnList = "NAME"),
-        @Index(name="SKU_TAXABLE_INDEX", columnList="TAXABLE_FLAG"),
-        @Index(name="SKU_DISCOUNTABLE_INDEX", columnList="DISCOUNTABLE_FLAG"),
+        @Index(name = "SKU_TAXABLE_INDEX", columnList = "TAXABLE_FLAG"),
+        @Index(name = "SKU_DISCOUNTABLE_INDEX", columnList = "DISCOUNTABLE_FLAG"),
         @Index(name = "SKU_AVAILABLE_INDEX", columnList = "AVAILABLE_FLAG"),
-        @Index(name="SKU_ACTIVE_START_INDEX", columnList = "ACTIVE_START_DATE"),
-        @Index(name="SKU_ACTIVE_END_INDEX",columnList = "ACTIVE_END_DATE")
+        @Index(name = "SKU_ACTIVE_START_INDEX", columnList = "ACTIVE_START_DATE"),
+        @Index(name = "SKU_ACTIVE_END_INDEX", columnList = "ACTIVE_END_DATE")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SkuImpl implements Sku, SkuAdminPresentation {
-    
+
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
-    
+
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "SkuId")
     @GenericGenerator(
-        name = "SkuId",
-        strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name = "segment_value", value = "SkuImpl"),
-            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.SkuImpl")
-        }
+            name = "SkuId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SkuImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.SkuImpl")
+            }
     )
     @Column(name = "SKU_ID")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ID", visibility = VisibilityEnum.HIDDEN_ALL)
@@ -176,20 +177,20 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Column(name = "EXTERNAL_ID")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ExternalID",
-        group = GroupName.Miscellaneous, order = FieldOrder.EXTERNAL_ID,
-        tooltip = "SkuImpl_Sku_ExternalID_Tooltip")
+            group = GroupName.Miscellaneous, order = FieldOrder.EXTERNAL_ID,
+            tooltip = "SkuImpl_Sku_ExternalID_Tooltip")
     protected String externalId;
 
     @Column(name = "URL_KEY")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_UrlKey",
-        group = GroupName.Advanced, order = 4000,
-        excluded = true)
+            group = GroupName.Advanced, order = 4000,
+            excluded = true)
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Display_Template",
-        group = GroupName.Advanced, order = 5000,
-        excluded = true)
+            group = GroupName.Advanced, order = 5000,
+            excluded = true)
     protected String displayTemplate;
 
     @Column(name = "UPC")
@@ -199,17 +200,17 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price",
-        group = GroupName.Price, order = FieldOrder.SALE_PRICE,
-        tooltip = "SkuImpl_Sku_Sale_Price_tooltip",
-        prominent = true, gridOrder = 6,
-        fieldType = SupportedFieldType.MONEY)
+            group = GroupName.Price, order = FieldOrder.SALE_PRICE,
+            tooltip = "SkuImpl_Sku_Sale_Price_tooltip",
+            prominent = true, gridOrder = 6,
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "RETAIL_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price",
-        group = GroupName.Price, order = FieldOrder.RETAIL_PRICE,
-        prominent = true, gridOrder = 5,
-        fieldType = SupportedFieldType.MONEY)
+            group = GroupName.Price, order = FieldOrder.RETAIL_PRICE,
+            prominent = true, gridOrder = 5,
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "COST", precision = 19, scale = 5)
@@ -220,17 +221,17 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name",
-        group = GroupName.General, order = FieldOrder.NAME,
-        prominent = true, gridOrder = 1, columnWidth = "260px",
-        translatable = true)
+            group = GroupName.General, order = FieldOrder.NAME,
+            prominent = true, gridOrder = 1, columnWidth = "260px",
+            translatable = true)
     protected String name;
 
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Description",
-        group = GroupName.General, order = FieldOrder.SHORT_DESCRIPTION,
-        largeEntry = true, 
-        excluded = true,
-        translatable = true)
+            group = GroupName.General, order = FieldOrder.SHORT_DESCRIPTION,
+            largeEntry = true,
+            excluded = true,
+            translatable = true)
     protected String description;
 
     //if you are going to remove @Lob you need to adjust
@@ -240,16 +241,19 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Lob
     @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description",
-        group = GroupName.General, order = FieldOrder.LONG_DESCRIPTION,
-        largeEntry = true, 
-        fieldType = SupportedFieldType.HTML_BASIC,
-        translatable = true)
+            group = GroupName.General, order = FieldOrder.LONG_DESCRIPTION,
+            largeEntry = true,
+            fieldType = SupportedFieldType.HTML_BASIC,
+            translatable = true)
     protected String longDescription;
 
     @Column(name = "TAX_CODE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_TaxCode", order = 1001, group = GroupName.Financial)
-    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionHideIfEmpty = true, optionFilterParams = { @OptionFilterParam(
-            param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_TaxCode", order = 1001,
+            group = GroupName.Financial)
+    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionHideIfEmpty = true,
+            optionFilterParams = {@OptionFilterParam(
+                    param = "type.key", value = "TAX_CODE",
+                    paramType = OptionFilterParamType.STRING)})
     protected String taxCode;
 
     @Column(name = "TAXABLE_FLAG")
@@ -259,9 +263,9 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Column(name = "DISCOUNTABLE_FLAG")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable",
-        group = GroupName.Discountable,
-        helpText = "SkuImpl_Sku_Discountable_helptext",
-        defaultValue = "Y")
+            group = GroupName.Discountable,
+            helpText = "SkuImpl_Sku_Discountable_helptext",
+            defaultValue = "Y")
     protected Character discountable;
 
     @Column(name = "AVAILABLE_FLAG")
@@ -271,22 +275,23 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
-        group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_START_DATE,
-        tooltip = "skuStartDateTooltip",
-        defaultValue = "today")
+            group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_START_DATE,
+            tooltip = "skuStartDateTooltip",
+            defaultValue = "today")
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date",
-        group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_END_DATE,
-        tooltip = "skuEndDateTooltip",
-        validationConfigurations = {
-            @ValidationConfiguration(
-                validationImplementation = "blAfterStartDateValidator",
-                configurationItems = {
-                        @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
-                }) 
-        })
+            group = GroupName.ActiveDateRange, order = FieldOrder.ACTIVE_END_DATE,
+            tooltip = "skuEndDateTooltip",
+            validationConfigurations = {
+                    @ValidationConfiguration(
+                            validationImplementation = "blAfterStartDateValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(itemName = "otherField",
+                                            itemValue = "activeStartDate")
+                            })
+            })
     protected Date activeEndDate;
 
     @Embedded
@@ -297,11 +302,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable",
-        group = GroupName.ShippingOther, order = FieldOrder.IS_MACHINE_SORTABLE,
-        defaultValue = "false")
+            group = GroupName.ShippingOther, order = FieldOrder.IS_MACHINE_SORTABLE,
+            defaultValue = "false")
     protected Boolean isMachineSortable;
 
-    @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = {CascadeType.ALL})
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSkuMedia")
     @BatchSize(size = 50)
@@ -316,15 +321,16 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             forceFreeFormKeys = true
     )
     @AdminPresentationMapFields(
-        mapDisplayFields = {
-            @AdminPresentationMapField(
-                    fieldName = "primary",
-                    fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.MEDIA,
-                            group = GroupName.Image,
-                            order = FieldOrder.PRIMARY_MEDIA,
-                            friendlyName = "SkuImpl_Primary_Media")
-            )
-    })
+            mapDisplayFields = {
+                    @AdminPresentationMapField(
+                            fieldName = "primary",
+                            fieldPresentation = @AdminPresentation(
+                                    fieldType = SupportedFieldType.MEDIA,
+                                    group = GroupName.Image,
+                                    order = FieldOrder.PRIMARY_MEDIA,
+                                    friendlyName = "SkuImpl_Primary_Media")
+                    )
+            })
     protected Map<String, SkuMediaXref> skuMedia = new HashMap<String, SkuMediaXref>();
 
     @Transient
@@ -336,7 +342,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     //todo: 6.3 cascade refresh was deleted due to potential hiberante issue, when after a clone process
     //we refresh original & clone records, and after refresh it will be flushed at some point
     //and during flush there will be exception about shared collection in sku.skuPriceData
-    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "DEFAULT_PRODUCT_ID", foreignKey = @ForeignKey(NO_CONSTRAINT))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @IgnoreEnterpriseBehavior
@@ -346,63 +353,74 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
      * This relationship will be non-null if and only if this Sku is contained in the list of
      * additional Skus for a Product (for Skus based on ProductOptions)
      */
-    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDL_PRODUCT_ID")
     protected Product product;
 
-    @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "skuAttributesTitle", tab = TabName.Advanced, order = 1000)
+    @AdminPresentationCollection(friendlyName = "skuAttributesTitle", tab = TabName.Advanced,
+            order = 1000)
     protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
-    @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL, mappedBy = "sku")
+    @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL,
+            mappedBy = "sku")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     @ClonePolicyCollectionOverride
     @ClonePolicyArchive
     //Use a Set instead of a List - see https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917
-    protected Set<SkuProductOptionValueXref> productOptionValueXrefs = new HashSet<SkuProductOptionValueXref>();
+    protected Set<SkuProductOptionValueXref> productOptionValueXrefs =
+            new HashSet<SkuProductOptionValueXref>();
 
     @Transient
     protected Set<ProductOptionValue> legacyProductOptionValues = new HashSet<ProductOptionValue>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuFeeImpl.class)
     @JoinTable(name = "BLC_SKU_FEE_XREF",
-            joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true),
-            inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
+            joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID",
+                    nullable = true),
+            inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID",
+                    referencedColumnName = "SKU_FEE_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
     @ElementCollection
-    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", 
-        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
-    @MapKeyJoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID")
+    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES",
+            joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID",
+                    nullable = true))
+    @MapKeyJoinColumn(name = "FULFILLMENT_OPTION_ID",
+            referencedColumnName = "FULFILLMENT_OPTION_ID")
     @MapKeyClass(FulfillmentOptionImpl.class)
     @Column(name = "RATE", precision = 19, scale = 5)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
-    protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
+    protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates =
+            new HashMap<FulfillmentOption, BigDecimal>();
 
     @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
     @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED",
             joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"),
-            inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID",referencedColumnName = "FULFILLMENT_OPTION_ID"))
+            inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID",
+                    referencedColumnName = "FULFILLMENT_OPTION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
-    protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
+    protected List<FulfillmentOption> excludedFulfillmentOptions =
+            new ArrayList<FulfillmentOption>();
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
-        group = GroupName.Inventory, order = 1000,
-        helpText = "skuInventoryTypeHelpText",
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType",
-        columnWidth = "180px", prominent = true)
+            group = GroupName.Inventory, order = 1000,
+            helpText = "skuInventoryTypeHelpText",
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType",
+            columnWidth = "180px", prominent = true)
     protected String inventoryType;
-    
+
     @Column(name = "QUANTITY_AVAILABLE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_QuantityAvailable",
             group = GroupName.Inventory, order = 1010)
@@ -410,17 +428,18 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     @Column(name = "FULFILLMENT_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType",
-        group = GroupName.ShippingFulfillment, order = FieldOrder.FULFILLMENT_TYPE,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
+            group = GroupName.ShippingFulfillment, order = FieldOrder.FULFILLMENT_TYPE,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
-    
+
     /**
-     * Note that this field is not the target of the currencyCodeField attribute on either retailPrice or salePrice.
-     * This is because SKUs are special in that we want to return the currency on this SKU if there is one, falling back
-     * to the defaultSku's currency if possible.
-     * 
+     * Note that this field is not the target of the currencyCodeField attribute on either
+     * retailPrice or salePrice. This is because SKUs are special in that we want to return the
+     * currency on this SKU if there is one, falling back to the defaultSku's currency if possible.
+     *
      * Normally null and hidden.  Use Meta-Data overrides to display in the admin.
+     *
      * @see Sku#getCurrency() for further cautions about using this field.
      */
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
@@ -428,7 +447,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @AdminPresentation(friendlyName = "SkuImpl_Currency",
             group = GroupName.Advanced, order = 3000,
             visibility = VisibilityEnum.HIDDEN_ALL)
-    @AdminPresentationToOneLookup(lookupType = LookupType.DROPDOWN, lookupDisplayProperty = "friendlyName")
+    @AdminPresentationToOneLookup(lookupType = LookupType.DROPDOWN,
+            lookupDisplayProperty = "friendlyName")
     protected BroadleafCurrency currency;
 
     @Override
@@ -450,12 +470,12 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public void setUrlKey(String urlKey) {
         this.urlKey = urlKey;
     }
-    
+
     @Override
     public String getDisplayTemplate() {
         return displayTemplate;
     }
-    
+
     @Override
     public void setDisplayTemplate(String displayTemplate) {
         this.displayTemplate = displayTemplate;
@@ -469,7 +489,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     protected boolean hasDefaultSku() {
-        return (product != null && product.getDefaultSku() != null && getId() != null && !getId().equals(product.getDefaultSku().getId()));
+        return (product != null && product.getDefaultSku() != null && getId() != null
+                && !getId().equals(product.getDefaultSku().getId()));
     }
 
     protected Sku lookupDefaultSku() {
@@ -489,7 +510,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
                     if (optionValuePriceAdjustments == null) {
                         optionValuePriceAdjustments = value.getPriceAdjustment();
                     } else {
-                        optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
+                        optionValuePriceAdjustments =
+                                optionValuePriceAdjustments.add(value.getPriceAdjustment());
                     }
                 }
             }
@@ -504,7 +526,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the sale price from there
-            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
+            DynamicSkuPrices dynamicPrices =
+                    SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getSalePrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
             if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
@@ -523,7 +546,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (returnPrice == null) {
             return null;
         }
-        
+
         if (optionValueAdjustments != null) {
             returnPrice = returnPrice.add(optionValueAdjustments);
         }
@@ -547,8 +570,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     /*
-     * This allows us a way to determine or calculate the retail price. If one is not available this method will return null. 
-     * This allows the call to hasRetailPrice() to determine if there is a retail price without the overhead of an exception. 
+     * This allows us a way to determine or calculate the retail price. If one is not available this method will return null.
+     * This allows the call to hasRetailPrice() to determine if there is a retail price without the overhead of an exception.
      */
     protected Money getRetailPriceInternal() {
         Money returnPrice = null;
@@ -556,7 +579,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the retail price from there
-            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
+            DynamicSkuPrices dynamicPrices =
+                    SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
             if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
@@ -571,11 +595,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             returnPrice = lookupDefaultSku().getRetailPrice();
             optionValueAdjustments = getProductOptionValueAdjustments();
         }
-        
+
         if (returnPrice != null && optionValueAdjustments != null) {
             returnPrice = returnPrice.add(optionValueAdjustments);
         }
-        
+
         return returnPrice;
     }
 
@@ -608,7 +632,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Override
     public DynamicSkuPrices getPriceData() {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
+            DynamicSkuPrices dynamicPrices =
+                    SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             return dynamicPrices;
         } else {
             DynamicSkuPrices dsp = new DynamicSkuPrices();
@@ -687,7 +712,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             purchaseCost = lookupDefaultSku().getCost();
         }
 
-        if (price != null && !(price.getAmount().compareTo(BigDecimal.ZERO)==0)) {
+        if (price != null && !(price.getAmount().compareTo(BigDecimal.ZERO) == 0)) {
             if (purchaseCost != null) {
                 margin = price.subtract(purchaseCost).divide(price.getAmount());
             }
@@ -703,7 +728,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
         }
-        
+
         return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
@@ -717,7 +742,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
         }
-        
+
         return DynamicTranslationProvider.getValue(this, "description", description);
     }
 
@@ -731,7 +756,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
         }
-        
+
         return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
@@ -797,7 +822,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (InventoryType.UNAVAILABLE.equals(getInventoryType())) {
             return false;
         }
-        
+
         if (available == null) {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().isAvailable();
@@ -906,7 +931,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
                 LOG.debug("sku, " + id + ", inactive due to category being inactive");
             }
         }
-        return this.isActive() && (product == null || product.isActive()) && (category == null || category.isActive());
+        return this.isActive() && (product == null || product.isActive()) && (category == null
+                || category.isActive());
     }
 
     @Override
@@ -928,8 +954,9 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public void setSkuMedia(Map<String, Media> skuMedia) {
         this.skuMedia.clear();
         this.legacySkuMedia.clear();
-        for(Map.Entry<String, Media> entry : skuMedia.entrySet()){
-            this.skuMedia.put(entry.getKey(), new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+        for (Map.Entry<String, Media> entry : skuMedia.entrySet()) {
+            this.skuMedia.put(entry.getKey(),
+                    new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
 
@@ -977,7 +1004,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
             } else {
                 SkuMediaXref primaryXref = skuMediaMap.get("primary");
 
-                return (primaryXref == null)? null : primaryXref.getMedia();
+                return (primaryXref == null) ? null : primaryXref.getMedia();
             }
         }
 
@@ -996,9 +1023,13 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
     protected Map<String, SkuMediaXref> sortSkuMedia(Map<String, SkuMediaXref> skuMedia) {
         return skuMedia.values().stream()
-                .sorted(Comparator.comparing(xref -> ((OrderedSkuMediaXref) xref).getDisplayOrder()))
+                .sorted(Comparator.comparing(
+                        xref -> ((OrderedSkuMediaXref) xref).getDisplayOrder()))
                 .collect(Collectors.toMap(SkuMediaXref::getKey, Function.identity(),
-                        (key1,key2) ->{ throw new IllegalStateException(String.format("Duplicate key %s", key1)); },
+                        (key1, key2) -> {
+                            throw new IllegalStateException(
+                                    String.format("Duplicate key %s", key1));
+                        },
                         LinkedHashMap::new));
     }
 
@@ -1021,7 +1052,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public void setProduct(Product product) {
         this.product = product;
     }
-    
+
     @Override
     public Set<SkuProductOptionValueXref> getProductOptionValueXrefs() {
         return productOptionValueXrefs;
@@ -1057,12 +1088,15 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         //Changing this API to Set is ill-advised (especially in a patch release). The tendrils are widespread. Instead
         //we just migrate the call from the List to the internal Set representation. This is in response
         //to https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917.
-        return (List<ProductOptionValue>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{List.class}, new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return MethodUtils.invokeMethod(getProductOptionValuesCollection(), method.getName(), args, method.getParameterTypes());
-            }
-        });
+        return (List<ProductOptionValue>) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {List.class}, new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args)
+                            throws Throwable {
+                        return MethodUtils.invokeMethod(getProductOptionValuesCollection(),
+                                method.getName(), args, method.getParameterTypes());
+                    }
+                });
     }
 
     @Override
@@ -1146,12 +1180,12 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public void setInventoryType(InventoryType inventoryType) {
         this.inventoryType = (inventoryType == null) ? null : inventoryType.getType();
     }
-    
+
     @Override
     public Integer getQuantityAvailable() {
         return quantityAvailable;
     }
-    
+
     @Override
     public void setQuantityAvailable(Integer quantityAvailable) {
         this.quantityAvailable = quantityAvailable;
@@ -1205,7 +1239,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes) {
         List<SkuAttribute> skuAttributeList = new ArrayList<SkuAttribute>();
 
-        for(Map.Entry<String, SkuAttribute> entry : skuAttributes.entrySet()){
+        for (Map.Entry<String, SkuAttribute> entry : skuAttributes.entrySet()) {
             skuAttributeList.add(entry.getValue());
         }
 
@@ -1302,14 +1336,15 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public void setUpc(String upc) {
         this.upc = upc;
     }
-    
+
     @Override
     public FieldEntity getFieldEntityType() {
         return FieldEntity.SKU;
     }
 
     @Override
-    public <G extends Sku> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends Sku> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -1342,27 +1377,32 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (product != null) {
             cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
         }
-        for(Map.Entry<String, SkuAttribute> entry : getSkuAttributes().entrySet()){
-            SkuAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getSkuAttributes().put(entry.getKey(),clonedEntry);
+        for (Map.Entry<String, SkuAttribute> entry : getSkuAttributes().entrySet()) {
+            SkuAttribute clonedEntry =
+                    entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            cloned.getSkuAttributes().put(entry.getKey(), clonedEntry);
         }
-        for(SkuProductOptionValueXref entry : productOptionValueXrefs){
-            SkuProductOptionValueXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+        for (SkuProductOptionValueXref entry : productOptionValueXrefs) {
+            SkuProductOptionValueXref clonedEntry =
+                    entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getProductOptionValueXrefs().add(clonedEntry);
         }
-        for(Map.Entry<String, SkuMediaXref> entry : skuMedia.entrySet()){
-            SkuMediaXrefImpl clonedEntry = ((SkuMediaXrefImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
-            cloned.getSkuMediaXrefIgnoreDefaultSku().put(entry.getKey(),clonedEntry);
+        for (Map.Entry<String, SkuMediaXref> entry : skuMedia.entrySet()) {
+            SkuMediaXrefImpl clonedEntry =
+                    ((SkuMediaXrefImpl) entry.getValue()).createOrRetrieveCopyInstance(context)
+                            .getClone();
+            cloned.getSkuMediaXrefIgnoreDefaultSku().put(entry.getKey(), clonedEntry);
         }
-        for(FulfillmentOption entry : excludedFulfillmentOptions){
+        for (FulfillmentOption entry : excludedFulfillmentOptions) {
             FulfillmentOption clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getExcludedFulfillmentOptions().add(clonedEntry);
         }
-        for(Map.Entry<FulfillmentOption, BigDecimal> entry : fulfillmentFlatRates.entrySet()){
-            FulfillmentOption clonedEntry = entry.getKey().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getFulfillmentFlatRates().put(clonedEntry,entry.getValue());
+        for (Map.Entry<FulfillmentOption, BigDecimal> entry : fulfillmentFlatRates.entrySet()) {
+            FulfillmentOption clonedEntry =
+                    entry.getKey().createOrRetrieveCopyInstance(context).getClone();
+            cloned.getFulfillmentFlatRates().put(clonedEntry, entry.getValue());
         }
 
-        return  createResponse;
+        return createResponse;
     }
 }

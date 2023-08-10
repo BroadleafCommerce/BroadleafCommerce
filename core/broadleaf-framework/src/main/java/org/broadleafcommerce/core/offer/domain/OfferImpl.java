@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -94,7 +95,8 @@ import jakarta.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
 @SQLDelete(sql = "UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation {
@@ -102,93 +104,95 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public static final long serialVersionUID = 1L;
 
     public static final String EXCLUDE_OFFERCODE_COPY_HINT = "exclude-offer-offerCodes";
-    
+
     @Id
-    @GeneratedValue(generator= "OfferId")
+    @GeneratedValue(generator = "OfferId")
     @GenericGenerator(
-        name="OfferId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="OfferImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferImpl")
-        }
+            name = "OfferId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OfferImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferImpl")
+            }
     )
     @Column(name = "OFFER_ID")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "offerCodeTitle",
-        group = GroupName.Codes, order = FieldOrder.OfferCodes,
-        addType = AddMethodType.PERSIST)
+            group = GroupName.Codes, order = FieldOrder.OfferCodes,
+            addType = AddMethodType.PERSIST)
     protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
 
-    @Column(name = "OFFER_NAME", nullable=false)
+    @Column(name = "OFFER_NAME", nullable = false)
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Name",
-        group = GroupName.Description, order = FieldOrder.Name,
-        prominent = true, gridOrder = 1, translatable = true,
-        defaultValue = "New Offer")
+            group = GroupName.Description, order = FieldOrder.Name,
+            prominent = true, gridOrder = 1, translatable = true,
+            defaultValue = "New Offer")
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Description",
-        group = GroupName.Description, order = FieldOrder.Description,
-        largeEntry = true, fieldType = SupportedFieldType.DESCRIPTION, defaultValue = "")
+            group = GroupName.Description, order = FieldOrder.Description,
+            largeEntry = true, fieldType = SupportedFieldType.DESCRIPTION, defaultValue = "")
     protected String description;
 
     @Column(name = "MARKETING_MESSAGE")
     @AdminPresentation(friendlyName = "OfferImpl_marketingMessage",
-        group = GroupName.Marketing, order = FieldOrder.Message,
-        translatable = true, defaultValue = "")
+            group = GroupName.Marketing, order = FieldOrder.Message,
+            translatable = true, defaultValue = "")
     protected String marketingMessage;
 
-    @Column(name = "OFFER_TYPE", nullable=false)
+    @Column(name = "OFFER_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Type",
-        group = GroupName.Description, order = FieldOrder.OfferType,
-        fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType",
-        defaultValue = "ORDER")
+            group = GroupName.Description, order = FieldOrder.OfferType,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferType",
+            defaultValue = "ORDER")
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type",
-        group = GroupName.Description, order = FieldOrder.DiscountType,
-        requiredOverride = RequiredOverride.REQUIRED,
-        fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType")
+            group = GroupName.Description, order = FieldOrder.DiscountType,
+            requiredOverride = RequiredOverride.REQUIRED,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferDiscountType")
     protected String discountType;
 
-    @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
+    @Column(name = "OFFER_VALUE", nullable = false, precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Value",
-        group = GroupName.Description, order = FieldOrder.Amount,
-        prominent = true, gridOrder = 4,
+            group = GroupName.Description, order = FieldOrder.Amount,
+            prominent = true, gridOrder = 4,
             defaultValue = "0.00")
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority",
-        group = GroupName.Advanced, order = FieldOrder.Priority)
+            group = GroupName.Advanced, order = FieldOrder.Priority)
     protected Integer priority;
 
     @Column(name = "START_DATE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date",
-        group = GroupName.ActivityRange, order = FieldOrder.StartDate,
-        prominent = true, gridOrder = 2,
-        defaultValue = "today")
+            group = GroupName.ActivityRange, order = FieldOrder.StartDate,
+            prominent = true, gridOrder = 2,
+            defaultValue = "today")
     protected Date startDate;
 
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date",
-        group = GroupName.ActivityRange, order = FieldOrder.EndDate,
-        validationConfigurations = { 
-            @ValidationConfiguration(
-                validationImplementation = "blAfterStartDateValidator",
-                configurationItems = {
-                        @ConfigurationItem(itemName = "otherField", itemValue = "startDate")
-                }) 
-        })
+            group = GroupName.ActivityRange, order = FieldOrder.EndDate,
+            validationConfigurations = {
+                    @ValidationConfiguration(
+                            validationImplementation = "blAfterStartDateValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(itemName = "otherField",
+                                            itemValue = "startDate")
+                            })
+            })
     protected Date endDate;
 
     @Column(name = "TARGET_SYSTEM")
@@ -210,11 +214,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected Boolean applyToChildItems = false;
 
     /**
-     * Determines if other offers of the same type can be combined with this offer. 
+     * Determines if other offers of the same type can be combined with this offer.
      */
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable",
-        tooltip = "OfferImplCombinableWithOtherOffers_tooltip",
+            tooltip = "OfferImplCombinableWithOtherOffers_tooltip",
             group = GroupName.CombineStack,
             order = FieldOrder.CombinableWithOtherOffers,
             defaultValue = "true")
@@ -229,19 +233,23 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order",
-        tooltip = "OfferImplMaxUsesPerOrder_tooltip", order = FieldOrder.MaxUsesPerOrder,
-        group = GroupName.Restrictions)
+            tooltip = "OfferImplMaxUsesPerOrder_tooltip", order = FieldOrder.MaxUsesPerOrder,
+            group = GroupName.Restrictions)
     protected Integer maxUsesPerOrder;
 
     @Column(name = "MAX_USES_PER_CUSTOMER")
     @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer",
-        group = GroupName.Restrictions, order = FieldOrder.MaxUsesPerCustomer,
-        tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
-        defaultValue = "0")
+            group = GroupName.Restrictions, order = FieldOrder.MaxUsesPerCustomer,
+            tooltip = "OfferImplMaxUsesPerCustomer_tooltip",
+            defaultValue = "0")
     protected Long maxUsesPerCustomer;
 
     @Column(name = "MAX_USES_STRATEGY")
-    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Strategy", allowNoValueEnumOption = false, defaultValue = "CUSTOMER", group = GroupName.Restrictions, order = FieldOrder.MaxUsesStrategy, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType")
+    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Strategy", allowNoValueEnumOption = false,
+            defaultValue = "CUSTOMER", group = GroupName.Restrictions,
+            order = FieldOrder.MaxUsesStrategy,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.CustomerMaxUsesStrategyType")
     protected String maxUsesStrategy;
 
     @Column(name = "MINIMUM_DAYS_PER_USAGE")
@@ -253,29 +261,29 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule",
-        group = GroupName.QualifierRuleRestriction,
-        tooltip = "OfferItemRestrictionRuleType_tooltip",
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
-        defaultValue = "NONE",
-        visibility = VisibilityEnum.HIDDEN_ALL)
+            group = GroupName.QualifierRuleRestriction,
+            tooltip = "OfferItemRestrictionRuleType_tooltip",
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
+            defaultValue = "NONE",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected String offerItemQualifierRuleType;
 
-    @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
-        group = GroupName.QualifierRuleRestriction, order = FieldOrder.QualifyingItemSubTotal,
+    @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Subtotal",
+            group = GroupName.QualifierRuleRestriction, order = FieldOrder.QualifyingItemSubTotal,
             defaultValue = "0.00")
     protected BigDecimal qualifyingItemSubTotal;
 
-    @Column(name = "ORDER_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="OfferImpl_Order_Subtotal",
-        tooltip = "OfferImplMinOrderSubtotal_tooltip",
-        group = GroupName.Restrictions, order = FieldOrder.OrderMinSubTotal,
+    @Column(name = "ORDER_MIN_TOTAL", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "OfferImpl_Order_Subtotal",
+            tooltip = "OfferImplMinOrderSubtotal_tooltip",
+            group = GroupName.Restrictions, order = FieldOrder.OrderMinSubTotal,
             defaultValue = "0.00")
     protected BigDecimal orderMinSubTotal;
 
-    @Column(name = "TARGET_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="OfferImpl_Target_Subtotal",
+    @Column(name = "TARGET_MIN_TOTAL", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "OfferImpl_Target_Subtotal",
             tooltip = "OfferImplMinTargetSubtotal_tooltip",
             group = GroupName.Restrictions, order = FieldOrder.TargetMinSubTotal,
             defaultValue = "0.00")
@@ -283,104 +291,121 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_ITEM_TARGET_RULE")
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule",
-        group = GroupName.CombineStack,
-        tooltip = "OfferItemRestrictionRuleType_tooltip",
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
-        defaultValue = "NONE",
-        visibility = VisibilityEnum.HIDDEN_ALL)
+            group = GroupName.CombineStack,
+            tooltip = "OfferItemRestrictionRuleType_tooltip",
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType",
+            defaultValue = "NONE",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected String offerItemTargetRuleType;
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer",
+            targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
-        tab = TabName.Qualifiers,
-        fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
-        ruleIdentifier = RuleIdentifier.ORDERITEM,
-        validationConfigurations =
-            @ValidationConfiguration(validationImplementation = "blOfferQualifyingCriteriaValidator"))
-    protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();
+            tab = TabName.Qualifiers,
+            fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
+            ruleIdentifier = RuleIdentifier.ORDERITEM,
+            validationConfigurations =
+            @ValidationConfiguration(
+                    validationImplementation = "blOfferQualifyingCriteriaValidator"))
+    protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria =
+            new HashSet<OfferQualifyingCriteriaXref>();
 
     @Transient
-    protected Set<OfferItemCriteria> legacyQualifyingItemCriteria = new HashSet<OfferItemCriteria>();
+    protected Set<OfferItemCriteria> legacyQualifyingItemCriteria =
+            new HashSet<OfferItemCriteria>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferTargetCriteriaXrefImpl.class, cascade = CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer",
+            targetEntity = OfferTargetCriteriaXrefImpl.class, cascade = CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
-        group = GroupName.RuleConfiguration,
-        fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
-        ruleIdentifier = RuleIdentifier.ORDERITEM,
-        validationConfigurations = @ValidationConfiguration(validationImplementation = "blOfferTargetCriteriaItemValidator"))
-    protected Set<OfferTargetCriteriaXref> targetItemCriteria = new HashSet<OfferTargetCriteriaXref>();
+            group = GroupName.RuleConfiguration,
+            fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
+            ruleIdentifier = RuleIdentifier.ORDERITEM,
+            validationConfigurations = @ValidationConfiguration(
+                    validationImplementation = "blOfferTargetCriteriaItemValidator"))
+    protected Set<OfferTargetCriteriaXref> targetItemCriteria =
+            new HashSet<OfferTargetCriteriaXref>();
 
     @Transient
     protected Set<OfferItemCriteria> legacyTargetItemCriteria = new HashSet<OfferItemCriteria>();
-    
+
     @Column(name = "TOTALITARIAN_OFFER")
     @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer",
-        group = GroupName.Advanced,
-        visibility = VisibilityEnum.HIDDEN_ALL, defaultValue = "false")
+            group = GroupName.Advanced,
+            visibility = VisibilityEnum.HIDDEN_ALL, defaultValue = "false")
     protected Boolean totalitarianOffer = false;
 
     @Column(name = "REQUIRES_RELATED_TAR_QUAL")
     @AdminPresentation(friendlyName = "OfferImpl_Requires_Related_Target_And_Qualifiers",
-        group = GroupName.ShouldBeRelated,
-        tooltip = "OfferImplRelatedTargetQualifier_tooltip",
-        visibility = VisibilityEnum.HIDDEN_ALL, defaultValue = "false")
+            group = GroupName.ShouldBeRelated,
+            tooltip = "OfferImplRelatedTargetQualifier_tooltip",
+            visibility = VisibilityEnum.HIDDEN_ALL, defaultValue = "false")
     protected Boolean requiresRelatedTargetAndQualifiers = false;
 
-    @OneToMany(mappedBy = "offer", targetEntity = OfferOfferRuleXrefImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "offer", targetEntity = OfferOfferRuleXrefImpl.class,
+            cascade = {CascadeType.ALL})
     @MapKey(name = "key")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @AdminPresentationMapFields(
-        toOneTargetProperty = "offerRule",
-        toOneParentProperty = "offer",
-        mapDisplayFields = {
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
-                    group = GroupName.Customer, order = FieldOrder.CustomerRule,
-                    ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
-            ),
-            @AdminPresentationMapField(
-            fieldName = RuleIdentifier.TIME_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE_TIME,
-                    group = GroupName.ActivityRange, order = FieldOrder.TimeRule,
-                    ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.ORDER_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
-                    group = GroupName.Restrictions,
-                    ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "OfferImpl_Order_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
-                    group = GroupName.RuleConfiguration,
-                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
-            )
-        }
+            toOneTargetProperty = "offerRule",
+            toOneParentProperty = "offer",
+            mapDisplayFields = {
+                    @AdminPresentationMapField(
+                            fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
+                            fieldPresentation = @AdminPresentation(
+                                    fieldType = SupportedFieldType.RULE_SIMPLE,
+                                    group = GroupName.Customer, order = FieldOrder.CustomerRule,
+                                    ruleIdentifier = RuleIdentifier.CUSTOMER,
+                                    friendlyName = "OfferImpl_Customer_Rule")
+                    ),
+                    @AdminPresentationMapField(
+                            fieldName = RuleIdentifier.TIME_FIELD_KEY,
+                            fieldPresentation = @AdminPresentation(
+                                    fieldType = SupportedFieldType.RULE_SIMPLE_TIME,
+                                    group = GroupName.ActivityRange, order = FieldOrder.TimeRule,
+                                    ruleIdentifier = RuleIdentifier.TIME,
+                                    friendlyName = "OfferImpl_Time_Rule")
+                    ),
+                    @AdminPresentationMapField(
+                            fieldName = RuleIdentifier.ORDER_FIELD_KEY,
+                            fieldPresentation = @AdminPresentation(
+                                    fieldType = SupportedFieldType.RULE_SIMPLE,
+                                    group = GroupName.Restrictions,
+                                    ruleIdentifier = RuleIdentifier.ORDER,
+                                    friendlyName = "OfferImpl_Order_Rule")
+                    ),
+                    @AdminPresentationMapField(
+                            fieldName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY,
+                            fieldPresentation = @AdminPresentation(
+                                    fieldType = SupportedFieldType.RULE_SIMPLE,
+                                    group = GroupName.RuleConfiguration,
+                                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP,
+                                    friendlyName = "OfferImpl_FG_Rule")
+                    )
+            }
     )
     Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
 
     @Column(name = "OFFER_ADJUSTMENT_TYPE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Adjustment_Type",
             group = GroupName.Description, order = FieldOrder.DiscountType + 1,
-            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType",
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferAdjustmentType",
             tooltip = "OfferImpl_Offer_Adjustment_Type_tooltip",
-            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+            showIfProperty = "admin.showIfProperty.offerAdjustmentType")
     protected String adjustmentType;
-    
+
     @Column(name = "USE_LIST_FOR_DISCOUNTS")
     @AdminPresentation(friendlyName = "OfferImpl_Use_List_For_Discounts",
             group = GroupName.Description, fieldComponentRendererTemplate = "HIDDEN_BOOLEAN",
             defaultValue = "false")
     protected Boolean useListForDiscounts = false;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferPriceDataImpl.class, cascade = CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferPriceDataImpl.class,
+            cascade = CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @AdminPresentationCollection(
             friendlyName = "OfferImpl_Offer_Price_Data",
             group = GroupName.Description, order = FieldOrder.OfferType + 10)
@@ -438,10 +463,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setDiscountType(OfferDiscountType discountType) {
         this.discountType = discountType.getType();
     }
-    
+
     @Override
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType() {
-        OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
+        OfferItemRestrictionRuleType returnType =
+                OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
         if (returnType == null) {
             return OfferItemRestrictionRuleType.NONE;
         } else {
@@ -453,10 +479,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setOfferItemQualifierRuleType(OfferItemRestrictionRuleType restrictionRuleType) {
         this.offerItemQualifierRuleType = restrictionRuleType.getType();
     }
-    
+
     @Override
     public OfferItemRestrictionRuleType getOfferItemTargetRuleType() {
-        OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemTargetRuleType);
+        OfferItemRestrictionRuleType returnType =
+                OfferItemRestrictionRuleType.getInstance(offerItemTargetRuleType);
         if (returnType == null) {
             return OfferItemRestrictionRuleType.NONE;
         } else {
@@ -493,7 +520,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Date getStartDate() {
-        if ('Y'==getArchived()) {
+        if ('Y' == getArchived()) {
             return null;
         }
         return startDate;
@@ -513,7 +540,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-    
+
     @Override
     public String getTargetSystem() {
         return targetSystem;
@@ -577,7 +604,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         return automaticallyAdded;
     }
 
-    
+
     @Override
     public void setAutomaticallyAdded(boolean automaticallyAdded) {
         this.automaticallyAdded = automaticallyAdded;
@@ -617,7 +644,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public boolean isUnlimitedUsePerCustomer() {
         return getMaxUsesPerCustomer() == 0;
     }
-    
+
     @Override
     public boolean isLimitedUsePerCustomer() {
         return getMaxUsesPerCustomer() > 0;
@@ -637,7 +664,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     public boolean isUnlimitedUsePerOrder() {
         return getMaxUsesPerOrder() == 0;
     }
-    
+
     @Override
     public boolean isLimitedUsePerOrder() {
         return getMaxUsesPerOrder() > 0;
@@ -699,12 +726,12 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Map<String, OfferOfferRuleXref> getOfferMatchRulesXref() {
-       return offerMatchRules;
+        return offerMatchRules;
     }
 
     @Override
     public void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref) {
-       this.offerMatchRules = offerMatchRulesXref;
+        this.offerMatchRules = offerMatchRulesXref;
     }
 
     @Override
@@ -732,13 +759,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Character getArchived() {
-       ArchiveStatus temp;
-       if (archiveStatus == null) {
-           temp = new ArchiveStatus();
-       } else {
-           temp = archiveStatus;
-       }
-       return temp.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
@@ -751,12 +778,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public boolean isActive() {
-        return DateUtil.isActive(startDate, endDate, true) && 'Y'!=getArchived();
+        return DateUtil.isActive(startDate, endDate, true) && 'Y' != getArchived();
     }
-    
+
     @Override
     public Money getQualifyingItemSubTotal() {
-        return qualifyingItemSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(qualifyingItemSubTotal, null);
+        return qualifyingItemSubTotal == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(qualifyingItemSubTotal, null);
     }
 
     @Override
@@ -766,7 +795,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Money getOrderMinSubTotal() {
-        return orderMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(orderMinSubTotal, null);
+        return orderMinSubTotal == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(orderMinSubTotal, null);
     }
 
     @Override
@@ -776,7 +807,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Money getTargetMinSubTotal() {
-        return targetMinSubTotal == null ? null : BroadleafCurrencyUtils.getMoney(targetMinSubTotal, null);
+        return targetMinSubTotal == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(targetMinSubTotal, null);
     }
 
     @Override
@@ -796,9 +829,11 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Override
     public Boolean getRequiresRelatedTargetAndQualifiers() {
-        return requiresRelatedTargetAndQualifiers == null ? false : requiresRelatedTargetAndQualifiers;
+        return requiresRelatedTargetAndQualifiers == null
+                ? false
+                : requiresRelatedTargetAndQualifiers;
     }
-    
+
     @Override
     public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers) {
         this.requiresRelatedTargetAndQualifiers = requiresRelatedTargetAndQualifiers;
@@ -827,37 +862,39 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         if (adjustmentType == null) {
             return false;
         }
-        return OfferAdjustmentType.FUTURE_CREDIT.equals(OfferAdjustmentType.getInstance(adjustmentType));
+        return OfferAdjustmentType.FUTURE_CREDIT.equals(
+                OfferAdjustmentType.getInstance(adjustmentType));
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(name)
-            .append(startDate)
-            .append(type)
-            .append(value)
-            .build();
+                .append(name)
+                .append(startDate)
+                .append(type)
+                .append(value)
+                .build();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (o != null && getClass().isAssignableFrom(o.getClass())) {
             OfferImpl that = (OfferImpl) o;
             return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.name, that.name)
-                .append(this.startDate, that.startDate)
-                .append(this.type, that.type)
-                .append(this.value, that.value)
-                .build();
+                    .append(this.id, that.id)
+                    .append(this.name, that.name)
+                    .append(this.startDate, that.startDate)
+                    .append(this.type, that.type)
+                    .append(this.value, that.value)
+                    .build();
         }
-        
+
         return false;
     }
 
     @Override
-    public <G extends Offer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends Offer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -893,27 +930,31 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
                 cloned.getOfferCodes().add(clonedEntry);
             }
         }
-        for(OfferQualifyingCriteriaXref entry : qualifyingItemCriteria){
-            OfferQualifyingCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+        for (OfferQualifyingCriteriaXref entry : qualifyingItemCriteria) {
+            OfferQualifyingCriteriaXref clonedEntry =
+                    entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getQualifyingItemCriteriaXref().add(clonedEntry);
         }
         Set<OfferTargetCriteriaXref> offerTargetCriteriaXrefs = new HashSet<>();
-        for(OfferTargetCriteriaXref entry : targetItemCriteria){
-            OfferTargetCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+        for (OfferTargetCriteriaXref entry : targetItemCriteria) {
+            OfferTargetCriteriaXref clonedEntry =
+                    entry.createOrRetrieveCopyInstance(context).getClone();
             offerTargetCriteriaXrefs.add(clonedEntry);
         }
         cloned.setTargetItemCriteriaXref(offerTargetCriteriaXrefs);
-        for(Map.Entry<String, OfferOfferRuleXref> entry : offerMatchRules.entrySet()){
-            OfferOfferRuleXref clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getOfferMatchRulesXref().put(entry.getKey(),clonedEntry);
+        for (Map.Entry<String, OfferOfferRuleXref> entry : offerMatchRules.entrySet()) {
+            OfferOfferRuleXref clonedEntry =
+                    entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            cloned.getOfferMatchRulesXref().put(entry.getKey(), clonedEntry);
         }
 
         for (OfferPriceData offerPriceDataEntry : offerPriceData) {
-            OfferPriceData clonedEntry = offerPriceDataEntry.createOrRetrieveCopyInstance(context).getClone();
+            OfferPriceData clonedEntry =
+                    offerPriceDataEntry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getOfferPriceData().add(clonedEntry);
         }
 
-        return  createResponse;
+        return createResponse;
     }
 
 

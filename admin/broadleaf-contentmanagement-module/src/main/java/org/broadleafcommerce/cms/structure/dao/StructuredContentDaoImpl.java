@@ -47,7 +47,7 @@ import jakarta.persistence.criteria.Root;
 @Repository("blStructuredContentDao")
 public class StructuredContentDaoImpl implements StructuredContentDao {
 
-    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+    private static final SandBox DUMMY_SANDBOX = new SandBoxImpl();
     {
         DUMMY_SANDBOX.setId(-1l);
     }

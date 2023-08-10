@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.payment.domain.secure;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -60,7 +61,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
     @GeneratedValue(generator = "CreditCardPaymentId")
     @GenericGenerator(
             name="CreditCardPaymentId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type= IdOverrideTableGenerator.class,
             parameters = {
                 @Parameter(name="segment_value", value="CreditCardPaymentInfoImpl"),
                 @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl")
@@ -244,11 +245,9 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
         } else if (!pan.equals(other.pan))
             return false;
         if (referenceNumber == null) {
-            if (other.referenceNumber != null)
-                return false;
-        } else if (!referenceNumber.equals(other.referenceNumber))
-            return false;
-        return true;
+            return other.referenceNumber == null;
+        } else
+            return referenceNumber.equals(other.referenceNumber);
     }
 
 }

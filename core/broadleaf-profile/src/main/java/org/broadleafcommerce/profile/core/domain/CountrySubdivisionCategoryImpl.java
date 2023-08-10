@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -55,18 +56,20 @@ public class CountrySubdivisionCategoryImpl implements CountrySubdivisionCategor
     @Id
     @GeneratedValue(generator = "CountrySubdivisionCategoryId")
     @GenericGenerator(
-            name="CountrySubdivisionCategoryId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            name = "CountrySubdivisionCategoryId",
+            type = IdOverrideTableGenerator.class,
             parameters = {
-                    @Parameter(name="segment_value", value="CountrySubdivisionCategoryImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl")
+                    @Parameter(name = "segment_value", value = "CountrySubdivisionCategoryImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl")
             }
     )
     @Column(name = "COUNTRY_SUB_CAT_ID")
     protected Long id;
 
-    @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "CountrySubdivisionCategoryImpl_Name", order=1, prominent = true, translatable = true)
+    @Column(name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName = "CountrySubdivisionCategoryImpl_Name", order = 1,
+            prominent = true, translatable = true)
     protected String name;
 
     @Override

@@ -76,7 +76,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         }
         GiftWrapOrderItem cloned = (GiftWrapOrderItem)createResponse.getClone();
         for(OrderItem entry : wrappedItems){
-            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setGiftWrapOrderItem(cloned);
             cloned.getWrappedItems().add(clonedEntry);
         }
@@ -112,10 +112,8 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         }
 
         if (wrappedItems == null) {
-            if (other.wrappedItems != null)
-                return false;
-        } else if (!wrappedItems.equals(other.wrappedItems))
-            return false;
-        return true;
+            return other.wrappedItems == null;
+        } else
+            return wrappedItems.equals(other.wrappedItems);
     }
 }

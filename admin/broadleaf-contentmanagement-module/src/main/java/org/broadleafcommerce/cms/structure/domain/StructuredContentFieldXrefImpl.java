@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,11 +50,13 @@ import jakarta.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FLD_MAP")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class StructuredContentFieldXrefImpl implements StructuredContentFieldXref, Serializable, ProfileEntity {
+public class StructuredContentFieldXrefImpl
+        implements StructuredContentFieldXref, Serializable, ProfileEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -66,17 +68,19 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentFieldXrefImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXrefImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXrefImpl")
             })
     @Column(name = "BLC_SC_SC_FIELD_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = StructuredContentImpl.class, optional = false, cascade = { CascadeType.REFRESH })
+    @ManyToOne(targetEntity = StructuredContentImpl.class, optional = false,
+            cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "SC_ID")
     @AdminPresentation(excluded = true)
     protected StructuredContent structuredContent;
 
-    @ManyToOne(targetEntity = StructuredContentFieldImpl.class, cascade = { CascadeType.ALL })
+    @ManyToOne(targetEntity = StructuredContentFieldImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "SC_FLD_ID")
     @ClonePolicy
     @AdminPresentation(fieldType = SupportedFieldType.FOREIGN_KEY)
@@ -90,7 +94,9 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
         //Default constructor for JPA...
     }
 
-    public StructuredContentFieldXrefImpl(StructuredContent sc, StructuredContentField scField, String key) {
+    public StructuredContentFieldXrefImpl(StructuredContent sc,
+            StructuredContentField scField,
+            String key) {
         this.structuredContent = sc;
         this.structuredContentField = scField;
         this.key = key;
@@ -137,7 +143,8 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
     }
 
     @Override
-    public <G extends StructuredContentFieldXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentFieldXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -145,7 +152,8 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
         StructuredContentFieldXref cloned = createResponse.getClone();
         cloned.setKey(key);
         if (structuredContent != null) {
-            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setStructuredContent(
+                    structuredContent.createOrRetrieveCopyInstance(context).getClone());
         }
         if (structuredContentField != null) {
             CreateResponse<StructuredContentField> clonedFieldRsp = structuredContentField

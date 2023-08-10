@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -61,18 +61,22 @@ public class CountrySubdivisionImpl implements CountrySubdivision, AdminMainEnti
     protected String abbreviation;
 
     @Column(name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName = "CountrySubdivisionImpl_Name", order=9, group = "CountrySubdivisionImpl_Address", prominent = true, translatable = true)
+    @AdminPresentation(friendlyName = "CountrySubdivisionImpl_Name", order = 9,
+            group = "CountrySubdivisionImpl_Address", prominent = true, translatable = true)
     protected String name;
 
     @Column(name = "ALT_ABBREVIATION")
-    @AdminPresentation(friendlyName = "CountrySubdivisionImpl_AltAbbreviation", order=10, group = "CountrySubdivisionImpl_Address", prominent = true)
+    @AdminPresentation(friendlyName = "CountrySubdivisionImpl_AltAbbreviation", order = 10,
+            group = "CountrySubdivisionImpl_Address", prominent = true)
     protected String alternateAbbreviation;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CountryImpl.class,
+            optional = false)
     @JoinColumn(name = "COUNTRY")
     protected Country country;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountrySubdivisionCategoryImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            targetEntity = CountrySubdivisionCategoryImpl.class)
     @JoinColumn(name = "COUNTRY_SUB_CAT")
     protected CountrySubdivisionCategory category;
 

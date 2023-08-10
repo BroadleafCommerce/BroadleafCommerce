@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -56,27 +57,30 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_ITEM_ADJUSTMENT", indexes = {@Index(name = "OIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
+@Table(name = "BLC_ORDER_ITEM_ADJUSTMENT",
+        indexes = {@Index(name = "OIADJUST_ITEM_INDEX", columnList = "ORDER_ITEM_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
         @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
                 booleanOverrideValue = true))
 })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemAdjustmentImpl_baseOrderItemAdjustment")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "OrderItemAdjustmentImpl_baseOrderItemAdjustment")
 public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "OrderItemAdjustmentId")
+    @GeneratedValue(generator = "OrderItemAdjustmentId")
     @GenericGenerator(
-        name="OrderItemAdjustmentId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="OrderItemAdjustmentImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl")
-        }
+            name = "OrderItemAdjustmentId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderItemAdjustmentImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl")
+            }
     )
     @Column(name = "ORDER_ITEM_ADJUSTMENT_ID")
     protected Long id;
@@ -86,27 +90,28 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     @AdminPresentation(excluded = true)
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Offer", order=1000,
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Offer", order = 1000,
             group = "OrderItemAdjustmentImpl_Description", prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
-    @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason", order=2000)
+    @Column(name = "ADJUSTMENT_REASON", nullable = false)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason",
+            order = 2000)
     protected String reason;
 
-    @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Value", order=3000,
+    @Column(name = "ADJUSTMENT_VALUE", nullable = false, precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Value", order = 3000,
             fieldType = SupportedFieldType.MONEY, prominent = true,
             gridOrder = 2000)
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "APPLIED_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Apply_To_Sale_Price", order=4000)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Apply_To_Sale_Price", order = 4000)
     protected boolean appliedToSalePrice;
-    
+
     @Transient
     protected Money retailValue;
 
@@ -117,7 +122,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     protected Offer deproxiedOffer;
 
     @Override
-    public void init(OrderItem orderItem, Offer offer, String reason){
+    public void init(OrderItem orderItem, Offer offer, String reason) {
         setOrderItem(orderItem);
         setOffer(offer);
         setReason(reason);
@@ -178,9 +183,11 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
 
     @Override
     public Money getValue() {
-        return value == null ? null : BroadleafCurrencyUtils.getMoney(value, getOrderItem().getOrder().getCurrency());
+        return value == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(value, getOrderItem().getOrder().getCurrency());
     }
-    
+
     @Override
     public void setValue(Money value) {
         this.value = value.getAmount();
@@ -199,7 +206,8 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     @Override
     public Money getRetailPriceValue() {
         if (retailValue == null) {
-            return BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderItem().getOrder().getCurrency());
+            return BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO,
+                    getOrderItem().getOrder().getCurrency());
         }
         return this.retailValue;
     }
@@ -212,7 +220,8 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     @Override
     public Money getSalesPriceValue() {
         if (salesValue == null) {
-            return BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderItem().getOrder().getCurrency());
+            return BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO,
+                    getOrderItem().getOrder().getCurrency());
         }
         return salesValue;
     }

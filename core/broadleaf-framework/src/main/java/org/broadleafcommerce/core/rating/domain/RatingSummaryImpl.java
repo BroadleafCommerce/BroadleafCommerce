@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -48,7 +48,8 @@ import jakarta.persistence.Table;
         @Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
         @Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")
 })
-@AdminPresentationClass(friendlyName = "RatingSummary", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(friendlyName = "RatingSummary",
+        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class RatingSummaryImpl implements RatingSummary, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,12 +57,13 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     @Id
     @GeneratedValue(generator = "RatingSummaryId")
     @GenericGenerator(
-        name="RatingSummaryId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="RatingSummaryImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.RatingSummaryImpl")
-        }
+            name = "RatingSummaryId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "RatingSummaryImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.rating.domain.RatingSummaryImpl")
+            }
     )
     @Column(name = "RATING_SUMMARY_ID")
     protected Long id;
@@ -72,20 +74,22 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
 
     @Column(name = "RATING_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "RatingSummary_ratingType",
-        prominent = true,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.core.rating.service.type.RatingType")
+            prominent = true,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.rating.service.type.RatingType")
     protected String ratingTypeStr;
 
     @Column(name = "AVERAGE_RATING", nullable = false)
     @AdminPresentation(friendlyName = "RatingSummary_averageRating", prominent = true)
     protected Double averageRating = 0.0;
 
-    @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class,
+            cascade = {CascadeType.ALL})
     @AdminPresentationCollection(friendlyName = "RatingSummary_ratings")
     protected List<RatingDetail> ratings = new ArrayList<RatingDetail>();
 
-    @OneToMany(mappedBy = "ratingSummary", targetEntity = ReviewDetailImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "ratingSummary", targetEntity = ReviewDetailImpl.class,
+            cascade = {CascadeType.ALL})
     @AdminPresentationCollection(friendlyName = "RatingSummary_reviews")
     protected List<ReviewDetail> reviews = new ArrayList<ReviewDetail>();
 

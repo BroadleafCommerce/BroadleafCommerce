@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -48,47 +49,52 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_PRODUCT_ATTRIBUTE")
+@Table(name = "BLC_PRODUCT_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
 @AdminPresentationClass(friendlyName = "ProductAttributeImpl_baseProductAttribute")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG,
+                skipOverlaps = true)
 })
 public class ProductAttributeImpl implements ProductAttribute {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
+
     /** The id. */
     @Id
-    @GeneratedValue(generator= "ProductAttributeId")
+    @GeneratedValue(generator = "ProductAttributeId")
     @GenericGenerator(
-        name="ProductAttributeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="ProductAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl")
-        }
+            name = "ProductAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ProductAttributeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl")
+            }
     )
     @Column(name = "PRODUCT_ATTRIBUTE_ID")
     protected Long id;
-    
+
     /** The name. */
-    @Column(name = "NAME", nullable=false)
-    @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order=-1, group = "ProductAttributeImpl_Description", prominent=true, gridOrder = 1)
+    @Column(name = "NAME", nullable = false)
+    @Index(name = "PRODUCTATTRIBUTE_NAME_INDEX", columnNames = {"NAME"})
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order = -1,
+            group = "ProductAttributeImpl_Description", prominent = true, gridOrder = 1)
     protected String name;
 
     /** The value. */
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true, gridOrder = 2)
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order = 2,
+            group = "ProductAttributeImpl_Description", prominent = true, gridOrder = 2)
     protected String value;
-    
+
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = ProductImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="PRODUCTATTRIBUTE_INDEX", columnNames={"PRODUCT_ID"})
+    @Index(name = "PRODUCTATTRIBUTE_INDEX", columnNames = {"PRODUCT_ID"})
     protected Product product;
 
     @Override
@@ -179,7 +185,8 @@ public class ProductAttributeImpl implements ProductAttribute {
     }
 
     @Override
-    public <G extends ProductAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends ProductAttribute> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -190,6 +197,6 @@ public class ProductAttributeImpl implements ProductAttribute {
         }
         cloned.setName(name);
         cloned.setValue(value);
-        return  createResponse;
+        return createResponse;
     }
 }

@@ -145,7 +145,7 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     }
 
     public void checkCloneable(Catalog catalog) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = catalog.getClass().getMethod("clone", new Class[] {});
+        Method cloneMethod = catalog.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !catalog.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");

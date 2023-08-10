@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -58,31 +59,34 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_INDEX_FIELD", indexes = {@Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
+@Table(name = "BLC_INDEX_FIELD",
+        indexes = {@Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
-public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdminPresentation, AdminMainEntity {
+public class IndexFieldImpl
+        implements IndexField, Serializable, IndexFieldAdminPresentation, AdminMainEntity {
 
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
     @GeneratedValue(generator = "IndexFieldId")
     @GenericGenerator(
-            name="IndexFieldId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            name = "IndexFieldId",
+            type = IdOverrideTableGenerator.class,
             parameters = {
-                    @Parameter(name="segment_value", value="IndexFieldImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.IndexFieldImpl")
+                    @Parameter(name = "segment_value", value = "IndexFieldImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.IndexFieldImpl")
             }
     )
     @Column(name = "INDEX_FIELD_ID")
     @AdminPresentation(friendlyName = "IndexFieldImpl_ID", group = "IndexFieldImpl_description",
-            visibility= VisibilityEnum.HIDDEN_ALL)
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
+
     @Column(name = "SEARCHABLE")
     @AdminPresentation(friendlyName = "IndexFieldImpl_searchable",
             defaultValue = "false",
@@ -91,14 +95,17 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
             tooltip = "IndexFieldImpl_searchable_tooltip")
     protected Boolean searchable;
 
-    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
+    @ManyToOne(optional = false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "IndexFieldImpl_field", order = 1000, group = GroupName.General,
+    @AdminPresentation(friendlyName = "IndexFieldImpl_field", order = 1000,
+            group = GroupName.General,
             prominent = true, gridOrder = 1000)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName", customCriteria = { "fieldImplOnly" })
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName",
+            customCriteria = {"fieldImplOnly"})
     protected Field field;
 
-    @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class,
+            cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @BatchSize(size = 50)
     @Where(clause = "(ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
@@ -124,7 +131,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
-    
+
     @Override
     public Field getField() {
         return field;
@@ -146,7 +153,8 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     }
 
     @Override
-    public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -154,7 +162,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
         IndexField cloned = createResponse.getClone();
         cloned.setSearchable(searchable);
         cloned.setField(field);
-        for(IndexFieldType entry : fieldTypes){
+        for (IndexFieldType entry : fieldTypes) {
             cloned.getFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
         }
 

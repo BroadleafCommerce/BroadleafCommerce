@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,46 +39,53 @@ public class Dimension implements Serializable, MultiTenantCloneable<Dimension> 
 
     @Column(name = "WIDTH")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Width",
-            group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.WIDTH)
+            group = SkuAdminPresentation.GroupName.ShippingDimensions,
+            order = SkuAdminPresentation.FieldOrder.WIDTH)
     protected BigDecimal width;
 
     @Column(name = "HEIGHT")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Height",
-            group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.HEIGHT)
+            group = SkuAdminPresentation.GroupName.ShippingDimensions,
+            order = SkuAdminPresentation.FieldOrder.HEIGHT)
     protected BigDecimal height;
 
     @Column(name = "DEPTH")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Depth",
-        group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.DEPTH)
+            group = SkuAdminPresentation.GroupName.ShippingDimensions,
+            order = SkuAdminPresentation.FieldOrder.DEPTH)
     protected BigDecimal depth;
 
     @Column(name = "GIRTH")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Girth",
-        group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.GIRTH)
+            group = SkuAdminPresentation.GroupName.ShippingDimensions,
+            order = SkuAdminPresentation.FieldOrder.GIRTH)
     protected BigDecimal girth;
 
     @Column(name = "CONTAINER_SIZE")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Size",
-        group = SkuAdminPresentation.GroupName.ShippingContainer, order = SkuAdminPresentation.FieldOrder.CONTAINER_SIZE,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerSizeType",
-        hideEnumerationIfEmpty = true)
+            group = SkuAdminPresentation.GroupName.ShippingContainer,
+            order = SkuAdminPresentation.FieldOrder.CONTAINER_SIZE,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerSizeType",
+            hideEnumerationIfEmpty = true)
     protected String size;
 
     @Column(name = "CONTAINER_SHAPE")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Shape",
-        group = SkuAdminPresentation.GroupName.ShippingContainer, order = SkuAdminPresentation.FieldOrder.CONTAINER_SHAPE,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerShapeType",
-        hideEnumerationIfEmpty = true)
+            group = SkuAdminPresentation.GroupName.ShippingContainer,
+            order = SkuAdminPresentation.FieldOrder.CONTAINER_SHAPE,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.vendor.service.type.ContainerShapeType",
+            hideEnumerationIfEmpty = true)
     protected String container;
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")
     @AdminPresentation(friendlyName = "ProductDimension_Product_Dimension_Units",
-        group = SkuAdminPresentation.GroupName.ShippingDimensions, order = SkuAdminPresentation.FieldOrder.DIMENSION_UNIT_OF_MEASURE,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.common.util.DimensionUnitOfMeasureType",
-        defaultValue = "CENTIMETERS")
+            group = SkuAdminPresentation.GroupName.ShippingDimensions,
+            order = SkuAdminPresentation.FieldOrder.DIMENSION_UNIT_OF_MEASURE,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.util.DimensionUnitOfMeasureType",
+            defaultValue = "CENTIMETERS")
     protected String dimensionUnitOfMeasure;
 
     public BigDecimal getWidth() {
@@ -106,8 +113,8 @@ public class Dimension implements Serializable, MultiTenantCloneable<Dimension> 
     }
 
     /**
-     * Returns the product dimensions as a String (assumes measurements are in
-     * inches)
+     * Returns the product dimensions as a String (assumes measurements are in inches)
+     *
      * @return a String value of the product dimensions
      */
     public String getDimensionString() {
@@ -153,7 +160,8 @@ public class Dimension implements Serializable, MultiTenantCloneable<Dimension> 
     }
 
     @Override
-    public <G extends Dimension> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends Dimension> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         Dimension clone = createResponse.getClone();
         if (container != null) {
@@ -174,21 +182,33 @@ public class Dimension implements Serializable, MultiTenantCloneable<Dimension> 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if (!getClass().isAssignableFrom(o.getClass())) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (!getClass().isAssignableFrom(o.getClass()))
+            return false;
 
         Dimension dimension = (Dimension) o;
 
-        if (container != null ? !container.equals(dimension.container) : dimension.container != null) return false;
-        if (depth != null ? !depth.equals(dimension.depth) : dimension.depth != null) return false;
-        if (dimensionUnitOfMeasure != null ? !dimensionUnitOfMeasure.equals(dimension.dimensionUnitOfMeasure) :
+        if (container != null
+                ? !container.equals(dimension.container)
+                : dimension.container != null)
+            return false;
+        if (depth != null ? !depth.equals(dimension.depth) : dimension.depth != null)
+            return false;
+        if (dimensionUnitOfMeasure != null ? !dimensionUnitOfMeasure.equals(
+                dimension.dimensionUnitOfMeasure) :
                 dimension.dimensionUnitOfMeasure != null)
             return false;
-        if (girth != null ? !girth.equals(dimension.girth) : dimension.girth != null) return false;
-        if (height != null ? !height.equals(dimension.height) : dimension.height != null) return false;
-        if (size != null ? !size.equals(dimension.size) : dimension.size != null) return false;
-        if (width != null ? !width.equals(dimension.width) : dimension.width != null) return false;
+        if (girth != null ? !girth.equals(dimension.girth) : dimension.girth != null)
+            return false;
+        if (height != null ? !height.equals(dimension.height) : dimension.height != null)
+            return false;
+        if (size != null ? !size.equals(dimension.size) : dimension.size != null)
+            return false;
+        if (width != null ? !width.equals(dimension.width) : dimension.width != null)
+            return false;
 
         return true;
     }
@@ -201,7 +221,9 @@ public class Dimension implements Serializable, MultiTenantCloneable<Dimension> 
         result = 31 * result + (girth != null ? girth.hashCode() : 0);
         result = 31 * result + (size != null ? size.hashCode() : 0);
         result = 31 * result + (container != null ? container.hashCode() : 0);
-        result = 31 * result + (dimensionUnitOfMeasure != null ? dimensionUnitOfMeasure.hashCode() : 0);
+        result = 31 * result + (dimensionUnitOfMeasure != null
+                ? dimensionUnitOfMeasure.hashCode()
+                : 0);
         return result;
     }
 }

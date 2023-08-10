@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,29 +43,28 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}.
- * A SKU Attribute is a designator on a SKU that differentiates it from other similar SKUs
- * (for example: Blue attribute for hat).
- * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
- * this class and add your fields.  If you need to make significant changes to the SkuImpl then you
- * should implement your own version of {@link Sku}.
+ * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}. A SKU Attribute
+ * is a designator on a SKU that differentiates it from other similar SKUs (for example: Blue
+ * attribute for hat). If you want to add fields specific to your implementation of
+ * BroadLeafCommerce you should extend this class and add your fields.  If you need to make
+ * significant changes to the SkuImpl then you should implement your own version of {@link Sku}.
  * <br>
  * <br>
- * This implementation uses a Hibernate implementation of JPA configured through annotations.
- * The Entity references the following tables:
- * BLC_SKU_ATTRIBUTES,
- * 
- * 
- *   @see {@link SkuAttribute}, {@link SkuImpl}
- *   @author btaylor
+ * This implementation uses a Hibernate implementation of JPA configured through annotations. The
+ * Entity references the following tables: BLC_SKU_ATTRIBUTES,
+ *
+ * @author btaylor
+ * @see {@link SkuAttribute}, {@link SkuImpl}
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SKU_ATTRIBUTE")
+@Table(name = "BLC_SKU_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG,
+                skipOverlaps = true)
 })
 public class SkuAttributeImpl implements SkuAttribute {
 
@@ -73,33 +73,36 @@ public class SkuAttributeImpl implements SkuAttribute {
 
     /** The id. */
     @Id
-    @GeneratedValue(generator= "SkuAttributeId")
+    @GeneratedValue(generator = "SkuAttributeId")
     @GenericGenerator(
-        name="SkuAttributeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="SkuAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl")
-        }
+            name = "SkuAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SkuAttributeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl")
+            }
     )
     @Column(name = "SKU_ATTR_ID")
     protected Long id;
-    
+
     /** The name. */
-    @Column(name = "NAME", nullable=false)
-    @Index(name="SKUATTR_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Name", order=1 , group = "SkuAttributeImpl_Description", prominent=true, gridOrder = 1)
+    @Column(name = "NAME", nullable = false)
+    @Index(name = "SKUATTR_NAME_INDEX", columnNames = {"NAME"})
+    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Name", order = 1,
+            group = "SkuAttributeImpl_Description", prominent = true, gridOrder = 1)
     protected String name;
 
     /** The value. */
-    @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", order=2, group = "SkuAttributeImpl_Description", prominent=true, gridOrder = 2)
+    @Column(name = "VALUE", nullable = false)
+    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", order = 2,
+            group = "SkuAttributeImpl_Description", prominent = true, gridOrder = 2)
     protected String value;
-  
+
     /** The sku. */
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = SkuImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SKU_ID")
-    @Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
+    @Index(name = "SKUATTR_SKU_INDEX", columnNames = {"SKU_ID"})
     protected Sku sku;
 
     /* (non-Javadoc)
@@ -133,7 +136,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
      */
@@ -157,7 +160,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     public String toString() {
         return value;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()
      */
@@ -217,7 +220,8 @@ public class SkuAttributeImpl implements SkuAttribute {
     }
 
     @Override
-    public <G extends SkuAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends SkuAttribute> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -58,13 +59,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "BLC_OFFER_PRICE_DATA", indexes = {@Index(name = "OFFER_PRICE_DATA_OFFER_INDEX", columnList = "OFFER_ID")})
+@Table(name = "BLC_OFFER_PRICE_DATA",
+        indexes = {@Index(name = "OFFER_PRICE_DATA_OFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferPriceDataImpl_baseOfferPriceData")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE,
+        friendlyName = "OfferPriceDataImpl_baseOfferPriceData")
 @SQLDelete(sql = "UPDATE BLC_OFFER_PRICE_DATA SET ARCHIVED = 'Y' WHERE OFFER_PRICE_DATA_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferPriceDataImpl implements OfferPriceData {
@@ -72,20 +76,22 @@ public class OfferPriceDataImpl implements OfferPriceData {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "OfferPriceDataId")
+    @GeneratedValue(generator = "OfferPriceDataId")
     @GenericGenerator(
-        name="OfferPriceDataId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="OfferPriceDataImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferPriceDataImpl")
-        }
+            name = "OfferPriceDataId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OfferPriceDataImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferPriceDataImpl")
+            }
     )
     @Column(name = "OFFER_PRICE_DATA_ID")
-    @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer_Price_Data_Id", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer_Price_Data_Id",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
     @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer", order = 1000)
     @AdminPresentationToOneLookup()
@@ -104,7 +110,8 @@ public class OfferPriceDataImpl implements OfferPriceData {
                     @ValidationConfiguration(
                             validationImplementation = "blAfterStartDateValidator",
                             configurationItems = {
-                                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
+                                    @ConfigurationItem(itemName = "otherField",
+                                            itemValue = "activeStartDate")
                             })
             })
     protected Date activeEndDate;
@@ -137,7 +144,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
             prominent = true, gridOrder = 3000)
     protected String discountType;
 
-    @Column(name = "AMOUNT", nullable=false, precision=19, scale=5)
+    @Column(name = "AMOUNT", nullable = false, precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OfferPriceDataImpl_Amount",
             requiredOverride = RequiredOverride.REQUIRED,
             order = 7000,
@@ -145,7 +152,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
             prominent = true, gridOrder = 4000)
     protected BigDecimal amount;
 
-    @Column(name = "QUANTITY", nullable=false)
+    @Column(name = "QUANTITY", nullable = false)
     @AdminPresentation(friendlyName = "OfferPriceDataImpl_Quantity",
             requiredOverride = RequiredOverride.REQUIRED,
             order = 8000,
@@ -277,7 +284,8 @@ public class OfferPriceDataImpl implements OfferPriceData {
         // If the start date for this offer code has not been set, just delegate to the offer to determine if the code is
         // active rather than requiring the user to set offer code dates as well
         if (activeStartDate == null) {
-            datesActive = DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
+            datesActive =
+                    DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
         } else {
             datesActive = DateUtil.isActive(activeStartDate, activeEndDate, true);
         }
@@ -286,22 +294,36 @@ public class OfferPriceDataImpl implements OfferPriceData {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OfferPriceDataImpl)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof OfferPriceDataImpl))
+            return false;
 
         OfferPriceDataImpl that = (OfferPriceDataImpl) o;
 
-        if (!getId().equals(that.getId())) return false;
-        if (!getOffer().equals(that.getOffer())) return false;
-        if (!getActiveStartDate().equals(that.getActiveStartDate())) return false;
-        if (getActiveEndDate() != null ? !getActiveEndDate().equals(that.getActiveEndDate()) : that.getActiveEndDate() != null)
+        if (!getId().equals(that.getId()))
             return false;
-        if (!getIdentifierType().equals(that.getIdentifierType())) return false;
-        if (!getIdentifierValue().equals(that.getIdentifierValue())) return false;
-        if (!getDiscountType().equals(that.getDiscountType())) return false;
-        if (!getAmount().equals(that.getAmount())) return false;
-        if (!getQuantity().equals(that.getQuantity())) return false;
-        return archiveStatus != null ? archiveStatus.equals(that.archiveStatus) : that.archiveStatus == null;
+        if (!getOffer().equals(that.getOffer()))
+            return false;
+        if (!getActiveStartDate().equals(that.getActiveStartDate()))
+            return false;
+        if (getActiveEndDate() != null
+                ? !getActiveEndDate().equals(that.getActiveEndDate())
+                : that.getActiveEndDate() != null)
+            return false;
+        if (!getIdentifierType().equals(that.getIdentifierType()))
+            return false;
+        if (!getIdentifierValue().equals(that.getIdentifierValue()))
+            return false;
+        if (!getDiscountType().equals(that.getDiscountType()))
+            return false;
+        if (!getAmount().equals(that.getAmount()))
+            return false;
+        if (!getQuantity().equals(that.getQuantity()))
+            return false;
+        return archiveStatus != null
+                ? archiveStatus.equals(that.archiveStatus)
+                : that.archiveStatus == null;
     }
 
     @Override
@@ -320,7 +342,8 @@ public class OfferPriceDataImpl implements OfferPriceData {
     }
 
     @Override
-    public <G extends OfferPriceData> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OfferPriceData> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

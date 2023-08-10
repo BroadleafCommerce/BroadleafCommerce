@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -53,38 +54,40 @@ import jakarta.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategorySearchFacetImpl implements CategorySearchFacet {
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "CategorySearchFacetId")
     @GenericGenerator(
-        name="CategorySearchFacetId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CategorySearchFacetImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl")
-        }
+            name = "CategorySearchFacetId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CategorySearchFacetImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl")
+            }
     )
     @Column(name = "CATEGORY_SEARCH_FACET_ID")
     protected Long id;
-    
+
     @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     @AdminPresentation(excluded = true)
     protected Category category;
-    
+
     @ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
-    
+
     @Column(name = "SEQUENCE")
     @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence")
     protected BigDecimal sequence;
@@ -128,29 +131,30 @@ public class CategorySearchFacetImpl implements CategorySearchFacet {
     public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             CategorySearchFacetImpl other = (CategorySearchFacetImpl) obj;
             return new EqualsBuilder()
-                .append(category, other.category)
-                .append(searchFacet, other.searchFacet)
-                .build();
+                    .append(category, other.category)
+                    .append(searchFacet, other.searchFacet)
+                    .build();
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(category)
-            .append(searchFacet)
-            .toHashCode();
+                .append(category)
+                .append(searchFacet)
+                .toHashCode();
     }
 
     @Override
-    public <G extends CategorySearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CategorySearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

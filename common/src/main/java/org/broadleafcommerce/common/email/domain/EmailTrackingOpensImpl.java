@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.email.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -33,7 +34,6 @@ import jakarta.persistence.Table;
 
 /**
  * @author jfischer
- *
  */
 @Entity
 @Table(name = "BLC_EMAIL_TRACKING_OPENS", indexes = {
@@ -47,12 +47,13 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     @Id
     @GeneratedValue(generator = "OpenId")
     @GenericGenerator(
-        name="OpenId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="EmailTrackingOpensImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl")
-        }
+            name = "OpenId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "EmailTrackingOpensImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl")
+            }
     )
     @Column(name = "OPEN_ID")
     protected Long id;
@@ -113,7 +114,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     @Override
     public void setUserAgent(String userAgent) {
         if (userAgent.length() > 255) {
-            userAgent = userAgent.substring(0,254);
+            userAgent = userAgent.substring(0, 254);
         }
         this.userAgent = userAgent;
     }
@@ -170,11 +171,9 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
         } else if (!emailTracking.equals(other.emailTracking))
             return false;
         if (userAgent == null) {
-            if (other.userAgent != null)
-                return false;
-        } else if (!userAgent.equals(other.userAgent))
-            return false;
-        return true;
+            return other.userAgent == null;
+        } else
+            return userAgent.equals(other.userAgent);
     }
 
 }

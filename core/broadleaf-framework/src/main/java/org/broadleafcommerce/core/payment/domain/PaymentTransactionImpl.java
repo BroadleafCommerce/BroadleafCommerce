@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -64,13 +65,14 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT_TRANSACTION")
-@SQLDelete(sql="UPDATE BLC_ORDER_PAYMENT_TRANSACTION SET ARCHIVED = 'Y' WHERE PAYMENT_TRANSACTION_ID = ?")
+@SQLDelete(
+        sql = "UPDATE BLC_ORDER_PAYMENT_TRANSACTION SET ARCHIVED = 'Y' WHERE PAYMENT_TRANSACTION_ID = ?")
 @AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
+        {
+                @AdminPresentationMergeOverride(name = "", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                        booleanOverrideValue = true))
+        }
 )
 public class PaymentTransactionImpl implements PaymentTransaction {
 
@@ -79,12 +81,13 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Id
     @GeneratedValue(generator = "PaymentTransactionId")
     @GenericGenerator(
-        name="PaymentTransactionId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PaymentTransactionImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl")
-        }
+            name = "PaymentTransactionId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PaymentTransactionImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl")
+            }
     )
     @Column(name = "PAYMENT_TRANSACTION_ID")
     protected Long id;
@@ -97,38 +100,41 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected String type;
 
     @Column(name = "TRANSACTION_AMOUNT")
-    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Amount", fieldType = SupportedFieldType.MONEY,
-        prominent = true, gridOrder = 2000)
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Amount",
+            fieldType = SupportedFieldType.MONEY,
+            prominent = true, gridOrder = 2000)
     protected BigDecimal amount;
 
     @Column(name = "DATE_RECORDED")
-    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Date", prominent = true, gridOrder = 3000)
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Date", prominent = true,
+            gridOrder = 3000)
     protected Date date;
-    
+
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
-    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Payment_IP_Address", order=4000)
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Payment_IP_Address", order = 4000)
     protected String customerIpAddress;
 
     @Lob
     @Column(name = "RAW_RESPONSE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Raw_Response")
     protected String rawResponse;
-    
+
     @Column(name = "SUCCESS")
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Success")
     protected Boolean success = true;
-    
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-    
+
     @ManyToOne(targetEntity = OrderPaymentImpl.class, optional = false)
     @JoinColumn(name = "ORDER_PAYMENT")
     @AdminPresentation(excluded = true)
     protected OrderPayment orderPayment;
 
     /**
-     * Necessary for operations on a payment that require something to have happened beforehand. For instance, an AUTHORIZE
-     * would not have a parent but a CAPTURE must have an AUTHORIZE parent and a REFUND must have a CAPTURE parent
+     * Necessary for operations on a payment that require something to have happened beforehand. For
+     * instance, an AUTHORIZE would not have a parent but a CAPTURE must have an AUTHORIZE parent
+     * and a REFUND must have a CAPTURE parent
      */
     @ManyToOne(targetEntity = PaymentTransactionImpl.class)
     @JoinColumn(name = "PARENT_TRANSACTION")
@@ -137,12 +143,15 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected PaymentTransaction parentTransaction;
 
     @ElementCollection
-    @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
-    @MapKeyColumn(name="FIELD_NAME")
-    @Column(name="FIELD_VALUE", length = Length.LONG32 - 1)
+    @CollectionTable(name = "BLC_TRANS_ADDITNL_FIELDS",
+            joinColumns = @JoinColumn(name = "PAYMENT_TRANSACTION_ID"))
+    @MapKeyColumn(name = "FIELD_NAME")
+    @Column(name = "FIELD_VALUE", length = Length.LONG32 - 1)
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields", isSimpleValue = UnspecifiedBooleanType.TRUE,
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
+    @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields",
+            isSimpleValue = UnspecifiedBooleanType.TRUE,
+            forceFreeFormKeys = true,
+            keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
@@ -173,7 +182,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     public void setOrderPayment(OrderPayment orderPayment) {
         this.orderPayment = orderPayment;
     }
-    
+
     @Override
     public PaymentTransaction getParentTransaction() {
         return parentTransaction;
@@ -196,7 +205,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @Override
     public Money getAmount() {
-        return amount == null ? BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderPayment().getCurrency()) : BroadleafCurrencyUtils.getMoney(amount, getOrderPayment().getCurrency());
+        return amount == null
+                ? BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrderPayment().getCurrency())
+                : BroadleafCurrencyUtils.getMoney(amount, getOrderPayment().getCurrency());
     }
 
     @Override
@@ -215,7 +226,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     public void setDate(Date date) {
         this.date = date;
     }
-    
+
     @Override
     public String getCustomerIpAddress() {
         return customerIpAddress;
@@ -225,17 +236,17 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     public void setCustomerIpAddress(String customerIpAddress) {
         this.customerIpAddress = customerIpAddress;
     }
-    
+
     @Override
     public String getRawResponse() {
         return rawResponse;
     }
-    
+
     @Override
     public void setRawResponse(String rawResponse) {
         this.rawResponse = rawResponse;
     }
-    
+
     @Override
     public Boolean getSuccess() {
         return success;
@@ -245,7 +256,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     public void setSuccess(Boolean success) {
         this.success = success;
     }
-    
+
     @Override
     public Map<String, String> getAdditionalFields() {
         return additionalFields;
@@ -258,7 +269,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @Override
     public boolean isSaveToken() {
-        return saveToken == null ? false : saveToken;
+        return saveToken != null && saveToken;
     }
 
     @Override
@@ -268,13 +279,13 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @Override
     public Character getArchived() {
-       ArchiveStatus temp;
-       if (archiveStatus == null) {
-           temp = new ArchiveStatus();
-       } else {
-           temp = archiveStatus;
-       }
-       return temp.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
@@ -292,7 +303,8 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
 
     @Override
-    public <G extends PaymentTransaction> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends PaymentTransaction> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -308,8 +320,8 @@ public class PaymentTransactionImpl implements PaymentTransaction {
         cloned.setSuccess(success);
         cloned.setType(PaymentTransactionType.getInstance(type));
 
-        for(Map.Entry<String, String> entry : additionalFields.entrySet()){
-            cloned.getAdditionalFields().put(entry.getKey(),entry.getValue());
+        for (Map.Entry<String, String> entry : additionalFields.entrySet()) {
+            cloned.getAdditionalFields().put(entry.getKey(), entry.getValue());
         }
         return createResponse;
     }
