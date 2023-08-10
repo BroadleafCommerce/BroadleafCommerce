@@ -65,7 +65,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @GeneratedValue(generator = "CandidateItemOfferId")
     @GenericGenerator(
             name = "CandidateItemOfferId",
-            type = IdOverrideTableGenerator.classд,
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "CandidateItemOfferImpl"),
                     @Parameter(name = "entity_name",
