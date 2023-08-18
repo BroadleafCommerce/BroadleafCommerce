@@ -36,6 +36,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
@@ -164,7 +165,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @GeneratedValue(generator = "SkuId")
     @GenericGenerator(
             name = "SkuId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "SkuImpl"),
                     @Parameter(name = "entity_name",
@@ -1089,7 +1090,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         //we just migrate the call from the List to the internal Set representation. This is in response
         //to https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917.
         return (List<ProductOptionValue>) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {List.class}, new InvocationHandler() {
+                new Class<?>[]{List.class}, new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args)
                             throws Throwable {

@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.search.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -25,6 +24,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
@@ -102,7 +102,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
     @GeneratedValue(generator = "SearchFacetRangeId")
     @GenericGenerator(
             name = "SearchFacetRangeId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "SearchFacetRangeImpl"),
                     @Parameter(name = "entity_name",
