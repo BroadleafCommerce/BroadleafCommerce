@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -72,7 +73,7 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     @GeneratedValue(generator = "ModuleConfigurationId")
     @GenericGenerator(
             name = "ModuleConfigurationId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "ModuleConfigurationImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.config.domain" +

@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -46,7 +47,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-
 
 /**
  * @author priyeshpatel
@@ -70,7 +70,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @GeneratedValue(generator = "URLHandlerID")
     @GenericGenerator(
             name = "URLHandlerID",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "URLHandlerImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.url.domain.URLHandlerImpl")
