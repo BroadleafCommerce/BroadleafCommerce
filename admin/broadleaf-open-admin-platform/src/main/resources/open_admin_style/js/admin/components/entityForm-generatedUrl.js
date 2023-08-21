@@ -75,25 +75,25 @@
             var sourceFieldName = $generatedUrlContainer.data('source-field');
             $generatedUrlContainer.closest('form').find('#field-' + sourceFieldName + " input").off('keyup');
         },
-        
-        convertToUrlFragment : function convertToUrlFragment(val, options) {
+
+        convertToUrlFragment: function convertToUrlFragment(val, options) {
             var valPostFix = "";
-            if (val.toString().indexOf('.') != -1) {
+            if (val.toString().indexOf('.') !== -1) {
                 var valFragments = val.split('.');
-                valPostFix = valFragments[valFragments.length - 1];
-                val = val.substring(0,val.length - valPostFix.length)
-                if(valPostFix){
-                    valPostFix="."+valPostFix
+                valPostFix = "_" + valFragments[valFragments.length - 1].replace(/ /g, '-');
+                valFragments[valFragments.length - 1] = valFragments[valFragments.length - 1].replace(/ /g, '-');
+                if (valPostFix.endsWith('.')) {
+                    valPostFix = valPostFix.slice(0, -1);
                 }
+                val = valFragments.join('_');
             }
-
             if (options != null && options.allowSlash) {
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase() + valPostFix;
+                val = val.replace(/[^.\w\s/]/g, '');
             } else {
-                return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase() + valPostFix;
+                val = val.replace(/[^.\w\s-]/g, '');
             }
+            return val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).toLowerCase().replace(/\.{2,}/g, '.');
         }
-
     };
 
     BLCAdmin.addInitializationHandler(function($container) {
