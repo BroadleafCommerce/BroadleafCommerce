@@ -81,7 +81,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * Global value, intentionally only retrieved as a file property NOT via the system properties service
      */
     @Value("${googleAnalytics4.masterWebPropertyId:null}")
-    protected String GoogleAnalytics4PropertyId;
+   protected String googleAnalytics4PropertyId;
 
     @Value("${googleAnalytics4.webPropertyId:null}")
     protected String GoogleAnalytics4WebPropertyId;
