@@ -84,7 +84,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
    protected String googleAnalytics4PropertyId;
 
     @Value("${googleAnalytics4.webPropertyId:null}")
-    protected String GoogleAnalytics4WebPropertyId;
+    protected String googleAnalytics4WebPropertyId;
 
     @Value("${googleAnalytics4.tagIdForProperty:null}")
     protected String tagId;
@@ -116,10 +116,10 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
             tagId = getTagIdForProperty();
         }
         if (StringUtils.isNotEmpty(getWebPropertyId())) {
-            GoogleAnalytics4WebPropertyId = getWebPropertyId();
+            googleAnalytics4WebPropertyId = getWebPropertyId();
         }
 
-        if (StringUtils.isNotEmpty(tagId) || StringUtils.isNotEmpty(GoogleAnalytics4PropertyId) || StringUtils.isNotEmpty(GoogleAnalytics4WebPropertyId)) {
+        if (StringUtils.isNotEmpty(tagId) || StringUtils.isNotEmpty(googleAnalytics4PropertyId) || StringUtils.isNotEmpty(googleAnalytics4WebPropertyId)) {
             sb.append("window.dataLayer = window.dataLayer || [];");
             sb.append("function gtag(){dataLayer.push(arguments);}");
             sb.append("gtag('js', new Date());");
@@ -132,11 +132,11 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
             if (isIncludeDisplayAdvertising()) {
                 sb.append("gtag('set', 'allow_google_signals', true);");
             }
-            if (StringUtils.isNotEmpty(GoogleAnalytics4PropertyId)) {
-                sb.append("gtag('config', '" + GoogleAnalytics4PropertyId + "');");
+            if (StringUtils.isNotEmpty(googleAnalytics4PropertyId)) {
+                sb.append("gtag('config', '" + googleAnalytics4PropertyId + "');");
             }
-            if (StringUtils.isNotEmpty(GoogleAnalytics4WebPropertyId)) {
-                sb.append("gtag('config', '" + GoogleAnalytics4WebPropertyId + "');");
+            if (StringUtils.isNotEmpty(googleAnalytics4WebPropertyId)) {
+                sb.append("gtag('config', '" + googleAnalytics4WebPropertyId + "');");
             }
             if (StringUtils.isNotEmpty(tagId)) {
                 sb.append("gtag('config', '" + tagId + "');");
@@ -160,7 +160,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
             BroadleafTemplateModel model = context.createModel();
             Map<String, String> attrs = new HashMap<>();
             attrs.put("asynch", null);
-            String analyticsProperty = StringUtils.isNotEmpty(GoogleAnalytics4PropertyId) ? GoogleAnalytics4PropertyId : GoogleAnalytics4WebPropertyId;
+            String analyticsProperty = StringUtils.isNotEmpty(googleAnalytics4PropertyId) ? googleAnalytics4PropertyId : googleAnalytics4WebPropertyId;
             String idToUse = StringUtils.isNotEmpty(analyticsProperty) ? analyticsProperty : tagId;
             attrs.put("src", "https://www.googletagmanager.com/gtag/js?id=" + idToUse);
             BroadleafTemplateElement importScript = context.createStandaloneElement("script", attrs, true);
