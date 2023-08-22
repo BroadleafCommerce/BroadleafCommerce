@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -23,6 +22,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -96,7 +96,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @GeneratedValue(generator = "CustomerPaymentId")
     @GenericGenerator(
             name = "CustomerPaymentId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerPaymentImpl"),
                     @Parameter(name = "entity_name",

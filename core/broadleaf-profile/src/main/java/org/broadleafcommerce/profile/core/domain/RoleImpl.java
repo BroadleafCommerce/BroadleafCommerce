@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
@@ -46,7 +47,7 @@ public class RoleImpl implements Role {
     @GeneratedValue(generator = "RoleId")
     @GenericGenerator(
             name = "RoleId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "RoleImpl"),
                     @Parameter(name = "entity_name",

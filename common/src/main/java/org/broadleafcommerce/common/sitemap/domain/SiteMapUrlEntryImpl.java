@@ -15,9 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -52,7 +52,7 @@ public class SiteMapUrlEntryImpl implements SiteMapUrlEntry {
     @GeneratedValue(generator = "URLEntryId")
     @GenericGenerator(
             name = "URLEntryId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "SiteMapURLEntryImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntryImpl")

@@ -38,7 +38,6 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
-
 /**
  * @see org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService
  * @author Phillip Verheyden (phillipuniverse)
@@ -51,12 +50,10 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
     
     @Resource(name = "blRowLevelSecurityProviders")
     protected List<RowLevelSecurityProvider> providers;
-    
+
     @Override
-    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
-            Root entityRoot,
-            CriteriaQuery criteria,
-            CriteriaBuilder criteriaBuilder) {
+    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions,
+                                     List<Order> sorts, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
         for (RowLevelSecurityProvider provider : getProviders()) {
             provider.addFetchRestrictions(currentUser, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder);
         }

@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -69,7 +70,7 @@ public class ProductOptionValueImpl
     @GeneratedValue(generator = "ProductOptionValueId")
     @GenericGenerator(
             name = "ProductOptionValueId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
                     @Parameter(name = "entity_name",

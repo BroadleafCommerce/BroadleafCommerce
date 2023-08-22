@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -63,7 +64,7 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     @GeneratedValue(generator = "PageTemplateFieldGroupXrefId")
     @GenericGenerator(
             name = "PageTemplateFieldGroupXrefId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "PageTemplateFieldGroupXrefImpl"),
                     @Parameter(name = "entity_name",

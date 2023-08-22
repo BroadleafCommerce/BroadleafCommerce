@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -70,7 +71,7 @@ public class ProratedOrderItemAdjustmentImpl
     @GeneratedValue(generator = "ProratedOrderItemAdjustmentId")
     @GenericGenerator(
             name = "ProratedOrderItemAdjustmentId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "ProratedOrderItemAdjustmentImpl"),
                     @Parameter(name = "entity_name",

@@ -88,13 +88,12 @@ public interface RowLevelSecurityProvider {
      * <b>sorts</b>
      * @param criteriaBuilder used to create additional {@link Predicate}s or {@link Order}s to add to <b>restrictions</b>
      * and/or <b>sorts</b>
-     * @see {@link #getFetchRestrictionRoot(Class, List)}
-     * @see {@link CriteriaTranslatorImpl#addRestrictions}
+     * @see {@link #getFetchRestrictionRoot(AdminUser, Class, List)}
+     * @see {@link CriteriaTranslatorImpl#addRestrictions(String, List, CriteriaBuilder, Root, List, List, CriteriaQuery)}
      */
-    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
-            Root entityRoot,
-            CriteriaQuery criteria,
-            CriteriaBuilder criteriaBuilder);
+    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions,
+                                     List<Order> sorts, Root entityRoot, CriteriaQuery criteria,
+                                     CriteriaBuilder criteriaBuilder);
     
     /**
      * <p>
