@@ -184,8 +184,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries)
-            throws ServiceException  {
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
+                                             SearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Left here for backwards compatibility for this method signature
@@ -259,9 +259,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                     LOG.trace(doc);
                 }
             }
-        } catch (SolrServerException e) {
-            throw new ServiceException("Could not perform search", e);
-        } catch (IOException e) {
+        } catch (SolrServerException | IOException e) {
             throw new ServiceException("Could not perform search", e);
         }
 

@@ -74,8 +74,20 @@
     </profiles>
     <dependencies>
         <dependency>
-            <artifactId>solr-solrj</artifactId>
             <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.8.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper-jute</artifactId>
+            <version>3.8.1</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Solr still needs this dependency, we'll just use the later version -->
         <dependency>
