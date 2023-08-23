@@ -114,7 +114,7 @@ public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProce
         if (newAttributeValue.startsWith("/")) {
             newAttributeValue = "@{ " + newAttributeValue + " }";
         }
-        return (String) context.parseExpression(newAttributeValue);
+        return context.parseExpression(newAttributeValue);
     }
 
     protected String getFileExtension(String assetPath) {

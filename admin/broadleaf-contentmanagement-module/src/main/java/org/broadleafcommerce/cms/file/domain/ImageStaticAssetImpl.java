@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,18 +32,18 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(value = { AdminAuditableListener.class })
+@EntityListeners(value = {AdminAuditableListener.class})
 @Table(name = "BLC_IMG_STATIC_ASSET")
 public class ImageStaticAssetImpl extends StaticAssetImpl implements ImageStaticAsset {
 
-    @Column(name ="WIDTH")
+    @Column(name = "WIDTH")
     @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Width",
             order = FieldOrder.LAST + 1000,
             group = GroupName.File_Details,
             readOnly = true)
     protected Integer width;
 
-    @Column(name ="HEIGHT")
+    @Column(name = "HEIGHT")
     @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Height",
             order = FieldOrder.LAST + 2000,
             group = GroupName.File_Details,

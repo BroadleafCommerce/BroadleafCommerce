@@ -88,10 +88,8 @@ public class StorageType implements Serializable {
             return false;
         StorageType other = (StorageType) obj;
         if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        return true;
+            return other.type == null;
+        } else
+            return type.equals(other.type);
     }
 }

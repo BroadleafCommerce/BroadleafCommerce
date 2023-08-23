@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -50,37 +51,42 @@ import jakarta.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_TYPE", indexes = {@Index(name = "SC_TYPE_NAME_INDEX", columnList = "NAME")})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentTypeImpl_baseStructuredContentType")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "StructuredContentTypeImpl_baseStructuredContentType")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class StructuredContentTypeImpl implements StructuredContentType, AdminMainEntity, ProfileEntity {
+public class StructuredContentTypeImpl
+        implements StructuredContentType, AdminMainEntity, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "StructuredContentTypeId")
     @GenericGenerator(
-        name="StructuredContentTypeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StructuredContentTypeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl")
-        }
+            name = "StructuredContentTypeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StructuredContentTypeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl")
+            }
     )
     @Column(name = "SC_TYPE_ID")
     protected Long id;
 
-    @Column (name = "NAME")
-    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Name", order = 1, gridOrder = 1, group = "StructuredContentTypeImpl_Details", prominent = true)
+    @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Name", order = 1, gridOrder = 1,
+            group = "StructuredContentTypeImpl_Details", prominent = true)
     protected String name;
 
-    @Column (name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION")
     protected String description;
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
-    @JoinColumn(name="SC_FLD_TMPLT_ID")
+    @JoinColumn(name = "SC_FLD_TMPLT_ID")
     protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 
     @Override
@@ -129,7 +135,8 @@ public class StructuredContentTypeImpl implements StructuredContentType, AdminMa
     }
 
     @Override
-    public <G extends StructuredContentType> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentType> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -138,8 +145,9 @@ public class StructuredContentTypeImpl implements StructuredContentType, AdminMa
         cloned.setDescription(description);
         cloned.setName(name);
         if (structuredContentFieldTemplate != null) {
-            CreateResponse<StructuredContentFieldTemplate> clonedTemplate = structuredContentFieldTemplate
-                    .createOrRetrieveCopyInstance(context);
+            CreateResponse<StructuredContentFieldTemplate> clonedTemplate =
+                    structuredContentFieldTemplate
+                            .createOrRetrieveCopyInstance(context);
             cloned.setStructuredContentFieldTemplate(clonedTemplate.getClone());
         }
         return createResponse;

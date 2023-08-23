@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -51,7 +52,8 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_PGTMPLT_FLDGRP_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXref, ProfileEntity {
@@ -62,10 +64,11 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     @GeneratedValue(generator = "PageTemplateFieldGroupXrefId")
     @GenericGenerator(
             name = "PageTemplateFieldGroupXrefId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "PageTemplateFieldGroupXrefImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXrefImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXrefImpl")
             })
     @Column(name = "PG_TMPLT_FLD_GRP_ID")
     protected Long id;
@@ -75,7 +78,7 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     @AdminPresentation(excluded = true)
     protected PageTemplate pageTemplate;
 
-    @ManyToOne(targetEntity = FieldGroupImpl.class, cascade = { CascadeType.ALL })
+    @ManyToOne(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "FLD_GROUP_ID")
     @ClonePolicy
     protected FieldGroup fieldGroup;
@@ -134,7 +137,8 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     }
 
     @Override
-    public <G extends PageTemplateFieldGroupXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends PageTemplateFieldGroupXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

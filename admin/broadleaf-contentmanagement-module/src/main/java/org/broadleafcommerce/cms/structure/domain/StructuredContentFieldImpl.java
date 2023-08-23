@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.Length;
@@ -45,9 +46,10 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FLD")
-@EntityListeners(value = { AdminAuditableListener.class })
+@EntityListeners(value = {AdminAuditableListener.class})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class StructuredContentFieldImpl implements StructuredContentField, ProfileEntity {
@@ -57,27 +59,28 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     @Id
     @GeneratedValue(generator = "StructuredContentFieldId")
     @GenericGenerator(
-        name="StructuredContentFieldId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StructuredContentFieldImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl")
-        }
+            name = "StructuredContentFieldId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StructuredContentFieldImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl")
+            }
     )
     @Column(name = "SC_FLD_ID")
     protected Long id;
 
     @AdminPresentation
-    @Column (name = "FLD_KEY")
+    @Column(name = "FLD_KEY")
     protected String fieldKey;
 
     @AdminPresentation
-    @Column (name = "VALUE")
+    @Column(name = "VALUE")
     protected String stringValue;
 
     @Lob
     @AdminPresentation
-    @Column (name = "LOB_VALUE", length = Length.LONG32 - 1)
+    @Column(name = "LOB_VALUE", length = Length.LONG32 - 1)
     protected String lobValue;
 
     @Override
@@ -124,7 +127,7 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
             stringValue = null;
         }
     }
-    
+
     @Override
     public StructuredContentField clone() {
         StructuredContentField clone = null;
@@ -141,7 +144,8 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     }
 
     @Override
-    public <G extends StructuredContentField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentField> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.store.domain;
 
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -47,21 +48,23 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "BLC_STORE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStoreElements")
-@SQLDelete(sql="UPDATE BLC_STORE SET ARCHIVED = 'Y' WHERE STORE_ID = ?")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StoreImpl_baseStore")
+@SQLDelete(sql = "UPDATE BLC_STORE SET ARCHIVED = 'Y' WHERE STORE_ID = ?")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "StoreImpl_baseStore")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class StoreImpl implements Store {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "StoreId")
+    @GeneratedValue(generator = "StoreId")
     @GenericGenerator(
-            name="StoreId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            name = "StoreId",
+            type = IdOverrideTableGenerator.class,
             parameters = {
-                    @Parameter(name="segment_value", value="StoreImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.store.domain.StoreImpl")
+                    @Parameter(name = "segment_value", value = "StoreImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.store.domain.StoreImpl")
             }
     )
     @Column(name = "STORE_ID", nullable = false)
@@ -74,7 +77,7 @@ public class StoreImpl implements Store {
             prominent = true, gridOrder = 1, columnWidth = "200px",
             requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
-    
+
     @Column(name = "STORE_NUMBER")
     @AdminPresentation(friendlyName = "StoreImpl_Store_Number")
     protected String storeNumber;
@@ -94,17 +97,19 @@ public class StoreImpl implements Store {
     @Column(name = "LATITUDE")
     @AdminPresentation(friendlyName = "StoreImpl_lat", order = Presentation.FieldOrder.LATITUDE,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Geocoding, groupOrder = Presentation.Group.Order.Geocoding,
+            group = Presentation.Group.Name.Geocoding,
+            groupOrder = Presentation.Group.Order.Geocoding,
             gridOrder = 9, columnWidth = "200px")
     protected Double latitude;
 
     @Column(name = "LONGITUDE")
     @AdminPresentation(friendlyName = "StoreImpl_lng", order = Presentation.FieldOrder.LONGITUDE,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Geocoding, groupOrder = Presentation.Group.Order.Geocoding,
+            group = Presentation.Group.Name.Geocoding,
+            groupOrder = Presentation.Group.Order.Geocoding,
             gridOrder = 10, columnWidth = "200px")
     protected Double longitude;
-    
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -157,7 +162,7 @@ public class StoreImpl implements Store {
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
-    
+
     @Override
     public String getStoreNumber() {
         return storeNumber;
@@ -190,13 +195,13 @@ public class StoreImpl implements Store {
 
     @Override
     public Character getArchived() {
-       ArchiveStatus temp;
-       if (archiveStatus == null) {
-           temp = new ArchiveStatus();
-       } else {
-           temp = archiveStatus;
-       }
-       return temp.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
@@ -209,7 +214,7 @@ public class StoreImpl implements Store {
 
     @Override
     public boolean isActive() {
-        return 'Y'!=getArchived();
+        return 'Y' != getArchived();
     }
 
     public static class Presentation {
@@ -220,10 +225,12 @@ public class StoreImpl implements Store {
 
             }
 
+
             public static class Order {
                 public static final int Advanced = 7000;
             }
         }
+
 
         public static class Group {
             public static class Name {
@@ -232,12 +239,14 @@ public class StoreImpl implements Store {
                 public static final String Geocoding = "StoreImpl_Store_Geocoding";
             }
 
+
             public static class Order {
                 public static final int General = 1000;
                 public static final int Location = 2000;
                 public static final int Geocoding = 3000;
             }
         }
+
 
         public static class FieldOrder {
             public static final int NAME = 1000;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -46,31 +47,35 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_SEARCH_FACET_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG,
+                skipOverlaps = true)
 })
 public class RequiredFacetImpl implements RequiredFacet {
 
     protected static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "RequiredFacetId")
+    @GeneratedValue(generator = "RequiredFacetId")
     @GenericGenerator(
-        name="RequiredFacetId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="RequiredFacetImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.RequiredFacetImpl")
-        }
+            name = "RequiredFacetId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "RequiredFacetImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.RequiredFacetImpl")
+            }
     )
     @Column(name = "ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = SearchFacetImpl.class, optional = false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = SearchFacetImpl.class, optional = false,
+            cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
 
-    @ManyToOne(targetEntity = SearchFacetImpl.class, optional=false)
+    @ManyToOne(targetEntity = SearchFacetImpl.class, optional = false)
     @JoinColumn(name = "REQUIRED_FACET_ID", referencedColumnName = "SEARCH_FACET_ID")
     protected SearchFacet requiredFacet;
 
@@ -105,7 +110,8 @@ public class RequiredFacetImpl implements RequiredFacet {
     }
 
     @Override
-    public <G extends RequiredFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends RequiredFacet> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -117,6 +123,6 @@ public class RequiredFacetImpl implements RequiredFacet {
         if (searchFacet != null) {
             cloned.setSearchFacet(searchFacet);
         }
-        return  createResponse;
+        return createResponse;
     }
 }

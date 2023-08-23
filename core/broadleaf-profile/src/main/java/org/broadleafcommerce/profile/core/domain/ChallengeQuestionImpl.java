@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,6 +18,7 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -45,18 +46,20 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     @Id
     @GeneratedValue(generator = "ChallengeQuestionId")
     @GenericGenerator(
-        name="ChallengeQuestionId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="ChallengeQuestionImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl")
-        }
+            name = "ChallengeQuestionId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ChallengeQuestionImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl")
+            }
     )
     @Column(name = "QUESTION_ID")
     protected Long id;
 
-    @Column(name = "QUESTION", nullable=false)
-    @AdminPresentation(friendlyName = "ChallengeQuestionImpl_Challenge_Question", translatable = true, group = "ChallengeQuestionImpl_Customer")
+    @Column(name = "QUESTION", nullable = false)
+    @AdminPresentation(friendlyName = "ChallengeQuestionImpl_Challenge_Question",
+            translatable = true, group = "ChallengeQuestionImpl_Customer")
     protected String question;
 
     @Override

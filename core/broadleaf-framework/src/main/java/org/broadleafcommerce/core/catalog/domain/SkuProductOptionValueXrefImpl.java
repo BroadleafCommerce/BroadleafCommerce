@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,14 +53,15 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref {
 
     private static final long serialVersionUID = 1L;
-    
-    public SkuProductOptionValueXrefImpl() { }
+
+    public SkuProductOptionValueXrefImpl() {}
 
     public SkuProductOptionValueXrefImpl(Sku sku, ProductOptionValue val) {
         this.sku = sku;
@@ -67,23 +69,25 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
     }
 
     @Id
-    @GeneratedValue(generator= "SkuProductOptionValueXrefId")
+    @GeneratedValue(generator = "SkuProductOptionValueXrefId")
     @GenericGenerator(
-        name="SkuProductOptionValueXrefId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="SkuProductOptionValueXrefImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl")
-        }
+            name = "SkuProductOptionValueXrefId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SkuProductOptionValueXrefImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl")
+            }
     )
     @Column(name = "SKU_OPTION_VALUE_XREF_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = SkuImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SKU_ID")
     protected Sku sku;
 
-    @ManyToOne(targetEntity = ProductOptionValueImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = ProductOptionValueImpl.class, optional = false,
+            cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID")
     protected ProductOptionValue productOptionValue;
 
@@ -101,24 +105,25 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
     public Sku getSku() {
         return sku;
     }
-    
+
     @Override
     public void setSku(Sku sku) {
         this.sku = sku;
     }
-    
+
     @Override
     public ProductOptionValue getProductOptionValue() {
         return productOptionValue;
     }
-    
+
     @Override
     public void setProductOptionValue(ProductOptionValue productOptionValue) {
         this.productOptionValue = productOptionValue;
     }
 
     @Override
-    public <G extends SkuProductOptionValueXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends SkuProductOptionValueXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -128,10 +133,11 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
             cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
         }
         if (productOptionValue != null) {
-            if(context.getCopyHints().containsKey(MANUAL_DUPLICATION)){
+            if (context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
                 cloned.setProductOptionValue(productOptionValue);
-            }else {
-                cloned.setProductOptionValue(productOptionValue.createOrRetrieveCopyInstance(context).getClone());
+            } else {
+                cloned.setProductOptionValue(
+                        productOptionValue.createOrRetrieveCopyInstance(context).getClone());
             }
         }
         return createResponse;
@@ -139,8 +145,10 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SkuProductOptionValueXrefImpl that = (SkuProductOptionValueXrefImpl) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(getSku(), that.getSku()) &&

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -88,133 +89,187 @@ import jakarta.persistence.Transient;
 @AdminPresentationMergeOverrides(value = {
         @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         ),
         @AdminPresentationMergeOverride(name = "auditable.updatedBy.id",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         ),
         @AdminPresentationMergeOverride(name = "auditable.createdBy.name",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         ),
         @AdminPresentationMergeOverride(name = "auditable.updatedBy.name",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         ),
         @AdminPresentationMergeOverride(name = "auditable.dateCreated",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         ),
         @AdminPresentationMergeOverride(name = "auditable.dateUpdated",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         ),
         @AdminPresentationMergeOverride(name = "structuredContentType.name",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         ),
-        @AdminPresentationMergeOverride(name = "structuredContentType.structuredContentFieldTemplate.name",
+        @AdminPresentationMergeOverride(
+                name = "structuredContentType.structuredContentFieldTemplate.name",
                 mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.READONLY,
+                                booleanOverrideValue = true),
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                                overrideValue = "HIDDEN_ALL")
                 }
         )
 })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "StructuredContentImpl_baseStructuredContent")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 public class StructuredContentImpl implements StructuredContent, AdminMainEntity, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
-    
+
     public static final String SC_DONT_DUPLICATE_SC_TYPE_HINT = "dont-duplicate-sc-type";
 
     @Id
     @GeneratedValue(generator = "StructuredContentId")
     @GenericGenerator(
-        name="StructuredContentId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StructuredContentImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.structure.domain.StructuredContentImpl")
-        }
+            name = "StructuredContentId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StructuredContentImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.structure.domain.StructuredContentImpl")
+            }
     )
     @Column(name = "SC_ID")
     protected Long id;
 
     @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Name", order = 1,
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
-        prominent = true, gridOrder = 1)
+            group = Presentation.Group.Name.Description,
+            groupOrder = Presentation.Group.Order.Description,
+            prominent = true, gridOrder = 1)
     @Column(name = "CONTENT_NAME", nullable = false)
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "StructuredContentImpl_Locale", order = 2,
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
-        prominent = true, gridOrder = 2)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName", lookupType = LookupType.DROPDOWN)
+            group = Presentation.Group.Name.Description,
+            groupOrder = Presentation.Group.Order.Description,
+            prominent = true, gridOrder = 2)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName",
+            lookupType = LookupType.DROPDOWN)
     protected Locale locale;
 
     @Column(name = "PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3,
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
+            group = Presentation.Group.Name.Description,
+            groupOrder = Presentation.Group.Order.Description)
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_SC_RULE_MAP", 
-               joinColumns = @JoinColumn(name = "BLC_SC_SC_ID", referencedColumnName = "SC_ID"),
-               inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @JoinTable(name = "BLC_SC_RULE_MAP",
+            joinColumns = @JoinColumn(name = "BLC_SC_SC_ID", referencedColumnName = "SC_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID",
+                    referencedColumnName = "SC_RULE_ID"))
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
-    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
     @IgnoreEnterpriseBehavior
-    Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
+    Map<String, StructuredContentRule> structuredContentMatchRules =
+            new HashMap<String, StructuredContentRule>();
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
-    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ID"), inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class,
+            cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
     @IgnoreEnterpriseBehavior
-    protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
+    protected Set<StructuredContentItemCriteria> qualifyingItemCriteria =
+            new HashSet<StructuredContentItemCriteria>();
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
-    @JoinColumn(name="SC_TYPE_ID")
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2, prominent = true,
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
-        requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "name", forcePopulateChildProperties = true)
+    @JoinColumn(name = "SC_TYPE_ID")
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2,
+            prominent = true,
+            group = Presentation.Group.Name.Description,
+            groupOrder = Presentation.Group.Order.Description,
+            requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "name",
+            forcePopulateChildProperties = true)
     protected StructuredContentType structuredContentType;
 
-    @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class,
+            cascade = CascadeType.ALL)
     @MapKey(name = "key")
     @BatchSize(size = 20)
     @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "structuredContentFields")
-    protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();
+    protected Map<String, StructuredContentFieldXref> structuredContentFields =
+            new HashMap<String, StructuredContentFieldXref>();
 
     @Transient
-    protected Map<String, StructuredContentField> legacyStructuredContentFields = new HashMap<String, StructuredContentField>();
+    protected Map<String, StructuredContentField> legacyStructuredContentFields =
+            new HashMap<String, StructuredContentField>();
 
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4,
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
+            group = Presentation.Group.Name.Description,
+            groupOrder = Presentation.Group.Order.Description)
     @Column(name = "OFFLINE_FLAG")
     protected Boolean offlineFlag = false;
 
@@ -266,7 +321,8 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     public Map<String, StructuredContentField> getStructuredContentFields() {
         if (legacyStructuredContentFields.isEmpty()) {
             for (Map.Entry<String, StructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
-                legacyStructuredContentFields.put(entry.getKey(), entry.getValue().getStructuredContentField());
+                legacyStructuredContentFields.put(entry.getKey(),
+                        entry.getValue().getStructuredContentField());
             }
         }
         return Collections.unmodifiableMap(legacyStructuredContentFields);
@@ -277,7 +333,8 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         this.structuredContentFields.clear();
         this.legacyStructuredContentFields.clear();
         for (Map.Entry<String, StructuredContentField> entry : structuredContentFields.entrySet()) {
-            this.structuredContentFields.put(entry.getKey(), new StructuredContentFieldXrefImpl(this, entry.getValue(), entry.getKey()));
+            this.structuredContentFields.put(entry.getKey(),
+                    new StructuredContentFieldXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
 
@@ -294,7 +351,8 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Override
     public String getFieldValue(String fieldName) {
         if (structuredContentFields.containsKey(fieldName)) {
-            return getStructuredContentFieldXrefs().get(fieldName).getStructuredContentField().getValue();
+            return getStructuredContentFieldXrefs().get(fieldName).getStructuredContentField()
+                    .getValue();
         }
         return null;
     }
@@ -309,7 +367,8 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         if (fieldValuesMap == null) {
             fieldValuesMap = new HashMap<String, String>();
             for (Entry<String, StructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
-                fieldValuesMap.put(entry.getKey(), entry.getValue().getStructuredContentField().getValue());
+                fieldValuesMap.put(entry.getKey(),
+                        entry.getValue().getStructuredContentField().getValue());
             }
         }
         return fieldValuesMap;
@@ -365,7 +424,8 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     }
 
     @Override
-    public <G extends StructuredContent> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContent> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -375,34 +435,37 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         cloned.setLocale(locale);
         cloned.setOfflineFlag(offlineFlag);
         cloned.setPriority(priority);
-        
+
         if (structuredContentType != null) {
             if (Boolean.valueOf(context.getCopyHints().get(SC_DONT_DUPLICATE_SC_TYPE_HINT))) {
                 cloned.setStructuredContentType(structuredContentType);
             } else {
-                CreateResponse<StructuredContentType> clonedType = 
+                CreateResponse<StructuredContentType> clonedType =
                         structuredContentType.createOrRetrieveCopyInstance(context);
                 cloned.setStructuredContentType(clonedType.getClone());
             }
         }
-        
-        for(StructuredContentItemCriteria itemCriteria : qualifyingItemCriteria){
-            CreateResponse<StructuredContentItemCriteria> clonedItem = itemCriteria.createOrRetrieveCopyInstance(context);
+
+        for (StructuredContentItemCriteria itemCriteria : qualifyingItemCriteria) {
+            CreateResponse<StructuredContentItemCriteria> clonedItem =
+                    itemCriteria.createOrRetrieveCopyInstance(context);
             StructuredContentItemCriteria clonedCritera = clonedItem.getClone();
             cloned.getQualifyingItemCriteria().add(clonedCritera);
         }
-        
-        for(Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()){
-            CreateResponse<StructuredContentRule> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
+
+        for (Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()) {
+            CreateResponse<StructuredContentRule> clonedItem =
+                    entry.getValue().createOrRetrieveCopyInstance(context);
             StructuredContentRule clonedRule = clonedItem.getClone();
-            cloned.getStructuredContentMatchRules().put(entry.getKey(),clonedRule);
+            cloned.getStructuredContentMatchRules().put(entry.getKey(), clonedRule);
 
         }
-        
-        for(Entry<String, StructuredContentFieldXref> entry : structuredContentFields.entrySet() ){
-            CreateResponse<StructuredContentFieldXref> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
+
+        for (Entry<String, StructuredContentFieldXref> entry : structuredContentFields.entrySet()) {
+            CreateResponse<StructuredContentFieldXref> clonedItem =
+                    entry.getValue().createOrRetrieveCopyInstance(context);
             StructuredContentFieldXref clonedContentFieldXref = clonedItem.getClone();
-            cloned.getStructuredContentFieldXrefs().put(entry.getKey(),clonedContentFieldXref);
+            cloned.getStructuredContentFieldXrefs().put(entry.getKey(), clonedContentFieldXref);
         }
 
         return createResponse;
@@ -414,10 +477,12 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
                 public static final String Rules = "StructuredContentImpl_Rules_Tab";
             }
 
+
             public static class Order {
                 public static final int Rules = 1000;
             }
         }
+
 
         public static class Group {
             public static class Name {
@@ -425,6 +490,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
                 public static final String Internal = "StructuredContentImpl_Internal";
                 public static final String Rules = "StructuredContentImpl_Rules";
             }
+
 
             public static class Order {
                 public static final int Description = 1000;

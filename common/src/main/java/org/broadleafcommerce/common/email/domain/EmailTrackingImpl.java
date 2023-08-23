@@ -17,13 +17,6 @@
  */
 package org.broadleafcommerce.common.email.domain;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +24,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author jfischer
@@ -49,7 +49,7 @@ public class EmailTrackingImpl implements EmailTracking {
     @GeneratedValue(generator = "EmailTrackingId")
     @GenericGenerator(
         name="EmailTrackingId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="EmailTrackingImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingImpl")
@@ -211,11 +211,9 @@ public class EmailTrackingImpl implements EmailTracking {
         } else if (!emailTrackingOpens.equals(other.emailTrackingOpens))
             return false;
         if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        return true;
+            return other.type == null;
+        } else
+            return type.equals(other.type);
     }
 
 }

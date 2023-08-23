@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
@@ -60,7 +61,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     @GeneratedValue(generator= "MediaId")
     @GenericGenerator(
         name="MediaId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="MediaImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.media.domain.MediaImpl")
@@ -195,11 +196,9 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
         } else if (!tags.equals(other.tags))
             return false;
         if (url == null) {
-            if (other.url != null)
-                return false;
-        } else if (!url.equals(other.url))
-            return false;
-        return true;
+            return other.url == null;
+        } else
+            return url.equals(other.url);
     }
 
     @Override

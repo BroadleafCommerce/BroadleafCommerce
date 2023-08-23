@@ -443,13 +443,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             return false;
         }
         if (sku == null) {
-            if (other.sku != null) {
-                return false;
-            }
-        } else if (!sku.equals(other.sku)) {
-            return false;
-        }
-        return true;
+            return other.sku == null;
+        } else
+            return sku.equals(other.sku);
     }
 
     @Override

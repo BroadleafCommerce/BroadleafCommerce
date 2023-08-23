@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -47,12 +48,13 @@ public class CustomerRoleImpl implements CustomerRole {
     @Id
     @GeneratedValue(generator = "CustomerRoleId")
     @GenericGenerator(
-        name="CustomerRoleId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CustomerRoleImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CustomerRoleImpl")
-        }
+            name = "CustomerRoleId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CustomerRoleImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.CustomerRoleImpl")
+            }
     )
     @Column(name = "CUSTOMER_ROLE_ID")
     protected Long id;

@@ -17,6 +17,27 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.MapKeyClass;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
@@ -33,6 +54,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -76,28 +98,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.MapKeyClass;
-import jakarta.persistence.MapKeyJoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-
 @Entity
 @EntityListeners(value = {AuditableListener.class, OrderPersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -126,7 +126,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @GeneratedValue(generator = "OrderId")
     @GenericGenerator(
         name="OrderId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OrderImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderImpl")
@@ -754,7 +754,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     
     @Override
     public Boolean getTaxOverride() {
-        return taxOverride == null ? false : taxOverride;
+        return taxOverride != null && taxOverride;
     }
 
     @Override
@@ -839,13 +839,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         Date otherDateCreated = other.auditable != null ? other.auditable.getDateCreated() : null;
         if (myDateCreated == null) {
-            if (otherDateCreated != null) {
-                return false;
-            }
-        } else if (!myDateCreated.equals(otherDateCreated)) {
-            return false;
-        }
-        return true;
+            return otherDateCreated == null;
+        } else
+            return myDateCreated.equals(otherDateCreated);
     }
 
     @Override

@@ -377,7 +377,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         String fileName = staticAsset.getFullUrl();
 
         StringBuilder sb = new StringBuilder(200);
-        sb.append(fileName.substring(0, fileName.lastIndexOf('.')));
+        sb.append(fileName, 0, fileName.lastIndexOf('.'));
         sb.append("---");
 
         StringBuilder sb2 = new StringBuilder(200);

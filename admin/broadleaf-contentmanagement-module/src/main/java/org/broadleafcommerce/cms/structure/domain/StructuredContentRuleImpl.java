@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -40,35 +41,35 @@ import jakarta.persistence.Table;
 
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_RULE")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 public class StructuredContentRuleImpl implements StructuredContentRule, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "SCRuleId")
+    @GeneratedValue(generator = "SCRuleId")
     @GenericGenerator(
-        name="SCRuleId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="StructuredContentRuleImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl")
-        }
+            name = "SCRuleId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "StructuredContentRuleImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl")
+            }
     )
     @Column(name = "SC_RULE_ID")
     protected Long id;
-    
+
     @Lob
     @Column(name = "MATCH_RULE", length = Length.LONG32 - 1)
     protected String matchRule;
@@ -111,17 +112,15 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         StructuredContentRuleImpl other = (StructuredContentRuleImpl) obj;
-        
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        
+
         if (matchRule == null) {
-            if (other.matchRule != null)
-                return false;
-        } else if (!matchRule.equals(other.matchRule))
-            return false;
-        return true;
+            return other.matchRule == null;
+        } else
+            return matchRule.equals(other.matchRule);
     }
 
     @Override
@@ -133,13 +132,14 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
     }
 
     @Override
-    public <G extends StructuredContentRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends StructuredContentRule> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         StructuredContentRule cloned = createResponse.getClone();
         cloned.setMatchRule(matchRule);
-        return  createResponse;
+        return createResponse;
     }
 }

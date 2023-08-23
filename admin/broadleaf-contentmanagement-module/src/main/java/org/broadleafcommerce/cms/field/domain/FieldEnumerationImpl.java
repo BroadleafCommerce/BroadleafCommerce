@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,6 +18,7 @@
 package org.broadleafcommerce.cms.field.domain;
 
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -40,12 +41,13 @@ import jakarta.persistence.Table;
 
 /**
  * Created by jfischer
+ *
  * @deprecated use {@link DataDrivenEnumerationImpl} instead
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_ENUM")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @Deprecated
 public class FieldEnumerationImpl implements FieldEnumeration {
 
@@ -54,22 +56,25 @@ public class FieldEnumerationImpl implements FieldEnumeration {
     @Id
     @GeneratedValue(generator = "FieldEnumerationId")
     @GenericGenerator(
-        name="FieldEnumerationId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FieldEnumerationImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl")
-        }
+            name = "FieldEnumerationId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FieldEnumerationImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl")
+            }
     )
     @Column(name = "FLD_ENUM_ID")
     protected Long id;
 
-    @Column (name = "NAME")
+    @Column(name = "NAME")
     protected String name;
 
-    @OneToMany(mappedBy = "fieldEnumeration", targetEntity = FieldEnumerationItemImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @OneToMany(mappedBy = "fieldEnumeration", targetEntity = FieldEnumerationItemImpl.class,
+            cascade = {CascadeType.ALL})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
     @OrderBy("fieldOrder")
     @BatchSize(size = 20)
     protected List<FieldEnumerationItem> enumerationItems;

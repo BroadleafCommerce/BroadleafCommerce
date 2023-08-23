@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,13 +34,14 @@ import jakarta.persistence.TemporalType;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PASSWORD_TOKEN")
-public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPasswordSecurityToken {
+public class CustomerForgotPasswordSecurityTokenImpl
+        implements CustomerForgotPasswordSecurityToken {
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @Column(name = "PASSWORD_TOKEN", nullable = false)
     protected String token;
-    
+
     @Column(name = "CREATE_DATE", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date createDate;
@@ -48,10 +49,10 @@ public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPa
     @Column(name = "TOKEN_USED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     protected Date tokenUsedDate;
-    
+
     @Column(name = "CUSTOMER_ID", nullable = false)
     protected Long customerId;
-    
+
     @Column(name = "TOKEN_USED_FLAG", nullable = false)
     protected boolean tokenUsedFlag;
 
@@ -97,13 +98,17 @@ public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPa
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if (!getClass().isAssignableFrom(o.getClass())) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (!getClass().isAssignableFrom(o.getClass()))
+            return false;
 
         CustomerForgotPasswordSecurityTokenImpl that = (CustomerForgotPasswordSecurityTokenImpl) o;
 
-        if (token != null ? !token.equals(that.token) : that.token != null) return false;
+        if (token != null ? !token.equals(that.token) : that.token != null)
+            return false;
 
         return true;
     }

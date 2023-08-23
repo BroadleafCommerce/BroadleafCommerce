@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -69,14 +70,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_USER")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINUSER),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
@@ -92,25 +91,27 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @Id
     @GeneratedValue(generator = "AdminUserId")
     @GenericGenerator(
-        name="AdminUserId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="AdminUserImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl")
-        }
+            name = "AdminUserId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "AdminUserImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl")
+            }
     )
     @Column(name = "ADMIN_USER_ID")
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_User_ID", group = "AdminUserImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_User_ID",
+            group = "AdminUserImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     private Long id;
 
-    @Column(name = "NAME", nullable=false)
-    @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
+    @Column(name = "NAME", nullable = false)
+    @Index(name = "ADMINUSER_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name",
             group = GroupName.User, order = FieldOrder.NAME,
             prominent = true, gridOrder = 1000)
     protected String name;
 
-    @Column(name = "LOGIN", nullable=false)
+    @Column(name = "LOGIN", nullable = false)
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login",
             group = GroupName.User, order = FieldOrder.LOGIN,
             prominent = true, gridOrder = 2000)
@@ -121,20 +122,23 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             friendlyName = "AdminUserImpl_Admin_Password",
             group = GroupName.User, order = FieldOrder.PASSWORD,
             fieldType = SupportedFieldType.PASSWORD,
-            validationConfigurations = { @ValidationConfiguration(
+            validationConfigurations = {@ValidationConfiguration(
                     validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
                     configurationItems = {
-                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
-                            @ConfigurationItem(itemName = "otherField", itemValue = "passwordConfirm")
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE,
+                                    itemValue = "passwordNotMatchError"),
+                            @ConfigurationItem(itemName = "otherField",
+                                    itemValue = "passwordConfirm")
                     }
-                    )
+            )
             })
     protected String password;
 
-    @Column(name = "EMAIL", nullable=false)
-    @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
+    @Column(name = "EMAIL", nullable = false)
+    @Index(name = "ADMINPERM_EMAIL_INDEX", columnNames = {"EMAIL"})
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address",
-            group = GroupName.User, order = FieldOrder.EMAIL, requiredOverride = RequiredOverride.REQUIRED,
+            group = GroupName.User, order = FieldOrder.EMAIL,
+            requiredOverride = RequiredOverride.REQUIRED,
             fieldType = SupportedFieldType.STRING)
     protected String email;
 
@@ -149,51 +153,68 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             defaultValue = "true")
     protected Boolean activeStatusFlag;
 
-    /** All roles that this user has */
+    /**
+     * All roles that this user has
+     */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
-    @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+    @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID",
+            referencedColumnName = "ADMIN_USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID",
+                    referencedColumnName = "ADMIN_ROLE_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "roleListTitle",
-        group = GroupName.RolesAndPermissions, order = FieldOrder.ROLES,
-        addType = AddMethodType.LOOKUP,
-        manyToField = "allUsers",
-        operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
+            group = GroupName.RolesAndPermissions, order = FieldOrder.ROLES,
+            addType = AddMethodType.LOOKUP,
+            manyToField = "allUsers",
+            operationTypes = @AdminPresentationOperationTypes(
+                    removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
-    @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+    @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF",
+            joinColumns = @JoinColumn(name = "ADMIN_USER_ID",
+                    referencedColumnName = "ADMIN_USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID",
+                    referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "permissionListTitle",
-        group = GroupName.RolesAndPermissions, order = FieldOrder.PERMISSIONS,
-        addType = AddMethodType.LOOKUP,
-        customCriteria = "includeFriendlyOnly",
-        manyToField = "allUsers",
-        operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
+            group = GroupName.RolesAndPermissions, order = FieldOrder.PERMISSIONS,
+            addType = AddMethodType.LOOKUP,
+            customCriteria = "includeFriendlyOnly",
+            manyToField = "allUsers",
+            operationTypes = @AdminPresentationOperationTypes(
+                    removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
 
     @Transient
     protected String unencodedPassword;
-    
+
     @Override
     public String getUnencodedPassword() {
         return unencodedPassword;
     }
 
     @ManyToOne(targetEntity = SandBoxImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
+    @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID",
+            referencedColumnName = "ADMIN_USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID",
+                    referencedColumnName = "SANDBOX_ID"))
     @AdminPresentation(excluded = true)
     protected SandBox overrideSandBox;
 
-    @OneToMany(mappedBy = "adminUser", targetEntity = AdminUserAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurityVolatile")
+    @OneToMany(mappedBy = "adminUser", targetEntity = AdminUserAttributeImpl.class,
+            cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "AdminUserImpl_additional_fields",
             group = GroupName.AdditionalFields,
-            deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "AdminUserAttributeImpl_Key")
-    protected Map<String, AdminUserAttribute> additionalFields = new HashMap<String, AdminUserAttribute>();
+            deleteEntityUponRemove = true, forceFreeFormKeys = true,
+            keyPropertyFriendlyName = "AdminUserAttributeImpl_Key")
+    protected Map<String, AdminUserAttribute> additionalFields =
+            new HashMap<String, AdminUserAttribute>();
 
     @Override
     public void setUnencodedPassword(String unencodedPassword) {
@@ -319,7 +340,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     public void setContextKey(String contextKey) {
         //do nothing
     }
-    
+
     @Override
     public Map<String, String> getFlatAdditionalFields() {
         Map<String, String> map = new HashMap<String, String>();
@@ -328,7 +349,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
         }
         return map;
     }
-    
+
     @Override
     public Map<String, AdminUserAttribute> getAdditionalFields() {
         return additionalFields;
@@ -338,7 +359,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     public void setAdditionalFields(Map<String, AdminUserAttribute> additionalFields) {
         this.additionalFields = additionalFields;
     }
-    
+
     @Override
     public Long getLastUsedSandBoxId() {
         AdminUserAttribute attr = getAdditionalFields().get(LAST_USED_SANDBOX);
@@ -347,7 +368,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
         }
         return null;
     }
-    
+
     @Override
     public void setLastUsedSandBoxId(Long sandBoxId) {
         AdminUserAttribute attr = getAdditionalFields().get(LAST_USED_SANDBOX);

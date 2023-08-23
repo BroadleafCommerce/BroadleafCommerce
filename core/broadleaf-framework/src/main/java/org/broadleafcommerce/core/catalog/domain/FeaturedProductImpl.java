@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -48,7 +49,8 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_PRODUCT_FEATURED")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class FeaturedProductImpl implements FeaturedProduct {
@@ -57,34 +59,36 @@ public class FeaturedProductImpl implements FeaturedProduct {
 
     /** The id. */
     @Id
-    @GeneratedValue(generator= "FeaturedProductId")
+    @GeneratedValue(generator = "FeaturedProductId")
     @GenericGenerator(
-        name="FeaturedProductId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FeaturedProductImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl")
-        }
+            name = "FeaturedProductId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FeaturedProductImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl")
+            }
     )
     @Column(name = "FEATURED_PRODUCT_ID")
     protected Long id;
-    
+
     @Column(name = "SEQUENCE", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal sequence;
 
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName = "FeaturedProductImpl_Featured_Product_Promotion_Message", largeEntry=true)
+    @AdminPresentation(friendlyName = "FeaturedProductImpl_Featured_Product_Promotion_Message",
+            largeEntry = true)
     protected String promotionMessage;
-    
+
     @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="PRODFEATURED_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
+    @Index(name = "PRODFEATURED_CATEGORY_INDEX", columnNames = {"CATEGORY_ID"})
     protected Category category = new CategoryImpl();
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
+    @Index(name = "PRODFEATURED_PRODUCT_INDEX", columnNames = {"PRODUCT_ID"})
     protected Product product = new ProductImpl();
 
     @Override
@@ -96,7 +100,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
@@ -136,7 +140,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     public void setProduct(Product product) {
         this.product = product;
     }
-    
+
     @Override
     public Product getRelatedProduct() {
         return product;
@@ -144,16 +148,25 @@ public class FeaturedProductImpl implements FeaturedProduct {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if (!getClass().isAssignableFrom(o.getClass())) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (!getClass().isAssignableFrom(o.getClass()))
+            return false;
 
         FeaturedProductImpl that = (FeaturedProductImpl) o;
 
-        if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null) return false;
-        if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (product != null ? !product.equals(that.product) : that.product != null) return false;
-        if (promotionMessage != null ? !promotionMessage.equals(that.promotionMessage) : that.promotionMessage != null) return false;
+        if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null)
+            return false;
+        if (category != null ? !category.equals(that.category) : that.category != null)
+            return false;
+        if (product != null ? !product.equals(that.product) : that.product != null)
+            return false;
+        if (promotionMessage != null
+                ? !promotionMessage.equals(that.promotionMessage)
+                : that.promotionMessage != null)
+            return false;
 
         return true;
     }
@@ -168,7 +181,8 @@ public class FeaturedProductImpl implements FeaturedProduct {
     }
 
     @Override
-    public <G extends FeaturedProduct> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends FeaturedProduct> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

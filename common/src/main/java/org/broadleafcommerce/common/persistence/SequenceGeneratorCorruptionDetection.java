@@ -115,7 +115,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
             String segmentColumnName = null;
             String valueColumnName = null;
             Long incrementSize = null;
-            if (genericAnnot != null && genericAnnot.strategy().equals(IdOverrideTableGenerator.class.getName())) {
+            String generatorName = IdOverrideTableGenerator.class.getName();
+            if (genericAnnot != null && (generatorName.equals(genericAnnot.strategy())
+                    || (genericAnnot.type() != null && generatorName.equals(genericAnnot.type().getName())))) {
                 //This is a BLC style ID generator
                 for (Parameter param : genericAnnot.parameters()) {
                     if (param.name().equals("segment_value")) {

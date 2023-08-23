@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
@@ -46,17 +47,18 @@ public class RoleImpl implements Role {
     @GeneratedValue(generator = "RoleId")
     @GenericGenerator(
             name = "RoleId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "RoleImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.RoleImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.RoleImpl")
             }
     )
     @Column(name = "ROLE_ID")
     protected Long id;
 
     @Column(name = "ROLE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "rolesTitle",prominent = true)
+    @AdminPresentation(friendlyName = "rolesTitle", prominent = true)
     protected String roleName;
 
     @Override

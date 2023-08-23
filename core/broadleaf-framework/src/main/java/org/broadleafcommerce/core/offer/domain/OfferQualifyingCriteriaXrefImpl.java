@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -48,13 +49,16 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_QUAL_CRIT_OFFER_XREF")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
-@AdminPresentationClass(excludeFromPolymorphism = false, populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
+@AdminPresentationClass(excludeFromPolymorphism = false,
+        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaXref, QuantityBasedRule {
+public class OfferQualifyingCriteriaXrefImpl
+        implements OfferQualifyingCriteriaXref, QuantityBasedRule {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -69,20 +73,21 @@ public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaX
     }
 
     @Id
-    @GeneratedValue(generator= "OfferQualCritId")
+    @GeneratedValue(generator = "OfferQualCritId")
     @GenericGenerator(
-            name="OfferQualCritId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            name = "OfferQualCritId",
+            type = IdOverrideTableGenerator.class,
             parameters = {
-                    @Parameter(name="segment_value", value="OfferQualifyingCriteriaXrefImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl")
+                    @Parameter(name = "segment_value", value = "OfferQualifyingCriteriaXrefImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl")
             }
     )
     @Column(name = "OFFER_QUAL_CRIT_ID")
     protected Long id;
 
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
     @AdminPresentation(excluded = true)
     protected Offer offer;
@@ -177,7 +182,8 @@ public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaX
     }
 
     @Override
-    public <G extends OfferQualifyingCriteriaXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OfferQualifyingCriteriaXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -187,8 +193,9 @@ public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaX
             cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
         }
         if (offerItemCriteria != null) {
-            cloned.setOfferItemCriteria(offerItemCriteria.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setOfferItemCriteria(
+                    offerItemCriteria.createOrRetrieveCopyInstance(context).getClone());
         }
-        return  createResponse;
+        return createResponse;
     }
 }
