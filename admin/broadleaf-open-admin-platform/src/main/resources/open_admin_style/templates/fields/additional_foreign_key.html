@@ -52,7 +52,7 @@
                             th:classappend="${field.readOnly}? 'read-only'"
                             th:disabled="${field.readOnly}"
                             type="button" th:inline="text"
-                            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + #uris.escapePathSegment(field.name) + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs})},
+                            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + #uris.escapePathSegment(field.name) + '/select'}(requestingEntityId=${entityForm.id}, sectionCrumbs=${entityForm.sectionCrumbs}, inventoryParameter=${inventoryParameter})},
                                  data-dynamic-field=${field.attributes['dynamicField']},
                                  data-confirm=${field.isConfirmEnabled},
                                  data-confirm-text=${field.confirmEnabledText}">
