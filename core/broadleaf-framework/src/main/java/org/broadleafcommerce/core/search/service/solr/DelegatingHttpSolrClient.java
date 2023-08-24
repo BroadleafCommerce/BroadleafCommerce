@@ -43,11 +43,11 @@ import java.util.List;
 /**
  * Wrapper implementation of Solr that delegates to an {@link HttpSolrClient}.  With older versions of SolrJ, there was no ability to specify a 
  * a collection on an {@link HttpSolrClient}.  As a result, you needed two different clients, one for each collection.  For example, you might have 
- * a client with the base URL: http://localhost:8983/solr/catalog and another with the base URL of http://localhost:8983/solr/catalog_reindex.
+ * a client with the base URL: http://localhost:8983/solr/catalogs and another with the base URL of http://localhost:8983/solr/catalogs_reindex.
  * <p/>
  * What this class allows for is a "defaultCollection".  If the base URL is http://localhost:8983/solr for example, and the default collection is "catalog", then a call 
- * to {@link DelegatingHttpSolrClient#query(new SolrQuery("foo:bar")} will search the "catalog" index, or http://localhost:8983/solr/catalog.  Alternatively, a call to 
- * {@link DelegatingHttpSolrClient#query("catalog_reindex", new SolrQuery("foo:bar"))} will search the "catalog_reindex" index, or http://localhost:8983/solr/catalog_reindex.
+ * to {@link DelegatingHttpSolrClient#query(new SolrQuery("foo:bar")} will search the "catalog" index, or http://localhost:8983/solr/catalogs.  Alternatively, a call to
+ * {@link DelegatingHttpSolrClient#query("catalogs_reindex", new SolrQuery("foo:bar"))} will search the "catalogs_reindex" index, or http://localhost:8983/solr/catalogs_reindex.
  * 
  * The same thing goes for writes.  This class simply delegates to the delegate passed into the constructor.
  * 
