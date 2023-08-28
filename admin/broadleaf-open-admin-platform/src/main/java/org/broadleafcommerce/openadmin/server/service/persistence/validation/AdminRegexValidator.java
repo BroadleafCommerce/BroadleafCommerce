@@ -49,6 +49,10 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
                                     BasicFieldMetadata propertyMetadata,
                                     String propertyName,
                                     String value) {
+        //if value is empty allow, if someone doesn't want to allow empty values there is RequiredPropertyValidator as an option
+        if(StringUtils.isEmpty(value)){
+            return true;
+        }
         String regexExpression = validationConfiguration.get(REGEX_CONFIG_PROPERTY);
         if (propertiesService == null && StringUtils.isEmpty(regexExpression)) {
             LOG.error("regex validator for field " + propertyName + " is not applied because dependency is not injected, most probably because you used validationImplementation = " +
