@@ -317,20 +317,18 @@
                 collectedData.data = [];
                 for (var j = 0; j < builders.length; j++) {
                     var builder = builders[j];
-                    // if(BLCAdmin.currentModal().find("#"+$(builders[j]).attr("id")).length) {
-                        var dataDTO = $(builder).queryBuilder('getRules');
-                        if (dataDTO.rules) {
-                            dataDTO.pk = $(container).find(".rules-group-header-item-pk").val();
-                            dataDTO.quantity = $(container).find(".rules-group-header-item-qty").val();
-                            for (var k = 0; k < dataDTO.rules.length; k++) {
-                                if (Array.isArray(dataDTO.rules[k].value)) {
-                                    dataDTO.rules[k].value = JSON.stringify(dataDTO.rules[k].value);
-                                }
+                    var dataDTO = $(builder).queryBuilder('getRules');
+                    if (dataDTO.rules) {
+                        dataDTO.pk = $(container).find(".rules-group-header-item-pk").val();
+                        dataDTO.quantity = $(container).find(".rules-group-header-item-qty").val();
+                        for (var k = 0; k < dataDTO.rules.length; k++) {
+                            if (Array.isArray(dataDTO.rules[k].value)) {
+                                dataDTO.rules[k].value = JSON.stringify(dataDTO.rules[k].value);
                             }
-
-                            collectedData.data.push(dataDTO);
                         }
-                    // }
+
+                        collectedData.data.push(dataDTO);
+                    }
                 }
 
                 // There are two scenarios that we should clear out rule data:
