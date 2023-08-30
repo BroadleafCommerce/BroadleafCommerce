@@ -19,12 +19,11 @@
 package org.broadleafcommerce.core.web.processor;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
@@ -34,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,6 +45,9 @@ import java.util.Map;
 public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModifierProcessor {
 
     protected static final Logger logger = LoggerFactory.getLogger(ProductOptionDisplayProcessor.class);
+
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     @Override
     public String getName() {
@@ -80,7 +83,7 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
 
                 if (itemAttribute != null && !StringUtils.isEmpty(itemAttribute.getValue())) {
                     final String translatedLabel = productOption.getLabel();
-                    final String translatedValue = translateItemAttributeValue(itemAttribute, productOption);
+                    final String translatedValue = catalogService.translateItemAttributeValue(itemAttribute, productOption);
 
                     // Two product options can have same label. If so, only the first product option will be collected in the result.
                     if (productOptionDisplayValues.containsKey(translatedLabel)) {
@@ -94,25 +97,6 @@ public class ProductOptionDisplayProcessor extends AbstractBroadleafVariableModi
             // Ignore any other attributes that might be present on orderItem, and do not have a related ProductOption configured for them
         }
         return ImmutableMap.of("productOptionDisplayValues", (Object) productOptionDisplayValues);
-    }
-
-    /**
-     * Attempts to translate an itemAttribute's value based on the translation provided by a ProductOptionValue
-     * which has its rawAttributeValue = itemAttribute's value. Calling getAttributeValue() on that ProductOptionValue,
-     * results in the translation provided by DynamicTranslationProvider for itemAttribute's value.
-     * In order to find that ProductOptionValue, a search on ProductOption.getAllowedValues() must be made.
-     */
-    protected String translateItemAttributeValue(OrderItemAttribute itemAttribute, ProductOption productOption) {
-        String attributeValue = itemAttribute.getValue();
-        if (CollectionUtils.isNotEmpty(productOption.getAllowedValues())) {
-            for (ProductOptionValue allowedValue : productOption.getAllowedValues()) {
-                if (attributeValue.equals(allowedValue.getRawAttributeValue())) {
-                    return allowedValue.getAttributeValue();
-                }
-            }
-        }
-        // return initial value if no ProductOptionValue was found
-        return attributeValue;
     }
 
 }
