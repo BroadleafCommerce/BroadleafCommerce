@@ -43,9 +43,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.9.0</ehcache3.version>
-        <spring.version>5.3.27</spring.version>
-        <spring.security.version>5.8.3</spring.security.version>
-        <spring.boot.version>2.7.12</spring.boot.version>
+        <spring.version>5.3.29</spring.version>
+        <spring.security.version>5.8.5</spring.security.version>
+        <spring.boot.version>2.7.14</spring.boot.version>
         <jackson-bom.version>2.15.2</jackson-bom.version>
         <lombok.version>1.18.28</lombok.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
@@ -58,7 +58,7 @@
         <gpg.plugin.version>1.6</gpg.plugin.version>
         <broadleaf-presentation.version>1.3.5-GA</broadleaf-presentation.version>
         <hsqldb.database.starter.version>2.3.4-GA</hsqldb.database.starter.version>
-        <closure.compiler.version>v20210505</closure.compiler.version>
+        <closure.compiler.version>v20200830</closure.compiler.version>
         <hibernate.version>5.4.33.Final</hibernate.version>
         <hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
         <javax.version>2.3.1</javax.version>
@@ -944,7 +944,7 @@
             <dependency>
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
-                <version>1.1.8.4</version>
+                <version>1.1.10.1</version>
             </dependency>
             <!-- Byte Code Manipulation Libraries -->
             <dependency>
@@ -1422,7 +1422,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>32.0.0-jre</version>
+                <version>32.1.2-jre</version>
             </dependency>
             <dependency>
                 <groupId>com.google.protobuf</groupId>

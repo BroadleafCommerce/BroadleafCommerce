@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * BroadleafCommerce Framework
  * %%
@@ -15,17 +15,20 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.dao;
+package org.broadleafcommerce.core.search.service.solr.indexer;
 
-import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.site.domain.Catalog;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation;
 
-public class AbstractAdditionStatusDaoExtensionHandler extends AbstractExtensionHandler
-        implements AdditionStatusDaoExtensionHandler {
+public interface CatalogSolrIndexUpdateService extends SolrIndexUpdateService {
+    
+    public void rebuildIndex(Catalog catalog) throws ServiceException;
+    
+    public void rebuildIndex(Site site) throws ServiceException;
 
-    @Override
-    public ExtensionResultStatusType cleanUpEntity(Object entity) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
+    public void rebuildIndex() throws ServiceException;
+    
+    public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
 }

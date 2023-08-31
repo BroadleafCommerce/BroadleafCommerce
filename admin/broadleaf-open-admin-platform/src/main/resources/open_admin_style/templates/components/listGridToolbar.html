@@ -1,7 +1,7 @@
-<comment th:remove="all">
-<!-- This component represents a list grid toolbar -->
-<!-- Additional parameters that can be specified include: -->
-<!--    hideActionButtons - if set to true, will not render the add/update/delete buttons -->
+<comment th:remove="all" xmlns:th="http://www.w3.org/1999/html">
+    <!-- This component represents a list grid toolbar -->
+    <!-- Additional parameters that can be specified include: -->
+    <!--    hideActionButtons - if set to true, will not render the add/update/delete buttons -->
 </comment>
 
 <div class="listgrid-toolbar" th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
@@ -96,6 +96,9 @@
                      data-fields=${listGrid.fieldWrapper.serialize()},
                      data-data=${listGrid.dataWrapper.serialize()}">
         </div>
+
+        <input type="hidden" th:id="'query-params-for-filters'+${listGrid.jsonFieldName}"
+               th:value="${queryParamsForFilters}"/>
 
         <input type="hidden"
                th:id="${listGrid.jsonFieldName}"

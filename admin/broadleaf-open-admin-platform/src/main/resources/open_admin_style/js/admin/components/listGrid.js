@@ -1218,8 +1218,14 @@ $('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fie
     $('body').on('click', 'input[type=checkbox].multiselect-checkbox', function (event) {
         var $listgridBody = $(this).closest(".listgrid-header-wrapper").next();
         if ($(this).prop('checked')) {
-            $listgridBody.find(".listgrid-checkbox").prop('checked', true);
-            BLCAdmin.listGrid.inlineRowSelected(null, $listgridBody.find(".list-grid-table tbody tr:not(.selected)"), null, null, null, true);
+            if ($listgridBody.find(".listgrid-checkbox:not(:has(i.fa-lock))").length > 0) {
+                $listgridBody.find(".listgrid-checkbox:not(:has(i.fa-lock))").prop('checked', true);
+                BLCAdmin.listGrid.inlineRowSelected(null, $listgridBody.find(".list-grid-table tbody tr:not(.selected):not(:has(i.fa-lock))"), null, null, null, true);
+            }else {
+                var $tbody = $listgridBody.find("tbody");
+                var $listgridHeader = $tbody.closest(".listgrid-body-wrapper").prev();
+                updateMultiSelectCheckbox($tbody, $listgridHeader);
+            }
         } else {
             $listgridBody.find(".listgrid-checkbox").prop('checked', false);
             BLCAdmin.listGrid.inlineRowSelected(null, $listgridBody.find(".list-grid-table tbody tr.selected"), null, null, null, true);
@@ -1257,7 +1263,7 @@ function updateMultiSelectCheckbox($tbody, $listgridHeader) {
     var numRows = $tbody.find("input[type=checkbox].listgrid-checkbox").length;
     var numCheckedRows = $tbody.find("input[type=checkbox].listgrid-checkbox:checked").length;
 
-    if (numRows === numCheckedRows) {
+    if (numRows === numCheckedRows && numRows>0) {
         $listgridHeader.find("input[type=checkbox].multiselect-checkbox").prop('checked', true);
     } else {
         $listgridHeader.find("input[type=checkbox].multiselect-checkbox").prop('checked', false);

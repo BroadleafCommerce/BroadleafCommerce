@@ -1361,6 +1361,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
+            declareForceUseAdditionStatusFilter();
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
             ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey, sectionCrumbs);
             listGrid.setSubCollectionFieldName(collectionField);

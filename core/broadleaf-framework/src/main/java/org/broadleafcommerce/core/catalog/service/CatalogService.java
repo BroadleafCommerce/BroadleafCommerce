@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 
 import java.util.Date;
@@ -298,4 +299,14 @@ public interface CatalogService {
      * @return
      */
     List<Long> findProductIdsUsingProductOptionById(Long productOptionId, int start, int pageSize);
+
+    /**
+     * Returns a translated String attribute value for OrderItemAttribute
+     *
+     * @param itemAttribute
+     * @param productOption
+     * @return
+     */
+    String translateItemAttributeValue(OrderItemAttribute itemAttribute, ProductOption productOption);
+
 }
