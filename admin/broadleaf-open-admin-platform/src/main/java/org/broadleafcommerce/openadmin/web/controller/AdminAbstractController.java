@@ -470,6 +470,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                         } catch (Exception e) {
                             LOG.info("Could not decode value", e);
                         }
+                        decoded = decoded.replace("%","\\%");
                         if (decoded.contains(FILTER_VALUE_SEPARATOR)) {
                             String[] vs = decoded.split(FILTER_VALUE_SEPARATOR_REGEX);
                             for (String v : vs) {
