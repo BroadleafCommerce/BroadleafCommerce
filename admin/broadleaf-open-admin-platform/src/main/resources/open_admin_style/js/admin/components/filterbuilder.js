@@ -244,6 +244,18 @@
             //run any post-construct handlers
             //BLCAdmin.ruleBuilders.runPostConstructQueryBuilderFieldHandler(builder);
 
+            //seems we always create a new one, so need to delete the one that are no longer reachable
+            if(filterBuilder.builders){
+                if(BLCAdmin.currentModal()){
+                    var builders = filterBuilder.builders;
+                    for (var j = 0; j < builders.length; j++) {
+                        if(!BLCAdmin.currentModal().find("#" + $(builders[j]).attr("id")).length){
+                            filterBuilder.removeQueryBuilder(builders[j]);
+                        }
+                    }
+                }
+            }
+
             filterBuilder.addQueryBuilder($(builder));
 
             /****** For Developers: Test JSON Link *******
@@ -311,7 +323,7 @@
                         dataDTO.quantity = $(container).find(".rules-group-header-item-qty").val();
                         for (var k = 0; k < dataDTO.rules.length; k++) {
                             if (Array.isArray(dataDTO.rules[k].value)) {
-                                dataDTO.rules[k].value =  JSON.stringify(dataDTO.rules[k].value);
+                                dataDTO.rules[k].value = JSON.stringify(dataDTO.rules[k].value);
                             }
                         }
 
