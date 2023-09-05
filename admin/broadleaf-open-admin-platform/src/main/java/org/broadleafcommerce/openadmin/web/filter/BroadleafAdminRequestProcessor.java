@@ -48,8 +48,11 @@ import org.broadleafcommerce.common.web.ValidateProductionChangesState;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.broadleafcommerce.openadmin.server.security.service.user.AdminUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -62,6 +65,8 @@ import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import static org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote.ANONYMOUS_USER_NAME;
 
 
 /**
@@ -165,7 +170,17 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser != null) {
-            brc.setAdminUserId(adminUser.getId());
+            AdminUserDetails principal = (AdminUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal.getId().equals(adminUser.getId())) {
+                brc.setAdminUserId(adminUser.getId());
+            } else {
+                throw new SecurityException();
+            }
+        } else {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
+                throw new SecurityException();
+            }
         }
 
         prepareSandBox(request, brc);
