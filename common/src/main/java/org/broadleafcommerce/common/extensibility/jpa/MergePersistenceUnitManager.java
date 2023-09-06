@@ -110,6 +110,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      */
     protected static boolean transformed = false;
 
+    /**
+     * used in transformers to know from what persistentUnit classes are currently loaded
+     */
+    public static String currentProcessingPersistenceUnit;
+
     @Override
     protected boolean isPersistenceUnitOverrideAllowed() {
         return true;
@@ -368,6 +373,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     protected List<String> triggerClassLoadForManagedClasses() throws ClassNotFoundException {
         List<String> managedClassNames = new ArrayList<>();
         for (PersistenceUnitInfo pui : mergedPus.values()) {
+            currentProcessingPersistenceUnit = pui.getPersistenceUnitName();
             for (String managedClassName : pui.getManagedClassNames()) {
                 if (!managedClassNames.contains(managedClassName)) {
                     // Force-load this class so that we are able to ensure our instrumentation happens globally.
