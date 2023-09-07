@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +60,8 @@ public class FieldManager {
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
+
+    protected Set<Class> persistentClasses = new HashSet<>();
 
     public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
         this.entityConfiguration = entityConfiguration;
@@ -252,16 +255,18 @@ public class FieldManager {
     }
 
     protected boolean isPersistentClass(Class entityClass) {
-        if (entityManager != null) {
+        if (entityManager != null && persistentClasses.isEmpty()) {
             Set<EntityType<?>> managedEntities = entityManager.getMetamodel().getEntities();
+            boolean found = false;
             for (EntityType managedEntity : managedEntities) {
                 if (managedEntity.getJavaType().equals(entityClass)) {
-                    return true;
+                    found = true;
                 }
+                persistentClasses.add(managedEntity.getJavaType());
             }
+            return found;
         }
-
-        return false;
+        return !persistentClasses.isEmpty() && persistentClasses.contains(entityClass);
     }
 
     protected Object handleMapFieldExtraction(Object bean, String fieldName, Class<?> componentClass, Object value,

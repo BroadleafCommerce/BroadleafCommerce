@@ -67,6 +67,11 @@
                             <value>org\.terracotta.*</value>
                             <value>java.*</value>
                             <value>com\.fasterxml.*</value>
+                            <value>com\.mysql.*</value>
+                            <value>org\.antlr.*</value>
+                            <value>net\.bytebuddy.*</value>
+                            <value>org\.owasp.*</value>
+                            <value>org\.htmlunit.*</value>
                         </array>
                     </property>
                 </bean>
