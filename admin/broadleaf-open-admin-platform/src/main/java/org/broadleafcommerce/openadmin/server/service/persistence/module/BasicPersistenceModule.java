@@ -396,7 +396,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
                     if (attemptToPopulateValue(property, fieldManager, instance, setId, metadata, entity, value)) {
                         boolean isValid = true;
-                        PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
+                        PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd(), entity);
                         handled = false;
                         boolean required = metadata.getRequiredOverride() != null ? metadata.getRequiredOverride() : BooleanUtils.isTrue(metadata.getRequired());
                         if (value != null) {
@@ -428,7 +428,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     if (value == null) {
                                         property.setIsDirty(true);
                                     }
-                                    defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd()), instance);
+                                    defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd(), entity), instance);
                                     if (value == null) {
                                         fieldManager.setFieldValue(instance, property.getName(), null);
                                     }
