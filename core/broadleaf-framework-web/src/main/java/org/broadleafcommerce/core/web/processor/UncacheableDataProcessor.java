@@ -212,7 +212,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         boolean isBundle = false;
         if (TypedEntity.class.isAssignableFrom(product.getClass())) {
             BroadleafEnumerationType type = ((TypedEntity) product).getType();
-            isBundle = "BUNDLE".equals(type.getType());
+            isBundle = type!=null && "BUNDLE".equals(type.getType());
         }
         return isBundle;
     }
