@@ -89,7 +89,8 @@ import jakarta.persistence.Transient;
         @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnList = "MARKETING_MESSAGE"),
         @Index(name = "OFFER_TYPE_INDEX", columnList = "OFFER_TYPE"),
         @Index(name = "OFFER_DISCOUNT_INDEX", columnList = "OFFER_DISCOUNT_TYPE"),
-        @Index(name = "idx_BLOF_START_DATE", columnList = "START_DATE")
+        @Index(name = "idx_BLOF_START_DATE", columnList = "START_DATE"),
+        @Index(name = "OFFER_AUTOMATICALLY_ADDED_INDEX", columnList = "AUTOMATICALLY_ADDED")
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
