@@ -20,6 +20,8 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -39,6 +41,7 @@ import jakarta.persistence.Table;
         @Index(name = "CUSTOFFER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID"),
         @Index(name = "CUSTOFFER_OFFER_INDEX", columnList = "OFFER_ID")})
 @Inheritance(strategy = InheritanceType.JOINED)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
 public class CustomerOfferImpl implements CustomerOffer {
 
     public static final long serialVersionUID = 1L;

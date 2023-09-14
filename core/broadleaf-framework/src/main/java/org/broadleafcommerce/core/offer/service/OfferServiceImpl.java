@@ -270,7 +270,10 @@ public class OfferServiceImpl implements OfferService {
      * @return a List of offers assigned to the customer
      */
     protected List<CustomerOffer> lookupOfferCustomerByCustomer(Customer customer) {
-        List<CustomerOffer> offerCustomers = customerOfferDao.readCustomerOffersByCustomer(customer);
+        List<CustomerOffer> offerCustomers = new ArrayList<>();
+        if (!customer.isAnonymous()) {
+            offerCustomers = customerOfferDao.readCustomerOffersByCustomer(customer);
+        }
         return offerCustomers;
     }
 
