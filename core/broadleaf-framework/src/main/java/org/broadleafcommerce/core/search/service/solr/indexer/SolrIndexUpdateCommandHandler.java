@@ -62,7 +62,7 @@ public interface SolrIndexUpdateCommandHandler {
     public String getForegroundCollectionName();
     
     /**
-     * The background or "offline" collection (index) name or alias. This should return a non-null, non-empty string.  Every invocation should return the same value. (e.g. "catalog_reindex").
+     * The background or "offline" collection (index) name or alias. This should return a non-null, non-empty string.  Every invocation should return the same value. (e.g. "catalogs_reindex").
      * 
      * @return
      */
