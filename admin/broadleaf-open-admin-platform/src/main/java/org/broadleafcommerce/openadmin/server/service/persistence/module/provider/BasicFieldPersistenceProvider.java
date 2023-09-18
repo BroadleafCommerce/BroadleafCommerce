@@ -360,7 +360,13 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (origDispVal != null) {
                         prop.setOriginalDisplayValue(String.valueOf(origDispVal));
                         Session session = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
-                        String originalValueFromSession = String.valueOf(session.getIdentifier(origInstanceValue));
+                        String originalValueFromSession;
+                        if (session.contains(origInstanceValue)) {
+                            originalValueFromSession = String.valueOf(session.getIdentifier(origInstanceValue));
+                        } else {
+                            //can be that instance was constructed by spring and not fetched from the DB
+                            originalValueFromSession = String.valueOf(session.getIdentifier(session.getReference(origInstanceValue)));
+                        }
                         prop.setOriginalValue(originalValueFromSession);
                     }
 
