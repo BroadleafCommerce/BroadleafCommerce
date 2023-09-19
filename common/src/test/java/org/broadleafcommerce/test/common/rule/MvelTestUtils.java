@@ -18,6 +18,8 @@
 package org.broadleafcommerce.test.common.rule;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.rule.SelectizeCollectionUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -43,6 +45,8 @@ import static org.broadleafcommerce.test.common.rule.MvelHelperTest.something;
  */
 public class MvelTestUtils {
 
+    private static final Log LOG = LogFactory.getLog(MvelTestUtils.class);
+    
     public static void exerciseFailure() {
         System.setProperty("mvel2.disable.jit", "true");
         String rule = "CollectionUtils.intersection(level1.level2.getMultiValueSkuAttributes()[\"TEST-VALID\"],[\"TEST-VALID\"]).size()>0";
@@ -117,17 +121,17 @@ public class MvelTestUtils {
             Manifest manifest = new Manifest(resources.nextElement().openStream());
             Attributes main = manifest.getMainAttributes();
             if(something){
-                System.out.println("############################################################");
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                System.out.println(main.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue())
+                LOG.info("############################################################");
+                LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                LOG.info(main.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue())
                         .collect(Collectors.joining(", ", "{", "}")));
             }
             String mainClass = main.getValue("Main-Class");
             if ("org.apache.maven.surefire.booter.ForkedBooter".equals(mainClass)) {
                 if(something){
-                    System.out.println("############################################################");
-                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                    System.out.println("IN FORKEDBOOTER");
+                    LOG.info("############################################################");
+                    LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                    LOG.info("IN FORKEDBOOTER");
                 }
                 String[] paths = main.getValue("Class-Path").split(" ");
                 for (String path : paths) {
@@ -139,9 +143,9 @@ public class MvelTestUtils {
         }
         if (buffer.length() == 0) {
             if(something){
-                System.out.println("############################################################");
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                System.out.println("GETTING ALL PATHS");
+                LOG.info("############################################################");
+                LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                LOG.info("GETTING ALL PATHS");
             }
 
             for (String path : getAllPaths()) {
@@ -150,9 +154,9 @@ public class MvelTestUtils {
             classpath = cleanUpClassPathString(buffer);
         }
         if(something){
-            System.out.println("############################################################");
-            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            System.out.println("CLASSPATH:="+classpath);
+            LOG.info("############################################################");
+            LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            LOG.info("CLASSPATH:="+classpath);
         }
 
         return classpath;
