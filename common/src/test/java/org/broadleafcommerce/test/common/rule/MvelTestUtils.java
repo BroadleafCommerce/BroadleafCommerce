@@ -30,6 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
+
+import static org.broadleafcommerce.test.common.rule.MvelHelperTest.something;
 
 /**
  * Introduce some common testing util methods here.
@@ -113,8 +116,19 @@ public class MvelTestUtils {
         while (resources.hasMoreElements()) {
             Manifest manifest = new Manifest(resources.nextElement().openStream());
             Attributes main = manifest.getMainAttributes();
+            if(something){
+                System.out.println("############################################################");
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                System.out.println(main.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue())
+                        .collect(Collectors.joining(", ", "{", "}")));
+            }
             String mainClass = main.getValue("Main-Class");
             if ("org.apache.maven.surefire.booter.ForkedBooter".equals(mainClass)) {
+                if(something){
+                    System.out.println("############################################################");
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                    System.out.println("IN FORKEDBOOTER");
+                }
                 String[] paths = main.getValue("Class-Path").split(" ");
                 for (String path : paths) {
                     assembleClassPathElement(buffer, path);
@@ -124,11 +138,23 @@ public class MvelTestUtils {
             }
         }
         if (buffer.length() == 0) {
+            if(something){
+                System.out.println("############################################################");
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                System.out.println("GETTING ALL PATHS");
+            }
+
             for (String path : getAllPaths()) {
                 assembleClassPathElement(buffer, path);
             }
             classpath = cleanUpClassPathString(buffer);
         }
+        if(something){
+            System.out.println("############################################################");
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            System.out.println("CLASSPATH:="+classpath);
+        }
+
         return classpath;
     }
 

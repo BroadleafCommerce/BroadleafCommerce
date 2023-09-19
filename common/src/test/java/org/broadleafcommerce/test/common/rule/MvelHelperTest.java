@@ -40,6 +40,7 @@ import junit.framework.TestCase;
 public class MvelHelperTest extends TestCase {
 
     private static final Log LOG = LogFactory.getLog(MvelHelperTest.class);
+    public static boolean something = false;
 
     /**
      * Test that a blank rule is true.
@@ -137,6 +138,7 @@ public class MvelHelperTest extends TestCase {
     public void testMvelMethodOverloadFailureCase() throws IOException {
         //Test multiple iterations to make sure we hit the undetermined ordering case we need to confirm
         String output = "";
+        something = true;
         for (int j = 0; j < 100; j++) {
             output = executeExternalJavaProcess(MvelOverloadFailureReproduction.class);
             boolean result = Boolean.parseBoolean(output.trim());
@@ -145,6 +147,7 @@ public class MvelHelperTest extends TestCase {
                 break;
             }
         }
+        something=false;
         assertEquals("true", output);
     }
 
