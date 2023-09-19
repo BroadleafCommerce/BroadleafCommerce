@@ -33,9 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.stream.Collectors;
-
-import static org.broadleafcommerce.test.common.rule.MvelHelperTest.something;
 
 /**
  * Introduce some common testing util methods here.
@@ -121,37 +118,17 @@ public class MvelTestUtils {
         while (resources.hasMoreElements()) {
             Manifest manifest = new Manifest(resources.nextElement().openStream());
             Attributes main = manifest.getMainAttributes();
-            if(something){
-                LOG.info("############################################################");
-                LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                LOG.info(main.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining(", ", "{", "}")));
-            }
             String mainClass = main.getValue("Main-Class");
             if ("org.apache.maven.surefire.booter.ForkedBooter".equals(mainClass)) {
-                if(something){
-                    LOG.info("############################################################");
-                    LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                    LOG.info("IN FORKEDBOOTER");
-                }
                 URL location = MvelOverloadFailureReproduction.class.getProtectionDomain().getCodeSource().getLocation();
                 String testClasses = location.getPath();
                 if(testClasses.endsWith("/")) {
                     testClasses = testClasses.substring(0, testClasses.lastIndexOf("/"));
                 }
-                LOG.info("TEST_CLASSES="+testClasses);
                 String root = testClasses.substring(0, testClasses.lastIndexOf("/"))+"/classes";
-                LOG.info("CLASSES="+root);
                 String[] paths = main.getValue("Class-Path").split(" ");
                 String maven = ApplicationContext.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-                LOG.info("MAVEN APP CONTEXT="+maven);
                 maven = maven.substring(0, maven.indexOf(".m2"));
-                LOG.info("MAVEN="+maven);
-                LOG.info("JUST EXAMPLE!!!!!!!!!!!!!!!!!!");
-                String path1=paths[0].substring(paths[0].indexOf(".m2"));
-                String path2=maven+path1;
-                LOG.info("RESULT:"+path2);
-
                 for (String path : paths) {
                     if(path.indexOf(".m2")>0) {
                         path=path.substring(path.indexOf(".m2"));
@@ -171,21 +148,10 @@ public class MvelTestUtils {
             }
         }
         if (buffer.length() == 0) {
-            if(something){
-                LOG.info("############################################################");
-                LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                LOG.info("GETTING ALL PATHS");
-            }
-
             for (String path : getAllPaths()) {
                 assembleClassPathElement(buffer, path);
             }
             classpath = cleanUpClassPathString(buffer);
-        }
-        if(something){
-            LOG.info("############################################################");
-            LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            LOG.info("CLASSPATH:="+classpath);
         }
 
         return classpath;

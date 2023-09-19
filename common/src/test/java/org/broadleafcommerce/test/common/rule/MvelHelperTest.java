@@ -138,10 +138,6 @@ public class MvelHelperTest extends TestCase {
     public void testMvelMethodOverloadFailureCase() throws IOException {
         //Test multiple iterations to make sure we hit the undetermined ordering case we need to confirm
         String output = "";
-        something = true;
-        LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        LOG.info("###################################################################");
-        LOG.info("RUNNING testMvelMethodOverloadFailureCase set something="+something);
         for (int j = 0; j < 100; j++) {
             output = executeExternalJavaProcess(MvelOverloadFailureReproduction.class);
             boolean result = Boolean.parseBoolean(output.trim());
