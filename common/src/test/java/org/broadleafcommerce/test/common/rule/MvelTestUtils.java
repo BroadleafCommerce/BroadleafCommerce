@@ -144,15 +144,20 @@ public class MvelTestUtils {
                 LOG.info("CLASSES="+root);
                 String[] paths = main.getValue("Class-Path").split(" ");
                 String maven = ApplicationContext.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                LOG.info("MAVEN APP CONTEXT="+maven);
                 maven = maven.substring(0, maven.indexOf(".m2"));
-
+                LOG.info("MAVEN="+maven);
                 LOG.info("JUST EXAMPLE!!!!!!!!!!!!!!!!!!");
                 String path1=paths[0].substring(paths[0].indexOf(".m2"));
                 String path2=maven+path1;
                 LOG.info("RESULT:"+path2);
 
                 for (String path : paths) {
-                    path=path.substring(path.indexOf(".m2"));
+                    if(path.indexOf(".m2")>0) {
+                        path=path.substring(path.indexOf(".m2"));
+                    }else{
+                        LOG.info("NOT FOUND MAVEN="+path);
+                    }
                     path=maven+path;
                     assembleClassPathElement(buffer, path);
                 }
