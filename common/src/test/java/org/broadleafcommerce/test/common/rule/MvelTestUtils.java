@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.rule.SelectizeCollectionUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -138,11 +139,21 @@ public class MvelTestUtils {
                 if(testClasses.endsWith("/")) {
                     testClasses = testClasses.substring(0, testClasses.lastIndexOf("/"));
                 }
-                LOG.info(testClasses);
+                LOG.info("TEST_CLASSES="+testClasses);
                 String root = testClasses.substring(0, testClasses.lastIndexOf("/"))+"/classes";
-                LOG.info(root);
+                LOG.info("CLASSES="+root);
                 String[] paths = main.getValue("Class-Path").split(" ");
+                String maven = ApplicationContext.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                maven = maven.substring(0, maven.indexOf(".m2"));
+
+                LOG.info("JUST EXAMPLE!!!!!!!!!!!!!!!!!!");
+                String path1=paths[0].substring(paths[0].indexOf(".m2"));
+                String path2=maven+path1;
+                LOG.info("RESULT:"+path2);
+
                 for (String path : paths) {
+                    path=path.substring(path.indexOf(".m2"));
+                    path=maven+path;
                     assembleClassPathElement(buffer, path);
                 }
                 classpath = cleanUpClassPathString(buffer);
