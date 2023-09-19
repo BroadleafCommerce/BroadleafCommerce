@@ -104,6 +104,16 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        <!-- seems some lib brings junit 5 in classpath and so surefire selects engine to be junit platform 5
+             while we still have old junit 4(and I think junit3) tests and some of them not annotated with @Test
+             Also seems @Test annotation was moved in junit 5 to another package and Junit4 annotation is ignored
+             as well as "extends TestCase" and "ends on Test". So for now to help surefire to understand that we still
+             want to use Junit4 we need to specify engine that can do that
+        -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
@@ -137,6 +147,11 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-jcache</artifactId>
+        </dependency>
+        <!-- this is needed for hibernate 6.2, when running tests it will try to transform classes and needs bytecode lib -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ehcache</groupId>
