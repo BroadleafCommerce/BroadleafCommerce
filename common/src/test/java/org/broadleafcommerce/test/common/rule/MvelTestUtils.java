@@ -133,11 +133,24 @@ public class MvelTestUtils {
                     LOG.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
                     LOG.info("IN FORKEDBOOTER");
                 }
+                URL location = MvelOverloadFailureReproduction.class.getProtectionDomain().getCodeSource().getLocation();
+                String testClasses = location.getPath();
+                if(testClasses.endsWith("/")) {
+                    testClasses = testClasses.substring(0, testClasses.lastIndexOf("/"));
+                }
+                LOG.info(testClasses);
+                String root = testClasses.substring(0, testClasses.lastIndexOf("/"))+"/classes";
+                LOG.info(root);
                 String[] paths = main.getValue("Class-Path").split(" ");
                 for (String path : paths) {
                     assembleClassPathElement(buffer, path);
                 }
                 classpath = cleanUpClassPathString(buffer);
+                if(!classpath.contains(testClasses)){
+                    classpath=testClasses+System.getProperty("path.separator")+root+System.getProperty("path.separator")+classpath;
+
+                }
+
                 break;
             }
         }
