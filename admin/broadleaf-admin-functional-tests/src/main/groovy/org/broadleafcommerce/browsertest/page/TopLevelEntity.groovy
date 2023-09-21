@@ -18,7 +18,7 @@
 package org.broadleafcommerce.browsertest.page
 
 
-import geb.navigator.NonEmptyNavigator
+import geb.navigator.DefaultNavigator
 
 /**
  * Represents a top-level entity page like viewing a list of Categories at '/admin/category' or viewing a list of Prodcuts
@@ -48,7 +48,7 @@ class TopLevelEntity extends AdminPage {
         $('#sideMenu .blc-module .content a', text: contains(containingText))
     }
     
-    def findSectionLink(String containingText, NonEmptyNavigator containingModule) {
+    def findSectionLink(String containingText, DefaultNavigator containingModule) {
         containingModule.closest('.blc-module').find('.content a', text: contains(containingText))
     }
     
