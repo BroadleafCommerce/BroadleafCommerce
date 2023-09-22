@@ -119,10 +119,6 @@
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.asynchttpclient</groupId>
                     <artifactId>async-http-client</artifactId>
                 </exclusion>
