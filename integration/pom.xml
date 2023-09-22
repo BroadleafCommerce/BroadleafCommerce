@@ -230,12 +230,6 @@
             <artifactId>easymockclassextension</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.36</version>
-        </dependency>
-
         <!-- Spock/Groovy Test Dependencies -->
         <dependency>
             <groupId>org.apache.groovy</groupId>
@@ -318,12 +312,6 @@
             <artifactId>archunit</artifactId>
             <version>0.11.0</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 </project>
