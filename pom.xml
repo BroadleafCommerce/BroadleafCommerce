@@ -58,7 +58,7 @@
         <gpg.plugin.version>1.6</gpg.plugin.version>
         <broadleaf-presentation.version>1.4.0-SNAPSHOT</broadleaf-presentation.version>
         <hsqldb.database.starter.version>2.4.0-SNAPSHOT</hsqldb.database.starter.version>
-        <hsqldb.version>2.7.1</hsqldb.version>
+        <hsqldb.version>2.7.2</hsqldb.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
         <hibernate.version>6.2.6.Final</hibernate.version>
         <jakarta.version>6.0.0</jakarta.version>
@@ -1277,7 +1277,7 @@
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb.version}</version>
-                <classifier>jdk8</classifier>
+                <classifier>debug</classifier>
                 <scope>test</scope>
             </dependency>
 

@@ -426,7 +426,7 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <classifier>jdk8</classifier>
+            <classifier>debug</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>

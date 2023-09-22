@@ -122,20 +122,24 @@ public class MvelTestUtils {
             if ("org.apache.maven.surefire.booter.ForkedBooter".equals(mainClass)) {
                 URL location = MvelOverloadFailureReproduction.class.getProtectionDomain().getCodeSource().getLocation();
                 String testClasses = location.getPath();
-                if(testClasses.endsWith("/")) {
+                if (testClasses.endsWith("/")) {
                     testClasses = testClasses.substring(0, testClasses.lastIndexOf("/"));
                 }
-                String root = testClasses.substring(0, testClasses.lastIndexOf("/"))+"/classes";
+                String root = testClasses.substring(0, testClasses.lastIndexOf("/")) + "/classes";
                 String[] paths = main.getValue("Class-Path").split(" ");
                 String maven = ApplicationContext.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-                maven = maven.substring(0, maven.indexOf(".m2"));
+                String str = ".m2";
+                int endIndex = maven.indexOf(str);
+                if(endIndex==-1){
+                    str="m";
+                    endIndex = maven.indexOf(str);
+                }
+                maven = maven.substring(0, endIndex);
                 for (String path : paths) {
-                    if(path.indexOf(".m2")>0) {
-                        path=path.substring(path.indexOf(".m2"));
-                    }else{
-                        LOG.info("NOT FOUND MAVEN="+path);
+                    if (path.indexOf(str) > 0) {
+                        path = path.substring(path.indexOf(str));
                     }
-                    path=maven+path;
+                    path = maven + path;
                     assembleClassPathElement(buffer, path);
                 }
                 classpath = cleanUpClassPathString(buffer);

@@ -63,6 +63,7 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
         Order order = context.getSeedData();
         
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            boolean wasAdded = false;
             //create and associate all the Fulfillment Fees
             for (FulfillmentGroupItem item : fulfillmentGroup.getFulfillmentGroupItems()) {
                 List<SkuFee> fees = null;
@@ -83,13 +84,14 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessCont
                                 fulfillmentFee.setFulfillmentGroup(fulfillmentGroup);
                                 
                                 fulfillmentGroup.addFulfillmentGroupFee(fulfillmentFee);
+                                wasAdded = true;
                             }
                         }
                     }
                 }
             }
             
-            if (fulfillmentGroup.getFulfillmentGroupFees().size() > 0) {
+            if (wasAdded) {
                 fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
             }
         }

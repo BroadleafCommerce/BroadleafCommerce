@@ -19,10 +19,10 @@ package org.broadleafcommerce.test.junit;
 
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.Test;
+import org.testng.Assert;
 
 import jakarta.annotation.Resource;
 
@@ -32,7 +32,8 @@ import jakarta.annotation.Resource;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @BroadleafSiteIntegrationTest
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class JUnitExampleTest {
     
     @Resource

@@ -80,7 +80,6 @@ public class MVELTest extends TestNGSiteIntegrationSetup {
     }
 
     @Test
-    @Transactional
     public void testOfferAppliesToItemsInCategoryAndOrderValueGreaterThanFifty() {
         //----------------------------------------------------------------------------------------------------
         // Mock up some order data
@@ -206,96 +205,6 @@ public class MVELTest extends TestNGSiteIntegrationSetup {
         assert expressionOutcome1 != null && expressionOutcome1;
 
     }
-
-    //@Test
-    //TODO fix this test
-    public void testOfferAppliesToHatsWhenOneLawnmowerIsPurchased() {
-        OrderImpl order = new OrderImpl();
-        ArrayList<OrderItem> items = new ArrayList<>();
-        order.setOrderItems(items);
-        DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
-        Money amount = new Money(10D);
-        items.add(item);
-        item.setSalePrice(amount);
-        ProductImpl product = new ProductImpl();
-        CategoryImpl category = new CategoryImpl();
-        category.setName("hat");
-        product.setDefaultCategory(category);
-        item.setProduct(product);
-        item.setQuantity(3);
-
-        DiscreteOrderItemImpl item2 = new DiscreteOrderItemImpl();
-        Money amount2 = new Money(250D);
-        items.add(item2);
-        item2.setSalePrice(amount2);
-        ProductImpl product2 = new ProductImpl();
-        CategoryImpl category2 = new CategoryImpl();
-        category2.setName("lawnmower");
-        product2.setDefaultCategory(category2);
-        item2.setProduct(product2);
-        item2.setQuantity(1);
-
-        HashMap<String, Object> vars = new HashMap<>();
-        vars.put("currentItem", item);
-        vars.put("order", order);
-        vars.put("doMark", false);
-
-        //This test makes use of the static MVEL function "orderContains(quantity)".
-        StringBuffer expression = new StringBuffer(functions);
-        expression.append("def evalItemForOrderContains(item) {")
-        .append("             return item.product.defaultCategory.name == 'lawnmower'")
-        .append("          } ")
-        .append("          return (orderContainsPlusMark(1) and currentItem.product.defaultCategory.name == 'hat');");
-
-        Boolean result = (Boolean)MVEL.eval(expression.toString(), vars);
-        assert result != null && result;
-    }
-
-    //@Test
-    //No longer a valid test
-//    public void testMarkLawnmowerWhenOfferAppliesToHats() {
-//        OrderImpl order = new OrderImpl();
-//        ArrayList<OrderItem> items = new ArrayList<OrderItem>();
-//        order.setOrderItems(items);
-//        DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
-//        Money amount = new Money(10D);
-//        items.add(item);
-//        item.setSalePrice(amount);
-//        ProductImpl product = new ProductImpl();
-//        CategoryImpl category = new CategoryImpl();
-//        category.setName("hat");
-//        product.setDefaultCategory(category);
-//        item.setProduct(product);
-//        item.setQuantity(3);
-//
-//        DiscreteOrderItemImpl item2 = new DiscreteOrderItemImpl();
-//        Money amount2 = new Money(250D);
-//        items.add(item2);
-//        item2.setSalePrice(amount2);
-//        ProductImpl product2 = new ProductImpl();
-//        CategoryImpl category2 = new CategoryImpl();
-//        category2.setName("lawnmower");
-//        product2.setDefaultCategory(category2);
-//        item2.setProduct(product2);
-//        item2.setQuantity(1);
-//
-//        HashMap<String, Object> vars = new HashMap<String, Object>();
-//        vars.put("currentItem", item);
-//        vars.put("order", order);
-//        vars.put("doMark", true);
-//
-//        //This test makes use of the static MVEL function "orderContains(quantity)".
-//        StringBuffer expression = new StringBuffer(functions);
-//        expression.append("def evalItemForOrderContains(item) {")
-//        .append("             return item.product.defaultCategory.name == 'lawnmower'")
-//        .append("          } ")
-//        .append("          return (orderContainsPlusMark(1) and currentItem.product.defaultCategory.name == 'hat');");
-//
-//        Boolean result = (Boolean)MVEL.eval(expression.toString(), vars);
-//        assert result != null && result;
-//        assert item2.getMarkedForOffer() == 1;
-//        assert item.getMarkedForOffer() == 0;
-//    }
 
     @Test
     public void testOfferAppliesToFulfillmentGroup() {

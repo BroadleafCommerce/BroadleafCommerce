@@ -200,8 +200,8 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         return order;
     }
 
-    @Test(groups =  {"testOffersWithGiftWrap"}, dependsOnGroups = { "testShippingInsert"})
-    @Transactional
+    @Test(groups =  {"testOffersWithGiftWrap"})
+    @Transactional(value = "blTransactionManager")
     public void testOrderItemOfferWithGiftWrap() throws PricingException {
         Order order = createTestOrderWithOfferAndGiftWrap();
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();

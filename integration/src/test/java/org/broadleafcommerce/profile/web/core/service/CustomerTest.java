@@ -83,13 +83,6 @@ public class CustomerTest extends TestNGSiteIntegrationSetup {
         }
     }
 
-    /*@Test(groups = { "readCustomer1" }, dependsOnGroups = { "createCustomers" })
-    public void readCustomersByUsername1() {
-        for (String userName : userNames) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-            assert userDetails != null && userDetails.getPassword().equals(userDetails.getUsername() + "Password");
-        }
-    }*/
 
     @Test(groups = { "changeCustomerPassword" }, dependsOnGroups = { "readCustomer" })
     @Transactional
