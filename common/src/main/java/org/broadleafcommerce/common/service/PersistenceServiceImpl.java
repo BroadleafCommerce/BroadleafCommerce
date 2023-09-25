@@ -206,13 +206,11 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     public Class<?> getCeilingImplClassFromEntityManagers(String className) {
         Class<?> beanIdClass = getClassForName(className);
 
-        for (EntityManager em : entityManagers) {
             Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(beanIdClass, true, true);
 
             if (ArrayUtils.isNotEmpty(entitiesFromCeiling)) {
                 return entitiesFromCeiling[entitiesFromCeiling.length - 1];
             }
-        }
         return null;
     }
 

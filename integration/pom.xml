@@ -50,6 +50,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-testng</artifactId>
+                        <version>3.1.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit-platform</artifactId>
+                        <version>3.1.2</version>
+                    </dependency>
+                </dependencies>
+
                 <executions>
                     <execution>
                         <id>default-test</id>
@@ -58,7 +71,9 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+<!--                            <argLine>-Dmaven.surefire.debug -Xmx1024m ${surefire.argLine}</argLine>-->
                             <argLine>-Xmx1024m ${surefire.argLine}</argLine>
+<!--                            <debugForkedProcess>true</debugForkedProcess>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -187,6 +202,10 @@
                     <groupId>org.eclipse.angus</groupId>
                     <artifactId>angus-activation</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -217,10 +236,10 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
+        <!-- not adding junit for now, as we have old junit4
+            and spock/gmaven will compile with junit5 support
+            so rely on junit(junit-platform) that comes from spring/groovy
+         -->
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
@@ -236,6 +255,12 @@
             <artifactId>groovy-all</artifactId>
             <scope>test</scope>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
@@ -305,6 +330,12 @@
             <groupId>com.broadleafcommerce</groupId>
             <artifactId>broadleaf-boot-starter-hsql-database</artifactId>
             <version>${hsqldb.database.starter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>test</scope>
         </dependency>
         <dependency>

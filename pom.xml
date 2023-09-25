@@ -58,7 +58,7 @@
         <gpg.plugin.version>1.6</gpg.plugin.version>
         <broadleaf-presentation.version>1.4.0-SNAPSHOT</broadleaf-presentation.version>
         <hsqldb.database.starter.version>2.4.0-SNAPSHOT</hsqldb.database.starter.version>
-        <hsqldb.version>2.7.1</hsqldb.version>
+        <hsqldb.version>2.7.2</hsqldb.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
         <hibernate.version>6.2.6.Final</hibernate.version>
         <jakarta.version>6.0.0</jakarta.version>
@@ -876,6 +876,12 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.13.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>5.10.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

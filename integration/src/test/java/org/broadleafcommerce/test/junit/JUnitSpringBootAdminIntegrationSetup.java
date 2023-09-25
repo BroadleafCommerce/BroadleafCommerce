@@ -21,8 +21,8 @@ import org.broadleafcommerce.test.config.AdminSpringBootTestConfiguration;
 import org.broadleafcommerce.test.helper.AdminApplication;
 import org.broadleafcommerce.test.helper.AdminTestHelper;
 import org.broadleafcommerce.test.helper.TestAdminRequestFilter;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -156,7 +157,7 @@ import jakarta.servlet.Filter;
  *
  * @author Jeff Fischer
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {AdminApplication.class})
 @TestPropertySource(locations = "classpath:/config/bc/overrideprops/admin_springboot_testoverrides.properties")
 @Import(AdminSpringBootTestConfiguration.class)
@@ -185,7 +186,7 @@ public abstract class JUnitSpringBootAdminIntegrationSetup {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Filter[] filters = getOrderedFilters(openEntityManagerInViewFilter, requestContextFilter, adminRequestFilter);
         String[] roles = getRequestRoles("PERMISSION_ALL_DEPLOYMENT");

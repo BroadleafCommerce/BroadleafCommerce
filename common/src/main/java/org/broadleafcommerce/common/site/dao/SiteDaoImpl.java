@@ -145,7 +145,7 @@ public class SiteDaoImpl implements SiteDao {
         Root<SiteImpl> site = criteria.from(SiteImpl.class);
         criteria.select(site);
 
-        criteria.where(builder.and(site.get("siteIdentifierValue").as(String.class).in(potentialIdentifiers),
+        criteria.where(builder.and(site.get("siteIdentifierValue").as(String.class).in((Object) potentialIdentifiers),
                 builder.and(
                     builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
                         builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),

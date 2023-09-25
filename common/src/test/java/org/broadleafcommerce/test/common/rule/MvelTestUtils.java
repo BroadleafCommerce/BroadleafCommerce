@@ -18,9 +18,12 @@
 package org.broadleafcommerce.test.common.rule;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.rule.SelectizeCollectionUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -40,6 +43,8 @@ import java.util.jar.Manifest;
  */
 public class MvelTestUtils {
 
+    private static final Log LOG = LogFactory.getLog(MvelTestUtils.class);
+    
     public static void exerciseFailure() {
         System.setProperty("mvel2.disable.jit", "true");
         String rule = "CollectionUtils.intersection(level1.level2.getMultiValueSkuAttributes()[\"TEST-VALID\"],[\"TEST-VALID\"]).size()>0";
@@ -115,11 +120,34 @@ public class MvelTestUtils {
             Attributes main = manifest.getMainAttributes();
             String mainClass = main.getValue("Main-Class");
             if ("org.apache.maven.surefire.booter.ForkedBooter".equals(mainClass)) {
+                URL location = MvelOverloadFailureReproduction.class.getProtectionDomain().getCodeSource().getLocation();
+                String testClasses = location.getPath();
+                if (testClasses.endsWith("/")) {
+                    testClasses = testClasses.substring(0, testClasses.lastIndexOf("/"));
+                }
+                String root = testClasses.substring(0, testClasses.lastIndexOf("/")) + "/classes";
                 String[] paths = main.getValue("Class-Path").split(" ");
+                String maven = ApplicationContext.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                String str = ".m2";
+                int endIndex = maven.indexOf(str);
+                if(endIndex==-1){
+                    str="m";
+                    endIndex = maven.indexOf(str);
+                }
+                maven = maven.substring(0, endIndex);
                 for (String path : paths) {
+                    if (path.indexOf(str) > 0) {
+                        path = path.substring(path.indexOf(str));
+                    }
+                    path = maven + path;
                     assembleClassPathElement(buffer, path);
                 }
                 classpath = cleanUpClassPathString(buffer);
+                if(!classpath.contains(testClasses)){
+                    classpath=testClasses+System.getProperty("path.separator")+root+System.getProperty("path.separator")+classpath;
+
+                }
+
                 break;
             }
         }
@@ -129,6 +157,7 @@ public class MvelTestUtils {
             }
             classpath = cleanUpClassPathString(buffer);
         }
+
         return classpath;
     }
 

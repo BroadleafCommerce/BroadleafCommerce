@@ -42,4 +42,12 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         context = applicationContext;
     }
 
+    /**
+     * see org.broadleafcommerce.test.TestNGSiteIntegrationSetup#reSetApplicationContext()
+     * @param applicationContext
+     */
+    public static void resetApplicationContext(ApplicationContext applicationContext){
+        context = applicationContext;
+    }
+
 }
