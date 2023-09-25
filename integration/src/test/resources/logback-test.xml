@@ -20,9 +20,9 @@
 <Configuration>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>
+            <pattern>
                 [%-5level] %d{HH:mm:ss.SSS} [%t] %logger{36} - %msg%n
-            </Pattern>
+            </pattern>
         </encoder>
     </appender>
 
