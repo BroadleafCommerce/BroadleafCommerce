@@ -280,6 +280,7 @@
                     <inceptionYear>2009</inceptionYear>
                     <licenseName>blc_dual</licenseName>
                     <licenseResolver>${project.uri}/licenses</licenseResolver>
+                    <canUpdateCopyright>true</canUpdateCopyright>
                     <excludes>
                         <exclude>**/*.sql</exclude>
                         <exclude>**/*.html</exclude>
