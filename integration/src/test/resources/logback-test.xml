@@ -21,7 +21,7 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <Pattern>
-                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+                [%-5level] %d{HH:mm:ss.SSS} [%t] %logger{36} - %msg%n
             </Pattern>
         </encoder>
     </appender>

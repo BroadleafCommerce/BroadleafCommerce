@@ -40,7 +40,6 @@ import junit.framework.TestCase;
 public class MvelHelperTest extends TestCase {
 
     private static final Log LOG = LogFactory.getLog(MvelHelperTest.class);
-    public static boolean something = false;
 
     /**
      * Test that a blank rule is true.
@@ -146,7 +145,6 @@ public class MvelHelperTest extends TestCase {
                 break;
             }
         }
-        something=false;
         assertEquals("true", output);
     }
 

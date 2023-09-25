@@ -235,11 +235,10 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <classifier>debug</classifier>
         </dependency>
         <!-- not adding junit for now, as we have old junit4
             and spock/gmaven will compile with junit5 support
-            so rely on junit(junit-platform) that comes fomr spring/groovy
+            so rely on junit(junit-platform) that comes from spring/groovy
          -->
         <dependency>
             <groupId>org.easymock</groupId>

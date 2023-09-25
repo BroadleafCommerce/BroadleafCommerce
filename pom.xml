@@ -1291,7 +1291,6 @@
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb.version}</version>
-                <classifier>debug</classifier>
                 <scope>test</scope>
             </dependency>
 
