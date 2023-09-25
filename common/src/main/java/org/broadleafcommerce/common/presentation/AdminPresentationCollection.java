@@ -42,6 +42,8 @@ public @interface AdminPresentationCollection {
      * the friendly name may be a key to retrieve a localized friendly name using
      * the GWT support for i18N.</p>
      *
+     * <p>Note: do not use the "/" character (or encode via i18N resource).</p>
+     *
      * @return the friendly name
      */
     String friendlyName() default "";
