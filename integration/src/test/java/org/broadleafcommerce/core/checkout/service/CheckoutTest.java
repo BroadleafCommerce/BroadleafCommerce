@@ -98,7 +98,7 @@ public class CheckoutTest extends TestNGSiteIntegrationSetup {
     @Resource(name = "blCurrencyService")
     protected BroadleafCurrencyService currencyService;
 
-    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" }, dataProvider = "USCurrency", dataProviderClass = BroadleafCurrencyProvider.class)
+    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer" }, dataProvider = "USCurrency", dataProviderClass = BroadleafCurrencyProvider.class)
     @Transactional
     public void testCheckout(BroadleafCurrency usCurrency) throws Exception {
         HashMap currencyConsiderationContext = new HashMap();

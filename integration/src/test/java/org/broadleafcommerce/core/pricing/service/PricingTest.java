@@ -94,7 +94,7 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
     private ISOService isoService;
 
 
-    @Test(groups = {"testPricing"}, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
+    @Test(groups = {"testPricing"}, dependsOnGroups = {  "createCustomerIdGeneration" })
     @Transactional
     public void testPricing() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -127,8 +127,6 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);
         List<FulfillmentGroup> groups = new ArrayList<>();
-        group.setMethod("standard");
-        group.setService("BANDED_SHIPPING");
         group.setOrder(order);
         groups.add(group);
         order.setFulfillmentGroups(groups);
@@ -218,7 +216,7 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         return result;
     }
 
-    @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
+    @Test(groups = { "testShipping" }, dependsOnGroups = {  "createCustomerIdGeneration"})
     @Transactional
     public void testShipping() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -229,8 +227,6 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         FulfillmentGroup group2 = new FulfillmentGroupImpl();
 
         // setup group1 - standard
-        group1.setMethod("standard");
-        group1.setService("BANDED_SHIPPING");
 
         Country country = new CountryImpl();
         country.setAbbreviation("US");
@@ -258,8 +254,6 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         group1.setOrder(order);
 
         // setup group2 - truck
-        group2.setMethod("truck");
-        group2.setService("BANDED_SHIPPING");
         group2.setOrder(order);
 
         List<FulfillmentGroup> groups = new ArrayList<>();

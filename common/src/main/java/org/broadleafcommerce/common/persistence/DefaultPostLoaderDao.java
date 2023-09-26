@@ -52,6 +52,15 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
         return postLoaderDao;
     }
 
+    /**
+     * see org.broadleafcommerce.test.TestNGSiteIntegrationSetup#reSetApplicationContext()
+     * @param applicationContext
+     */
+    public static void resetApplicationContext(ApplicationContext applicationContext) {
+        DefaultPostLoaderDao.applicationContext = applicationContext;
+        postLoaderDao = null;
+    }
+
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
