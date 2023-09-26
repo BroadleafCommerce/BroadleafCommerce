@@ -22,6 +22,8 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.firefox.FirefoxDriver
 
+import groovy.ant.AntBuilder
+
 println 'Loading default Broadleaf GebConfig'
 // Use the FirefoxDriver by default
 driver = { new FirefoxDriver() }

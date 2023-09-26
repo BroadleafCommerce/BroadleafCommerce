@@ -49,7 +49,7 @@
         <jackson.version>2.15.0</jackson.version>
         <lombok.version>1.18.24</lombok.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
-        <geb.version>1.0</geb.version>
+        <geb.version>7.0</geb.version>
         <spock.core.version>2.4-M1-groovy-4.0</spock.core.version>
         <spock.spring.version>2.4-M1-groovy-4.0</spock.spring.version>
         <selenium.version>4.8.1</selenium.version>
@@ -971,7 +971,7 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.14.5</version>
+                <version>1.14.8</version>
             </dependency>
 
             <!--Scheduling Libraries -->
