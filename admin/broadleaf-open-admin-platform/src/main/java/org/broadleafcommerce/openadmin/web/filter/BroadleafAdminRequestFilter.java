@@ -117,7 +117,9 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (StaleStateServiceException e) {
             //catch state change attempts from a stale page
-            forwardToConflictDestination(request,response);
+            forwardToConflictDestination(request, response);
+        } catch (SecurityException e){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         } finally {
             requestProcessor.postProcess(new ServletWebRequest(request, response));
         }

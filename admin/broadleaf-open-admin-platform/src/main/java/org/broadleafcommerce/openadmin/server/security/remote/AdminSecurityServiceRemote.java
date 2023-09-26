@@ -74,7 +74,7 @@ import javax.annotation.Resource;
 @Service("blAdminSecurityRemoteService")
 public class AdminSecurityServiceRemote implements AdminSecurityService, SecurityVerifier {
     
-    private static final String ANONYMOUS_USER_NAME = "anonymousUser";
+    public static final String ANONYMOUS_USER_NAME = "anonymousUser";
     private static final Log LOG = LogFactory.getLog(AdminSecurityServiceRemote.class);
     
     @Resource(name="blAdminSecurityService")
