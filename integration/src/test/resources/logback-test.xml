@@ -18,26 +18,26 @@
   -->
 
 <Configuration>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>
+            <pattern>
                 [%-5level] %d{HH:mm:ss.SSS} [%t] %logger{36} - %msg%n
-            </Pattern>
+            </pattern>
         </encoder>
     </appender>
 
-    <logger name="org.broadleafcommerce.common.extensibility.jpa" level="info" />
+    <logger name="org.broadleafcommerce.common.extensibility.jpa" level="INFO"/>
+    <logger name="org.broadleafcommerce" level="INFO"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.web.servlet" level="WARN"/>
+    <logger name="org.hibernate" level="ERROR"/>
+    <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" additivity="false" level="DEBUG"/>
+    <logger name="org.hibernate.tool.hbm2ddl.SchemaExport" level="ERROR"/>
 
-    <logger name="org.broadleafcommerce" level="info" />
-    <logger name="org.springframework" level="warn" />
-    <logger name="org.springframework.web" level="warn" />
-    <logger name="org.springframework.web.servlet" level="warn" />
-    <logger name="org.hibernate" level="error" />
-
-    <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" additivity="false" level="debug"/>
-
-    <logger name="org.hibernate.tool.hbm2ddl.SchemaExport" level="fatal" />
-    <root level="warn">
-        <AppenderRef ref="console"/>
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
     </root>
+
 </Configuration>

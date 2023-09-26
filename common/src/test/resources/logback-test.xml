@@ -20,24 +20,24 @@
 <Configuration status="WARN">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>
+            <pattern>
                 [%-5level] %d{HH:mm:ss.SSS} [%t] %logger{36} - %msg%n
-            </Pattern>
+            </pattern>
         </encoder>
     </appender>
 
-    <logger name="org.broadleafcommerce" level="info" additivity="false">
-        <AppenderRef ref="console"/>
+    <logger name="org.broadleafcommerce" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="org.springframework" level="warn" additivity="false">
-        <AppenderRef ref="console"/>
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="org.hibernate" level="warn" additivity="false">
-        <AppenderRef ref="console"/>
+    <logger name="org.hibernate" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="org.broadleafcommerce" level="info"/>
+    <logger name="org.broadleafcommerce" level="INFO"/>
 
-    <root level="debug">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </root>
 
