@@ -18,6 +18,7 @@
   -->
 
 <Configuration>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
@@ -27,17 +28,16 @@
     </appender>
 
     <logger name="org.broadleafcommerce.common.extensibility.jpa" level="INFO"/>
-
     <logger name="org.broadleafcommerce" level="INFO"/>
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.springframework.web" level="WARN"/>
     <logger name="org.springframework.web.servlet" level="WARN"/>
     <logger name="org.hibernate" level="ERROR"/>
-
     <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" additivity="false" level="DEBUG"/>
-
     <logger name="org.hibernate.tool.hbm2ddl.SchemaExport" level="ERROR"/>
+
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
     </root>
+
 </Configuration>
