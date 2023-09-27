@@ -52,8 +52,7 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
     public BroadleafTemplateModel getReplacementModel(final String s, final Map<String, String> map, 
                                                       final BroadleafTemplateContext context) {
         String linkedDataText = "<script type=\"application/ld+json\">\n" +
-                                //TODO update presentation
-//                                    getData(context.getRequest()) +
+                                    getData(context.getRequest()) +
                                 "\n</script>";
 
         final BroadleafTemplateModel model = context.createModel();

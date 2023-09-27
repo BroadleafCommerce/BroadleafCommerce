@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
@@ -159,13 +160,11 @@ public abstract class AbstractResourceProcessor extends AbstractBroadleafTagRepl
             bundleUrl = "/" + bundleUrl;
         }
 
-        
-        //TODO update presentation
-//        HttpServletRequest request = context.getRequest();
+        HttpServletRequest request = context.getRequest();
         String contextPath = "";
-//        if (request != null) {
-//            contextPath = request.getContextPath();
-//        }
+        if (request != null) {
+            contextPath = request.getContextPath();
+        }
         if (StringUtils.isNotEmpty(contextPath)) {
             bundleUrl = contextPath + bundleUrl;
         }
