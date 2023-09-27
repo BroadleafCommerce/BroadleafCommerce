@@ -199,12 +199,12 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             final Tika tika = new Tika();
             final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
             final String detectedType;
-            detectedType = tika.detect(file.getBytes());
+            detectedType = tika.detect(file.getOriginalFilename());
             if (detectedType != null && !detectedType.isEmpty()) {
                 final MimeType mimeType = allTypes.forName(detectedType);
                 tikaExtension = mimeType.getExtension().replace(".", "").toLowerCase();
             }
-        } catch (IOException | MimeTypeException ignored) {
+        } catch (MimeTypeException ignored) {
         }
         return (tikaExtension != null && !tikaExtension.isEmpty()) ? tikaExtension : FilenameUtils.getExtension(file.getOriginalFilename());
     }
