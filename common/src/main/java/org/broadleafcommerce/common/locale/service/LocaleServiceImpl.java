@@ -24,8 +24,9 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import jakarta.annotation.Resource;
 
 /**
  * Created by bpolster.

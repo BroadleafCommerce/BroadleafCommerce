@@ -37,8 +37,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author Chris Kittrell (ckittrell)

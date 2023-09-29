@@ -15,17 +15,12 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
-
-
 
 /**
  * <p>

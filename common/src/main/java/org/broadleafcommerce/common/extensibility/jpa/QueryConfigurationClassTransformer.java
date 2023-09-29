@@ -17,6 +17,26 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa;
 
+import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.NamedNativeQueries;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.QueryHint;
+import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
@@ -29,27 +49,6 @@ import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
-
-import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
-import javax.persistence.LockModeType;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.QueryHint;
 
 /**
  * Detects any externally registered {@link NamedQueries} or {@link NamedNativeQueries} and adds them to the first detected
@@ -81,7 +80,7 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain
-            protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            protectionDomain, byte[] classfileBuffer) throws TransformerException {
         if (className == null || isExecuted) {
             return null;
         }
@@ -94,7 +93,7 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
                 }
                 ConstPool constantPool = classFile.getConstPool();
                 ClassPool pool = ClassPool.getDefault();
-                pool.importPackage("javax.persistence");
+                pool.importPackage("jakarta.persistence");
                 pool.importPackage("java.lang");
                 List<?> attributes = classFile.getAttributes();
                 Iterator<?> itr = attributes.iterator();
@@ -113,7 +112,7 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
                 return bos.toByteArray();
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new IllegalClassFormatException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + e.getMessage());
+                throw new TransformerException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + e.getMessage());
             }
         } else {
             return null;

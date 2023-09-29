@@ -24,11 +24,7 @@ import org.broadleafcommerce.common.money.Money
 import org.broadleafcommerce.core.catalog.domain.SkuFeeImpl
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType
-import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl
-import org.broadleafcommerce.core.order.domain.Order
+import org.broadleafcommerce.core.order.domain.*
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService
 import org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity
 

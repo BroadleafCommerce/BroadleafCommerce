@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.template.TemplateType;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 public interface TemplateTypeAware {

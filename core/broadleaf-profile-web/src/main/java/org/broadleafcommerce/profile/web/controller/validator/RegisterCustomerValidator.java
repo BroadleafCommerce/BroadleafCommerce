@@ -27,7 +27,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author bpolster

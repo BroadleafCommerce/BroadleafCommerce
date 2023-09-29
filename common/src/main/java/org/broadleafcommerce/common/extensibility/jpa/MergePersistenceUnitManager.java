@@ -49,15 +49,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.management.ObjectName;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NamedNativeQueries;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 
 /**
  * Merges jars, class names and mapping file names from several persistence.xml files. The
@@ -108,6 +109,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      * re-initialized but all the classes have already been transformed
      */
     protected static boolean transformed = false;
+
+    /**
+     * used in transformers to know from what persistentUnit classes are currently loaded
+     */
+    public static String currentProcessingPersistenceUnit;
 
     @Override
     protected boolean isPersistenceUnitOverrideAllowed() {
@@ -205,7 +211,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                             pui.getPersistenceUnitName().equals(((BroadleafPersistenceUnitDeclaringClassTransformer) transformer).getPersistenceUnitName())
                         );
                     if (isTransformerQualified) {
-                        pui.addTransformer(transformer);
+                        if (this.getLoadTimeWeaver() == null) {
+                            weaverRegistered = false;
+                        } else {
+                            pui.addTransformer(transformer);
+                        }
                     }
                 } catch (Exception e) {
                     weaverRegistered = handleClassTransformerRegistrationProblem(transformer, e);
@@ -363,6 +373,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     protected List<String> triggerClassLoadForManagedClasses() throws ClassNotFoundException {
         List<String> managedClassNames = new ArrayList<>();
         for (PersistenceUnitInfo pui : mergedPus.values()) {
+            currentProcessingPersistenceUnit = pui.getPersistenceUnitName();
             for (String managedClassName : pui.getManagedClassNames()) {
                 if (!managedClassNames.contains(managedClassName)) {
                     // Force-load this class so that we are able to ensure our instrumentation happens globally.

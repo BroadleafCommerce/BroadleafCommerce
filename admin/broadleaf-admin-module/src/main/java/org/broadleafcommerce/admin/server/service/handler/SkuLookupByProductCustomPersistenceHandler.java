@@ -18,7 +18,7 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This persistence handler handles all {@link Sku} inspects and fetches where the `toOneLookup` custom criteria is on the

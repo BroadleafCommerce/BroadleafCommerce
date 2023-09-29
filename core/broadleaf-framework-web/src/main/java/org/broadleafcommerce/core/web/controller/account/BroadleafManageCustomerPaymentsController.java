@@ -18,7 +18,7 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.checkout.model.PaymentInfoForm;
 import org.broadleafcommerce.core.web.controller.account.validator.AccountPaymentInfoFormValidator;
@@ -35,8 +35,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is the page controller for adding, updating, and deleting a customer's saved payments.

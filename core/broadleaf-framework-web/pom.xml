@@ -3,7 +3,7 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>6.3.0-SNAPSHOT</version>
+        <version>7.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-framework-web</artifactId>
@@ -59,10 +59,6 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.social</groupId>
-            <artifactId>spring-social-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-profile</artifactId>
         </dependency>
@@ -71,8 +67,8 @@
             <artifactId>broadleaf-profile-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
@@ -97,6 +93,10 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
         </dependency>
     </dependencies>
 </project>

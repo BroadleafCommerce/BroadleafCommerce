@@ -28,16 +28,15 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Provides a PostConstruct method that sorts the {@link ResourceResolver}, {@link ResourceTransformer}, 
  * or location ({@link Resource}) collections based on the {@link Ordered} interface.
- * 
  *  
  * @author bpolster
  *
@@ -72,7 +71,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             throws ServletException, IOException {
         
         try {
-            blcContextUtil.establishThinRequestContext();
+            blcContextUtil.establishThinRequestContext(true);
             super.handleRequest(request, response);
         } finally {
             blcContextUtil.clearThinRequestContext();

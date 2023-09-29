@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service("blSearchFacetDTOService")
 public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {

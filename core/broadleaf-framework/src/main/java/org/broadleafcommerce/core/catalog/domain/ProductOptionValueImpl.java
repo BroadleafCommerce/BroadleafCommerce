@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -38,16 +39,16 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
 
@@ -56,27 +57,30 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @Table(name = "BLC_PRODUCT_OPTION_VALUE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductOptionValueImpl implements ProductOptionValue, ProductOptionValueAdminPresentation {
+public class ProductOptionValueImpl
+        implements ProductOptionValue, ProductOptionValueAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "ProductOptionValueId")
     @GenericGenerator(
-        name = "ProductOptionValueId",
-        strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-                @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
-                @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
-        })
+            name = "ProductOptionValueId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
+            })
     @Column(name = "PRODUCT_OPTION_VALUE_ID")
     protected Long id;
 
     @Column(name = "ATTRIBUTE_VALUE")
-    @AdminPresentation(friendlyName = "productOptionValue_attributeValue", 
+    @AdminPresentation(friendlyName = "productOptionValue_attributeValue",
             prominent = true, order = FieldOrder.value,
             translatable = true, gridOrder = FieldOrder.value,
             requiredOverride = RequiredOverride.REQUIRED,
@@ -85,12 +89,13 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
 
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOptionValue_displayOrder", prominent = true,
-            gridOrder =FieldOrder.order, order = FieldOrder.order,
+            gridOrder = FieldOrder.order, order = FieldOrder.order,
             group = GroupName.General)
     protected Long displayOrder;
 
     @Column(name = "PRICE_ADJUSTMENT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY,
+    @AdminPresentation(friendlyName = "productOptionValue_adjustment",
+            fieldType = SupportedFieldType.MONEY,
             prominent = true, gridOrder = FieldOrder.adjustment, order = FieldOrder.adjustment,
             group = GroupName.General)
     protected BigDecimal priceAdjustment;
@@ -139,11 +144,12 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
         Money returnPrice = null;
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            HashMap pricingConsiderationContext = SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
+            HashMap pricingConsiderationContext =
+                    SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
             Money adjustment = priceAdjustment == null ? null : new Money(priceAdjustment);
             DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext
-                                                     .getSkuPricingService()
-                                                     .getPriceAdjustment(this, adjustment, pricingConsiderationContext);
+                    .getSkuPricingService()
+                    .getPriceAdjustment(this, adjustment, pricingConsiderationContext);
             returnPrice = dynamicPrices.getPriceAdjustment();
 
         } else if (priceAdjustment != null) {
@@ -207,7 +213,8 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
     }
 
     @Override
-    public <G extends ProductOptionValue> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends ProductOptionValue> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -221,7 +228,7 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
         } else {
             cloned.setProductOption(productOption);
         }
-        
-        return  createResponse;
+
+        return createResponse;
     }
 }

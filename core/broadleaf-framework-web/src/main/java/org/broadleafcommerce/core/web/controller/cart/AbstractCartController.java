@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
 import org.broadleafcommerce.core.web.service.UpdateCartService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its

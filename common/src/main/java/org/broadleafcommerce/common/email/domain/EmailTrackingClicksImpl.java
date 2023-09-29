@@ -17,26 +17,28 @@
  */
 package org.broadleafcommerce.common.email.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * @author jfischer
  *
  */
 @Entity
-@Table(name = "BLC_EMAIL_TRACKING_CLICKS")
+@Table(name = "BLC_EMAIL_TRACKING_CLICKS", indexes = {
+        @Index(name = "TRACKINGCLICKS_TRACKING_INDEX", columnList = "EMAIL_TRACKING_ID"),
+        @Index(name = "TRACKINGCLICKS_CUSTOMER_INDEX", columnList = "CUSTOMER_ID") })
 public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
     /** The Constant serialVersionUID. */
@@ -46,7 +48,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     @GeneratedValue(generator = "ClickId")
     @GenericGenerator(
         name="ClickId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="EmailTrackingClicksImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl")
@@ -57,14 +59,12 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
     @ManyToOne(optional=false, targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
-    @Index(name="TRACKINGCLICKS_TRACKING_INDEX", columnNames={"EMAIL_TRACKING_ID"})
     protected EmailTracking emailTracking;
 
     @Column(nullable=false, name = "DATE_CLICKED")
     protected Date dateClicked;
 
     @Column(name = "CUSTOMER_ID")
-    @Index(name="TRACKINGCLICKS_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected String customerId;
 
     @Column(name = "DESTINATION_URI")
@@ -210,11 +210,9 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
         } else if (!destinationUri.equals(other.destinationUri))
             return false;
         if (emailTracking == null) {
-            if (other.emailTracking != null)
-                return false;
-        } else if (!emailTracking.equals(other.emailTracking))
-            return false;
-        return true;
+            return other.emailTracking == null;
+        } else
+            return emailTracking.equals(other.emailTracking);
     }
 
 }

@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.money.Money;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class CatalogTest extends TestNGSiteIntegrationSetup {
@@ -50,6 +51,15 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
     @Test(groups = {"testCatalog"})
     @Transactional
     public void testCatalog() throws Exception {
+        //this test does read all categories, so it assumes that no categories exists before
+        //but because seems order of tests are not persistent some other test that creates category
+        //can be run before this test, and this could lead this test to false-positive fail...
+        //let's delete all of them...or if this will cause issue in the future, check that categories
+        //created by this test exists among other categories
+        List<Category> allCategories = catalogService.findAllCategories();
+        if (CollectionUtils.isNotEmpty(allCategories)) {
+            allCategories.forEach(t -> catalogService.removeCategory(t));
+        }
         Category category = new CategoryImpl();
         category.setName("Soaps");
         category = catalogService.saveCategory(category);

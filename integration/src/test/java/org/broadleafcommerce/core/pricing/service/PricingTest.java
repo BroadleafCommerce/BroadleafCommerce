@@ -50,9 +50,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.pricing.ShippingRateDataProvider;
-import org.broadleafcommerce.core.pricing.domain.ShippingRate;
-import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -61,7 +58,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
@@ -71,7 +67,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class PricingTest extends TestNGSiteIntegrationSetup {
@@ -82,9 +78,6 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
     @Resource(name = "blOrderService")
     private OrderService orderService;
 
-    @Resource
-    private ShippingRateService shippingRateService;
-    
     @Resource
     private CatalogService catalogService;
     
@@ -100,14 +93,8 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
     @Resource
     private ISOService isoService;
 
-    @Test(groups =  {"testShippingInsert"}, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
-    @Rollback(false)
-    public void testShippingInsert(ShippingRate shippingRate, ShippingRate sr2) throws Exception {
-        shippingRate = shippingRateService.save(shippingRate);
-        sr2 = shippingRateService.save(sr2);
-    }
 
-    @Test(groups = {"testPricing"}, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
+    @Test(groups = {"testPricing"}, dependsOnGroups = {  "createCustomerIdGeneration" })
     @Transactional
     public void testPricing() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -140,8 +127,6 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);
         List<FulfillmentGroup> groups = new ArrayList<>();
-        group.setMethod("standard");
-        group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         group.setOrder(order);
         groups.add(group);
         order.setFulfillmentGroups(groups);
@@ -231,7 +216,7 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         return result;
     }
 
-    @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
+    @Test(groups = { "testShipping" }, dependsOnGroups = {  "createCustomerIdGeneration"})
     @Transactional
     public void testShipping() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -242,8 +227,6 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         FulfillmentGroup group2 = new FulfillmentGroupImpl();
 
         // setup group1 - standard
-        group1.setMethod("standard");
-        group1.setService(ShippingServiceType.BANDED_SHIPPING.getType());
 
         Country country = new CountryImpl();
         country.setAbbreviation("US");
@@ -271,8 +254,6 @@ public class PricingTest extends TestNGSiteIntegrationSetup {
         group1.setOrder(order);
 
         // setup group2 - truck
-        group2.setMethod("truck");
-        group2.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         group2.setOrder(order);
 
         List<FulfillmentGroup> groups = new ArrayList<>();

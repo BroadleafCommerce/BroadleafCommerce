@@ -29,8 +29,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.util.concurrent.Semaphore;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * Provides a {@link Runnable} implementation that allows the execution of the run() method inside the context of a thread-bound {@link EntityManager}.

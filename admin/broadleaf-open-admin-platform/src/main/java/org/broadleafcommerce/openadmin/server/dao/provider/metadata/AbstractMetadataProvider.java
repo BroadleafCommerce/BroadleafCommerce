@@ -22,7 +22,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Chris Kittrell (ckittrell)

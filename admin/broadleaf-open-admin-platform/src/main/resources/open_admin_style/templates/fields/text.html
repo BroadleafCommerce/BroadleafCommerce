@@ -1,6 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:utext="#{${field.friendlyName}}"></span>
-<span th:replace="components/fieldTooltip" ></span>
+<span th:replace="~{components/fieldTooltip}" ></span>
 </label>
 <div th:if="*{fields['__${field.name}__'].isLargeEntry}" class="twelve indented-form-value">
     <textarea class="autosize" style="width: 100%;" th:field="*{fields['__${field.name}__'].value}"></textarea>

@@ -28,7 +28,7 @@ package org.broadleafcommerce.cms.web;
  * Created by bpolster.
  */
 public class NullURLProcessor implements URLProcessor {
-    private static NullURLProcessor _instance = new NullURLProcessor();
+    private static final NullURLProcessor _instance = new NullURLProcessor();
 
 
     public static NullURLProcessor getInstance() {

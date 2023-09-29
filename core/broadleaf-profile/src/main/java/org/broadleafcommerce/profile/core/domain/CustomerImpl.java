@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,7 +47,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
@@ -55,51 +54,58 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
-@EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
+@EntityListeners(value = {AuditableListener.class, CustomerPersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER")
+@Table(name = "BLC_CUSTOMER", indexes = {
+        @Index(name = "CUSTOMER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList = "CHALLENGE_QUESTION_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "auditable.dateCreated", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                overrideValue = CustomerAdminPresentation.GroupName.Audit)),
         @AdminPresentationMergeOverride(name = "auditable.createdBy", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                overrideValue = CustomerAdminPresentation.GroupName.Audit)),
         @AdminPresentationMergeOverride(name = "auditable.dateUpdated", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit)),
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                overrideValue = CustomerAdminPresentation.GroupName.Audit)),
         @AdminPresentationMergeOverride(name = "auditable.updatedBy", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = CustomerAdminPresentation.GroupName.Audit))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                overrideValue = CustomerAdminPresentation.GroupName.Audit))
+})
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
-public class CustomerImpl implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
+public class CustomerImpl
+        implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Embedded
@@ -120,7 +126,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     protected String password;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name = "CUSTOMER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
     @AdminPresentation(friendlyName = "CustomerImpl_Email_Address",
             group = GroupName.Customer, order = FieldOrder.EMAIL,
             prominent = true, gridOrder = 1000)
@@ -146,7 +151,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
-    @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",
             excluded = true)
     protected ChallengeQuestion challengeQuestion;
@@ -158,16 +162,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     /**
      * <p>
-     *     If true, this customer must go through a reset password flow.
+     * If true, this customer must go through a reset password flow.
      * </p>
      * <p>
-     *     During a site conversion or security breach or a matter of routine security policy,
-     *     it may be necessary to require users to change their password. This property will
-     *     not allow a user whose credentials are managed within Broadleaf to login until
-     *     they have reset their password.
+     * During a site conversion or security breach or a matter of routine security policy, it may be
+     * necessary to require users to change their password. This property will not allow a user
+     * whose credentials are managed within Broadleaf to login until they have reset their
+     * password.
      * </p>
      * <p>
-     *     Used by blUserDetailsService.
+     * Used by blUserDetailsService.
      * </p>
      */
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
@@ -193,10 +197,11 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",
-        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+            excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class,
+            cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @MapKey(name = "name")
     @BatchSize(size = 50)
@@ -206,8 +211,10 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name")
     protected Map<String, CustomerAttribute> customerAttributes = new HashMap<>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class,
+            cascade = {CascadeType.ALL})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @Where(clause = "archived != 'Y'")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses",
@@ -215,16 +222,20 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
             addType = AddMethodType.PERSIST)
     protected List<CustomerAddress> customerAddresses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class,
+            cascade = {CascadeType.ALL})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Phones",
             group = GroupName.ContactInfo, order = FieldOrder.PHONES,
             addType = AddMethodType.PERSIST)
     protected List<CustomerPhone> customerPhones = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class,
+            cascade = {CascadeType.ALL})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments",
@@ -583,7 +594,8 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     }
 
     @Override
-    public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -600,7 +612,8 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
         }
         for (Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()) {
-            CustomerAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            CustomerAttribute clonedEntry =
+                    entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setCustomer(cloned);
             cloned.getCustomerAttributes().put(entry.getKey(), clonedEntry);
         }
@@ -646,7 +659,8 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
 
     @Override
     public boolean isTaxExempt() {
-        return isTaxExempt != null && isTaxExempt != false &&  StringUtils.isNotEmpty(taxExemptionCode);
+        return isTaxExempt != null && isTaxExempt != false && StringUtils.isNotEmpty(
+                taxExemptionCode);
     }
 
 }

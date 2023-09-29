@@ -18,7 +18,7 @@
 package org.broadleafcommerce.common.persistence;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.service.PersistenceService;
@@ -40,10 +40,10 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.TableGenerator;
-import javax.persistence.metamodel.EntityType;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TableGenerator;
+import jakarta.persistence.metamodel.EntityType;
 
 /**
  * Detect inconsistencies between the values in the SEQUENCE_GENERATOR and the primary
@@ -114,7 +114,10 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
             String tableName = null;
             String segmentColumnName = null;
             String valueColumnName = null;
-            if (genericAnnot != null && genericAnnot.strategy().equals(IdOverrideTableGenerator.class.getName())) {
+            Long incrementSize = null;
+            String generatorName = IdOverrideTableGenerator.class.getName();
+            if (genericAnnot != null && (generatorName.equals(genericAnnot.strategy())
+                    || (genericAnnot.type() != null && generatorName.equals(genericAnnot.type().getName())))) {
                 //This is a BLC style ID generator
                 for (Parameter param : genericAnnot.parameters()) {
                     if (param.name().equals("segment_value")) {
@@ -128,6 +131,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                     }
                     if (param.name().equals("value_column_name")) {
                         valueColumnName = param.value();
+                    }
+                    if (param.name().equals("increment_size")) {
+                        incrementSize = Long.valueOf(param.value());
                     }
                 }
 
@@ -196,7 +202,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 } finally {
                     context.setInternalIgnoreFilters(false);
                 }
-
+                if(incrementSize==null){
+                    incrementSize = (long) IdOverrideTableGenerator.DEFAULT_INCREMENT_SIZE;
+                }
                 if (CollectionUtils.isNotEmpty(results) && results.get(0) != null) {
                     LOG.debug(String.format("Checking for sequence corruption on entity %s", segmentValue));
                     Long maxEntityId = BLCNumberUtils.toLong(results.get(0));
@@ -204,7 +212,9 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                         String invalidSequenceDetectedMsg = String.format("The sequence value for %s in %s was found as %d (or an entry did not exist) but the actual max sequence in"
                             + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId);
                         if (automaticallyCorrectInconsistencies) {
-                            long newMaxId = maxEntityId + 10;
+                            //with hibernate 6 formulat is maxId+allocationSize+1
+                            //https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc#defaults-for-implicit-sequence-generators
+                            long newMaxId = maxEntityId + incrementSize + 1L;
                             if (sequenceEntryExists) {
                                 invalidSequenceDetectedMsg += String.format(". Updating the sequence value" + " to %d", newMaxId);
                                 LOG.info(invalidSequenceDetectedMsg);

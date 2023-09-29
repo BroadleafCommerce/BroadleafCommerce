@@ -22,8 +22,8 @@ import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Sku entity to determine if a sku has been configured for

@@ -27,9 +27,10 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the product ratings and reviews to the model

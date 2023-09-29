@@ -17,17 +17,17 @@
  */
 package org.broadleafcommerce.common.id.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.OptimisticLockException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.id.dao.IdGenerationDao;
 import org.broadleafcommerce.common.id.domain.IdGeneration;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import jakarta.annotation.Resource;
+import jakarta.persistence.OptimisticLockException;
 
 @Service("blIdGenerationService")
 public class IdGenerationServiceImpl implements IdGenerationService {

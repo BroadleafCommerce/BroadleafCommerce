@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -31,27 +32,29 @@ import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
-@Table(name = "BLC_CANDIDATE_ITEM_OFFER")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Table(name = "BLC_CANDIDATE_ITEM_OFFER", indexes = {
+        @Index(name = "CANDIDATE_ITEM_INDEX", columnList = "ORDER_ITEM_ID"),
+        @Index(name = "CANDIDATE_ITEMOFFER_INDEX", columnList = "OFFER_ID")})
+@Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
@@ -59,29 +62,28 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "CandidateItemOfferId")
+    @GeneratedValue(generator = "CandidateItemOfferId")
     @GenericGenerator(
-        name="CandidateItemOfferId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CandidateItemOfferImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl")
-        }
+            name = "CandidateItemOfferId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CandidateItemOfferImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl")
+            }
     )
     @Column(name = "CANDIDATE_ITEM_OFFER_ID")
     protected Long id;
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    @Index(name="CANDIDATE_ITEM_INDEX", columnNames={"ORDER_ITEM_ID"})
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="CANDIDATE_ITEMOFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
-    @Column(name = "DISCOUNTED_PRICE", precision=19, scale=5)
+    @Column(name = "DISCOUNTED_PRICE", precision = 19, scale = 5)
     private BigDecimal discountedPrice;
 
     @Transient
@@ -135,35 +137,44 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
         return deproxiedOffer;
     }
-    
+
     @Override
     public Money getDiscountedPrice() {
-        return discountedPrice == null ? null : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrderItem().getOrder().getCurrency());
+        return discountedPrice == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(discountedPrice,
+                        getOrderItem().getOrder().getCurrency());
     }
-    
+
     @Override
     public void setDiscountedPrice(Money discountedPrice) {
         this.discountedPrice = discountedPrice.getAmount();
     }
-    
-    public void checkCloneable(CandidateItemOffer itemOffer) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[]{});
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemOffer.getClass().getName().startsWith("org.broadleafcommerce")) {
+
+    public void checkCloneable(CandidateItemOffer itemOffer)
+            throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[] {});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !itemOffer.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+            throw new CloneNotSupportedException(
+                    "Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
         }
     }
-    
+
     @Override
     public CandidateItemOffer clone() {
         //instantiate from the fully qualified name via reflection
         CandidateItemOffer candidateItemOffer;
         try {
-            candidateItemOffer = (CandidateItemOffer) Class.forName(this.getClass().getName()).newInstance();
+            candidateItemOffer =
+                    (CandidateItemOffer) Class.forName(this.getClass().getName()).newInstance();
             try {
                 checkCloneable(candidateItemOffer);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + candidateItemOffer.getClass().getName(), e);
+                LOG.warn(
+                        "Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                                + candidateItemOffer.getClass().getName(), e);
             }
             //candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
             //candidateItemOffer.setCandidateTargets(getCandidateTargets());
@@ -172,10 +183,10 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        
+
         return candidateItemOffer;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -228,7 +239,8 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     }
 
     @Override
-    public <G extends CandidateItemOffer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CandidateItemOffer> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -239,6 +251,6 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         cloned.setOrderItem(orderItem);
         // TODO clone here?
         cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
-        return  createResponse;
+        return createResponse;
     }
 }

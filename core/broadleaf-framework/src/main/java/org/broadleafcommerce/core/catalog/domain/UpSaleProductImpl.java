@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -33,23 +34,24 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_PRODUCT_UP_SALE")
+@Table(name = "BLC_PRODUCT_UP_SALE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<UpSaleProductImpl> {
@@ -57,46 +59,48 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "UpSaleProductId")
+    @GeneratedValue(generator = "UpSaleProductId")
     @GenericGenerator(
-        name="UpSaleProductId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="UpSaleProductImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl")
-        }
+            name = "UpSaleProductId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "UpSaleProductImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl")
+            }
     )
     @Column(name = "UP_SALE_PRODUCT_ID")
     private Long id;
-    
+
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName = "UpSaleProductImpl_Upsale_Promotion_Message", translatable=true, largeEntry=true)
+    @AdminPresentation(friendlyName = "UpSaleProductImpl_Upsale_Promotion_Message",
+            translatable = true, largeEntry = true)
     private String promotionMessage;
 
     @Column(name = "SEQUENCE", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     private BigDecimal sequence;
-    
+
     @ManyToOne(targetEntity = ProductImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
+    @Index(name = "UPSALE_PRODUCT_INDEX", columnNames = {"PRODUCT_ID"})
     private Product product;
-    
+
     @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="UPSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
+    @Index(name = "UPSALE_CATEGORY_INDEX", columnNames = {"CATEGORY_ID"})
     protected Category category;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
-    @Index(name="UPSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
+    @Index(name = "UPSALE_RELATED_INDEX", columnNames = {"RELATED_SALE_PRODUCT_ID"})
     private Product relatedSaleProduct = new ProductImpl();
 
     @Override
     public Long getId() {
         return id;
-    } 
-    
+    }
+
     @Override
     public void setId(Long id) {
         this.id = id;
@@ -106,7 +110,7 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     public String getPromotionMessage() {
         return promotionMessage;
     }
-    
+
     @Override
     public void setPromotionMessage(String promotionMessage) {
         this.promotionMessage = promotionMessage;
@@ -116,7 +120,7 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     public BigDecimal getSequence() {
         return sequence;
     }
-    
+
     @Override
     public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
@@ -126,12 +130,12 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     public Product getProduct() {
         return product;
     }
-    
+
     @Override
     public void setProduct(Product product) {
         this.product = product;
     }
-    
+
     @Override
     public Category getCategory() {
         return category;
@@ -145,7 +149,7 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     @Override
     public Product getRelatedProduct() {
         return relatedSaleProduct;
-    }   
+    }
 
     @Override
     public void setRelatedProduct(Product relatedSaleProduct) {
@@ -154,17 +158,29 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if (!getClass().isAssignableFrom(o.getClass())) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (!getClass().isAssignableFrom(o.getClass()))
+            return false;
 
         UpSaleProductImpl that = (UpSaleProductImpl) o;
 
-        if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null) return false;
-        if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (product != null ? !product.equals(that.product) : that.product != null) return false;
-        if (relatedSaleProduct != null ? !relatedSaleProduct.equals(that.relatedSaleProduct) : that.relatedSaleProduct != null) return false;
-        if (promotionMessage != null ? !promotionMessage.equals(that.promotionMessage) : that.promotionMessage != null) return false;
+        if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null)
+            return false;
+        if (category != null ? !category.equals(that.category) : that.category != null)
+            return false;
+        if (product != null ? !product.equals(that.product) : that.product != null)
+            return false;
+        if (relatedSaleProduct != null
+                ? !relatedSaleProduct.equals(that.relatedSaleProduct)
+                : that.relatedSaleProduct != null)
+            return false;
+        if (promotionMessage != null
+                ? !promotionMessage.equals(that.promotionMessage)
+                : that.promotionMessage != null)
+            return false;
 
         return true;
     }
@@ -180,7 +196,8 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     }
 
     @Override
-    public <G extends UpSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends UpSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -194,7 +211,8 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
         }
         cloned.setPromotionMessage(promotionMessage);
         if (relatedSaleProduct != null) {
-            cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setRelatedProduct(
+                    relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setSequence(sequence);
         return createResponse;

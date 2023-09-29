@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -36,24 +37,25 @@ import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
 /**
  * @author priyeshpatel
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_URL_HANDLER")
+@Table(name = "BLC_URL_HANDLER", indexes = {
+        @Index(name = "INCOMING_URL_INDEX", columnList = "INCOMING_URL"),
+        @Index(name = "IS_REGEX_HANDLER_INDEX", columnList = "IS_REGEX")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blUrlHandler")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
 @DirectCopyTransform({
@@ -68,7 +70,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @GeneratedValue(generator = "URLHandlerID")
     @GenericGenerator(
             name = "URLHandlerID",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "URLHandlerImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.url.domain.URLHandlerImpl")
@@ -81,7 +83,6 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = GroupName.General, prominent = true,
             helpText = "urlHandlerIncoming_help", defaultValue = "")
     @Column(name = "INCOMING_URL", nullable = false)
-    @Index(name = "INCOMING_URL_INDEX", columnNames = {"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
@@ -100,7 +101,6 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @AdminPresentation(friendlyName = "URLHandlerImpl_isRegexHandler", order = 1, group = GroupName.General, prominent = true,
             groupOrder = 1,
             helpText = "urlHandlerIsRegexHandler_help")
-    @Index(name = "IS_REGEX_HANDLER_INDEX", columnNames = {"IS_REGEX"})
     protected Boolean isRegex = false;
 
     @Override
@@ -146,10 +146,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @Override
     public boolean isRegexHandler() {
         if (isRegex == null) {
-            if (hasRegExCharacters(getIncomingURL())) {
-                return true;
-            }
-            return false;
+            return hasRegExCharacters(getIncomingURL());
         }
         return isRegex;
     }
@@ -215,7 +212,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
         cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
-        cloned.setRegexHandler(isRegex==null?false:isRegex);
+        cloned.setRegexHandler(isRegex != null && isRegex);
         return createResponse;
     }
 

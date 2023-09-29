@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -34,24 +35,26 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_TAR_CRIT_OFFER_XREF")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
-@AdminPresentationClass(excludeFromPolymorphism = false, populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
+@AdminPresentationClass(excludeFromPolymorphism = false,
+        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferTargetCriteriaXrefImpl implements OfferTargetCriteriaXref, QuantityBasedRule {
@@ -69,20 +72,21 @@ public class OfferTargetCriteriaXrefImpl implements OfferTargetCriteriaXref, Qua
     }
 
     @Id
-    @GeneratedValue(generator= "OfferTarCritId")
+    @GeneratedValue(generator = "OfferTarCritId")
     @GenericGenerator(
-        name="OfferTarCritId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="OfferTargetCriteriaXrefImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl")
-        }
+            name = "OfferTarCritId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OfferTargetCriteriaXrefImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl")
+            }
     )
     @Column(name = "OFFER_TAR_CRIT_ID")
     protected Long id;
 
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
     @AdminPresentation(excluded = true)
     protected Offer offer;
@@ -177,7 +181,8 @@ public class OfferTargetCriteriaXrefImpl implements OfferTargetCriteriaXref, Qua
     }
 
     @Override
-    public <G extends OfferTargetCriteriaXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+    public <G extends OfferTargetCriteriaXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context)
             throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -188,7 +193,8 @@ public class OfferTargetCriteriaXrefImpl implements OfferTargetCriteriaXref, Qua
             cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
         }
         if (offerItemCriteria != null) {
-            cloned.setOfferItemCriteria(offerItemCriteria.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setOfferItemCriteria(
+                    offerItemCriteria.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
     }

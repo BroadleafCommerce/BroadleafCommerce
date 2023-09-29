@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
@@ -27,6 +25,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 
 /**
  * @author Jeff Fischer

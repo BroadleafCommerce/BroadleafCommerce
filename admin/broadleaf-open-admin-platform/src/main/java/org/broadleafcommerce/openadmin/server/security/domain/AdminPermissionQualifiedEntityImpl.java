@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -28,28 +29,26 @@ import org.hibernate.annotations.Parameter;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 9/24/11
- * Time: 4:34 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: jfischer Date: 9/24/11 Time: 4:34 PM To change this template use
+ * File | Settings | File Templates.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_PERMISSION_ENTITY")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blAdminSecurity")
-public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualifiedEntity, Serializable {
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
+public class AdminPermissionQualifiedEntityImpl
+        implements AdminPermissionQualifiedEntity, Serializable {
 
     private static final Log LOG = LogFactory.getLog(AdminPermissionQualifiedEntityImpl.class);
     private static final long serialVersionUID = 1L;
@@ -57,18 +56,20 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
     @Id
     @GeneratedValue(generator = "AdminPermissionEntityId")
     @GenericGenerator(
-        name="AdminPermissionEntityId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="AdminPermissionEntityImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl")
-        }
+            name = "AdminPermissionEntityId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "AdminPermissionEntityImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl")
+            }
     )
     @Column(name = "ADMIN_PERMISSION_ENTITY_ID")
     protected Long id;
 
-    @Column(name = "CEILING_ENTITY", nullable=false)
-    @AdminPresentation(friendlyName = "AdminPermissionQualifiedEntityImpl_Ceiling_Entity_Name", order=1, group = "AdminPermissionQualifiedEntityImpl_Permission", prominent=true)
+    @Column(name = "CEILING_ENTITY", nullable = false)
+    @AdminPresentation(friendlyName = "AdminPermissionQualifiedEntityImpl_Ceiling_Entity_Name",
+            order = 1, group = "AdminPermissionQualifiedEntityImpl_Permission", prominent = true)
     protected String ceilingEntityFullyQualifiedName;
 
     @ManyToOne(targetEntity = AdminPermissionImpl.class)
@@ -105,11 +106,14 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
         this.adminPermission = adminPermission;
     }
 
-    public void checkCloneable(AdminPermissionQualifiedEntity qualifiedEntity) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = qualifiedEntity.getClass().getMethod("clone", new Class[]{});
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !qualifiedEntity.getClass().getName().startsWith("org.broadleafcommerce")) {
+    public void checkCloneable(AdminPermissionQualifiedEntity qualifiedEntity)
+            throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = qualifiedEntity.getClass().getMethod("clone", new Class[] {});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !qualifiedEntity.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+            throw new CloneNotSupportedException(
+                    "Custom extensions and implementations should implement clone.");
         }
     }
 
@@ -117,11 +121,14 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
     public AdminPermissionQualifiedEntity clone() {
         AdminPermissionQualifiedEntity clone;
         try {
-            clone = (AdminPermissionQualifiedEntity) Class.forName(this.getClass().getName()).newInstance();
+            clone = (AdminPermissionQualifiedEntity) Class.forName(this.getClass().getName())
+                    .newInstance();
             try {
                 checkCloneable(clone);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+                LOG.warn(
+                        "Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                                + clone.getClass().getName(), e);
             }
             clone.setId(id);
             clone.setCeilingEntityFullyQualifiedName(ceilingEntityFullyQualifiedName);

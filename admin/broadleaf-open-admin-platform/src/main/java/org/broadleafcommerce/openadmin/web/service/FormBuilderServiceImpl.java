@@ -19,8 +19,8 @@ package org.broadleafcommerce.openadmin.web.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -130,10 +130,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author Andre Azzolini (apazzolini)

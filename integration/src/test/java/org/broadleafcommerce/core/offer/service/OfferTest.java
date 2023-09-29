@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This integration test class is kept to guarantee backwards

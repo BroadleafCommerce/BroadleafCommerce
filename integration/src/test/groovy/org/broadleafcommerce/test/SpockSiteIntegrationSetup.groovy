@@ -18,9 +18,7 @@
 package org.broadleafcommerce.test
 
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest
-
 import spock.lang.Specification
-
 
 /**
  * Base Integration Test Setup groovy file for Site based integration tests. This base class has all the

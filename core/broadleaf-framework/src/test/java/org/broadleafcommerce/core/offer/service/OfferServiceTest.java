@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
-import junit.framework.TestCase;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -67,10 +65,13 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
+
+import junit.framework.TestCase;
 
 /**
  * 

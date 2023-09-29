@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.common.persistence.transaction;
 
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.jdbc.ReturningWork;
 
@@ -26,7 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * @author Jeff Fischer

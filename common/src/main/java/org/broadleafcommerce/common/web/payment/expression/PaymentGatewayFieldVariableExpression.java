@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * <p>A Thymeleaf Variable Expression implementation for Payment Gateway Specific fields.

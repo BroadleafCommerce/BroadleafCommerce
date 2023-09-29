@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class CustomerPhoneControllerTest extends TestNGSiteIntegrationSetup {
 
@@ -132,7 +132,7 @@ public class CustomerPhoneControllerTest extends TestNGSiteIntegrationSetup {
         assert ((phones_1_size - phones_2.size()) == 1);
     }
 
-    @Test(groups = "viewCustomerPhoneFromController")
+    @Test(groups = "viewCustomerPhoneFromController",dependsOnGroups = "readCustomer")
     public void viewCustomerPhoneFromController() {
         PhoneNameForm pnf = new PhoneNameForm();
 

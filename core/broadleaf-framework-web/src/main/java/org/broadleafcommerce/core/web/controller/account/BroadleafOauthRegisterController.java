@@ -17,24 +17,25 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.exception.ServiceException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.UserProfile;
-import org.springframework.social.connect.web.ProviderSignInUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.context.request.ServletWebRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * This is an extension of BroadleafRegisterController
@@ -47,61 +48,77 @@ import javax.servlet.http.HttpServletResponse;
  * @author elbertbautista
  *
  */
-public class BroadleafSocialRegisterController extends BroadleafRegisterController {
+public class BroadleafOauthRegisterController extends BroadleafRegisterController {
 
-    @Autowired(required = false)
-    protected ProviderSignInUtils providerSignInUtils;
+    private final OAuth2AuthorizedClientService authorizedClientService;
 
-    //Pre-populate portions of the RegisterCustomerForm from ProviderSignInUtils.getConnection();
+    public BroadleafOauthRegisterController(OAuth2AuthorizedClientService authorizedClientService) {
+        this.authorizedClientService = authorizedClientService;
+    }
+    @RequestMapping
     public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request,
                            HttpServletResponse response, Model model) {
-        assert(providerSignInUtils != null);
-        Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
-        if (connection != null) {
-            UserProfile userProfile = connection.fetchUserProfile();
-            Customer customer = registerCustomerForm.getCustomer();
-            customer.setFirstName(userProfile.getFirstName());
-            customer.setLastName(userProfile.getLastName());
-            customer.setEmailAddress(userProfile.getEmail());
-            if (isUseEmailForLogin()){
-                customer.setUsername(userProfile.getEmail());
-            } else {
-                customer.setUsername(userProfile.getUsername());
-            }
-        }
+        try {
+            assert (authorizedClientService != null);
+            OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
+                    registerCustomerForm.getProviderId(),
+                    registerCustomerForm.getOAuth2UserRequest().getClientRegistration().getRegistrationId()
+            );
 
+            if (authorizedClient != null) {
+                OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) SecurityContextHolder
+                        .getContext().getAuthentication();
+                Customer customer = registerCustomerForm.getCustomer();
+                OAuth2User oauth2User = authenticationToken.getPrincipal();
+                customer.setFirstName(oauth2User.getAttribute("firstName"));
+                customer.setLastName(oauth2User.getAttribute("lastName"));
+                customer.setEmailAddress(oauth2User.getAttribute("email"));
+                if (isUseEmailForLogin()) {
+                    customer.setUsername(oauth2User.getAttribute("email"));
+                } else {
+                    customer.setUsername(oauth2User.getAttribute("username"));
+                }
+            }
+        } catch (NullPointerException e) {
+            model.addAttribute("error", "An error occurred while processing the registration. Please try again.");
+            return "errorPage";
+        }
         return super.register(registerCustomerForm, request, response, model);
     }
 
+
     //Calls ProviderSignInUtils.handlePostSignUp() after a successful registration
+    @RequestMapping(params = "action=register")
     public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors,
-                                  HttpServletRequest request, HttpServletResponse response, Model model)
-            throws ServiceException, PricingException {
+                                  HttpServletRequest request, HttpServletResponse response, Model model,
+                                  RedirectAttributes redirectAttributes) throws PricingException {
         if (isUseEmailForLogin()) {
             Customer customer = registerCustomerForm.getCustomer();
             customer.setUsername(customer.getEmailAddress());
         }
-
         registerCustomerValidator.validate(registerCustomerForm, errors, isUseEmailForLogin());
         if (!errors.hasErrors()) {
             Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(),
                     registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
             assert(newCustomer != null);
 
-            assert(providerSignInUtils != null);
-            providerSignInUtils.doPostSignUp(newCustomer.getUsername(), new ServletWebRequest(request));
+            assert (authorizedClientService != null);
+            OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
+                    registerCustomerForm.getProviderId(),
+                    registerCustomerForm.getOAuth2UserRequest().getClientRegistration().getRegistrationId()
+            );
+            authorizedClientService.saveAuthorizedClient(
+                    authorizedClient,
+                    (Authentication) registerCustomerForm.getOAuth2UserRequest()
+            );
 
-            // The next line needs to use the customer from the input form and not the customer returned after registration
-            // so that we still have the unencoded password for use by the authentication mechanism.
             loginService.loginCustomer(registerCustomerForm.getCustomer());
 
-            // Need to ensure that the Cart on CartState is owned by the newly registered customer.
             Order cart = CartState.getCart();
             if (cart != null && !(cart instanceof NullOrderImpl) && cart.getEmailAddress() == null) {
                 cart.setEmailAddress(newCustomer.getEmailAddress());
                 orderService.save(cart, false);
             }
-
             String redirectUrl = registerCustomerForm.getRedirectUrl();
             if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {
                 redirectUrl = null;

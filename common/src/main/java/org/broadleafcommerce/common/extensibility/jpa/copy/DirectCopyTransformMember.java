@@ -22,6 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import jakarta.persistence.Index;
+
 /**
  *
  * @author Jeff Fischer
@@ -58,5 +60,7 @@ public @interface DirectCopyTransformMember {
      * @return
      */
     String overrideIndexNameKey() default "";
+
+    Index[] indexes() default {};
 
 }

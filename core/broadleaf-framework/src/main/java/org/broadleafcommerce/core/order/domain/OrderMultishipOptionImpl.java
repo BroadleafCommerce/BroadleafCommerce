@@ -17,30 +17,30 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_MULTISHIP_OPTION")
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Table(name = "BLC_ORDER_MULTISHIP_OPTION", indexes = {@Index(name = "MULTISHIP_OPTION_ORDER_INDEX", columnList = "ORDER_ID")})
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 public class OrderMultishipOptionImpl implements OrderMultishipOption {
 
     private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     @GeneratedValue(generator = "OrderMultishipOptionId")
     @GenericGenerator(
         name="OrderMultishipOptionId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OrderMultishipOptionImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl")
@@ -60,7 +60,6 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    @Index(name="MULTISHIP_OPTION_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
 
     @ManyToOne(targetEntity = OrderItemImpl.class)

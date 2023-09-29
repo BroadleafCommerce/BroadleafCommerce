@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.test.config;
 
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
@@ -27,14 +24,11 @@ import org.broadleafcommerce.common.extensibility.context.merge.Merge;
 import org.broadleafcommerce.common.web.filter.IgnorableOpenEntityManagerInViewFilter;
 import org.broadleafcommerce.test.helper.AdminTestHelper;
 import org.broadleafcommerce.test.helper.TestAdminRequestFilter;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockitoPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSender;

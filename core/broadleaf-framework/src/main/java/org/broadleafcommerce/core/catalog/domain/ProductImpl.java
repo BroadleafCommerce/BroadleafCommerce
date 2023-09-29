@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -33,6 +32,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
@@ -57,7 +57,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -73,86 +72,107 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
+import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
 
 /**
- * The Class ProductImpl is the default implementation of {@link Product}. A
- * product is a general description of an item that can be sold (for example: a
- * hat). Products are not sold or added to a cart. {@link Sku}s which are
- * specific items (for example: a XL Blue Hat) are sold or added to a cart. <br>
+ * The Class ProductImpl is the default implementation of {@link Product}. A product is a general
+ * description of an item that can be sold (for example: a hat). Products are not sold or added to a
+ * cart. {@link Sku}s which are specific items (for example: a XL Blue Hat) are sold or added to a
+ * cart. <br>
  * <br>
- * If you want to add fields specific to your implementation of
- * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the ProductImpl then you should implement
- * your own version of {@link Product}. <br>
+ * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
+ * this class and add your fields. If you need to make significant changes to the ProductImpl then
+ * you should implement your own version of {@link Product}. <br>
  * <br>
- * This implementation uses a Hibernate implementation of JPA configured through
- * annotations. The Entity references the following tables: BLC_PRODUCT,
- * BLC_PRODUCT_SKU_XREF, BLC_PRODUCT_IMAGE
+ * This implementation uses a Hibernate implementation of JPA configured through annotations. The
+ * Entity references the following tables: BLC_PRODUCT, BLC_PRODUCT_SKU_XREF, BLC_PRODUCT_IMAGE
  *
  * @author btaylor
  * @see {@link Product}, {@link SkuImpl}, {@link CategoryImpl}
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@javax.persistence.Table(name = "BLC_PRODUCT")
-//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
-@org.hibernate.annotations.Table(appliesTo = "BLC_PRODUCT", indexes = {
-        @Index(name = "PRODUCT_URL_INDEX",
-                columnNames = {"URL", "URL_KEY"}
-        ),
-        @Index(name = "PRODUCT_URL_KEY_INDEX",
-                columnNames = {"URL_KEY"})
+@Table(name = "BLC_PRODUCT", indexes = {
+        @Index(name = "PRODUCT_URL_INDEX", columnList = "URL, URL_KEY"),
+        @Index(name = "PRODUCT_URL_KEY_INDEX", columnList = "URL_KEY"),
+        @Index(name = "PRODUCT_CATEGORY_INDEX", columnList = "DEFAULT_CATEGORY_ID")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationMergeOverrides(
         {
                 @AdminPresentationMergeOverride(name = "defaultSku.displayTemplate", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)),
                 @AdminPresentationMergeOverride(name = "defaultSku.urlKey", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)),
                 @AdminPresentationMergeOverride(name = "defaultSku.retailPrice", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "REQUIRED")),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "REQUIRED")),
                 @AdminPresentationMergeOverride(name = "defaultSku.name", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "REQUIRED")),
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "REQUIRED")),
                 @AdminPresentationMergeOverride(name = "defaultSku.activeEndDate", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VALIDATIONCONFIGURATIONS, validationConfigurations = {
-                        @ValidationConfiguration(
-                                validationImplementation = "blAfterStartDateValidator",
-                                configurationItems = {
-                                        @ConfigurationItem(itemName = "otherField", itemValue = "defaultSku.activeStartDate")
-                                })
-                })),
-                @AdminPresentationMergeOverride(name = "defaultSku.auditable.createdBy", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
-                @AdminPresentationMergeOverride(name = "defaultSku.auditable.dateCreated", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
-                @AdminPresentationMergeOverride(name = "defaultSku.auditable.dateUpdated", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
-                @AdminPresentationMergeOverride(name = "defaultSku.auditable.updatedBy", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true))
+                @AdminPresentationMergeEntry(
+                        propertyType = PropertyType.AdminPresentation.VALIDATIONCONFIGURATIONS,
+                        validationConfigurations = {
+                                @ValidationConfiguration(
+                                        validationImplementation = "blAfterStartDateValidator",
+                                        configurationItems = {
+                                                @ConfigurationItem(itemName = "otherField",
+                                                        itemValue = "defaultSku.activeStartDate")
+                                        })
+                        })),
+                @AdminPresentationMergeOverride(name = "defaultSku.auditable.createdBy",
+                        mergeEntries =
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)),
+                @AdminPresentationMergeOverride(name = "defaultSku.auditable.dateCreated",
+                        mergeEntries =
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)),
+                @AdminPresentationMergeOverride(name = "defaultSku.auditable.dateUpdated",
+                        mergeEntries =
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)),
+                @AdminPresentationMergeOverride(name = "defaultSku.auditable.updatedBy",
+                        mergeEntries =
+                        @AdminPresentationMergeEntry(
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true))
         })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductImpl implements Product, ProductAdminPresentation, Status, AdminMainEntity, Locatable, TemplatePathContainer {
+public class ProductImpl
+        implements Product, ProductAdminPresentation, Status, AdminMainEntity, Locatable,
+        TemplatePathContainer {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /**
@@ -169,13 +189,15 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @GeneratedValue(generator = "ProductId")
     @GenericGenerator(
             name = "ProductId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "ProductImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.ProductImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.ProductImpl")
             })
     @Column(name = "PRODUCT_ID")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_ID", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_ID",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "URL")
@@ -233,10 +255,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
     protected Boolean isFeaturedProduct = false;
 
-    @OneToOne(targetEntity = SkuImpl.class, cascade = {CascadeType.ALL})
+    @ManyToOne(targetEntity = SkuImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL})
-    @JoinColumn(name = "DEFAULT_SKU_ID")
+    @JoinColumn(name = "DEFAULT_SKU_ID", foreignKey = @ForeignKey(NO_CONSTRAINT))
     @ClonePolicy(toOneProperty = "defaultProduct")
     protected Sku defaultSku;
 
@@ -271,8 +293,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Transient
     protected String promoMessage;
 
-    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class,
+            cascade = {CascadeType.ALL})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
     @OrderBy(value = "sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle",
@@ -284,8 +308,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
-    @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class,
+            cascade = {CascadeType.ALL})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
     @OrderBy(value = "sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle",
@@ -297,7 +323,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
     protected List<RelatedProduct> upSaleProducts = new ArrayList<RelatedProduct>();
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy = "product",
+            cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus",
@@ -306,8 +333,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
-    @Index(name = "PRODUCT_CATEGORY_INDEX", columnNames = {"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = FieldOrder.DEFAULT_CATEGORY,
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category",
+            order = FieldOrder.DEFAULT_CATEGORY,
             group = GroupName.General,
             prominent = true, gridOrder = 2,
             requiredOverride = RequiredOverride.REQUIRED)
@@ -325,9 +352,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             targetObjectProperty = "category",
             parentObjectProperty = "product",
             gridVisibleFields = {"name"})
-    protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
+    protected List<CategoryProductXref> allParentCategoryXrefs =
+            new ArrayList<CategoryProductXref>();
 
-    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class,
+            cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "productAttributesTitle",
@@ -363,13 +392,14 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
-    public Boolean getEnableDefaultSkuInInventory(){
+    public Boolean getEnableDefaultSkuInInventory() {
         return this.enableDefaultSkuInventory == null ? false : this.enableDefaultSkuInventory;
     }
 
     @Override
     public void setEnableDefaultSkuInInventory(Boolean enableDefaultSkuInventory) {
-        this.enableDefaultSkuInventory = enableDefaultSkuInventory != null && enableDefaultSkuInventory;
+        this.enableDefaultSkuInventory =
+                enableDefaultSkuInventory != null && enableDefaultSkuInventory;
     }
 
     @Override
@@ -442,7 +472,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
                 LOG.debug("product, " + id + ", inactive due to archived status");
             }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true) && 'Y' != getArchived();
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)
+                && 'Y' != getArchived();
     }
 
     @Override
@@ -668,7 +699,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         List<CategoryProductXref> xrefs = getAllParentCategoryXrefs();
         if (!CollectionUtils.isEmpty(xrefs)) {
             for (CategoryProductXref xref : xrefs) {
-                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                if (xref.getCategory().isActive() && xref.getDefaultReference() != null
+                        && xref.getDefaultReference()) {
                     response = xref.getCategory();
                     break;
                 }
@@ -911,7 +943,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     public List<RelatedProduct> getCumulativeCrossSaleProducts() {
         List<RelatedProduct> returnProducts = getCrossSaleProducts();
         if (defaultCategory != null) {
-            List<RelatedProduct> categoryProducts = defaultCategory.getCumulativeCrossSaleProducts();
+            List<RelatedProduct> categoryProducts =
+                    defaultCategory.getCumulativeCrossSaleProducts();
             if (categoryProducts != null) {
                 returnProducts.addAll(categoryProducts);
             }
@@ -995,7 +1028,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
             @Override
             public int compare(ProductOptionXref o1, ProductOptionXref o2) {
-                return ObjectUtils.compare(o1.getProductOption().getDisplayOrder(), o2.getProductOption().getDisplayOrder(), true);
+                return ObjectUtils.compare(o1.getProductOption().getDisplayOrder(),
+                        o2.getProductOption().getDisplayOrder(), true);
             }
 
         });
@@ -1081,7 +1115,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             List<ProductOptionXref> xrefs = getProductOptionXrefs();
             if (xrefs != null) {
                 for (ProductOptionXref xref : xrefs) {
-                    List<ProductOptionValue> productOptionValues = xref.getProductOption().getAllowedValues();
+                    List<ProductOptionValue> productOptionValues =
+                            xref.getProductOption().getAllowedValues();
                     if (productOptionValues != null && !productOptionValues.isEmpty()) {
                         HashSet<String> values = new HashSet<String>();
                         for (ProductOptionValue value : productOptionValues) {
@@ -1172,8 +1207,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
-    public <G extends Product> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        boolean isPropagation = context.getCopyHints().get("PROPAGATION") != null && "TRUE".equalsIgnoreCase((String)context.getCopyHints().get("PROPAGATION"));
+    public <G extends Product> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
+        boolean isPropagation =
+                context.getCopyHints().get("PROPAGATION") != null && "TRUE".equalsIgnoreCase(
+                        (String) context.getCopyHints().get("PROPAGATION"));
 
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -1191,31 +1229,35 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
         cloned.setMetaTitle(metaTitle);
         cloned.setEnableDefaultSkuInInventory(enableDefaultSkuInventory);
         if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
-            cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
-        } else if(context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
+            cloned.setDefaultCategory(
+                    defaultCategory.createOrRetrieveCopyInstance(context).getClone());
+        } else if (context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
             cloned.setDefaultCategory(defaultCategory);
         }
         cloned.setModel(model);
         if (defaultSku != null) {
             cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
         }
-        if(context.getToCatalog().getId().equals(context.getFromCatalog().getId()) || isPropagation) {
+        if (context.getToCatalog().getId().equals(context.getFromCatalog().getId())
+                || isPropagation) {
             for (Sku entry : additionalSkus) {
                 Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
                 cloned.getAdditionalSkus().add(clonedEntry);
             }
             for (ProductOptionXref entry : productOptions) {
-                ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+                ProductOptionXref clonedEntry =
+                        entry.createOrRetrieveCopyInstance(context).getClone();
                 cloned.getProductOptionXrefs().add(clonedEntry);
 
             }
         }
         Map<String, ProductAttribute> attributeMap = new HashMap<>();
         for (Map.Entry<String, ProductAttribute> entry : getProductAttributes().entrySet()) {
-            ProductAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            ProductAttribute clonedEntry =
+                    entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             attributeMap.put(entry.getKey(), clonedEntry);
         }
-        if(attributeMap.size()>0) {
+        if (attributeMap.size() > 0) {
             cloned.setProductAttributes(attributeMap);
         }
 

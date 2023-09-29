@@ -19,9 +19,8 @@ package org.broadleafcommerce.common.weave;
 
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
 
-import javax.persistence.Embedded;
+import jakarta.persistence.Embedded;
 
 /**
  * @author by reginaldccole

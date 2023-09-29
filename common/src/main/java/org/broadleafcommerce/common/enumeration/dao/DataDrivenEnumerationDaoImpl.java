@@ -17,16 +17,18 @@
  */
 package org.broadleafcommerce.common.enumeration.dao;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.springframework.stereotype.Repository;
+
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 
 @Repository("blDataDrivenEnumerationDao")
@@ -40,19 +42,20 @@ public class DataDrivenEnumerationDaoImpl implements DataDrivenEnumerationDao {
     
     @Override
     public DataDrivenEnumeration readEnumByKey(String enumKey) {
-        TypedQuery<DataDrivenEnumeration> query = new TypedQueryBuilder<DataDrivenEnumeration>(DataDrivenEnumeration.class, "dde")
-            .addRestriction("dde.key", "=", enumKey)
-            .toQuery(em);
+        TypedQuery<DataDrivenEnumeration> query =
+                new TypedQueryBuilder<>(DataDrivenEnumerationImpl.class, "dde", DataDrivenEnumeration.class)
+                        .addRestriction("dde.key", "=", enumKey)
+                        .toQuery(em);
         return query.getSingleResult();
     }
     
     @Override
     public DataDrivenEnumerationValue readEnumValueByKey(String enumKey, String enumValueKey) {
-        TypedQuery<DataDrivenEnumerationValue> query = 
-                new TypedQueryBuilder<DataDrivenEnumerationValue>(DataDrivenEnumerationValue.class, "ddev")
-            .addRestriction("ddev.type.key", "=", enumKey)
-            .addRestriction("ddev.key", "=", enumValueKey)
-            .toQuery(em);
+        TypedQuery<DataDrivenEnumerationValue> query =
+                new TypedQueryBuilder<>(DataDrivenEnumerationValueImpl.class, "ddev", DataDrivenEnumerationValue.class)
+                        .addRestriction("ddev.type.key", "=", enumKey)
+                        .addRestriction("ddev.key", "=", enumValueKey)
+                        .toQuery(em);
         return query.getSingleResult();
     }
 

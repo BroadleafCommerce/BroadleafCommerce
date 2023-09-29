@@ -72,11 +72,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
+import jakarta.annotation.Resource;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 /**
  * Created by Jon on 11/23/15.

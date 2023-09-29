@@ -39,7 +39,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * As of Broadleaf version 3.1.0, saves of individual aspects of an Order (such as OrderItems and FulfillmentGroupItems) no

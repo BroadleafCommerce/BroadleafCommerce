@@ -31,13 +31,12 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
+import jakarta.annotation.Resource;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  * @see org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService
@@ -51,12 +50,10 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
     
     @Resource(name = "blRowLevelSecurityProviders")
     protected List<RowLevelSecurityProvider> providers;
-    
+
     @Override
-    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
-            Root entityRoot,
-            CriteriaQuery criteria,
-            CriteriaBuilder criteriaBuilder) {
+    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions,
+                                     List<Order> sorts, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
         for (RowLevelSecurityProvider provider : getProviders()) {
             provider.addFetchRestrictions(currentUser, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder);
         }

@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.common.workflow;
 
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
@@ -30,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Ensures that activities are rolled back in the correct order

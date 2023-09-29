@@ -35,8 +35,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPe
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
-        .MediaFieldPersistenceProviderExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.MediaFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -56,8 +55,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.OneToMany;
+import jakarta.annotation.Resource;
+import jakarta.persistence.OneToMany;
 
 /**
  * @author Brian Polster

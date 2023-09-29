@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,52 +23,56 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_PAGE_ATTRIBUTES")
+@Table(name = "BLC_PAGE_ATTRIBUTES", indexes = {
+        @Index(name = "PAGEATTRIBUTE_NAME_INDEX", columnList = "FIELD_NAME"),
+        @Index(name = "PAGEATTRIBUTE_INDEX", columnList = "PAGE_ID")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageAttributeImpl implements PageAttribute, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(generator= "PageAttributeId")
+    @GeneratedValue(generator = "PageAttributeId")
     @GenericGenerator(
-        name="PageAttributeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PageAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageAttributeImpl")
-        }
+            name = "PageAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PageAttributeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.cms.page.domain.PageAttributeImpl")
+            }
     )
     @Column(name = "ATTRIBUTE_ID")
     protected Long id;
-    
+
     @Column(name = "FIELD_NAME", nullable = false)
-    @Index(name="PAGEATTRIBUTE_NAME_INDEX", columnNames = { "NAME" })
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
@@ -77,9 +81,8 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
 
     @ManyToOne(targetEntity = PageImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PAGE_ID")
-    @Index(name="PAGEATTRIBUTE_INDEX", columnNames = { "PAGE_ID" })
     protected Page page;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -160,15 +163,14 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
         } else if (!page.equals(other.page))
             return false;
         if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
-        return true;
+            return other.value == null;
+        } else
+            return value.equals(other.value);
     }
 
     @Override
-    public <G extends PageAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends PageAttribute> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

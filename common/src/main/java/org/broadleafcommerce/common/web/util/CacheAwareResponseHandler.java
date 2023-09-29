@@ -25,7 +25,7 @@ import org.springframework.http.MediaType;
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Utility class that sets the correct response headers (especially browser cache related headers) using the existing

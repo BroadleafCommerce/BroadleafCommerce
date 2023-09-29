@@ -30,7 +30,8 @@ import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOServic
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  *

@@ -6,7 +6,7 @@
                    th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
             <div class="listgrid-search-actions">
                 <button class="button primary search-button" th:inline="text" th:utext="#{Search}"></button>
-                <div th:replace="components/listGridToolbar" ></div>
+                <div th:replace="~{components/listGridToolbar}" ></div>
 
             </div>
         </form>

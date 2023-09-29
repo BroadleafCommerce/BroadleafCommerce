@@ -43,9 +43,9 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Stack;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.TypedQuery;
 
 /**
  * Helper class for working with admin related integration tests. The main focus is for enabling direct persistence layer

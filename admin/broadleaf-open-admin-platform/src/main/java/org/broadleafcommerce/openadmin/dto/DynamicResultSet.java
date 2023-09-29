@@ -17,13 +17,12 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.notification.service.type;
 
 import org.broadleafcommerce.common.email.service.message.Attachment;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

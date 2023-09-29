@@ -18,16 +18,6 @@
 package org.broadleafcommerce.common.extensibility.jpa.cache;
 
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.FieldInfo;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
@@ -39,12 +29,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 import java.io.ByteArrayInputStream;
-import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import jakarta.persistence.spi.TransformerException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.FieldInfo;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * Strip the cache annotation from classes and the class fields
@@ -99,7 +99,7 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -141,7 +141,7 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
             error.printStackTrace();
             throw error;
         } catch (Exception e) {
-            throw new RuntimeException("Unable to transform class", e);
+            throw new TransformerException("Unable to transform class", e);
         } finally {
             if (clazz != null) {
                 try {

@@ -17,21 +17,21 @@
  */
 package org.broadleafcommerce.core.social.domain;
 
-import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * This class creates the following BLC domain object for the Spring Social User Connection.
  * The following is the SQL that is needed for Spring Social to achieve JDBC-based persistence.
  * http://static.springsource.org/spring-social/docs/1.0.x/reference/html/serviceprovider.html#service-providers-persisting-connections
  *
- * Spring Social expects the following table be created:
+ * It is expected that the following table be created:
  * -----------------------------------------------------
  * create table UserConnection (userId varchar(255) not null,
  *  providerId varchar(255) not null,
@@ -48,10 +48,6 @@ import javax.persistence.Table;
  *
  * create unique index UserConnectionRank on UserConnection(userId, providerId, rank);
  * ------------------------------------------------------
- *
- * NOTE: We are prefixing the table with "BLC_" to be consistent with the rest of the framework.
- * The prefix is injected into JdbcUsersConnectionRepository
- * @see org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository
  *
  * @author elbertbautista
  *

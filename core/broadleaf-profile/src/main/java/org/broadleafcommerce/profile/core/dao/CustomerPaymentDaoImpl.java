@@ -24,11 +24,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 @Repository("blCustomerPaymentDao")
 public class CustomerPaymentDaoImpl implements CustomerPaymentDao {

@@ -1,6 +1,6 @@
 <th:block>
     <th:block th:if="${entityFormTemplatePath == null and useAjaxUpdate == true}" >
-        <th:block th:include="components/entityForm"
+        <th:block th:insert="~{components/entityForm}"
         th:with="additionalClasses='blc-admin-ajax-update',
                  additionalTabClasses='entity-form',
                  showSingleTab='false',
@@ -9,7 +9,7 @@
     </th:block>
     
     <th:block th:if="${entityFormTemplatePath == null and useAjaxUpdate != true}" >
-        <th:block th:include="components/entityForm"
+        <th:block th:insert="~{components/entityForm}"
         th:with="additionalTabClasses='entity-form',
                  showSingleTab='false',
                  hideActions='true',
@@ -18,7 +18,7 @@
     </th:block>
     
     <th:block th:unless="${entityFormTemplatePath == null}" >
-        <th:block th:include="${entityFormTemplatePath}"
+        <th:block th:insert="~{${entityFormTemplatePath}}"
               th:with="additionalTabClasses='entity-form',
                        showSingleTab='false',
                        hideActions='true',

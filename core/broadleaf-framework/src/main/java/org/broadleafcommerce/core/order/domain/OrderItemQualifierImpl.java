@@ -17,9 +17,20 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -29,17 +40,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_ITEM_OFFER_QUALIFIER")
@@ -54,7 +54,7 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     @GeneratedValue(generator = "OrderItemQualifierId")
     @GenericGenerator(
         name = "OrderItemQualifierId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
             @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl")
@@ -158,9 +158,9 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
             if (other.orderItem != null) return false;
         } else if (!orderItem.equals(other.orderItem)) return false;
         if (quantity == null) {
-            if (other.quantity != null) return false;
-        } else if (!quantity.equals(other.quantity)) return false;
-        return true;
+            return other.quantity == null;
+        } else
+            return quantity.equals(other.quantity);
     }
 
 }

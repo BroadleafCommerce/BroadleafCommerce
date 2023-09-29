@@ -15,13 +15,9 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.common.i18n.service;
 
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;

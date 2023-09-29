@@ -23,8 +23,8 @@ import org.broadleafcommerce.common.util.BLCFieldUtils;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 
 /**
  * Implements behavior shared by auditable listener implementations

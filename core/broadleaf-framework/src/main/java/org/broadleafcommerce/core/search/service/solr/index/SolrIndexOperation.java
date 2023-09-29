@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.client.solrj.SolrClient;
@@ -25,7 +22,6 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 
 import java.util.List;
-
 
 /**
  *  Defines the lifecylce of an indexing operation used in {@link SolrIndexService}. Each of the methods in this interface

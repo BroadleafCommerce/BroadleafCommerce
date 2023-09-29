@@ -28,7 +28,7 @@ import org.springframework.core.env.Environment;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * An {@link AbstractSeoPropertyGenerator} understands how to gather a specific set of SEO properties for the given domain object

@@ -19,9 +19,10 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 
-import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.List;
+
+import jakarta.persistence.TypedQuery;
 
 /**
  * @author Jeff Fischer

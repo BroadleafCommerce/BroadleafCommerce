@@ -18,7 +18,7 @@
 package org.broadleafcommerce.common.security.util;
 
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.security.SecureRandom;
 import java.util.Random;

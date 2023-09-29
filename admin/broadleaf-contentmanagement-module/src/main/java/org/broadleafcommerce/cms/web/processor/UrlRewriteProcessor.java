@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A Thymeleaf processor that processes the given url through the StaticAssetService's
@@ -114,7 +114,7 @@ public class UrlRewriteProcessor extends AbstractBroadleafAttributeModifierProce
         if (newAttributeValue.startsWith("/")) {
             newAttributeValue = "@{ " + newAttributeValue + " }";
         }
-        return (String) context.parseExpression(newAttributeValue);
+        return context.parseExpression(newAttributeValue);
     }
 
     protected String getFileExtension(String assetPath) {

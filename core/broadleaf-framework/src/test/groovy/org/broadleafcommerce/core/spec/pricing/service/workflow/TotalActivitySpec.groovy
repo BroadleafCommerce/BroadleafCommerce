@@ -21,13 +21,8 @@
 package org.broadleafcommerce.core.spec.pricing.service.workflow
 
 import org.broadleafcommerce.common.money.Money
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl
-import org.broadleafcommerce.core.order.domain.TaxDetailImpl
+import org.broadleafcommerce.core.order.domain.*
 import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity
-
 
 class TotalActivitySpec extends BasePricingActivitySpec{
 

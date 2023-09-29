@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.rest.api.wrapper;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This interface is the super interface for all classes that will provide a JAXB wrapper

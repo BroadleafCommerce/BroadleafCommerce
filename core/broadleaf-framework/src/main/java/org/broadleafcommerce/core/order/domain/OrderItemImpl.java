@@ -17,6 +17,25 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +51,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -59,9 +79,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -72,41 +89,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-
 @Entity
 @EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER_ITEM")
+@Table(name = "BLC_ORDER_ITEM", indexes = {
+        @Index(name = "ORDERITEM_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
+        @Index(name = "ORDERITEM_ORDER_INDEX", columnList = "ORDER_ID"),
+        @Index(name = "ORDERITEM_MESSAGE_INDEX", columnList = "PERSONAL_MESSAGE_ID"),
+        @Index(name = "ORDERITEM_GIFT_INDEX", columnList = "GIFT_WRAP_ITEM_ID"),
+        @Index(name = "ORDERITEM_PARENT_INDEX", columnList = "PARENT_ORDER_ITEM_ID"),
+        @Index(name = "ORDERITEM_TYPE_INDEX", columnList = "ORDER_ITEM_TYPE")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
+        {
+                @AdminPresentationMergeOverride(name = "", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                        booleanOverrideValue = true))
+        }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
 })
 public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
@@ -117,7 +121,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @GeneratedValue(generator = "OrderItemId")
     @GenericGenerator(
         name="OrderItemId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OrderItemImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderItemImpl")
@@ -130,9 +134,8 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Embedded
     protected Auditable auditable = new Auditable();
 
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
             group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
@@ -140,7 +143,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     @AdminPresentationToOneLookup()
     protected Order order;
@@ -178,13 +180,11 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @Index(name="ORDERITEM_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @Index(name="ORDERITEM_GIFT_INDEX", columnNames={"GIFT_WRAP_ITEM_ID"})
     @AdminPresentation(excluded = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
@@ -220,7 +220,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<OrderItemPriceDetail>();
 
     @Column(name = "ORDER_ITEM_TYPE")
-    @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
     protected String orderItemType;
 
     @Column(name = "ITEM_TAXABLE_FLAG")
@@ -259,7 +258,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
-    @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
     protected OrderItem parentOrderItem;
 
     @Column(name = "HAS_VALIDATION_ERRORS")
@@ -621,7 +619,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Boolean isTaxable() {
-        return itemTaxable == null ? true : itemTaxable;
+        return itemTaxable == null || itemTaxable;
     }
 
     @Override
@@ -867,7 +865,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
+        Method cloneMethod = orderItem.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") &&
                 !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
@@ -1034,13 +1032,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             return false;
         }
         if (parentOrderItem == null) {
-            if (other.parentOrderItem != null) {
-                return false;
-            }
-        } else if (!parentOrderItem.equals(other.parentOrderItem)) {
-            return false;
-        }
-        return true;
+            return other.parentOrderItem == null;
+        } else
+            return parentOrderItem.equals(other.parentOrderItem);
     }
 
     @Override

@@ -26,9 +26,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Map;
-import java.util.Objects;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Stanislav Fedorov

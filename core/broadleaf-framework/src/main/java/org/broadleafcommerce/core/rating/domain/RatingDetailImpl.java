@@ -10,48 +10,51 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.rating.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_RATING_DETAIL")
+@Table(name = "BLC_RATING_DETAIL",
+        indexes = {@Index(name = "RATING_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")})
 public class RatingDetailImpl implements RatingDetail, Serializable {
 
     @Id
     @GeneratedValue(generator = "RatingDetailId")
     @GenericGenerator(
-        name="RatingDetailId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="RatingDetailImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.RatingDetailImpl")
-        }
+            name = "RatingDetailId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "RatingDetailImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.rating.domain.RatingDetailImpl")
+            }
     )
     @Column(name = "RATING_DETAIL_ID")
     private Long id;
@@ -66,7 +69,6 @@ public class RatingDetailImpl implements RatingDetail, Serializable {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="RATING_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName = "RatingDetail_customer", prominent = true)
     @AdminPresentationToOneLookup
     protected Customer customer;

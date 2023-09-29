@@ -18,6 +18,7 @@
 package org.broadleafcommerce.profile.web.core.form;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 
 import java.io.Serializable;
 
@@ -28,6 +29,8 @@ public class RegisterCustomerForm implements Serializable {
     protected String password;
     protected String passwordConfirm;
     protected String redirectUrl;
+    protected String providerId;
+    protected OAuth2UserRequest oAuth2UserRequest;
 
     public Customer getCustomer() {
         return customer;
@@ -59,6 +62,22 @@ public class RegisterCustomerForm implements Serializable {
     
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+
+    public OAuth2UserRequest getOAuth2UserRequest() {
+        return oAuth2UserRequest;
+    }
+
+    public void setOAuth2UserRequest(OAuth2UserRequest oAuth2UserRequest) {
+        this.oAuth2UserRequest = oAuth2UserRequest;
     }
     
 }

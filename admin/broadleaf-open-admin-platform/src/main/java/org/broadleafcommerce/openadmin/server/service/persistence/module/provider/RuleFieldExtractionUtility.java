@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Commonality shared between {@link RuleFieldPersistenceProvider} and {@link RuleFieldValidator}

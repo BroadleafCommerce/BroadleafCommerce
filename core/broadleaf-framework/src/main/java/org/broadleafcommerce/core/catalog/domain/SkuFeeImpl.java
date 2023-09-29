@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,93 +26,97 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
+import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * @author Phillip Verheyden
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SKU_FEE")
+@Table(name = "BLC_SKU_FEE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true)
 })
 public class SkuFeeImpl implements SkuFee {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(generator = "SkuFeeId")
     @GenericGenerator(
-        name = "SkuFeeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="SkuFeeImpl"),
-            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.SkuFeeImpl")
-        }
+            name = "SkuFeeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SkuFeeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.SkuFeeImpl")
+            }
     )
     @Column(name = "SKU_FEE_ID")
     protected Long id;
 
     @Column(name = "NAME")
     protected String name;
-    
+
     @Column(name = "DESCRIPTION")
     protected String description;
-    
-    @Column(name ="AMOUNT", precision=19, scale=5, nullable=false)
+
+    @Column(name = "AMOUNT", precision = 19, scale = 5, nullable = false)
     protected BigDecimal amount;
-    
+
     @Column(name = "TAXABLE")
     protected Boolean taxable = Boolean.FALSE;
-    
+
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
-    @Column(name = "EXPRESSION", length = Integer.MAX_VALUE - 1)
+    @Column(name = "EXPRESSION", length = Length.LONG32 - 1)
     protected String expression;
 
     @Column(name = "FEE_TYPE")
-    @AdminPresentation(fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.catalog.service.type.SkuFeeType")
+    @AdminPresentation(fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.SkuFeeType")
     protected String feeType = SkuFeeType.FULFILLMENT.getType();
-    
+
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_SKU_FEE_XREF",
-            joinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true),
-            inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
+            joinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID",
+                    nullable = true),
+            inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID",
+                    nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     protected List<Sku> skus;
-    
+
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order=1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order = 1,
+            group = "FixedPriceFulfillmentOptionImpl_Details", prominent = true)
     protected BroadleafCurrency currency;
-
 
 
 
@@ -185,20 +189,22 @@ public class SkuFeeImpl implements SkuFee {
     public void setFeeType(SkuFeeType feeType) {
         this.feeType = (feeType == null) ? null : feeType.getType();
     }
-    
+
     @Override
     public List<Sku> getSkus() {
         return skus;
     }
-    
+
     @Override
     public void setSkus(List<Sku> skus) {
         this.skus = skus;
     }
+
     @Override
     public BroadleafCurrency getCurrency() {
         return currency;
     }
+
     @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;

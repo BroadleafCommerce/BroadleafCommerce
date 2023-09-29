@@ -31,8 +31,8 @@ import org.springframework.web.bind.ServletRequestUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Product entity to determine if a product has been configured for

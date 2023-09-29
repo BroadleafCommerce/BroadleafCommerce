@@ -17,10 +17,21 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -29,7 +40,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.lang.reflect.Method;
 
 /**
@@ -52,7 +62,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     @GeneratedValue(generator= "OrderItemAttributeId")
     @GenericGenerator(
         name="OrderItemAttributeId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OrderItemAttributeImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.OrderItemAttributeImpl")
@@ -119,7 +129,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     }
 
     public void checkCloneable(OrderItemAttribute itemAttribute) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = itemAttribute.getClass().getMethod("clone", new Class[]{});
+        Method cloneMethod = itemAttribute.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemAttribute.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");

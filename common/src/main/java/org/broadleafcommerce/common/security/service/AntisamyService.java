@@ -15,28 +15,17 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.dialect;
+package org.broadleafcommerce.common.security.service;
 
-import org.hibernate.dialect.PostgreSQL95Dialect;
-import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.Policy;
 
-import java.sql.Types;
+public interface AntisamyService {
+    String getAntiSamyPolicyFileLocation();
 
-/**
- * This custom dialect will treat all Clob types as if they contain a string instead of an OID.
- *
- * https://github.com/hibernate/hibernate-orm/wiki/Migration-Guide---5.2#changes-to-how-clob-values-are-processed-using-postgresql81dialect-and-its-subclasses
- *
- */
-public class BroadleafPostgreSQLDialect extends PostgreSQL95Dialect {
+    void setAntiSamyPolicyFileLocation(String antiSamyPolicyFileLocation);
 
-    @Override
-    public SqlTypeDescriptor getSqlTypeDescriptorOverride(int sqlCode) {
-        if (sqlCode == Types.CLOB) {
-            return new PostgreSQLClobTypeDescriptor();
-        }
+    AntiSamy getAntiSamy();
 
-        return super.getSqlTypeDescriptorOverride(sqlCode);
-    }
-
+    Policy getAntiSamyPolicy();
 }

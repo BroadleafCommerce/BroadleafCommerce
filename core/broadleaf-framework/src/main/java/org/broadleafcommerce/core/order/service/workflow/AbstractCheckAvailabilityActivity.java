@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.order.service.workflow;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -30,7 +27,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.Objects;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Common functionality between checking availability between adds and updates

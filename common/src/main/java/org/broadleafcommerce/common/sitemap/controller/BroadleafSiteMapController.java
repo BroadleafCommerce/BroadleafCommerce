@@ -26,9 +26,9 @@ import org.springframework.core.io.FileSystemResource;
 import java.io.File;
 import java.io.IOException;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Controller to generate and retrieve site map files.

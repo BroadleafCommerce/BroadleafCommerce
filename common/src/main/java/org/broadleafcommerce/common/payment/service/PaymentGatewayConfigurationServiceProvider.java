@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * <p>This represents the main servic bus for grabbing configurations to configured payment gateways to execute service calls

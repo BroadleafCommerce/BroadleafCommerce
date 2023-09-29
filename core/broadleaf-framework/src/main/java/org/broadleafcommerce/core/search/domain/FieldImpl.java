@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -32,53 +33,51 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD")
+@Table(name = "BLC_FIELD",
+        indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
-
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTI_PHASE_ADD)
 })
 public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity {
-    
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
     @GeneratedValue(generator = "FieldId")
     @GenericGenerator(
-        name="FieldId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FieldImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.FieldImpl")
-        }
+            name = "FieldId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FieldImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.FieldImpl")
+            }
     )
     @Column(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general",visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
+
     // This is a broadleaf enumeration
     @Column(name = "ENTITY_TYPE", nullable = false)
-    @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     @AdminPresentation(friendlyName = "FieldImpl_EntityType",
             group = GroupName.General, order = FieldOrder.ENTITY_TYPE,
             prominent = true, gridOrder = 1,
@@ -87,7 +86,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
             defaultValue = "org.broadleafcommerce.core.catalog.domain.ProductImpl",
             requiredOverride = RequiredOverride.REQUIRED)
     protected String entityType;
-    
+
     @Column(name = "FRIENDLY_NAME")
     @AdminPresentation(friendlyName = "FieldImpl_friendlyName",
             group = GroupName.General, order = FieldOrder.FRIENDLY_NAME,
@@ -156,12 +155,13 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public Boolean getOverrideGeneratedPropertyName() {
-        return overrideGeneratedPropertyName  == null ? false : overrideGeneratedPropertyName;
+        return overrideGeneratedPropertyName != null && overrideGeneratedPropertyName;
     }
 
     @Override
     public void setOverrideGeneratedPropertyName(Boolean overrideGeneratedPropertyName) {
-        this.overrideGeneratedPropertyName = overrideGeneratedPropertyName == null ? false : overrideGeneratedPropertyName;
+        this.overrideGeneratedPropertyName =
+                overrideGeneratedPropertyName != null && overrideGeneratedPropertyName;
     }
 
     @Override
@@ -186,7 +186,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
     @Override
     public Boolean getTranslatable() {
-        return translatable == null ? false : translatable;
+        return translatable != null && translatable;
     }
 
     @Override
@@ -197,13 +197,15 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     @Deprecated
     @Override
     public List<SearchConfig> getSearchConfigs() {
-        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
+        throw new UnsupportedOperationException(
+                "The default Field implementation does not support search configs");
     }
 
     @Deprecated
     @Override
     public void setSearchConfigs(List<SearchConfig> searchConfigs) {
-        throw new UnsupportedOperationException("The default Field implementation does not support search configs");
+        throw new UnsupportedOperationException(
+                "The default Field implementation does not support search configs");
     }
 
     @Override
@@ -212,7 +214,8 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     }
 
     @Override
-    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws
+    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws
             CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -240,7 +243,8 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
         }
         Field other = (Field) obj;
 
-        return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
+        return getEntityType().getType().equals(other.getEntityType().getType())
+                && getPropertyName().equals(other.getPropertyName());
 
     }
 

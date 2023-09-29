@@ -107,4 +107,14 @@ public class BLCDateUtils {
         return dateFormat.format(date);
     }
 
+    /**
+     * Method to solve problem with thymeleaf if you somehow have java.sql.Timestamp if will not allow call methods for this class
+     * @param date1 - the first date to compare
+     * @param date2 - the second date to compare
+     * @return result of date1.compareTo(date2)
+     */
+    public static int compareTo(Date date1, Date date2){
+        return date1.compareTo(date2);
+    }
+
 }

@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Created by bpolster.
@@ -118,7 +118,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     protected String getFileExtension(String fileName) {
         int pos = fileName.lastIndexOf(".");
         if (pos > 0) {
-            return fileName.substring(pos + 1, fileName.length()).toLowerCase();
+            return fileName.substring(pos + 1).toLowerCase();
         } else {
             LOG.warn("No extension provided for asset : " + StringUtil.sanitize(fileName));
             return null;
@@ -184,7 +184,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     private static String normalizeFileExtension(MultipartFile file) {
         int index = file.getOriginalFilename().lastIndexOf(".");
-        return file.getOriginalFilename().substring(0, index + 1) + file.getOriginalFilename().substring(index + 1, file.getOriginalFilename().length()).toLowerCase();
+        return file.getOriginalFilename().substring(0, index + 1) + file.getOriginalFilename().substring(index + 1).toLowerCase();
     }
 
     private static String getFileExtension(MultipartFile file) {

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -34,70 +35,74 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_PRODUCT_CROSS_SALE")
+@Table(name = "BLC_PRODUCT_CROSS_SALE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantCloneable<CrossSaleProductImpl> {
+public class CrossSaleProductImpl
+        implements CrossSaleProduct, MultiTenantCloneable<CrossSaleProductImpl> {
 
     protected static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "CrossSaleProductId")
+    @GeneratedValue(generator = "CrossSaleProductId")
     @GenericGenerator(
-        name="CrossSaleProductId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CrossSaleProductImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl")
-        }
+            name = "CrossSaleProductId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CrossSaleProductImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl")
+            }
     )
     @Column(name = "CROSS_SALE_PRODUCT_ID")
     protected Long id;
-    
+
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message", translatable=true, largeEntry=true)
+    @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message",
+            translatable = true, largeEntry = true)
     protected String promotionMessage;
 
     @Column(name = "SEQUENCE", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal sequence;
-    
+
     @ManyToOne(targetEntity = ProductImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="CROSSSALE_INDEX", columnNames={"PRODUCT_ID"})
+    @Index(name = "CROSSSALE_INDEX", columnNames = {"PRODUCT_ID"})
     protected Product product;
-    
+
     @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="CROSSSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
+    @Index(name = "CROSSSALE_CATEGORY_INDEX", columnNames = {"CATEGORY_ID"})
     protected Category category;
 
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
+    @ManyToOne(targetEntity = ProductImpl.class, optional = false)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
-    @Index(name="CROSSSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
+    @Index(name = "CROSSSALE_RELATED_INDEX", columnNames = {"RELATED_SALE_PRODUCT_ID"})
     protected Product relatedSaleProduct = new ProductImpl();
 
     @Override
     public Long getId() {
         return id;
     }
-    
+
     @Override
     public void setId(Long id) {
         this.id = id;
@@ -107,7 +112,7 @@ public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantClonea
     public String getPromotionMessage() {
         return DynamicTranslationProvider.getValue(this, "promotionMessage", promotionMessage);
     }
-    
+
     @Override
     public void setPromotionMessage(String promotionMessage) {
         this.promotionMessage = promotionMessage;
@@ -117,7 +122,7 @@ public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantClonea
     public BigDecimal getSequence() {
         return sequence;
     }
-    
+
     @Override
     public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
@@ -132,7 +137,7 @@ public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantClonea
     public void setProduct(Product product) {
         this.product = product;
     }
-    
+
     @Override
     public Category getCategory() {
         return category;
@@ -155,17 +160,29 @@ public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantClonea
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        if (!getClass().isAssignableFrom(o.getClass())) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (!getClass().isAssignableFrom(o.getClass()))
+            return false;
 
         CrossSaleProductImpl that = (CrossSaleProductImpl) o;
 
-        if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null) return false;
-        if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (product != null ? !product.equals(that.product) : that.product != null) return false;
-        if (relatedSaleProduct != null ? !relatedSaleProduct.equals(that.relatedSaleProduct) : that.relatedSaleProduct != null) return false;
-        if (promotionMessage != null ? !promotionMessage.equals(that.promotionMessage) : that.promotionMessage != null) return false;
+        if (sequence != null ? !sequence.equals(that.sequence) : that.sequence != null)
+            return false;
+        if (category != null ? !category.equals(that.category) : that.category != null)
+            return false;
+        if (product != null ? !product.equals(that.product) : that.product != null)
+            return false;
+        if (relatedSaleProduct != null
+                ? !relatedSaleProduct.equals(that.relatedSaleProduct)
+                : that.relatedSaleProduct != null)
+            return false;
+        if (promotionMessage != null
+                ? !promotionMessage.equals(that.promotionMessage)
+                : that.promotionMessage != null)
+            return false;
 
         return true;
     }
@@ -181,7 +198,8 @@ public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantClonea
     }
 
     @Override
-    public <G extends CrossSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CrossSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -196,7 +214,8 @@ public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantClonea
         cloned.setPromotionMessage(promotionMessage);
         cloned.setSequence(sequence);
         if (relatedSaleProduct != null) {
-            cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setRelatedProduct(
+                    relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
         }
         return createResponse;
     }

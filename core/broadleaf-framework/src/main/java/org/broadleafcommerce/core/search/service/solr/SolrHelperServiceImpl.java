@@ -15,17 +15,16 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -42,7 +41,6 @@ import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
@@ -87,8 +85,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -96,8 +92,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.jms.IllegalStateException;
+import jakarta.annotation.Resource;
 
 /**
  * Provides utility methods that are used by other Solr service classes
@@ -162,15 +157,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if (!isSolrConfigured) {
             return;
         }
-        if (CloudSolrClient.class.isAssignableFrom(solrConfiguration.getServer().getClass()) && CloudSolrClient.class.isAssignableFrom(solrConfiguration.getReindexServer().getClass())) {
+        if (CloudSolrClient.class.isAssignableFrom(solrConfiguration.getServer().getClass())
+                && CloudSolrClient.class.isAssignableFrom(solrConfiguration.getReindexServer().getClass())) {
             CloudSolrClient primaryCloudClient = (CloudSolrClient) solrConfiguration.getServer();
             CloudSolrClient reindexCloudClient = (CloudSolrClient) solrConfiguration.getReindexServer();
             try {
                 String queryAlias = solrConfiguration.getQueryCollectionName();
                 String reindexAlias = solrConfiguration.getReindexCollectionName();
                 primaryCloudClient.connect();
-                Aliases aliases = primaryCloudClient.getZkStateReader().getAliases();
-                Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+                Map<String, String> aliasCollectionMap = this.aliasCollectionMap(primaryCloudClient);
                 if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(queryAlias)
                         || !aliasCollectionMap.containsKey(reindexAlias)) {
                     throw new IllegalStateException("Could not determine the PRIMARY or REINDEX "
@@ -219,6 +214,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 }
             }
         }
+    }
+
+    protected Map<String, String> aliasCollectionMap(CloudSolrClient client) throws SolrServerException, IOException {
+        return new CollectionAdminRequest.ListAliases()
+                .process(client)
+                .getAliases();
     }
 
     @Override
@@ -438,7 +439,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if(propertyValueInternal instanceof String){
             String enabled = environment.getProperty("exploitProtection.xssEnabled", "false");
             if(Boolean.parseBoolean(enabled)){
-                return StringEscapeUtils.unescapeHtml((String) propertyValueInternal);
+                return StringEscapeUtils.unescapeHtml4((String) propertyValueInternal);
             }
         }
         return propertyValueInternal;
@@ -649,7 +650,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 for (Count value : facet.getValues()) {
                     SearchFacetResultDTO resultDTO = new SearchFacetResultDTO();
                     resultDTO.setFacet(facetDTO.getFacet());
-                    resultDTO.setQuantity(new Long(value.getCount()).intValue());
+                    resultDTO.setQuantity(Long.valueOf(value.getCount()).intValue());
                     resultDTO.setValue(value.getName());
                     facetDTO.getFacetValues().add(resultDTO);
                 }
@@ -683,20 +684,18 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public void sortFacetResults(Map<String, SearchFacetDTO> namedFacetMap) {
-        for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
-            Collections.sort(entry.getValue().getFacetValues(), new Comparator<SearchFacetResultDTO>() {
-
-                @Override
-                public int compare(SearchFacetResultDTO o1, SearchFacetResultDTO o2) {
+        namedFacetMap.forEach((key, value) -> value.getFacetValues()
+                .sort((o1, o2) -> {
                     if (o1.getValue() != null && o2.getValue() != null) {
                         return o1.getValue().compareTo(o2.getValue());
-                    } else if (o1.getMinValue() != null && o2.getMinValue() != null) {
-                        return o1.getMinValue().compareTo(o2.getMinValue());
+                    } else {
+                        if (o1.getMinValue() != null && o2.getMinValue() != null) {
+                            return o1.getMinValue().compareTo(o2.getMinValue());
+                        }
                     }
                     return 0; // Don't know how to compare
-                }
-            });
-        }
+                })
+        );
     }
 
 
@@ -744,13 +743,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if (response.getGroupResponse() == null) {
             docs = response.getResults();
         } else {
-            docs = new ArrayList<SolrDocument>();
+            docs = new ArrayList<>();
             GroupResponse gr = response.getGroupResponse();
             for (GroupCommand gc : gr.getValues()) {
                 for (Group g : gc.getValues()) {
-                    for (SolrDocument d : g.getResult()) {
-                        docs.add(d);
-                    }
+                    docs.addAll(g.getResult());
                 }
             }
         }

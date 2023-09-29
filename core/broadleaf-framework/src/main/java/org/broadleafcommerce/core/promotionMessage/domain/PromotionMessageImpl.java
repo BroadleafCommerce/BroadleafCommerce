@@ -17,6 +17,18 @@
  */
 package org.broadleafcommerce.core.promotionMessage.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -31,6 +43,7 @@ import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
@@ -46,72 +59,59 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 @Entity
-@Table(name = "BLC_PROMOTION_MESSAGE")
-@Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@SQLDelete(sql="UPDATE BLC_PROMOTION_MESSAGE SET ARCHIVED = 'Y' WHERE PROMOTION_MESSAGE_ID = ?")
+@Table(name = "BLC_PROMOTION_MESSAGE", indexes = {@Index(name = "PROMOTION_MESSAGE_NAME_INDEX", columnList = "NAME")})
+@Inheritance(strategy = InheritanceType.JOINED)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@SQLDelete(sql = "UPDATE BLC_PROMOTION_MESSAGE SET ARCHIVED = 'Y' WHERE PROMOTION_MESSAGE_ID = ?")
 @AdminPresentationMergeOverrides({
-    @AdminPresentationMergeOverride(name = "media.url", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "PromotionMessageImpl_Media"),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "NOT_REQUIRED"),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
-    }),
-    @AdminPresentationMergeOverride(name = "media.title", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
-    }),
-    @AdminPresentationMergeOverride(name = "media.altText", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
-    }),
-    @AdminPresentationMergeOverride(name = "media.tags", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
-    }),
-    @AdminPresentationMergeOverride(name = "media.auditable.createdBy", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-    }),
-    @AdminPresentationMergeOverride(name = "media.auditable.updatedBy", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-    }),
-    @AdminPresentationMergeOverride(name = "media.auditable.dateCreated", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-    }),
-    @AdminPresentationMergeOverride(name = "media.auditable.dateUpdated", mergeEntries = {
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
-    })
+        @AdminPresentationMergeOverride(name = "media.url", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "PromotionMessageImpl_Media"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "NOT_REQUIRED"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+        }),
+        @AdminPresentationMergeOverride(name = "media.title", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+        }),
+        @AdminPresentationMergeOverride(name = "media.altText", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+        }),
+        @AdminPresentationMergeOverride(name = "media.tags", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = PromotionMessageAdminPresentation.TabName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = PromotionMessageAdminPresentation.TabOrder.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP, overrideValue = PromotionMessageAdminPresentation.GroupName.Media),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = false)
+        }),
+        @AdminPresentationMergeOverride(name = "media.auditable.createdBy", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+        }),
+        @AdminPresentationMergeOverride(name = "media.auditable.updatedBy", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+        }),
+        @AdminPresentationMergeOverride(name = "media.auditable.dateCreated", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+        }),
+        @AdminPresentationMergeOverride(name = "media.auditable.dateUpdated", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "HIDDEN_ALL")
+        })
 })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, PromotionMessageAdminPresentation {
@@ -122,7 +122,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @GeneratedValue(generator= "PromotionMessageId")
     @GenericGenerator(
         name="PromotionMessageId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="PromotionMessageImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl")
@@ -133,7 +133,6 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     protected Long id;
 
     @Column(name = "NAME")
-    @Index(name="PROMOTION_MESSAGE_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Name",
         tab = TabName.General, tabOrder = TabOrder.General,
         group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Name,

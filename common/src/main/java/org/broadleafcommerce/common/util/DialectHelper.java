@@ -20,15 +20,15 @@ package org.broadleafcommerce.common.util;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQLDialect;
-import org.hibernate.dialect.Oracle8iDialect;
-import org.hibernate.dialect.PostgreSQL81Dialect;
+import org.hibernate.dialect.OracleDialect;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 /**
  * @author Jeff Fischer
@@ -51,22 +51,22 @@ public class DialectHelper {
 
     public boolean isOracle() {
         //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        return getHibernateDialect(defaultEntityManager) instanceof Oracle8iDialect;
+        return getHibernateDialect(defaultEntityManager) instanceof OracleDialect;
     }
 
     public boolean isOracle(EntityManager em) {
         //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        return getHibernateDialect(em) instanceof Oracle8iDialect;
+        return getHibernateDialect(em) instanceof OracleDialect;
     }
 
     public boolean isPostgreSql() {
         //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect(defaultEntityManager) instanceof PostgreSQL81Dialect;
+        return getHibernateDialect(defaultEntityManager) instanceof PostgreSQLDialect;
     }
 
     public boolean isPostgreSql(EntityManager em) {
         //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect(em) instanceof PostgreSQL81Dialect;
+        return getHibernateDialect(em) instanceof PostgreSQLDialect;
     }
 
     public boolean isSqlServer() {

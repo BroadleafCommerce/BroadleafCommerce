@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.web.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.io.AtomicMove;
@@ -55,10 +55,10 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Provides either dynamic, or cached static compression of response data. The 'filter.compression.enabled' property must

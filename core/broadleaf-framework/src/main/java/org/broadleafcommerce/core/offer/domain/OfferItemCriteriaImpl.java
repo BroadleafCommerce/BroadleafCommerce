@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,64 +24,67 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Table(name = "BLC_OFFER_ITEM_CRITERIA")
-@Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
 @AdminPresentationClass(friendlyName = "OfferItemCriteriaImpl_baseOfferItemCriteria")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferItemCriteriaImpl implements OfferItemCriteria {
-    
+
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "OfferItemCriteriaId")
+    @GeneratedValue(generator = "OfferItemCriteriaId")
     @GenericGenerator(
-        name="OfferItemCriteriaId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="OfferItemCriteriaImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl")
-        }
+            name = "OfferItemCriteriaId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OfferItemCriteriaImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl")
+            }
     )
     @Column(name = "OFFER_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Item_Criteria_Id", group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Item_Criteria_Id",
+            group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-    
-    @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Quantity", group = "OfferItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
+
+    @Column(name = "QUANTITY", nullable = false)
+    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Quantity",
+            group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Integer quantity;
-    
+
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
-    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Order_Item_Match_Rule", group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Length.LONG32 - 1)
+    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Order_Item_Match_Rule",
+            group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
 
     @Override
@@ -117,10 +120,10 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(id)
-            .append(orderItemMatchRule)
-            .append(quantity)
-            .build();
+                .append(id)
+                .append(orderItemMatchRule)
+                .append(quantity)
+                .build();
     }
 
     @Override
@@ -128,17 +131,18 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
         if (o != null && getClass().isAssignableFrom(o.getClass())) {
             OfferItemCriteriaImpl that = (OfferItemCriteriaImpl) o;
             return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.orderItemMatchRule, that.orderItemMatchRule)
-                .append(this.quantity, that.quantity)
-                .build();
+                    .append(this.id, that.id)
+                    .append(this.orderItemMatchRule, that.orderItemMatchRule)
+                    .append(this.quantity, that.quantity)
+                    .build();
         }
 
         return false;
     }
 
     @Override
-    public <G extends OfferItemCriteria> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OfferItemCriteria> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -146,6 +150,6 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
         OfferItemCriteria cloned = createResponse.getClone();
         cloned.setQuantity(quantity);
         cloned.setMatchRule(orderItemMatchRule);
-       return createResponse;
+        return createResponse;
     }
 }

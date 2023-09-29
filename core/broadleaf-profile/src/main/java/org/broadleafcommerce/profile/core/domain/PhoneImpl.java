@@ -10,26 +10,27 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -42,34 +43,39 @@ public class PhoneImpl implements Phone {
     @Id
     @GeneratedValue(generator = "PhoneId")
     @GenericGenerator(
-        name="PhoneId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PhoneImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.PhoneImpl")
-        }
+            name = "PhoneId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PhoneImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.profile.core.domain.PhoneImpl")
+            }
     )
     @Column(name = "PHONE_ID")
     protected Long id;
 
     @Column(name = "COUNTRY_CODE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Country_Code", order=1, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Country_Code", order = 1,
+            group = "PhoneImpl_Phone")
     protected String countryCode;
 
-    @Column(name = "PHONE_NUMBER", nullable=false)
-    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order=2, group = "PhoneImpl_Phone")
+    @Column(name = "PHONE_NUMBER", nullable = false)
+    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order = 2,
+            group = "PhoneImpl_Phone")
     protected String phoneNumber;
 
     @Column(name = "EXTENSION")
-    @AdminPresentation(friendlyName = "PhoneImpl_Extension", order=3, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Extension", order = 3, group = "PhoneImpl_Phone")
     protected String extension;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order=4, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order = 4,
+            group = "PhoneImpl_Phone")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order=5, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order = 5,
+            group = "PhoneImpl_Phone")
     protected boolean isActive = true;
 
     @Override

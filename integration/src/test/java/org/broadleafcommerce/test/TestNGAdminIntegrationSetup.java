@@ -20,6 +20,7 @@ package org.broadleafcommerce.test;
 import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
@@ -33,7 +34,10 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
  * @author Phillip Verheyden (phillipuniverse)
  */
 @BroadleafAdminIntegrationTest
-@TestExecutionListeners({TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class})
+//Seems spring should add DependencyInjectionTestExecutionListener by default, but in spring boot 3/spring 6 at lest now
+//because of defined listeners explicitly it doesn't have it, and so test classes are missing injected beans
+// and also spring context is not started early enough, so some other code triggers loading of entities before we register our transformers
+@TestExecutionListeners({TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
 public abstract class TestNGAdminIntegrationSetup extends AbstractTestNGSpringContextTests {
     
 }

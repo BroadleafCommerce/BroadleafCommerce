@@ -62,15 +62,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * An implementation of SearchService that uses Solr.
@@ -186,8 +184,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries)
-            throws ServiceException  {
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
+                                             SearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Left here for backwards compatibility for this method signature
@@ -261,9 +259,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                     LOG.trace(doc);
                 }
             }
-        } catch (SolrServerException e) {
-            throw new ServiceException("Could not perform search", e);
-        } catch (IOException e) {
+        } catch (SolrServerException | IOException e) {
             throw new ServiceException("Could not perform search", e);
         }
 
@@ -305,7 +301,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                         iterator.remove();
                         break;
                     }
-                    Optional<CategoryXref> parentXref = parentCategory.getAllParentCategoryXrefs().stream().filter(CategoryXref::getDefaultReference).findFirst();
+                    Optional<CategoryXref> parentXref = parentCategory.getAllParentCategoryXrefs().stream()
+                            .filter(x -> Objects.nonNull(x.getDefaultReference()))
+                            .filter(CategoryXref::getDefaultReference)
+                            .findFirst();
                     parentCategory = parentXref.map(CategoryXref::getCategory).orElse(null);
                 }
             } else if(defaultParent.isPresent() && !defaultParent.get().getCategory().isActive()) {
@@ -378,9 +377,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * This helper method gathers the query fields for the given field and stores them in the List parameter.
-     * @param currentField the current field
      * @param query
      * @param queryFields the query fields for this query
+     * @param indexField
      * @param searchCriteria
      */
     protected void getQueryFields(SolrQuery query, final List<String> queryFields, IndexField indexField, SearchCriteria searchCriteria) {
@@ -557,7 +556,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * from solr, while page and page size are duplicates of the searchCriteria conditions for ease of use.
      * 
      * @param result
-     * @param response
+     * @param numResults
      * @param searchCriteria
      */
     public void setPagingAttributes(SearchResult result, int numResults, SearchCriteria searchCriteria) {
@@ -571,7 +570,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * actual Product instances. It will return a Products that is sorted by the order of the IDs in the passed
      * in list.
      * 
-     * @param response
+     * @param responseDocuments
      * @return the actual Product instances as a result of the search
      */
     protected List<Product> getProducts(List<SolrDocument> responseDocuments) {
@@ -586,13 +585,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         // We have to sort the products list by the order of the productIds list to maintain sortability in the UI
         if (products != null) {
-            Collections.sort(products, new Comparator<Product>() {
-                @Override
-                public int compare(Product o1, Product o2) {
-                    Long o1id = shs.getIndexableId(o1);
-                    Long o2id = shs.getIndexableId(o2);
-                    return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
-                }
+            products.sort((o1, o2) -> {
+                Long o1id = shs.getIndexableId(o1);
+                Long o2id = shs.getIndexableId(o2);
+                return Integer.compare(productIds.indexOf(o1id), productIds.indexOf(o2id));
             });
         }
 
@@ -615,7 +611,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * Checks to see if the requiredFacets condition for a given facet is met.
      * 
      * @param facet
-     * @param request
+     * @param params
      * @return whether or not the facet parameter is available 
      */
     protected boolean facetIsAvailable(SearchFacet facet, Map<String, String[]> params) {

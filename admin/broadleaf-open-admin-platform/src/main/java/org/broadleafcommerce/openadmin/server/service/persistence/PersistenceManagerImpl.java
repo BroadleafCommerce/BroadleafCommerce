@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.EntityParentIdServiceExtensionManager;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -50,7 +51,6 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
-import org.broadleafcommerce.common.persistence.EntityParentIdServiceExtensionManager;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -68,6 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -81,9 +82,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -268,7 +269,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         try {
             Class<?> clazz = Class.forName(entityClass);
             Class<?>[] entities = getUpDownInheritance(clazz);
-            if (!org.apache.commons.lang.ArrayUtils.isEmpty(entities)) {
+            if (!ArrayUtils.isEmpty(entities)) {
                 Map<String, Object> idData = getDynamicEntityDao().getIdMetadata(entities[0]);
                 if (idData != null) {
                     response = (String) idData.get("name");
@@ -919,12 +920,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
-        Collections.sort(cloned, new Comparator<CustomPersistenceHandler>() {
-            @Override
-            public int compare(CustomPersistenceHandler o1, CustomPersistenceHandler o2) {
-                return new Integer(o1.getOrder()).compareTo(new Integer(o2.getOrder()));
-            }
-        });
+        cloned.sort(Comparator.comparingInt(Ordered::getOrder));
         return cloned;
     }
     

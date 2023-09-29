@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -38,86 +39,89 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
-@Table(name = "BLC_FG_ADJUSTMENT")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Table(name = "BLC_FG_ADJUSTMENT", indexes = {
+        @Index(name = "FGADJUSTMENT_INDEX", columnList = "FULFILLMENT_GROUP_ID"),
+        @Index(name = "FGADJUSTMENT_OFFER_INDEX", columnList = "OFFER_ID")})
+@Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupAdjustmentImpl_baseFulfillmentGroupAdjustment")
-public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustment, CurrencyCodeIdentifiable {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        friendlyName = "FulfillmentGroupAdjustmentImpl_baseFulfillmentGroupAdjustment")
+public class FulfillmentGroupAdjustmentImpl
+        implements FulfillmentGroupAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "FGAdjustmentId")
+    @GeneratedValue(generator = "FGAdjustmentId")
     @GenericGenerator(
-        name="FGAdjustmentId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="FulfillmentGroupAdjustmentImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl")
-        }
+            name = "FGAdjustmentId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FulfillmentGroupAdjustmentImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl")
+            }
     )
     @Column(name = "FG_ADJUSTMENT_ID")
     protected Long id;
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    @Index(name="FGADJUSTMENT_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     @AdminPresentation(excluded = true)
     protected FulfillmentGroup fulfillmentGroup;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
-    @Index(name="FGADJUSTMENT_OFFER_INDEX", columnNames={"OFFER_ID"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_Offer", order=1000,
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_Offer", order = 1000,
             prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
-    @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason", order=2000)
+    @Column(name = "ADJUSTMENT_REASON", nullable = false)
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason",
+            order = 2000)
     protected String reason;
 
-    @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value", order=3000,
+    @Column(name = "ADJUSTMENT_VALUE", nullable = false, precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value",
+            order = 3000,
             fieldType = SupportedFieldType.MONEY, prominent = true,
             gridOrder = 2000)
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "IS_FUTURE_CREDIT")
     @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_isFutureCredit", order = 4000,
-            showIfProperty="admin.showIfProperty.offerAdjustmentType")
+            showIfProperty = "admin.showIfProperty.offerAdjustmentType")
     protected Boolean isFutureCredit = false;
 
     @Transient
     protected Offer deproxiedOffer;
 
     @Override
-    public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
+    public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason) {
         this.fulfillmentGroup = fulfillmentGroup;
         this.offer = offer;
 
@@ -127,7 +131,8 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
             this.reason = reason;
         }
         if (offer != null) {
-            this.setFutureCredit(OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType()));
+            this.setFutureCredit(
+                    OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType()));
         }
     }
 
@@ -186,9 +191,12 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
 
     @Override
     public Money getValue() {
-        return value == null ? null : BroadleafCurrencyUtils.getMoney(value, getFulfillmentGroup().getOrder().getCurrency());
+        return value == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(value,
+                        getFulfillmentGroup().getOrder().getCurrency());
     }
-    
+
     @Override
     public void setValue(Money value) {
         this.value = value.getAmount();

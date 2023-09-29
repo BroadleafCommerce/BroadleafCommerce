@@ -24,7 +24,8 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayResolver;
 
 import java.util.Map;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)

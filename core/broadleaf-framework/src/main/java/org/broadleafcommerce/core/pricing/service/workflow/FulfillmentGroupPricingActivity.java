@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Called during the pricing workflow to compute all of the fulfillment costs

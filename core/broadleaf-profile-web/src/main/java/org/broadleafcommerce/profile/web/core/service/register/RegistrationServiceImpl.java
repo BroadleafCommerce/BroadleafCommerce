@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.profile.web.core.service.register;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -25,8 +25,8 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @Service("blRegistrationService")

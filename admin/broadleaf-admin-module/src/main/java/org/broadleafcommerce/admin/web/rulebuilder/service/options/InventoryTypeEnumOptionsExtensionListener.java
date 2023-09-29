@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.admin.web.rulebuilder.service.options;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.common.time.HourOfDayType;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;

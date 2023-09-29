@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,32 +22,32 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_OFFER_RULE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferRuleImpl implements OfferRule {
@@ -55,21 +55,21 @@ public class OfferRuleImpl implements OfferRule {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "OfferRuleId")
+    @GeneratedValue(generator = "OfferRuleId")
     @GenericGenerator(
-        name="OfferRuleId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="OfferRuleImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferRuleImpl")
-        }
+            name = "OfferRuleId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OfferRuleImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.offer.domain.OfferRuleImpl")
+            }
     )
     @Column(name = "OFFER_RULE_ID")
     protected Long id;
-    
+
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
-    @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
+    @Column(name = "MATCH_RULE", length = Length.LONG32 - 1)
     protected String matchRule;
 
     /* (non-Javadoc)
@@ -122,11 +122,11 @@ public class OfferRuleImpl implements OfferRule {
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferRuleImpl other = (OfferRuleImpl) obj;
-        
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        
+
         if (matchRule == null) {
             if (other.matchRule != null)
                 return false;
@@ -136,7 +136,8 @@ public class OfferRuleImpl implements OfferRule {
     }
 
     @Override
-    public <G extends OfferRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OfferRule> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

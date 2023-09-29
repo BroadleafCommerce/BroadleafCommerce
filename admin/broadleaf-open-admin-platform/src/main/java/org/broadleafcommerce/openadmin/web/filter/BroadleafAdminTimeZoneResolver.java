@@ -23,7 +23,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.TimeZone;
 
-
 /**
  * 
  * @author Phillip Verheyden (phillipuniverse)

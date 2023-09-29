@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.order.domain.OrderImpl
 import org.broadleafcommerce.core.workflow.BaseActivity
 import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl
 import org.broadleafcommerce.core.workflow.ProcessContext
-
 import spock.lang.Specification
 
 class BaseCheckoutRollbackSpec extends Specification {

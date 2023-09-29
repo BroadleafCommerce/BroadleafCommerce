@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Used as a replacement to the HTML {@code <form>} element which adds a CSRF token input field to forms that are submitted

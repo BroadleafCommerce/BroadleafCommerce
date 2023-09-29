@@ -26,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 
 
 @Service("blGenericEntityService")

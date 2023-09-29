@@ -23,8 +23,8 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceUnit;
 
 /**
  * Provides methods to easily access entities managed by the 'blPU' {@link PersistenceUnit}.
@@ -131,7 +131,7 @@ public interface GenericEntityDao {
     boolean sessionContains(Object object);
 
     /**
-     * Whether or not this object is an {@link javax.persistence.Entity} and whether or not it already has an id assigned
+     * Whether or not this object is an {@link jakarta.persistence.Entity} and whether or not it already has an id assigned
      * @param object
      * @return
      */

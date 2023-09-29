@@ -19,9 +19,12 @@ package org.broadleafcommerce.common.util.sql.importsql;
 
 import org.broadleafcommerce.common.logging.SupportLogManager;
 import org.broadleafcommerce.common.logging.SupportLogger;
-import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.tool.schema.internal.script.SingleLineSqlScriptExtractor;
 
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +41,7 @@ import java.util.regex.Pattern;
  * @author Jay Aisenbrey (cja769)
  *
  */
-public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlCommandExtractor {
+public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlScriptExtractor {
 
     public static final String NEWLINE_REPLACEMENT_REGEX = "\\\\r\\\\n";
     
@@ -47,10 +50,9 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
     private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoPostgresSingleLineSqlCommandExtractor.class);
     
     @Override
-    public String[] extractCommands(Reader reader) {
-        String[] commands = super.extractCommands(reader);
-        String[] newCommands = new String[commands.length];
-        int i = 0;
+    public List<String> extractCommands(Reader reader, Dialect dialect) {
+        List<String> commands = super.extractCommands(reader, dialect);
+        List<String> newCommands = new ArrayList<String>(commands.size());
         for (String command : commands) {
             String newCommand = command;
             
@@ -78,8 +80,7 @@ public class DemoPostgresSingleLineSqlCommandExtractor extends SingleLineSqlComm
             // an attempt to save straight to production will occur resulting in an error
             newCommand = newCommand.replaceAll("CURRENT_TIMESTAMP", "date_trunc('second', CURRENT_TIMESTAMP)");
 
-            newCommands[i] = newCommand;
-            i++;
+            newCommands.add(newCommand);
         }
         return newCommands;
     }

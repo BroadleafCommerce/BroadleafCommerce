@@ -21,10 +21,11 @@ package org.broadleafcommerce.common.payment.service;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * <p>This default implementation encodes the seal using a URL-Safe Base64 encoder

@@ -17,9 +17,9 @@
  */
 package org.broadleafcommerce.openadmin.web.service.extension;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -29,8 +29,8 @@ import org.broadleafcommerce.openadmin.web.service.AbstractFormBuilderExtensionH
 import org.broadleafcommerce.openadmin.web.service.FormBuilderExtensionManager;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 @Service("blTranslationsFormBuilderExtensionHandler")
 public class TranslationsFormBuilderExtensionHandler extends AbstractFormBuilderExtensionHandler {
@@ -58,11 +58,11 @@ public class TranslationsFormBuilderExtensionHandler extends AbstractFormBuilder
                     if (displayValue.length() > 30) {
                         displayValue = displayValue.substring(0, 30) + "...";
                     }
-                    translatedValue.setDisplayValue(StringEscapeUtils.escapeHtml(displayValue));
+                    translatedValue.setDisplayValue(StringEscapeUtils.escapeHtml4(displayValue));
                     if (value.length() > 30) {
                         value = value.substring(0, 30) + "...";
                     }
-                    translatedValue.setValue(StringEscapeUtils.escapeHtml(value));
+                    translatedValue.setValue(StringEscapeUtils.escapeHtml4(value));
                 }
                 return ExtensionResultStatusType.HANDLED;
             }

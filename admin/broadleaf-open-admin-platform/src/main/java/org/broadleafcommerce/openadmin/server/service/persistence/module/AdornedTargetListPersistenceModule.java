@@ -18,7 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
@@ -27,7 +27,18 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
@@ -37,10 +48,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -50,6 +57,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -285,11 +297,11 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     Field sortFieldDef = fieldManager.getField(instance.getClass(), adornedTargetList.getSortField());
                     int add = (adornedLastOrdering == null) ? 0 : 1;
                     if (sortFieldDef.getType().isAssignableFrom(Long.class)) {
-                        adornedLastOrdering = (adornedLastOrdering == null) ? new Long(0) : adornedLastOrdering;
-                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), new Long(((Long) adornedLastOrdering).longValue() + add));
+                        adornedLastOrdering = (adornedLastOrdering == null) ? Long.valueOf(0) : adornedLastOrdering;
+                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Long.valueOf(((Long) adornedLastOrdering).longValue() + add));
                     } else if (sortFieldDef.getType().isAssignableFrom(Integer.class)) {
-                        adornedLastOrdering = (adornedLastOrdering == null) ? new Integer(0) : adornedLastOrdering;
-                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), new Integer(((Integer) adornedLastOrdering).intValue() + add));
+                        adornedLastOrdering = (adornedLastOrdering == null) ? Integer.valueOf(0) : adornedLastOrdering;
+                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Integer.valueOf(((Integer) adornedLastOrdering).intValue() + add));
                     } else if (sortFieldDef.getType().isAssignableFrom(BigDecimal.class)) {
                         adornedLastOrdering = (adornedLastOrdering == null) ? BigDecimal.ZERO : adornedLastOrdering;
                         fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), ((BigDecimal) adornedLastOrdering).add(new BigDecimal(add)));

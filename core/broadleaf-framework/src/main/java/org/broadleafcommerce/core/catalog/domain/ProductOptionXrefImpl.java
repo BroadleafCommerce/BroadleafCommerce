@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,22 +24,23 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
 
@@ -52,7 +53,8 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
+                skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductOptionXrefImpl implements ProductOptionXref {
@@ -61,23 +63,24 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "ProductOptionXrefId")
+    @GeneratedValue(generator = "ProductOptionXrefId")
     @GenericGenerator(
-        name="ProductOptionXrefId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="ProductOptionXrefImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl")
-        }
+            name = "ProductOptionXrefId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ProductOptionXrefImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl")
+            }
     )
     @Column(name = "PRODUCT_OPTION_XREF_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = ProductImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product = new ProductImpl();
 
-    @ManyToOne(targetEntity = ProductOptionImpl.class, optional=false)
+    @ManyToOne(targetEntity = ProductOptionImpl.class, optional = false)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption = new ProductOptionImpl();
 
@@ -112,7 +115,8 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
     }
 
     @Override
-    public <G extends ProductOptionXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends ProductOptionXref> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -123,7 +127,8 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
                 cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
             }
             if (productOption != null) {
-                cloned.setProductOption(productOption.createOrRetrieveCopyInstance(context).getClone());
+                cloned.setProductOption(
+                        productOption.createOrRetrieveCopyInstance(context).getClone());
             }
         } else {
             cloned.setProduct(product);

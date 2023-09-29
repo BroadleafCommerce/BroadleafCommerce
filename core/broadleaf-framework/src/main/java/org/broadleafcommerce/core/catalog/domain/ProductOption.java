@@ -217,4 +217,9 @@ public interface ProductOption extends Serializable, MultiTenantCloneable<Produc
 
     ProductOptionValidationStrategyType getProductOptionValidationStrategyType();
 
+    void setLongDescription(String longDescription);
+
+    String getLongDescription();
+
+
 }

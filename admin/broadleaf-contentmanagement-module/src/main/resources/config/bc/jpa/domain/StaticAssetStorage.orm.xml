@@ -24,7 +24,7 @@
 
     <named-query name="BC_READ_STATIC_ASSET_STORAGE_BY_STATIC_ASSET_ID">
         <query>SELECT staticAssetStorage
-            FROM org.broadleafcommerce.cms.file.domain.StaticAssetStorage staticAssetStorage
+            FROM org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl staticAssetStorage
             WHERE staticAssetStorage.staticAssetId = :id
         </query>
     </named-query>

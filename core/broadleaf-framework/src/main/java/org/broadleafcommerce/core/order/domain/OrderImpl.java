@@ -17,6 +17,27 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.MapKeyClass;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
@@ -33,6 +54,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -67,7 +89,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -77,41 +98,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 @Entity
-@EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
+@EntityListeners(value = {AuditableListener.class, OrderPersistedEntityListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ORDER")
+@Table(name = "BLC_ORDER", indexes = {
+        @Index(name = "ORDER_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "ORDER_STATUS_INDEX", columnList = "ORDER_STATUS"),
+        @Index(name = "ORDER_NUMBER_INDEX", columnList = "ORDER_NUMBER"),
+        @Index(name = "ORDER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "ORDER_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiable, Previewable, OrderAdminPresentation {
@@ -122,7 +126,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @GeneratedValue(generator = "OrderId")
     @GenericGenerator(
         name="OrderId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="OrderImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderImpl")
@@ -138,21 +142,18 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "NAME")
-    @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = GroupName.General,
             order=FieldOrder.NAME)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-    @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     @AdminPresentation(friendlyName = "OrderImpl_Customer", group = GroupName.Customer,
             order=FieldOrder.CUSTOMER)
     @AdminPresentationToOneLookup()
     protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
-    @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = GroupName.General,
             order=FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
@@ -190,7 +191,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
-    @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = GroupName.General,
             order = FieldOrder.ORDERNUMBER,
             prominent = true,
@@ -198,7 +198,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = GroupName.Customer,
             order=FieldOrder.EMAILADDRESS)
     protected String emailAddress;
@@ -755,7 +754,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     
     @Override
     public Boolean getTaxOverride() {
-        return taxOverride == null ? false : taxOverride;
+        return taxOverride != null && taxOverride;
     }
 
     @Override
@@ -840,13 +839,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         Date otherDateCreated = other.auditable != null ? other.auditable.getDateCreated() : null;
         if (myDateCreated == null) {
-            if (otherDateCreated != null) {
-                return false;
-            }
-        } else if (!myDateCreated.equals(otherDateCreated)) {
-            return false;
-        }
-        return true;
+            return otherDateCreated == null;
+        } else
+            return myDateCreated.equals(otherDateCreated);
     }
 
     @Override

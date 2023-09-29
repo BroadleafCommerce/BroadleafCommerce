@@ -18,7 +18,7 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.CreditCardValidator;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
@@ -34,11 +34,9 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.Map;
 
 @Service("blNullIntegrationGatewayTransactionService")

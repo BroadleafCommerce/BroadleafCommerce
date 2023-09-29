@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;

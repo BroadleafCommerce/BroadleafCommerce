@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.controller.catalog;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its

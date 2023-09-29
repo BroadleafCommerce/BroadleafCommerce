@@ -15,14 +15,10 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
-
 
 /**
  * Simple interface for returning a {@link PaymentRequestDTO} based on the current order in the system (like something on

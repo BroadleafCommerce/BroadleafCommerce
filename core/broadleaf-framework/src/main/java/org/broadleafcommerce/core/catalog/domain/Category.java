@@ -24,14 +24,15 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Implementations of this interface are used to hold data about a Category.  A category is a group of products.

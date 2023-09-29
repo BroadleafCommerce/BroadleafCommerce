@@ -18,14 +18,16 @@
 package org.broadleafcommerce.test.common.rule;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.rule.SelectizeCollectionUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,8 @@ import java.util.jar.Manifest;
  */
 public class MvelTestUtils {
 
+    private static final Log LOG = LogFactory.getLog(MvelTestUtils.class);
+    
     public static void exerciseFailure() {
         System.setProperty("mvel2.disable.jit", "true");
         String rule = "CollectionUtils.intersection(level1.level2.getMultiValueSkuAttributes()[\"TEST-VALID\"],[\"TEST-VALID\"]).size()>0";
@@ -49,14 +53,14 @@ public class MvelTestUtils {
         Serializable exp = MVEL.compileExpression(rule, context);
         executeTestCase(exp, "TEST-INVALID");
         boolean response = executeTestCase(exp, "TEST-VALID");
-        if (!response) {
-            //We received the expected, corrupted expression state, so return true to validate the expected test results
-            System.out.print("true");
-        } else {
+        if (response) {
             //We did not receive the expected, corrupted expression state. This can happen sometimes, since the ordering of methods
             //returned from the call to Class#getMethods for SelectizeCollectionUtilsTest is undetermined. Return false
             //since we did not validate the expected test results in this run.
             System.out.print("false");
+        } else {
+            //We received the expected, corrupted expression state, so return true to validate the expected test results
+            System.out.print("true");
         }
     }
 
@@ -68,12 +72,12 @@ public class MvelTestUtils {
         Serializable exp = MVEL.compileExpression(rule, context);
         executeTestCase(exp, "TEST-INVALID");
         boolean response = executeTestCase(exp, "TEST-VALID");
-        if (!response) {
-            //With the workaround, we should never get here
-            System.out.print("false");
-        } else {
+        if (response) {
             //The expression should never be corrupted now that we've removed the overloaded method (this is the workaround)
             System.out.print("true");
+        } else {
+            //With the workaround, we should never get here
+            System.out.print("false");
         }
     }
 
@@ -116,20 +120,44 @@ public class MvelTestUtils {
             Attributes main = manifest.getMainAttributes();
             String mainClass = main.getValue("Main-Class");
             if ("org.apache.maven.surefire.booter.ForkedBooter".equals(mainClass)) {
-                String[] urls = main.getValue("Class-Path").split(" ");
-                for (String url : urls) {
-                    assembleClassPathElement(buffer, new URL(url));
+                URL location = MvelOverloadFailureReproduction.class.getProtectionDomain().getCodeSource().getLocation();
+                String testClasses = location.getPath();
+                if (testClasses.endsWith("/")) {
+                    testClasses = testClasses.substring(0, testClasses.lastIndexOf("/"));
+                }
+                String root = testClasses.substring(0, testClasses.lastIndexOf("/")) + "/classes";
+                String[] paths = main.getValue("Class-Path").split(" ");
+                String maven = ApplicationContext.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                String str = ".m2";
+                int endIndex = maven.indexOf(str);
+                if(endIndex==-1){
+                    str="m";
+                    endIndex = maven.indexOf(str);
+                }
+                maven = maven.substring(0, endIndex);
+                for (String path : paths) {
+                    if (path.indexOf(str) > 0) {
+                        path = path.substring(path.indexOf(str));
+                    }
+                    path = maven + path;
+                    assembleClassPathElement(buffer, path);
                 }
                 classpath = cleanUpClassPathString(buffer);
+                if(!classpath.contains(testClasses)){
+                    classpath=testClasses+System.getProperty("path.separator")+root+System.getProperty("path.separator")+classpath;
+
+                }
+
                 break;
             }
         }
         if (buffer.length() == 0) {
-            for (URL url : ((URLClassLoader) cl).getURLs()) {
-                assembleClassPathElement(buffer, url);
+            for (String path : getAllPaths()) {
+                assembleClassPathElement(buffer, path);
             }
             classpath = cleanUpClassPathString(buffer);
         }
+
         return classpath;
     }
 
@@ -141,11 +169,16 @@ public class MvelTestUtils {
         return classpath;
     }
 
-    private static void assembleClassPathElement(StringBuilder buffer, URL val) {
-        String path = val.getPath();
+    private static void assembleClassPathElement(StringBuilder buffer, String path) {
         path = path.replace("%20", " ");
         path = path.replace("%40", "@");
         buffer.append(path);
         buffer.append(System.getProperty("path.separator"));
     }
+
+    private static String[] getAllPaths() {
+        return System.getProperty("java.class.path")
+                .split(System.getProperty("path.separator"));
+    }
+
 }

@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
@@ -36,8 +36,8 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 
 /**
  * Validates that a rule can be parsed out successfully. Most of this comes from {@link RuleFieldPersistenceProvider}.

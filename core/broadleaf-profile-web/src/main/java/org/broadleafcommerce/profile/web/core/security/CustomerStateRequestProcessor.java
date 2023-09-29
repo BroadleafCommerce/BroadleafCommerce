@@ -20,7 +20,6 @@ package org.broadleafcommerce.profile.web.core.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
@@ -42,7 +41,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 
 /**

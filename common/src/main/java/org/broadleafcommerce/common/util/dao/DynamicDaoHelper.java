@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * Provides utility methods for interacting with dynamic entities
@@ -52,7 +52,6 @@ public interface DynamicDaoHelper {
      * Retrieve the list of property names known to Hibernate for the entity class.
      *
      * @param entityClass
-     * @param entityManager
      * @return
      */
     List<String> getPropertyNames(Class<?> entityClass);
@@ -61,7 +60,6 @@ public interface DynamicDaoHelper {
      * Retrieve the list of property types ({@link Type} known to Hibernate for the entity class.
      *
      * @param entityClass
-     * @param entityManager
      * @return
      */
     List<Type> getPropertyTypes(Class<?> entityClass);

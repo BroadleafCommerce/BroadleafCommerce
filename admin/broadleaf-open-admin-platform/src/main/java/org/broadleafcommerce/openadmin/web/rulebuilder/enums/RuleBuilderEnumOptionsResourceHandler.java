@@ -34,7 +34,7 @@ import java.util.List;
 @Component("blRuleBuilderEnumOptionsResourceHandler")
 public class RuleBuilderEnumOptionsResourceHandler extends AbstractGeneratedResourceHandler {
     
-    @javax.annotation.Resource(name = "blRuleBuilderEnumOptionsExtensionManager")
+    @jakarta.annotation.Resource(name = "blRuleBuilderEnumOptionsExtensionManager")
     protected RuleBuilderEnumOptionsExtensionManager ruleBuilderEnumOptions;
     
     @Override

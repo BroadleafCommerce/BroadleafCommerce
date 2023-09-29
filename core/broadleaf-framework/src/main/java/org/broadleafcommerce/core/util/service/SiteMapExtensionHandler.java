@@ -20,9 +20,9 @@ package org.broadleafcommerce.core.util.service;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 public interface SiteMapExtensionHandler extends ExtensionHandler {
     ExtensionResultStatusType modifyQuery(CriteriaQuery criteriaQuery, CriteriaBuilder builder, Root root);

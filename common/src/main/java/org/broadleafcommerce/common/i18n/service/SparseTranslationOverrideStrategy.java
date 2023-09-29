@@ -36,8 +36,6 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.jpa.QueryHints;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -46,14 +44,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  * A retrieval and caching strategy for translations. Primarily supports multitenant scenarios with the following characteristics:
@@ -296,9 +294,10 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
                     //This should already be in level 1 cache and this should not cause a hit to the database.
                     Map<String, Object> idMetadata = helper.getIdMetadata(entities[entities.length - 1], em);
                     Type idType = (Type) idMetadata.get("type");
-                    if (idType instanceof StringType) {
+                    Class<?> returnedClass = idType.getReturnedClass();
+                    if (returnedClass.isAssignableFrom(String.class)) {
                         testObject = em.find(entities[entities.length - 1], entityId);
-                    } else if (idType instanceof LongType) {
+                    } else if (returnedClass.isAssignableFrom(Long.class)) {
                         testObject = em.find(entities[entities.length - 1], Long.parseLong(entityId));
                     }
                 } catch (ClassNotFoundException e) {

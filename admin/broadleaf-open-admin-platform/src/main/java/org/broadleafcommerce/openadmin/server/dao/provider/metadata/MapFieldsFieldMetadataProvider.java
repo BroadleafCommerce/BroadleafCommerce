@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -35,10 +35,8 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.Over
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
-import org.hibernate.internal.TypeLocatorImpl;
+import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
-import org.hibernate.type.TypeFactory;
-import org.hibernate.type.TypeResolver;
 import org.hibernate.type.spi.TypeConfiguration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -126,20 +124,18 @@ public class MapFieldsFieldMetadataProvider extends DefaultFieldMetadataProvider
         for (Map.Entry<String, FieldMetadata> entry : addMetadataFromFieldTypeRequest.getPresentationAttributes().entrySet()) {
             if (entry.getKey().startsWith(addMetadataFromFieldTypeRequest.getRequestedPropertyName() + FieldManager.MAPFIELDSEPARATOR)) {
                 TypeConfiguration typeConfiguration = new TypeConfiguration();
-                TypeFactory typeFactory = new TypeFactory(typeConfiguration);
-                TypeLocatorImpl typeLocator = new TypeLocatorImpl(new TypeResolver(typeConfiguration, typeFactory));
 
                 Type myType = null;
                 //first, check if an explicit type was declared
                 String valueClass = ((BasicFieldMetadata) entry.getValue()).getMapFieldValueClass();
                 if (valueClass != null) {
-                    myType = typeLocator.entity(valueClass);
+                    myType = new ManyToOneType(typeConfiguration, valueClass);
                 }
                 if (myType == null) {
                     SupportedFieldType fieldType = ((BasicFieldMetadata) entry.getValue()).getExplicitFieldType();
                     Class<?> basicJavaType = getBasicJavaType(fieldType);
                     if (basicJavaType != null) {
-                        myType = typeLocator.basic(basicJavaType);
+                        myType = typeConfiguration.getBasicTypeForJavaType(basicJavaType);
                     }
                 }
                 if (myType == null) {
@@ -149,7 +145,7 @@ public class MapFieldsFieldMetadataProvider extends DefaultFieldMetadataProvider
                         Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
                         Class<?>[] entities = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
                         if (!ArrayUtils.isEmpty(entities)) {
-                            myType = typeLocator.entity(entities[entities.length-1]);
+                            myType = new ManyToOneType(typeConfiguration, entities[entities.length-1].getName());
                         }
                     }
                 }

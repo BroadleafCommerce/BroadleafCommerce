@@ -101,13 +101,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link AdminAbstractController}. This delegates every call to 
@@ -874,7 +874,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
 
     @RequestMapping(
-            value = "/{id}/{collectionField:.*}/{collectionItemId}/{tab:[0-9]+}/{tabName}",
+            value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/{tab:[0-9]+}/{tabName}",
             method = RequestMethod.POST
     )
     public String viewCollectionItemTab(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -890,7 +890,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
 
     @RequestMapping(
-            value = "/{id}/{collectionField:.*}/{collectionItemId}/view/{tab:[0-9]+}/{tabName}",
+            value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/view/{tab:[0-9]+}/{tabName}",
             method = RequestMethod.POST
     )
     public String viewReadOnlyCollectionItemTab(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -917,7 +917,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}", method = RequestMethod.GET)
     public String getCollectionFieldRecords(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -984,7 +984,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value = "id") String id,
@@ -1065,7 +1065,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return MODAL_CONTAINER_VIEW;
     }
 
-    @RequestMapping(value = "/{id}/{collectionField:.*}/add/{collectionItemId}/verify", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/add/{collectionItemId}/verify", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1098,7 +1098,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return Json collection data
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/selectize", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/selectize", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> getSelectizeCollectionOptions(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value = "id") String id,
@@ -1148,7 +1148,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/selectize-add", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/selectize-add", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> addSelectizeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1207,7 +1207,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/add", method = RequestMethod.POST)
     public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1253,7 +1253,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "views/standaloneListGrid";
     }
 
-    @RequestMapping(value = "/{id}/{collectionField:.*}/addEmpty", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/addEmpty", method = RequestMethod.POST)
     public @ResponseBody String addEmptyCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1429,7 +1429,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/{alternateId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1440,7 +1440,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 ModalHeaderType.UPDATE_COLLECTION_ITEM.getType());
     }
 
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1463,7 +1463,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/{alternateId}/view", method = RequestMethod.GET)
     public String showViewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1482,7 +1482,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return returnPath;
     }
 
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/view", method = RequestMethod.GET)
     public String showViewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1755,7 +1755,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}", method = RequestMethod.POST)
     public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1782,7 +1782,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/{alternateId}", method = RequestMethod.POST)
     public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1820,7 +1820,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "views/standaloneListGrid";
     }
 
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/sequence", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/sequence", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> updateCollectionItemSequence(HttpServletRequest request,
             HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
@@ -1845,7 +1845,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return an object explaining the state of the operation
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}/sequence", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/{alternateId}/sequence", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> updateCollectionItemSequence(HttpServletRequest request,
             HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
@@ -1946,7 +1946,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/delete", method = RequestMethod.POST)
     public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
@@ -1971,7 +1971,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/{alternateId}/delete", method = RequestMethod.POST)
     public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,

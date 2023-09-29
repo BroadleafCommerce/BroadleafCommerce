@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.web;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Responsible for returning the Locale to use for the current request.

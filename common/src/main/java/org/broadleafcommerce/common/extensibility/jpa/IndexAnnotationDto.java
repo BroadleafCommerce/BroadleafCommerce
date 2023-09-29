@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
@@ -10,24 +10,33 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.pricing.service;
+package org.broadleafcommerce.common.extensibility.jpa;
 
-import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+public class IndexAnnotationDto {
+    private final String indexName;
+    private final String indexColumnList;
+    private final Boolean indexUnique;
 
-/**
- * @deprecated Should use the {@link FulfillmentOption} paradigm, implemented in {@link FulfillmentPricingService}
- * @see {@link FulfillmentPricingService}, {@link FulfillmentOption}
- */
-@Deprecated
-public interface ShippingService {
-    
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException;
-    
+    public IndexAnnotationDto(String indexName, String indexColumnList, Boolean indexUnique) {
+        this.indexName = indexName;
+        this.indexColumnList = indexColumnList;
+        this.indexUnique = indexUnique;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public String getIndexColumnList() {
+        return indexColumnList;
+    }
+
+    public Boolean getIndexUnique() {
+        return indexUnique;
+    }
 }
+

@@ -38,9 +38,6 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
@@ -49,24 +46,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_DISCRETE_ORDER_ITEM")
+@Table(name = "BLC_DISCRETE_ORDER_ITEM", indexes = {
+        @Index(name = "DISCRETE_SKU_INDEX", columnList = "SKU_ID"),
+        @Index(name = "DISCRETE_PRODUCT_INDEX", columnList = "PRODUCT_ID")})
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemImpl_discreteOrderItem")
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
@@ -82,28 +82,26 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(targetEntity = SkuImpl.class, fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
-    @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = ProductImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
             group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
     protected Product product;
 
-    @ManyToOne(targetEntity = BundleOrderItemImpl.class)
+    @ManyToOne(targetEntity = BundleOrderItemImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected BundleOrderItem bundleOrderItem;
 
-    @ManyToOne(targetEntity = SkuBundleItemImpl.class)
+    @ManyToOne(targetEntity = SkuBundleItemImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;
@@ -445,13 +443,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             return false;
         }
         if (sku == null) {
-            if (other.sku != null) {
-                return false;
-            }
-        } else if (!sku.equals(other.sku)) {
-            return false;
-        }
-        return true;
+            return other.sku == null;
+        } else
+            return sku.equals(other.sku);
     }
 
     @Override

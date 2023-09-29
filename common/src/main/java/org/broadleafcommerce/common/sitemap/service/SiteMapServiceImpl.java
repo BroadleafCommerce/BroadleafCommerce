@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Component responsible for generating a sitemap.   Relies on SiteMapGenerators to 

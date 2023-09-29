@@ -22,14 +22,14 @@
                  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_MODULE_CONFIG_BY_TYPE" >
-        <query>SELECT config FROM org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+        <query>SELECT config FROM org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration config
                WHERE config.configType = :configType 
                ORDER BY config.priority ASC
         </query>
     </named-query>
     
     <named-query name="BC_READ_ACTIVE_MODULE_CONFIG_BY_TYPE" >
-        <query>SELECT config FROM org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+        <query>SELECT config FROM org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration config
                WHERE config.configType = :configType 
                AND (config.archiveStatus.archived IS NULL OR config.archiveStatus.archived = 'N')
                AND (config.activeStartDate IS NOT NULL AND config.activeStartDate &lt; :currentDate)
@@ -39,7 +39,7 @@
     </named-query>
     
     <named-query name="BC_BATCH_UPDATE_MODULE_CONFIG_DEFAULT" >
-        <query>UPDATE org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+        <query>UPDATE org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration config
                SET config.isDefault = false
                WHERE config.configType = :configType
         </query>

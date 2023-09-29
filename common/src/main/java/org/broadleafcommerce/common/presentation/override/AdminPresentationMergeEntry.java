@@ -19,8 +19,8 @@ package org.broadleafcommerce.common.presentation.override;
 
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.FieldValueConfiguration;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 

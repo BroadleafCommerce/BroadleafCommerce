@@ -33,8 +33,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * <p>
@@ -49,16 +49,16 @@ import javax.servlet.http.HttpSession;
 @Service("blBroadleafContextUtil")
 public class BroadleafContextUtil {
     
-    @javax.annotation.Resource(name = "blSiteResolver")
+    @jakarta.annotation.Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
     
-    @javax.annotation.Resource(name = "blSandBoxResolver")
+    @jakarta.annotation.Resource(name = "blSandBoxResolver")
     protected BroadleafSandBoxResolver sbResolver;
     
-    @javax.annotation.Resource(name = "blThemeResolver")
+    @jakarta.annotation.Resource(name = "blThemeResolver")
     protected BroadleafThemeResolver themeResolver;
 
-    @javax.annotation.Resource(name = "blDeployBehaviorUtil")
+    @jakarta.annotation.Resource(name = "blDeployBehaviorUtil")
     protected DeployBehaviorUtil deployBehaviorUtil;
 
     protected boolean versioningEnabled = false;
@@ -69,6 +69,10 @@ public class BroadleafContextUtil {
      */
     public void establishThinRequestContext() {
         establishThinRequestContextInternal(true, true);
+    }
+
+    public void establishThinRequestContext(boolean forceCreate) {
+        establishThinRequestContextInternal(true, true, forceCreate);
     }
 
     /**
@@ -97,8 +101,15 @@ public class BroadleafContextUtil {
      * @param includeSandBox
      */
     protected void establishThinRequestContextInternal(boolean includeTheme, boolean includeSandBox) {
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        establishThinRequestContextInternal(includeTheme, includeSandBox, false);
+    }
 
+    protected void establishThinRequestContextInternal(boolean includeTheme, boolean includeSandBox, boolean forceCreate) {
+        if(forceCreate) {
+            //remove old
+            BroadleafRequestContext.setBroadleafRequestContext(null);
+        }
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getRequest() == null) {
             ServletRequestAttributes requestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
             if (requestAttributes != null) {

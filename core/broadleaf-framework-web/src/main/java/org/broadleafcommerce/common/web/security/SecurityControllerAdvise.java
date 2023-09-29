@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2023 Broadleaf Commerce
  * %%
@@ -15,23 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.dialect;
+package org.broadleafcommerce.common.web.security;
 
-import org.hibernate.dialect.MySQL5InnoDBDialect;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
-/**
- * Intended to allow installations migrating from BLC version 2.0 to not be forced to make a schema
- * change for boolean fields when migrating to BLC version 3.0, and above.
- *
- * @deprecated use org.hibernate.dialect.MySQL5InnoDBDialect instead
- * @author Jeff Fischer
- */
-@Deprecated
-public class Broadleaf2CompatibilityMySQL5InnoDBDialect extends MySQL5InnoDBDialect {
+import jakarta.servlet.http.HttpSession;
 
-    public Broadleaf2CompatibilityMySQL5InnoDBDialect() {
-        super();
-        registerColumnType( java.sql.Types.BOOLEAN, "bit" );
+@ControllerAdvice("blSecurityControllerAdvise")
+public class SecurityControllerAdvise {
+
+    @ModelAttribute("session")
+    HttpSession session() {
+        BroadleafRequestContext context =  BroadleafRequestContext.getBroadleafRequestContext();
+        return context.getRequest() != null ? context.getRequest().getSession() : null;
     }
 
 }

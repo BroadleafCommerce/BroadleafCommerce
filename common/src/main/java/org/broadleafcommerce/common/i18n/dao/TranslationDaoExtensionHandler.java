@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 
 /**

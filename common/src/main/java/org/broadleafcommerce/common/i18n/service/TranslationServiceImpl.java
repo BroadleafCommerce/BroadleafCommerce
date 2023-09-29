@@ -43,9 +43,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+
+import jakarta.annotation.Resource;
 
 @Service("blTranslationService")
 public class TranslationServiceImpl implements TranslationService, TranslationSupport {
@@ -230,6 +231,11 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
      * @return Whether translations should be gathered for the provided locale.
      */
     protected boolean shouldTranslateLocale(String localeCode) {
+        org.broadleafcommerce.common.locale.domain.Locale localeBrc = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+        if (localeBrc != null && localeBrc.getLocaleCode().equals(localeCode)) {
+            return !localeBrc.getDefaultFlag();
+        }
+
         org.broadleafcommerce.common.locale.domain.Locale locale = localeService.findLocaleByCode(localeCode);
 
         if (locale == null) {

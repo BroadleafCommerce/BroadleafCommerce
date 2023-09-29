@@ -27,10 +27,11 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import jakarta.annotation.PostConstruct;
 
 @Component("blEntityConfiguration")
 public class EntityConfiguration implements ApplicationContextAware {
@@ -42,7 +43,7 @@ public class EntityConfiguration implements ApplicationContextAware {
     private ApplicationContext applicationcontext;
     private Resource[] entityContexts;
 
-    @javax.annotation.Resource(name="blMergedEntityContexts")
+    @jakarta.annotation.Resource(name="blMergedEntityContexts")
     protected Set<String> mergedEntityContexts;
 
     @Override

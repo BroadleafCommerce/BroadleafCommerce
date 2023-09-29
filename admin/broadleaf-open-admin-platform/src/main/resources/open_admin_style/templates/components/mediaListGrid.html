@@ -3,7 +3,7 @@
 </comment>
 
 <th:block th:if="${!#strings.isEmpty(listGrid.templateOverride)}">
-    <th:block th:include="${listGrid.templateOverride}" th:with="listGrid=${listGrid}"></th:block>
+    <th:block th:insert="~{${listGrid.templateOverride}}" th:with="listGrid=${listGrid}"></th:block>
 </th:block>
 
 <th:block th:unless="${!#strings.isEmpty(listGrid.templateOverride)}">
@@ -47,7 +47,7 @@
 
                             <input type="hidden" class="listgrid-criteria" th:attr="data-name=${headerField.name}" />
 
-                            <ul th:include="components/partials/listGridHeaderFilter"
+                            <ul th:insert="~{components/partials/listGridHeaderFilter}"
                                 class="no-hover"
                                 th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
                                 th:with="fieldType=${headerField.fieldType},
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
 
-                            <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                            <ul th:insert="~{${'components/partials/listGridHeaderFilter'}}"
                                 class="no-hover end"
                                 th:with="fieldType=${'id'},
                                          fieldName=${listGrid.idProperty},
@@ -126,7 +126,7 @@
                         th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
                         th:class="${field.isDerived ? 'derived' : ''}">
 
-                        <span th:replace="components/partials/listGridIcon"></span>
+                        <span th:replace="~{components/partials/listGridIcon}"></span>
 
                         <th:block th:if="${action}">
                             <a href="#" th:if="${headerField.name == 'media.title'}"

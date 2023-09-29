@@ -17,6 +17,20 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -24,6 +38,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -35,7 +50,6 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.lang.reflect.Method;
@@ -43,31 +57,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULFILLMENT_GROUP_ITEM")
+@Table(name = "BLC_FULFILLMENT_GROUP_ITEM", indexes = {
+        @Index(name = "FGITEM_FG_INDEX", columnList = "FULFILLMENT_GROUP_ID"),
+        @Index(name = "FGITEM_STATUS_INDEX", columnList = "STATUS")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(FulfillmentGroupItemImpl.class);
@@ -77,7 +77,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @GeneratedValue(generator = "FulfillmentGroupItemId")
     @GenericGenerator(
         name="FulfillmentGroupItemId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="FulfillmentGroupItemImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl")
@@ -88,7 +88,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    @Index(name="FGITEM_FG_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;
 
     //this needs to stay OrderItem in order to provide backwards compatibility for those implementations that place a BundleOrderItem
@@ -103,7 +102,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     protected int quantity;
 
     @Column(name = "STATUS")
-    @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Status", prominent = true, order = 3000, gridOrder = 3000)
     private String status;
     
@@ -263,7 +261,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     }
 
     public void checkCloneable(FulfillmentGroupItem fulfillmentGroupItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = fulfillmentGroupItem.getClass().getMethod("clone", new Class[]{});
+        Method cloneMethod = fulfillmentGroupItem.getClass().getMethod("clone");
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
@@ -351,13 +349,9 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
 
         if (orderItem == null) {
-            if (other.orderItem != null) {
-                return false;
-            }
-        } else if (!orderItem.equals(other.orderItem)) {
-            return false;
-        }
-        return true;
+            return other.orderItem == null;
+        } else
+            return orderItem.equals(other.orderItem);
     }
 
     @Override

@@ -17,6 +17,18 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import com.google.common.base.Strings;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -26,6 +38,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -44,23 +57,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Where;
 
-import com.google.common.base.Strings;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 
 @Entity
@@ -98,7 +97,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     @GeneratedValue(generator = "SearchFacetId")
     @GenericGenerator(
         name="SearchFacetId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="SearchFacetImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFacetImpl")
@@ -286,7 +285,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
 
     @Override
     public Boolean getRequiresAllDependentFacets() {
-        return requiresAllDependentFacets == null ? false : requiresAllDependentFacets;
+        return requiresAllDependentFacets != null && requiresAllDependentFacets;
     }
 
     @Override

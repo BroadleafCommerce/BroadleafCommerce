@@ -25,29 +25,32 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_MEDIA")
+@Table(name = "BLC_MEDIA", indexes = {
+        @Index(name = "MEDIA_URL_INDEX", columnList = "URL"),
+        @Index(name = "MEDIA_TITLE_INDEX", columnList = "TITLE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blMediaElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
@@ -58,7 +61,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     @GeneratedValue(generator= "MediaId")
     @GenericGenerator(
         name="MediaId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="MediaImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.media.domain.MediaImpl")
@@ -68,13 +71,11 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     protected Long id;
 
     @Column(name = "URL", nullable = false)
-    @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Url", order = 1, gridOrder = 4, prominent = true,
             fieldType = SupportedFieldType.ASSET_LOOKUP)
     protected String url;
     
     @Column(name = "TITLE")
-    @Index(name="MEDIA_TITLE_INDEX", columnNames={"TITLE"})
     @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order = 2, gridOrder = 2, prominent = true, translatable = true)
     protected String title;
     
@@ -195,11 +196,9 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
         } else if (!tags.equals(other.tags))
             return false;
         if (url == null) {
-            if (other.url != null)
-                return false;
-        } else if (!url.equals(other.url))
-            return false;
-        return true;
+            return other.url == null;
+        } else
+            return url.equals(other.url);
     }
 
     @Override

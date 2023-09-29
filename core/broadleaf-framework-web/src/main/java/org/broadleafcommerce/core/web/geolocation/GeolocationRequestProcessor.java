@@ -31,7 +31,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Component("blGeolocationRequestProcessor")
 public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProcessor {

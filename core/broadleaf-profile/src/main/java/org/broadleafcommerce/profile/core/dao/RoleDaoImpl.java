@@ -20,14 +20,15 @@ package org.broadleafcommerce.profile.core.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.Role;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 @Repository("blRoleDao")
 public class RoleDaoImpl implements RoleDao {
@@ -42,12 +43,14 @@ public class RoleDaoImpl implements RoleDao {
     public List<CustomerRole> readCustomerRolesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_ROLES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
     
     public Role readRoleByName(String name) {
         Query query = em.createNamedQuery("BC_READ_ROLE_BY_NAME");
         query.setParameter("name", name);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return (Role) query.getSingleResult();
     }
 

@@ -33,12 +33,12 @@ import org.broadleafcommerce.openadmin.web.service.FormBuilderServiceImpl;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  * <p>
@@ -88,13 +88,12 @@ public interface RowLevelSecurityProvider {
      * <b>sorts</b>
      * @param criteriaBuilder used to create additional {@link Predicate}s or {@link Order}s to add to <b>restrictions</b>
      * and/or <b>sorts</b>
-     * @see {@link #getFetchRestrictionRoot(Class, List)}
-     * @see {@link CriteriaTranslatorImpl#addRestrictions}
+     * @see {@link #getFetchRestrictionRoot(AdminUser, Class, List)}
+     * @see {@link CriteriaTranslatorImpl#addRestrictions(String, List, CriteriaBuilder, Root, List, List, CriteriaQuery)}
      */
-    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
-            Root entityRoot,
-            CriteriaQuery criteria,
-            CriteriaBuilder criteriaBuilder);
+    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions,
+                                     List<Order> sorts, Root entityRoot, CriteriaQuery criteria,
+                                     CriteriaBuilder criteriaBuilder);
     
     /**
      * <p>

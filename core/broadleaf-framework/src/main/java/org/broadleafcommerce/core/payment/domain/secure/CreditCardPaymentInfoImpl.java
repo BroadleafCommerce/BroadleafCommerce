@@ -18,19 +18,20 @@
 package org.broadleafcommerce.core.payment.domain.secure;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * 
@@ -39,7 +40,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CREDIT_CARD_PAYMENT")
+@Table(name = "BLC_CREDIT_CARD_PAYMENT", indexes = {@Index(name = "CREDITCARD_INDEX", columnList = "REFERENCE_NUMBER")})
 public class CreditCardPaymentInfoImpl implements CreditCardPayment {
 
     private static final long serialVersionUID = 1L;
@@ -60,7 +61,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
     @GeneratedValue(generator = "CreditCardPaymentId")
     @GenericGenerator(
             name="CreditCardPaymentId",
-            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            type= IdOverrideTableGenerator.class,
             parameters = {
                 @Parameter(name="segment_value", value="CreditCardPaymentInfoImpl"),
                 @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl")
@@ -70,7 +71,6 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER", nullable=false)
-    @Index(name="CREDITCARD_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @Column(name = "PAN", nullable=false)
@@ -245,11 +245,9 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
         } else if (!pan.equals(other.pan))
             return false;
         if (referenceNumber == null) {
-            if (other.referenceNumber != null)
-                return false;
-        } else if (!referenceNumber.equals(other.referenceNumber))
-            return false;
-        return true;
+            return other.referenceNumber == null;
+        } else
+            return referenceNumber.equals(other.referenceNumber);
     }
 
 }

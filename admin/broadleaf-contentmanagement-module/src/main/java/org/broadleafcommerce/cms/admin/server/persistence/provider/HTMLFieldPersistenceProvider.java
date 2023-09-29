@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author bpolster

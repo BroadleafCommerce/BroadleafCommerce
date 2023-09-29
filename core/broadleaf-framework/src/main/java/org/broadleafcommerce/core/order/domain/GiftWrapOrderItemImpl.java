@@ -27,13 +27,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -76,7 +76,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         }
         GiftWrapOrderItem cloned = (GiftWrapOrderItem)createResponse.getClone();
         for(OrderItem entry : wrappedItems){
-            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setGiftWrapOrderItem(cloned);
             cloned.getWrappedItems().add(clonedEntry);
         }
@@ -112,10 +112,8 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         }
 
         if (wrappedItems == null) {
-            if (other.wrappedItems != null)
-                return false;
-        } else if (!wrappedItems.equals(other.wrappedItems))
-            return false;
-        return true;
+            return other.wrappedItems == null;
+        } else
+            return wrappedItems.equals(other.wrappedItems);
     }
 }

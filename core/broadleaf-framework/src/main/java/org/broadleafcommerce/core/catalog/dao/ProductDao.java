@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * {@code ProductDao} provides persistence access to {@code Product} instances

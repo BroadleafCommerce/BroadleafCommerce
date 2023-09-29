@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
-import org.broadleafcommerce.common.i18n.domain.ISOCountry;
-import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
@@ -54,11 +52,12 @@ import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import jakarta.annotation.Resource;
 
 public class OfferServiceTest extends CommonSetupBaseTest {
 
@@ -201,8 +200,8 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         return order;
     }
 
-    @Test(groups =  {"testOffersWithGiftWrap"}, dependsOnGroups = { "testShippingInsert"})
-    @Transactional
+    @Test(groups =  {"testOffersWithGiftWrap"})
+    @Transactional(value = "blTransactionManager")
     public void testOrderItemOfferWithGiftWrap() throws PricingException {
         Order order = createTestOrderWithOfferAndGiftWrap();
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();

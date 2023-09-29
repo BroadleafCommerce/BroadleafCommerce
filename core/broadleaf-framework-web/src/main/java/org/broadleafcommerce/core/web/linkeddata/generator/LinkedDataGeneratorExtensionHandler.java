@@ -24,7 +24,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Extension handler for extending functionality of {@link org.broadleafcommerce.core.web.linkeddata.generator.LinkedDataGenerator}.

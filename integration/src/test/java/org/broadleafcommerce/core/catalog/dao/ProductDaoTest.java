@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class ProductDaoTest extends TestNGSiteIntegrationSetup {
 
@@ -44,23 +44,23 @@ public class ProductDaoTest extends TestNGSiteIntegrationSetup {
     private List<Product> savedProducts = new ArrayList<>();
 
     private static RelatedProduct getRelatedUpSaleProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
-        RelatedProduct rp1 = new UpSaleProductImpl();
-        rp1.setProduct(prod);
-        rp1.setPromotionMessage("brand new coffee");
-        rp1.setRelatedProduct(prodToRelate);
+        RelatedProduct upSaleProduct = new UpSaleProductImpl();
+        upSaleProduct.setProduct(prod);
+        upSaleProduct.setPromotionMessage("brand new coffee");
+        upSaleProduct.setRelatedProduct(prodToRelate);
 
-        upSales.add(rp1);
-        return rp1;
+        upSales.add(upSaleProduct);
+        return upSaleProduct;
     }
 
-    private static RelatedProduct getRelatedCrossProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
-        RelatedProduct rp1 = new CrossSaleProductImpl();
-        rp1.setProduct(prod);
-        rp1.setPromotionMessage("brand new coffee");
-        rp1.setRelatedProduct(prodToRelate);
+    private static RelatedProduct getRelatedCrossProduct(Product prod, Product prodToRelate, List<RelatedProduct> crossSales){
+        RelatedProduct crossSaleProduct = new CrossSaleProductImpl();
+        crossSaleProduct.setProduct(prod);
+        crossSaleProduct.setPromotionMessage("brand new coffee");
+        crossSaleProduct.setRelatedProduct(prodToRelate);
 
-        upSales.add(rp1);
-        return rp1;
+        crossSales.add(crossSaleProduct);
+        return crossSaleProduct;
     }
 
     @Test(groups="createProducts", dataProvider="setupProducts", dataProviderClass=ProductDataProvider.class)

@@ -20,9 +20,9 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
@@ -105,6 +105,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -125,14 +126,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 import static org.broadleafcommerce.common.presentation.client.SupportedFieldType.BROADLEAF_ENUMERATION;
 
@@ -426,7 +427,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         fieldManager.setFieldValue(instance, property.getName(), null);
                                     }
                                 }
-                            } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
+                            } catch (ParentEntityPersistenceException | jakarta.validation.ValidationException e) {
                                 entityPersistenceException = e;
                                 cleanupFailedPersistenceAttempt(instance);
                                 break;
@@ -1416,8 +1417,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public Serializable getMaxValue(String ceilingEntity, List<FilterMapping> filterMappings, String maxField) {
-        return criteriaTranslator.translateMaxQuery(persistenceManager.getDynamicEntityDao(),
-                ceilingEntity, filterMappings, maxField).getSingleResult();
+        return criteriaTranslator.translateMaxQuery(
+                persistenceManager.getDynamicEntityDao(),
+                ceilingEntity,
+                filterMappings,
+                maxField
+        ).getSingleResult();
     }
 
     @Override
@@ -1629,7 +1634,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property) {
         Class<?> returnType = null;
         Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR)));
-        java.lang.reflect.Type type = field.getGenericType();
+        Type type = field.getGenericType();
         if (type instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) type;
             Class<?> clazz;

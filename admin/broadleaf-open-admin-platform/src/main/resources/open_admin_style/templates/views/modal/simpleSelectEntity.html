@@ -1,13 +1,13 @@
 <th:block th:if="${treeListGrid}">
-    <th:block th:include="components/treeListGrid" th:object="${treeListGrid}"></th:block>
-    <th:block th:include="components/listGridModalActions"
+    <th:block th:insert="~{components/treeListGrid}" th:object="${treeListGrid}"></th:block>
+    <th:block th:insert="~{components/listGridModalActions}"
          th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
          th:if="${iterStat.index == 0}"
          th:with="listGrid=${column.listGrid}"></th:block>
 </th:block>
 <th:block th:unless="${treeListGrid}">
     <th:block th:if="${isAssetGrid != null and isAssetGrid}">
-        <th:block th:include="views/assetGridWithUploadForm"></th:block>
+        <th:block th:insert="~{views/assetGridWithUploadForm}"></th:block>
     </th:block>
     <th:block th:unless="${isAssetGrid != null and isAssetGrid}">
         <div class="fieldset-card field-group listgrid-container single-listgrid"
@@ -19,12 +19,12 @@
                     <span class="listgrid-total-records" th:if="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.record} + ')'"></span>
                     <span class="listgrid-total-records" th:unless="${listGrid.totalRecords} == 1" th:text="'(' + ${listGrid.totalRecords} + #{listgrid.header.records} + ')'"></span>
                 </div>
-                <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
+                <th:block th:insert="~{components/listGridToolbar}" th:with="listGrid=${listGrid}"></th:block>
             </div>
             <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-                <th:block th:include="components/listGrid" th:object="${listGrid}"></th:block>
+                <th:block th:insert="~{components/listGrid}" th:object="${listGrid}"></th:block>
             </div>
         </div>
-        <th:block th:include="components/listGridModalActions" th:object="${listGrid}"></th:block>
+        <th:block th:insert="~{components/listGridModalActions}" th:object="${listGrid}"></th:block>
     </th:block>
 </th:block>

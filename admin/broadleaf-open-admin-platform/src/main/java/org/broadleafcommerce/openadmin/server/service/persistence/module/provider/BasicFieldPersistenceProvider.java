@@ -19,7 +19,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -68,7 +68,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -360,7 +360,13 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (origDispVal != null) {
                         prop.setOriginalDisplayValue(String.valueOf(origDispVal));
                         Session session = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
-                        String originalValueFromSession = String.valueOf(session.getIdentifier(origInstanceValue));
+                        String originalValueFromSession;
+                        if (session.contains(origInstanceValue)) {
+                            originalValueFromSession = String.valueOf(session.getIdentifier(origInstanceValue));
+                        } else {
+                            //can be that instance was constructed by spring and not fetched from the DB
+                            originalValueFromSession = String.valueOf(session.getIdentifier(session.getReference(origInstanceValue)));
+                        }
                         prop.setOriginalValue(originalValueFromSession);
                     }
 

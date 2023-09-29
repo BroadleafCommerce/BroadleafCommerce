@@ -3,7 +3,7 @@
 </comment>
 
 <th:block th:if="${!#strings.isEmpty(listGrid.templateOverride)}">
-    <th:block th:include="${listGrid.templateOverride}" th:with="listGrid=${listGrid}"></th:block>
+    <th:block th:insert="~{${listGrid.templateOverride}}" th:with="listGrid=${listGrid}"></th:block>
 </th:block>
 
 <th:block th:unless="${!#strings.isEmpty(listGrid.templateOverride)}">
@@ -53,7 +53,7 @@
 
                             <input type="hidden" class="listgrid-criteria" th:attr="data-name=${headerField.name}" />
 
-                            <ul th:include="components/partials/listGridHeaderFilter"
+                            <ul th:insert="~{components/partials/listGridHeaderFilter}"
                                 class="no-hover"
                                 th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
                                 th:with="fieldType=${headerField.fieldType},
@@ -80,7 +80,7 @@
                                 </div>
                             </div>
 
-                            <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                            <ul th:insert="~{${'components/partials/listGridHeaderFilter'}}"
                                 class="no-hover end"
                                 th:with="fieldType=${'id'},
                                          fieldName=${listGrid.idProperty},
@@ -137,7 +137,7 @@
                         th:class="${field.isDerived ? 'derived' : ''}"
                         th:style="${headerField.contentOverflowAllowed?'overflow: visible;':''}">
                         <th:block th:case="'main'">
-                            <span th:replace="components/partials/listGridIcon"></span>
+                            <span th:replace="~{components/partials/listGridIcon}"></span>
 
                             <a class="list-grid-primary-field"
                                th:if="${headerField.mainEntityLink}"
@@ -155,7 +155,7 @@
                                          th:attr="data-fullurl=@{${field.value}}" />
                                 </th:block>
                                 <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
-                                    <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
+                                    <div th:replace="~{${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}}"></div>
                                 </th:block>
                             </span>
 
@@ -165,7 +165,7 @@
                                           th:style="${'background-color: ' + field.value + ';'}"></span>
                                 </th:block>
                                 <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
-                                     <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
+                                     <div th:replace="~{${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}}"></div>
                                 </th:block>
                             </span>
 
@@ -178,12 +178,12 @@
                                   th:utext="${field.displayValue}">
                                 </th:block>
                                 <th:block th:unless="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
-                                    <div th:replace="${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}"></div>
+                                    <div th:replace="~{${'fields/' + #strings.toLowerCase(field.gridFieldComponentRenderer)}}"></div>
                                 </th:block>
                             </th:block>
                         </th:block>
                         <th:block th:case="'asset_grid'">
-                            <span th:replace="components/partials/listGridIcon"></span>
+                            <span th:replace="~{components/partials/listGridIcon}"></span>
 
                             <a th:if="${headerField.mainEntityLink}"
                                th:href="@{${'/assets/' + record.id}}"
@@ -208,7 +208,7 @@
                                 <i class="fa fa-arrows-v fa-lg"></i>
                             </a>
 
-                            <span th:replace="components/partials/listGridIcon"></span>
+                            <span th:replace="~{components/partials/listGridIcon}"></span>
 
                             <span class="column-text">
                                 <th:block th:if="${headerField.canLinkToExternalEntity}">

@@ -18,6 +18,7 @@
 package org.broadleafcommerce.profile.core.event;
 
 import org.broadleafcommerce.common.event.BroadleafApplicationEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 

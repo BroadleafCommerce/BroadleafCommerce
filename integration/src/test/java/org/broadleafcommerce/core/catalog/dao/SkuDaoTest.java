@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class SkuDaoTest extends TestNGSiteIntegrationSetup {
 

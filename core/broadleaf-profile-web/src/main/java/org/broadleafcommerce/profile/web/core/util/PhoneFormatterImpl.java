@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.profile.web.core.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.stereotype.Service;
 

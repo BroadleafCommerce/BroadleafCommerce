@@ -18,7 +18,7 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -36,7 +36,7 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.jpa.AvailableSettings;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,18 +51,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.persistence.CacheRetrieveMode;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.annotation.Resource;
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -100,16 +100,15 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderByIdIgnoreCache(final Long orderId) {
         Map<String, Object> m = new HashMap<>();
-        m.put(AvailableSettings.SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
+        m.put(AvailableSettings.JAKARTA_SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
         return em.find(OrderImpl.class, orderId, m);
     }
 
     @Override
     public Order readOrderByExternalId(String orderExternalId) {
-        TypedQuery<Order> query = new TypedQueryBuilder<Order>(Order.class, "ord")
+        TypedQuery<Order> query = new TypedQueryBuilder<>(OrderImpl.class, "ord", Order.class)
                 .addRestriction("ord.embeddedOmsOrder.externalId", "=", orderExternalId)
                 .toQuery(em);
-
         try {
             return query.getSingleResult();
             //potentially we can get exception because externalId field is added in oms module that is not mandatory to have

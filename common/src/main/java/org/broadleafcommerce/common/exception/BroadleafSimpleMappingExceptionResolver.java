@@ -26,8 +26,8 @@ import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This exception resolver can be used to handle exceptions in a user friendly way by displaying an error template.  

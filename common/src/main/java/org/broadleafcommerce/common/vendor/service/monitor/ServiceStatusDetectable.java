@@ -19,8 +19,6 @@ package org.broadleafcommerce.common.vendor.service.monitor;
 
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 
-import java.io.Serializable;
-
 public interface ServiceStatusDetectable<T> {
 
     public ServiceStatusType getServiceStatus();

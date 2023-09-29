@@ -17,27 +17,29 @@
  */
 package org.broadleafcommerce.common.email.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 /**
  * @author jfischer
  *
  */
 @Entity
-@Table(name = "BLC_EMAIL_TRACKING")
+@Table(name = "BLC_EMAIL_TRACKING", indexes = {
+        @Index(name = "EMAILTRACKING_INDEX", columnList = "EMAIL_ADDRESS"),
+        @Index(name = "DATESENT_INDEX", columnList = "DATE_SENT")})
 public class EmailTrackingImpl implements EmailTracking {
 
     /** The Constant serialVersionUID. */
@@ -47,7 +49,7 @@ public class EmailTrackingImpl implements EmailTracking {
     @GeneratedValue(generator = "EmailTrackingId")
     @GenericGenerator(
         name="EmailTrackingId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        type= IdOverrideTableGenerator.class,
         parameters = {
             @Parameter(name="segment_value", value="EmailTrackingImpl"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingImpl")
@@ -57,11 +59,9 @@ public class EmailTrackingImpl implements EmailTracking {
     protected Long id;
 
     @Column(name = "EMAIL_ADDRESS")
-    @Index(name="EMAILTRACKING_INDEX", columnNames={"EMAIL_ADDRESS"})
     protected String emailAddress;
 
     @Column(name = "DATE_SENT")
-    @Index(name="DATESENT_INDEX", columnNames = { "DATE_SENT" })
     protected Date dateSent;
 
     @Column(name = "TYPE")
@@ -211,11 +211,9 @@ public class EmailTrackingImpl implements EmailTracking {
         } else if (!emailTrackingOpens.equals(other.emailTrackingOpens))
             return false;
         if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        return true;
+            return other.type == null;
+        } else
+            return type.equals(other.type);
     }
 
 }

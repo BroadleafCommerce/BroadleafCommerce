@@ -59,7 +59,7 @@
                          th:inline="text">
 
                         <th:block th:if="${tab.customTemplate != null}">
-                            <div th:replace="${tab.customTemplate}"></div>
+                            <div th:replace="~{${tab.customTemplate}}"></div>
                         </th:block>
                         <th:block th:unless="${tab.customTemplate != null}">
                             <div th:class="${inModal != null and inModal? 'col12' : tab.isMultiColumn != null and tab.isMultiColumn? 'col8' : tab.wantsFullScreen? 'col12' : 'col10'}">
@@ -67,21 +67,21 @@
 
                                     <th:block th:each="group, groupStat : ${tab.fieldGroups}" th:if="${group.column} == 0 or ${group.column} == null">
                                         <th:block th:if="${group.customTemplate == null}">
-                                            <div th:replace="components/partials/entityFormGroups"></div>
+                                            <div th:replace="~{components/partials/entityFormGroups}"></div>
                                         </th:block>
                                         <th:block th:unless="${group.customTemplate == null}">
-                                            <div th:replace="${group.customTemplate}"></div>
+                                            <div th:replace="~{${group.customTemplate}}"></div>
                                         </th:block>
                                     </th:block>
 
                                     <th:block th:if="${dynamicFormTemplateOverride == null}">
                                         <th:block th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
-                                            <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}"></div>
+                                            <div th:insert="~{components/dynamicForm}" th:with="dynamicPropertyName=${dynamicForm.key}"></div>
                                         </th:block>
                                     </th:block>
 
                                     <th:block th:unless="${dynamicFormTemplateOverride == null}">
-                                        <div th:replace="${dynamicFormTemplateOverride}"></div>
+                                        <div th:replace="~{${dynamicFormTemplateOverride}}"></div>
                                     </th:block>
 
                                     <th:block th:each="listGrid : ${tab.listGrids}"
@@ -99,11 +99,11 @@
                                                         <span class="listgrid-total-records" th:text="#{listgrid.manualFetch}"></span>
                                                     </th:block>
                                                 </div>
-                                                <th:block th:include="components/listGridToolbar" th:with="listGrid=${listGrid}"></th:block>
+                                                <th:block th:insert="~{components/listGridToolbar}" th:with="listGrid=${listGrid}"></th:block>
                                             </div>
                                             <div class="fieldgroup-listgrid-wrapper fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records)} ? 'hidden'">
-                                                <th:block th:unless="${listGrid.listGridType} == 'asset_grid'" th:include="components/listGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
-                                                <th:block th:if="${listGrid.listGridType} == 'asset_grid'" th:include="components/mediaListGrid" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
+                                                <th:block th:unless="${listGrid.listGridType} == 'asset_grid'" th:insert="~{components/listGrid}" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
+                                                <th:block th:if="${listGrid.listGridType} == 'asset_grid'" th:insert="~{components/mediaListGrid}" th:with="listGrid=${listGrid}, inModal=${inModal != null and inModal}"></th:block>
                                             </div>
                                         </div>
                                     </th:block>
@@ -122,8 +122,8 @@
                                                 </div>
                                             </a>
                                             <div class="fieldset-card-content" th:classappend="${#lists.isEmpty(listGrid.records) ? 'content-collapsed' : ''}">
-                                                <th:block th:include="components/selectizeLabelBar" th:with="listGrid=${listGrid}"></th:block>
-                                                <th:block th:include="components/selectizeCollection" th:with="listGrid=${listGrid}"></th:block>
+                                                <th:block th:insert="~{components/selectizeLabelBar}" th:with="listGrid=${listGrid}"></th:block>
+                                                <th:block th:insert="~{components/selectizeCollection}" th:with="listGrid=${listGrid}"></th:block>
                                             </div>
                                         </div>
                                     </th:block>
@@ -131,9 +131,9 @@
                             </div>
                             <div th:if="${tab.isMultiColumn != null and tab.isMultiColumn}" th:class="${inModal != null and inModal? 'col12' : 'col4'}">
                                 <th:block th:each="group : ${tab.fieldGroups}" th:if="${group.column} != 0 and ${group.column} != null">
-                                    <th:block th:if="${group.customTemplate == null}" th:include="components/partials/entityFormGroups"></th:block>
+                                    <th:block th:if="${group.customTemplate == null}" th:insert="~{components/partials/entityFormGroups}"></th:block>
                                     <th:block th:unless="${group.customTemplate == null}">
-                                        <div th:replace="${group.customTemplate}"></div>
+                                        <div th:replace="~{${group.customTemplate}}"></div>
                                     </th:block>
                                 </th:block>
                             </div>

@@ -18,6 +18,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -27,7 +28,9 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -71,10 +74,19 @@ public class NamedOrderProcessor implements NamedOrderExpression {
         Customer customer = CustomerState.getCustomer();
         String orderName = "wishlist";
 
+        Map<String, Object> additionalProperties = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties();
+        Object wishlist = additionalProperties.get("NAMED_ORDER_WISHLIST");
+        if (wishlist != null) {
+            return (Order) wishlist;
+        }
+
         Order order = orderService.findNamedOrderForCustomer(orderName, customer);
         if (order != null) {
+            additionalProperties.put("NAMED_ORDER_WISHLIST", order);
             return order;
         }
-        return new NullOrderImpl();
+        NullOrderImpl nullOrder = new NullOrderImpl();
+        additionalProperties.put("NAMED_ORDER_WISHLIST", nullOrder);
+        return nullOrder;
     }
 }

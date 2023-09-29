@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * Custom persistence handler for SystemProperty to ensure that the value is validated against the type appropriately.

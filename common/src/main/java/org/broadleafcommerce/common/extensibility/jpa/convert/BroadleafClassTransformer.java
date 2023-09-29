@@ -17,8 +17,9 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.convert;
 
-import javax.persistence.spi.ClassTransformer;
 import java.util.Properties;
+
+import jakarta.persistence.spi.ClassTransformer;
 
 /**
  * 

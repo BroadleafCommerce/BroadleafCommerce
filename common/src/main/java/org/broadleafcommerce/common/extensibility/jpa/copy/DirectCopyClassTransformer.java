@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.extensibility.jpa.copy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.IndexAnnotationDto;
 import org.broadleafcommerce.common.extensibility.jpa.SkipDefaultConstructorCheck;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
@@ -27,7 +28,6 @@ import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDt
 import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager;
 
 import java.io.ByteArrayInputStream;
-import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,12 +41,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityListeners;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -103,7 +103,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -122,6 +122,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             Set<String> buildXFormVals = new LinkedHashSet<>();
             Boolean[] xformSkipOverlaps = null;
             Boolean[] xformRenameMethodOverlaps = null;
+            List<IndexAnnotationDto> indexes = new ArrayList<>();
             if (!xformTemplates.isEmpty()) {
                 if (xformTemplates.containsKey(xformKey)) {
                     buildXFormVals.addAll(Arrays.asList(xformTemplates.get(xformKey).split(",")));
@@ -166,6 +167,9 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     }
                     xformSkipOverlaps = params.getXformSkipOverlaps();
                     xformRenameMethodOverlaps = params.getXformRenameMethodOverlaps();
+                    if (params.getIndexes() != null) {
+                        indexes.addAll(params.getIndexes());
+                    }
                 }
             }
             if (buildXFormVals.size() > 0) {
@@ -206,7 +210,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     ClassFile templateFile = template.getClassFile();
                     ConstPool constantPool = classFile.getConstPool();
                     buildClassLevelAnnotations(classFile, templateFile, constantPool);
-                    transformIndexAnnotations(classFile, templateFile, constantPool);
+                    transformIndexAnnotations(classFile, templateFile, constantPool, indexes);
 
                     // Copy over all declared fields from the template class
                     // Note that we do not copy over fields with the @NonCopiedField annotation
@@ -317,7 +321,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             error.printStackTrace();
             throw error;
         } catch (Exception e) {
-            throw new RuntimeException("Unable to transform class", e);
+            throw new TransformerException("Unable to transform class", e);
         } finally {
             if (clazz != null) {
                 try {
@@ -375,6 +379,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         response.setXformVals(templates.toArray(new String[templates.size()]));
         response.setXformSkipOverlaps(skips.toArray(new Boolean[skips.size()]));
         response.setXformRenameMethodOverlaps(renames.toArray(new Boolean[renames.size()]));
+        response.setIndexes(defaultParams.getIndexes());
         return response;
     }
 
@@ -402,6 +407,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     for (Annotation annotation : items) {
                         String typeName = annotation.getTypeName();
                         if (typeName.equals(DirectCopyTransform.class.getName())) {
+                            List<IndexAnnotationDto> addedIndexes = new ArrayList<>();
                             ArrayMemberValue arrayMember = (ArrayMemberValue) annotation.getMemberValue("value");
                             for (MemberValue arrayMemberValue : arrayMember.getValue()) {
                                 AnnotationMemberValue member = (AnnotationMemberValue) arrayMemberValue;
@@ -433,10 +439,33 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                                         renames.add(myRenameMethodOverlaps);
                                     }
                                 }
+                                ArrayMemberValue indexesAnnot = (ArrayMemberValue) memberAnnot.getMemberValue("indexes");
+                                if(indexesAnnot!=null) {
+                                    for (MemberValue memberValue : indexesAnnot.getValue()) {
+                                        Annotation value = ((AnnotationMemberValue) memberValue).getValue();
+                                        StringMemberValue name = (StringMemberValue) value.getMemberValue("name");
+                                        String indexName = null;
+                                        String indexColumnList = null;
+                                        Boolean indexUnique = null;
+                                        if(name!=null) {
+                                            indexName = name.getValue();
+                                        }
+                                        StringMemberValue columnList = (StringMemberValue) value.getMemberValue("columnList");
+                                        if(columnList!=null) {
+                                            indexColumnList = columnList.getValue();
+                                        }
+                                        BooleanMemberValue unique = (BooleanMemberValue) value.getMemberValue("unique");
+                                        if(unique!=null) {
+                                            indexUnique = unique.getValue();
+                                        }
+                                        addedIndexes.add(new IndexAnnotationDto(indexName, indexColumnList, indexUnique));
+                                    }
+                                }
                             }
                             response.setXformVals(templates.toArray(new String[templates.size()]));
                             response.setXformSkipOverlaps(skips.toArray(new Boolean[skips.size()]));
                             response.setXformRenameMethodOverlaps(renames.toArray(new Boolean[renames.size()]));
+                            response.setIndexes(addedIndexes);
                             break check;
                         }
                     }
@@ -495,7 +524,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         return addedTemplates;
     }
 
-    protected void transformIndexAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+    protected void transformIndexAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool, List<IndexAnnotationDto> indexes) throws NotFoundException {
         List<?> templateAttributes = templateClassFile.getAttributes();
         Iterator<?> templateItr = templateAttributes.iterator();
         Annotation templateTable = null;
@@ -512,11 +541,11 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 }
             }
         }
-
-        if (templateTable != null) {
-            AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
-            List<?> attributes = classFile.getAttributes();
-            Iterator<?> itr = attributes.iterator();
+        Annotation newTable = null;
+        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+        List<?> attributes = classFile.getAttributes();
+        Iterator<?> itr = attributes.iterator();
+        if (templateTable != null || (indexes != null && indexes.size() > 0)) {
             Annotation existingTable = null;
             while (itr.hasNext()) {
                 Object object = itr.next();
@@ -536,31 +565,30 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 }
             }
 
-            Annotation newTable = getIndexes(constantPool, existingTable, templateTable);
+            newTable = getIndexes(constantPool, existingTable, templateTable, indexes);
             annotationsAttribute.addAnnotation(newTable);
 
             classFile.addAttribute(annotationsAttribute);
         }
     }
 
-    protected Annotation getIndexes(ConstPool constantPool, Annotation existingTable, Annotation templateTable) {
+    protected Annotation getIndexes(ConstPool constantPool, Annotation existingTable, Annotation templateTable, List<IndexAnnotationDto> indexes) {
         Annotation newTable = new Annotation(Table.class.getName(), constantPool);
         ArrayMemberValue indexArray = new ArrayMemberValue(constantPool);
         ArrayMemberValue uniqueConstraintArray = new ArrayMemberValue(constantPool);
         Set<MemberValue> indexMemberValues = new HashSet<>();
         Set<MemberValue> uniqueConstraintMemberValues = new HashSet<>();
-        {
+        if (templateTable != null) {
             ArrayMemberValue templateIndexValues = (ArrayMemberValue) templateTable.getMemberValue("indexes");
             if (templateIndexValues != null) {
                 indexMemberValues.addAll(Arrays.asList(templateIndexValues.getValue()));
                 logger.debug("Adding template values to new Table");
             }
-        }
-
-        ArrayMemberValue templateUniqueConstraintValues = (ArrayMemberValue) templateTable.getMemberValue("uniqueConstraints");
-        if (templateUniqueConstraintValues != null) {
-            uniqueConstraintMemberValues.addAll(Arrays.asList(templateUniqueConstraintValues.getValue()));
-            logger.debug("Adding template values to new Table");
+            ArrayMemberValue templateUniqueConstraintValues = (ArrayMemberValue) templateTable.getMemberValue("uniqueConstraints");
+            if (templateUniqueConstraintValues != null) {
+                uniqueConstraintMemberValues.addAll(Arrays.asList(templateUniqueConstraintValues.getValue()));
+                logger.debug("Adding template values to new Table");
+            }
         }
 
         if (existingTable != null) {
@@ -598,6 +626,32 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 Annotation annotation = annotationMember.getValue();
                 newAnnotationMember.setValue(cloneUniqueAnnotation(annotation, constantPool));
                 deepCopyUniqueConstraints.add(newAnnotationMember);
+            }
+        }
+        if (indexes != null) {
+            Iterator<IndexAnnotationDto> iterator = indexes.iterator();
+            while(iterator.hasNext()){
+                IndexAnnotationDto index = iterator.next();
+                AnnotationMemberValue newAnnotationMember = new AnnotationMemberValue(constantPool);
+                Annotation newAnnotation = new Annotation(Index.class.getName(), constantPool);
+                if (index.getIndexName() != null) {
+                    StringMemberValue name = new StringMemberValue(constantPool);
+                    name.setValue(index.getIndexName());
+                    newAnnotation.addMemberValue("name", name);
+                }
+                if (index.getIndexColumnList() != null) {
+                    StringMemberValue columnList = new StringMemberValue(constantPool);
+                    columnList.setValue(index.getIndexColumnList());
+                    newAnnotation.addMemberValue("columnList", columnList);
+                }
+                if (index.getIndexUnique() != null) {
+                    BooleanMemberValue unique = new BooleanMemberValue(constantPool);
+                    unique.setValue(index.getIndexUnique());
+                    newAnnotation.addMemberValue("unique", unique);
+                }
+                newAnnotationMember.setValue(newAnnotation);
+                deepCopyIndexes.add(newAnnotationMember);
+                iterator.remove();
             }
         }
         indexArray.setValue(deepCopyIndexes.toArray(new MemberValue[deepCopyIndexes.size()]));
@@ -737,7 +791,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 Annotation[] items = attr.getAnnotations();
                 for (Annotation annotation : items) {
                     String typeName = annotation.getTypeName();
-                    if (typeName.equals(javax.persistence.Cache.class.getName())
+                    if (typeName.equals(jakarta.persistence.Cache.class.getName())
                             || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                         templateCache = annotation;
                         break;
@@ -757,7 +811,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     Annotation[] items = attr.getAnnotations();
                     for (Annotation annotation : items) {
                         String typeName = annotation.getTypeName();
-                        if (typeName.equals(javax.persistence.Cache.class.getName())
+                        if (typeName.equals(jakarta.persistence.Cache.class.getName())
                                 || typeName.equals(org.hibernate.annotations.Cache.class.getName())) {
                             logger.debug("Stripping out previous Cache annotation at the class level - will merge into new EntityListeners");
                             // Since we are replacing the existing, we just drop the existing cache setting
@@ -829,7 +883,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
     }
 
     /**
-     * 
+     *
      * @param classToTransform the class that will be transformed at runtime
      * @param contributingClass the class that should be bytecode-merged into <b>classToTransform</b>
      * @return
@@ -838,7 +892,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         xformTemplates.put(classToTransform, contributingClass);
         return this;
     }
-    
+
     public void setXformTemplates(Map<String, String> xformTemplates) {
         this.xformTemplates = xformTemplates;
     }
@@ -889,6 +943,8 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
         Boolean[] xformSkipOverlaps = null;
         Boolean[] xformRenameMethodOverlaps = null;
 
+        private List<IndexAnnotationDto> addedIndexes;
+
         public String[] getXformVals() {
             return xformVals;
         }
@@ -915,6 +971,14 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
 
         public boolean isEmpty() {
             return xformVals == null || xformVals.length == 0;
+        }
+
+        public void setIndexes(List<IndexAnnotationDto> addedIndexes) {
+            this.addedIndexes = addedIndexes;
+        }
+
+        public List<IndexAnnotationDto> getIndexes() {
+            return addedIndexes;
         }
     }
 }

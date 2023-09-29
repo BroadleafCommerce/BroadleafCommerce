@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collection;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Extra logging facility whose design intent is to handle detailed production logging for complex interactions.

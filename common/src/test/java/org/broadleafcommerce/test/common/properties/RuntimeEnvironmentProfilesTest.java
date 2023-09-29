@@ -15,13 +15,10 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.test.common.properties;
 
-import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
+import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -42,7 +39,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
 @DirtiesContext
 public class RuntimeEnvironmentProfilesTest {
-
     
     @BeforeClass
     public static void setRuntimeEnvironment() {

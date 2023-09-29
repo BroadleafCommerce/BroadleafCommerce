@@ -20,8 +20,8 @@ package org.broadleafcommerce.cms.web;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class DefaultURLHandlerFilterExtensionHandler extends AbstractExtensionHandler
         implements URLHandlerFilterExtensionHandler {

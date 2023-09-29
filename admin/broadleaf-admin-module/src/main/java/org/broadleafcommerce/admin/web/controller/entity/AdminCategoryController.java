@@ -26,8 +26,9 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 /**
  * Handles admin operations for the {@link Category} entity.

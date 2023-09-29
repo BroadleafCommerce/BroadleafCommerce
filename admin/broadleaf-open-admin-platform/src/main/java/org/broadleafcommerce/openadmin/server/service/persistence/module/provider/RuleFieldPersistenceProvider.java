@@ -17,10 +17,9 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -57,13 +56,23 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.persistence.Embeddable;
-import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import jakarta.annotation.Resource;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.OneToMany;
 
 /**
  * Provides persistence (read/write) behavior for rule builder fields. This includes two types: Rule with quantity, and

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,12 +27,12 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -50,8 +50,9 @@ public class CountryImpl implements Country, AdminMainEntity {
     @Column(name = "ABBREVIATION")
     protected String abbreviation;
 
-    @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "CountryImpl_Country", order=12, group = "CountryImpl_Address", prominent = true, translatable = true)
+    @Column(name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName = "CountryImpl_Country", order = 12,
+            group = "CountryImpl_Address", prominent = true, translatable = true)
     protected String name;
 
     @Override

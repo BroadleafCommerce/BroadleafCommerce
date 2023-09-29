@@ -19,9 +19,10 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Jeff Fischer

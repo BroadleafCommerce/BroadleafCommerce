@@ -80,8 +80,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
+import jakarta.annotation.Resource;
 
 /**
  * Responsible for building and rebuilding the Solr index
@@ -164,7 +163,6 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     @Value(value = "${enable.solr.optimize:false}")
     private boolean optimizeEnabled;
 
-
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
         try {
@@ -200,7 +198,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
 
     @Override
     public void postBuildIndex() throws IOException, ServiceException {
-        if(optimizeEnabled) {
+        if (optimizeEnabled) {
             // this is required to be at the very very very end after rebuilding the whole index
             optimizeIndex(solrConfiguration.getReindexCollectionName(), solrConfiguration.getReindexServer());
         }
@@ -557,7 +555,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     /**
      * Implementors can extend this and override this method to add additional fields to the Solr document.
      * 
-     * @param sku
+     * @param indexable
      * @param document
      */
     protected void attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document) {
@@ -652,8 +650,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
      * { "en_US" : "A description",
      *   "es_ES" : "Una descripcion" }
      * 
-     * @param product
-     * @param sku
+     * @param indexedItem
      * @param field
      * @param fieldType
      * @param locales

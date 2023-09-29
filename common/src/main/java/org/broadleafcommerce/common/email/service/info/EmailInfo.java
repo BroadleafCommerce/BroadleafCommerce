@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.email.service.info;
 
 import org.broadleafcommerce.common.email.service.message.Attachment;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.admin.web.controller.extension;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -30,6 +27,9 @@ import org.broadleafcommerce.openadmin.web.controller.AbstractAdminTranslationCo
 import org.broadleafcommerce.openadmin.web.controller.AdminTranslationControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)

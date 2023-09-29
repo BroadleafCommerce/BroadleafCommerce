@@ -35,15 +35,15 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 /**
  * 
@@ -93,7 +93,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readCategoriesByIds(List<Long> categoryIds) {
         TypedQuery<Category> query = em.createQuery(
-                "select category from org.broadleafcommerce.core.catalog.domain.Category category "
+                "select category from org.broadleafcommerce.core.catalog.domain.CategoryImpl category "
                         + "where category.id in :ids",
                 Category.class);
         query.setParameter("ids", sandBoxHelper.mergeCloneIds(CategoryImpl.class,
@@ -106,10 +106,9 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public Category readCategoryByExternalId(@Nonnull String externalId) {
-        TypedQuery<Category> query = new TypedQueryBuilder<Category>(Category.class, "cat")
+        TypedQuery<Category> query = new TypedQueryBuilder<>(CategoryImpl.class, "cat", Category.class)
                 .addRestriction("cat.externalId", "=", externalId)
                 .toQuery(em);
-
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {

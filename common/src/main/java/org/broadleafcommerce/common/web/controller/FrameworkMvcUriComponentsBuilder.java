@@ -83,7 +83,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This class has been copied from spring-webmvc:4.3.7-RELEASE in order to provide URI building functionality for

@@ -28,16 +28,16 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  * Created by bpolster.
@@ -45,7 +45,7 @@ import javax.persistence.criteria.Root;
 @Repository("blStaticAssetDao")
 public class StaticAssetDaoImpl implements StaticAssetDao {
 
-    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+    private static final SandBox DUMMY_SANDBOX = new SandBoxImpl();
     {
         DUMMY_SANDBOX.setId(-1l);
     }

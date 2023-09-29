@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
@@ -25,8 +25,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
-import org.apache.solr.common.cloud.Aliases;
-import org.apache.solr.common.util.NamedList;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -35,7 +33,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,8 +47,9 @@ import java.util.Objects;
  * @author Andre Azzolini (apazzolini)
  */
 public class SolrConfiguration implements InitializingBean {
-    private static final Log LOG = LogFactory.getLog(SolrConfiguration.class);
 
+    private static final Log LOG = LogFactory.getLog(SolrConfiguration.class);
+    private static final int COUNT_COLLECTION_NAMES = 1000;
     protected String primaryName = null;
     protected String reindexName = null;
 
@@ -69,7 +67,7 @@ public class SolrConfiguration implements InitializingBean {
     protected Integer solrCloudNumShards = null;
 
     //This is the default number of replicas that should be created if a SolrCloud collection is created via API
-    protected Integer solrCloudNumReplicas = null;
+    protected Integer solrCloudNumReplicas = 1;
 
     protected String solrHomePath = null;
     
@@ -145,7 +143,7 @@ public class SolrConfiguration implements InitializingBean {
      * <code>org.apache.solr.client.solrj.impl.LBHttpSolrClient</code>,
      * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
      * 
-     * @param server
+     * @param server SolrClient
      * @throws IllegalStateException 
      */
     public void setServer(SolrClient server) throws IllegalStateException {
@@ -171,7 +169,6 @@ public class SolrConfiguration implements InitializingBean {
                     }
                 }
             }
-            
         }
 
         primaryServer = server;
@@ -455,6 +452,23 @@ public class SolrConfiguration implements InitializingBean {
     }
 
     /**
+     *
+     * @param solrServer
+     * @param reindexServer
+     * @param solrCloudConfigName
+     * @param solrCloudNumShards
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(CloudSolrClient solrServer, CloudSolrClient reindexServer, String solrCloudConfigName,
+                             int solrCloudNumShards, int replicationFactor) throws IllegalStateException {
+        this.setSolrCloudConfigName(solrCloudConfigName);
+        this.setSolrCloudNumShards(solrCloudNumShards);
+        this.setSolrCloudNumReplicas(replicationFactor);
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+    }
+
+    /**
      * This constructor should be used to set up Solr Cloud using solr cloud config name, number of cloud shards, and 
      * multiple clients, one primary, and one for reindexing to reduce down time during indexing.  Be sure to set the 
      * defaultCollection on the SolrClients correctly before passing them to this constructor.  Namespace can be specified 
@@ -478,118 +492,96 @@ public class SolrConfiguration implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws SolrServerException, IOException, IllegalStateException {
         if (isSolrCloudMode()) {
-            
             if (isSiteCollections()) {
                 LOG.info("Solr configuration is using collection-per-site, assuming collections will be created on the fly");
                 return;
             }
-            
             //We want to use the Solr APIs to make sure the correct collections are set up.
             CloudSolrClient primary = (CloudSolrClient) primaryServer;
             CloudSolrClient reindex = (CloudSolrClient) reindexServer;
-            if (primary == null || reindex == null) {
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
-                        + "your configuration and ensure that you are passing a different instance for each to the "
-                        + "constructor of "
-                        + this.getClass().getName()
-                        + " and ensure that each has a null (empty)"
-                        + " defaultCollection property, or ensure that defaultCollection is unique between"
-                        + " the two instances. All other things, like Zookeeper addresses should be the same.");
-            }
 
-            if (primary == reindex) {
-                //These are the same object instances.  They should be separate instances, with generally 
-                //the same configuration, except for the defaultCollection name.
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
-                        + "and their defaultCollection property must be unique or null.  All other things like the "
-                        + "Zookeeper addresses should be the same.");
-            }
-            
-            //check if the default collection is null
-            if (StringUtils.isEmpty(primary.getDefaultCollection())) {
-                throw new IllegalStateException("The primary CloudSolrServer must have a defaultCollection property set.");
-            } else {
-                this.setPrimaryName(primary.getDefaultCollection());
-            }
-
-            //check if the default collection is null
-            if (StringUtils.isEmpty(reindex.getDefaultCollection())) {
-                throw new IllegalStateException("The reindex CloudSolrServer must have a defaultCollection property set.");
-            } else {
-                this.setReindexName(reindex.getDefaultCollection());
-            }
-
-            if (Objects.equals(primary.getDefaultCollection(), reindex.getDefaultCollection())) {
-                throw new IllegalStateException("The primary and reindex CloudSolrServers must have "
-                        + "unique defaultCollection properties.  All other things like the "
-                        + "Zookeeper addresses should be the same.");
-            }
-
-            primary.connect(); //This is required to ensure no NPE!
-
+            this.validateCloudSolrClients(primary, reindex);
             //Get a list of existing collections so we don't overwrite one
-            NamedList<Object> listResponse = new CollectionAdminRequest.List().process(primary).getResponse();
-            List<String> collectionNames = listResponse.get("collections") == null ? collectionNames = new ArrayList<>() : (List<String>) listResponse.get("collections");
+            this.reloadCollectionNames(primary, primary);
+            //Reload these maps for the next collection.
+            this.reloadCollectionNames(primary, reindex);
+        }
+    }
 
-            Aliases aliases = primary.getZkStateReader().getAliases();
-            Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+    protected void validateCloudSolrClients(CloudSolrClient primary, CloudSolrClient reindex) {
+        if (primary == null || reindex == null) {
+            throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
+                    + "your configuration and ensure that you are passing a different instance for each to the "
+                    + "constructor of "
+                    + this.getClass().getName()
+                    + " and ensure that each has a null (empty)"
+                    + " defaultCollection property, or ensure that defaultCollection is unique between"
+                    + " the two instances. All other things, like Zookeeper addresses should be the same.");
+        }
 
-            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())) {
-                //Create a completely new collection
-                String collectionName = null;
-                for (int i = 0; i < 1000; i++) {
-                    collectionName = "blcCollection" + i;
-                    if (collectionNames.contains(collectionName)) {
-                        collectionName = null;
-                    } else {
-                        break;
-                    }
-                }
-                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
-                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName).process(primary);
-            } else {
-                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
-                String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
-                collectionName = collectionName.split(",")[0];
-                if (!collectionNames.contains(collectionName)) {
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
+        if (primary == reindex) {
+            //These are the same object instances.  They should be separate instances, with generally
+            //the same configuration, except for the defaultCollection name.
+            throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
+                    + "and their defaultCollection property must be unique or null.  All other things like the "
+                    + "Zookeeper addresses should be the same.");
+        }
+
+        //check if the default collection is null
+        if (StringUtils.isEmpty(primary.getDefaultCollection())) {
+            throw new IllegalStateException("The primary CloudSolrServer must have a defaultCollection property set.");
+        } else {
+            this.setPrimaryName(primary.getDefaultCollection());
+        }
+
+        //check if the default collection is null
+        if (StringUtils.isEmpty(reindex.getDefaultCollection())) {
+            throw new IllegalStateException("The reindex CloudSolrServer must have a defaultCollection property set.");
+        } else {
+            this.setReindexName(reindex.getDefaultCollection());
+        }
+
+        if (Objects.equals(primary.getDefaultCollection(), reindex.getDefaultCollection())) {
+            throw new IllegalStateException("The primary and reindex CloudSolrServers must have "
+                    + "unique defaultCollection properties.  All other things like the "
+                    + "Zookeeper addresses should be the same.");
+        }
+
+        primary.connect(); //This is required to ensure no NPE!
+    }
+
+    protected void reloadCollectionNames(CloudSolrClient primary, CloudSolrClient reindex) throws SolrServerException, IOException {
+        List<String> collectionNames = CollectionAdminRequest.listCollections(primary);
+        Map<String, String> aliasCollectionMap  = this.aliasCollectionMap(primary);
+        if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
+            //Create a completely new collection
+            String collectionName = null;
+            for (int i = 0; i < COUNT_COLLECTION_NAMES; i++) {
+                collectionName = reindex.getDefaultCollection() + i;
+                if (collectionNames.contains(collectionName)) {
+                    collectionName = null;
+                } else {
+                    break;
                 }
             }
-
-            //Reload the collection names
-            listResponse = new CollectionAdminRequest.List().process(primary).getResponse();
-            collectionNames = listResponse.get("collections") == null ? collectionNames = new ArrayList<>() : (List<String>) listResponse.get("collections");
-
-            //Reload these maps for the next collection.
-            aliases = primary.getZkStateReader().getAliases();
-            aliasCollectionMap = aliases.getCollectionAliasMap();
-
-            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
-                //Create a completely new collection
-                String collectionName = null;
-                for (int i = 0; i < 1000; i++) {
-                    collectionName = "blcCollection" + i;
-                    if (collectionNames.contains(collectionName)) {
-                        collectionName = null;
-                    } else {
-                        break;
-                    }
-                }
-                CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
-                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName).process(primary);
-
-            } else {
-                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
-                String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
-                collectionName = collectionName.split(",")[0];
-                if (!collectionNames.contains(collectionName)) {
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudConfigName, solrCloudNumShards, solrCloudNumReplicas).process(primary);
-                }
+            this.createCollection(primary, collectionName);
+            this.createAlias(primary, collectionName, reindex.getDefaultCollection());
+        } else {
+            //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
+            String collectionName = aliasCollectionMap .get(reindex.getDefaultCollection());
+            collectionName = collectionName.split(",")[0];
+            if (!collectionNames.contains(collectionName)) {
+                this.createCollection(primary, collectionName);
             }
         }
     }
-    
-    
+
+    protected Map<String, String> aliasCollectionMap(CloudSolrClient client) throws SolrServerException, IOException {
+        return new CollectionAdminRequest.ListAliases()
+                .process(client)
+                .getAliases();
+    }
+
     public SolrClient getSiteServer() {
         BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = ctx.getNonPersistentSite();
@@ -625,31 +617,44 @@ public class SolrConfiguration implements InitializingBean {
 
         return client;
     }
-    
+
     protected void createCollectionIfNotExist(CloudSolrClient client, String collectionName) {
-        if (!client.getZkStateReader().getClusterState().hasCollection(collectionName)) {
-            try {
-                CollectionAdminRequest.createCollection(collectionName, getSolrCloudConfigName(), getSolrCloudNumShards(), getSolrCloudNumReplicas())
-                        .setMaxShardsPerNode(getSolrCloudNumShards()).process(client);
-            } catch (SolrServerException e) {
-                throw ExceptionHelper.refineException(e);
-            } catch (IOException e) {
-                throw ExceptionHelper.refineException(e);
-            }
+        if (!client.getClusterState().hasCollection(collectionName)) {
+            this.createCollection(client, collectionName);
         }
     }
-    
+
+    protected void createCollection(CloudSolrClient client, String collectionName) {
+        try {
+            CollectionAdminRequest.createCollection(
+                    collectionName,
+                    solrCloudConfigName(client),
+                    getSolrCloudNumShards(),
+                    getSolrCloudNumReplicas()
+            ).process(client);
+        } catch (SolrServerException | IOException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+    }
+
+    protected String solrCloudConfigName(CloudSolrClient client) {
+        String defaultCollection = client.getDefaultCollection();
+        return getSolrCloudConfigName() + "/" + defaultCollection.substring(0, defaultCollection.length() - 1) + "/conf";
+    }
+
     protected void createAliasIfNotExist(CloudSolrClient client, String collectionName, String aliasName) {
-        Aliases aliases = client.getZkStateReader().getAliases();
-        Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
-        if (!aliasCollectionMap.containsKey(aliasName)) {
-            try {
-                CollectionAdminRequest.createAlias(aliasName, collectionName).process(client);
-            } catch (SolrServerException e) {
-                throw ExceptionHelper.refineException(e);
-            } catch (IOException e) {
-                throw ExceptionHelper.refineException(e);
-            }
+        Map<String, String> aliasProperties = client.getClusterStateProvider().getAliasProperties(aliasName);
+        if (aliasProperties.isEmpty()) {
+            this.createAlias(client, collectionName, aliasName);
+        }
+    }
+
+    protected void createAlias(CloudSolrClient client, String collectionName, String aliasName) {
+        try {
+            CollectionAdminRequest.createAlias(aliasName, collectionName)
+                    .process(client);
+        } catch (SolrServerException | IOException e) {
+            throw ExceptionHelper.refineException(e);
         }
     }
     
@@ -756,9 +761,7 @@ public class SolrConfiguration implements InitializingBean {
 
     protected String determineCoreName(HttpSolrClient httpSolrClient) {
         String url = httpSolrClient.getBaseURL();
-        String coreName = url.substring(url.lastIndexOf('/') + 1);
-
-        return coreName;
+        return url.substring(url.lastIndexOf('/') + 1);
     }
 
     public void destroy() throws Exception {

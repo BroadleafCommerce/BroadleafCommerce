@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * This processor is responsible for setting up the translation context.   It is intended to be used

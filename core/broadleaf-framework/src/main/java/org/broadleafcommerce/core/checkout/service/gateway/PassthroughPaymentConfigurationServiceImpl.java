@@ -22,7 +22,8 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayRollbackService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
+import jakarta.annotation.Resource;
 
 /**
  * A Default Configuration to handle Passthrough Payments, for example COD payments.

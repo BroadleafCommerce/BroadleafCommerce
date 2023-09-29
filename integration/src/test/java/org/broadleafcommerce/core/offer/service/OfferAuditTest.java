@@ -45,7 +45,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @author Chad Harchar (charchar)
@@ -66,6 +66,9 @@ public class OfferAuditTest extends CommonSetupBaseTest {
 
     @Resource
     private OfferAuditDao offerAuditDao;
+
+    @Resource
+    private OfferAuditService offerAuditService;
 
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
@@ -119,8 +122,8 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         offerAudit.setOfferId(offer.getId());
         offerAudit.setOrderId(null);
         offerAudit.setRedeemedDate(currentDate.getTime());
-        
-        offerAuditDao.save(offerAudit);
+
+        offerAuditService.save(offerAudit);
 
         OfferAudit offerAudit2 = offerAuditDao.create();
 
@@ -129,8 +132,8 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         offerAudit2.setOfferId(offer.getId());
         offerAudit2.setOrderId(null);
         offerAudit2.setRedeemedDate(currentDate.getTime());
-        
-        offerAuditDao.save(offerAudit2);
+
+        offerAuditService.save(offerAudit2);
 
 
         Order order = orderService.createNewCartForCustomer(customer);
@@ -159,12 +162,12 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         
         currentDate.add(Calendar.DAY_OF_YEAR, -2);
         offerAudit.setRedeemedDate(currentDate.getTime());
-        offerAuditDao.delete(offerAudit);
-        offerAuditDao.save(offerAudit);
+        offerAuditService.delete(offerAudit);
+        offerAuditService.save(offerAudit);
 
         offerAudit2.setRedeemedDate(currentDate.getTime());
-        offerAuditDao.delete(offerAudit2);
-        offerAuditDao.save(offerAudit2);
+        offerAuditService.delete(offerAudit2);
+        offerAuditService.save(offerAudit2);
 
         maxUsesExceeded = false;
         try {

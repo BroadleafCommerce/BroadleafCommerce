@@ -24,7 +24,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * A Spring bean extending this class will automatically be called when validation is done on the entity specified by

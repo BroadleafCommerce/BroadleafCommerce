@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.test.common.context.autoconfig;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

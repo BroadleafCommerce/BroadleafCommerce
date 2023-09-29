@@ -31,10 +31,9 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferPriceDataIdentifierType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
 

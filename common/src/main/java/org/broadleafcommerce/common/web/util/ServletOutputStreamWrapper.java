@@ -22,8 +22,8 @@ import org.springframework.util.FastByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 /**
  * Delegate standard {@link ServletOutputStream} write calls to standard buffered IO.

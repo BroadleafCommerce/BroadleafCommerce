@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,33 +19,31 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 
 /**
  * Created by bpolster.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(value = { AdminAuditableListener.class })
+@EntityListeners(value = {AdminAuditableListener.class})
 @Table(name = "BLC_IMG_STATIC_ASSET")
 public class ImageStaticAssetImpl extends StaticAssetImpl implements ImageStaticAsset {
 
-    @Column(name ="WIDTH")
+    @Column(name = "WIDTH")
     @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Width",
             order = FieldOrder.LAST + 1000,
             group = GroupName.File_Details,
             readOnly = true)
     protected Integer width;
 
-    @Column(name ="HEIGHT")
+    @Column(name = "HEIGHT")
     @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Height",
             order = FieldOrder.LAST + 2000,
             group = GroupName.File_Details,

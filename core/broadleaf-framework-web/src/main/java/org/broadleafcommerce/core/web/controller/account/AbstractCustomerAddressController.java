@@ -31,8 +31,8 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its children.

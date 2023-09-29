@@ -29,7 +29,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A {@code ResourceResolver} that is used to serve previously bundled files.
@@ -47,7 +47,7 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
 
     private int order = BroadleafResourceResolverOrder.BLC_BUNDLE_RESOURCE_RESOLVER;
 
-    @javax.annotation.Resource(name = "blResourceBundlingService")
+    @jakarta.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
 
     @Override

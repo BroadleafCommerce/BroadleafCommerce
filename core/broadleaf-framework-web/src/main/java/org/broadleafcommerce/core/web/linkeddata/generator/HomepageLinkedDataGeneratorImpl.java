@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Objects;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This generator generates structured data specific for a homepage, namely the search action. The search action allows

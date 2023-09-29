@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -24,35 +25,36 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 
 /**
  * @deprecated Replaced in functionality by {@link SearchRedirectImpl}
  */
 @Deprecated
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 public class SearchInterceptImpl implements SearchIntercept {
-    
+
     @Id
     @GeneratedValue(generator = "SearchInterceptId")
     @GenericGenerator(
-        name="SearchInterceptId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="SearchInterceptImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchInterceptImpl")
-        }
+            name = "SearchInterceptId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SearchInterceptImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.SearchInterceptImpl")
+            }
     )
     @Column(name = "SEARCH_INTERCEPT_ID")
     protected Long id;
-    
+
     @Column(name = "TERM")
-    @Index(name="SEARCHINTERCEPT_TERM_INDEX", columnNames={"TERM"})
+    @Index(name = "SEARCHINTERCEPT_TERM_INDEX", columnNames = {"TERM"})
     private String term;
-    
+
     @Column(name = "REDIRECT")
     private String redirect;
 
@@ -63,6 +65,7 @@ public class SearchInterceptImpl implements SearchIntercept {
     public String getTerm() {
         return term;
     }
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.search.domain.SearchIntercept#setTerm(java.lang.String)
      */
@@ -70,6 +73,7 @@ public class SearchInterceptImpl implements SearchIntercept {
     public void setTerm(String term) {
         this.term = term;
     }
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.search.domain.SearchIntercept#getRedirect()
      */
@@ -77,6 +81,7 @@ public class SearchInterceptImpl implements SearchIntercept {
     public String getRedirect() {
         return redirect;
     }
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.search.domain.SearchIntercept#setRedirect(java.lang.String)
      */
@@ -84,9 +89,11 @@ public class SearchInterceptImpl implements SearchIntercept {
     public void setRedirect(String redirect) {
         this.redirect = redirect;
     }
+
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }

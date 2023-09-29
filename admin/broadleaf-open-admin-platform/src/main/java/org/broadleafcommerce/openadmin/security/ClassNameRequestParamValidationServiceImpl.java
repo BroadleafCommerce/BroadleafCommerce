@@ -31,8 +31,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManagerFactory;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * @see ClassNameRequestParamValidationService

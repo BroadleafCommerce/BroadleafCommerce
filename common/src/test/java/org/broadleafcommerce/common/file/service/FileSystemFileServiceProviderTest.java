@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.file.service;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;

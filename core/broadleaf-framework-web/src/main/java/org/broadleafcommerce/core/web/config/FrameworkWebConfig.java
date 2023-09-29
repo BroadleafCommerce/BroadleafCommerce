@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.web.cookie.CookieRuleRequestProcessor;
 import org.broadleafcommerce.core.web.seo.BasicSeoPropertyGeneratorImpl;
 import org.broadleafcommerce.core.web.seo.SeoPropertyGenerator;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
@@ -35,6 +34,7 @@ import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.RequestContextFilter;
+
 import java.util.ArrayList;
 import java.util.List;
 

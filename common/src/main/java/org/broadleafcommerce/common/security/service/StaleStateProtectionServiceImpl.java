@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.security.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.security.RandomGenerator;
@@ -35,9 +35,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Enumeration;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * @see StaleStateProtectionService

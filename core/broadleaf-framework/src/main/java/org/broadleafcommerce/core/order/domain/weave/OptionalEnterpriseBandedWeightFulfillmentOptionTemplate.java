@@ -26,7 +26,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.OneToMany;
+import jakarta.persistence.OneToMany;
 
 /**
  * This class is meant as a template to provide overriding of the annotations on fields in 

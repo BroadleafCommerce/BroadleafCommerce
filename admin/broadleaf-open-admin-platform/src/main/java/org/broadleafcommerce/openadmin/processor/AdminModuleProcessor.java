@@ -28,8 +28,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import jakarta.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
