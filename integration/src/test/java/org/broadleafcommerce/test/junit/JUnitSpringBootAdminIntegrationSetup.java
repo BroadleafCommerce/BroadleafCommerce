@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.test.junit;
 
+import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.test.config.AdminSpringBootTestConfiguration;
 import org.broadleafcommerce.test.helper.AdminApplication;
 import org.broadleafcommerce.test.helper.AdminTestHelper;
@@ -201,6 +203,8 @@ public abstract class JUnitSpringBootAdminIntegrationSetup {
         Allow calls to HttpServletRequest#isUserInRole to work
          */
         servletContext.declareRoles(roles);
+        DefaultPostLoaderDao.resetApplicationContext(this.context);
+        ApplicationContextHolder.resetApplicationContext(context);
     }
 
     public MockMvc getMockMvc() {
