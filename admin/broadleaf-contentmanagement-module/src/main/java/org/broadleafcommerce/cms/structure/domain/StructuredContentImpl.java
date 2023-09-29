@@ -260,12 +260,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @MapKey(name = "key")
     @BatchSize(size = 20)
     @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "structuredContentFields")
-    protected Map<String, StructuredContentFieldXref> structuredContentFields =
-            new HashMap<String, StructuredContentFieldXref>();
-
-    @Transient
-    protected Map<String, StructuredContentField> legacyStructuredContentFields =
-            new HashMap<String, StructuredContentField>();
+    protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<>();
 
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4,
             group = Presentation.Group.Name.Description,
@@ -314,28 +309,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Override
     public void setStructuredContentType(StructuredContentType structuredContentType) {
         this.structuredContentType = structuredContentType;
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, StructuredContentField> getStructuredContentFields() {
-        if (legacyStructuredContentFields.isEmpty()) {
-            for (Map.Entry<String, StructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
-                legacyStructuredContentFields.put(entry.getKey(),
-                        entry.getValue().getStructuredContentField());
-            }
-        }
-        return Collections.unmodifiableMap(legacyStructuredContentFields);
-    }
-
-    @Override
-    public void setStructuredContentFields(Map<String, StructuredContentField> structuredContentFields) {
-        this.structuredContentFields.clear();
-        this.legacyStructuredContentFields.clear();
-        for (Map.Entry<String, StructuredContentField> entry : structuredContentFields.entrySet()) {
-            this.structuredContentFields.put(entry.getKey(),
-                    new StructuredContentFieldXrefImpl(this, entry.getValue(), entry.getKey()));
-        }
     }
 
     @Override
