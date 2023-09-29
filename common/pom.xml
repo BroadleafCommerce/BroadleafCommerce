@@ -153,11 +153,6 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-        </dependency>
-        <!-- this is needed for hibernate 6.2, when running tests it will try to transform classes and needs bytecode lib -->
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
