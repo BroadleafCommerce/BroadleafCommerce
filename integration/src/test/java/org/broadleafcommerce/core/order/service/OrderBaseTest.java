@@ -42,7 +42,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         Order order = orderService.createNamedOrderForCustomer("Boxes Named Order", customer);
         
         Product newProduct = addTestProduct("Cube Box", "Boxes");        
-        Category newCategory = newProduct.getDefaultCategory();
+        Category newCategory = newProduct.getCategory();
         
         order = orderService.addItem(order.getId(), 
                 new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 2), 
@@ -57,7 +57,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         Order order = orderService.createNewCartForCustomer(customer);
 
         Product newProduct = addTestProduct("Plastic Crate Active", "Crates");
-        Category newCategory = newProduct.getDefaultCategory();
+        Category newCategory = newProduct.getCategory();
         
         order = orderService.addItem(order.getId(), 
                 new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 
@@ -72,7 +72,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         Order order = orderService.createNewCartForCustomer(customer);
 
         Product newProduct = addTestProduct("Plastic Crate Should Be Inactive", "Crates");
-        Category newCategory = newProduct.getDefaultCategory();
+        Category newCategory = newProduct.getCategory();
         
         order = orderService.addItem(order.getId(), 
                 new OrderItemRequestDTO(newProduct.getId(), newProduct.getDefaultSku().getId(), newCategory.getId(), 1), 

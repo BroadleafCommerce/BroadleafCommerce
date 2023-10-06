@@ -193,8 +193,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         if (sku.getFulfillmentType() != null) {
             return sku.getFulfillmentType();
         }
-        if (sku.getDefaultProduct() != null && sku.getDefaultProduct().getDefaultCategory() != null) {
-            return sku.getDefaultProduct().getDefaultCategory().getFulfillmentType();
+        if (sku.getDefaultProduct() != null && sku.getDefaultProduct().getCategory() != null) {
+            return sku.getDefaultProduct().getCategory().getFulfillmentType();
         }
         return null;
     }

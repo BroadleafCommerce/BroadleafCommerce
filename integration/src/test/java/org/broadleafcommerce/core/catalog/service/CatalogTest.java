@@ -101,8 +101,6 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         newProduct.setActiveStartDate(activeStartCal.getTime());
-//        newProduct.setAllParentCategories(allParentCategories);
-        newProduct.setDefaultCategory(category);
         newProduct.getAllParentCategoryXrefs().clear();
         newProduct = catalogService.saveProduct(newProduct);
 

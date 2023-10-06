@@ -937,31 +937,6 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
-    @Deprecated
-    public Map<String, Media> getSkuMedia() {
-        Map<String, Media> skuMediaMap = new LinkedHashMap<>(legacySkuMedia);
-
-        if (MapUtils.isEmpty(skuMediaMap)) {
-            for (Map.Entry<String, SkuMediaXref> entry : getSkuMediaXref().entrySet()) {
-                skuMediaMap.put(entry.getKey(), entry.getValue().getMedia());
-            }
-        }
-
-        return Collections.unmodifiableMap(skuMediaMap);
-    }
-
-    @Override
-    @Deprecated
-    public void setSkuMedia(Map<String, Media> skuMedia) {
-        this.skuMedia.clear();
-        this.legacySkuMedia.clear();
-        for (Map.Entry<String, Media> entry : skuMedia.entrySet()) {
-            this.skuMedia.put(entry.getKey(),
-                    new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
-        }
-    }
-
-    @Override
     public Map<String, SkuMediaXref> getSkuMediaXref() {
         Map<String, SkuMediaXref> skuMediaMap = skuMedia;
 
@@ -1169,8 +1144,13 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (StringUtils.isEmpty(this.inventoryType)) {
             if (hasDefaultSku() && lookupDefaultSku().getInventoryType() != null) {
                 return lookupDefaultSku().getInventoryType();
-            } else if (getProduct() != null && getProduct().getDefaultCategory() != null) {
-                return getProduct().getDefaultCategory().getInventoryType();
+            } else {
+                if (getProduct() != null) {
+                    Category category = getProduct().getCategory();
+                    if (category != null) {
+                        return category.getInventoryType();
+                    }
+                }
             }
             return null;
         }
@@ -1197,8 +1177,13 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (StringUtils.isEmpty(this.fulfillmentType)) {
             if (hasDefaultSku() && lookupDefaultSku().getFulfillmentType() != null) {
                 return lookupDefaultSku().getFulfillmentType();
-            } else if (getProduct() != null && getProduct().getDefaultCategory() != null) {
-                return getProduct().getDefaultCategory().getFulfillmentType();
+            } else {
+                if (getProduct() != null) {
+                    Category category = getProduct().getCategory();
+                    if (category != null) {
+                        return category.getFulfillmentType();
+                    }
+                }
             }
             return null;
         }
@@ -1306,8 +1291,13 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         if (StringUtils.isEmpty(this.taxCode)) {
             if (hasDefaultSku() && !StringUtils.isEmpty(lookupDefaultSku().getTaxCode())) {
                 return lookupDefaultSku().getTaxCode();
-            } else if (getProduct() != null && getProduct().getDefaultCategory() != null) {
-                return getProduct().getDefaultCategory().getTaxCode();
+            } else {
+                if (getProduct() != null) {
+                    Category category = getProduct().getCategory();
+                    if (category != null) {
+                        return category.getTaxCode();
+                    }
+                }
             }
         }
         return this.taxCode;

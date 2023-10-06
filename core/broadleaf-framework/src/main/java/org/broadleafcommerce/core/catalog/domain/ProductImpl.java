@@ -113,8 +113,7 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT", indexes = {
         @Index(name = "PRODUCT_URL_INDEX", columnList = "URL, URL_KEY"),
-        @Index(name = "PRODUCT_URL_KEY_INDEX", columnList = "URL_KEY"),
-        @Index(name = "PRODUCT_CATEGORY_INDEX", columnList = "DEFAULT_CATEGORY_ID")
+        @Index(name = "PRODUCT_URL_KEY_INDEX", columnList = "URL_KEY")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationMergeOverrides(
@@ -251,10 +250,6 @@ public class ProductImpl
             prominent = true, gridOrder = 4)
     protected String manufacturer;
 
-    @Deprecated
-    @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
-    protected Boolean isFeaturedProduct = false;
-
     @ManyToOne(targetEntity = SkuImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL})
@@ -330,17 +325,6 @@ public class ProductImpl
     @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus",
             tab = TabName.ProductOptions, order = 1000)
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
-
-    @ManyToOne(targetEntity = CategoryImpl.class)
-    @JoinColumn(name = "DEFAULT_CATEGORY_ID")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category",
-            order = FieldOrder.DEFAULT_CATEGORY,
-            group = GroupName.General,
-            prominent = true, gridOrder = 2,
-            requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup()
-    @Deprecated
-    protected Category defaultCategory;
 
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -494,18 +478,6 @@ public class ProductImpl
     @Override
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
-    }
-
-    @Deprecated
-    @Override
-    public boolean isFeaturedProduct() {
-        return isFeaturedProduct;
-    }
-
-    @Deprecated
-    @Override
-    public void setFeaturedProduct(boolean isFeaturedProduct) {
-        this.isFeaturedProduct = isFeaturedProduct;
     }
 
     @Override
@@ -674,25 +646,6 @@ public class ProductImpl
             this.additionalSkus.add(sku);
         }
     }
-
-    @Override
-    @Deprecated
-    public Category getDefaultCategory() {
-        Category response;
-        if (defaultCategory != null) {
-            response = defaultCategory;
-        } else {
-            response = getCategory();
-        }
-        return response;
-    }
-
-    @Override
-    @Deprecated
-    public void setDefaultCategory(Category defaultCategory) {
-        this.defaultCategory = defaultCategory;
-    }
-
     @Override
     public Category getCategory() {
         Category response = null;
@@ -941,6 +894,7 @@ public class ProductImpl
 
     @Override
     public List<RelatedProduct> getCumulativeCrossSaleProducts() {
+        Category defaultCategory = getCategory();
         List<RelatedProduct> returnProducts = getCrossSaleProducts();
         if (defaultCategory != null) {
             List<RelatedProduct> categoryProducts =
@@ -962,6 +916,7 @@ public class ProductImpl
     @Override
     public List<RelatedProduct> getCumulativeUpSaleProducts() {
         List<RelatedProduct> returnProducts = getUpSaleProducts();
+        Category defaultCategory = getCategory();
         if (defaultCategory != null) {
             List<RelatedProduct> categoryProducts = defaultCategory.getCumulativeUpSaleProducts();
             if (categoryProducts != null) {
@@ -1183,8 +1138,9 @@ public class ProductImpl
 
     @Override
     public String getGeneratedUrl() {
-        if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
-            String generatedUrl = getDefaultCategory().getGeneratedUrl();
+        Category category = getCategory();
+        if (category != null && category.getGeneratedUrl() != null) {
+            String generatedUrl = category.getGeneratedUrl();
             if (generatedUrl.endsWith("//")) {
                 return generatedUrl + getUrlKey();
             } else {
@@ -1219,7 +1175,6 @@ public class ProductImpl
         }
         Product cloned = createResponse.getClone();
         cloned.setCanSellWithoutOptions(canSellWithoutOptions);
-        cloned.setFeaturedProduct(isFeaturedProduct);
         cloned.setUrl(url);
         cloned.setUrlKey(urlKey);
         cloned.setManufacturer(manufacturer);
@@ -1228,12 +1183,6 @@ public class ProductImpl
         cloned.setCanonicalUrl(canonicalUrl);
         cloned.setMetaTitle(metaTitle);
         cloned.setEnableDefaultSkuInInventory(enableDefaultSkuInventory);
-        if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
-            cloned.setDefaultCategory(
-                    defaultCategory.createOrRetrieveCopyInstance(context).getClone());
-        } else if (context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
-            cloned.setDefaultCategory(defaultCategory);
-        }
         cloned.setModel(model);
         if (defaultSku != null) {
             cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());

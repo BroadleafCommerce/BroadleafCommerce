@@ -195,7 +195,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
 
         //Detach and save a cloned Sku
         Sku cloneSku = cloneProduct.getDefaultSku();
-        cloneSku.getSkuMedia().size();
+        cloneSku.getSkuMediaXref().size();
         em.detach(cloneSku);
         cloneSku.setId(null);
 
