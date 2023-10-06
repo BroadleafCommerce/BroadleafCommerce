@@ -67,15 +67,4 @@
         </tx:attributes>
     </tx:advice>
 
-    <!-- Not modifying, legacy stuff so doesn't really matter -->
-    <aop:config>
-        <aop:pointcut id="blLegacyOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.legacy.LegacyOrderService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLegacyOrderServiceOperation" order="1"/>
-    </aop:config>
-    
-    <aop:config>
-        <aop:pointcut id="blLegacyCartServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.legacy.LegacyCartService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLegacyCartServiceOperation" order="1"/>
-    </aop:config>
-
 </beans>

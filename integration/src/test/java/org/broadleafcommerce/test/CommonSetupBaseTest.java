@@ -23,6 +23,10 @@ import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -197,11 +201,20 @@ public abstract class CommonSetupBaseTest extends TestNGSiteIntegrationSetup {
         }
         newSku.setDiscountable(true);
         newSku = catalogService.saveSku(newSku);
-        
+
+
         Product newProduct = new ProductImpl();
-        newProduct.setDefaultCategory(category);
         newProduct.setDefaultSku(newSku);
         newProduct = catalogService.saveProduct(newProduct);
+
+        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+        categoryXref.setCategory(category);
+        categoryXref.setProduct(newProduct);
+        categoryXref.setDefaultReference(true);
+        newProduct.getAllParentCategoryXrefs().add(categoryXref);
+        category.getAllProductXrefs().add(categoryXref);
+        catalogService.saveProduct(newProduct);
+        catalogService.saveCategory(category);
 
         return newProduct;
     }

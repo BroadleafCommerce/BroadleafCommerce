@@ -175,15 +175,4 @@ public class ProductDaoTest extends TestNGSiteIntegrationSetup {
         assert result.isEmpty();
     }
 
-    @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
-    @Transactional
-    public void testFeaturedProduct(Product product) {
-        product = catalogService.saveProduct(product);
-        Long productId = product.getId();
-        product.setFeaturedProduct(true);
-        catalogService.saveProduct(product);
-        Product testProduct = productDao.readProductById(productId);
-        assert (testProduct.isFeaturedProduct() == true);
-    }
-    
 }
