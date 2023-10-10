@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.DeployState;
 import org.broadleafcommerce.common.web.EnforceEnterpriseCollectionBehaviorState;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 
 import java.lang.reflect.Field;
@@ -47,10 +48,14 @@ import java.util.regex.Pattern;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DUPLICATION;
+import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATION;
 
 /**
  * Abstract class for copying entities to a new catalog as required during derived catalog propagation. Subclasses generally
@@ -72,6 +77,9 @@ public abstract class MultiTenantCopier implements Ordered {
 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    @Value("${catalog.copier.optimization.enabled:false}")
+    protected boolean catalogCopierOptimizationEnabled = false;
     
     protected int order = 0;
 
@@ -135,6 +143,10 @@ public abstract class MultiTenantCopier implements Ordered {
                 || this.excludeFromCopyRegexPattern(copy)) {
             return;
         }
+
+        if (catalogCopierOptimizationEnabled && dontTraversThroughEntityFromTheDB(copy, context)) {
+            return;
+        }
         library.add(System.identityHashCode(copy));
         List<Object[]> collections = new ArrayList<Object[]>();
         Field[] allFields = context.getAllFields(copy.getClass());
@@ -185,6 +197,19 @@ public abstract class MultiTenantCopier implements Ordered {
                         "recognizes Collection and Map. (%s.%s)", copy.getClass().getName(), ((Field) collectionItem[0]).getName()));
             }
         }
+    }
+
+    private boolean dontTraversThroughEntityFromTheDB(Object copy, MultiTenantCopyContext context) {
+        //special optimization for synched catalog copy. In the marketplace test copy of the catalog takes abnoramally long time
+        //this is for blc 7.0: after hibernate & spring & etc libs update. Looks like it has a setup of product_category_xref
+        //where it references category from the shared catalog, that category has 42 products, and it starts to iterate over those products
+        //and can go deep up to 13 levels, while the final decision is to do nothing as category & its products are already
+        //were fetched from the DB, so the if condition in persistNode will not be satisfied, so what is the reason of processing
+        //entity fields if you fetch this entity from the DB and so all dependend entities & collections are also from the db.
+        //not sure about duplication & propagation flows, so this optimization should be only when you setup a new site/catalog
+        //with synched sandbox propagation option.
+        return !context.getCopyHints().containsKey(MANUAL_DUPLICATION) && !context.getCopyHints().containsKey(PROPAGATION)
+                && copy.getClass().getAnnotation(Entity.class) != null && genericEntityService.sessionContains(copy) && genericEntityService.idAssigned(copy);
     }
 
     /**
