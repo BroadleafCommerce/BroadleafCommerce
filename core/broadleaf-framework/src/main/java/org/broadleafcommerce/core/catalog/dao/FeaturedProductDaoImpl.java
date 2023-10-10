@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
@@ -34,6 +35,7 @@ public class FeaturedProductDaoImpl implements FeaturedProductDao{
     public boolean isFeaturedProduct(long productId){
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(p) FROM FeaturedProductImpl p WHERE p.product.id=:pId", Long.class);
         query.setParameter("pId",productId);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         Long result = query.getSingleResult();
         return result!=null && result>0;
     }
