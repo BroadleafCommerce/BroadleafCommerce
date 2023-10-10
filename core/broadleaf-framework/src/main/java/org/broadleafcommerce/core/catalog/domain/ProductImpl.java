@@ -326,6 +326,17 @@ public class ProductImpl
             tab = TabName.ProductOptions, order = 1000)
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
+    @ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "DEFAULT_CATEGORY_ID")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category",
+            order = FieldOrder.DEFAULT_CATEGORY,
+            group = GroupName.General,
+            prominent = true, gridOrder = 2,
+            requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentationToOneLookup()
+    @Deprecated
+    protected Category defaultCategory;
+
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product",
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @OrderBy(value = "displayOrder")
@@ -646,6 +657,25 @@ public class ProductImpl
             this.additionalSkus.add(sku);
         }
     }
+
+    @Override
+    @Deprecated
+    public Category getDefaultCategory() {
+        Category response;
+        if (defaultCategory != null) {
+            response = defaultCategory;
+        } else {
+            response = getCategory();
+        }
+        return response;
+    }
+
+    @Override
+    @Deprecated
+    public void setDefaultCategory(Category defaultCategory) {
+        this.defaultCategory = defaultCategory;
+    }
+
     @Override
     public Category getCategory() {
         Category response = null;
@@ -894,7 +924,6 @@ public class ProductImpl
 
     @Override
     public List<RelatedProduct> getCumulativeCrossSaleProducts() {
-        Category defaultCategory = getCategory();
         List<RelatedProduct> returnProducts = getCrossSaleProducts();
         if (defaultCategory != null) {
             List<RelatedProduct> categoryProducts =
@@ -916,7 +945,6 @@ public class ProductImpl
     @Override
     public List<RelatedProduct> getCumulativeUpSaleProducts() {
         List<RelatedProduct> returnProducts = getUpSaleProducts();
-        Category defaultCategory = getCategory();
         if (defaultCategory != null) {
             List<RelatedProduct> categoryProducts = defaultCategory.getCumulativeUpSaleProducts();
             if (categoryProducts != null) {
@@ -1138,9 +1166,8 @@ public class ProductImpl
 
     @Override
     public String getGeneratedUrl() {
-        Category category = getCategory();
-        if (category != null && category.getGeneratedUrl() != null) {
-            String generatedUrl = category.getGeneratedUrl();
+        if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
+            String generatedUrl = getDefaultCategory().getGeneratedUrl();
             if (generatedUrl.endsWith("//")) {
                 return generatedUrl + getUrlKey();
             } else {
@@ -1183,6 +1210,12 @@ public class ProductImpl
         cloned.setCanonicalUrl(canonicalUrl);
         cloned.setMetaTitle(metaTitle);
         cloned.setEnableDefaultSkuInInventory(enableDefaultSkuInventory);
+        if (defaultCategory != null && !context.getCopyHints().containsKey(MANUAL_DUPLICATION)) {
+            cloned.setDefaultCategory(
+                    defaultCategory.createOrRetrieveCopyInstance(context).getClone());
+        } else if (context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
+            cloned.setDefaultCategory(defaultCategory);
+        }
         cloned.setModel(model);
         if (defaultSku != null) {
             cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
