@@ -15,31 +15,8 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.service;
+package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
-import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
-
-import java.util.List;
-
-/**
- * Interface for finding related products.   Could be extended to support more complex
- * related product functions.    
- * 
- * @author bpolster
- *
- */
-public interface RelatedProductsService {   
-    
-    /**
-     * Uses the data in the passed in DTO to return a list of relatedProducts.
-     * 
-     * For example, upSale, crossSale, or featured products.
-     * 
-     * @param relatedProductDTO
-     * @return
-     */
-    public List<? extends PromotableProduct> findRelatedProducts(RelatedProductDTO relatedProductDTO);
-
-    boolean isFeaturedProduct(Long productId);
+public interface FeaturedProductDao {
+    boolean isFeaturedProduct(long productId);
 }
