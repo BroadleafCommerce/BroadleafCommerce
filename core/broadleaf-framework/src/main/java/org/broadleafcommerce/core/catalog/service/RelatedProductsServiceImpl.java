@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
+import org.broadleafcommerce.core.catalog.dao.FeaturedProductDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
@@ -46,6 +47,9 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
 
     @Resource(name="blProductDao")
     protected ProductDao productDao;
+
+    @Resource(name = "blFeaturedProductDao")
+    protected FeaturedProductDao featuredProductDao;
     
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
@@ -64,6 +68,11 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
         } else {
             throw new IllegalArgumentException("RelatedProductType " + relatedProductDTO.getType() + " not supported.");
         }       
+    }
+
+    @Override
+    public boolean isFeaturedProduct(Long productId){
+        return featuredProductDao.isFeaturedProduct(productId);
     }
     
     /**

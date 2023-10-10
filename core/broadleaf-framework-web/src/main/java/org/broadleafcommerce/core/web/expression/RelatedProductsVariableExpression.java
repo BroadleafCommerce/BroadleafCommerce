@@ -82,6 +82,9 @@ public class RelatedProductsVariableExpression implements BroadleafVariableExpre
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
         return buildProductList(relatedProducts);
     }
+    public boolean isFeaturedProduct(Long productId){
+        return relatedProductsService.isFeaturedProduct(productId);
+    }
 
     protected List<Product> buildProductList(List<? extends PromotableProduct> relatedProducts) {
         List<Product> productList = new ArrayList<>();

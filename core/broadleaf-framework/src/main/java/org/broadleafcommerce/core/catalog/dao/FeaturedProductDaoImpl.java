@@ -15,31 +15,26 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.service;
+package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
-import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
-/**
- * Interface for finding related products.   Could be extended to support more complex
- * related product functions.    
- * 
- * @author bpolster
- *
- */
-public interface RelatedProductsService {   
-    
-    /**
-     * Uses the data in the passed in DTO to return a list of relatedProducts.
-     * 
-     * For example, upSale, crossSale, or featured products.
-     * 
-     * @param relatedProductDTO
-     * @return
-     */
-    public List<? extends PromotableProduct> findRelatedProducts(RelatedProductDTO relatedProductDTO);
+@Repository("blFeaturedProductDao")
+public class FeaturedProductDaoImpl implements FeaturedProductDao{
 
-    boolean isFeaturedProduct(Long productId);
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager em;
+
+
+    @Override
+    public boolean isFeaturedProduct(long productId){
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(p) FROM FeaturedProductImpl p WHERE p.product.id=:pId", Long.class);
+        query.setParameter("pId",productId);
+        Long result = query.getSingleResult();
+        return result!=null && result>0;
+    }
 }
