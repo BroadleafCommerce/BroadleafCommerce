@@ -370,6 +370,29 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public void setCategory(Category category);
 
     /**
+     * Returns the default {@link Category} this product is associated with. This method will delegate to
+     * {@link #getCategory()} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to return the deprecated defaultCategory field.
+     *
+     * @deprecated use {@link #getCategory()} instead
+     */
+    @Deprecated
+    public Category getDefaultCategory();
+
+    /**
+     * Sets the default {@link Category} to associate this product with. This method will delegate to
+     * {@link #setCategory(Category)} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to set the deprecated defaultCategory field.
+     *
+     * @deprecated use {@link #setCategory(Category)} instead
+     * @param defaultCategory - the default {@link Category} to associate this product with
+     */
+    @Deprecated
+    public void setDefaultCategory(Category defaultCategory);
+
+    /**
      * Returns the model number of the product
      * @return the model number
      */

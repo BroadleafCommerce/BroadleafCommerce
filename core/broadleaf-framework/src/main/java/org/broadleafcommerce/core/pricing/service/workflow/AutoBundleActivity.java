@@ -181,7 +181,7 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
 
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         bundleOrderItem.setQuantity(numApplications);
-        bundleOrderItem.setCategory(productBundle.getCategory());
+        bundleOrderItem.setCategory(productBundle.getDefaultCategory());
         bundleOrderItem.setSku(productBundle.getDefaultSku());
         bundleOrderItem.setName(productBundle.getName());
         bundleOrderItem.setProductBundle(productBundle);

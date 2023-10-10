@@ -411,7 +411,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             }
 
             if (bundleCategory == null && bundleProduct != null) {
-                bundleCategory = bundleProduct.getCategory();
+                bundleCategory = bundleProduct.getDefaultCategory();
             }
 
             DiscreteOrderItemRequest bundleItemRequest = new DiscreteOrderItemRequest();
@@ -520,7 +520,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
 
         if (category == null && product != null) {
-            category = product.getCategory();
+            category = product.getDefaultCategory();
         }
 
         OrderItem item;
