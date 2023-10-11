@@ -937,6 +937,31 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     }
 
     @Override
+    @Deprecated
+    public Map<String, Media> getSkuMedia() {
+        Map<String, Media> skuMediaMap = new LinkedHashMap<>(legacySkuMedia);
+
+        if (MapUtils.isEmpty(skuMediaMap)) {
+            for (Map.Entry<String, SkuMediaXref> entry : getSkuMediaXref().entrySet()) {
+                skuMediaMap.put(entry.getKey(), entry.getValue().getMedia());
+            }
+        }
+
+        return Collections.unmodifiableMap(skuMediaMap);
+    }
+
+    @Override
+    @Deprecated
+    public void setSkuMedia(Map<String, Media> skuMedia) {
+        this.skuMedia.clear();
+        this.legacySkuMedia.clear();
+        for (Map.Entry<String, Media> entry : skuMedia.entrySet()) {
+            this.skuMedia.put(entry.getKey(),
+                    new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+        }
+    }
+
+    @Override
     public Map<String, SkuMediaXref> getSkuMediaXref() {
         Map<String, SkuMediaXref> skuMediaMap = skuMedia;
 
