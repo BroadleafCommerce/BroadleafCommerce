@@ -1142,7 +1142,10 @@ var BLCAdmin = (function($) {
          */
         serializeArray : function serializeArray($form) {
             var $disabledFields = $form.find(':disabled').attr('disabled', false);
+            var redactorEnabledFields= $form.find(".redactor-editor").find('input:not(:disabled)');
+            $form.find(".redactor-editor").find('input').attr('disabled', true);
             var serializedForm = $form.serializeArray();
+            redactorEnabledFields.attr("disabled", false);
             $disabledFields.attr('disabled', true);
 
             return serializedForm.filter(notIdFilterFunction);
