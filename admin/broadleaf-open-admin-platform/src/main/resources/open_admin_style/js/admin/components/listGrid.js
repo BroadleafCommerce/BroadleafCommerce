@@ -1220,7 +1220,7 @@ $('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fie
         if ($(this).prop('checked')) {
             if ($listgridBody.find(".listgrid-checkbox:not(:has(i.fa-lock))").length > 0) {
                 $listgridBody.find(".listgrid-checkbox:not(:has(i.fa-lock))").prop('checked', true);
-                BLCAdmin.listGrid.inlineRowSelected(null, $listgridBody.find(".list-grid-table tbody tr:not(.selected):not(:has(i.fa-lock))"), null, null, null, true);
+                BLCAdmin.listGrid.inlineRowSelected(null, $listgridBody.find(".list-grid-table tbody tr:not(.selected,.blank-padding):not(:has(i.fa-lock)"), null, null, null, true);
             }else {
                 var $tbody = $listgridBody.find("tbody");
                 var $listgridHeader = $tbody.closest(".listgrid-body-wrapper").prev();
