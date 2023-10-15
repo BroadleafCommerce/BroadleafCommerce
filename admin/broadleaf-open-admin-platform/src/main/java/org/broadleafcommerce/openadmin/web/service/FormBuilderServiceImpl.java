@@ -908,12 +908,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setExternalEntitySectionKey(section.getUrl());
         }
 
-        // format date list grid cells
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, y @ hh:mma");
-        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-        symbols.setAmPmStrings(new String[] { "am", "pm" });
-        formatter.setDateFormatSymbols(symbols);
-
         // For each of the entities (rows) in the list grid, we need to build the associated
         // ListGridRecord and set the required fields on the record. These fields are the same ones
         // that are used for the header fields.
@@ -964,13 +958,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         recordField.setDisplayValue(p.getDisplayValue());
                     } else {
                         if (headerField.getFieldType().equals("DATE")) {
-                            try {
-                                Date date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(p.getValue());
-                                String newValue = formatter.format(date);
-                                recordField.setValue(newValue);
-                            } catch (Exception ex) {
-                                recordField.setValue(p.getValue());
-                            }
+                            this.setDateToRecordField(recordField, p);
                         } else {
                             recordField.setValue(p.getValue());
                         }
@@ -1184,6 +1172,29 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 f.setAssociatedFieldName(null);
             }
         }
+    }
+
+    protected void setDateToRecordField(Field recordField, Property property) {
+        // format date list grid cells
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, y @ hh:mma");
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+        symbols.setAmPmStrings(new String[]{"am", "pm"});
+        formatter.setDateFormatSymbols(symbols);
+        String newValue;
+        Date date;
+        try {
+            date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(property.getValue());
+            newValue = formatter.format(date);
+        } catch (Exception ex) {
+            try {
+                date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SS").parse(property.getValue());
+                newValue = formatter.format(date);
+            } catch (ParseException e) {
+                newValue = property.getValue();
+            }
+
+        }
+        recordField.setValue(newValue);
     }
 
     protected String getFieldComponentRenderer(BasicFieldMetadata fmd) {
