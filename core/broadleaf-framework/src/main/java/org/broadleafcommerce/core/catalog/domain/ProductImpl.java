@@ -1081,7 +1081,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, skus);
+        return Objects.hash(id, additionalSkus);
     }
 
     @Override
