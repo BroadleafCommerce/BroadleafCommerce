@@ -87,32 +87,32 @@ INSERT INTO BLC_SEARCH_FACET_RANGE (SEARCH_FACET_RANGE_ID, SEARCH_FACET_ID, MIN_
 -- =============================================
 -- In this step, we are also populating the manufacturer for the product
 ------------------------------------------------------------------------------------------------------------------
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (1,'/hot-sauces/sudden_death_sauce','Blair''s',TRUE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (2,'/hot-sauces/sweet_death_sauce','Blair''s',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (3,'/hot-sauces/hoppin_hot_sauce','Salsa Express',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (4,'/hot-sauces/day_of_the_dead_chipotle_hot_sauce','Spice Exchange',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (5,'/hot-sauces/day_of_the_dead_habanero_hot_sauce','Spice Exchange',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (6,'/hot-sauces/day_of_the_dead_scotch_bonnet_sauce','Spice Exchange',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (7,'/hot-sauces/green_ghost','Garden Row',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (8,'/hot-sauces/blazin_saddle_hot_habanero_pepper_sauce','D. L. Jardine''s',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (9,'/hot-sauces/armageddon_hot_sauce_to_end_all','Figueroa Brothers',TRUE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (10,'/hot-sauces/dr_chilemeisters_insane_hot_sauce','Figueroa Brothers',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (11,'/hot-sauces/bull_snort_cowboy_cayenne_pepper_hot_sauce','Brazos Legends',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (12,'/hot-sauces/cafe_louisiane_sweet_cajun_blackening_sauce','Garden Row',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (13,'/hot-sauces/bull_snort_smokin_toncils_hot_sauce','Brazos Legends',TRUE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (14,'/hot-sauces/cool_cayenne_pepper_hot_sauce','Dave''s Gourmet',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (15,'/hot-sauces/roasted_garlic_hot_sauce','Dave''s Gourmet',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (16,'/hot-sauces/scotch_bonnet_hot_sauce','Dave''s Gourmet',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (17,'/hot-sauces/insanity_sauce','Dave''s Gourmet',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (18,'/hot-sauces/hurtin_jalepeno_hot_sauce','Dave''s Gourmet',FALSE, FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT, OVERRIDE_GENERATED_URL) VALUES (19,'/hot-sauces/roasted_red_pepper_chipotle_hot_sauce','Dave''s Gourmet',FALSE, FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (1,'/hot-sauces/sudden_death_sauce','Blair''s', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (2,'/hot-sauces/sweet_death_sauce','Blair''s', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (3,'/hot-sauces/hoppin_hot_sauce','Salsa Express', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (4,'/hot-sauces/day_of_the_dead_chipotle_hot_sauce','Spice Exchange', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (5,'/hot-sauces/day_of_the_dead_habanero_hot_sauce','Spice Exchange', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (6,'/hot-sauces/day_of_the_dead_scotch_bonnet_sauce','Spice Exchange', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (7,'/hot-sauces/green_ghost','Garden Row', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (8,'/hot-sauces/blazin_saddle_hot_habanero_pepper_sauce','D. L. Jardine''s', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (9,'/hot-sauces/armageddon_hot_sauce_to_end_all','Figueroa Brothers', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (10,'/hot-sauces/dr_chilemeisters_insane_hot_sauce','Figueroa Brothers', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (11,'/hot-sauces/bull_snort_cowboy_cayenne_pepper_hot_sauce','Brazos Legends', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (12,'/hot-sauces/cafe_louisiane_sweet_cajun_blackening_sauce','Garden Row', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (13,'/hot-sauces/bull_snort_smokin_toncils_hot_sauce','Brazos Legends', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (14,'/hot-sauces/cool_cayenne_pepper_hot_sauce','Dave''s Gourmet', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (15,'/hot-sauces/roasted_garlic_hot_sauce','Dave''s Gourmet', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (16,'/hot-sauces/scotch_bonnet_hot_sauce','Dave''s Gourmet', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (17,'/hot-sauces/insanity_sauce','Dave''s Gourmet', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (18,'/hot-sauces/hurtin_jalepeno_hot_sauce','Dave''s Gourmet', FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE,  OVERRIDE_GENERATED_URL) VALUES (19,'/hot-sauces/roasted_red_pepper_chipotle_hot_sauce','Dave''s Gourmet',FALSE);
 
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT) VALUES (100,'/merchandise/hawt_like_a_habanero_mens','The Heat Clinic',FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT) VALUES (200,'/merchandise/hawt_like_a_habanero_womens','The Heat Clinic',FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT) VALUES (300,'/merchandise/heat_clinic_hand-drawn_mens','The Heat Clinic',FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT) VALUES (400,'/merchandise/heat_clinic_hand-drawn_womens','The Heat Clinic',FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT) VALUES (500,'/merchandise/heat_clinic_mascot_mens','The Heat Clinic',FALSE);
-INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE, IS_FEATURED_PRODUCT) VALUES (600,'/merchandise/heat_clinic_mascot_womens','The Heat Clinic',FALSE);
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE) VALUES (100,'/merchandise/hawt_like_a_habanero_mens','The Heat Clinic');
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE) VALUES (200,'/merchandise/hawt_like_a_habanero_womens','The Heat Clinic');
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE) VALUES (300,'/merchandise/heat_clinic_hand-drawn_mens','The Heat Clinic');
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE) VALUES (400,'/merchandise/heat_clinic_hand-drawn_womens','The Heat Clinic');
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE) VALUES (500,'/merchandise/heat_clinic_mascot_mens','The Heat Clinic');
+INSERT INTO BLC_PRODUCT (PRODUCT_ID, URL, MANUFACTURE) VALUES (600,'/merchandise/heat_clinic_mascot_womens','The Heat Clinic');
 
 ------------------------------------------------------------------------------------------------------------------
 -- Load Catalog - Step 2:  Create "default" SKUs
