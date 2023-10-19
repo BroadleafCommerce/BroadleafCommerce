@@ -114,6 +114,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -124,6 +125,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -907,6 +909,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setExternalEntitySectionKey(section.getUrl());
         }
 
+        // format date list grid cells
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, y @ hh:mma");
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+        symbols.setAmPmStrings(new String[]{"am", "pm"});
+        formatter.setDateFormatSymbols(symbols);
+
         // For each of the entities (rows) in the list grid, we need to build the associated
         // ListGridRecord and set the required fields on the record. These fields are the same ones
         // that are used for the header fields.
@@ -957,7 +965,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         recordField.setDisplayValue(property.getDisplayValue());
                     } else {
                         if (headerField.getFieldType().equals("DATE")) {
-                            this.setDateToRecordField(recordField, property);
+                            this.setDateToRecordField(recordField, property, formatter);
                         } else {
                             recordField.setValue(property.getValue());
                         }
@@ -1173,16 +1181,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
     }
 
-    protected void setDateToRecordField(Field recordField, Property property) {
+    protected void setDateToRecordField(Field recordField, Property property, SimpleDateFormat formatter) {
         String newValue;
         Date date;
         try {
             date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(property.getValue());
-            newValue = BLCDateUtils.formatDateAsString(date);
+            newValue = formatter.format(date);
         } catch (Exception ex) {
             try {
                 date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SS").parse(property.getValue());
-                newValue = BLCDateUtils.formatDateAsString(date);
+                newValue = formatter.format(date);
             } catch (ParseException e) {
                 newValue = property.getValue();
             }
