@@ -39,7 +39,7 @@ class RecordOfferUsageRollbackHandlerSpec extends BaseCheckoutRollbackSpec {
         stateConfiguration = new HashMap<String, List>()
         stateConfiguration.put(RecordOfferUsageActivity.SAVED_AUDITS, offerAudits)
         OfferAuditService mockOfferAuditService = Mock()
-        RollbackHandler<CheckoutSeed> rollbackHandler = new RecordOfferUsageRollbackHandler().with {
+        RecordOfferUsageRollbackHandler rollbackHandler = new RecordOfferUsageRollbackHandler().with {
             offerAuditService = mockOfferAuditService
             it
         }

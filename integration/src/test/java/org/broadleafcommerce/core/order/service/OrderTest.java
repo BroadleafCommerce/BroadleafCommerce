@@ -21,9 +21,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -37,7 +35,6 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.springframework.test.annotation.Rollback;
@@ -47,7 +44,6 @@ import org.testng.annotations.Test;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.annotation.Resource;
 
@@ -55,19 +51,12 @@ public class OrderTest extends OrderBaseTest {
 
     private Long orderId = null;
     private int numOrderItems = 0;
-    private Long bundleOrderItemId;
 
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
     
     @Resource
     private SkuDao skuDao;
-    
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
-    
-    @Resource(name = "blAddItemWorkflow")
-    protected SequenceProcessor addItemWorkflow;
     
     @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone" })
     @Transactional
@@ -279,9 +268,6 @@ public class OrderTest extends OrderBaseTest {
             assert e.getCause() instanceof IllegalArgumentException;
         }
         assert !addSuccessful;
-
-
-        
     }
     
     @Test(groups = { "testIllegalUpdateScenarios" }, dependsOnGroups = { "addItemToOrder" })
@@ -617,11 +603,7 @@ public class OrderTest extends OrderBaseTest {
         order = orderService.save(order, false);
 
         List<Order> newOrders = orderService.findOrdersForCustomer(customer, OrderStatus.IN_PROCESS);
-        boolean containsOrder = false;
-
-        if (newOrders.contains(order)) {
-            containsOrder = true;
-        }
+        boolean containsOrder = newOrders.contains(order);
 
         assert containsOrder == true;
 
@@ -671,15 +653,9 @@ public class OrderTest extends OrderBaseTest {
         orderService.addPaymentToOrder(order, paymentInfo, null);
 
         order = orderService.findOrderById(orderId);
-        OrderPayment payment = null;
-        for (OrderPayment op : order.getPayments()) {
-            Long oldId = op.getId();
-            op.setId(null);
-            if (op.equals(paymentInfo)) {
-                op.setId(oldId);
-                payment = op;
-            }
-        }
+        OrderPayment payment = order.getPayments()
+                .get(order.getPayments().indexOf(paymentInfo));
+
         assert payment != null;
         assert payment.getOrder() != null;
         assert payment.getOrder().equals(order);
@@ -697,6 +673,7 @@ public class OrderTest extends OrderBaseTest {
         for (OrderPayment testInfo : order.getPayments()) {
             if (testInfo.equals(info)) {
                 foundInfo = true;
+                break;
             }
         }
         assert foundInfo == true;
