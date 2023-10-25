@@ -55,7 +55,7 @@
         <selenium.version>4.14.1</selenium.version>
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>4.0.15</groovy.version>
-        <gpg.plugin.version>1.6</gpg.plugin.version>
+        <gpg.plugin.version>3.1.0</gpg.plugin.version>
         <broadleaf-presentation.version>1.4.0-SNAPSHOT</broadleaf-presentation.version>
         <hsqldb.database.starter.version>2.4.0-SNAPSHOT</hsqldb.database.starter.version>
         <hsqldb.version>2.7.2</hsqldb.version>
@@ -64,8 +64,6 @@
         <jakarta.version>6.0.0</jakarta.version>
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
-        <sunxml.version>4.0.2</sunxml.version>
-        <eclipse.jetty.version>12.0.0</eclipse.jetty.version>
         <slf4j.version>2.0.9</slf4j.version>
         <logback.version>1.4.11</logback.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
