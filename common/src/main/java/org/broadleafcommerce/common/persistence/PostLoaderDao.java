@@ -50,4 +50,7 @@ public interface PostLoaderDao {
      */
     <T> T findSandboxEntity(Class<T> clazz, Object id);
 
+    void evict(Class<?> clazz, Object id);
+
+    void evict(Object entity);
 }

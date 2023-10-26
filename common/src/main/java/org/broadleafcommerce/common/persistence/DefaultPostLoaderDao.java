@@ -20,6 +20,8 @@ package org.broadleafcommerce.common.persistence;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.service.PersistenceService;
+import org.hibernate.Session;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -86,6 +88,32 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     @Override
     public <T> T findSandboxEntity(Class<T> clazz, Object id) {
         return find(clazz, id);
+    }
+
+    @Override
+    public void evict(Class<?> clazz, Object id) {
+        EntityManager em = getEntityManager(clazz);
+        if(em != null){
+            Session session = em.unwrap(Session.class);
+            session.evict(session.getReference(clazz, id));
+        }
+    }
+
+    @Override
+    public void evict(Object entity) {
+        EntityManager em;
+        if(entity instanceof HibernateProxy){
+            Class<?> persistentClass = ((HibernateProxy) entity).getHibernateLazyInitializer().getPersistentClass();
+            em = getEntityManager(persistentClass);
+        }else {
+            em = getEntityManager(entity.getClass());
+        }
+
+        if(em != null){
+            Session session = em.unwrap(Session.class);
+            session.evict(entity);
+        }
+
     }
 
     protected EntityManager getEntityManager(Class clazz) {
