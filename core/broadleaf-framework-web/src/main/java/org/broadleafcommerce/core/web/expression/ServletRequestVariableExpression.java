@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service("blServletRequestVariableExpression")
 @ConditionalOnTemplating
@@ -39,6 +40,10 @@ public class ServletRequestVariableExpression implements BroadleafVariableExpres
     public String getParameter(final String parameter) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         return context.getRequest() != null ? context.getRequest().getParameter(parameter) : null;
+    }
+
+    public ServletUriComponentsBuilder uriBuilderFromCurrentRequest(){
+        return ServletUriComponentsBuilder.fromCurrentRequest();
     }
 
 }
