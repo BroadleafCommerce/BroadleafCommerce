@@ -168,7 +168,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Boolean isTaxable() {
-        return (sku == null || sku.isTaxable() == null || sku.isTaxable());
+        return (sku == null || getSku().isTaxable() == null || getSku().isTaxable());
     }
 
     @Override
@@ -253,7 +253,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     public String getName() {
         String name = super.getName();
         if (name == null) {
-            return sku.getName();
+            return getSku().getName();
         }
         return name;
     }
@@ -472,14 +472,14 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         final int prime = super.hashCode();
         int result = 1;
         result = prime * result + ((bundleOrderItem == null) ? 0 : bundleOrderItem.hashCode());
-        result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+        result = prime * result + ((sku == null) ? 0 : getSku().hashCode());
         return result;
     }
 
     @Override
     public boolean isDiscountingAllowed() {
         if (discountsAllowed == null) {
-            return sku.isDiscountable();
+            return getSku().isDiscountable();
         } else {
             return discountsAllowed.booleanValue();
         }
@@ -546,6 +546,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public boolean isSkuActive() {
-        return sku.isActive();
+        return getSku().isActive();
     }
 }
