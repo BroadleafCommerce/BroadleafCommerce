@@ -19,6 +19,9 @@ package org.broadleafcommerce.common.crossapp.service;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 /**
  * A service responsible for allowing secure authentication for a user between the admin and site applications.
  * 
@@ -37,14 +40,16 @@ public interface CrossAppAuthService {
     /**
      * Consumes an authentication token for the given user id and token. This method will additionally register the
      * current session (acquired from the {@link RedirectAttributes} argument) as having an admin authentication for the
-     * given adminUserId.
-     * 
+     * given adminUserId, to do so it will try to use bean blSecurityContextRepository defined in Site and/or Admin Security configs.
+     * If it fails to find such bean, will directly set security context to a session(this is required from blc 7.0.0 spring-boot 3.0)
+     *
      * @param adminUserId
      * @param token
-     * @param ra
+     * @param request
+     * @param response
      * @throws IllegalArgumentException
      */
-    public void useSiteAuthToken(Long adminUserId, String token) throws IllegalArgumentException;
+    public void useSiteAuthToken(Long adminUserId, String token, HttpServletRequest request, HttpServletResponse response) throws IllegalArgumentException;
 
     /**
      * @return whether or not the user is currently authenticated from the admin
