@@ -21,11 +21,27 @@
 
 package org.broadleafcommerce.common.config;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern;
+import org.broadleafcommerce.common.extensibility.jpa.hibernate.BroadleafHibernateEnhancingClassTransformerImpl;
+import org.hibernate.bytecode.enhance.spi.EnhancementContext;
+import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
+import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 
 /**
  * Main configuration class for the broadleaf-common module
@@ -35,13 +51,42 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @Configuration
 public class BroadleafCommonConfig {
 
+    @Resource(name = "blDirectCopyIgnorePatterns")
+    protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
+
     /**
      * Other enterprise/mulititenant modules override this adapter to provide one that supports dynamic filtration
      */
     @Bean
     @ConditionalOnMissingBean(name = "blJpaVendorAdapter")
     public JpaVendorAdapter blJpaVendorAdapter() {
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter(){
+            @Override
+            public PersistenceProvider getPersistenceProvider() {
+                PersistenceProvider persistenceProvider = new HibernatePersistenceProvider(){
+                    public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map properties) {
+                        final List<String> mergedClassesAndPackages = new ArrayList(info.getManagedClassNames());
+                        if (info instanceof SmartPersistenceUnitInfo smartInfo) {
+                            mergedClassesAndPackages.addAll(smartInfo.getManagedPackages());
+                        }
+
+                        return (new EntityManagerFactoryBuilderImpl(new PersistenceUnitInfoDescriptor(info) {
+                            public List<String> getManagedClassNames() {
+                                return mergedClassesAndPackages;
+                            }
+
+                            public void pushClassTransformer(EnhancementContext enhancementContext) {
+                                BroadleafHibernateEnhancingClassTransformerImpl classTransformer = new BroadleafHibernateEnhancingClassTransformerImpl(enhancementContext);
+                                classTransformer.setIgnorePatterns(ignorePatterns);
+                                info.addTransformer(classTransformer);
+                            }
+                        }, properties)).build();
+                    }
+                };
+                return persistenceProvider;
+            }
+        };
+
         return vendorAdapter;
     }
 
