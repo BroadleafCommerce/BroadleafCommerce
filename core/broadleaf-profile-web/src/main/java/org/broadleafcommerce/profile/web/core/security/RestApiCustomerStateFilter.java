@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.profile.web.core.security;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,11 +29,14 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.FilterChain;
@@ -57,7 +61,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * User: Kelly Tisdell
  * Date: 4/18/12
  */
-public class RestApiCustomerStateFilter extends GenericFilterBean implements Ordered {
+public class RestApiCustomerStateFilter extends OncePerRequestFilter implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(RestApiCustomerStateFilter.class);
 
@@ -65,15 +69,16 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
     @Qualifier("blCustomerService")
     protected CustomerService customerService;
 
+    protected AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    protected List<String> excludeUrlPatterns;
     public static final String CUSTOMER_ID_ATTRIBUTE = "customerId";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String customerId = null;
-
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
 
         //If someone already set the customer on the request then we don't need to do anything.
         if (request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName()) == null){
@@ -85,7 +90,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
 
             if (customerId == null) {
                 //If it's not on the request attribute, try the parameter
-                customerId = servletRequest.getParameter(CUSTOMER_ID_ATTRIBUTE);
+                customerId = request.getParameter(CUSTOMER_ID_ATTRIBUTE);
             }
 
             if (customerId == null) {
@@ -115,14 +120,23 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
             }
         }
         if (CustomerState.getCustomer() == null) { //we need to create an anonymous customer for API calls
-            ServletWebRequest servletWebRequest = new ServletWebRequest(request, (HttpServletResponse)servletResponse);
+            ServletWebRequest servletWebRequest = new ServletWebRequest(request, response);
             BroadleafRequestContext.getBroadleafRequestContext().setWebRequest(servletWebRequest);
             Customer customer = this.customerService.createCustomer();
             CustomerState.setCustomer(customer);
             setupCustomerForRuleProcessing(customer, request);
         }
 
-        filterChain.doFilter(request, servletResponse);
+        filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        if(CollectionUtils.isNotEmpty(excludeUrlPatterns)) {
+            return excludeUrlPatterns.stream()
+                    .anyMatch(p -> pathMatcher.match(p, request.getServletPath()));
+        }
+        return false;
     }
 
     private void setupCustomerForRuleProcessing(Customer customer, HttpServletRequest request) {
@@ -145,4 +159,11 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
         return CUSTOMER_ID_ATTRIBUTE;
     }
 
+    public List<String> getExcludeUrlPatterns() {
+        return excludeUrlPatterns;
+    }
+
+    public void setExcludeUrlPatterns(List<String> excludeUrlPatterns) {
+        this.excludeUrlPatterns = excludeUrlPatterns;
+    }
 }
