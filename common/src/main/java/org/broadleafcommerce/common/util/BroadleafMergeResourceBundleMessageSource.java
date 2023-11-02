@@ -31,7 +31,7 @@ import jakarta.annotation.Resource;
 
 
 /**
- * <p>Replaces the deprecated BLResourceBundleMessageSource by using a {@link ReloadableResourceBundleMessageSource}
+ * <p>Replaces the older BLResourceBundleMessageSource by using a {@link ReloadableResourceBundleMessageSource}
  * instead. The main advantage of using this is the out-of-the-box ability to merge multiple property files together. There
  * is one important difference: When there is a conflict for a property (declared in multiple files) this implementation
  * assumes that the <i>later</i> one in the list takes precedence. This follows with normal Broadleaf assumptions that bean
