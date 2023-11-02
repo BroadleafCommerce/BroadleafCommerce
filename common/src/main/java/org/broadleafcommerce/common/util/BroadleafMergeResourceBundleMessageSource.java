@@ -69,7 +69,6 @@ public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourc
      * implementation.
      * 
      * @param basenames
-     * @param resourceBundleExtensionPoint
      * @see {@link ReloadableResourceBundleMessageSource#setBasenames(String...)}
      */
     @Resource(name="blMessageSourceBaseNames")
