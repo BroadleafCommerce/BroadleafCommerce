@@ -144,9 +144,13 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
             Column column = null;
             for (Property property : addMetadataFromMappingDataRequest.getComponentProperties()) {
                 if (property.getName().equals(addMetadataFromMappingDataRequest.getPropertyName())) {
-                    Object columnObject = property.getColumnIterator().next();
-                    if (columnObject instanceof Column) {
-                        column = (Column) columnObject;
+                    List<Column> columns = property.getColumns();
+                    if (CollectionUtils.isNotEmpty(columns)) {
+                        if(columns.size()>1){
+                            LOG.warn("class:"+metadata.getTargetClass()+", property:"+property.getName()+
+                                    "has a mapping to more than one column. Only the first column is used");
+                        }
+                        column = columns.get(0);
                     }
                     break;
                 }

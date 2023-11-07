@@ -80,6 +80,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.annotation.PostConstruct;
@@ -757,7 +758,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected void logValidationError(Entity response) {
-        LOG.info("A validation error occurred: " + response.getPropertyValidationErrors());
+        List<String> globalValidationErrors = response.getGlobalValidationErrors();
+        String globalErrors = globalValidationErrors.stream().collect(Collectors.joining(";"));
+        LOG.info("A validation error occurred: " + response.getPropertyValidationErrors()+"; "+globalErrors);
     }
 
     protected PersistenceResponse executePostUpdateHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
