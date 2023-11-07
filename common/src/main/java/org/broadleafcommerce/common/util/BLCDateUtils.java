@@ -38,6 +38,7 @@ public class BLCDateUtils {
 
     private static final Log LOG = LogFactory.getLog(BLCDateUtils.class);
 
+    public static final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.s";
     public static final String DISPLAY_DATE_FORMAT = "MMM d, Y @ hh:mma";
 
@@ -80,6 +81,10 @@ public class BLCDateUtils {
             LOG.warn("The date string could not be parsed into the given format: " + dateFormat, e);
         }
         return parsedDate;
+    }
+
+    public static String formatSimpleDate(Date date) {
+        return formatDate(date, SIMPLE_DATE_FORMAT);
     }
 
     public static String formatDate(Date date) {

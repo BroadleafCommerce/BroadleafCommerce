@@ -141,9 +141,9 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                 } else {
                     suffix = COPY_NUMBER_SEPARATOR + 1;
                 }
-                if(index>0) {
-                    name = name.substring(0, index+1) + suffix;
-                }else{
+                if (index > 0) {
+                    name = name.substring(0, index + 1) + suffix;
+                } else {
                     name = name + suffix;
                 }
             } else {

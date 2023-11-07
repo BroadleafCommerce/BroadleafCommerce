@@ -23,6 +23,7 @@ import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -44,8 +45,12 @@ public class DateProcessor implements DateExpression {
 
     @Override
     public String renderWithContextTimeZone(final Date date) {
-        BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
-        TimeZone timeZone = broadleafRequestContext.getTimeZone();
-        return FormatUtil.dateToSting(date, timeZone);
+        String dateString = "";
+        if (Objects.nonNull(date)) {
+            BroadleafRequestContext broadleafRequestContext = BroadleafRequestContext.getBroadleafRequestContext();
+            TimeZone timeZone = broadleafRequestContext.getTimeZone();
+            dateString = FormatUtil.dateToSting(date, timeZone);
+        }
+        return dateString;
     }
 }
