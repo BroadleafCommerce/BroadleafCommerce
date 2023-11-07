@@ -130,7 +130,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         List<Predicate> restrictions = new ArrayList<>();
         List<Long> mergedIds = sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId);
-        restrictions.add(root.get("productOption").in(mergedIds));
+        restrictions.add(root.get("productOption").get("id").in(mergedIds));
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         TypedQuery<Long> query = em.createQuery(criteria);
