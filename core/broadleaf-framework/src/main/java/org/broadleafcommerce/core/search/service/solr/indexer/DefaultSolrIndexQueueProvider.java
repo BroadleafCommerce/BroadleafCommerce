@@ -73,18 +73,6 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
         this.env = null;
     }
     
-    public DefaultSolrIndexQueueProvider(SolrClient solrClient, Environment env) {
-        if (solrClient != null && CloudSolrClient.class.isAssignableFrom(solrClient.getClass())) {
-            this.distributed = true;
-            this.zk = ((CloudSolrClient)solrClient).getZkStateReader().getZkClient().getSolrZooKeeper();
-        } else {
-            this.distributed = false;
-            this.zk = null;
-        }
-        
-        this.env = env;
-    }
-    
     public DefaultSolrIndexQueueProvider(ZooKeeper zookeeper, Environment env) {
         this.zk = zookeeper;
         this.env = env;

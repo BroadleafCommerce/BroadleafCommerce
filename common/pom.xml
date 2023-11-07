@@ -343,6 +343,10 @@
             <artifactId>closure-compiler-unshaded</artifactId>
             <exclusions>
                 <exclusion>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>jsr250-api</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>

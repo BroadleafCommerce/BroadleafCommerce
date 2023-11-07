@@ -18,15 +18,11 @@
 package org.broadleafcommerce.test.junit;
 
 import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
-import org.junit.Test;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-
-import static org.junit.Assert.assertNotNull;
-
 /**
  * <p>
  * Used as a customization point so that you can extend this class and add additional beans to the live Broadleaf ApplicationContext.
@@ -43,8 +39,4 @@ import static org.junit.Assert.assertNotNull;
 @BroadleafAdminIntegrationTest
 @TestExecutionListeners({TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class})
 public class JUnitAdminIntegrationSetup extends AbstractJUnit4SpringContextTests {
-    @Test
-    public void testContext() {
-        assertNotNull(applicationContext);
-    }
 }

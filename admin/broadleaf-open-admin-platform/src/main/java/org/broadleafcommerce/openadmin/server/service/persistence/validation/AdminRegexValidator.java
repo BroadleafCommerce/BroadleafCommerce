@@ -26,10 +26,10 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 @Component("blAdminRegexValidator")
 public class AdminRegexValidator extends ValidationConfigurationBasedPropertyValidator {
