@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang3.StringUtils;
@@ -1086,18 +1085,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Override
     @Deprecated
     public List<ProductOptionValue> getProductOptionValues() {
-        //Changing this API to Set is ill-advised (especially in a patch release). The tendrils are widespread. Instead
-        //we just migrate the call from the List to the internal Set representation. This is in response
-        //to https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917.
-        return (List<ProductOptionValue>) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[]{List.class}, new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args)
-                            throws Throwable {
-                        return MethodUtils.invokeMethod(getProductOptionValuesCollection(),
-                                method.getName(), args, method.getParameterTypes());
-                    }
-                });
+        return new ArrayList<>(getProductOptionValuesCollection());
     }
 
     @Override

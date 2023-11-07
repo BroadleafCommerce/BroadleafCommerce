@@ -19,8 +19,11 @@ package org.broadleafcommerce.common.util;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -61,6 +64,22 @@ public class FormatUtil {
     public static String formatDateUsingW3C(Date date) {
         String w3cDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(date);
         return w3cDate = w3cDate.substring(0, 22) + ":" + w3cDate.substring(22, 24);
+    }
+
+    /**
+     * Use to produce date Strings with a given timezone
+     *
+     * @param date     incoming date as java.util.Date
+     * @param timeZone timezone to correctly represent date information
+     * @return string of date
+     */
+    public static String dateToSting(Date date, TimeZone timeZone) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, y @ hh:mma");
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+        symbols.setAmPmStrings(new String[] { "am", "pm" });
+        formatter.setDateFormatSymbols(symbols);
+        formatter.setTimeZone(timeZone);
+        return formatter.format(date);
     }
 
 }

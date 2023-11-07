@@ -170,7 +170,9 @@ $(document).ready(function() {
     $('body').on('click', 'button.edit-asset-selector', function() {
 
         var $modal = BLCAdmin.getModalSkeleton();
-        var primaryData = JSON.parse($("#fields\\'defaultSku__skuMedia---primary\\'\\.value").val());
+        var hiddenInput = $(this).closest('.asset-selector-container').find(":input:hidden.mediaItem");
+        var parent = $(this).closest('.field-group');
+        var primaryData = JSON.parse(hiddenInput.val());
         var primaryDatum = primaryData['id'];
         var linkTitleTranslations ="<a class=\"show-translations\" href=\"" + BLC.servletContext + "/translation?ceilingEntity=org.broadleafcommerce.common.media.domain.Media&entityId="+primaryDatum+"&propertyName=media__title&isRte=false&fieldType=STRING\">"+
             "<i class=\"blc-icon-globe\" style=\"color: #94AF39; \">"+"</i>"+
@@ -184,6 +186,7 @@ $(document).ready(function() {
         $modal.find('.modal-header h3').text(BLCAdmin.messages.primaryMediaAttrsFormTitle);
         $modal.find('.modal-body').append(
             "<form id='primary-media-attrs-form'>" +
+            "<input type='hidden' id='assetPrimaryData' value=\""+parent.attr('id')+"\">" +
                 "<div class='field-group'>" +
                     "<label for='primary-media-title'>" +
             "</label>" +
@@ -291,7 +294,8 @@ $(document).ready(function() {
     $('body').on('submit', '#primary-media-attrs-form', function () {
         var $this = $(this);
 
-        var $primaryDataField = $("#fields\\'defaultSku__skuMedia---primary\\'\\.value");
+        var $parentId = $('#assetPrimaryData').val();
+        var $primaryDataField = $("#"+$parentId).find(":input:hidden.mediaItem");
 
         var primaryData = JSON.parse($primaryDataField.val());
         primaryData['title'] = $this.find('#primary-media-title').val();

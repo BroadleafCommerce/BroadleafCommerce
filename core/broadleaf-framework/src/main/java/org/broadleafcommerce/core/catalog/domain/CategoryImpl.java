@@ -756,11 +756,10 @@ public class CategoryImpl
 
     @Override
     public List<CategoryXref> getChildCategoryXrefs() {
-        if (childCategoryXrefs.isEmpty()) {
-            for (CategoryXref category : allChildCategoryXrefs) {
-                if (category.getSubCategory().isActive()) {
-                    childCategoryXrefs.add(category);
-                }
+        childCategoryXrefs.clear();
+        for (CategoryXref category : allChildCategoryXrefs) {
+            if (category.getSubCategory().isActive()) {
+                childCategoryXrefs.add(category);
             }
         }
         return Collections.unmodifiableList(childCategoryXrefs);

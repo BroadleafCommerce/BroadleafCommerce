@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -68,11 +69,9 @@ public class CartOperationRequest {
         Collections.sort(orderItemRequestDTO.getChildOrderItems(), new Comparator<OrderItemRequestDTO>() {
             @Override
             public int compare(OrderItemRequestDTO o1, OrderItemRequestDTO o2) {
-                String o1DisplayOrder = o1.getAdditionalAttributes().get("addOnDisplayOrder");
-                String o2DisplayOrder = o2.getAdditionalAttributes().get("addOnDisplayOrder");
-                return new CompareToBuilder()
-                        .append(o1DisplayOrder, o2DisplayOrder)
-                        .toComparison();
+                BigDecimal o1DisplayOrder = new BigDecimal(o1.getAdditionalAttributes().get("addOnDisplayOrder"));
+                BigDecimal o2DisplayOrder = new BigDecimal(o2.getAdditionalAttributes().get("addOnDisplayOrder"));
+                return o1DisplayOrder.compareTo(o2DisplayOrder);
             }
         });
 

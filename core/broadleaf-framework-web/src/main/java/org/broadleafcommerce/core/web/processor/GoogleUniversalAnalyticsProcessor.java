@@ -74,6 +74,11 @@ import jakarta.servlet.http.HttpServletRequest;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
+
+/**
+ * @deprecated use {@link GoogleAnalytics4Processor} instead
+ */
+@Deprecated
 @Component("blGoogleUniversalAnalyticsProcessor")
 @ConditionalOnTemplating
 public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagReplacementProcessor {
@@ -108,14 +113,16 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
     
     @Override
     public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Map<String, String> trackers = getTrackers();
         if (MapUtils.isNotEmpty(trackers)) {
+
             sb.append("(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){");
             sb.append("(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),");
             sb.append("m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)");
             sb.append("})(window,document,'script','//www.google-analytics.com/analytics.js','ga');");
-            
+
+
             String orderNumberExpression = tagAttributes.get("ordernumber");
             String orderNumber = null;
             if (orderNumberExpression != null) {
@@ -229,7 +236,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
      * in the given <b>order</b>.
      */
     protected String getTransactionJs(Order order, String trackerPrefix) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("ga('" + trackerPrefix + "require', 'ecommerce', 'ecommerce.js');");
         
         sb.append("ga('" + trackerPrefix + "ecommerce:addTransaction', {");
@@ -253,7 +260,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractBroadleafTagRepla
     }
     
     protected String getItemJs(Order order, String trackerPrefix) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem orderItem = fulfillmentGroupItem.getOrderItem();

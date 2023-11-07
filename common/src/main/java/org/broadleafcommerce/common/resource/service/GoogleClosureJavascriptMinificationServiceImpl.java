@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
+import com.google.common.io.CharStreams;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -96,7 +97,7 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
     @Override
     public void minifyJs(String filename, Reader reader, Writer writer) throws ResourceMinificationException {
         try {
-            SourceFile input = SourceFile.fromReader(filename, reader);
+            SourceFile input = SourceFile.fromCode(filename, CharStreams.toString(reader));
             String compiled = compileJs(input, filename);
             writer.write(compiled);
         } catch (IOException e) {
@@ -112,8 +113,9 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
         if (!result.success || StringUtils.isBlank(compiled)) {
             StringBuilder errorString = new StringBuilder("\n");
             if (result.errors != null) {
-                for (int i = 0; i < result.errors.length; i++) {
-                    errorString.append(result.errors[i].description + "\n");
+                for (int i = 0; i < result.errors.size(); i++) {
+                    errorString.append(result.errors.get(i).getDescription())
+                            .append("\n");
                 }
             }
             throw new ResourceMinificationException("Error minifying js file " + filename + errorString);
