@@ -41,14 +41,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller("blAdminInventoryBasicOperationsController")
 @RequestMapping("/com.broadleafcommerce.inventory.advanced.domain.InventoryImpl")
 public class AdminInventoryBasicOperationsController extends AdminBasicOperationsController {
-
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -59,31 +58,38 @@ public class AdminInventoryBasicOperationsController extends AdminBasicOperation
                                            @PathVariable String collectionField, @RequestParam(required = false) String requestingEntityId,
                                            @RequestParam(required = false) boolean dynamicField,
                                            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
-        String view = super.showSelectCollectionItem(request, response, model, pathVars, "com.broadleafcommerce.inventory.advanced.domain.InventoryImpl", collectionField, requestingEntityId, dynamicField, requestParams);
-        String queryString = requestParams.entrySet().stream().flatMap(
-                k -> k.getValue().stream().map(v -> new AbstractMap.SimpleEntry<String, String>(k.getKey(), v))
-        ).map(e -> e.getKey() + '=' + e.getValue()).collect(Collectors.joining("&"));
+        String view = super.showSelectCollectionItem(
+                request, response, model, pathVars, "com.broadleafcommerce.inventory.advanced.domain.InventoryImpl",
+                collectionField, requestingEntityId, dynamicField, requestParams
+        );
+        String queryString = requestParams.entrySet().stream()
+                .flatMap(k -> k.getValue().stream()
+                        .map(v -> new AbstractMap.SimpleEntry<>(k.getKey(), v))
+                )
+                .map(e -> e.getKey() + '=' + e.getValue())
+                .collect(Collectors.joining("&"));
         if (!queryString.contains("fulfillmentType=") && StringUtils.isNotEmpty(request.getParameter("inventoryParameter"))) {
-            List<SectionCrumb> sectionCrumbs = this.getSectionCrumbs(request, (String) null, (String) null);
+            List<SectionCrumb> sectionCrumbs = this.getSectionCrumbs(request, null, null);
             if (CollectionUtils.isNotEmpty(sectionCrumbs) && sectionCrumbs.get(0).getSectionIdentifier().equals("inventory")) {
                 FulfillmentType defaultFulfillmentType = getDefaultFulfillmentType(sectionCrumbs.get(0));
-                if (queryString.length() > 0 && defaultFulfillmentType!=null) {
+                if (queryString.length() > 0 && defaultFulfillmentType != null) {
                     queryString += "&fulfillmentType=" + defaultFulfillmentType.getType();
                 }
             }
         }
         model.addAttribute("queryParamsForFilters", queryString);
         return view;
-
     }
 
     @Override
     protected void modifyFetchPersistencePackageRequest(PersistencePackageRequest ppr, Map<String, String> pathVars) {
         super.modifyFetchPersistencePackageRequest(ppr, pathVars);
         Optional<FilterAndSortCriteria> fType = Arrays.stream(ppr.getFilterAndSortCriteria())
-                .filter(f -> f.getPropertyId().equals("fulfillmentType")).findFirst();
+                .filter(f -> f.getPropertyId().equals("fulfillmentType"))
+                .findFirst();
         Optional<FilterAndSortCriteria> inventoryParameter = Arrays.stream(ppr.getFilterAndSortCriteria())
-                .filter(t -> t.getPropertyId().equals("inventoryParameter")).findFirst();
+                .filter(t -> t.getPropertyId().equals("inventoryParameter"))
+                .findFirst();
 
         if (!fType.isPresent() && inventoryParameter.isPresent()) {
             SectionCrumb[] sectionCrumbs = ppr.getSectionCrumbs();

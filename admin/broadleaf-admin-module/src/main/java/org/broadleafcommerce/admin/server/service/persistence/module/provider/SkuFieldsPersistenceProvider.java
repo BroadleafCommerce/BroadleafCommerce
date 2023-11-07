@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- *
+ * 
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,6 @@ import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderRespo
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 /**
  * Persistence provider for populating the display value of all Sku fields to invoke the getter if the entity property
  * itself is null. This is designed to immediately come after the {@link SkuPricingPersistenceProvider} and should not have
@@ -41,7 +40,6 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 @Component("blSkuFieldsPersistenceProvider")
 public class SkuFieldsPersistenceProvider extends FieldPersistenceProviderAdapter {
-
 
     @Override
     public int getOrder() {

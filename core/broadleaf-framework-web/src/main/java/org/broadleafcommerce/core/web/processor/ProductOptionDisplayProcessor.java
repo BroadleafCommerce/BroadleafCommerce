@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,7 +18,6 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -27,15 +26,14 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.broadleafcommerce.presentation.dialect.AbstractBroadleafVariableModifierProcessor;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 /**
  * @author Priyesh Patel
@@ -66,12 +64,11 @@ public class ProductOptionDisplayProcessor implements OnePageCheckoutExpression 
 
     @Override
     public Map<String, String> getDisplayValues(Object item) {
-        final HashMap<String, String> productOptionDisplayValues = new LinkedHashMap<>();
-        final Object item = context.parseExpression(tagAttributes.get("orderItem"));
+        final Map<String, String> productOptionDisplayValues = new LinkedHashMap<>();
 
         if (item instanceof DiscreteOrderItem) {
             // The search of ProductOptions on Sku was removed because we cannot properly sort the items based on their displayOrder / sequence
-            final DiscreteOrderItem orderItem = (DiscreteOrderItem)item;
+            final DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
             final Product product = orderItem.getProduct();
             final Map<String, OrderItemAttribute> orderItemAttributes = orderItem.getOrderItemAttributes();
 

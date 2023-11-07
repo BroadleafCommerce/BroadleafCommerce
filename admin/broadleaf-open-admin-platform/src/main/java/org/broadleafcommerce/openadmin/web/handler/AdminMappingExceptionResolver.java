@@ -28,7 +28,6 @@ import org.springframework.web.util.UrlPathHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolver {
 
     private static final Log LOG = LogFactory.getLog(AdminMappingExceptionResolver.class);

@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -94,8 +93,12 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 /**
  * @author Phillip Verheyden
@@ -506,7 +509,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             //allow subclasses to provide additional criteria before executing the query
             applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, null);
             applySkuBundleItemValueCriteria(filterMappings, cto, persistencePackage);
-            applyInventoryRestictions(filterMappings, cto, persistencePackage);
+            applyInventoryRestrictions(filterMappings, cto, persistencePackage);
             applyAdditionalFetchCriteria(filterMappings, cto, persistencePackage);
 
             List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
@@ -524,7 +527,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
-    protected void applyInventoryRestictions(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+    protected void applyInventoryRestrictions(
+            List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage
+    ) {
         boolean hasInventory = persistencePackage.containsCriteria("owningClass=com.broadleafcommerce.inventory.advanced.domain.InventoryImpl")
                 && persistencePackage.containsCriteria("requestingField=sku");
         if (hasInventory && enableUseDefaultSkuInventory) {

@@ -26,7 +26,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
                                     String propertyName,
                                     String value) {
         //if value is empty allow, if someone doesn't want to allow empty values there is RequiredPropertyValidator as an option
-        if(StringUtils.isEmpty(value)){
+        if (StringUtils.isEmpty(value)) {
             return true;
         }
         String regexExpression = validationConfiguration.get(REGEX_CONFIG_PROPERTY);
@@ -71,7 +71,7 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
         try {
             return value != null && value.matches(regexExpression);
         } catch (Exception e) {
-            LOG.error("An error has occurred ",e);
+            LOG.error("An error has occurred ", e);
             return false;
         }
     }

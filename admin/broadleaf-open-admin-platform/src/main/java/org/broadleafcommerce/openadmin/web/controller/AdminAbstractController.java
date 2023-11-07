@@ -907,4 +907,5 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         Map<String, Object> additionalProperties = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties();
         additionalProperties.put("forceUseAdditionStatusFilter", true);
     }
+
 }

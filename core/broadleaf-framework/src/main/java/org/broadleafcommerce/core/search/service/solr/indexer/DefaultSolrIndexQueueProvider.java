@@ -38,53 +38,39 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Default component to obtain a command {@link Queue} and a {@link Lock} to access the command queue.
- * The queue should only be accessed by a single thread at a time, and so accessors must first 
- * obtain a lock. This is to prevent two threads, even across nodes, from issuing commands to Solr that might interfere with 
+ * The queue should only be accessed by a single thread at a time, and so accessors must first
+ * obtain a lock. This is to prevent two threads, even across nodes, from issuing commands to Solr that might interfere with
  * one another (e.g. re-aliasing or committing).
- * 
- * This default implementation evaluates the {@link SolrClient} to determine whether to use a local {@link Queue} 
- * and {@link Lock}, or whether to use a distributed {@link Queue} and {@link Lock}.  If the SolrClient is an 
- * instance of {@link CloudSolrClient} then this will use the associated Zookeeper to manage the lock and the queue.  
+ *
+ * This default implementation evaluates the {@link SolrClient} to determine whether to use a local {@link Queue}
+ * and {@link Lock}, or whether to use a distributed {@link Queue} and {@link Lock}.  If the SolrClient is an
+ * instance of {@link CloudSolrClient} then this will use the associated Zookeeper to manage the lock and the queue.
  * Otherwise, it will use a local (non-distributed) lock and queue.
- * 
- * This can be extended to provide different queue and lock implementations.  If you override them, then they both need 
+ *
+ * This can be extended to provide different queue and lock implementations.  If you override them, then they both need
  * to be distributed or local.  Having a local lock and a distributed queue or vice versa will not work.
- * 
+ *
  * @author Kelly Tisdell
  *
  */
 public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
-    
+
     private static final Log LOG = LogFactory.getLog(DefaultSolrIndexQueueProvider.class);
     protected static final Map<String, BlockingQueue<? super SolrUpdateCommand>> QUEUE_REGISTRY = Collections.synchronizedMap(new HashMap<String, BlockingQueue<? super SolrUpdateCommand>>());
     protected static final Map<String, Lock> LOCK_REGISTRY = Collections.synchronizedMap(new HashMap<String, Lock>());
-    
+
     public static final int MAX_QUEUE_SIZE = 500;
     public static final String LOCK_PATH = "/solr-index/command-lock";
     public static final String QUEUE_PATH = "/solr-index/command-queue";
-    
+
     private final ZooKeeper zk;
     private final boolean distributed;
     private final Environment env;
-    
+
     public DefaultSolrIndexQueueProvider() {
-        this.distributed = false;
-        this.zk = null;
-        this.env = null;
+        this(null, null);
     }
-    
-    public DefaultSolrIndexQueueProvider(SolrClient solrClient, Environment env) {
-        if (solrClient != null && CloudSolrClient.class.isAssignableFrom(solrClient.getClass())) {
-            this.distributed = true;
-            this.zk = ((CloudSolrClient)solrClient).getZkStateReader().getZkClient().getSolrZooKeeper();
-        } else {
-            this.distributed = false;
-            this.zk = null;
-        }
-        
-        this.env = env;
-    }
-    
+
     public DefaultSolrIndexQueueProvider(ZooKeeper zookeeper, Environment env) {
         this.zk = zookeeper;
         this.env = env;
@@ -132,50 +118,50 @@ public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
     public boolean isDistributed() {
         return distributed;
     }
-    
+
     /**
-     * Returns the {@link Environment} object, which is used in a distributed situation to determine if the current node or application 
+     * Returns the {@link Environment} object, which is used in a distributed situation to determine if the current node or application
      * can obtain a lock.  This may return null.
-     * 
+     *
      * @return
      */
     protected Environment getEnvironment() {
         return env;
     }
-    
+
     /**
      * Returns the {@link ZooKeeper} instance that distributes the Lock and the Queue.  This may return null in non-distributed situation.
-     * 
+     *
      * @return
      */
     protected ZooKeeper getZookeeper() {
         return zk;
     }
-    
+
     protected BlockingQueue<? super SolrUpdateCommand> createLocalQueue(String queueName) {
-        LOG.warn("Creating Local Queue for Solr update commands with the name " 
-                + queueName 
+        LOG.warn("Creating Local Queue for Solr update commands with the name "
+                + queueName
                 + ". This will be thread safe within a single JVM but is unsafe for multiple JVMs.  "
                 + "Use SolrCloud and CloudSolrClient to automatically enable a distributed Queue.  "
                 + "With CloudSolrClient, Zookeeper will be used as the shared Queue store.");
         return new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     }
-    
+
     protected BlockingQueue<? super SolrUpdateCommand> createDistributedQueue(String queueName) {
         return new ZookeeperDistributedQueue<>(QUEUE_PATH + '/' + queueName, getZookeeper(), MAX_QUEUE_SIZE);
     }
-    
+
     protected Lock createLocalLock(String lockName) {
-        LOG.warn("Creating Local Lock for lock name " 
-                + lockName 
+        LOG.warn("Creating Local Lock for lock name "
+                + lockName
                 + ". This will be thread safe within a single JVM but is unsafe for multiple JVMs.  "
                 + "Use SolrCloud and CloudSolrClient to automatically enable a distributed lock.  "
                 + "With CloudSolrClient, Zookeeper will be used as the shared Lock store.");
         return new ReentrantLock();
     }
-    
+
     protected Lock createDistributedLock(String lockName) {
         return new ReentrantDistributedZookeeperLock(getZookeeper(), LOCK_PATH, lockName, getEnvironment(), null);
     }
-    
+
 }

@@ -71,16 +71,14 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             if (section.getDisplayOrder() != null) {
                 if (section2.getDisplayOrder() != null) {
                     return section.getDisplayOrder().compareTo(section2.getDisplayOrder());
-                }
-                else
+                } else {
                     return -1;
+                }
             } else if (section2.getDisplayOrder() != null) {
                 return 1;
             }
-
             return section.getId().compareTo(section2.getId());
         }
-
     }
 
     @Resource(name = "blAdminNavigationDao")
@@ -121,7 +119,6 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
                 }
             }
         }
-
         return false;
     }
 
@@ -183,7 +180,9 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
                     result = clazz.substring(0, clazz.length() - 4);
                 } else {
                     Class<?>[] interfaces = aClass.getInterfaces();
-                    Optional<Class<?>> first = Arrays.stream(interfaces).filter(t -> t.getName().startsWith(clazz) || clazz.startsWith(t.getName())).findFirst();
+                    Optional<Class<?>> first = Arrays.stream(interfaces)
+                            .filter(t -> t.getName().startsWith(clazz) || clazz.startsWith(t.getName()))
+                            .findFirst();
                     if (first.isPresent()) {
                         result = first.get().getName();
                     }

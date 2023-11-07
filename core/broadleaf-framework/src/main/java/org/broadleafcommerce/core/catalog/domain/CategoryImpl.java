@@ -591,8 +591,7 @@ public class CategoryImpl
 
     @Override
     public void setActiveStartDate(Date activeStartDate) {
-        this.activeStartDate =
-                (activeStartDate == null) ? null : new Date(activeStartDate.getTime());
+        this.activeStartDate = (activeStartDate == null) ? null : new Date(activeStartDate.getTime());
     }
 
     @Override
@@ -881,8 +880,7 @@ public class CategoryImpl
     }
 
     @Override
-    public List<Category> getParentCategoryHierarchy(List<Category> currentPath,
-            Boolean firstParent) {
+    public List<Category> getParentCategoryHierarchy(List<Category> currentPath, Boolean firstParent) {
         // If firstParent is null, default it to false
         if (firstParent == null) {
             firstParent = false;
@@ -929,8 +927,7 @@ public class CategoryImpl
             currentPath = new ArrayList<Category>();
             currentPath.add(0, this);
         }
-        if (getDefaultParentCategory() != null && !currentPath.contains(
-                getDefaultParentCategory())) {
+        if (getDefaultParentCategory() != null && ! currentPath.contains(getDefaultParentCategory())) {
             currentPath.add(0, getDefaultParentCategory());
             getDefaultParentCategory().buildDefaultParentCategoryPath(currentPath);
         }
@@ -1236,9 +1233,8 @@ public class CategoryImpl
     public void setCategoryMedia(Map<String, Media> categoryMedia) {
         this.categoryMedia.clear();
         this.legacyCategoryMedia.clear();
-        for (Map.Entry<String, Media> entry : categoryMedia.entrySet()) {
-            this.categoryMedia.put(entry.getKey(),
-                    new CategoryMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+        for(Map.Entry<String, Media> entry : categoryMedia.entrySet()){
+            this.categoryMedia.put(entry.getKey(), new CategoryMediaXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
 
@@ -1393,8 +1389,7 @@ public class CategoryImpl
         @Override
         public int compare(Object o1, Object o2) {
             try {
-                return ((Comparable) PropertyUtils.getProperty(o1, "sequence")).compareTo(
-                        PropertyUtils.getProperty(o2, "sequence"));
+                return ((Comparable) PropertyUtils.getProperty(o1, "sequence")).compareTo(PropertyUtils.getProperty(o2, "sequence"));
             } catch (Exception e) {
                 LOG.warn("Trying to compare objects that do not have a sequence property, assuming they are the same order");
                 return 0;
