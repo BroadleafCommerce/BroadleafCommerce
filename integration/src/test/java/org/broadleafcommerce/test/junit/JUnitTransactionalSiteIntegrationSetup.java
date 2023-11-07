@@ -18,7 +18,11 @@
 package org.broadleafcommerce.test.junit;
 
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;
+import org.junit.Test;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertNotNull;
+
 
 /**
  * The {@literal @}Transactional version of the {@link JUnitSiteIntegrationSetup}
@@ -27,5 +31,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  */
 @BroadleafSiteIntegrationTest
 public class JUnitTransactionalSiteIntegrationSetup extends AbstractTransactionalJUnit4SpringContextTests {
-
+    @Test
+    public void testContext() {
+        assertNotNull(applicationContext);
+    }
 }

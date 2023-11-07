@@ -94,7 +94,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
                 }
             }
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("An error has occurred ",e);
             throw new TransformerException("Unable to mark " + convertedClassName + " as transformed.");
         }
         

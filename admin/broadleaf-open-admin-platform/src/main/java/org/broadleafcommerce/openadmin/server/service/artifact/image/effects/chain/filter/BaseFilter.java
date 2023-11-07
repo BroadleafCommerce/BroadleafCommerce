@@ -32,6 +32,8 @@ public abstract class BaseFilter implements BufferedImageOp, OperationBuilder {
     
     protected RenderingHints hints;
 
+    protected String imageFormat;
+
     /* (non-Javadoc)
      * @see java.awt.image.BufferedImageOp#createCompatibleDestImage(java.awt.image.BufferedImage, java.awt.image.ColorModel)
      */
@@ -105,5 +107,13 @@ public abstract class BaseFilter implements BufferedImageOp, OperationBuilder {
             }
         }
         return false;
+    }
+
+    public String getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(String imageFormat) {
+        this.imageFormat = imageFormat;
     }
 }

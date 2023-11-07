@@ -464,12 +464,13 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                     List<String> values = entry.getValue();
                     List<String> collapsedValues = new ArrayList<>();
                     for (String value : values) {
-                        String decoded = null;
+                        String decoded = value;
                         try {
                             decoded = eps.cleanString(URLDecoder.decode(value, "UTF-8"));
-                        } catch (UnsupportedEncodingException | ServiceException e) {
+                        } catch (Exception e) {
                             LOG.info("Could not decode value", e);
                         }
+                        decoded = decoded.replace("%","\\%");
                         if (decoded.contains(FILTER_VALUE_SEPARATOR)) {
                             String[] vs = decoded.split(FILTER_VALUE_SEPARATOR_REGEX);
                             for (String v : vs) {
@@ -900,5 +901,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
             return error.getCode();
         }
+    }
+
+    protected void declareForceUseAdditionStatusFilter() {
+        Map<String, Object> additionalProperties = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties();
+        additionalProperties.put("forceUseAdditionStatusFilter", true);
     }
 }

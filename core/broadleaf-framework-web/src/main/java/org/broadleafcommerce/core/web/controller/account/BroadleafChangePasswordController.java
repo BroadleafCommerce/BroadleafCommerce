@@ -59,6 +59,7 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
             return getChangePasswordView();
         }
         customerService.changePassword(passwordChange);
+        redirectAttributes.addFlashAttribute("successMessage", getPasswordChangedMessage());
         return getChangePasswordRedirect();
     }
 

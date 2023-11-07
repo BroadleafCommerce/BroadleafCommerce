@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -462,4 +463,10 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Long> findProductIdsUsingProductOptionById(Long productId, int start, int pageSize) {
         return productOptionDao.findProductIdsUsingProductOptionById(productId, start, pageSize);
     }
+
+    @Override
+    public String translateItemAttributeValue(OrderItemAttribute itemAttribute, ProductOption productOption) {
+        return productOptionDao.translateItemAttributeValue(itemAttribute, productOption);
+    }
+
 }

@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 
 import java.util.List;
 
@@ -72,4 +73,14 @@ public interface ProductOptionDao {
      * @return
      */
     public List<Long> findProductIdsUsingProductOptionById(Long productOptionId, int start, int pageSize);
+
+    /**
+     * Returns a translated String attribute value for OrderItemAttribute
+     *
+     * @param itemAttribute
+     * @param productOption
+     * @return
+     */
+    String translateItemAttributeValue(OrderItemAttribute itemAttribute, ProductOption productOption);
+
 }

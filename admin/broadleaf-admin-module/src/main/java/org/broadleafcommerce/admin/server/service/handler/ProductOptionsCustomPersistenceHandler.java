@@ -139,7 +139,7 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
 
         // Validate values and type
         if (adminInstance.getType() != null && adminInstance.getType().getType().equals(ProductOptionType.BOOLEAN.getType())
-            && adminInstance.getAllowedValues().size() >= MAX_BOOLEAN_VALUES) {
+            && adminInstance.getAllowedValues().size() > MAX_BOOLEAN_VALUES) {
             String errorMessage = "The Product Option with the 'Boolean' type can't have more than " + MAX_BOOLEAN_VALUES + " values";
             entity.addValidationError("type", errorMessage);
             return true;

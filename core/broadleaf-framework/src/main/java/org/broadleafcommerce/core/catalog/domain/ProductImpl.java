@@ -69,6 +69,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -1116,10 +1117,7 @@ public class ProductImpl
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((skus == null) ? 0 : skus.hashCode());
-        return result;
+        return Objects.hash(id, additionalSkus);
     }
 
     @Override

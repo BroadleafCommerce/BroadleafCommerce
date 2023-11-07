@@ -48,7 +48,7 @@ public class ProductUrlFieldPersistenceProvider extends FieldPersistenceProvider
             Product product = (Product) instance;
 
             ExtensionResultHolder<String> holder = new ExtensionResultHolder<>();
-            ExtensionResultStatusType result = extensionManager.getProxy().modifyUrl(val, product, holder);
+            ExtensionResultStatusType result = extensionManager.getProxy().modifyUrl(val, product, request.getEntity(), holder);
 
             if (ExtensionResultStatusType.HANDLED == result) {
                 product.setUrl(holder.getResult());

@@ -73,7 +73,7 @@ public class MVELTest extends TestNGSiteIntegrationSetup {
                 try {
                     is.close();
                 } catch (Exception e){
-                    logger.error(e);
+                    logger.error("An error has occurred ",e);
                 }
             }
         }

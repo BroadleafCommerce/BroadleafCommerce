@@ -756,11 +756,10 @@ public class CategoryImpl
 
     @Override
     public List<CategoryXref> getChildCategoryXrefs() {
-        if (childCategoryXrefs.isEmpty()) {
-            for (CategoryXref category : allChildCategoryXrefs) {
-                if (category.getSubCategory().isActive()) {
-                    childCategoryXrefs.add(category);
-                }
+        childCategoryXrefs.clear();
+        for (CategoryXref category : allChildCategoryXrefs) {
+            if (category.getSubCategory().isActive()) {
+                childCategoryXrefs.add(category);
             }
         }
         return Collections.unmodifiableList(childCategoryXrefs);
@@ -1397,8 +1396,7 @@ public class CategoryImpl
                 return ((Comparable) PropertyUtils.getProperty(o1, "sequence")).compareTo(
                         PropertyUtils.getProperty(o2, "sequence"));
             } catch (Exception e) {
-                LOG.warn(
-                        "Trying to compare objects that do not have a sequence property, assuming they are the same order");
+                LOG.warn("Trying to compare objects that do not have a sequence property, assuming they are the same order");
                 return 0;
             }
         }

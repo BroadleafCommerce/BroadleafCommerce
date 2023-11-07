@@ -18,7 +18,11 @@
 package org.broadleafcommerce.test.junit;
 
 import org.broadleafcommerce.test.config.BroadleafAdminIntegrationTest;
+import org.junit.Test;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertNotNull;
+
 
 /**
  * The {@literal @}Transactional version of the {@link JUnitAdminIntegrationSetup}
@@ -27,5 +31,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  */
 @BroadleafAdminIntegrationTest
 public class JUnitTransactionalAdminIntegrationSetup extends AbstractTransactionalJUnit4SpringContextTests {
-
+    @Test
+    public void testContext() {
+        assertNotNull(applicationContext);
+    }
 }

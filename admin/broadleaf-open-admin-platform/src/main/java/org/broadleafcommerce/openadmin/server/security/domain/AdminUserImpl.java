@@ -130,6 +130,12 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
                             @ConfigurationItem(itemName = "otherField",
                                     itemValue = "passwordConfirm")
                     }
+                    ), @ValidationConfiguration(
+                            validationImplementation = "blAdminRegexValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordComplexityNotSatisfiedError"),
+                            @ConfigurationItem(itemName = "regexPropertyName", itemValue = "admin.password.regex.validation")
+                    }
             )
             })
     protected String password;

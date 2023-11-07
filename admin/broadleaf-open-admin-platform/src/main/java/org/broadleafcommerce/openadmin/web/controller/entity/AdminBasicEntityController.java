@@ -1361,6 +1361,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
+            declareForceUseAdditionStatusFilter();
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
             ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey, sectionCrumbs);
             listGrid.setSubCollectionFieldName(collectionField);
@@ -1701,7 +1702,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     entityForm.setTranslationCeilingEntity(Class.forName(fmd.getValueClassName()).getDeclaredField(fmd.getToOneTargetProperty()).getType().getName());
                 }
             } catch (Exception e) {
-                LOG.error(e);
+                LOG.error("An error has occurred ",e);
             }
             String entityId = (fmd.getToOneTargetProperty().equals("") ? "id" : fmd.getToOneTargetProperty() + ".id");
             entityForm.setTranslationId(entity.getPMap().get(entityId).getValue());

@@ -18,6 +18,7 @@
 package org.broadleafcommerce.test.junit;
 
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;
+import org.junit.Test;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.event.ApplicationEventsTestExecutionListener;
@@ -29,6 +30,8 @@ import org.springframework.test.context.support.DirtiesContextBeforeModesTestExe
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.ServletTestExecutionListener;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * <p>
@@ -53,5 +56,8 @@ import org.springframework.test.context.web.ServletTestExecutionListener;
         //and these 2 are "ours", so just keep them here
         TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class})
 public class JUnitSiteIntegrationSetup extends AbstractJUnit4SpringContextTests {
-
+    @Test
+    public void testContext() {
+        assertNotNull(applicationContext);
+    }
 }

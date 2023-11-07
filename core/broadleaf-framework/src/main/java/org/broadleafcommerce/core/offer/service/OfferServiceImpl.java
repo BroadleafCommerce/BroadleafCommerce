@@ -330,6 +330,11 @@ public class OfferServiceImpl implements OfferService {
                         Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(OfferImpl.class, offerCode.getOffer().getId());
                         if (sandBoxVersionId != null && !Objects.equals(sandBoxVersionId, offerCode.getOffer().getId())) {
                             em.refresh(offerCode);
+                            //trigger loading of offer. Somehow sometimes if you have offer & offer code in global(template) site
+                            //and have overridden both in test site, sometimes offer code will from the test site has reference
+                            //to the offer from global, after triggering of fetch it will replace with correct version
+                            OfferImpl offer = em.find(OfferImpl.class, sandBoxVersionId);
+                            offerCode.setOffer(offer);
                         }
                     }
                 }

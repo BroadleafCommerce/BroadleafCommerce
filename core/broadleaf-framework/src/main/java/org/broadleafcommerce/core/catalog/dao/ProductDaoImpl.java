@@ -184,7 +184,7 @@ public class ProductDaoImpl implements ProductDao {
 
     protected List<Product> readActiveProductsByCategoryInternal(Long categoryId, Date currentDate) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
+        query.setParameter("categoryInList", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
         query.setParameter("currentDate", currentDate);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
@@ -443,7 +443,7 @@ public class ProductDaoImpl implements ProductDao {
 
     public List<Product> readActiveProductsByCategoryInternal(Long categoryId, Date currentDate, int limit, int offset) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
+        query.setParameter("categoryInList", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
         query.setParameter("currentDate", currentDate);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
@@ -456,7 +456,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> readProductsByCategory(Long categoryId) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
+        query.setParameter("categoryInList", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -466,7 +466,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> readProductsByCategory(Long categoryId, int limit, int offset) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
+        query.setParameter("categoryInList", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
