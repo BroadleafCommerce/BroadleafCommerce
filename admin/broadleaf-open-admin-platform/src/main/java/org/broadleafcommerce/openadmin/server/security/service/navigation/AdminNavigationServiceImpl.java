@@ -42,10 +42,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
@@ -69,16 +71,14 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             if (section.getDisplayOrder() != null) {
                 if (section2.getDisplayOrder() != null) {
                     return section.getDisplayOrder().compareTo(section2.getDisplayOrder());
-                }
-                else
+                } else {
                     return -1;
+                }
             } else if (section2.getDisplayOrder() != null) {
                 return 1;
             }
-
             return section.getId().compareTo(section2.getId());
         }
-
     }
 
     @Resource(name = "blAdminNavigationDao")
@@ -119,7 +119,6 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
                 }
             }
         }
-
         return false;
     }
 
@@ -151,9 +150,11 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     @Override
     public AdminSection findBaseAdminSectionByClass(String clazz) {
         List<AdminSection> sections = adminNavigationDao.readAdminSectionForClassName(clazz);
-        if (org.springframework.util.CollectionUtils.isEmpty(sections) && clazz.endsWith("Impl")) {
-            clazz = clazz.substring(0, clazz.length() - 4);
-            sections = adminNavigationDao.readAdminSectionForClassName(clazz);
+        if (org.springframework.util.CollectionUtils.isEmpty(sections)) {
+            clazz = guessClassFromInterfaces(clazz);
+            if (clazz != null) {
+                sections = adminNavigationDao.readAdminSectionForClassName(clazz);
+            }
         }
         
         if (sections == null) {
@@ -168,6 +169,29 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             }
         }
         return sections.get(0);
+    }
+
+    protected String guessClassFromInterfaces(String clazz) {
+        try {
+            String result = null;
+            Class<?> aClass = Class.forName(clazz);
+            if (!aClass.isInterface()) {
+                if (clazz.endsWith("Impl")) {
+                    result = clazz.substring(0, clazz.length() - 4);
+                } else {
+                    Class<?>[] interfaces = aClass.getInterfaces();
+                    Optional<Class<?>> first = Arrays.stream(interfaces)
+                            .filter(t -> t.getName().startsWith(clazz) || clazz.startsWith(t.getName()))
+                            .findFirst();
+                    if (first.isPresent()) {
+                        result = first.get().getName();
+                    }
+                }
+            }
+            return result;
+        } catch (ClassNotFoundException ex) {
+            return null;
+        }
     }
 
     @Override

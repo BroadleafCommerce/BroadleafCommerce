@@ -261,12 +261,6 @@
             <artifactId>groovy-all</artifactId>
             <scope>test</scope>
             <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>

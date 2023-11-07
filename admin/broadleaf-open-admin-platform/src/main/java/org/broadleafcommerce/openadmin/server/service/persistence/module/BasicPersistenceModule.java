@@ -24,7 +24,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
@@ -335,6 +334,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 return 0;
             }
         });
+        Arrays.sort(sortedProperties, (o1, o2) -> {
+            if (o1.getName().contains(".") && !o2.getName().contains(".")) {
+                return 1;
+            } else if (o2.getName().contains(".") && !o1.getName().contains(".")) {
+                return -1;
+            }
+            return 0;
+        });
         Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
         FlushMode originalFlushMode = session.getHibernateFlushMode();
         try {
@@ -390,7 +397,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
                     if (attemptToPopulateValue(property, fieldManager, instance, setId, metadata, entity, value)) {
                         boolean isValid = true;
-                        PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd());
+                        PopulateValueRequest request = new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd(), entity);
                         handled = false;
                         boolean required = metadata.getRequiredOverride() != null ? metadata.getRequiredOverride() : BooleanUtils.isTrue(metadata.getRequired());
                         if (value != null) {
@@ -422,7 +429,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     if (value == null) {
                                         property.setIsDirty(true);
                                     }
-                                    defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd()), instance);
+                                    defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId, fieldManager, property, metadata, returnType, value, persistenceManager, this, entity.isPreAdd(), entity), instance);
                                     if (value == null) {
                                         fieldManager.setFieldValue(instance, property.getName(), null);
                                     }
@@ -574,7 +581,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             try {
                 Property p = new Property();
                 p.setName(MAIN_ENTITY_NAME_PROPERTY);
-                String mainEntityName = (String) MethodUtils.invokeMethod(entity, "getMainEntityName");
+                String mainEntityName = ((AdminMainEntity)entity).getMainEntityName();
                 p.setValue(mainEntityName);
                 props.add(p);
             } catch (Exception e) {

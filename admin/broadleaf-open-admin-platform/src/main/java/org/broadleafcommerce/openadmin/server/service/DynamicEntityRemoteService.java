@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +29,7 @@ import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BatchDynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.BatchPersistencePackage;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -39,6 +41,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -46,6 +49,7 @@ import org.springframework.transaction.TransactionDefinition;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.annotation.Resource;
 
@@ -69,6 +73,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    @Value("${ignore.entities.for.cleaning.list}")
+    protected Set<String> entitiesIgnoreList;
 
     protected ServiceException recreateSpecificServiceException(ServiceException e, String message, Throwable cause) {
         try {
@@ -269,7 +276,11 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable <PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
-                cleanEntity(persistencePackage.getEntity());
+                boolean shouldClean = isShouldClean();
+                if (shouldClean && (CollectionUtils.isEmpty(entitiesIgnoreList) ||
+                        !entitiesIgnoreList.contains(persistencePackage.getCeilingEntityFullyQualifiedClassname()))) {
+                    cleanEntity(persistencePackage.getEntity());
+                }
                 try {
                     PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.add(persistencePackage);
@@ -292,7 +303,11 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable <PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
-                cleanEntity(persistencePackage.getEntity());
+                boolean shouldClean = isShouldClean();
+                if (shouldClean && (CollectionUtils.isEmpty(entitiesIgnoreList) ||
+                        !entitiesIgnoreList.contains(persistencePackage.getCeilingEntityFullyQualifiedClassname()))) {
+                    cleanEntity(persistencePackage.getEntity());
+                }
                 try {
                     PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.update(persistencePackage);
@@ -332,6 +347,11 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 }
             }
         });
+    }
+
+    protected boolean isShouldClean() {
+        Boolean ignoreEntityCleaning = (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get("IGNORE_ENTITY_CLEANING");
+        return ignoreEntityCleaning == null || !ignoreEntityCleaning;
     }
 
     protected PlatformTransactionManager identifyTransactionManager(PersistencePackage persistencePackage) throws ServiceException {

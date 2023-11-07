@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -27,7 +28,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 
 /**
  * Persistence provider for populating the display value of all Sku fields to invoke the getter if the entity property
@@ -41,43 +41,50 @@ import org.springframework.stereotype.Component;
 @Component("blSkuFieldsPersistenceProvider")
 public class SkuFieldsPersistenceProvider extends FieldPersistenceProviderAdapter {
 
-    
     @Override
     public int getOrder() {
         return SkuPricingPersistenceProvider.ORDER + 1;
     }
-    
+
     @Override
     public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
         if (!canHandleExtraction(extractValueRequest, property)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
-        
+
         Object actualValue = extractValueRequest.getRequestedValue();
-        
-        String value = extractValueRequest.getRecordHelper().formatValue(actualValue);
-        String displayValue = value;
+        String value;
+        String displayValue = null;
+        if (actualValue instanceof BroadleafEnumerationType) {
+            value = ((BroadleafEnumerationType) extractValueRequest.getRequestedValue()).getType();
+            displayValue = ((BroadleafEnumerationType) extractValueRequest.getRequestedValue()).getFriendlyType();
+        } else {
+            value = extractValueRequest.getRecordHelper().formatValue(actualValue);
+        }
+        if (displayValue == null) {
+            displayValue = value;
+        }
         if (displayValue == null) {
             try {
                 displayValue = extractValueRequest.getRecordHelper().getStringValueFromGetter(extractValueRequest.getEntity(), property.getName());
-                ((BasicFieldMetadata)property.getMetadata()).setDerived(true);
+                ((BasicFieldMetadata) property.getMetadata()).setDerived(true);
             } catch (Exception e) {
                 //swallow all exceptions because null is fine for the display value
             }
         }
-        
+
         property.setValue(value);
         property.setDisplayValue(displayValue);
-        
+
         return MetadataProviderResponse.HANDLED;
     }
-    
+
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         return (
                 extractValueRequest.getMetadata().getTargetClass().equals(SkuImpl.class.getName()) ||
-                extractValueRequest.getMetadata().getTargetClass().equals(Sku.class.getName())
-               ) 
+                        extractValueRequest.getMetadata().getTargetClass().equals(Sku.class.getName())
+        )
                 && !property.getName().contains(FieldManager.MAPFIELDSEPARATOR);
     }
-    
+
 }

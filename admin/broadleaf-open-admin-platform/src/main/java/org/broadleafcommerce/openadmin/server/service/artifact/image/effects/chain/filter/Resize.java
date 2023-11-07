@@ -204,7 +204,7 @@ public class Resize extends BaseFilter {
                 }
             }
             int type;
-            if (img.getType()!=BufferedImage.TYPE_INT_ARGB && img.getType()!=BufferedImage.TYPE_INT_RGB) {
+            if (img.getType()!=BufferedImage.TYPE_INT_ARGB && img.getType()!=BufferedImage.TYPE_INT_RGB && !"bmp".equalsIgnoreCase(imageFormat)) {
                 type = BufferedImage.TYPE_INT_ARGB;
             } else {
                 type = img.getType();

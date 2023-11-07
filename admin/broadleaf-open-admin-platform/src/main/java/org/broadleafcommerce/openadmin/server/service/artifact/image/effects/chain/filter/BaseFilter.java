@@ -29,14 +29,15 @@ import java.awt.image.IndexColorModel;
 import java.util.Map;
 
 public abstract class BaseFilter implements BufferedImageOp, OperationBuilder {
-    
+
     protected RenderingHints hints;
+
+    protected String imageFormat;
 
     /* (non-Javadoc)
      * @see java.awt.image.BufferedImageOp#createCompatibleDestImage(java.awt.image.BufferedImage, java.awt.image.ColorModel)
      */
-    public BufferedImage createCompatibleDestImage(BufferedImage src,
-            ColorModel destCM) {
+    public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
         BufferedImage image;
         if (destCM == null) {
             destCM = src.getColorModel();
@@ -48,13 +49,13 @@ public abstract class BaseFilter implements BufferedImageOp, OperationBuilder {
 
         int w = src.getWidth();
         int h = src.getHeight();
-        image = new BufferedImage (destCM,
-                                   destCM.createCompatibleWritableRaster(w, h),
-                                   destCM.isAlphaPremultiplied(), null);
+        image = new BufferedImage(destCM,
+                destCM.createCompatibleWritableRaster(w, h),
+                destCM.isAlphaPremultiplied(), null);
 
         return image;
     }
-    
+
     public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM, int width, int height) {
         BufferedImage image;
         if (destCM == null) {
@@ -65,9 +66,9 @@ public abstract class BaseFilter implements BufferedImageOp, OperationBuilder {
             }
         }
 
-        image = new BufferedImage (destCM,
-                                   destCM.createCompatibleWritableRaster(width, height),
-                                   destCM.isAlphaPremultiplied(), null);
+        image = new BufferedImage(destCM,
+                destCM.createCompatibleWritableRaster(width, height),
+                destCM.isAlphaPremultiplied(), null);
 
         return image;
     }
@@ -105,5 +106,13 @@ public abstract class BaseFilter implements BufferedImageOp, OperationBuilder {
             }
         }
         return false;
+    }
+
+    public String getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(String imageFormat) {
+        this.imageFormat = imageFormat;
     }
 }

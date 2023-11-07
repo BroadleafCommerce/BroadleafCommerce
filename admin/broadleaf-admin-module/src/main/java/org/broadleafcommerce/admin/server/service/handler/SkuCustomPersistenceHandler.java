@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -65,6 +64,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -93,8 +93,12 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 /**
  * @author Phillip Verheyden
@@ -119,6 +123,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     @Resource(name = "blSkuCustomPersistenceHandlerExtensionManager")
     protected SkuCustomPersistenceHandlerExtensionManager extensionManager;
+
+    @Value("${enable.weave.use.default.sku.inventory:false}")
+    protected boolean enableUseDefaultSkuInventory = false;
 
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
@@ -502,6 +509,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             //allow subclasses to provide additional criteria before executing the query
             applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, null);
             applySkuBundleItemValueCriteria(filterMappings, cto, persistencePackage);
+            applyInventoryRestrictions(filterMappings, cto, persistencePackage);
             applyAdditionalFetchCriteria(filterMappings, cto, persistencePackage);
 
             List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
@@ -516,6 +524,52 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             return new DynamicResultSet(payload, totalRecords);
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+
+    protected void applyInventoryRestrictions(
+            List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage
+    ) {
+        boolean hasInventory = persistencePackage.containsCriteria("owningClass=com.broadleafcommerce.inventory.advanced.domain.InventoryImpl")
+                && persistencePackage.containsCriteria("requestingField=sku");
+        if (hasInventory && enableUseDefaultSkuInventory) {
+            filterMappings.add(new FilterMapping().withDirectFilterValues(new EmptyFilterValues()).withRestriction(new Restriction()
+                    .withPredicateProvider(new PredicateProvider() {
+                        @Override
+                        public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root, String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
+
+                            Join product = root.join("product", JoinType.LEFT);
+
+                            Subquery<Long> subquery = fieldPathBuilder.getCriteria().subquery(Long.class);
+                            Root<ProductImpl> productRoot = subquery.from(ProductImpl.class);
+                            subquery.select(builder.count(productRoot));
+                            subquery.where(
+                                    builder.and(
+                                            builder.equal(productRoot.get("embeddableSandBoxDiscriminator").get("tier"), 999999),
+                                            builder.isNull(productRoot.get("embeddableSandBoxDiscriminator").get("sandBox")),
+                                            builder.equal(productRoot.get("embeddableSandBoxDiscriminator").get("originalItemId"), root.get("product").get("id")),
+                                            builder.equal(productRoot.get("useDefaultSkuInInventory"), Boolean.TRUE)
+                                    )
+                            );
+
+                            Subquery<Long> subqueryWithoutOverride = fieldPathBuilder.getCriteria().subquery(Long.class);
+                            Root<ProductImpl> productRootWithoutOverride = subqueryWithoutOverride.from(ProductImpl.class);
+                            subqueryWithoutOverride.select(builder.count(productRootWithoutOverride));
+                            subqueryWithoutOverride.where(
+                                    builder.and(
+                                            builder.equal(productRootWithoutOverride.get("embeddableSandBoxDiscriminator").get("tier"), 999999),
+                                            builder.isNull(productRootWithoutOverride.get("embeddableSandBoxDiscriminator").get("sandBox")),
+                                            builder.equal(productRootWithoutOverride.get("embeddableSandBoxDiscriminator").get("originalItemId"), root.get("product").get("id"))
+                                    )
+                            );
+                            Predicate and = builder.and(
+                                    builder.equal(subqueryWithoutOverride, 0),
+                                    builder.or(builder.isNull(product.get("useDefaultSkuInInventory")), builder.equal(product.get("useDefaultSkuInInventory"), Boolean.FALSE))
+                            );
+                            Predicate equal = builder.and(builder.equal(subquery, 0), and);
+                            return equal;
+                        }
+                    })));
         }
     }
 

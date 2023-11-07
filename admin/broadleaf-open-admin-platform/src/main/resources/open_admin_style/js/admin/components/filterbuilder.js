@@ -244,6 +244,18 @@
             //run any post-construct handlers
             //BLCAdmin.ruleBuilders.runPostConstructQueryBuilderFieldHandler(builder);
 
+            //seems we always create a new one, so need to delete the one that are no longer reachable
+            if(filterBuilder.builders){
+                if(BLCAdmin.currentModal()){
+                    var builders = filterBuilder.builders;
+                    for (var j = 0; j < builders.length; j++) {
+                        if(!BLCAdmin.currentModal().find("#" + $(builders[j]).attr("id")).length){
+                            filterBuilder.removeQueryBuilder(builders[j]);
+                        }
+                    }
+                }
+            }
+
             filterBuilder.addQueryBuilder($(builder));
 
             /****** For Developers: Test JSON Link *******
@@ -311,7 +323,7 @@
                         dataDTO.quantity = $(container).find(".rules-group-header-item-qty").val();
                         for (var k = 0; k < dataDTO.rules.length; k++) {
                             if (Array.isArray(dataDTO.rules[k].value)) {
-                                dataDTO.rules[k].value =  JSON.stringify(dataDTO.rules[k].value);
+                                dataDTO.rules[k].value = JSON.stringify(dataDTO.rules[k].value);
                             }
                         }
 
@@ -413,6 +425,23 @@
                 var pair = vars[i].split('=');
                 if (decodeURIComponent(pair[0]) == variable) {
                     return decodeURIComponent(pair[1]);
+                }
+            }
+            return null;
+        },
+
+        getQueryVariableFromStoredField: function (variable, hiddenId) {
+            var field = $('#query-params-for-filters' + hiddenId);
+            if (field) {
+                var query = field.val();
+                if (query) {
+                    var vars = query.split('&');
+                    for (var i = 0; i < vars.length; i++) {
+                        var pair = vars[i].split('=');
+                        if (decodeURIComponent(pair[0]) == variable) {
+                            return decodeURIComponent(pair[1]);
+                        }
+                    }
                 }
             }
             return null;
@@ -660,7 +689,7 @@
             var filters = JSON.parse($('#' + hiddenId).val());
             var inputs = BLCAdmin.filterBuilders.getFiltersAsURLParams(hiddenId);
             if (inputs.length) {
-                for (var i in inputs) {
+                for (var i=0;i<inputs.length;i++) {
                     var input = inputs[i];
                     input.value = encodeURIComponent(input.value);
                 }
@@ -678,7 +707,13 @@
             }
 
             var url = $($filterFields[0]).data('action');
-
+            var parentTable = $($filterFields[0]).closest(".list-grid-table.table.table-striped");
+            if(parentTable){
+                var currentUrl = $(parentTable).data("currenturl");
+                if(currentUrl && !currentUrl.includes(url)){
+                    url=currentUrl;
+                }
+            }
             var urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
             $('body').trigger(urlEvent, [url, $tbody]);
             url = urlEvent.resultUrl || url;
@@ -882,10 +917,15 @@
 
                 // check for existing rules in the url
                 var queryString = BLCAdmin.filterBuilders.getQueryVariable(field.id);
+                var ignoreModal = false;
+                if (queryString == null) {
+                    queryString = BLCAdmin.filterBuilders.getQueryVariableFromStoredField(field.id, hiddenId);
+                    var ignoreModal = true;
+                }
                 // make sure its not modal
                 var modal = BLCAdmin.currentModal();
 
-                if ((queryString != null) && (modal == undefined)) {
+                if ((queryString != null) && (ignoreModal || modal == undefined)) {
                     var numInputs = 1;
                     // is this a 'BETWEEN' filter?
                     if (queryString.indexOf('|') > 0) {

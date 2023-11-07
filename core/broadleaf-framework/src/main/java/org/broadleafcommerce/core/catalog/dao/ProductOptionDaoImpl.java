@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.dto.AssignedProductOptionDTO;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -267,6 +268,27 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         return em.createQuery(criteria);
+    }
+
+    @Override
+    public String translateItemAttributeValue(OrderItemAttribute itemAttribute, ProductOption productOption) {
+        String attributeValue = itemAttribute.getValue();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<ProductOptionValue> criteria = builder.createQuery(ProductOptionValue.class);
+        Root<ProductOptionValueImpl> root = criteria.from(ProductOptionValueImpl.class);
+        criteria.select(root);
+
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.equal(root.get("productOption").get("id"), productOption.getId()));
+        restrictions.add(builder.equal(root.get("attributeValue"), attributeValue));
+
+        criteria.where(restrictions.toArray(new Predicate[0]));
+
+        TypedQuery<ProductOptionValue> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        List<ProductOptionValue> response = query.getResultList();
+
+        return (response != null && response.size() > 0) ? response.get(0).getAttributeValue() : attributeValue;
     }
 
 }

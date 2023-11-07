@@ -125,12 +125,15 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             validationConfigurations = {@ValidationConfiguration(
                     validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
                     configurationItems = {
-                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE,
-                                    itemValue = "passwordNotMatchError"),
-                            @ConfigurationItem(itemName = "otherField",
-                                    itemValue = "passwordConfirm")
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
+                            @ConfigurationItem(itemName = "otherField", itemValue = "passwordConfirm")
                     }
-            )
+            ), @ValidationConfiguration(
+                    validationImplementation = "blAdminRegexValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordComplexityNotSatisfiedError"),
+                            @ConfigurationItem(itemName = "regexPropertyName", itemValue = "admin.password.regex.validation")
+                    })
             })
     protected String password;
 

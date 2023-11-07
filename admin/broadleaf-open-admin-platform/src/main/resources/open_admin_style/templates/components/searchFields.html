@@ -3,7 +3,7 @@
     <div class="col6">
         <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
             <input id="listgrid-search" type="search" name="table-search"
-                   th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
+                   th:placeholder="#{Search_Placeholder(#{${listGrid.firstSearchableFieldFriendlyName}}, #{${entityFriendlyName}})}" />
             <div class="listgrid-search-actions">
                 <button class="button primary search-button" th:inline="text" th:utext="#{Search}"></button>
                 <div th:replace="~{components/listGridToolbar}" ></div>

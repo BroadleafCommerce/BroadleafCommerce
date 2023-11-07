@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Validates a field as being a valid URI to ensure compatibility with Broadleaf handlers including
@@ -46,10 +47,12 @@ import java.util.Map;
 public class UriPropertyValidator extends ValidationConfigurationBasedPropertyValidator {
 
     protected static final Log LOG = LogFactory.getLog(UriPropertyValidator.class);
+    protected static final Pattern URI_PATTERN = Pattern.compile("[\\w-_/]*");
 
     protected String ERROR_KEY_BEGIN_WITH_SLASH = "uriPropertyValidatorMustBeginWithSlashError";
     protected String ERROR_KEY_CANNOT_END_WITH_SLASH = "uriPropertyValidatorCannotEndWithSlashError";
     protected String ERROR_KEY_CANNOT_CONTAIN_SPACES = "uriPropertyValidatorCannotContainSpacesError";
+    protected String ERROR_KEY_CANNOT_CONTAIN_SPECIAL_CHARACTERS = "uriPropertyValidatorCannotContainSpecialCharactersError";
 
     protected boolean getIgnoreFullUrls() {
         return BLCSystemProperty.resolveBooleanSystemProperty("uriPropertyValidator.ignoreFullUrls");
@@ -100,6 +103,10 @@ public class UriPropertyValidator extends ValidationConfigurationBasedPropertyVa
 
         if (!getAllowTrailingSlash() && value.endsWith("/") && value.length() > 1) {
             return new PropertyValidationResult(false, ERROR_KEY_CANNOT_END_WITH_SLASH);
+        }
+
+        if (!URI_PATTERN.matcher(value).matches()) {
+            return new PropertyValidationResult(false, ERROR_KEY_CANNOT_CONTAIN_SPECIAL_CHARACTERS);
         }
 
         return new PropertyValidationResult(true);

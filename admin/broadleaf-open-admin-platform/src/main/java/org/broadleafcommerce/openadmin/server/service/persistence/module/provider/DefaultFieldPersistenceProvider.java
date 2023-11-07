@@ -60,14 +60,18 @@ public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAda
     @Override
     public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (extractValueRequest.getRequestedValue() != null) {
+            String displayVal = extractValueRequest.getDisplayVal();
             String val;
             if(extractValueRequest.getRequestedValue() instanceof BroadleafEnumerationType){
                 val = ((BroadleafEnumerationType)extractValueRequest.getRequestedValue()).getType();
+                if(displayVal == null){
+                    displayVal = ((BroadleafEnumerationType)extractValueRequest.getRequestedValue()).getFriendlyType();
+                }
             }else {
                 val = extractValueRequest.getRequestedValue().toString();
             }
             property.setValue(val);
-            property.setDisplayValue(extractValueRequest.getDisplayVal());
+            property.setDisplayValue(displayVal);
         }
         return MetadataProviderResponse.HANDLED;
     }

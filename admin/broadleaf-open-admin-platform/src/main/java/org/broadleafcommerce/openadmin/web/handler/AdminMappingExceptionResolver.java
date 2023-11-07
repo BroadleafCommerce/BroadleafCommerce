@@ -28,7 +28,6 @@ import org.springframework.web.util.UrlPathHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolver {
 
     private static final Log LOG = LogFactory.getLog(AdminMappingExceptionResolver.class);
@@ -51,7 +50,7 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             mav.addObject("showDebugMessage", showDebugMessage);
             if (showDebugMessage) {
                 StringBuilder sb2 = new StringBuilder("An error has occured");
-                if (!enableStacktrace) {
+                if (enableStacktrace) {
                     appendStackTrace(ex, sb2);
                 }
                 mav.addObject("debugMessage", sb2.toString());

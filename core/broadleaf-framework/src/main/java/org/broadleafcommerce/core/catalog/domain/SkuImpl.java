@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang3.StringUtils;
@@ -511,8 +510,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
                     if (optionValuePriceAdjustments == null) {
                         optionValuePriceAdjustments = value.getPriceAdjustment();
                     } else {
-                        optionValuePriceAdjustments =
-                                optionValuePriceAdjustments.add(value.getPriceAdjustment());
+                        optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
                     }
                 }
             }
@@ -527,8 +525,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the sale price from there
-            DynamicSkuPrices dynamicPrices =
-                    SkuPricingConsiderationContext.getDynamicSkuPrices(this);
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getSalePrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
             if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
@@ -580,8 +577,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             // We have dynamic pricing, so we will pull the retail price from there
-            DynamicSkuPrices dynamicPrices =
-                    SkuPricingConsiderationContext.getDynamicSkuPrices(this);
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
             if (SkuPricingConsiderationContext.isPricingConsiderationActive()) {
@@ -633,8 +629,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Override
     public DynamicSkuPrices getPriceData() {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            DynamicSkuPrices dynamicPrices =
-                    SkuPricingConsiderationContext.getDynamicSkuPrices(this);
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getDynamicSkuPrices(this);
             return dynamicPrices;
         } else {
             DynamicSkuPrices dsp = new DynamicSkuPrices();
@@ -932,8 +927,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
                 LOG.debug("sku, " + id + ", inactive due to category being inactive");
             }
         }
-        return this.isActive() && (product == null || product.isActive()) && (category == null
-                || category.isActive());
+        return this.isActive() && (product == null || product.isActive()) && (category == null || category.isActive());
     }
 
     @Override
@@ -955,9 +949,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     public void setSkuMedia(Map<String, Media> skuMedia) {
         this.skuMedia.clear();
         this.legacySkuMedia.clear();
-        for (Map.Entry<String, Media> entry : skuMedia.entrySet()) {
-            this.skuMedia.put(entry.getKey(),
-                    new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+        for(Map.Entry<String, Media> entry : skuMedia.entrySet()){
+            this.skuMedia.put(entry.getKey(), new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
 
@@ -1086,18 +1079,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @Override
     @Deprecated
     public List<ProductOptionValue> getProductOptionValues() {
-        //Changing this API to Set is ill-advised (especially in a patch release). The tendrils are widespread. Instead
-        //we just migrate the call from the List to the internal Set representation. This is in response
-        //to https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917.
-        return (List<ProductOptionValue>) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[]{List.class}, new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args)
-                            throws Throwable {
-                        return MethodUtils.invokeMethod(getProductOptionValuesCollection(),
-                                method.getName(), args, method.getParameterTypes());
-                    }
-                });
+        return new ArrayList<>(getProductOptionValuesCollection());
     }
 
     @Override

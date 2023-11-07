@@ -34,6 +34,7 @@
 
     var MIN_WIDTH = 60;
     var CONTROL_WIDTH = 45;
+    var HEADER_CONTROL_WIDTH = 30;
 
     var tableResizing = {
         active : false,
@@ -663,6 +664,10 @@
         
         updateGridSize : function($tbody) {
             var $table = $tbody.closest('table.list-grid-table');
+            //no table found, page might not have tables
+            if ($table.length === 0) {
+                return;
+            }
             var $headerTable = $table.closest('.listgrid-container').find('.listgrid-header-wrapper table');
             var rowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody);
             var thWidths = [];
@@ -728,16 +733,32 @@
             }).each(function(index, thElement) {
                 $(thElement).css('width', $(thElement).data('columnwidth'));
             });
-            
+            var isFullScreen = !window.screenTop && !window.screenY;
             // Set the new widths
             $headerTable.find('th').each(function(index, thElement) {
                 var $th = $(thElement);
-                var width = $th.outerWidth();
-                $th.css('width', width);
-                thWidths[index] = width;
+                //In the case of window resizing we need to do additional headers adjustment,
+                //but this makes sense only for not full screen
+                if (!isFullScreen) {
+                    $th.find('.listgrid-title span').css('width', 'fit-content');
+                    var widthSpan = $th.find('.listgrid-title span').width() + HEADER_CONTROL_WIDTH;
+                    $th.find('.listgrid-title span').css('width', widthSpan);
+                }
+                $th.css('width', $th.outerWidth());
+                thWidths[index] = $th.outerWidth();
+            });
+            var lastElement = null;
+            $table.find('th').each(function(index, thElement) {
+                lastElement = thElement;
             });
             $table.find('th').each(function(index, thElement) {
-                $(thElement).css('width', thWidths[index]);
+                var delta = $(thElement).outerWidth() - thWidths[index];
+                $(thElement).outerWidth(thWidths[index]);
+                //In the case of window resizing we need to do additional headers adjustment,
+                //but this makes sense only for not full screen
+                if (!isFullScreen && delta > 0 && lastElement != null && $(thElement).index() !== $(lastElement).index()) {
+                    $(lastElement).outerWidth($(lastElement).outerWidth() + delta);
+                }
                 var columnNo = $(thElement).index();
                 $(thElement).closest("table")
                     .find("tr td:nth-child(" + (columnNo+1) + ")")
@@ -994,8 +1015,8 @@
                                 url = $('button.add-multitenant-main-entity').data('url');
                             }
                             //If this is modal and 'multitenant duplicate' we use url from parent
-                            var multitenantDuplicate = $('.duplicate-multitenant-main-entity').length === 1;
-                            if (multitenantDuplicate  && inModal) {
+                            var multitenantDuplicate = $('#listGrid-duplicate-select-catalog').length === 1;
+                            if (multitenantDuplicate && inModal) {
                                 url = $('.duplicate-multitenant-main-entity').data('url');
                             }
                             if ($container.data('parentid')) {
@@ -1080,10 +1101,9 @@ $(document).ready(function() {
                     }
 
                     if ($(element).is(':visible')) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($(element));
                         if ($(element).parents('#listGrid-main.org\\.broadleafcommerce\\.core\\.order\\.domain\\.Order').length > 0) {
                             fillUnusedPageBottomSpace($(element));
-                        } else {
-                            BLCAdmin.listGrid.paginate.updateGridSize($(element));
                         }
                     } else {
                         $(element).addClass('needsupdate');

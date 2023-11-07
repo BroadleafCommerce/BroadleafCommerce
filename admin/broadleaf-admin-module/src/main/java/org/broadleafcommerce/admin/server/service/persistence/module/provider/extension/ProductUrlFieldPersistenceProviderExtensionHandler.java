@@ -21,8 +21,9 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.openadmin.dto.Entity;
 
 public interface ProductUrlFieldPersistenceProviderExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType modifyUrl(String url, Product product, ExtensionResultHolder<String> holder);
+    ExtensionResultStatusType modifyUrl(String url, Product product, Entity entity, ExtensionResultHolder<String> holder);
 }

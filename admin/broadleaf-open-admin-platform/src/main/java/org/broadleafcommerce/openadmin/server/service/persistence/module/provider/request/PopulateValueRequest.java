@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request;
 
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
@@ -39,8 +40,9 @@ public class PopulateValueRequest {
     private final PersistenceManager persistenceManager;
     private final DataFormatProvider dataFormatProvider;
     private final Boolean isPreAdd;
+    private final Entity entity;
 
-    public PopulateValueRequest(Boolean setId, FieldManager fieldManager, Property property, BasicFieldMetadata metadata, Class<?> returnType, String requestedValue, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider, Boolean isPreAdd) {
+    public PopulateValueRequest(Boolean setId, FieldManager fieldManager, Property property, BasicFieldMetadata metadata, Class<?> returnType, String requestedValue, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider, Boolean isPreAdd, Entity entity) {
         this.setId = setId;
         this.fieldManager = fieldManager;
         this.property = property;
@@ -50,6 +52,7 @@ public class PopulateValueRequest {
         this.persistenceManager = persistenceManager;
         this.dataFormatProvider = dataFormatProvider;
         this.isPreAdd = isPreAdd;
+        this.entity = entity;
     }
 
     public Boolean getSetId() {
@@ -86,5 +89,9 @@ public class PopulateValueRequest {
 
     public Boolean getPreAdd() {
         return isPreAdd != null && isPreAdd;
+    }
+
+    public Entity getEntity() {
+        return entity;
     }
 }
