@@ -462,3 +462,22 @@ td .listgrid-row-actions {
     color: #B3B3B3;
     font-size: 12px;
 }
+
+.listgrid-scrollable-header {
+    overflow-x: auto;
+}
+
+.listgrid-scrollable-header::-webkit-scrollbar {
+    background-color: rgba(249, 247, 243, 0.75);
+    height: 7.5px;
+}
+
+.listgrid-scrollable-header::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.6);
+    border-radius: 3px;
+    border: 1px solid #f3f1ed;
+}
+
+.listgrid-scrollable-header::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,0.9);
+}

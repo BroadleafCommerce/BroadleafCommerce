@@ -876,6 +876,20 @@
                 $wrapper.mCustomScrollbar('update');
             }
 
+            // add horizontal scrolling
+            let $headerWrapper = $wrapper.siblings(".listgrid-header-wrapper");
+            if ($wrapper.find(".mCSB_container").length > 0 && $headerWrapper.length > 0) {
+                $headerWrapper.css({
+                    'overflow': 'hidden',
+                    'overflow-x': 'auto'
+                });
+                $wrapper.find(".mCSB_container").css({'overflow-x': 'hidden'});
+                $headerWrapper.scroll(function () {
+                    $(this).siblings(".listgrid-body-wrapper").find(".mCSB_container")[0].scrollLeft = $(this)[0].scrollLeft;
+                });
+                $wrapper.mCustomScrollbar('update');
+            }
+
             // after all the heights have been calculated, update the table footer with the correct record shown count
             BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
             BLCAdmin.listGrid.updateGridTitleBarSize($table.closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));
@@ -991,6 +1005,7 @@
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
+                axis: "yx",
                 scrollEasing: "linear",
                 scrollInertia: 500,
                 mouseWheelPixels: trHeight,

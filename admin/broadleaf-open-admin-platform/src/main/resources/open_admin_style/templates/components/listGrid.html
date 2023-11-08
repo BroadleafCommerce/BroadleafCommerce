@@ -7,7 +7,7 @@
 </th:block>
 
 <th:block th:unless="${!#strings.isEmpty(listGrid.templateOverride)}">
-    <div class="listgrid-header-wrapper">
+    <div class="listgrid-header-wrapper listgrid-scrollable-header">
         <table class="list-grid-table table table-striped"
                th:classappend="${listGrid.className + ' ' + listGrid.getCssClassNames()}"
                th:attr="data-listgridtype=${listGrid.listGridType},
