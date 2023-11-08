@@ -168,17 +168,20 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         }
 
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
-        if (adminUser != null) {
-            AdminUserDetails principal = (AdminUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (adminUser != null && authentication!=null && !authentication.getName().equals(ANONYMOUS_USER_NAME)) {
+            AdminUserDetails principal = (AdminUserDetails) authentication.getPrincipal();
             if (principal.getId().equals(adminUser.getId())) {
                 brc.setAdminUserId(adminUser.getId());
             } else {
                 throw new SecurityException();
             }
         } else {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
+            if (authentication != null && !authentication.getName().equals(ANONYMOUS_USER_NAME)) {
                 throw new SecurityException();
+            } else {
+                //anonymous user, let's remove possible brc admin user, if threadlocal was not removed & thread re-used
+                brc.getAdditionalProperties().remove("adminUser");
             }
         }
 
