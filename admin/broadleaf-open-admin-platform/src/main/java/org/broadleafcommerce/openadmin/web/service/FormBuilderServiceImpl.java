@@ -42,7 +42,6 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
-import org.broadleafcommerce.common.util.BLCDateUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -1182,17 +1181,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     protected void setDateToRecordField(Field recordField, Property property, SimpleDateFormat formatter) {
-        String newValue;
-        Date date;
-        try {
-            date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(property.getValue());
-            newValue = formatter.format(date);
-        } catch (Exception ex) {
+        String newValue = property.getValue();
+        if (newValue != null) {
+            Date date;
             try {
-                date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SS").parse(property.getValue());
+                date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").parse(property.getValue());
                 newValue = formatter.format(date);
-            } catch (ParseException e) {
-                newValue = property.getValue();
+            } catch (ParseException ex) {
+                try {
+                    date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SS").parse(property.getValue());
+                    newValue = formatter.format(date);
+                } catch (ParseException ignored) {
+                }
             }
         }
         recordField.setValue(newValue);
