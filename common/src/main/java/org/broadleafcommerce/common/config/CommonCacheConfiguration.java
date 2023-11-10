@@ -106,6 +106,11 @@ public class CommonCacheConfiguration {
     }
 
     @Bean
+    public JCacheRegionConfiguration blCustomerAddress() {
+        return new JCacheRegionConfiguration("blCustomerAddress", 600, 1000);
+    }
+
+    @Bean
     public JCacheRegionConfiguration queryOrder() {
         return new JCacheRegionConfiguration("query.Order", 60, 1000);
     }
