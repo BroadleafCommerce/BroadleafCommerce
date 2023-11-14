@@ -20,7 +20,6 @@ package org.broadleafcommerce.cms.file.domain;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.sql.Blob;
@@ -29,6 +28,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
@@ -39,7 +39,9 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_STATIC_ASSET_STRG")
+@Table(name = "BLC_STATIC_ASSET_STRG", indexes = {
+        @Index(name = "STATIC_ASSET_ID_INDEX", columnList = "STATIC_ASSET_ID")
+})
 public class StaticAssetStorageImpl implements StaticAssetStorage {
 
     private static final long serialVersionUID = 1L;
@@ -51,15 +53,13 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "StaticAssetStorageImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl")
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl")
             }
     )
     @Column(name = "STATIC_ASSET_STRG_ID")
     protected Long id;
 
     @Column(name = "STATIC_ASSET_ID", nullable = false)
-    @Index(name = "STATIC_ASSET_ID_INDEX", columnNames = {"STATIC_ASSET_ID"})
     protected Long staticAssetId;
 
     @Lob

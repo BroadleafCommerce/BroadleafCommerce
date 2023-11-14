@@ -68,7 +68,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -92,6 +91,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -109,7 +109,13 @@ import jakarta.persistence.Transient;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CATEGORY")
+@Table(name = "BLC_CATEGORY", indexes = {
+        @Index(name = "CATEGORY_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "CATEGORY_URL_INDEX", columnList = "URL"),
+        @Index(name = "CATEGORY_E_ID_INDEX", columnList = "EXTERNAL_ID"),
+        @Index(name = "CATEGORY_URLKEY_INDEX", columnList = "URL_KEY"),
+        @Index(name = "CATEGORY_PARENT_INDEX", columnList = "DEFAULT_PARENT_CATEGORY_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
 @SQLDelete(sql = "UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
 @DirectCopyTransform({
@@ -145,9 +151,9 @@ public class CategoryImpl
     }
 
     private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap,
-            Category category,
-            String startingPath,
-            List<Long> startingCategoryList) throws CacheFactoryException {
+                                                Category category,
+                                                String startingPath,
+                                                List<Long> startingCategoryList) throws CacheFactoryException {
         String urlKey = category.getUrlKey();
         if (urlKey == null) {
             throw new CacheFactoryException(
@@ -187,7 +193,6 @@ public class CategoryImpl
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
-    @Index(name = "CATEGORY_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
             group = GroupName.General,
             prominent = true, gridOrder = 1000,
@@ -200,7 +205,6 @@ public class CategoryImpl
             prominent = true, gridOrder = 2000,
             validationConfigurations = {
                     @ValidationConfiguration(validationImplementation = "blUriPropertyValidator")})
-    @Index(name = "CATEGORY_URL_INDEX", columnNames = {"URL"})
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
@@ -210,14 +214,12 @@ public class CategoryImpl
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "EXTERNAL_ID")
-    @Index(name = "CATEGORY_E_ID_INDEX", columnNames = {"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_ExternalID",
             group = GroupName.Miscellaneous, order = 2000,
             tooltip = "CategoryImpl_Category_ExternalID_Tooltip")
     protected String externalId;
 
     @Column(name = "URL_KEY")
-    @Index(name = "CATEGORY_URLKEY_INDEX", columnNames = {"URL_KEY"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key",
             group = GroupName.ProductDefaults, excluded = true)
     protected String urlKey;
@@ -303,7 +305,6 @@ public class CategoryImpl
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
-    @Index(name = "CATEGORY_PARENT_INDEX", columnNames = {"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 3000,
             group = GroupName.General)
     @AdminPresentationToOneLookup()
@@ -927,7 +928,7 @@ public class CategoryImpl
             currentPath = new ArrayList<Category>();
             currentPath.add(0, this);
         }
-        if (getDefaultParentCategory() != null && ! currentPath.contains(getDefaultParentCategory())) {
+        if (getDefaultParentCategory() != null && !currentPath.contains(getDefaultParentCategory())) {
             currentPath.add(0, getDefaultParentCategory());
             getDefaultParentCategory().buildDefaultParentCategoryPath(currentPath);
         }
@@ -1233,7 +1234,7 @@ public class CategoryImpl
     public void setCategoryMedia(Map<String, Media> categoryMedia) {
         this.categoryMedia.clear();
         this.legacyCategoryMedia.clear();
-        for(Map.Entry<String, Media> entry : categoryMedia.entrySet()){
+        for (Map.Entry<String, Media> entry : categoryMedia.entrySet()) {
             this.categoryMedia.put(entry.getKey(), new CategoryMediaXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }

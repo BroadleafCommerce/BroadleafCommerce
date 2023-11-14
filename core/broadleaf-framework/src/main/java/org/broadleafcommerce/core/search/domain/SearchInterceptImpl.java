@@ -22,13 +22,11 @@ import org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-
 
 /**
  * @deprecated Replaced in functionality by {@link SearchRedirectImpl}
@@ -52,7 +50,6 @@ public class SearchInterceptImpl implements SearchIntercept {
     protected Long id;
 
     @Column(name = "TERM")
-    @Index(name = "SEARCHINTERCEPT_TERM_INDEX", columnNames = {"TERM"})
     private String term;
 
     @Column(name = "REDIRECT")

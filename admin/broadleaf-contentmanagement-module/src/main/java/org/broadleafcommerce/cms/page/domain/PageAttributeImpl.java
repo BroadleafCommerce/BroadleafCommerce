@@ -47,7 +47,8 @@ import jakarta.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_ATTRIBUTES", indexes = {
         @Index(name = "PAGEATTRIBUTE_NAME_INDEX", columnList = "FIELD_NAME"),
-        @Index(name = "PAGEATTRIBUTE_INDEX", columnList = "PAGE_ID")})
+        @Index(name = "PAGEATTRIBUTE_INDEX", columnList = "PAGE_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,

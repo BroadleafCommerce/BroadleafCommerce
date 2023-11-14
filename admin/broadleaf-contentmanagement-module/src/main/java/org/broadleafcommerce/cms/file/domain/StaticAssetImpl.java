@@ -41,7 +41,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.HashMap;
@@ -53,6 +52,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -67,7 +67,9 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(value = {AdminAuditableListener.class})
-@Table(name = "BLC_STATIC_ASSET")
+@Table(name = "BLC_STATIC_ASSET", indexes = {
+        @Index(name = "ASST_FULL_URL_INDX", columnList = "FULL_URL")
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @AdminPresentationMergeOverrides(value = {
         @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
@@ -184,7 +186,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
             requiredOverride = RequiredOverride.REQUIRED,
             fieldType = SupportedFieldType.ASSET_URL,
             prominent = true)
-    @Index(name = "ASST_FULL_URL_INDX", columnNames = {"FULL_URL"})
     protected String fullUrl;
 
     @Column(name = "TITLE", nullable = true)

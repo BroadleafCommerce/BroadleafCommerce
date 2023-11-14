@@ -10,26 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -61,7 +48,6 @@ import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -69,57 +55,82 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULFILLMENT_GROUP")
+@Table(name = "BLC_FULFILLMENT_GROUP", indexes = {
+        @Index(name = "FG_REFERENCE_INDEX", columnList = "REFERENCE_NUMBER"),
+        @Index(name = "FG_METHOD_INDEX", columnList = "METHOD"),
+        @Index(name = "FG_SERVICE_INDEX", columnList = "SERVICE"),
+        @Index(name = "FG_PRIMARY_INDEX", columnList = "IS_PRIMARY"),
+        @Index(name = "FG_STATUS_INDEX", columnList = "STATUS"),
+        @Index(name = "FG_ORDER_INDEX", columnList = "ORDER_ID"),
+        @Index(name = "FG_ADDRESS_INDEX", columnList = "ADDRESS_ID"),
+        @Index(name = "FG_PHONE_INDEX", columnList = "PHONE_ID"),
+        @Index(name = "FG_MESSAGE_INDEX", columnList = "PERSONAL_MESSAGE_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "", mergeEntries =
-                    @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                                    booleanOverrideValue = true)),
-        @AdminPresentationMergeOverride(name = "currency", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
+        {
+                @AdminPresentationMergeOverride(name = "", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                        booleanOverrideValue = true)),
+                @AdminPresentationMergeOverride(name = "currency", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
                         booleanOverrideValue = false)),
-        @AdminPresentationMergeOverride(name = "personalMessage", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
-                        overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Advanced),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
-                        intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Advanced)
-        }),
-        @AdminPresentationMergeOverride(name = "address", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
-                        overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
-                        intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
-        }),
-        @AdminPresentationMergeOverride(name = "address.isDefault", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                        booleanOverrideValue = true)
-        }),
-        @AdminPresentationMergeOverride(name = "address.isActive", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                        booleanOverrideValue = true)
-        }),
-        @AdminPresentationMergeOverride(name = "address.isBusiness", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                        booleanOverrideValue = true)
-        }),
-        @AdminPresentationMergeOverride(name = "phone", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                        booleanOverrideValue = true)
-        }),
-        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                        booleanOverrideValue = false),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
-                        intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
-                        overrideValue = "General"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                        overrideValue = "NOT_REQUIRED")
-        })
-    }
+                @AdminPresentationMergeOverride(name = "personalMessage", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
+                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Advanced),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Advanced)
+                }),
+                @AdminPresentationMergeOverride(name = "address", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
+                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
+                }),
+                @AdminPresentationMergeOverride(name = "address.isDefault", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)
+                }),
+                @AdminPresentationMergeOverride(name = "address.isActive", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)
+                }),
+                @AdminPresentationMergeOverride(name = "address.isBusiness", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)
+                }),
+                @AdminPresentationMergeOverride(name = "phone", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = true)
+                }),
+                @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                booleanOverrideValue = false),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                                overrideValue = "General"),
+                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                                overrideValue = "NOT_REQUIRED")
+                })
+        }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupImpl_baseFulfillmentGroup")
 @DirectCopyTransform({
@@ -132,143 +143,136 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     @Id
     @GeneratedValue(generator = "FulfillmentGroupId")
     @GenericGenerator(
-        name="FulfillmentGroupId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="FulfillmentGroupImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl")
-        }
+            name = "FulfillmentGroupId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FulfillmentGroupImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl")
+            }
     )
     @Column(name = "FULFILLMENT_GROUP_ID")
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
-    @Index(name="FG_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Reference_Number", order=Presentation.FieldOrder.REFNUMBER,
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Reference_Number", order = Presentation.FieldOrder.REFNUMBER,
             groupOrder = Presentation.Group.Order.General)
     protected String referenceNumber;
 
     @Column(name = "METHOD")
-    @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
     @AdminPresentation(excluded = true)
     @Deprecated
     protected String method;
-    
+
     @Column(name = "SERVICE")
-    @Index(name="FG_SERVICE_INDEX", columnNames={"SERVICE"})
     @AdminPresentation(excluded = true)
     @Deprecated
     protected String service;
 
-    @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Retail_Shipping_Price", order=Presentation.FieldOrder.RETAIL,
+    @Column(name = "RETAIL_PRICE", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Retail_Shipping_Price", order = Presentation.FieldOrder.RETAIL,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailFulfillmentPrice;
 
-    @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Sale_Shipping_Price", order=Presentation.FieldOrder.SALE,
+    @Column(name = "SALE_PRICE", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Sale_Shipping_Price", order = Presentation.FieldOrder.SALE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal saleFulfillmentPrice;
 
-    @Column(name = "PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price", order=Presentation.FieldOrder.PRICE,
+    @Column(name = "PRICE", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price", order = Presentation.FieldOrder.PRICE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal fulfillmentPrice;
 
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=Presentation.FieldOrder.TYPE,
-            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType",
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order = Presentation.FieldOrder.TYPE,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType",
             prominent = true, gridOrder = 3000)
     protected String type;
 
-    @Column(name = "TOTAL_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order=Presentation.FieldOrder.TOTALTAX,
+    @Column(name = "TOTAL_TAX", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order = Presentation.FieldOrder.TOTALTAX,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
-    
-    @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Item_Tax", order=Presentation.FieldOrder.ITEMTAX,
+
+    @Column(name = "TOTAL_ITEM_TAX", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Item_Tax", order = Presentation.FieldOrder.ITEMTAX,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemTax;
-    
-    @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Fee_Tax", order=Presentation.FieldOrder.FEETAX,
+
+    @Column(name = "TOTAL_FEE_TAX", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Fee_Tax", order = Presentation.FieldOrder.FEETAX,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalFeeTax;
-    
-    @Column(name = "TOTAL_FG_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_FG_Tax", order=Presentation.FieldOrder.FGTAX,
+
+    @Column(name = "TOTAL_FG_TAX", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_FG_Tax", order = Presentation.FieldOrder.FGTAX,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalFulfillmentGroupTax;
 
     @Column(name = "DELIVERY_INSTRUCTION")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Delivery_Instruction", order=Presentation.FieldOrder.DELIVERINSTRUCTION)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Delivery_Instruction", order = Presentation.FieldOrder.DELIVERINSTRUCTION)
     protected String deliveryInstruction;
 
     @Column(name = "IS_PRIMARY")
-    @Index(name="FG_PRIMARY_INDEX", columnNames={"IS_PRIMARY"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Primary_FG", order=Presentation.FieldOrder.PRIMARY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Primary_FG", order = Presentation.FieldOrder.PRIMARY)
     protected boolean primary = false;
 
-    @Column(name = "MERCHANDISE_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Merchandise_Total", order=Presentation.FieldOrder.MERCHANDISETOTAL,
+    @Column(name = "MERCHANDISE_TOTAL", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Merchandise_Total", order = Presentation.FieldOrder.MERCHANDISETOTAL,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType=SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal merchandiseTotal;
 
-    @Column(name = "TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total", order=Presentation.FieldOrder.TOTAL,
+    @Column(name = "TOTAL", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total", order = Presentation.FieldOrder.TOTAL,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
-            fieldType= SupportedFieldType.MONEY, prominent = true, gridOrder = 2000)
+            fieldType = SupportedFieldType.MONEY, prominent = true, gridOrder = 2000)
     protected BigDecimal total;
 
     @Column(name = "STATUS")
-    @Index(name="FG_STATUS_INDEX", columnNames={"STATUS"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Status", order=Presentation.FieldOrder.STATUS,
-            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType",
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Status", order = Presentation.FieldOrder.STATUS,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType",
             prominent = true, gridOrder = 4000)
     protected String status;
-    
+
     @Column(name = "SHIPPING_PRICE_TAXABLE")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=Presentation.FieldOrder.TAXABLE,
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order = Presentation.FieldOrder.TAXABLE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing)
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
-    
+
     @ManyToOne(targetEntity = FulfillmentOptionImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected FulfillmentOption fulfillmentOption;
-    
-    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
+
+    @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
-    @Index(name="FG_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     protected Order order;
-    
+
     @Column(name = "FULFILLMENT_GROUP_SEQUNCE")
     protected Integer sequence;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
 
     /**
@@ -276,42 +280,40 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
      */
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_ID")
-    @Index(name="FG_PHONE_INDEX", columnNames={"PHONE_ID"})
     @Deprecated
     protected Phone phone;
-    
-    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
+
+    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
-    @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
-    
+
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL,
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Items",
+    @AdminPresentationCollection(friendlyName = "FulfillmentGroupImpl_Items",
             tab = Presentation.Tab.Name.Items, tabOrder = Presentation.Tab.Order.Items)
     protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
-    
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL },
+
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Fees",
+    @AdminPresentationCollection(friendlyName = "FulfillmentGroupImpl_Fees",
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing)
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
-        
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = { CascadeType.ALL },
+
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     protected List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
 
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = { CascadeType.ALL },
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Adjustments",
+    @AdminPresentationCollection(friendlyName = "FulfillmentGroupImpl_Adjustments",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
-    
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinTable(name = "BLC_FG_FG_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ID"),
             inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
@@ -364,19 +366,19 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     public List<FulfillmentGroupItem> getFulfillmentGroupItems() {
         return fulfillmentGroupItems;
     }
-    
+
     @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
             OrderItem orderItem = fgItem.getOrderItem();
             if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl) orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                     discreteOrderItems.add(discreteOrderItem);
                 }
             } else if (orderItem instanceof DiscreteOrderItem) {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                 discreteOrderItems.add(discreteOrderItem);
             }
         }
@@ -506,11 +508,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             if (adjustment.isFutureCredit()) {
                 futureCreditAdjustments.add(adjustment);
             }
-            
+
         }
         return futureCreditAdjustments;
     }
-    
+
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
         Money adjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
@@ -587,7 +589,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     public void setShippingPrice(Money shippingPrice) {
         setFulfillmentPrice(shippingPrice);
     }
-    
+
     @Override
     public List<TaxDetail> getTaxes() {
         return taxes;
@@ -607,7 +609,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
     }
-    
+
     @Override
     public Money getTotalItemTax() {
         return totalItemTax == null ? null : BroadleafCurrencyUtils.getMoney(totalItemTax, getOrder().getCurrency());
@@ -689,7 +691,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     public void setTotal(Money orderTotal) {
         this.total = Money.toAmount(orderTotal);
     }
-    
+
     @Override
     public FulfillmentGroupStatusType getStatus() {
         return FulfillmentGroupStatusType.getInstance(status);
@@ -783,7 +785,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         result = prime * result + ((fulfillmentGroupItems == null) ? 0 : fulfillmentGroupItems.hashCode());
         return result;
     }
-    
+
     @Override
     public <G extends FulfillmentGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -809,12 +811,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         cloned.setOrder(order);
         cloned.setPrimary(primary);
         cloned.setType(getType());
-        for (FulfillmentGroupItem fgi: fulfillmentGroupItems) {
+        for (FulfillmentGroupItem fgi : fulfillmentGroupItems) {
             FulfillmentGroupItem fulfillmentGroupItem = fgi.createOrRetrieveCopyInstance(context).getClone();
             fulfillmentGroupItem.setFulfillmentGroup(cloned);
             cloned.getFulfillmentGroupItems().add(fulfillmentGroupItem);
         }
-        return  createResponse;
+        return createResponse;
     }
 
     protected void cloneTaxDetails(MultiTenantCopyContext context, FulfillmentGroup cloned) throws CloneNotSupportedException {

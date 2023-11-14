@@ -50,8 +50,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
      * Builds the search facet ranges for the provided dto.
-     * 
-     * @param context
+     *
      * @param dto
      * @param ranges
      */
@@ -59,7 +58,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
      * Provides an extension point to modify the SolrQuery.
-     * @param context
+     *
      * @param query
      * @param qualifiedSolrQuery
      * @param facets

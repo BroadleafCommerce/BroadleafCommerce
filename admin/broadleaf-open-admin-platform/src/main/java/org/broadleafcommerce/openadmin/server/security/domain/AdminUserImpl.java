@@ -43,7 +43,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.HashMap;
@@ -58,6 +57,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -74,7 +74,10 @@ import jakarta.persistence.Transient;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ADMIN_USER")
+@Table(name = "BLC_ADMIN_USER", indexes = {
+        @Index(name = "ADMINUSER_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "ADMINPERM_EMAIL_INDEX", columnList = "EMAIL")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINUSER),
@@ -105,7 +108,6 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     private Long id;
 
     @Column(name = "NAME", nullable = false)
-    @Index(name = "ADMINUSER_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name",
             group = GroupName.User, order = FieldOrder.NAME,
             prominent = true, gridOrder = 1000)
@@ -138,7 +140,6 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     protected String password;
 
     @Column(name = "EMAIL", nullable = false)
-    @Index(name = "ADMINPERM_EMAIL_INDEX", columnNames = {"EMAIL"})
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address",
             group = GroupName.User, order = FieldOrder.EMAIL,
             requiredOverride = RequiredOverride.REQUIRED,
@@ -189,7 +190,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             manyToField = "allUsers",
             operationTypes = @AdminPresentationOperationTypes(
                     removeType = OperationType.NONDESTRUCTIVEREMOVE))
-    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
+    protected Set<AdminPermission> allPermissions = new HashSet<>();
 
     @Transient
     protected String unencodedPassword;
@@ -216,8 +217,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             group = GroupName.AdditionalFields,
             deleteEntityUponRemove = true, forceFreeFormKeys = true,
             keyPropertyFriendlyName = "AdminUserAttributeImpl_Key")
-    protected Map<String, AdminUserAttribute> additionalFields =
-            new HashMap<String, AdminUserAttribute>();
+    protected Map<String, AdminUserAttribute> additionalFields = new HashMap<>();
 
     @Override
     public void setUnencodedPassword(String unencodedPassword) {

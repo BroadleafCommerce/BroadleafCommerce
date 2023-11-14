@@ -30,7 +30,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -54,7 +54,10 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ADMIN_SECTION")
+@Table(name = "BLC_ADMIN_SECTION", indexes = {
+        @Index(name = "ADMINSECTION_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "ADMINSECTION_MODULE_INDEX", columnList = "ADMIN_MODULE_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
 @AdminPresentationClass(friendlyName = "AdminSectionImpl_baseAdminSection")
 @DirectCopyTransform({
@@ -81,7 +84,6 @@ public class AdminSectionImpl implements AdminSection {
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
-    @Index(name = "ADMINSECTION_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "AdminSectionImpl_Name", order = 1,
             group = "AdminSectionImpl_Section", prominent = true)
     protected String name;
@@ -99,7 +101,6 @@ public class AdminSectionImpl implements AdminSection {
     @ManyToOne(optional = false, targetEntity = AdminModuleImpl.class)
     @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "ADMIN_MODULE_ID")
-    @Index(name = "ADMINSECTION_MODULE_INDEX", columnNames = {"ADMIN_MODULE_ID"})
     protected AdminModule module;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)

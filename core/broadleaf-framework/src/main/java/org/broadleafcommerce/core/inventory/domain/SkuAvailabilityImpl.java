@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
@@ -35,6 +34,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
@@ -58,14 +58,22 @@ import jakarta.persistence.Table;
 @Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SKU_AVAILABILITY")
+@Table(name = "BLC_SKU_AVAILABILITY", indexes = {
+        @Index(name = "SKUAVAIL_SKU_INDEX", columnList = "SKU_ID"),
+        @Index(name = "SKUAVAIL_LOCATION_INDEX", columnList = "LOCATION_ID"),
+        @Index(name = "SKUAVAIL_STATUS_INDEX", columnList = "AVAILABILITY_STATUS")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blInventoryElements")
 public class SkuAvailabilityImpl implements SkuAvailability {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 1L;
 
-    /** The id. */
+    /**
+     * The id.
+     */
     @Id
     @GeneratedValue(generator = "SkuAvailabilityId")
     @GenericGenerator(
@@ -82,42 +90,51 @@ public class SkuAvailabilityImpl implements SkuAvailability {
             group = "SkuAvailabilityImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    /** The sale price. */
+    /**
+     * The sale price.
+     */
     @Column(name = "SKU_ID")
-    @Index(name = "SKUAVAIL_SKU_INDEX", columnNames = {"SKU_ID"})
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Sku_ID",
             visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long skuId;
 
-    /** The retail price. */
+    /**
+     * The retail price.
+     */
     @Column(name = "LOCATION_ID")
-    @Index(name = "SKUAVAIL_LOCATION_INDEX", columnNames = {"LOCATION_ID"})
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Location_ID",
             group = "SkuAvailabilityImpl_Description")
     protected Long locationId;
 
-    /** The quantity on hand. */
+    /**
+     * The quantity on hand.
+     */
     @Column(name = "QTY_ON_HAND")
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Quantity_On_Hand",
             group = "SkuAvailabilityImpl_Description")
     protected Integer quantityOnHand;
 
-    /** The reserve quantity. */
+    /**
+     * The reserve quantity.
+     */
     @Column(name = "RESERVE_QTY")
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Reserve_Quantity",
             group = "SkuAvailabilityImpl_Description")
     protected Integer reserveQuantity;
 
-    /** The description. */
+    /**
+     * The description.
+     */
     @Column(name = "AVAILABILITY_STATUS")
-    @Index(name = "SKUAVAIL_STATUS_INDEX", columnNames = {"AVAILABILITY_STATUS"})
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Availability_Status",
             group = "SkuAvailabilityImpl_Description",
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType")
     protected String availabilityStatus;
 
-    /** The date this product will be available. */
+    /**
+     * The date this product will be available.
+     */
     @Column(name = "AVAILABILITY_DATE")
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Available_Date",
             group = "SkuAvailabilityImpl_Description")
