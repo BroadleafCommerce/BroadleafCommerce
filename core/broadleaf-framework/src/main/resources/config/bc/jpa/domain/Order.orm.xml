@@ -74,7 +74,7 @@
 
     <named-query name="BC_ORDER_LOCK_READ">
         <query>
-            SELECT COUNT(*) FROM org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SELECT COUNT(orderLock) FROM org.broadleafcommerce.core.order.domain.OrderLock orderLock
             WHERE  orderLock.orderLockPK.orderId = :orderId
             AND orderLock.orderLockPK.key = :key
         </query>
