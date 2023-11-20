@@ -59,7 +59,7 @@ public class CartStateRefresher implements ApplicationListener<OrderPersistedEve
             boolean emptyCartState = CartState.getCart() == null || CartState.getCart() instanceof NullOrderImpl;
             if (emptyCartState) {
                 //If cart state is empty, set it to this newly persisted order if it's the active Customer's cart
-                if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId().equals(dbOrder.getCustomer().getId())
+                if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId()!=null && CustomerState.getCustomer().getId().equals(dbOrder.getCustomer().getId())
                         && OrderStatus.IN_PROCESS.equals(dbOrder.getStatus())) {
                     CartState.setCart(dbOrder);
                 }
