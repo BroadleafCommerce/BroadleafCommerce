@@ -509,9 +509,10 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         DiscreteOrderItem cloned = createResponse.getClone();
         cloned.setBaseRetailPrice(getBaseRetailPrice());
         cloned.setBaseSalePrice(getBaseSalePrice());
-        cloned.setProduct(product);
-        cloned.setSku(sku);
-        cloned.setCategory(category);
+        //seems there could be proxies of product, sku etc, so let's unproxy it(getter does this trick)
+        cloned.setProduct(getProduct());
+        cloned.setSku(getSku());
+        cloned.setCategory(getCategory());
         ((DiscreteOrderItemImpl)cloned).discountsAllowed = discountsAllowed;
         cloned.setName(name);
         // dont clone
