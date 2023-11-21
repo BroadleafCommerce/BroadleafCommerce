@@ -1092,10 +1092,11 @@ $('body').on('listGrid-adorned-rowSelected', function (event, $target, link, fie
 
         function processDeleteCall (params) {
             var $selectedRows;
-            if ($(this).is('a')) {
-                $selectedRows = $(this).closest('tr');
+            let $deleteButton = $(params[0]);
+            if ($deleteButton.is('a')) {
+                $selectedRows = $deleteButton.closest('tr');
             } else {
-                var $container = $(this).closest('.listgrid-container');
+                var $container = $deleteButton.closest('.listgrid-container');
                 $selectedRows = $container.find('table tr.selected');
             }
             var rowFields = BLCAdmin.listGrid.getRowFields($selectedRows);
