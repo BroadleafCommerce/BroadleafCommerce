@@ -221,15 +221,16 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             if (discountType == null || StringUtils.isBlank(discountType.getValue())) {
                 discountValue.setValue("");
             } else {
-                if (discountType.getValue().equals("PERCENT_OFF")) {
-                    if (value.contains(decimalSeparator)) {
-                        value = value
-                                .replaceAll("0*$", "")
-                                .replaceAll(String.format("\\%s$", decimalSeparator), "");
-                    }
-                    discountValue.setValue(value + "%");
-                } else {
-                    if (discountType.getValue().equals("AMOUNT_OFF")) {
+                switch (discountType.getValue()) {
+                    case "PERCENT_OFF":
+                        if (value.contains(decimalSeparator)) {
+                            value = value
+                                    .replaceAll("0*$", "")
+                                    .replaceAll("\\" + decimalSeparator + "$", "");
+                        }
+                        discountValue.setValue(value + "%");
+                        break;
+                    case "AMOUNT_OFF":
                         try {
                             //ok, because we construct NumberFormat.getCurrencyInstance we need to end on "Currency" to parse
                             Number parsedValue = nf.parse(((DecimalFormat) nf).getPositivePrefix() + value + ((DecimalFormat) nf).getPositiveSuffix());
@@ -238,10 +239,9 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                             LOG.error("An error has occurred ", e);
                             discountValue.setValue(nf.format(new BigDecimal(value)));
                         }
-                    }
+                        break;
                 }
             }
-
             Property timeRule = entity.findProperty("offerMatchRules---TIME");
             entity.addProperty(buildAdvancedVisibilityOptionsProperty(timeRule));
 
@@ -257,7 +257,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 String moneySuffix = ((DecimalFormat) nf).getPositiveSuffix();
                 String setValue = discountValue.getValue();
                 setValue = setValue.replaceAll("\\%", "")
-                        .replaceAll(String.format("\\%s", decimalSeparator), "")
+                        .replaceAll("\\" + decimalSeparator, "")
                         .replaceAll(Pattern.quote(moneyPrefix), "")
                         .replaceAll(Pattern.quote(moneySuffix), "");
                 discountValue.setValue(setValue);
