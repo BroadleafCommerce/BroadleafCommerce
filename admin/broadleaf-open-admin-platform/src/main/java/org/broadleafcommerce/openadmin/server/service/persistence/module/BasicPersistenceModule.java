@@ -1381,7 +1381,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         })));
                     }
                 }
-                System.out.println("");
             }
         }
     }
