@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
@@ -77,6 +78,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     @Resource(name = "blValidateAddRequestActivityExtensionManager")
     protected ValidateAddRequestActivityExtensionManager extensionManager;
 
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
     public ValidateAddRequestActivity() {
         setOrder(ORDER);
     }
@@ -117,6 +121,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         } else {
             // TODO: In the next minor release, refactor this to leverage OrderItemRequestValidationService. Leaving as-is to maintain the API for now.
             Product product = determineProduct(orderItemRequestDTO);
+            validateIfProductIsProdRecord(product);
             Sku sku;
             try {
                 // TODO: In the next minor release, refactor this to leverage OrderItemRequestValidationService. Leaving as-is to maintain the API for now.
@@ -141,6 +146,12 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         }
         
         return context;
+    }
+
+    protected void validateIfProductIsProdRecord(Product product) {
+        if (product != null && sandBoxHelper.getOriginalId(product) != null) {
+            throw new IllegalArgumentException("Only production record could be added to the cart");
+        }
     }
 
     protected boolean hasQuantity(Integer orderItemQuantity) {
