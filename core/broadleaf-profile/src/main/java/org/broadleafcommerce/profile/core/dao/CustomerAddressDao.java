@@ -43,4 +43,5 @@ public interface CustomerAddressDao {
 
     Long readNumberOfAddresses();
 
+    void hardDeleteCustomerAddressesForCustomer(Long customerId);
 }

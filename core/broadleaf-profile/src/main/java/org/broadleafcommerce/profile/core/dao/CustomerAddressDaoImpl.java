@@ -23,9 +23,6 @@ import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,6 +32,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository("blCustomerAddressDao")
 public class CustomerAddressDaoImpl implements CustomerAddressDao {
@@ -155,5 +154,13 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         query.setParameter("customerId", customerId);
         List<CustomerAddress> customerAddresses = query.getResultList();
         return customerAddresses.isEmpty() ? null : customerAddresses.get(0);
+    }
+
+    @Override
+    public void hardDeleteCustomerAddressesForCustomer(Long customerId){
+        Object entityInstance = entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
+        Query query = em.createQuery("DELETE FROM " + entityInstance.getClass().getName() + " T WHERE T.customer.id=:customerId");
+        query.setParameter("customerId", customerId);
+        query.executeUpdate();
     }
 }
