@@ -65,11 +65,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -239,6 +238,7 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     //as it now relates on CLOB. Probably you can change signature and pass old/new values
     //and check them for length, if some will exceed some value (255?) consider it large
     @Lob
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description",
             group = GroupName.General, order = FieldOrder.LONG_DESCRIPTION,

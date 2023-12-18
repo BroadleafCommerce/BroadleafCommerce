@@ -34,7 +34,9 @@ import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -95,6 +97,7 @@ public class SkuFeeImpl implements SkuFee {
     protected Boolean taxable = Boolean.FALSE;
 
     @Lob
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "EXPRESSION", length = Length.LONG32 - 1)
     protected String expression;
 

@@ -33,7 +33,9 @@ import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.io.Serializable;
 
@@ -90,6 +92,7 @@ public class TranslationImpl implements Serializable, Translation {
     protected String localeCode;
 
     @Lob
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "TRANSLATED_VALUE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "TranslationImpl_TranslatedValue", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String translatedValue;

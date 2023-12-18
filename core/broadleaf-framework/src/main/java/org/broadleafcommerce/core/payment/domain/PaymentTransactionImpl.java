@@ -36,8 +36,10 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -115,6 +117,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected String customerIpAddress;
 
     @Lob
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "RAW_RESPONSE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Raw_Response")
     protected String rawResponse;
