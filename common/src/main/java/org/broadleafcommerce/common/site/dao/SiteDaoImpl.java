@@ -97,8 +97,8 @@ public class SiteDaoImpl implements SiteDao {
             builder.and(
                 builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
                     builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
-                builder.or(builder.isNull(site.get("deactivated").as(Boolean.class)),
-                    builder.notEqual(site.get("deactivated").as(Boolean.class), true))
+                builder.or(builder.isNull(site.get("deactivated")),
+                    builder.notEqual(site.get("deactivated"), true))
             )
         );
         
@@ -150,8 +150,8 @@ public class SiteDaoImpl implements SiteDao {
                 builder.and(
                     builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
                         builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
-                    builder.or(builder.isNull(site.get("deactivated").as(Boolean.class)),
-                        builder.notEqual(site.get("deactivated").as(Boolean.class), true))
+                    builder.or(builder.isNull(site.get("deactivated")),
+                        builder.notEqual(site.get("deactivated"), true))
                 )
             )
         );

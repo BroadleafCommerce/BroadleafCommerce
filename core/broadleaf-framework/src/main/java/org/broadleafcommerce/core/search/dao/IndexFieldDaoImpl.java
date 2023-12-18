@@ -127,7 +127,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         criteria.select(root);
         criteria.where(
-                builder.equal(root.get("searchable").as(Boolean.class), Boolean.TRUE),
+                builder.equal(root.get("searchable"), Boolean.TRUE),
                 root.get("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
         );
 

@@ -117,18 +117,18 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
         restrictions.add(builder.equal(subquery, 0L));
         if (registered != null) {
             if (registered) {
-                restrictions.add(builder.isTrue(root.get("registered").as(Boolean.class)));
+                restrictions.add(builder.isTrue(root.get("registered")));
             } else {
                 restrictions.add(builder.or(builder.isNull(root.get("registered")),
-                        builder.isFalse(root.get("registered").as(Boolean.class))));
+                        builder.isFalse(root.get("registered"))));
             }
         }
         if (deactivated != null) {
             if (deactivated) {
-                restrictions.add(builder.isTrue(root.get("deactivated").as(Boolean.class)));
+                restrictions.add(builder.isTrue(root.get("deactivated")));
             } else {
                 restrictions.add(builder.or(builder.isNull(root.get("deactivated")),
-                        builder.isFalse(root.get("deactivated").as(Boolean.class))));
+                        builder.isFalse(root.get("deactivated"))));
             }
         }
         if (dateCreatedMinThreshold != null) {
@@ -136,10 +136,10 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
         }
         if (isPreview != null) {
             if (isPreview) {
-                restrictions.add(builder.isTrue(root.get("previewable").get("isPreview").as(Boolean.class)));
+                restrictions.add(builder.isTrue(root.get("previewable").get("isPreview")));
             } else {
                 restrictions.add(builder.or(builder.isNull(root.get("previewable").get("isPreview")),
-                        builder.isFalse(root.get("previewable").get("isPreview").as(Boolean.class))));
+                        builder.isFalse(root.get("previewable").get("isPreview"))));
             }
         }
         if (excludedIds != null && excludedIds.size() > 0) {
@@ -186,10 +186,10 @@ public class ResourcePurgeDaoImpl implements ResourcePurgeDao {
         }
         if (isPreview != null) {
             if (isPreview) {
-                restrictions.add(builder.isTrue(root.get("previewable").get("isPreview").as(Boolean.class)));
+                restrictions.add(builder.isTrue(root.get("previewable").get("isPreview")));
             } else {
                 restrictions.add(builder.or(builder.isNull(root.get("previewable").get("isPreview")),
-                        builder.isFalse(root.get("previewable").get("isPreview").as(Boolean.class))));
+                        builder.isFalse(root.get("previewable").get("isPreview"))));
             }
         }
         if (excludedIds != null && excludedIds.size() > 0) {
