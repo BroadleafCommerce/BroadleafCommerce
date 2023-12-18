@@ -69,8 +69,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -265,6 +267,7 @@ public class CategoryImpl
     protected String displayTemplate;
 
     @Lob
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 2000,
             group = GroupName.General,

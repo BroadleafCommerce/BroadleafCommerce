@@ -26,7 +26,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -67,6 +69,7 @@ public class PageRuleImpl implements PageRule, ProfileEntity {
     protected Long id;
 
     @Lob
+    @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "MATCH_RULE", length = Length.LONG32 - 1)
     protected String matchRule;
 
