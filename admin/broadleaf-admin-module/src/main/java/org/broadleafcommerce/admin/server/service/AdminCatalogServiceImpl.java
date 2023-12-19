@@ -60,7 +60,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
     public static String FAILED_SKU_GENERATION_KEY = "errorNeedAllowedValue";
     public static String NUMBER_SKUS_GENERATED_KEY = "numberSkusGenerated";
 
-    @Value("${product.sku.generation.max:2}")
+    @Value("${product.sku.generation.max:400}")
     protected int skuMaxGeneration;
 
     @Resource(name = "blCatalogService")
