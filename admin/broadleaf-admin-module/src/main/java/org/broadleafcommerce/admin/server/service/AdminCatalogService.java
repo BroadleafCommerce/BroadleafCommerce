@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.admin.server.service;
 
+import java.util.Map;
+
 /**
  * 
  * @author Phillip Verheyden
@@ -33,6 +35,8 @@ public interface AdminCatalogService {
      * @return the number of generated Skus from the ProductOption permutations
      */
     public Integer generateSkusFromProduct(Long productId);
+
+     Map<String, Object> generateSkus(Long productId);
 
     /**
      * This will create a new product along with a new Sku for the defaultSku, along with new
