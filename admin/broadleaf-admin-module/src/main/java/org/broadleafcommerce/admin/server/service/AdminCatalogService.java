@@ -25,18 +25,26 @@ import java.util.Map;
  *
  */
 public interface AdminCatalogService {
-    
+
     /**
      * Clear out any Skus that are already attached to the Product
      * if there were any there and generate a new set of Skus based
      * on the permutations of ProductOptions attached to this Product
-     * 
+     *
      * @param productId - the Product to generate Skus from
      * @return the number of generated Skus from the ProductOption permutations
+     * @deprecated use {@link #generateSkus(Long)}
      */
+    @Deprecated
     public Integer generateSkusFromProduct(Long productId);
 
-     Map<String, Object> generateSkus(Long productId);
+    /**
+     * Create new Skus based on a product's ProductOptions by permutation and add them to existing ones.
+     *
+     * @param productId - Product ID to create SKUs
+     * @return the map as ResponseBody
+     */
+    Map<String, Object> generateSkus(Long productId);
 
     /**
      * This will create a new product along with a new Sku for the defaultSku, along with new

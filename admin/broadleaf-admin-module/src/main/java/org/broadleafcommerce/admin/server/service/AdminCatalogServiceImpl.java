@@ -91,7 +91,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         }
 
         LOG.info("Total number of permutations: " + allPermutations.size());
-        LOG.info(allPermutations);
+        LOG.debug(allPermutations);
 
         //determine the permutations that I already have Skus for
         List<List<ProductOptionValue>> previouslyGeneratedPermutations = new ArrayList<>();
@@ -144,7 +144,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             return result;
         }
 
-        if (checkSkuMaxGeneration(product.getProductOptions())) {
+        if (this.checkSkuMaxGeneration(product.getProductOptions())) {
             result.put("message", String.format(BLCMessageUtils.getMessage(MAX_SKU_GENERATION_KEY), skuMaxGeneration));
             return result;
         }
@@ -159,7 +159,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         }
 
         LOG.info("Total number of permutations: " + allPermutations.size());
-        LOG.info(allPermutations);
+        LOG.debug(allPermutations);
 
         //determine the permutations that I already have Skus for
         List<List<ProductOptionValue>> previouslyGeneratedPermutations = new ArrayList<>();
@@ -209,7 +209,8 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
 
     protected boolean checkSkuMaxGeneration(List<ProductOption> productOptions) {
         boolean beyondAvailable = false;
-        long count = productOptions.stream()
+        int count = productOptions.stream()
+                .filter(ProductOption::getUseInSkuGeneration)
                 .map(ProductOption::getAllowedValues)
                 .mapToInt(List::size)
                 .reduce(1, Math::multiplyExact);;
