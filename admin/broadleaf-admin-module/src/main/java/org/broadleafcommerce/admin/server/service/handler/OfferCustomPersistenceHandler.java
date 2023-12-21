@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.admin.server.service.handler;
-
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -54,10 +53,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFi
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -67,16 +64,11 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 /**
  * Created by Jon on 11/23/15.
@@ -103,7 +95,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     @Resource(name = "blOfferCustomServiceExtensionManager")
     protected OfferCustomServiceExtensionManager extensionManager;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     public OfferCustomPersistenceHandler() {
@@ -112,7 +104,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-       return classIsAssignableFrom(persistencePackage) && isBasicOperation(persistencePackage);
+        return classIsAssignableFrom(persistencePackage) && isBasicOperation(persistencePackage);
     }
 
     @Override
@@ -217,9 +209,10 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             customCriteria = persistencePackage.getCustomCriteria()[0];
         }
 
-        Locale locale =  BroadleafRequestContext.getBroadleafRequestContext().getLocale();
-        BroadleafCurrency currency =  BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
+        Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+        BroadleafCurrency currency = BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
         NumberFormat nf = BroadleafCurrencyUtils.getNumberFormatFromCache(locale.getJavaLocale(), currency.getJavaCurrency());
+        String decimalSeparator = String.valueOf(((DecimalFormat) nf).getDecimalFormatSymbols().getDecimalSeparator());
         for (Entity entity : resultSet.getRecords()) {
             Property discountType = entity.findProperty("discountType");
             Property discountValue = entity.findProperty("value");
@@ -227,20 +220,28 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             String value = discountValue.getValue();
             if (discountType == null || StringUtils.isBlank(discountType.getValue())) {
                 discountValue.setValue("");
-            } else if (discountType.getValue().equals("PERCENT_OFF")) {
-                value = !value.contains(".") ? value : value.replaceAll("0*$", "").replaceAll("\\.$", "");
-                discountValue.setValue(value + "%");
-            } else if (discountType.getValue().equals("AMOUNT_OFF")) {
-                try {
-                    //ok, because we construct NumberFormat.getCurrencyInstance we need to end on "Currency" to parse
-                    Number parsedValue = nf.parse(((DecimalFormat) nf).getPositivePrefix()+value + ((DecimalFormat) nf).getPositiveSuffix());
-                    discountValue.setValue(nf.format(parsedValue));
-                } catch (ParseException e) {
-                    LOG.error("An error has occurred ",e);
-                    discountValue.setValue(nf.format(new BigDecimal(value)));
+            } else {
+                switch (discountType.getValue()) {
+                    case "PERCENT_OFF":
+                        if (value.contains(decimalSeparator)) {
+                            value = value
+                                    .replaceAll("0*$", "")
+                                    .replaceAll("\\" + decimalSeparator + "$", "");
+                        }
+                        discountValue.setValue(value + "%");
+                        break;
+                    case "AMOUNT_OFF":
+                        try {
+                            //ok, because we construct NumberFormat.getCurrencyInstance we need to end on "Currency" to parse
+                            Number parsedValue = nf.parse(((DecimalFormat) nf).getPositivePrefix() + value + ((DecimalFormat) nf).getPositiveSuffix());
+                            discountValue.setValue(nf.format(parsedValue));
+                        } catch (ParseException e) {
+                            LOG.error("An error has occurred ", e);
+                            discountValue.setValue(nf.format(new BigDecimal(value)));
+                        }
+                        break;
                 }
             }
-
             Property timeRule = entity.findProperty("offerMatchRules---TIME");
             entity.addProperty(buildAdvancedVisibilityOptionsProperty(timeRule));
 
@@ -256,7 +257,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 String moneySuffix = ((DecimalFormat) nf).getPositiveSuffix();
                 String setValue = discountValue.getValue();
                 setValue = setValue.replaceAll("\\%", "")
-                        .replaceAll("\\,", "")
+                        .replaceAll("\\" + decimalSeparator, "")
                         .replaceAll(Pattern.quote(moneyPrefix), "")
                         .replaceAll(Pattern.quote(moneySuffix), "");
                 discountValue.setValue(setValue);
@@ -272,38 +273,33 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             FilterAndSortCriteria filter = cto.get(IS_ACTIVE);
             final Boolean isActive = Boolean.parseBoolean(filter.getFilterValues().get(0));
             FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty("id"))
-                .withDirectFilterValues(new EmptyFilterValues())
-                .withRestriction(new Restriction()
-                     .withPredicateProvider(new PredicateProvider() {
-                        @Override
-                        public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                        From root, String ceilingEntity, String fullPropertyName,
-                                                        Path explicitPath, List directValues) {
-                            Date currentTime = SystemTime.asDate(true);
-                            if (isActive) {
-                                return builder.and(
-                                        builder.isNotNull(root.get("startDate")),
-                                        builder.lessThan(root.get("startDate"), currentTime),
-                                        builder.or(
-                                            builder.isNull(root.get("endDate")),
-                                            builder.greaterThan(root.get("endDate"), currentTime)
-                                        )
-                                );
-                            } else {
-                                return builder.or(
-                                        builder.isNull(root.get("startDate")),
-                                        builder.greaterThan(root.get("startDate"), currentTime),
-                                        builder.and(
-                                            builder.isNotNull(root.get("endDate")),
-                                            builder.lessThan(root.get("endDate"), currentTime)
-                                        )
-                                );
-                            }
-                        }
-                    }
-                 )
-            );
+                    .withFieldPath(new FieldPath().withTargetProperty("id"))
+                    .withDirectFilterValues(new EmptyFilterValues())
+                    .withRestriction(new Restriction().withPredicateProvider(
+                                    (builder, fieldPathBuilder, root, ceilingEntity, fullPropertyName, explicitPath, directValues) -> {
+                                        Date currentTime = SystemTime.asDate(true);
+                                        if (isActive) {
+                                            return builder.and(
+                                                    builder.isNotNull(root.get("startDate")),
+                                                    builder.lessThan(root.get("startDate"), currentTime),
+                                                    builder.or(
+                                                            builder.isNull(root.get("endDate")),
+                                                            builder.greaterThan(root.get("endDate"), currentTime)
+                                                    )
+                                            );
+                                        } else {
+                                            return builder.or(
+                                                    builder.isNull(root.get("startDate")),
+                                                    builder.greaterThan(root.get("startDate"), currentTime),
+                                                    builder.and(
+                                                            builder.isNotNull(root.get("endDate")),
+                                                            builder.lessThan(root.get("endDate"), currentTime)
+                                                    )
+                                            );
+                                        }
+                                    }
+                            )
+                    );
             cto.getAdditionalFilterMappings().add(filterMapping);
         }
     }
@@ -388,16 +384,16 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
 
         //This can't be on a validator since the field is dynamically added with JavaScript
         Property isMultiTierOffer = entity.findProperty(IS_TIERED_OFFER);
-        if(isMultiTierOffer != null) {
+        if (isMultiTierOffer != null) {
             String multiTierValue = isMultiTierOffer.getValue();
-            if("false".equalsIgnoreCase(multiTierValue)) {
-               Property offerValue = entity.findProperty(OFFER_VALUE);
-               if(offerValue != null) {
-                   String value = offerValue.getValue();
-                   if(value == null || "null".equalsIgnoreCase(value)) {
-                       entity.addValidationError(OFFER_VALUE, "requiredFieldMessage");
-                   }
-               }
+            if ("false".equalsIgnoreCase(multiTierValue)) {
+                Property offerValue = entity.findProperty(OFFER_VALUE);
+                if (offerValue != null) {
+                    String value = offerValue.getValue();
+                    if (value == null || "null".equalsIgnoreCase(value)) {
+                        entity.addValidationError(OFFER_VALUE, "requiredFieldMessage");
+                    }
+                }
             }
         }
 
@@ -405,7 +401,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             extensionManager.getProxy().clearHiddenQualifiers(entity);
         }
         Property qualifiersCanBeQualifiers = entity.findProperty(QUALIFIERS_CAN_BE_QUALIFIERS);
-        
+
         if (qualifiersCanBeQualifiers != null) {
             qualifiersCanBeQualifiers.setIsDirty(true);
         }
@@ -436,7 +432,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             offerItemQualifierRuleType = OfferItemRestrictionRuleType.QUALIFIER_TARGET.getType();
         } else if (canBeTargets) {
             offerItemQualifierRuleType = OfferItemRestrictionRuleType.TARGET.getType();
-        } else if (canBeQualifiers){
+        } else if (canBeQualifiers) {
             offerItemQualifierRuleType = OfferItemRestrictionRuleType.QUALIFIER.getType();
         } else {
             offerItemQualifierRuleType = OfferItemRestrictionRuleType.NONE.getType();
