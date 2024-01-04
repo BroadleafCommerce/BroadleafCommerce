@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -65,7 +65,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         Path<Character> archived = facet.get("archiveStatus").get("archived");
 
         criteria.where(
-                builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
+                builder.equal(facet.get("showOnSearch"), true),
                 builder.or(builder.isNull(archived.as(String.class)),
                            builder.notEqual(archived.as(Character.class), 'Y')),
                 facet.join("fieldType")

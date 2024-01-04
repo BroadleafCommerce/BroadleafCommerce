@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -261,8 +261,8 @@ public class PageDaoImpl implements PageDao {
         Root<PageImpl> page = criteria.from(PageImpl.class);
         criteria.select(page);
         criteria.where(builder.and(
-                builder.or(builder.isFalse(page.get("offlineFlag").as(Boolean.class)), builder.isNull(page.get("offlineFlag").as(Boolean.class))),
-                builder.or(builder.isFalse(page.get("excludeFromSiteMap").as(Boolean.class)), builder.isNull(page.get("excludeFromSiteMap").as(Boolean.class)))));
+                builder.or(builder.isFalse(page.get("offlineFlag")), builder.isNull(page.get("offlineFlag"))),
+                builder.or(builder.isFalse(page.get("excludeFromSiteMap")), builder.isNull(page.get("excludeFromSiteMap")))));
         criteria.orderBy(builder.asc(page.get(sortBy)));
         TypedQuery<Page> query = em.createQuery(criteria);
         query.setFirstResult(offset);

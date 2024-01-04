@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -509,9 +509,10 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         DiscreteOrderItem cloned = createResponse.getClone();
         cloned.setBaseRetailPrice(getBaseRetailPrice());
         cloned.setBaseSalePrice(getBaseSalePrice());
-        cloned.setProduct(product);
-        cloned.setSku(sku);
-        cloned.setCategory(category);
+        //seems there could be proxies of product, sku etc, so let's unproxy it(getter does this trick)
+        cloned.setProduct(getProduct());
+        cloned.setSku(getSku());
+        cloned.setCategory(getCategory());
         ((DiscreteOrderItemImpl)cloned).discountsAllowed = discountsAllowed;
         cloned.setName(name);
         // dont clone

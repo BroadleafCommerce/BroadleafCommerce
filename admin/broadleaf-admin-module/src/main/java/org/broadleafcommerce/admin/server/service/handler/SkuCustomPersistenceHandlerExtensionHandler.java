@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,8 +18,12 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+
+import java.util.List;
 
 /**
  * Allows special behavior to be defined when a sku is updated via the admin.
@@ -35,6 +39,8 @@ public interface SkuCustomPersistenceHandlerExtensionHandler extends ExtensionHa
      * @return
      */
     ExtensionResultStatusType skuUpdated(Sku updated);
+
+    ExtensionResultStatusType getAdditionalSkusCollection(Product product, ExtensionResultHolder<List<Sku>> erh);
 
     public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 }

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -27,6 +27,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.server.service.SkuMetadataCacheService;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -907,7 +909,18 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
 
             boolean validated = true;
-            for (Sku sku : product.getAdditionalSkus()) {
+            ExtensionResultHolder<List<Sku>> holder = new ExtensionResultHolder<>();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAdditionalSkusCollection(product, holder);
+            List<Sku> additionalSkus;
+            if(result.equals(ExtensionResultStatusType.HANDLED)){
+                additionalSkus = holder.getResult();
+                if(CollectionUtils.isEmpty(additionalSkus)){
+                    additionalSkus = product.getAdditionalSkus();
+                }
+            }else {
+                additionalSkus = product.getAdditionalSkus();
+            }
+            for (Sku sku : additionalSkus) {
                 if (currentSku == null || !sku.getId().equals(currentSku.getId())) {
                     List<Long> testList = new ArrayList<>();
                     for (ProductOptionValue optionValue : sku.getProductOptionValues()) {

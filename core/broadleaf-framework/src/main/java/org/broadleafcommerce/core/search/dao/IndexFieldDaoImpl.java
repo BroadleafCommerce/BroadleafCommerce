@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -127,7 +127,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         criteria.select(root);
         criteria.where(
-                builder.equal(root.get("searchable").as(Boolean.class), Boolean.TRUE),
+                builder.equal(root.get("searchable"), Boolean.TRUE),
                 root.get("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes())
         );
 

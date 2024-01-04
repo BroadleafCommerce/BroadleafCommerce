@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -56,7 +56,7 @@ public class TypedQueryBuilder<T> {
         this(rootClass, rootAlias, rootClass);
     }
 
-    public TypedQueryBuilder(Class<? extends T> rootClass, String rootAlias, Class<T> returnClass) {
+    public TypedQueryBuilder(Class rootClass, String rootAlias, Class<T> returnClass) {
         this.rootClass = rootClass;
         this.rootAlias = rootAlias;
         this.returnClass = returnClass;
@@ -119,7 +119,7 @@ public class TypedQueryBuilder<T> {
      * 
      * If you are using this as a COUNT query, you should look at the corresponding {@link #toCountQuery(EntityManager)}
      * 
-     * @param whether or not the resulting query string should be used as a count query or not
+     * @param count - whether or not the resulting query string should be used as a count query or not
      * @return the QL string
      */
     public String toQueryString(boolean count) {

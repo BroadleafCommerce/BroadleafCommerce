@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -189,11 +189,7 @@ public class MvelHelper {
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();
 
-            if (ruleParameters != null) {
-                for (String parameter : ruleParameters.keySet()) {
-                    mvelParameters.put(parameter, ruleParameters.get(parameter));
-                }
-            }
+            populateParamsFromMap(ruleParameters, mvelParameters);
 
             try {
                 Object test = MVEL.executeExpression(exp, mvelParameters);
@@ -285,13 +281,19 @@ public class MvelHelper {
             mvelParameters.put("request", requestDto);
 
             Map<String, Object> blcRuleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
-            if (blcRuleMap != null) {
-                for (String mapKey : blcRuleMap.keySet()) {
-                    mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
-                }
-            }
+            populateParamsFromMap(blcRuleMap, mvelParameters);
+        }else if(brc != null) {
+            populateParamsFromMap((Map<String, Object>) brc.getAdditionalProperties().get("blRuleMap"), mvelParameters);
         }
 
        return mvelParameters;
-   }    
+   }
+
+    private static void populateParamsFromMap(Map<String, Object> blcRuleMap, Map<String, Object> mvelParameters) {
+        if (blcRuleMap != null) {
+            for (String mapKey : blcRuleMap.keySet()) {
+                mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
+            }
+        }
+    }
 }

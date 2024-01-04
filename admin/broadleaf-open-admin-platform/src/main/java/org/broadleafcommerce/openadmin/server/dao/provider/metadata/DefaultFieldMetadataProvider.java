@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -24,6 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.DialectHelper;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -35,6 +39,10 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.engine.jdbc.Size;
+import org.hibernate.engine.spi.Mapping;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
@@ -57,6 +65,9 @@ import java.util.Map;
 public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(DefaultFieldMetadataProvider.class);
+
+    @Resource(name = "blDialectHelper")
+    protected DialectHelper dialectHelper;
 
     @Override
     public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
@@ -152,7 +163,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                 }
             }
             if (column != null) {
-                fieldMetadata.setLength(column.getLength().intValue());
+                fieldMetadata.setLength(getColumnLength(column));
                 fieldMetadata.setScale(column.getScale());
                 fieldMetadata.setPrecision(column.getPrecision());
                 fieldMetadata.setRequired(!column.isNullable());
@@ -495,6 +506,23 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
             return MetadataProviderResponse.HANDLED;
         }
         return MetadataProviderResponse.NOT_HANDLED;
+    }
+
+    protected Integer getColumnLength(Column column) {
+        Integer columnLength = column.getColumnSize();
+        if (columnLength == 0) {
+            EntityManager em = HibernateUtils.getCurrentDefaultEntityManager();
+            SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
+            Size colSize = column.getColumnSize(dialectHelper.getHibernateDialect(), (Mapping) sessionFactory);
+            Long length = colSize.getLength();
+            if (length != null) {
+                columnLength = length.intValue();
+            }
+            if (columnLength == 0) {
+                columnLength = null;
+            }
+        }
+        return columnLength;
     }
 
 }

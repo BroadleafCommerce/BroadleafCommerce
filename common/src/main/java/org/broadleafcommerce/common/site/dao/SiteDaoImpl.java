@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -97,8 +97,8 @@ public class SiteDaoImpl implements SiteDao {
             builder.and(
                 builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
                     builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
-                builder.or(builder.isNull(site.get("deactivated").as(Boolean.class)),
-                    builder.notEqual(site.get("deactivated").as(Boolean.class), true))
+                builder.or(builder.isNull(site.get("deactivated")),
+                    builder.notEqual(site.get("deactivated"), true))
             )
         );
         
@@ -150,8 +150,8 @@ public class SiteDaoImpl implements SiteDao {
                 builder.and(
                     builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
                         builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
-                    builder.or(builder.isNull(site.get("deactivated").as(Boolean.class)),
-                        builder.notEqual(site.get("deactivated").as(Boolean.class), true))
+                    builder.or(builder.isNull(site.get("deactivated")),
+                        builder.notEqual(site.get("deactivated"), true))
                 )
             )
         );
