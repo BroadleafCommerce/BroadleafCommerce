@@ -54,7 +54,8 @@ import jakarta.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_INTERCEPT", indexes = {
-        @Index(name = "SEARCH_ACTIVE_INDEX", columnList = "ACTIVE_START_DATE, ACTIVE_END_DATE")})
+        @Index(name = "SEARCH_ACTIVE_INDEX", columnList = "ACTIVE_START_DATE, ACTIVE_END_DATE")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
@@ -97,7 +98,9 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
             group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "")
     protected String url;
 
-    /** The active start date. */
+    /**
+     * The active start date.
+     */
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
             order = 3000, group = GroupName.Dates,
@@ -106,7 +109,9 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
             defaultValue = "today")
     protected Date activeStartDate;
 
-    /** The active end date. */
+    /**
+     * The active end date.
+     */
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 4000, group = GroupName.Dates,
             tooltip = "skuEndDateTooltip",

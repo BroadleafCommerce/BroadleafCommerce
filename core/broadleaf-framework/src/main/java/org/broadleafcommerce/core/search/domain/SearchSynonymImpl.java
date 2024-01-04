@@ -22,17 +22,19 @@ import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "BLC_SEARCH_SYNONYM")
+@Table(name = "BLC_SEARCH_SYNONYM", indexes = {
+        @Index(name = "SEARCHSYNONYM_TERM_INDEX", columnList = "TERM")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 public class SearchSynonymImpl implements SearchSynonym {
 
@@ -51,7 +53,6 @@ public class SearchSynonymImpl implements SearchSynonym {
     private Long id;
 
     @Column(name = "TERM")
-    @Index(name = "SEARCHSYNONYM_TERM_INDEX", columnNames = {"TERM"})
     private String term;
 
     @Column(name = "SYNONYMS")

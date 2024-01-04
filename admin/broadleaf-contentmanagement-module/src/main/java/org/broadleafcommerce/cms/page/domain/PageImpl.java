@@ -42,7 +42,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.Date;
@@ -58,6 +57,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -74,7 +74,9 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PAGE")
+@Table(name = "BLC_PAGE", indexes = {
+        @Index(name = "PAGE_FULL_URL_INDEX", columnList = "FULL_URL")
+})
 @EntityListeners(value = {AdminAuditableListener.class})
 @AdminPresentationMergeOverrides(value = {
         @AdminPresentationMergeOverride(name = "auditable.createdBy.id",
@@ -180,8 +182,7 @@ public class PageImpl
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "PageImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.cms.page.domain.PageImpl")
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageImpl")
             }
     )
     @Column(name = "PAGE_ID")
@@ -205,13 +206,11 @@ public class PageImpl
     protected String description;
 
     @Column(name = "FULL_URL")
-    @Index(name = "PAGE_FULL_URL_INDEX", columnNames = {"FULL_URL"})
     @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 3000,
             group = PageAdminPresentation.GroupName.Basic,
             groupOrder = PageAdminPresentation.GroupOrder.Basic,
             prominent = true, gridOrder = 2,
-            validationConfigurations = {
-                    @ValidationConfiguration(validationImplementation = "blUriPropertyValidator")})
+            validationConfigurations = {@ValidationConfiguration(validationImplementation = "blUriPropertyValidator")})
     protected String fullUrl;
 
     @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = {CascadeType.ALL})
@@ -225,8 +224,7 @@ public class PageImpl
     protected Integer priority;
 
     @Column(name = "OFFLINE_FLAG")
-    @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
-            group = GroupName.Misc, defaultValue = "false")
+    @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500, group = GroupName.Misc, defaultValue = "false")
     protected Boolean offlineFlag = false;
 
     /*
@@ -235,10 +233,8 @@ public class PageImpl
     @ManyToMany(targetEntity = PageRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_PAGE_RULE_MAP",
             joinColumns = @JoinColumn(name = "BLC_PAGE_PAGE_ID", referencedColumnName = "PAGE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID",
-                    referencedColumnName = "PAGE_RULE_ID"))
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+            inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID", referencedColumnName = "PAGE_RULE_ID"))
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @Deprecated
     protected Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
@@ -246,8 +242,7 @@ public class PageImpl
     /*
      * This will not work with Enterprise workflows. Do not use.
      */
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class,
-            cascade = {CascadeType.ALL})
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF",
             joinColumns = @JoinColumn(name = "PAGE_ID"),
             inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))

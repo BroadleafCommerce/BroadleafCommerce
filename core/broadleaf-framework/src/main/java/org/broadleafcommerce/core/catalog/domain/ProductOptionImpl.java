@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,7 +42,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
@@ -56,6 +55,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
@@ -65,15 +65,16 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT_OPTION")
+@Table(name = "BLC_PRODUCT_OPTION", indexes = {
+        @Index(name = "PRODUCT_OPTION_NAME_INDEX", columnList = "NAME")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
                 skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductOptionImpl
-        implements ProductOption, AdminMainEntity, ProductOptionAdminPresentation {
+public class ProductOptionImpl implements ProductOption, AdminMainEntity, ProductOptionAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,7 +93,6 @@ public class ProductOptionImpl
     protected Long id;
 
     @Column(name = "NAME")
-    @Index(name = "PRODUCT_OPTION_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "productOption_name",
             group = GroupName.General, order = FieldOrder.name,
             prominent = true, gridOrder = 1000)
@@ -374,12 +374,16 @@ public class ProductOptionImpl
     }
 
     @Override
-    public void setLongDescription(String longDescription) {this.longDescription = longDescription;}
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
 
     ;
 
     @Override
-    public String getLongDescription() {return longDescription;}
+    public String getLongDescription() {
+        return longDescription;
+    }
 
     @Override
     public <G extends ProductOption> CreateResponse<G> createOrRetrieveCopyInstance(

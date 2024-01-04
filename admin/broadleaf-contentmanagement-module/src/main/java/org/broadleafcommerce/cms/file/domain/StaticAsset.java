@@ -63,7 +63,7 @@ public interface StaticAsset extends Serializable, MultiTenantCloneable<StaticAs
 
     /**
      * Set the altText of the static asset.
-     * @param title
+     * @param altText
      */
     public void setAltText(String altText);
 

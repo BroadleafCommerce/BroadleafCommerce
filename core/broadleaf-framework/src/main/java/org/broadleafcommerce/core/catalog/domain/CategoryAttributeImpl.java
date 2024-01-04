@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.CascadeType;
@@ -37,6 +36,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -48,12 +48,14 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CATEGORY_ATTRIBUTE")
+@Table(name = "BLC_CATEGORY_ATTRIBUTE", indexes = {
+        @Index(name = "CATEGORYATTRIBUTE_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "CATEGORYATTRIBUTE_INDEX", columnList = "CATEGORY_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
 @AdminPresentationClass(friendlyName = "baseCategoryAttribute")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategoryAttributeImpl implements CategoryAttribute {
@@ -75,7 +77,6 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
-    @Index(name = "CATEGORYATTRIBUTE_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order = -1,
             group = "ProductAttributeImpl_Description", prominent = true, gridOrder = 1)
     protected String name;
@@ -87,7 +88,6 @@ public class CategoryAttributeImpl implements CategoryAttribute {
 
     @ManyToOne(targetEntity = CategoryImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name = "CATEGORYATTRIBUTE_INDEX", columnNames = {"CATEGORY_ID"})
     protected Category category;
 
     @Override

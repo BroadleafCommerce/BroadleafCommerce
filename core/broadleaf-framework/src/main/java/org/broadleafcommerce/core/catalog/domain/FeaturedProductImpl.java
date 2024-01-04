@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -38,6 +37,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -46,7 +46,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT_FEATURED")
+@Table(name = "BLC_PRODUCT_FEATURED", indexes = {
+        @Index(name = "PRODFEATURED_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
+        @Index(name = "PRODFEATURED_PRODUCT_INDEX", columnList = "PRODUCT_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
@@ -57,7 +60,9 @@ public class FeaturedProductImpl implements FeaturedProduct {
 
     private static final long serialVersionUID = 1L;
 
-    /** The id. */
+    /**
+     * The id.
+     */
     @Id
     @GeneratedValue(generator = "FeaturedProductId")
     @GenericGenerator(
@@ -83,12 +88,10 @@ public class FeaturedProductImpl implements FeaturedProduct {
 
     @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name = "PRODFEATURED_CATEGORY_INDEX", columnNames = {"CATEGORY_ID"})
     protected Category category = new CategoryImpl();
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name = "PRODFEATURED_PRODUCT_INDEX", columnNames = {"PRODUCT_ID"})
     protected Product product = new ProductImpl();
 
     @Override

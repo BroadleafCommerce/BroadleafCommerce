@@ -23,13 +23,13 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -38,7 +38,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ADMIN_USER_ADDTL_FIELDS")
+@Table(name = "BLC_ADMIN_USER_ADDTL_FIELDS", indexes = {
+        @Index(name = "ADMINUSERATTRIBUTE_NAME_INDEX", columnList = "FIELD_NAME"),
+        @Index(name = "ADMINUSERATTRIBUTE_INDEX", columnList = "ADMIN_USER_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
 public class AdminUserAttributeImpl implements AdminUserAttribute {
 
@@ -59,7 +62,6 @@ public class AdminUserAttributeImpl implements AdminUserAttribute {
     protected Long id;
 
     @Column(name = "FIELD_NAME", nullable = false)
-    @Index(name = "ADMINUSERATTRIBUTE_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
@@ -68,7 +70,6 @@ public class AdminUserAttributeImpl implements AdminUserAttribute {
 
     @ManyToOne(targetEntity = AdminUserImpl.class, optional = false)
     @JoinColumn(name = "ADMIN_USER_ID")
-    @Index(name = "ADMINUSERATTRIBUTE_INDEX", columnNames = {"ADMIN_USER_ID"})
     protected AdminUser adminUser;
 
     @Override

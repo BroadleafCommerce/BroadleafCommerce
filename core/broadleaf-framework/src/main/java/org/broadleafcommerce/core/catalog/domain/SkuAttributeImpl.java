@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.CascadeType;
@@ -36,6 +35,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -58,7 +58,10 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SKU_ATTRIBUTE")
+@Table(name = "BLC_SKU_ATTRIBUTE", indexes = {
+        @Index(name = "SKUATTR_NAME_INDEX", columnList = "NAME"),
+        @Index(name = "SKUATTR_SKU_INDEX", columnList = "SKU_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductAttributes")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
@@ -68,10 +71,14 @@ import jakarta.persistence.Table;
 })
 public class SkuAttributeImpl implements SkuAttribute {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 1L;
 
-    /** The id. */
+    /**
+     * The id.
+     */
     @Id
     @GeneratedValue(generator = "SkuAttributeId")
     @GenericGenerator(
@@ -86,23 +93,27 @@ public class SkuAttributeImpl implements SkuAttribute {
     @Column(name = "SKU_ATTR_ID")
     protected Long id;
 
-    /** The name. */
+    /**
+     * The name.
+     */
     @Column(name = "NAME", nullable = false)
-    @Index(name = "SKUATTR_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Name", order = 1,
             group = "SkuAttributeImpl_Description", prominent = true, gridOrder = 1)
     protected String name;
 
-    /** The value. */
+    /**
+     * The value.
+     */
     @Column(name = "VALUE", nullable = false)
     @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", order = 2,
             group = "SkuAttributeImpl_Description", prominent = true, gridOrder = 2)
     protected String value;
 
-    /** The sku. */
+    /**
+     * The sku.
+     */
     @ManyToOne(targetEntity = SkuImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SKU_ID")
-    @Index(name = "SKUATTR_SKU_INDEX", columnNames = {"SKU_ID"})
     protected Sku sku;
 
     /* (non-Javadoc)

@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
@@ -40,6 +39,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -48,7 +48,11 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT_CROSS_SALE")
+@Table(name = "BLC_PRODUCT_CROSS_SALE", indexes = {
+        @Index(name = "CROSSSALE_INDEX", columnList = "PRODUCT_ID"),
+        @Index(name = "CROSSSALE_CATEGORY_INDEX", columnList = "CATEGORY_ID"),
+        @Index(name = "CROSSSALE_RELATED_INDEX", columnList = "RELATED_SALE_PRODUCT_ID")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
@@ -85,17 +89,14 @@ public class CrossSaleProductImpl
 
     @ManyToOne(targetEntity = ProductImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name = "CROSSSALE_INDEX", columnNames = {"PRODUCT_ID"})
     protected Product product;
 
     @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name = "CROSSSALE_CATEGORY_INDEX", columnNames = {"CATEGORY_ID"})
     protected Category category;
 
     @ManyToOne(targetEntity = ProductImpl.class, optional = false)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
-    @Index(name = "CROSSSALE_RELATED_INDEX", columnNames = {"RELATED_SALE_PRODUCT_ID"})
     protected Product relatedSaleProduct = new ProductImpl();
 
     @Override

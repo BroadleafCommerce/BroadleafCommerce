@@ -25,7 +25,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
@@ -45,7 +45,9 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ADMIN_MODULE")
+@Table(name = "BLC_ADMIN_MODULE", indexes = {
+        @Index(name = "ADMINMODULE_NAME_INDEX", columnList = "NAME")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurity")
 @AdminPresentationClass(friendlyName = "AdminModuleImpl_baseAdminModule")
 public class AdminModuleImpl implements AdminModule {
@@ -69,7 +71,6 @@ public class AdminModuleImpl implements AdminModule {
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
-    @Index(name = "ADMINMODULE_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "AdminModuleImpl_Name", order = 1,
             group = "AdminModuleImpl_Module", prominent = true)
     protected String name;
