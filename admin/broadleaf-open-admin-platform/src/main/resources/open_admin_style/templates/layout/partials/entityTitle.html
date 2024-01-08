@@ -93,7 +93,7 @@
     </th:block>
 
     <th:block th:if="${entityForm}">
-        <div th:if="${entityFriendlyName == null}">
+       <th:block th:if="${entityFriendlyName == null}">
             <a class="back-button" blc_admin:admin_section_href="${currentAdminSection}" >
                 <i class="fa fa-angle-left fa-2x"></i>&nbsp;&nbsp;&nbsp;
                 <h3>
@@ -105,7 +105,7 @@
             <h3 class="breadcrumb-divider">&nbsp;&nbsp;/&nbsp;&nbsp;</h3>
             <h3 class="mainEntityName" th:text="${entityForm.mainEntityName}"></h3>
             <span class="entityCatalogName" th:if="${entityCatalog != null}" th:utext="${'(' + entityCatalog.name + ')'}"></span>
-        </div>
+        </th:block>
 
         <!-- Dropdown button if more than one action -->
         <div th:if="${#lists.size(entityForm.actions) > 1}" class="button-group">
