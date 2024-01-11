@@ -256,10 +256,12 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 String moneyPrefix = ((DecimalFormat) nf).getPositivePrefix();
                 String moneySuffix = ((DecimalFormat) nf).getPositiveSuffix();
                 String setValue = discountValue.getValue();
-                setValue = setValue.replaceAll("\\%", "")
-                        .replaceAll("\\" + decimalSeparator, "")
+                String groupingSeparator = String.valueOf(((DecimalFormat) nf).getDecimalFormatSymbols().getGroupingSeparator());
+                setValue = setValue
                         .replaceAll(Pattern.quote(moneyPrefix), "")
-                        .replaceAll(Pattern.quote(moneySuffix), "");
+                        .replaceAll(Pattern.quote(moneySuffix), "")
+                        .replaceAll("\\%", "")
+                        .replaceAll("\\" + groupingSeparator, "");
                 discountValue.setValue(setValue);
             }
 
