@@ -984,6 +984,7 @@
                     $filterButton.closest('.main-content').find('.sticky-container .filter-text').hide();
                 }
             }
+            BLCAdmin.filterBuilders.updateAppliedFiltersView(filterBuilder);
         },
 
         updateAppliedFiltersView: function(filterBuilder) {

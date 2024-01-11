@@ -156,4 +156,12 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         List<CustomerAddress> customerAddresses = query.getResultList();
         return customerAddresses.isEmpty() ? null : customerAddresses.get(0);
     }
+
+    @Override
+    public void hardDeleteCustomerAddressesForCustomer(Long customerId){
+        Object entityInstance = entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
+        Query query = em.createQuery("DELETE FROM " + entityInstance.getClass().getName() + " T WHERE T.customer.id=:customerId");
+        query.setParameter("customerId", customerId);
+        query.executeUpdate();
+    }
 }

@@ -101,11 +101,11 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             }
             copy.setProductOptionXrefs(productOptionXrefs);
 
-        }else {
-            if(!context.getToCatalog().getId().equals(context.getFromCatalog().getId())){
+        } else {
+            if (!context.getToCatalog().getId().equals(context.getFromCatalog().getId())) {
                 copy.setAllParentCategoryXrefs(new ArrayList<>());
                 copy.setProductOptionXrefs(new ArrayList<>());
-            }else {
+            } else {
                 for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
                     final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
                     clone.setProduct(copy);

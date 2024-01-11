@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.dao.CustomerForgotPasswordSecurityTokenDao;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
@@ -72,6 +73,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
+
+    @Resource(name="blCustomerAddressDao")
+    protected CustomerAddressDao customerAddressDao;
 
     @Resource(name = "blIdGenerationService")
     protected IdGenerationService idGenerationService;
@@ -255,6 +259,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(Customer customer) {
         roleDao.removeCustomerRolesByCustomerId(customer.getId());
+        customerAddressDao.hardDeleteCustomerAddressesForCustomer(customer.getId());
         customerDao.delete(customer);
     }
 

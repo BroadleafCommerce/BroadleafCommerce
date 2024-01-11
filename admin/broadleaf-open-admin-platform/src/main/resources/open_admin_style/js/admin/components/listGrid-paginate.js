@@ -876,6 +876,35 @@
                 $wrapper.mCustomScrollbar('update');
             }
 
+            let $headerWrapper = $wrapper.siblings(".listgrid-header-wrapper");
+            let $mcsbContainer = $wrapper.find(".mCSB_container");
+            let $horizontalScrollContainer = $wrapper.siblings(".js-horizontal-scrollbar-container");
+            if ($headerWrapper.length > 0 && $mcsbContainer.length > 0 && $horizontalScrollContainer.length
+                && (($headerTable.width() - $mcsbContainer[0].clientWidth) > 1)) {
+                $headerWrapper.css({'overflow': 'hidden'});
+                $mcsbContainer.css({'overflow': 'hidden'});
+                $horizontalScrollContainer.css({
+                    'display': 'block',
+                    'background-color': '#F9F7F3',
+                    'height': '8.5px',
+                    'margin-bottom': '5px',
+                    'overflow': 'auto hidden',
+                    'border': '1px solid #B4B3B0',
+                    'border-top': 'none'
+                });
+                $horizontalScrollContainer.children(".js-scrollable-content").width(
+                    $mcsbContainer.children(".list-grid-table").width()
+                );
+                $horizontalScrollContainer.scroll(function () {
+                    $headerWrapper[0].scrollLeft = $(this)[0].scrollLeft;
+                    $mcsbContainer[0].scrollLeft = $(this)[0].scrollLeft;
+                });
+                $wrapper.mCustomScrollbar('update');
+            } else if ($mcsbContainer.length > 0 && ($mcsbContainer[0].clientWidth >= $headerTable.width())) {
+                $horizontalScrollContainer.css({'display': 'none'});
+                $wrapper.mCustomScrollbar('update');
+            }
+
             // after all the heights have been calculated, update the table footer with the correct record shown count
             BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
             BLCAdmin.listGrid.updateGridTitleBarSize($table.closest('.listgrid-container').find('.fieldgroup-listgrid-wrapper-header'));

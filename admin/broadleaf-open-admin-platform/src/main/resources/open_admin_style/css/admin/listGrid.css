@@ -462,3 +462,21 @@ td .listgrid-row-actions {
     color: #B3B3B3;
     font-size: 12px;
 }
+.js-horizontal-scrollbar-container {
+    display: none;
+}
+.js-horizontal-scrollbar-container > .js-scrollable-content {
+    height: 1px;
+}
+.js-horizontal-scrollbar-container::-webkit-scrollbar {
+    background-color: #F9F7F3;
+    height: 7px;
+}
+.js-horizontal-scrollbar-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.6);
+    border-radius: 3px;
+    border: 1px solid #f3f1ed;
+}
+.js-horizontal-scrollbar-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,0.9);
+}

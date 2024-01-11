@@ -345,11 +345,10 @@
             var $spinner = $tbody.closest('.listgrid-container').find('.listgrid-table-spinner-container');
 
             var spinnerHalfSize = 20;
-            var tableHalfWidth = $tbody.innerWidth() / 2;
             var tableHalfHeight = $tbody.closest('.mCustomScrollBox').height() / 2;
 
             $spinner.css('top', (Math.floor(spinnerOffset) + tableHalfHeight - spinnerHalfSize) + 'px');
-            $spinner.css('margin-left', tableHalfWidth - spinnerHalfSize + 'px');
+            $spinner.css('margin-left', '45%');
             $spinner.css('display', 'block');
 
             var backdrop = $('<div>', {
