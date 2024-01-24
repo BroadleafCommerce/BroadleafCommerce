@@ -17,6 +17,13 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
+import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -28,8 +35,11 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,9 +52,12 @@ import javax.servlet.http.HttpServletResponse;
  * @author jfridye
  */
 public class BroadleafManageWishlistController extends AbstractAccountController {
-    
+    private static final Log LOG = LogFactory.getLog(BroadleafManageWishlistController.class);
     protected static String accountWishlistView = "account/manageWishlist";
     protected static String accountWishlistRedirect = "redirect:/account/wishlist";
+
+    @Resource(name = "blInventoryService")
+    protected ContextualInventoryService inventoryService;
 
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
                       OrderItemRequestDTO itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
@@ -91,6 +104,11 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     public String moveItemToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
             String wishlistName, Long orderItemId) throws RemoveFromCartException, AddToCartException, PricingException {
         Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
+        if(!isWishlistValid(wishlist)) {
+            model.addAttribute("wishlist", wishlist);
+            model.addAttribute("invalidWishlist", true);
+            return getAccountWishlistView();
+        }
         List<OrderItem> orderItems = wishlist.getOrderItems();
 
         OrderItem orderItem = null;
@@ -116,11 +134,43 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     public String moveListToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
             String wishlistName) throws RemoveFromCartException, AddToCartException, PricingException {
         Order wishlist = orderService.findNamedOrderForCustomer(wishlistName, CustomerState.getCustomer());
-        
+        if(!isWishlistValid(wishlist)) {
+            model.addAttribute("wishlist", wishlist);
+            model.addAttribute("invalidWishlist", true);
+            return getAccountWishlistView();
+        }
         Order cartOrder = orderService.addAllItemsFromNamedOrder(wishlist, false);
         cartOrder = orderService.save(cartOrder, true);
         model.addAttribute("wishlist", wishlist);
         return getAccountWishlistRedirect();
+    }
+
+    protected boolean isWishlistValid(Order wishlist) {
+        try {
+            Map<Sku, Integer> skuItems = new HashMap<>();
+            for (OrderItem orderItem : wishlist.getOrderItems()) {
+                Sku sku;
+                if (orderItem instanceof DiscreteOrderItem) {
+                    sku = ((DiscreteOrderItem) orderItem).getSku();
+                } else if (orderItem instanceof BundleOrderItem) {
+                    sku = ((BundleOrderItem) orderItem).getSku();
+                } else {
+                    final String message = "Could not check availability; did not recognize passed-in item " + orderItem.getClass().getName();
+                    LOG.warn(message);
+                   return false;
+                }
+                if (!sku.isActive()) {
+                    return false;
+                }
+                skuItems.merge(sku, orderItem.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
+            }
+            for (Map.Entry<Sku, Integer> entry : skuItems.entrySet()) {
+                inventoryService.checkSkuAvailability(wishlist, entry.getKey(), entry.getValue());
+            }
+        } catch (InventoryUnavailableException e) {
+            return false;
+        }
+        return true;
     }
 
     public String getAccountWishlistView() {
