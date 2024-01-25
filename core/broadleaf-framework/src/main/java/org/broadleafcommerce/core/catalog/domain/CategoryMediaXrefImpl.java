@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
+import org.broadleafcommerce.common.util.Wrappable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -59,8 +60,7 @@ import jakarta.persistence.Table;
                 skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CategoryMediaXrefImpl
-        implements CategoryMediaXref, Media, MultiTenantCloneable<CategoryMediaXrefImpl> {
+public class CategoryMediaXrefImpl implements CategoryMediaXref, Wrappable, MultiTenantCloneable<CategoryMediaXrefImpl> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -145,49 +145,41 @@ public class CategoryMediaXrefImpl
         this.key = key;
     }
 
-    @Override
     public String getUrl() {
         createEntityInstance();
         return media.getUrl();
     }
 
-    @Override
     public void setUrl(String url) {
         createEntityInstance();
         media.setUrl(url);
     }
 
-    @Override
     public String getTitle() {
         createEntityInstance();
         return media.getTitle();
     }
 
-    @Override
     public void setTitle(String title) {
         createEntityInstance();
         media.setTitle(title);
     }
 
-    @Override
     public String getAltText() {
         createEntityInstance();
         return media.getAltText();
     }
 
-    @Override
     public void setAltText(String altText) {
         createEntityInstance();
         media.setAltText(altText);
     }
 
-    @Override
     public String getTags() {
         createEntityInstance();
         return media.getTags();
     }
 
-    @Override
     public void setTags(String tags) {
         createEntityInstance();
         media.setTags(tags);

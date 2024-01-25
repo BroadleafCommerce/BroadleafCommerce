@@ -27,6 +27,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class EntityConfiguration implements ApplicationContextAware {
     private static final Log LOG = LogFactory.getLog(EntityConfiguration.class);
 
     private ApplicationContext webApplicationContext;
-    private final HashMap<String, Class<?>> entityMap = new HashMap<String, Class<?>>(50);
+    private final HashMap<String, Class<?>> entityMap = new HashMap<>(50);
     private ApplicationContext applicationcontext;
     private Resource[] entityContexts;
 
@@ -53,16 +54,14 @@ public class EntityConfiguration implements ApplicationContextAware {
 
     @PostConstruct
     public void configureMergedItems() {
-        Set<Resource> temp = new LinkedHashSet<Resource>();
+        Set<Resource> temp = new LinkedHashSet<>();
         if (mergedEntityContexts != null && !mergedEntityContexts.isEmpty()) {
             for (String location : mergedEntityContexts) {
                 temp.add(webApplicationContext.getResource(location));
             }
         }
         if (entityContexts != null) {
-            for (Resource resource : entityContexts) {
-                temp.add(resource);
-            }
+            temp.addAll(Arrays.asList(entityContexts));
         }
         entityContexts = temp.toArray(new Resource[temp.size()]);
         applicationcontext = new GenericXmlApplicationContext(entityContexts);

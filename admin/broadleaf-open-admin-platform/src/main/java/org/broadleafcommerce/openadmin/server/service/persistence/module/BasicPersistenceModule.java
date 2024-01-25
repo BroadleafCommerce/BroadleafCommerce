@@ -772,11 +772,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     }
                 }
             }
-        } catch (ClassNotFoundException e) {
-            throw new PersistenceException(e);
-        } catch (IllegalAccessException e) {
-            throw new PersistenceException(e);
-        } catch (InvocationTargetException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
             throw new PersistenceException(e);
         }
     }
