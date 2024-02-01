@@ -1133,8 +1133,6 @@ $(document).ready(function() {
      * Invoked from the "Apply" button on an individual row
      */
     $('body').on('click', 'button.filter-apply-button', function () {
-        // apply the filters
-        BLCAdmin.filterBuilders.applyFilters();
 
         // mark this rule as read-only
         var el = $(this).parent().parent().parent();
@@ -1173,6 +1171,8 @@ $(document).ready(function() {
             hideError($errorContainer);
         }
 
+        // apply the filters
+        BLCAdmin.filterBuilders.applyFilters();
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();
