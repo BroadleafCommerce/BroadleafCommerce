@@ -708,10 +708,15 @@
 
             var url = $($filterFields[0]).data('action');
             var parentTable = $($filterFields[0]).closest(".list-grid-table.table.table-striped");
-            if(parentTable){
+            if (parentTable) {
                 var currentUrl = $(parentTable).data("currenturl");
-                if(currentUrl && !currentUrl.includes(url)){
-                    url=currentUrl;
+                if (currentUrl) {
+                    if (!currentUrl.startsWith("http") && !currentUrl.startsWith(BLC.servletContext)) {
+                        currentUrl = BLC.servletContext + currentUrl
+                    }
+                    if (!currentUrl.includes(url) && !url.includes(currentUrl)) {
+                        url = currentUrl;
+                    }
                 }
             }
             var urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
