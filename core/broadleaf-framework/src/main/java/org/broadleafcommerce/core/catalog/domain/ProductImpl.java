@@ -352,7 +352,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
             joinEntityClass = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl",
             targetObjectProperty = "productOption",
             parentObjectProperty = "product",
-            gridVisibleFields = {"name", "type", "required"})
+            gridVisibleFields = {"name", "type", "required", "useInSkuGeneration"})
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
     @Transient
