@@ -41,7 +41,7 @@ public class ListGrid {
     protected String idProperty;
     protected int order;
     protected boolean isSortable;
-    protected boolean htmlEscapeMainEntityLink = true;
+    protected boolean htmlEscapeMainEntityLink = false;
 
     protected boolean hideFriendlyName;
 
