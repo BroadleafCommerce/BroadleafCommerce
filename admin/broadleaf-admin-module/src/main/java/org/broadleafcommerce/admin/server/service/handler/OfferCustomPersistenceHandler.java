@@ -262,12 +262,20 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                         .replaceAll(Pattern.quote(moneySuffix), "")
                         .replaceAll("\\%", "")
                         .replaceAll("\\" + groupingSeparator, "");
+                setValue = this.stripTrailingZeros(setValue, decimalSeparator);
                 discountValue.setValue(setValue);
             }
 
             addIsActiveStatus(helper, entity);
         }
         return resultSet;
+    }
+
+    protected String stripTrailingZeros(String value, String decimalSeparator) {
+        String replaceDecimalSeparator = value.replace(decimalSeparator, ".");
+        BigDecimal number = new BigDecimal(replaceDecimalSeparator);
+        String stripTrailingZeros = number.stripTrailingZeros().toPlainString();
+        return stripTrailingZeros.replace(".", decimalSeparator);
     }
 
     protected void addIsActiveFiltering(CriteriaTransferObject cto) {
