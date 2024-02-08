@@ -262,7 +262,9 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                         .replaceAll(Pattern.quote(moneySuffix), "")
                         .replaceAll("\\%", "")
                         .replaceAll("\\" + groupingSeparator, "");
-                setValue = this.stripTrailingZeros(setValue, decimalSeparator);
+                if (!setValue.isEmpty()) {
+                    setValue = this.stripTrailingZeros(setValue, decimalSeparator);
+                }
                 discountValue.setValue(setValue);
             }
 
