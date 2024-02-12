@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
@@ -67,11 +66,6 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     }
 
     @Override
-    public PaymentLog save(PaymentLog log) {
-        return paymentDao.save(log);
-    }
-
-    @Override
     public OrderPayment readPaymentById(Long paymentId) {
         return paymentDao.readPaymentById(paymentId);
     }
@@ -93,17 +87,12 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     }
 
     @Override
-    public PaymentLog createLog() {
-        return paymentDao.createLog();
-    }
-
-    @Override
     public PaymentTransaction createTransaction() {
         PaymentTransaction returnItem = paymentDao.createTransaction();
-        
+
         //TODO: this needs correct timezone conversion, right?
         returnItem.setDate(SystemTime.asDate());
-        
+
         return returnItem;
     }
 
@@ -118,7 +107,7 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         OrderPayment orderPayment = create();
         orderPayment.setOrder(order);
         orderPayment.setBillingAddress(addressService.copyAddress(customerPayment.getBillingAddress()));
-        
+
         PaymentGatewayType gatewayType = customerPayment.getPaymentGatewayType();
         PaymentType paymentType = customerPayment.getPaymentType();
         Map<String, String> additionalFields = customerPayment.getAdditionalFields();

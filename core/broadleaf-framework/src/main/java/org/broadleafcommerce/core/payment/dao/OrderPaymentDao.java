@@ -19,31 +19,26 @@ package org.broadleafcommerce.core.payment.dao;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 
 import java.util.List;
 
 public interface OrderPaymentDao {
 
-    public OrderPayment readPaymentById(Long paymentId);
+    OrderPayment readPaymentById(Long paymentId);
 
-    public OrderPayment save(OrderPayment payment);
+    OrderPayment save(OrderPayment payment);
 
-    public PaymentTransaction save(PaymentTransaction transaction);
+    PaymentTransaction save(PaymentTransaction transaction);
 
-    public PaymentLog save(PaymentLog log);
+    List<OrderPayment> readPaymentsForOrder(Order order);
 
-    public List<OrderPayment> readPaymentsForOrder(Order order);
+    OrderPayment create();
 
-    public OrderPayment create();
+    void delete(OrderPayment payment);
 
-    public void delete(OrderPayment payment);
+    PaymentTransaction createTransaction();
 
-    public PaymentTransaction createTransaction();
-
-    public PaymentTransaction readTransactionById(Long transactionId);
-
-    public PaymentLog createLog();
+    PaymentTransaction readTransactionById(Long transactionId);
 
 }

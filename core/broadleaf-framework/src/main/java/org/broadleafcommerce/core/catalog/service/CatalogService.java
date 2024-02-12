@@ -56,16 +56,6 @@ public interface CatalogService {
     List<Product> findActiveProductsByCategory(Category category);
 
     /**
-     * @deprecated Use findActiveProductsByCategory
-     * 
-     * @param category
-     * @param currentDate
-     * @return
-     */
-    @Deprecated
-    List<Product> findActiveProductsByCategory(Category category, Date currentDate);
-    
-    /**
      * Given a category and a ProudctSearchCriteria, returns the appropriate matching products
      * 
      * @param category
@@ -111,7 +101,7 @@ public interface CatalogService {
     /**
      * @deprecated Use {@link #findActiveProductsByCategory(Category, limit, offset}
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
     /**
@@ -149,7 +139,7 @@ public interface CatalogService {
      * @param categoryName the category name to search by
      * @return the Category instance matching the categoryName
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     Category findCategoryByName(String categoryName);
 
     /**

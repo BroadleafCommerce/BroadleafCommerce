@@ -37,13 +37,6 @@ import java.util.HashMap;
 public class DefaultDynamicSkuPricingServiceImpl implements DynamicSkuPricingService {
 
     @Override
-    @Deprecated
-    public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations) {
-        SkuPriceWrapper wrapper = new SkuPriceWrapper(sku);
-        return getSkuPrices(wrapper, skuPricingConsiderations);
-    }
-
-    @Override
     @SuppressWarnings("rawtypes")
     public DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations) {
         Sku sku = skuWrapper.getTargetSku();

@@ -70,7 +70,7 @@ public interface CategoryDao {
      * @return the Category having the specified name
      */
     @Nonnull
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public Category readCategoryByName(@Nonnull String categoryName);
 
     /**
