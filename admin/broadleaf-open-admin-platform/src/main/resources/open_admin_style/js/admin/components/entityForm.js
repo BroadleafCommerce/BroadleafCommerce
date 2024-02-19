@@ -1010,5 +1010,7 @@ $(document).ready(function() {
         // progressive button margin
         $titleBar.children("button").css("margin-top", 8 + ((parseInt(newTitleBarHeight) - 50) / 30) * 12 + "px");
     });
-    observer.observe(document.getElementById('content-title-bar'), {attributes: true, attributeFilter: ['style']});
+    if(document.getElementById('content-title-bar')) {
+        observer.observe(document.getElementById('content-title-bar'), {attributes: true, attributeFilter: ['style']});
+    }
 });
