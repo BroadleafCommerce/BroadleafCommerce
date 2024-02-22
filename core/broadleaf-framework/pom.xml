@@ -74,8 +74,8 @@
     </profiles>
     <dependencies>
         <dependency>
-            <artifactId>solr-solrj</artifactId>
             <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
         </dependency>
         <!-- Solr still needs this dependency, we'll just use the later version -->
         <dependency>
