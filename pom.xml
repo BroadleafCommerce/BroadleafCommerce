@@ -57,7 +57,8 @@
         <spring.security.version>5.4.11</spring.security.version>
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <spring.mobile.version>2.0.0.M3</spring.mobile.version>
-        <jackson-bom.version>2.15.3</jackson-bom.version>
+        <logback.version>1.2.13</logback.version>
+        <jackson-bom.version>2.16.1</jackson-bom.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <geb.version>1.0</geb.version>
@@ -67,8 +68,8 @@
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>2.4.21</groovy.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
-        <broadleaf-presentation.version>1.1.7-SNAPSHOT</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>2.0.5-SNAPSHOT</hsqldb.database.starter.version>
+        <broadleaf-presentation.version>1.1.6-GA</broadleaf-presentation.version>
+        <hsqldb.database.starter.version>2.0.4-GA</hsqldb.database.starter.version>
         <closure.compiler.version>v20200830</closure.compiler.version>
         <hibernate.version>5.3.25.Final</hibernate.version>
         <hibernate-validator.version>6.0.22.Final</hibernate-validator.version>
@@ -723,7 +724,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.13.0</version>
+                <version>2.15.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1278,7 +1279,7 @@
             <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
-                <version>2.9.0</version>
+                <version>2.9.1</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
@@ -1348,11 +1349,6 @@
                 <version>2.0.1.Final</version>
             </dependency>
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>33.0.0-jre</version>
-            </dependency>
-            <dependency>
                 <groupId>de.jkeylockmanager</groupId>
                 <artifactId>jkeylockmanager</artifactId>
                 <version>1.1.0</version>
@@ -1377,7 +1373,43 @@
                         <groupId>com.google.protobuf</groupId>
                         <artifactId>protobuf-java</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.code.gson</groupId>
+                        <artifactId>gson</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.errorprone</groupId>
+                        <artifactId>error_prone_annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.code.findbugs</groupId>
+                        <artifactId>jsr305</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.jsinterop</groupId>
+                        <artifactId>base</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+            <!-- Added for security to override versions from closure-compiler -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.0.0-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>3.25.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.10.1</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.htmlcompressor</groupId>

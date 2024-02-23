@@ -328,19 +328,22 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.22.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler-unshaded</artifactId>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>protobuf-java</artifactId>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.google.errorprone</groupId>
@@ -349,6 +352,10 @@
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.jsinterop</groupId>
+                    <artifactId>base</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
