@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 
-import javax.annotation.Nonnull;
+
 import java.util.Date;
 import java.util.List;
 
@@ -39,8 +39,8 @@ public interface ProductDao {
      * @param productId the primary key of the product
      * @return the product instance at the specified primary key
      */
-    @Nonnull
-    public Product readProductById(@Nonnull Long productId);
+    
+    public Product readProductById( Long productId);
     
     /**
      * Retrieves a list of Product instances by their primary keys
@@ -48,7 +48,7 @@ public interface ProductDao {
      * @param productIds the list of primary keys for products
      * @return the list of products specified by the primary keys
      */
-    public List<Product> readProductsByIds(@Nonnull List<Long> productIds);
+    public List<Product> readProductsByIds( List<Long> productIds);
 
     /**
      * Persist a {@code Product} instance to the datastore
@@ -56,8 +56,8 @@ public interface ProductDao {
      * @param product the product instance
      * @return the updated state of the product instance after being persisted
      */
-    @Nonnull
-    public Product save(@Nonnull Product product);
+    
+    public Product save( Product product);
 
     /**
      * Find all {@code Product} instances whose name starts with
@@ -66,8 +66,8 @@ public interface ProductDao {
      * @param searchName the partial or whole name to match
      * @return the list of product instances that were search hits
      */
-    @Nonnull
-    public List<Product> readProductsByName(@Nonnull String searchName);
+    
+    public List<Product> readProductsByName( String searchName);
 
     /**
      * Find a subset of {@code Product} instances whose name starts with
@@ -77,8 +77,8 @@ public interface ProductDao {
      * @param offset the starting point in the record set
      * @return the list of product instances that fit the search criteria
      */
-    @Nonnull
-    public List<Product> readProductsByName(@Nonnull String searchName, @Nonnull int limit, @Nonnull int offset);
+    
+    public List<Product> readProductsByName( String searchName,  int limit,  int offset);
 
     /**
      * Find all products whose start and end dates are before and after the passed in
@@ -88,8 +88,8 @@ public interface ProductDao {
      * @param currentDate the date for which the products should be checked against to determine their active state
      * @return the list of products qualified for the category and date
      */
-    @Nonnull
-    public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate);
+    
+    public List<Product> readActiveProductsByCategory( Long categoryId,  Date currentDate);
     
     /**
      * Find all products whose start and end dates are before and after the passed in
@@ -101,7 +101,7 @@ public interface ProductDao {
      * @param searchCriteria
      * @return the matching products
      */
-    @Nonnull
+    
     public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, ProductSearchCriteria searchCriteria);
     
     /**
@@ -114,11 +114,11 @@ public interface ProductDao {
      * @param searchCriteria
      * @return the matching products
      */
-    @Nonnull
+    
     public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
 
-    @Nonnull
-    public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate, @Nonnull int limit, @Nonnull int offset);
+    
+    public List<Product> readActiveProductsByCategory( Long categoryId,  Date currentDate,  int limit,  int offset);
 
     /**
      * Find all products related to the passed in category
@@ -126,8 +126,8 @@ public interface ProductDao {
      * @param categoryId the primary key of the category to whom the resulting product list should be related
      * @return the list of products qualified for the category
      */
-    @Nonnull
-    public List<Product> readProductsByCategory(@Nonnull Long categoryId);
+    
+    public List<Product> readProductsByCategory( Long categoryId);
 
     /**
      * Find all products related to the passed in category
@@ -137,15 +137,15 @@ public interface ProductDao {
      * @param offset the starting point in the record set
      * @return the list of products qualified for the category
      */
-    @Nonnull
-    public List<Product> readProductsByCategory(@Nonnull Long categoryId, @Nonnull int limit, @Nonnull int offset);
+    
+    public List<Product> readProductsByCategory( Long categoryId,  int limit,  int offset);
 
     /**
      * Remove the passed in product instance from the datastore
      *
      * @param product the product instance to remove
      */
-    public void delete(@Nonnull Product product);
+    public void delete( Product product);
 
     /**
      * Create a new {@code Product} instance. The system will use the configuration in
@@ -194,7 +194,7 @@ public interface ProductDao {
      * @param currentDate
      * @return a list of all active products
      */
-    public List<Product> readAllActiveProducts(@Nonnull Date currentDate);
+    public List<Product> readAllActiveProducts( Date currentDate);
 
     /**
      * Reads all products from the database that are currently active. That is, reads all products that 

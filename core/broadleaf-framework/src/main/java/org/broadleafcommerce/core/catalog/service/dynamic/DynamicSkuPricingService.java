@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
-import javax.annotation.Nonnull;
+
 import java.util.HashMap;
 
 /**
@@ -47,7 +47,7 @@ public interface DynamicSkuPricingService {
      * @param skuPricingConsiderations
      * @return
      */
-    @Nonnull
+    
     @SuppressWarnings("rawtypes")
     public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations);
 

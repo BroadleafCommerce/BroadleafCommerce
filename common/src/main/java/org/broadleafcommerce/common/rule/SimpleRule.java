@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import javax.annotation.Nonnull;
+
 import java.io.Serializable;
 
 /**
@@ -30,7 +30,7 @@ public interface SimpleRule extends Serializable {
      *
      * @return the rule as an MVEL string
      */
-    @Nonnull
+    
     public String getMatchRule();
 
     /**
@@ -38,6 +38,6 @@ public interface SimpleRule extends Serializable {
      *
      * @param matchRule the rule as an MVEL string
      */
-    public void setMatchRule(@Nonnull String matchRule);
+    public void setMatchRule( String matchRule);
 
 }

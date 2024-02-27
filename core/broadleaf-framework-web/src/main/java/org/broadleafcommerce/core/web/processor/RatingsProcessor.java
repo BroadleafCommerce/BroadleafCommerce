@@ -24,9 +24,14 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -49,39 +54,37 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
      *
      */
     public RatingsProcessor() {
-        super("ratings");
+        super(TemplateMode.HTML, "blc", "ratings", true, null, false, 10000);
     }
 
-    @Override
-    public int getPrecedence() {
-        return 10000;
-    }
 
-    @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
-        RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
-        if (ratingSummary != null) {
-            addToModel(arguments, getRatingsVar(element), ratingSummary);
-        }
-        
-        Customer customer = CustomerState.getCustomer();
-        ReviewDetail reviewDetail = null;
-        if (!customer.isAnonymous()) {
-            reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
-        }
-        if (reviewDetail != null) {
-            addToModel(arguments, "currentCustomerReview", reviewDetail);
-        }
-        
-    }
-    
-    private String getRatingsVar(Element element) {
-        String ratingsVar = element.getAttributeValue("ratingsVar");
+    private String getRatingsVar(Map<String, String> attributes) {
+        String ratingsVar = attributes.get("ratingsVar");
         if (StringUtils.isNotEmpty(ratingsVar)) {
             return ratingsVar;
         } 
         return "ratingSummary";
     }
 
+    @Override
+    protected Map<String, Object> populateModelVariables(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler) {
+        Map<String,Object> result = new HashMap<>();
+        Map<String, String> attributes = tag.getAttributeMap();
+        String itemId = String.valueOf(StandardExpressions.getExpressionParser(context.getConfiguration()).parseExpression(context, attributes.get("itemId")).execute(context));
+        RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
+        if (ratingSummary != null) {
+            result.put(getRatingsVar(attributes), ratingSummary);
+        }
+
+        Customer customer = CustomerState.getCustomer();
+        ReviewDetail reviewDetail = null;
+        if (!customer.isAnonymous()) {
+            reviewDetail = ratingService.readReviewByCustomerAndItem(customer, itemId);
+        }
+        if (reviewDetail != null) {
+            result.put("currentCustomerReview", reviewDetail);
+        }
+
+        return result;
+    }
 }

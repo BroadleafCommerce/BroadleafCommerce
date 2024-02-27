@@ -19,12 +19,16 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.engine.AttributeName;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import java.text.NumberFormat;
+import java.util.Map;
 
 /**
  * A Thymeleaf processor that renders a Money object according to the currently set locale options.
@@ -35,44 +39,38 @@ import java.text.NumberFormat;
  * @author apazzolini
  */
 @Component("blPriceTextDisplayProcessor")
-public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProcessor {
-
+public class PriceTextDisplayProcessor extends AbstractAttributeTagProcessor {
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
     public PriceTextDisplayProcessor() {
-        super("price");
-    }
-    
-    @Override
-    public int getPrecedence() {
-        return 1500;
+        super(TemplateMode.HTML, "blc", null, false, "price", true, 1500, true);
     }
 
     @Override
-    protected String getText(Arguments arguments, Element element, String attributeName) {
-        
+    protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName, String attributeValue, IElementTagStructureHandler structureHandler) {
         Money price;
-        
+        String result;
+        Map<String, String> attributes = tag.getAttributeMap();
         try {
-            price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+            price = (Money) StandardExpressions.getExpressionParser(context.getConfiguration()).parseExpression(context, attributes.get(attributeName)).execute(context);
         } catch (ClassCastException e) {
-            Number value = (Number) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+            Number value = (Number) StandardExpressions.getExpressionParser(context.getConfiguration()).parseExpression(context, attributes.get(attributeName)).execute(context);
             price = new Money(value.doubleValue());
-        }
-
-        if (price == null) {
-            return "Not Available";
         }
 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
             NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
             format.setCurrency(price.getCurrency());
-            return format.format(price.getAmount());
+            result = format.format(price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
-            return "$ " + price.getAmount().toString();
+            result = "$ " + price.getAmount().toString();
         }
+        structureHandler.setBody(result, false);
+
     }
+
+
 }

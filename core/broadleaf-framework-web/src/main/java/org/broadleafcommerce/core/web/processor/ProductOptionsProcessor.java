@@ -28,9 +28,11 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -64,25 +66,11 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
     protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(100, 500));
 
     public ProductOptionsProcessor() {
-        super("product_options");
+
+        super(TemplateMode.HTML, "blc", "product_options", true, null, false, 10000);
     }
 
-    @Override
-    public int getPrecedence() {
-        return 10000;
-    }
-
-    @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
-        Product product = catalogService.findProductById(productId);
-        if (product != null) {
-            addAllProductOptionsToModel(arguments, product);
-            addProductOptionPricingToModel(arguments, product);
-        }
-    }
-    
-    private void addProductOptionPricingToModel(Arguments arguments, Product product) {
+    private void addProductOptionPricingToModel(Map<String,Object> result, Product product) {
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<ProductOptionPricingDTO>();
         for (Sku sku : skus) {
@@ -108,10 +96,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             dto.setSelectedOptions(values);
             skuPricing.add(dto);
         }
-        writeJSONToModel(arguments, "skuPricing", skuPricing);
+        writeJSONToModel(result, "skuPricing", skuPricing);
     }
     
-    private void addAllProductOptionsToModel(Arguments arguments, Product product) {
+    private void addAllProductOptionsToModel(Map<String,Object> result, Product product) {
         List<ProductOption> productOptions = product.getProductOptions();
         List<ProductOptionDTO> dtos = new ArrayList<ProductOptionDTO>();
         for (ProductOption option : productOptions) {
@@ -125,10 +113,10 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             dto.setValues(values);
             dtos.add(dto);
         }
-        writeJSONToModel(arguments, "allProductOptions", dtos);
+        writeJSONToModel(result, "allProductOptions", dtos);
     }
     
-    private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
+    private void writeJSONToModel(Map<String,Object> result, String modelKey, Object o) {
         try {
             if (!JSON_CACHE.containsKey(o)) {
                 ObjectMapper mapper = new ObjectMapper();
@@ -136,7 +124,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
                 mapper.writeValue(strWriter, o);
                 JSON_CACHE.put(o, strWriter.toString());
             }
-            addToModel(arguments, modelKey, JSON_CACHE.get(o));
+            result.put(modelKey, JSON_CACHE.get(o));
         } catch (Exception ex) {
             LOG.error("There was a problem writing the product option map to JSON", ex);
         }
@@ -156,7 +144,20 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
             return "$ " + price.getAmount().toString();
         }
     }
-    
+
+    @Override
+    protected Map<String, Object> populateModelVariables(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler) {
+        Map<String,Object> result = new HashMap<>();
+        Map<String, String> attributes = tag.getAttributeMap();
+        Long productId = (Long) StandardExpressions.getExpressionParser(context.getConfiguration()).parseExpression( context, attributes.get("productId")).execute(context);
+        Product product = catalogService.findProductById(productId);
+        if (product != null) {
+            addAllProductOptionsToModel(result, product);
+            addProductOptionPricingToModel(result, product);
+        }
+        return result;
+    }
+
     private class ProductOptionDTO {
         private Long id;
         private String type;

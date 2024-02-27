@@ -37,9 +37,9 @@ import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecu
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -146,7 +146,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Transactional("blTransactionManager")
     public AdminUser saveAdminUser(AdminUser user) {
         if (user.getUnencodedPassword() != null) {
-            user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), getSalt(user)));
+            user.setPassword(passwordEncoder.encode(user.getUnencodedPassword()));
         }
         return adminUserDao.saveAdminUser(user);
     }
@@ -242,7 +242,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
             ForgotPasswordSecurityToken fpst = new ForgotPasswordSecurityTokenImpl();
             fpst.setAdminUserId(user.getId());
-            fpst.setToken(passwordEncoder.encodePassword(token, null));
+            fpst.setToken(passwordEncoder.encode(token));
             fpst.setCreateDate(SystemTime.asDate());
             forgotPasswordSecurityTokenDao.saveToken(fpst);
             
@@ -280,7 +280,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         ForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
-            fpst = forgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token, null));
+            fpst = forgotPasswordSecurityTokenDao.readToken(passwordEncoder.encode(token));
             if (fpst == null) {
                 response.addErrorCode("invalidToken");
             } else if (fpst.isTokenUsedFlag()) {
@@ -319,7 +319,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
     
     protected void checkExistingPassword(String password, AdminUser user, GenericResponse response) {
-        if (!passwordEncoder.isPasswordValid(user.getPassword(), password, getSalt(user))) {
+        if (!passwordEncoder.matches(user.getPassword(), password)) {
             response.addErrorCode("invalidPassword");
         }
     }

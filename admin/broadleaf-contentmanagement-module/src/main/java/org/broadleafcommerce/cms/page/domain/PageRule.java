@@ -18,7 +18,7 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.rule.SimpleRule;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 
 /**
@@ -57,7 +57,7 @@ public interface PageRule extends SimpleRule {
      *
      * @return a copy of this rule
      */
-    @Nonnull
+    
     public PageRule cloneEntity();
 
 }

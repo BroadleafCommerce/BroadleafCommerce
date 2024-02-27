@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -43,6 +44,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldMa
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.hibernate.Criteria;
 import org.hibernate.MappingException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.PersistentClass;
@@ -98,9 +100,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Resource(name="blMetadata")
     protected Metadata metadata;
-
-    @Resource(name="blEJB3ConfigurationDao")
-    protected EJB3ConfigurationDao ejb3ConfigurationDao;
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -180,7 +179,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public PersistentClass getPersistentClass(String targetClassName) {
-        return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
+        return HibernateMappingProvider.getMapping(targetClassName);
     }
 
     protected boolean useCache() {
@@ -799,7 +798,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public SessionFactory getSessionFactory() {
-        return dynamicDaoHelper.getSessionFactory((HibernateEntityManager) standardEntityManager);
+        return standardEntityManager.unwrap(Session.class).getSessionFactory();
     }
 
     @Override
@@ -809,12 +808,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public List<String> getPropertyNames(Class<?> entityClass) {
-        return dynamicDaoHelper.getPropertyNames(entityClass, (HibernateEntityManager) standardEntityManager);
+        return dynamicDaoHelper.getPropertyNames(entityClass);
     }
 
     @Override
     public List<Type> getPropertyTypes(Class<?> entityClass) {
-        return dynamicDaoHelper.getPropertyTypes(entityClass, (HibernateEntityManager) standardEntityManager);
+        return dynamicDaoHelper.getPropertyTypes(entityClass);
     }
 
     protected Map<String, FieldMetadata> getPropertiesForEntityClass(
@@ -1325,14 +1324,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     @Override
     public void setStandardEntityManager(EntityManager entityManager) {
         this.standardEntityManager = entityManager;
-    }
-
-    public EJB3ConfigurationDao getEjb3ConfigurationDao() {
-        return ejb3ConfigurationDao;
-    }
-
-    public void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao) {
-        this.ejb3ConfigurationDao = ejb3ConfigurationDao;
     }
 
     @Override

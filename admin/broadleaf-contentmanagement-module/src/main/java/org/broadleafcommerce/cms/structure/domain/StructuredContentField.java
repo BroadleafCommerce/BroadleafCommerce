@@ -18,7 +18,7 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
@@ -64,7 +64,7 @@ public interface StructuredContentField extends Serializable {
      * @return the key associated with this item
      * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
      */
-    @Nonnull
+    
     public String getFieldKey();
 
     /**
@@ -72,7 +72,7 @@ public interface StructuredContentField extends Serializable {
      * @param fieldKey
      * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
      */
-    public void setFieldKey(@Nonnull String fieldKey);
+    public void setFieldKey( String fieldKey);
 
     /**
      * Returns the parent <code>StructuredContent</code> item to which this
@@ -80,14 +80,14 @@ public interface StructuredContentField extends Serializable {
      *
      * @return
      */
-    @Nonnull
+    
     public StructuredContent getStructuredContent();
 
     /**
      * Sets the parent <code>StructuredContent</code> item.
      * @param structuredContent
      */
-    public void setStructuredContent(@Nonnull StructuredContent structuredContent);
+    public void setStructuredContent( StructuredContent structuredContent);
 
     /**
      * Builds a copy of this item.   Used by the content management system when an
@@ -95,7 +95,7 @@ public interface StructuredContentField extends Serializable {
      *
      * @return a copy of this item
      */
-    @Nonnull
+    
     public StructuredContentField cloneEntity();
 
     /**
@@ -103,13 +103,13 @@ public interface StructuredContentField extends Serializable {
      *
      * @param value
      */
-    public void setValue(@Nonnull String value);
+    public void setValue( String value);
 
     /**
      * Sets the value of this custom field.
      * @return
      */
-    @Nonnull
+    
     public String getValue();
 
     /**

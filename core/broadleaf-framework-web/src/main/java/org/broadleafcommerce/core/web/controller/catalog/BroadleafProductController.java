@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 

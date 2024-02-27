@@ -20,7 +20,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.Date;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * <p>Interface for dynamically determining the activity dates.</p>
@@ -45,7 +45,7 @@ public interface DynamicSkuActiveDatesService {
      * @param sku
      * @return
      */
-    @Nonnull
+    
     @SuppressWarnings("rawtypes")
     public Date getDynamicSkuActiveStartDate(Sku sku);
 

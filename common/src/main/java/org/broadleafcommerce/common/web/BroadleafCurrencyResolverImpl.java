@@ -81,7 +81,7 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
 
         // 3) Check session for currency
         if (currency == null && BLCRequestUtils.isOKtoUseSession(request)) {
-            currency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            currency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR, WebRequest.SCOPE_SESSION);
         }
 
         // 4) Check locale for currency
@@ -98,7 +98,7 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
         }
 
         if (BLCRequestUtils.isOKtoUseSession(request)) {
-            request.setAttribute(CURRENCY_VAR, currency, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(CURRENCY_VAR, currency, WebRequest.SCOPE_SESSION);
         }
         return currency;
     }

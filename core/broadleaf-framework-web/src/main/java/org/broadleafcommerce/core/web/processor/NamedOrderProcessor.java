@@ -23,8 +23,13 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.templatemode.TemplateMode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -47,26 +52,25 @@ public class NamedOrderProcessor extends AbstractModelVariableModifierProcessor 
      *
      */
     public NamedOrderProcessor() {
-        super("named_order");
+        super(TemplateMode.HTML, "blc", "named_order", true, null, false, 10000);
     }
 
-    @Override
-    public int getPrecedence() {
-        return 10000;
-    }
+
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
+    protected Map<String, Object> populateModelVariables(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler) {
+        Map<String,Object> result = new HashMap<>();
         Customer customer = CustomerState.getCustomer();
-
-        String orderVar = element.getAttributeValue("orderVar");
-        String orderName = element.getAttributeValue("orderName");
+        Map<String, String> attributeMap = tag.getAttributeMap();
+        String orderVar = attributeMap.get("orderVar");
+        String orderName = attributeMap.get("orderName");
 
         Order order = orderService.findNamedOrderForCustomer(orderName, customer);
         if (order != null) {
-            addToModel(arguments, orderVar, order);
+            result.put(orderVar, order);
         } else {
-            addToModel(arguments, orderVar, new NullOrderImpl());
+            result.put(orderVar, new NullOrderImpl());
         }
+        return result;
     }
 }

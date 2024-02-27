@@ -16,11 +16,12 @@
 
 package org.broadleafcommerce.common.email.service.message;
 
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,11 +39,19 @@ public class VelocityMessageCreator extends MessageCreator {
     @Override
     public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
         @SuppressWarnings("unchecked")
+        VelocityContext context = new VelocityContext();
         HashMap<String,Object> propsCopy = (HashMap<String, Object>) props.clone();
         if (additionalConfigItems != null) {
             propsCopy.putAll(additionalConfigItems);
         }
-        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, info.getEmailTemplate(), propsCopy);
+        propsCopy.forEach(context::put);
+        StringWriter stringWriter = new StringWriter();
+        try {
+            velocityEngine.mergeTemplate(info.getEmailTemplate(), "UTF-8", context, stringWriter);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return stringWriter.toString();
     }
 
     public VelocityEngine getVelocityEngine() {

@@ -22,11 +22,15 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -47,19 +51,17 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
      * Sets the name of this processor to be used in Thymeleaf template
      */
     public CategoriesProcessor() {
-        super("categories");
-    }
-    
-    @Override
-    public int getPrecedence() {
-        return 10000;
+
+        super(TemplateMode.HTML, "blc", "categories", true, null, false, 10000);
     }
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String resultVar = element.getAttributeValue("resultVar");
-        String parentCategory = element.getAttributeValue("parentCategory");
-        String unparsedMaxResults = element.getAttributeValue("maxResults");
+    protected Map<String, Object> populateModelVariables(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, String> attributes = tag.getAttributeMap();
+        String resultVar = attributes.get("resultVar");
+        String parentCategory = attributes.get("parentCategory");
+        String unparsedMaxResults = attributes.get("maxResults");
         
         // TODO: Potentially write an algorithm that will pick the minimum depth category
         // instead of the first category in the list
@@ -80,7 +82,9 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
                 results.add(xref.getSubCategory());
             }
             
-            addToModel(arguments, resultVar, results);
+            result.put(resultVar, results);
+
         }
+        return result;
     }
 }

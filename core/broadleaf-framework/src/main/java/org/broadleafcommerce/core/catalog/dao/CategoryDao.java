@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * {@code CategoryDao} provides persistence access to {@code Category} instances.
@@ -39,8 +39,8 @@ public interface CategoryDao {
      * @param categoryId the primary key of the {@code Category}
      * @return the {@code Category}  at the specified primary key
      */
-    @Nonnull
-    public Category readCategoryById(@Nonnull Long categoryId);
+    
+    public Category readCategoryById( Long categoryId);
 
     /**
      * Retrieve a {@code Category} instance by its name.
@@ -52,9 +52,9 @@ public interface CategoryDao {
      * @param categoryName the name of the category
      * @return the Category having the specified name
      */
-    @Nonnull
+    
     @Deprecated
-    public Category readCategoryByName(@Nonnull String categoryName);
+    public Category readCategoryByName( String categoryName);
     
     /**
      * @return a list of all categories that do not have a defaultParentCategory set
@@ -67,11 +67,11 @@ public interface CategoryDao {
      * @param categoryName the name to search by
      * @return the Category instances having the specified name
      */
-    @Nonnull
-    public List<Category> readCategoriesByName(@Nonnull String categoryName);
+    
+    public List<Category> readCategoriesByName( String categoryName);
 
-    @Nonnull
-    public List<Category> readCategoriesByName(@Nonnull String categoryName, int limit, int offset);
+    
+    public List<Category> readCategoriesByName( String categoryName, int limit, int offset);
 
     /**
      * Persist a {@code Category} instance to the datastore
@@ -79,15 +79,15 @@ public interface CategoryDao {
      * @param category the {@code Category} instance
      * @return the updated state of the passed in {@code Category} after being persisted
      */
-    @Nonnull
-    public Category save(@Nonnull Category category);
+    
+    public Category save( Category category);
 
     /**
      * Retrieve all categories in the datastore
      *
      * @return a list of all the {@code Category} instances in the datastore
      */
-    @Nonnull
+    
     public List<Category> readAllCategories();
 
     /**
@@ -97,19 +97,19 @@ public interface CategoryDao {
      * @param offset the starting point in the record set, defaults to 0
      * @return
      */
-    @Nonnull
-    public List<Category> readAllCategories(@Nonnull int limit, @Nonnull int offset);
+    
+    public List<Category> readAllCategories( int limit,  int offset);
 
     /**
      * Retrieve all products in the datastore
      *
      * @return a list of all {@code Category} instances in the datastore, regardless of their category association
      */
-    @Nonnull
+    
     public List<Product> readAllProducts();
 
-    @Nonnull
-    public List<Product> readAllProducts(@Nonnull int limit, @Nonnull int offset);
+    
+    public List<Product> readAllProducts( int limit,  int offset);
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance
@@ -117,8 +117,8 @@ public interface CategoryDao {
      * @param category the parent category
      * @return a list of all child categories
      */
-    @Nonnull
-    public List<Category> readAllSubCategories(@Nonnull Category category);
+    
+    public List<Category> readAllSubCategories( Category category);
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance
@@ -128,15 +128,15 @@ public interface CategoryDao {
      * @param offset the starting point in the record set
      * @return a list of all child categories
      */
-    @Nonnull
-    public List<Category> readAllSubCategories(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
+    
+    public List<Category> readAllSubCategories( Category category,  int limit,  int offset);
 
     /**
      * Removed the passed in {@code Category} instance from the datastore
      *
      * @param category the {@code Category} instance to remove
      */
-    public void delete(@Nonnull Category category);
+    public void delete( Category category);
 
     /**
      * Create a new {@code Category} instance. The system will use the configuration in
@@ -159,7 +159,7 @@ public interface CategoryDao {
      *
      * @return a {@code Category} instance based on the Broadleaf entity configuration.
      */
-    @Nonnull
+    
     public Category create();
 
     /**
@@ -171,7 +171,7 @@ public interface CategoryDao {
      * @param category the parent category
      * @return a list of all active child categories
      */
-    @Nonnull
+    
     public List<Category> readActiveSubCategoriesByCategory(Category category);
 
     /**
@@ -185,10 +185,10 @@ public interface CategoryDao {
      * @param offset the starting point in the record set
      * @return a list of all active child categories
      */
-    @Nonnull
-    public List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
+    
+    public List<Category> readActiveSubCategoriesByCategory( Category category,  int limit,  int offset);
 
-    @Nonnull
+    
     public Category findCategoryByURI(String uri);
 
 }

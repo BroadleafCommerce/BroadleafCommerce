@@ -18,7 +18,7 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.rule.SimpleRule;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 
 /**
@@ -58,7 +58,7 @@ public interface StructuredContentRule extends SimpleRule {
      *
      * @return a copy of this rule
      */
-    @Nonnull
+    
     public StructuredContentRule cloneEntity();
 
 }

@@ -16,11 +16,17 @@
 
 package org.broadleafcommerce.common.web.dialect;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.NestableNode;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
+import org.apache.commons.collections4.MapUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.context.request.WebRequest;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.Map;
 
@@ -31,43 +37,43 @@ import java.util.Map;
  * to the current evaluation context (model) for processing in the remainder of the page.
  *
  */
-public abstract class AbstractModelVariableModifierProcessor extends AbstractElementProcessor {
-    
-    public AbstractModelVariableModifierProcessor(String elementName) {
-        super(elementName);
+public abstract class AbstractModelVariableModifierProcessor extends AbstractElementTagProcessor implements ApplicationContextAware {
+
+    protected ApplicationContext applicationContext;
+
+    public AbstractModelVariableModifierProcessor(TemplateMode templateMode, String dialectPrefix, String elementName, boolean prefixElementName, String attributeName, boolean prefixAttributeName, int precedence) {
+        super(templateMode, dialectPrefix, elementName, prefixElementName, attributeName, prefixAttributeName, precedence);
     }
 
-    /**
-     * This method will handle calling the modifyModelAttributes abstract method and return
-     * an "OK" processor result
-     */
+
     @Override
-    protected ProcessorResult processElement(final Arguments arguments, final Element element) {
-        modifyModelAttributes(arguments, element);
-        
+    protected void doProcess(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler) {
+
+        Map<String, Object> newModelVariables = populateModelVariables(context, tag, structureHandler);
+
+        if (MapUtils.isNotEmpty(newModelVariables)) {
+            for (Map.Entry<String, Object> entry : newModelVariables.entrySet()) {
+                addToGlobalModel(entry.getKey(), entry.getValue());
+            }
+        }
+
         // Remove the tag from the DOM
-        final NestableNode parent = element.getParent();
-        parent.removeChild(element);
-        
-        return ProcessorResult.OK;
+        structureHandler.removeTags();
     }
-    
-    /**
-     * Helper method to add a value to the expression evaluation root (model) Map
-     * @param key the key to add to the model
-     * @param value the value represented by the key
-     */
-    @SuppressWarnings("unchecked")
-    protected void addToModel(Arguments arguments, String key, Object value) {
-        ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put(key, value);
+
+    protected void addToGlobalModel(String key, Object value) {
+        WebRequest request = BroadleafRequestContext.getBroadleafRequestContext()
+                .getWebRequest();
+        if (request != null) {
+            request.setAttribute(key, value, WebRequest.SCOPE_REQUEST);
+        }
     }
-    
-    
-    /**
-     * This method must be overriding by a processor that wishes to modify the model. It will
-     * be called by this abstract processor in the correct precendence in the evaluation chain.
-     * @param arguments
-     * @param element
-     */
-    protected abstract void modifyModelAttributes(Arguments arguments, Element element);
+
+    protected abstract Map<String, Object> populateModelVariables(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler);
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

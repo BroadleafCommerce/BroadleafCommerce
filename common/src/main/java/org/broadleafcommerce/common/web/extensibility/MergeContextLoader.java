@@ -89,36 +89,6 @@ public class MergeContextLoader extends ContextLoaderListener {
      * <p>In addition, {@link #customizeContext} gets called prior to refreshing the
      * context, allowing subclasses to perform custom modifications to the context.
      * @param servletContext current servlet context
-     * @param parent the parent ApplicationContext to use, or <code>null</code> if none
-     * @return the rootId WebApplicationContext
-     * @throws BeansException if the context couldn't be initialized
-     * @see ConfigurableWebApplicationContext
-     */
-    @Override
-    @Deprecated
-    protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
-        MergeXmlWebApplicationContext wac = new MergeXmlWebApplicationContext();
-        wac.setParent(parent);
-        wac.setServletContext(servletContext);
-        wac.setConfigLocation(servletContext.getInitParameter(ContextLoader.CONFIG_LOCATION_PARAM));
-        wac.setPatchLocation(servletContext.getInitParameter(PATCH_LOCATION_PARAM));
-        wac.setShutdownBean(servletContext.getInitParameter(SHUTDOWN_HOOK_BEAN));
-        wac.setShutdownMethod(servletContext.getInitParameter(SHUTDOWN_HOOK_METHOD));
-        customizeContext(servletContext, wac);
-        wac.refresh();
-
-        return wac;
-    }
-
-    /**
-     * Instantiate the rootId WebApplicationContext for this loader, either the
-     * default context class or a custom context class if specified.
-     * <p>This implementation expects custom contexts to implement the
-     * {@link ConfigurableWebApplicationContext} interface.
-     * Can be overridden in subclasses.
-     * <p>In addition, {@link #customizeContext} gets called prior to refreshing the
-     * context, allowing subclasses to perform custom modifications to the context.
-     * @param servletContext current servlet context
      * @return the rootId WebApplicationContext
      * @throws BeansException if the context couldn't be initialized
      * @see ConfigurableWebApplicationContext

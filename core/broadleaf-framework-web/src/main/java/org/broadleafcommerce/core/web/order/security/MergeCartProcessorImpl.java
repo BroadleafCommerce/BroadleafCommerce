@@ -56,7 +56,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     
     public void execute(WebRequest request, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
-        Customer anonymousCustomer = (Customer) request.getAttribute(CustomerStateRequestProcessor.ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+        Customer anonymousCustomer = (Customer) request.getAttribute(CustomerStateRequestProcessor.ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME, WebRequest.SCOPE_SESSION);
         
         Order cart = null;
         if (anonymousCustomer != null) {
@@ -71,7 +71,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
             throw new RuntimeException(e);
         }
 
-        request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
+        request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_SESSION);
     }
 
     public String getMergeCartResponseKey() {

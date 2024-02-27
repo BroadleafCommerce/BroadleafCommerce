@@ -22,8 +22,8 @@ import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-import org.thymeleaf.spring4.view.AbstractThymeleafView;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.spring5.view.AbstractThymeleafView;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 import java.util.HashMap;
 import java.util.Locale;

@@ -18,7 +18,7 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
@@ -56,13 +56,13 @@ public interface StructuredContentFieldTemplate extends Serializable {
      *
      * @return the name
      */
-    @Nonnull
+    
     String getName();
 
     /**
      * Sets the name.
      */
-    void setName(@Nonnull String name);
+    void setName( String name);
 
     /**
      * Returns the list of the field groups for this template.

@@ -62,11 +62,6 @@
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
 
-    <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">
-        <property name="persistenceUnitInfo">
-            <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
-        </property>
-    </bean>
 
     <mo:override id="blMetadataOverrides"/>
     

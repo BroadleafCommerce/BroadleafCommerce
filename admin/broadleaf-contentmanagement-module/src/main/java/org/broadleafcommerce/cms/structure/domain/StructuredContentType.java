@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
@@ -56,13 +56,13 @@ public interface StructuredContentType extends Serializable {
      *
      * @return the name
      */
-    @Nonnull
+    
     String getName();
 
     /**
      * Sets the name.
      */
-    void setName(@Nonnull String name);
+    void setName( String name);
 
     /**
      * Gets the description.
@@ -80,12 +80,12 @@ public interface StructuredContentType extends Serializable {
      * Returns the template associated with this content type.
      * @return
      */
-    @Nonnull
+    
     StructuredContentFieldTemplate getStructuredContentFieldTemplate();
 
     /**
      * Sets the template associated with this content type.
      * @param scft
      */
-    void setStructuredContentFieldTemplate(@Nonnull StructuredContentFieldTemplate scft);
+    void setStructuredContentFieldTemplate( StructuredContentFieldTemplate scft);
 }

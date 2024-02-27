@@ -37,15 +37,16 @@ import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -104,14 +105,14 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setRegistered(true);
         }
         if (customer.getUnencodedPassword() != null) {
-            customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), getSalt(customer)));
+            customer.setPassword(passwordEncoder.encode(customer.getUnencodedPassword()));
         }
 
         // let's make sure they entered a new challenge answer (we will populate
         // the password field with hashed values so check that they have changed
         // id
         if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
-            customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), getSalt(customer)));
+            customer.setChallengeAnswer(passwordEncoder.encode(customer.getUnencodedChallengeAnswer()));
         }
         return customerDao.save(customer);
     }
@@ -255,18 +256,7 @@ public class CustomerServiceImpl implements CustomerService {
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-    
-    /**
-     * Optionally provide a salt based on a customer.  By default, this returns
-     * the salt property
-     * 
-     * @param customer
-     * @return
-     * @see {@link CustomerServiceImpl#getSalt()}
-     */
-    public String getSalt(Customer customer) {
-        return getSalt();
-    }
+
     
     public String getSalt() {
         return salt;
@@ -343,7 +333,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
             fpst.setCustomerId(customer.getId());
-            fpst.setToken(passwordEncoder.encodePassword(token, null));
+            fpst.setToken(passwordEncoder.encode(token));
             fpst.setCreateDate(SystemTime.asDate());
             customerForgotPasswordSecurityTokenDao.saveToken(fpst);
 
@@ -377,7 +367,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
-            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token, null));
+            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encode(token));
             if (fpst == null) {
                 response.addErrorCode("invalidToken");
             } else if (fpst.isTokenUsedFlag()) {

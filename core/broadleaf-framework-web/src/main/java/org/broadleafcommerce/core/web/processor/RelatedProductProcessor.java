@@ -23,13 +23,18 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.IStandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -64,24 +69,19 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
      * Sets the name of this processor to be used in Thymeleaf template
      */
     public RelatedProductProcessor() {
-        super("related_products");
-    }
-    
-    @Override
-    public int getPrecedence() {
-        return 10000;
+        super(TemplateMode.HTML, "blc", "related_products", true, null, false, 10000);
     }
 
     @Override
-    /**
-     * Controller method for the processor that readies the service call and adds the results to the model.
-     */
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
-        List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
-        addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
-        addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
+    protected Map<String, Object> populateModelVariables(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler) {
+        Map<String,Object> result = new HashMap<>();
+        Map<String, String> attributeMap = tag.getAttributeMap();
+        List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(attributeMap, context));
+        result.put(getRelatedProductsResultVar(attributeMap), relatedProducts);
+        result.put(getProductsResultVar(attributeMap), convertRelatedProductsToProducts(relatedProducts));
+        return result;
     }
-    
+
     protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
         List<Product> products = new ArrayList<Product>();
         if (relatedProducts != null) {
@@ -92,31 +92,31 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         return products;        
     }
     
-    private String getRelatedProductsResultVar(Element element) {
-        String resultVar = element.getAttributeValue("relatedProductsResultVar");       
+    private String getRelatedProductsResultVar(Map<String, String> attributeMap) {
+        String resultVar = attributeMap.get("relatedProductsResultVar");
         if (resultVar == null) {
             resultVar = "relatedProducts";
         }
         return resultVar;
     }
     
-    private String getProductsResultVar(Element element) {
-        String resultVar = element.getAttributeValue("productsResultVar");      
+    private String getProductsResultVar(Map<String, String> attributeMap) {
+        String resultVar = attributeMap.get("productsResultVar");
         if (resultVar == null) {
             resultVar = "products";
         }
         return resultVar;
     }
 
-    private RelatedProductDTO buildDTO(Arguments args, Element element) {
+    private RelatedProductDTO buildDTO(Map<String, String> attributeMap, ITemplateContext context) {
         RelatedProductDTO relatedProductDTO = new RelatedProductDTO();
-        String productIdStr = element.getAttributeValue("productId"); 
-        String categoryIdStr = element.getAttributeValue("categoryId"); 
-        String quantityStr = element.getAttributeValue("quantity"); 
-        String typeStr = element.getAttributeValue("type"); 
-        
+        String productIdStr = attributeMap.get("productId");
+        String categoryIdStr = attributeMap.get("categoryId");
+        String quantityStr = attributeMap.get("quantity");
+        String typeStr = attributeMap.get("type");
+        IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(context.getConfiguration());
         if (productIdStr != null) {
-            Object productId = StandardExpressionProcessor.processExpression(args, productIdStr);
+            Object productId = expressionParser.parseExpression(context, productIdStr).execute(context);
             if (productId instanceof BigDecimal) {
                 productId = new Long(((BigDecimal) productId).toPlainString());
             }
@@ -124,7 +124,7 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         
         if (categoryIdStr != null) {
-            Object categoryId = StandardExpressionProcessor.processExpression(args, categoryIdStr);
+            Object categoryId = expressionParser.parseExpression(context, categoryIdStr).execute(context);
             if (categoryId instanceof BigDecimal) {
                 categoryId = new Long(((BigDecimal) categoryId).toPlainString());
             }
@@ -132,14 +132,14 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         
         if (quantityStr != null) {
-            relatedProductDTO.setQuantity(((BigDecimal) StandardExpressionProcessor.processExpression(args, quantityStr)).intValue());          
+            relatedProductDTO.setQuantity(((BigDecimal) expressionParser.parseExpression(context, quantityStr).execute(context)).intValue());
         }       
                 
         if (typeStr != null && RelatedProductTypeEnum.getInstance(typeStr) != null) {
             relatedProductDTO.setType(RelatedProductTypeEnum.getInstance(typeStr));         
         }
         
-        if ("false".equalsIgnoreCase(element.getAttributeValue("cumulativeResults"))) {
+        if ("false".equalsIgnoreCase(attributeMap.get("cumulativeResults"))) {
             relatedProductDTO.setCumulativeResults(false);          
         }
                     

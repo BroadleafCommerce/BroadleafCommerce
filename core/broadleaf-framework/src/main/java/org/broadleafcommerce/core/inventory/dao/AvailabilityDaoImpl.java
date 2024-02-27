@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.inventory.dao;
 
 import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

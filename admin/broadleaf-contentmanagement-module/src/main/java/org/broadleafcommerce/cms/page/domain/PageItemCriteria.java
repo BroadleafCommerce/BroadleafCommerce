@@ -18,7 +18,7 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * Implementations of this interface contain item rule data that is used for targeting
@@ -39,14 +39,14 @@ public interface PageItemCriteria extends QuantityBasedRule {
      *
      * @return
      */
-    @Nonnull
+    
     public Page getPage();
 
     /**
      * Sets the parent <code>Page</code>.
      * @param page
      */
-    public void setPage(@Nonnull Page page);
+    public void setPage( Page page);
 
     /**
      * Builds a copy of this item.   Used by the content management system when an
@@ -54,7 +54,7 @@ public interface PageItemCriteria extends QuantityBasedRule {
      *
      * @return a copy of this item
      */
-    @Nonnull
+    
     public PageItemCriteria cloneEntity();
     
 }

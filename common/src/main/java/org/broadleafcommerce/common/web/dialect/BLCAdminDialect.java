@@ -16,33 +16,41 @@
 
 package org.broadleafcommerce.common.web.dialect;
 
-import org.thymeleaf.dialect.AbstractDialect;
+import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.dialect.IExpressionObjectDialect;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.processor.IProcessor;
+import org.thymeleaf.spring5.dialect.SpringStandardDialect;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class BLCAdminDialect extends AbstractDialect {
+import javax.annotation.Resource;
+
+public class BLCAdminDialect extends AbstractProcessorDialect implements IExpressionObjectDialect {
+
+    @Resource(name = "blVariableExpressionObjectFactory")
+    protected IExpressionObjectFactory expressionObjectFactory;
+
 
     private Set<IProcessor> processors = new HashSet<IProcessor>();
 
-    @Override
-    public String getPrefix() {
-        return "blc_admin";
-    }
-
-    @Override
-    public boolean isLenient() {
-        return true;
-    }
-
-    @Override
-    public Set<IProcessor> getProcessors() {
-        return processors;
+    public BLCAdminDialect() {
+        super("Broadleaf Admin Dialect",
+                "blc_admin", SpringStandardDialect.PROCESSOR_PRECEDENCE);
     }
 
     public void setProcessors(Set<IProcessor> processors) {
         this.processors = processors;
     }
 
+    @Override
+    public Set<IProcessor> getProcessors(String dialectPrefix) {
+        return processors;
+    }
+
+    @Override
+    public IExpressionObjectFactory getExpressionObjectFactory() {
+        return expressionObjectFactory;
+    }
 }

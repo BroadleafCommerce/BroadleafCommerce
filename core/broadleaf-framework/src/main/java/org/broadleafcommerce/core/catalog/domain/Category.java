@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Date;
@@ -66,7 +66,7 @@ public interface Category extends Serializable {
      * 
      * @return the name
      */
-    @Nonnull
+    
     public String getName();
 
     /**
@@ -74,7 +74,7 @@ public interface Category extends Serializable {
      * 
      * @param name the new name
      */
-    public void setName(@Nonnull String name);
+    public void setName( String name);
 
     /**
      * Gets the default parent category.
@@ -234,7 +234,7 @@ public interface Category extends Serializable {
      * @deprecated This approach is inherently inefficient and should no longer be used
      */
     @Deprecated
-    @Nonnull
+    
     public Map<String,List<Long>> getChildCategoryURLMap();
 
     /**
@@ -245,7 +245,7 @@ public interface Category extends Serializable {
      * @deprecated This approach is inherently inefficient and should no longer be used
      */
     @Deprecated
-    public void setChildCategoryURLMap(@Nonnull Map<String, List<Long>> childCategoryURLMap);
+    public void setChildCategoryURLMap( Map<String, List<Long>> childCategoryURLMap);
 
     /**
      * Gets the category images.
@@ -254,7 +254,7 @@ public interface Category extends Serializable {
      * @return the category images
      */
     @Deprecated
-    @Nonnull
+    
     public Map<String, String> getCategoryImages();
 
     /**
@@ -266,7 +266,7 @@ public interface Category extends Serializable {
      */
     @Deprecated
     @Nullable
-    public String getCategoryImage(@Nonnull String imageKey);
+    public String getCategoryImage( String imageKey);
 
     /**
      * Sets the category images.
@@ -275,7 +275,7 @@ public interface Category extends Serializable {
      * @param categoryImages the category images
      */
     @Deprecated
-    public void setCategoryImages(@Nonnull Map<String, String> categoryImages);
+    public void setCategoryImages( Map<String, String> categoryImages);
 
     /**
      * Gets the category media map. The key is of arbitrary meaning
@@ -284,7 +284,7 @@ public interface Category extends Serializable {
      * 
      * @return the category Media
      */
-    @Nonnull
+    
     public Map<String, Media> getCategoryMedia() ;
 
     /**
@@ -294,7 +294,7 @@ public interface Category extends Serializable {
      * 
      * @param categoryMedia the category media
      */
-    public void setCategoryMedia(@Nonnull Map<String, Media> categoryMedia);
+    public void setCategoryMedia( Map<String, Media> categoryMedia);
 
     /**
      * Gets the long description.
@@ -317,7 +317,7 @@ public interface Category extends Serializable {
      * 
      * @return the featured products
      */
-    @Nonnull
+    
     public List<FeaturedProduct> getFeaturedProducts();
 
     /**
@@ -326,7 +326,7 @@ public interface Category extends Serializable {
      * 
      * @param featuredProducts the featured products
      */
-    public void setFeaturedProducts(@Nonnull List<FeaturedProduct> featuredProducts);
+    public void setFeaturedProducts( List<FeaturedProduct> featuredProducts);
 
     /**
      * Returns a list of cross sale products that are related to this category.
@@ -505,7 +505,7 @@ public interface Category extends Serializable {
      * @deprecated use getAllChildCategoryXrefs() instead.
      * @return the list of active and inactive child categories.
      */
-    @Nonnull
+    
     @Deprecated
     public List<Category> getAllChildCategories();
 
@@ -523,7 +523,7 @@ public interface Category extends Serializable {
      * @param childCategories the list of child categories
      */
     @Deprecated
-    public void setAllChildCategories(@Nonnull List<Category> childCategories);
+    public void setAllChildCategories( List<Category> childCategories);
 
     /**
      * Gets the child categories. If child categories has not been previously
@@ -533,7 +533,7 @@ public interface Category extends Serializable {
      * @return the list of active child categories
      */
     @Deprecated
-    @Nonnull
+    
     public List<Category> getChildCategories();
 
     /**
@@ -545,7 +545,7 @@ public interface Category extends Serializable {
      *
      * @return the list of active child category ids
      */
-    @Nonnull
+    
     public List<Long> getChildCategoryIds();
 
     /**
@@ -554,7 +554,7 @@ public interface Category extends Serializable {
      *
      * @param childCategoryIds the list of active child category ids.
      */
-    public void setChildCategoryIds(@Nonnull List<Long> childCategoryIds);
+    public void setChildCategoryIds( List<Long> childCategoryIds);
 
     /**
      * Checks for child categories.
@@ -571,7 +571,7 @@ public interface Category extends Serializable {
      * @param childCategories the list of active child categories.
      */
     @Deprecated
-    public void setChildCategories(@Nonnull List<Category> childCategories);
+    public void setChildCategories( List<Category> childCategories);
 
     public List<CategoryXref> getAllChildCategoryXrefs();
 
@@ -593,7 +593,7 @@ public interface Category extends Serializable {
      * @return the list of parent categories
      */
     @Deprecated
-    @Nonnull
+    
     public List<Category> getAllParentCategories();
 
     /**
@@ -603,7 +603,7 @@ public interface Category extends Serializable {
      * @param allParentCategories the list of parent categories
      */
     @Deprecated
-    public void setAllParentCategories(@Nonnull List<Category> allParentCategories);
+    public void setAllParentCategories( List<Category> allParentCategories);
 
     public List<CategoryProductXref> getActiveProductXrefs();
 
@@ -633,7 +633,7 @@ public interface Category extends Serializable {
      * @return the list of products associated with this category.
      */
     @Deprecated
-    @Nonnull
+    
     public List<Product> getAllProducts();
 
     /**
@@ -644,7 +644,7 @@ public interface Category extends Serializable {
      * @param allProducts the list of products to associate with this category
      */
     @Deprecated
-    public void setAllProducts(@Nonnull List<Product> allProducts);
+    public void setAllProducts( List<Product> allProducts);
 
     /**
      * Returns the tax code of this category.

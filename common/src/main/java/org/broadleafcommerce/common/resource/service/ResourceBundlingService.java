@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.common.resource.service;
 
-import org.broadleafcommerce.common.web.processor.ResourceBundleProcessor;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.core.io.Resource;
 

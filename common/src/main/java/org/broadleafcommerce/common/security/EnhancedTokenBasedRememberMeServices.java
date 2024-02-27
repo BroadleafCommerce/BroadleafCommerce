@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 /**
@@ -47,9 +48,7 @@ public class EnhancedTokenBasedRememberMeServices extends TokenBasedRememberMeSe
     @Resource(name="blCookieUtils")
     protected CookieUtils cookieUtils;
 
-    @Deprecated
-    public EnhancedTokenBasedRememberMeServices() {}
-    
+
     public EnhancedTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
         super(key, userDetailsService);
     }
@@ -134,6 +133,26 @@ public class EnhancedTokenBasedRememberMeServices extends TokenBasedRememberMeSe
             //do nothing
         }
 
+        @Override
+        public int getStatus() {
+            return 200;
+        }
+
+        @Override
+        public String getHeader(String s) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getHeaders(String s) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getHeaderNames() {
+            return null;
+        }
+
         public void setStatus(int arg0) {
             //do nothing
         }
@@ -188,6 +207,11 @@ public class EnhancedTokenBasedRememberMeServices extends TokenBasedRememberMeSe
 
         public void setContentLength(int arg0) {
             //do nothing
+        }
+
+        @Override
+        public void setContentLengthLong(long l) {
+
         }
 
         public void setContentType(String arg0) {

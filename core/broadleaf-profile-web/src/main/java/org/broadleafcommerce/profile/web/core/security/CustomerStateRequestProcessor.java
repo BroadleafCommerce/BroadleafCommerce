@@ -146,11 +146,11 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      */
     public Customer resolveAnonymousCustomer(WebRequest request) {
         Customer customer;
-        customer = (Customer) request.getAttribute(getAnonymousCustomerAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
+        customer = (Customer) request.getAttribute(getAnonymousCustomerAttributeName(), WebRequest.SCOPE_SESSION);
         if (customer == null) { 
             customer = customerService.createNewCustomer();
             customer.setAnonymous(true);
-            request.setAttribute(getAnonymousCustomerAttributeName(), customer, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(getAnonymousCustomerAttributeName(), customer, WebRequest.SCOPE_SESSION);
         }
         return customer;
     }

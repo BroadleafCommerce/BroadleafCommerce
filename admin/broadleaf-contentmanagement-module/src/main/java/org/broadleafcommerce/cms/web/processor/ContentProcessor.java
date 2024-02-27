@@ -29,13 +29,13 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IWebContext;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.spring4.context.SpringWebContext;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.IStandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import com.google.common.primitives.Ints;
 
@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -75,42 +76,29 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
     protected final Log LOG = LogFactory.getLog(getClass());
     public static final String REQUEST_DTO = "blRequestDTO";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
-    
+
+    @Resource(name = "blStructuredContentService")
     private StructuredContentService structuredContentService;
+    @Resource(name = "blStaticAssetService")
     private StaticAssetService staticAssetService;        
     
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
     public ContentProcessor() {
-        super("content");
+
+        super(TemplateMode.HTML, "blc", "content", true, null, false, 10000);
     }
-    
-    @Override
-    public int getPrecedence() {
-        return 10000;
-    }
-    
-    /**
-     * Returns a default name
-     * @param element
-     * @param valueName
-     * @return
-     */
-    private String getAttributeValue(Element element, String valueName, String defaultValue) {
-        String returnValue = element.getAttributeValue(valueName);
-        if (returnValue == null) {
-            return defaultValue;
-        } else {
-            return returnValue;
-        }
-    }   
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {        
-        String contentType = element.getAttributeValue("contentType");
-        String contentName = element.getAttributeValue("contentName");
-        String maxResultsStr = element.getAttributeValue("maxResults");
+    protected Map<String, Object> populateModelVariables(ITemplateContext context, IProcessableElementTag tag, IElementTagStructureHandler structureHandler) {
+        Map<String,Object> result = new HashMap<>();
+        Map<String, String> attributes = tag.getAttributeMap();
+
+        String contentType = attributes.get("contentType");
+        String contentName = attributes.get("contentName");
+        String maxResultsStr = attributes.get("maxResults");
+
         Integer maxResults = null;
         if (maxResultsStr != null) {
             maxResults = Ints.tryParse(maxResultsStr);
@@ -118,25 +106,25 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         if (maxResults == null) {
             maxResults = Integer.MAX_VALUE;
         }
-        
-        String contentListVar = getAttributeValue(element, "contentListVar", "contentList");
-        String contentItemVar = getAttributeValue(element, "contentItemVar", "contentItem");
-        String numResultsVar = getAttributeValue(element, "numResultsVar", "numResults");
 
-        initServices(arguments);
-                
-        IWebContext context = (IWebContext) arguments.getContext();     
-        HttpServletRequest request = context.getHttpServletRequest();   
+        String contentListVar = getAttributeValue(attributes, "contentListVar", "contentList");
+        String contentItemVar = getAttributeValue(attributes, "contentItemVar", "contentItem");
+        String numResultsVar = getAttributeValue(attributes, "numResultsVar", "numResults");
+
+        initServices();
+
+
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
-        
-        Map<String, Object> mvelParameters = buildMvelParameters(request, arguments, element);
+        HttpServletRequest request = blcContext.getRequest();
+        IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(context.getConfiguration());
+        Map<String, Object> mvelParameters = buildMvelParameters(request, attributes, expressionParser, context);
         SandBox currentSandbox = blcContext.getSandbox();
 
         List<StructuredContentDTO> contentItems;
         StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
 
         Locale locale = blcContext.getLocale();
-            
+
 
         if (structuredContentType == null) {
             contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
@@ -146,34 +134,55 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
             } else {
                 contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, maxResults, mvelParameters, isSecure(request));
             }
-        }                       
-                            
+        }
+
         if (contentItems.size() > 0) {
-            List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();          
-            
+            List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();
+
             for(StructuredContentDTO item : contentItems) {
                 contentItemFields.add(item.getValues());
             }
-            addToModel(arguments, contentItemVar, contentItemFields.get(0));
-            addToModel(arguments, contentListVar, contentItemFields);
-            addToModel(arguments, numResultsVar, contentItems.size());
+
+            result.put(contentItemVar, contentItemFields.get(0));
+            result.put(contentListVar, contentItemFields);
+            result.put( numResultsVar, contentItems.size());
         } else {
             if (LOG.isInfoEnabled()) {
                 LOG.info("**************************The contentItems is null*************************");
             }
-            addToModel(arguments, contentItemVar, null);
-            addToModel(arguments, contentListVar, null);
-            addToModel(arguments, numResultsVar, 0);
-        }       
+            result.put(contentItemVar, null);
+            result.put( contentListVar, null);
+            result.put(numResultsVar, 0);
+        }
+        return result;
     }
-    
+
+    /**
+         * Returns a default name
+         * @param element
+         * @param valueName
+         * @return
+         */
+    protected String getAttributeValue(Map<String, String> tagAttributes, String valueName, String defaultValue) {
+        String returnValue = tagAttributes.get(valueName);
+        if (returnValue == null) {
+            return defaultValue;
+        } else {
+            return returnValue;
+        }
+    }
+
     /**
      * MVEL is used to process the content targeting rules.
      *
+     * @param configuration
      * @param request
+     * @param attributes
+     * @param expressionParser
+     * @param context
      * @return
      */
-    private Map<String, Object> buildMvelParameters(HttpServletRequest request, Arguments arguments, Element element) {
+    private Map<String, Object> buildMvelParameters(HttpServletRequest request, Map<String, String> attributes, IStandardExpressionParser expressionParser, ITemplateContext context) {
         TimeZone timeZone = BroadleafRequestContext.getBroadleafRequestContext().getTimeZone();
 
         final TimeDTO timeDto;
@@ -189,10 +198,11 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         mvelParameters.put("time", timeDto);
         mvelParameters.put("request", requestDto);
 
-        String productString = element.getAttributeValue("product");
+        String productString = attributes.get("product");
 
         if (productString != null) {
-            Object product = StandardExpressionProcessor.processExpression(arguments, productString);
+
+            Object product = expressionParser.parseExpression(context, productString).execute(context);
             if (product != null) {
                 mvelParameters.put("product", product);
             }
@@ -207,16 +217,15 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         }
 
         return mvelParameters;
-    }   
-    
-    protected void initServices(Arguments arguments) {
+    }
+
+    protected void initServices() {
         if (structuredContentService == null || staticAssetService == null) {
-            final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();            
             structuredContentService = (StructuredContentService) applicationContext.getBean("blStructuredContentService");
             staticAssetService = (StaticAssetService) applicationContext.getBean("blStaticAssetService");
         }
     }
-    
+
     public boolean isSecure(HttpServletRequest request) {
         boolean secure = false;
         if (request != null) {
@@ -224,5 +233,5 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         }
         return secure;
     }
-    
+
 }

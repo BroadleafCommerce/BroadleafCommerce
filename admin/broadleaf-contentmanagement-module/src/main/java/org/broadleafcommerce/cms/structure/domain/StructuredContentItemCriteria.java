@@ -18,7 +18,7 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
-import javax.annotation.Nonnull;
+
 
 /**
  * Implementations of this interface contain item rule data that is used for targeting
@@ -39,14 +39,14 @@ public interface StructuredContentItemCriteria extends QuantityBasedRule {
      *
      * @return
      */
-    @Nonnull
+    
     public StructuredContent getStructuredContent();
 
     /**
      * Sets the parent <code>StructuredContent</code> item.
      * @param structuredContent
      */
-    public void setStructuredContent(@Nonnull StructuredContent structuredContent);
+    public void setStructuredContent( StructuredContent structuredContent);
 
     /**
      * Builds a copy of this item.   Used by the content management system when an
@@ -54,7 +54,7 @@ public interface StructuredContentItemCriteria extends QuantityBasedRule {
      *
      * @return a copy of this item
      */
-    @Nonnull
+    
     public StructuredContentItemCriteria cloneEntity();
     
 }

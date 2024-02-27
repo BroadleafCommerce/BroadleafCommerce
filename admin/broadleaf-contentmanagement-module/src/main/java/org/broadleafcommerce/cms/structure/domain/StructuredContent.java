@@ -20,7 +20,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
-import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
@@ -76,21 +76,21 @@ public interface StructuredContent extends Serializable {
      *
      * @return the name
      */
-    @Nonnull
+    
     public String getContentName();
 
     /**
      * Sets the name.
      * @param contentName
      */
-    public void setContentName(@Nonnull String contentName);
+    public void setContentName( String contentName);
 
     /**
      * Gets the {@link Locale} associated with this content item.
      *
      * @return
      */
-    @Nonnull
+    
     public Locale getLocale();
 
 
@@ -98,7 +98,7 @@ public interface StructuredContent extends Serializable {
      * Sets the locale associated with this content item.
      * @param locale
      */
-    public void setLocale(@Nonnull Locale locale);
+    public void setLocale( Locale locale);
 
     /**
      * Gets the Sandbox associated with the content item.  SandBoxes
@@ -127,14 +127,14 @@ public interface StructuredContent extends Serializable {
      *
      * @return
      */
-    @Nonnull
+    
     public StructuredContentType getStructuredContentType();
 
     /**
      * Sets the {@link StructuredContentType} associated with this content item.
      *
      */
-    public void setStructuredContentType(@Nonnull StructuredContentType structuredContentType);
+    public void setStructuredContentType( StructuredContentType structuredContentType);
 
     /**
      * Gets a map with the custom fields associated with this content item.<br>
@@ -165,7 +165,7 @@ public interface StructuredContent extends Serializable {
      *
      * @return the deleted indicator or false if none found
      */
-    @Nonnull
+    
     public Boolean getDeletedFlag();
 
     /**
@@ -174,7 +174,7 @@ public interface StructuredContent extends Serializable {
      *
      * @param deletedFlag
      */
-    public void setDeletedFlag(@Nonnull Boolean deletedFlag);
+    public void setDeletedFlag( Boolean deletedFlag);
 
     /**
      * Gets the archived indicator.   The archivedFlag indicates that the item
@@ -183,7 +183,7 @@ public interface StructuredContent extends Serializable {
      *
      * @return true if this item has been archived.   Returns false if not set.
      */
-    @Nonnull
+    
     public Boolean getArchivedFlag();
 
     /**
@@ -195,7 +195,7 @@ public interface StructuredContent extends Serializable {
      *
      * @param archivedFlag
      */
-    public void setArchivedFlag(@Nonnull Boolean archivedFlag);
+    public void setArchivedFlag( Boolean archivedFlag);
 
     /**
      * Returns the offlineFlag.   Indicates that the item should no longer appear on the site.
@@ -255,7 +255,7 @@ public interface StructuredContent extends Serializable {
      *
      * @return a copy of this item
      */
-    @Nonnull
+    
     public StructuredContent cloneEntity();
 
     /**
@@ -279,7 +279,7 @@ public interface StructuredContent extends Serializable {
      *
      * @return true if this item is locked for editing.
      */
-    @Nonnull
+    
     public Boolean getLockedFlag();
 
     /**
