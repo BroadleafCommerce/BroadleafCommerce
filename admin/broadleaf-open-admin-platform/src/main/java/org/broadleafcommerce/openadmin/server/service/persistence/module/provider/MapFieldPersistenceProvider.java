@@ -119,11 +119,11 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 Object requestedValue = extractValueRequest.getRequestedValue();
                 if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
                     try {
-                        requestedValue = extractValueRequest.getFieldManager().getFieldValue(requestedValue,
-                                extractValueRequest.getMetadata().getToOneTargetProperty());
-                    } catch (IllegalAccessException e) {
-                        throw ExceptionHelper.refineException(e);
-                    } catch (FieldNotAvailableException e) {
+                        requestedValue = extractValueRequest.getFieldManager().getFieldValue(
+                                requestedValue,
+                                extractValueRequest.getMetadata().getToOneTargetProperty()
+                        );
+                    } catch (IllegalAccessException | FieldNotAvailableException e) {
                         throw ExceptionHelper.refineException(e);
                     }
                 }
@@ -135,7 +135,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                     break checkValue;
                 }
             }
-            if (MetadataProviderResponse.NOT_HANDLED==super.extractValue(extractValueRequest, property)) {
+            if (MetadataProviderResponse.NOT_HANDLED == super.extractValue(extractValueRequest, property)) {
                 return MetadataProviderResponse.NOT_HANDLED;
             }
         }

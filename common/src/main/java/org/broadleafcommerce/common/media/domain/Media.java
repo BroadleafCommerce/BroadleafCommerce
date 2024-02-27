@@ -23,24 +23,24 @@ import java.io.Serializable;
 
 public interface Media extends Wrappable, Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getUrl();
+    String getUrl();
 
-    public void setUrl(String url);
-    
-    public String getTitle();
+    void setUrl(String url);
 
-    public void setTitle(String title);
+    String getTitle();
 
-    public String getAltText();
+    void setTitle(String title);
 
-    public void setAltText(String altText);
-    
-    public String getTags();
+    String getAltText();
 
-    public void setTags(String tags);
+    void setAltText(String altText);
+
+    String getTags();
+
+    void setTags(String tags);
 
 }

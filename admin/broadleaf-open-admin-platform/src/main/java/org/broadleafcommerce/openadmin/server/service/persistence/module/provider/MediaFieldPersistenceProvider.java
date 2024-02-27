@@ -115,7 +115,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     checkExtension:
                     {
                         if (extensionManager != null) {
-                            ExtensionResultHolder<Tuple<Media, Boolean>> result = new ExtensionResultHolder<Tuple<Media, Boolean>>();
+                            ExtensionResultHolder<Tuple<Media, Boolean>> result = new ExtensionResultHolder<>();
                             ExtensionResultStatusType statusType = extensionManager.getProxy().retrieveMedia(instance, populateValueRequest, result);
                             if (ExtensionResultStatusType.NOT_HANDLED != statusType) {
                                 Tuple<Media,Boolean> tuple = result.getResult();
@@ -193,17 +193,14 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
                 try {
                     requestedValue = extractValueRequest.getFieldManager().getFieldValue(requestedValue, extractValueRequest.getMetadata().getToOneTargetProperty());
-                } catch (IllegalAccessException e) {
-                    throw ExceptionHelper.refineException(e);
-                } catch (FieldNotAvailableException e) {
+                } catch (IllegalAccessException | FieldNotAvailableException e) {
                     throw ExceptionHelper.refineException(e);
                 }
             }
-            if (requestedValue instanceof Media) {
-                Media media = (Media) requestedValue;
+            if (requestedValue instanceof Media media) {
                 String jsonString = convertMediaToJson(media);
                 if (extensionManager != null) {
-                    ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
+                    ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<>();
                     ExtensionResultStatusType result = extensionManager.getProxy().transformId(media, resultHolder);
                     if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
                         Class<?> type;
