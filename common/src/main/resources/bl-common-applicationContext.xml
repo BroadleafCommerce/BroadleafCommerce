@@ -3,9 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
 
@@ -41,22 +43,16 @@
         </property>
     </bean>
 
-    <bean id="blVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-      <property name="velocityProperties">
-         <value>
-            resource.loader=class
-            class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-            <!-- class.resource.loader.path=classpath:/config/velocity/templates/ -->
-            <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class-->
-            <!-- jar.resource.loader.class =org.apache.velocity.runtime.resource.loader.JarResourceLoader
-            jar.resource.loader.path = jar:file:/broadleaf-profile.jar/emailTemplates
-            file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
-            file.resource.loader.cache = false
-            file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates-->
-         </value>
-      </property>
-   </bean>
-    
+    <util:properties id="velocityProperties">
+        <prop key="resource.loader">class</prop>
+        <prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
+    </util:properties>
+
+    <bean id="velocityEngine" class="org.apache.velocity.app.VelocityEngine">
+        <constructor-arg ref="velocityProperties"/>
+    </bean>
+
+
     <bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
     

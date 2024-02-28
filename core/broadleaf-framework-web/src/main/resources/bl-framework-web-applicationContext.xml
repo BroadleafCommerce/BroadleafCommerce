@@ -3,9 +3,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
-             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Scan Broadleaf defined web utility classes -->
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
@@ -31,11 +31,11 @@
         <property name="processors">
           <set>
             <ref bean="blContentProcessor"/>
-            <ref bean="blAddSortLinkProcessor" />
+<!--            <ref bean="blAddSortLinkProcessor" />-->
             <ref bean="blCategoriesProcessor" />
             <ref bean="blFormProcessor" />
-            <ref bean="blGoogleAnalyticsProcessor" />
-            <ref bean="blHeadProcessor" />
+<!--            <ref bean="blGoogleAnalyticsProcessor" />-->
+<!--            <ref bean="blHeadProcessor" />-->
             <ref bean="blNamedOrderProcessor" />
             <ref bean="blPaginationPageLinkProcessor" />
             <ref bean="blPriceTextDisplayProcessor" />
@@ -44,10 +44,10 @@
             <ref bean="blProductOptionDisplayProcessor" />
             <ref bean="blRatingsProcessor" />
             <ref bean="blRelatedProductProcessor" />
-            <ref bean="blRemoveFacetValuesLinkProcessor" />
-            <ref bean="blToggleFacetLinkProcessor" />
-            <ref bean="blUrlRewriteProcessor" />
-            <ref bean="blResourceBundleProcessor" />
+<!--            <ref bean="blRemoveFacetValuesLinkProcessor" />-->
+<!--            <ref bean="blToggleFacetLinkProcessor" />-->
+<!--            <ref bean="blUrlRewriteProcessor" />-->
+<!--            <ref bean="blResourceBundleProcessor" />-->
           </set>
         </property>     
     </bean> 
@@ -64,9 +64,10 @@
     
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
     <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
-    
+
+    <!-- or maybe construct somehow WebApplicationTemplateResolver, but it requires some application as arg constructor -->
 <!--    <bean id="blWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">-->
-    <bean id="blWebTemplateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolve">
+    <bean id="blWebTemplateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />
@@ -88,8 +89,9 @@
     
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
     <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
-    
-    <bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+
+    <!-- or maybe construct somehow WebApplicationTemplateResolver, but it requires some application as arg constructor -->
+    <bean id="blEmailTemplateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="/WEB-INF/emailTemplates/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />
@@ -135,7 +137,7 @@
         </property>
     </bean> 
     
-    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring5.SpringTemplateEngine">
         <property name="templateResolvers">
             <set>
                 <ref bean="blEmailTemplateResolver" />

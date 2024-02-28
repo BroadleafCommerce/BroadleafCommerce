@@ -4,10 +4,10 @@
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -37,7 +37,7 @@
         </property>
     </bean>
     
-    <bean id="hibernateExporter" class="org.springframework.jmx.export.MBeanExporter" depends-on="entityManagerFactory">
+<!--    <bean id="hibernateExporter" class="org.springframework.jmx.export.MBeanExporter" depends-on="entityManagerFactory">
         <property name="autodetect" value="false" />
         <property name="assembler">
             <bean id="jmxAssembler"
@@ -74,7 +74,7 @@
                 </entry>
             </map>
         </property>
-    </bean>
+    </bean>-->
 
     <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
