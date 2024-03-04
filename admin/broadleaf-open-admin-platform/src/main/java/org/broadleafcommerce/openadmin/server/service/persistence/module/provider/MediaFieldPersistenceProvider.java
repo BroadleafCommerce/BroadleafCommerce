@@ -371,7 +371,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(parent)) {
             try {
-                populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+                parent = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(parent);
             } catch (Exception e) {
                 throw new ParentEntityPersistenceException("Unable to Persist the parent entity during rule builder field population", e);
             }
