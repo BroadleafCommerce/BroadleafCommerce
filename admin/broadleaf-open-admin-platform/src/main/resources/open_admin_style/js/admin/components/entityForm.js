@@ -993,4 +993,24 @@ $(document).ready(function() {
     function alignListgridColumns() {
         $(window).resize();
     }
+
+    window.addEventListener("resize", (event) => {
+        var $sc = $('.sticky-container');
+        $sc.outerWidth($('.main-content').outerWidth());
+    });
+
+    /** * Create a MutationObserver to watch over style changes on the content title bar * @type {MutationObserver} */
+    var observer = new MutationObserver(function (mutations) {
+        var $titleBar = $(".content-area-title-bar.entity-form-actions");
+        var latestState = mutations[mutations.length - 1];
+        var newTitleBarHeight;
+        if (latestState && latestState.target) {
+            newTitleBarHeight = latestState.target.style.height;
+        }
+        // progressive button margin
+        $titleBar.children("button").css("margin-top", 8 + ((parseInt(newTitleBarHeight) - 50) / 30) * 12 + "px");
+    });
+    if(document.getElementById('content-title-bar')) {
+        observer.observe(document.getElementById('content-title-bar'), {attributes: true, attributeFilter: ['style']});
+    }
 });
