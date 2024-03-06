@@ -311,36 +311,26 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
         //Order media field, map field and rule builder fields last, as they will have some validation components that depend on previous values
         Property[] sortedProperties = entity.getProperties();
-        Arrays.sort(sortedProperties, new Comparator<Property>() {
-
-            @Override
-            public int compare(Property o1, Property o2) {
-                BasicFieldMetadata mo1 = (BasicFieldMetadata) mergedProperties.get(o1.getName());
-                BasicFieldMetadata mo2 = (BasicFieldMetadata) mergedProperties.get(o2.getName());
-                boolean isLate1 = mo1 != null && mo1.getFieldType() != null && mo1.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo1.getFieldType() ||
-                        SupportedFieldType.RULE_WITH_QUANTITY==mo1.getFieldType() ||
-                        SupportedFieldType.RULE_SIMPLE_TIME==mo1.getFieldType() ||
-                        SupportedFieldType.MEDIA==mo1.getFieldType() || o1.getName().contains(FieldManager.MAPFIELDSEPARATOR));
-                boolean isLate2 = mo2 != null && mo2.getFieldType() != null && mo2.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo2.getFieldType() ||
-                        SupportedFieldType.RULE_WITH_QUANTITY==mo2.getFieldType() ||
-                        SupportedFieldType.RULE_SIMPLE_TIME==mo2.getFieldType() ||
-                        SupportedFieldType.MEDIA==mo2.getFieldType() || o2.getName().contains(FieldManager.MAPFIELDSEPARATOR));
-                if (isLate1 && !isLate2) {
-                    return 1;
-                } else if (!isLate1 && isLate2) {
-                    return -1;
-                }
-                return 0;
-            }
-        });
         Arrays.sort(sortedProperties, (o1, o2) -> {
-            if (o1.getName().contains(".") && !o2.getName().contains(".")) {
+            String o1Name = o1.getName();
+            String o2Name = o2.getName();
+            BasicFieldMetadata mo1 = (BasicFieldMetadata) mergedProperties.get(o1Name);
+            BasicFieldMetadata mo2 = (BasicFieldMetadata) mergedProperties.get(o2Name);
+            boolean isLate1 = this.isLate(mo1, o1Name);
+            boolean isLate2 = this.isLate(mo2, o2Name);
+            if (isLate1 && !isLate2) {
                 return 1;
-            } else if (o2.getName().contains(".") && !o1.getName().contains(".")) {
+            } else if (!isLate1 && isLate2) {
+                return -1;
+            }
+            if (o1Name.contains(".") && !o2Name.contains(".")) {
+                return 1;
+            } else if (o2Name.contains(".") && !o1Name.contains(".")) {
                 return -1;
             }
             return 0;
         });
+
         Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
         FlushMode originalFlushMode = session.getHibernateFlushMode();
         try {
@@ -469,14 +459,26 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             } else {
                 fieldManager.persistMiddleEntities();
             }
-        } catch (IllegalAccessException e) {
-            throw new PersistenceException(e);
-        } catch (InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             throw new PersistenceException(e);
         } finally {
             session.setHibernateFlushMode(originalFlushMode);
         }
         return instance;
+    }
+
+    protected boolean isLate(BasicFieldMetadata metadata, String name) {
+        List<SupportedFieldType> availableType = Arrays.asList(
+                SupportedFieldType.RULE_SIMPLE,
+                SupportedFieldType.RULE_WITH_QUANTITY,
+                SupportedFieldType.RULE_SIMPLE_TIME,
+                SupportedFieldType.MEDIA
+        );
+        boolean result = false;
+        if (metadata != null && metadata.getFieldType() != null && metadata.getName() != null) {
+            result = availableType.contains(metadata.getFieldType()) || name.contains(FieldManager.MAPFIELDSEPARATOR);
+        }
+        return result;
     }
 
     protected boolean attemptToPopulateValue(Property property, FieldManager fieldManager, Serializable instance,
