@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
-import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl;
 import org.springframework.stereotype.Repository;
@@ -53,11 +52,6 @@ public class OrderPaymentDaoImpl implements OrderPaymentDao {
     }
 
     @Override
-    public PaymentLog save(PaymentLog log) {
-        return em.merge(log);
-    }
-
-    @Override
     public OrderPayment readPaymentById(Long paymentId) {
         return em.find(OrderPaymentImpl.class, paymentId);
     }
@@ -83,11 +77,6 @@ public class OrderPaymentDaoImpl implements OrderPaymentDao {
     @Override
     public PaymentTransaction readTransactionById(Long transactionId) {
         return em.find(PaymentTransactionImpl.class, transactionId);
-    }
-
-    @Override
-    public PaymentLog createLog() {
-        return entityConfiguration.createEntityInstance(PaymentLog.class.getName(), PaymentLog.class);
     }
 
     @Override

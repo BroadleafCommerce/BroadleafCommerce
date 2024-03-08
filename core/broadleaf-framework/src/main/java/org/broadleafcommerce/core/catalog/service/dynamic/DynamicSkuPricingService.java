@@ -52,12 +52,7 @@ public interface DynamicSkuPricingService {
      */
     @Nonnull
     @SuppressWarnings("rawtypes")
-    public DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations);
-
-    @Nonnull
-    @SuppressWarnings("rawtypes")
-    @Deprecated
-    public DynamicSkuPrices getSkuPrices(Sku sku, HashMap skuPricingConsiderations);
+    DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations);
 
     /**
      * Used for t
@@ -67,7 +62,7 @@ public interface DynamicSkuPricingService {
      * @return
      */
     @SuppressWarnings("rawtypes")
-    public DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem sku, HashMap skuPricingConsiderations);
+    DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem sku, HashMap skuPricingConsiderations);
 
     /**
      * Execute dynamic pricing on the price of a product option value. 
@@ -77,7 +72,7 @@ public interface DynamicSkuPricingService {
      * @return
      */
     @SuppressWarnings("rawtypes")
-    public DynamicSkuPrices getPriceAdjustment(ProductOptionValueImpl productOptionValueImpl, Money priceAdjustment,
-            HashMap skuPricingConsiderationContext);
+    DynamicSkuPrices getPriceAdjustment(ProductOptionValueImpl productOptionValueImpl, Money priceAdjustment,
+                                        HashMap skuPricingConsiderationContext);
 
 }

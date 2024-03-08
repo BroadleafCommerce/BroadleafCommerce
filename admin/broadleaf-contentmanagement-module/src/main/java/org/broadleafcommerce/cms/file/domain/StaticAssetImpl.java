@@ -240,8 +240,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
             mapKeyOptionEntityClass = LocaleImpl.class,
             mapKeyOptionEntityDisplayField = "friendlyName",
             mapKeyOptionEntityValueField = "localeCode")
-    protected Map<String, StaticAssetDescription> contentMessageValues =
-            new HashMap<String, StaticAssetDescription>();
+    protected Map<String, StaticAssetDescription> contentMessageValues = new HashMap<>();
 
     @Column(name = "STORAGE_TYPE")
     @AdminPresentation(excluded = true)

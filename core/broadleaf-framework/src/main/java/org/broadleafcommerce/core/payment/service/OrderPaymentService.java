@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.payment.service;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
@@ -28,30 +27,26 @@ import java.util.List;
 
 public interface OrderPaymentService {
 
-    public OrderPayment save(OrderPayment payment);
+    OrderPayment save(OrderPayment payment);
 
-    public PaymentTransaction save(PaymentTransaction transaction);
+    PaymentTransaction save(PaymentTransaction transaction);
 
-    public PaymentLog save(PaymentLog log);
+    OrderPayment readPaymentById(Long paymentId);
 
-    public OrderPayment readPaymentById(Long paymentId);
+    List<OrderPayment> readPaymentsForOrder(Order order);
 
-    public List<OrderPayment> readPaymentsForOrder(Order order);
-
-    public OrderPayment create();
+    OrderPayment create();
 
     /**
      * Deletes a payment from the system. Note that this is just a soft-delete and simply archives this entity
      * 
      * @see {@link OrderPayment#getArchived()}
      */
-    public void delete(OrderPayment payment);
+    void delete(OrderPayment payment);
 
-    public PaymentTransaction createTransaction();
+    PaymentTransaction createTransaction();
 
-    public PaymentTransaction readTransactionById(Long transactionId);
-
-    public PaymentLog createLog();
+    PaymentTransaction readTransactionById(Long transactionId);
 
     /**
      * <p>
@@ -69,7 +64,7 @@ public interface OrderPaymentService {
      * @param amount
      * @return
      */
-    public OrderPayment createOrderPaymentFromCustomerPayment(Order order, CustomerPayment customerPayment, Money amount);
+    OrderPayment createOrderPaymentFromCustomerPayment(Order order, CustomerPayment customerPayment, Money amount);
 
     /**
      * <p>
@@ -86,7 +81,7 @@ public interface OrderPaymentService {
      * @param transaction
      * @return
      */
-    public CustomerPayment createCustomerPaymentFromPaymentTransaction(PaymentTransaction transaction);
+    CustomerPayment createCustomerPaymentFromPaymentTransaction(PaymentTransaction transaction);
 
     /**
      * <p>
@@ -101,6 +96,6 @@ public interface OrderPaymentService {
      * @param transaction
      * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity}
      */
-    public void populateCustomerPaymentToken(CustomerPayment customerPayment, PaymentTransaction transaction);
+    void populateCustomerPaymentToken(CustomerPayment customerPayment, PaymentTransaction transaction);
 
 }

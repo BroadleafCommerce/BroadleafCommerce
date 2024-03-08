@@ -161,7 +161,7 @@ public interface ProductOption extends Serializable, MultiTenantCloneable<Produc
      * @deprecated use getProductXrefs instead
      * @return the Products associated with this ProductOption
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public List<Product> getProducts();
 
     /**
@@ -170,7 +170,7 @@ public interface ProductOption extends Serializable, MultiTenantCloneable<Produc
      * @deprecated use setProductXrefs instead
      * @param products
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void setProducts(List<Product> products);
 
     public List<ProductOptionXref> getProductXrefs();
