@@ -81,7 +81,7 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
             try {
                 exploitProtectionService = this.initExploitProtectionService();
             } catch (Exception e) {
-                LOG.error(String.format("Cannot initialize exploitProtectionService, error: %s", e.getMessage()));
+                LOG.error("ExploitProtectionService is missing and failed to initialize on fly so results of RegexPropertyValidator can be not accurate, please use bean name blRegexPropertyValidator in your AdminPresentation configuration instead of class name for validator implementation");
                 return new PropertyValidationResult(
                         value.matches(expression),
                         validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE)
@@ -106,7 +106,7 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
         ApplicationContext applicationContext = ApplicationContextHolder.getApplicationContext();
 
         if (applicationContext == null) {
-            throw new ServiceException("ApplicationContext is not present in ApplicationContextHolder");
+            throw new ServiceException("Can't access application context to initialize blExploitProtectionService bean");
         }
 
         ExploitProtectionService blExploitProtectionService = applicationContext.getBean(
@@ -114,7 +114,7 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
         );
 
         if (blExploitProtectionService == null) {
-            throw new ServiceException("ApplicationContext Bean is missing blExploitProtectionService");
+            throw new ServiceException("Bean blExploitProtectionService is missing in spring application context");
         }
         return blExploitProtectionService;
     }
