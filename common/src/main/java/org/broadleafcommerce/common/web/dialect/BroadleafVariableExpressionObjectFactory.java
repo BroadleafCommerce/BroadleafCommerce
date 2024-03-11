@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 
 public class BroadleafVariableExpressionObjectFactory implements IExpressionObjectFactory {
 
-    @Resource
+    @Resource(name = "blVariableExpressions")
     protected List<BroadleafVariableExpression> expressions = new ArrayList<>();
 
     @Override

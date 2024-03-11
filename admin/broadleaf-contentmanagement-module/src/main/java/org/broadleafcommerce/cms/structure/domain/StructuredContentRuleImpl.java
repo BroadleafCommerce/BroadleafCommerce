@@ -56,7 +56,7 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
     protected Long id;
     
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
     protected String matchRule;
 

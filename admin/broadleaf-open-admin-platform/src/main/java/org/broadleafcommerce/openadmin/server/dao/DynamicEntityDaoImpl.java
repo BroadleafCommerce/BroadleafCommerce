@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
@@ -76,6 +77,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.EntityType;
 
 /**
  * 
@@ -113,8 +115,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     @Resource(name="blAppConfigurationRemoteService")
     protected AppConfigurationService appConfigurationRemoteService;
 
-    @Resource(name="blDynamicDaoHelperImpl")
-    protected DynamicDaoHelper dynamicDaoHelper;
+    protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
@@ -222,9 +223,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
             }
             if (cache == null) {
                 List<Class<?>> entities = new ArrayList<Class<?>>();
-                for (Object item : getSessionFactory().getAllClassMetadata().values()) {
-                    ClassMetadata metadata = (ClassMetadata) item;
-                    Class<?> mappedClass = metadata.getMappedClass();
+                for (EntityType<?> item : getSessionFactory().getMetamodel().getEntities()) {
+                    Class<?> mappedClass = item.getJavaType();
                     if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
                         entities.add(mappedClass);
                     }

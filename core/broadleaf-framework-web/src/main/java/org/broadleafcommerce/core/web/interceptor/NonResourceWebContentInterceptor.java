@@ -44,9 +44,6 @@ public class NonResourceWebContentInterceptor extends WebContentInterceptor {
         if (BroadleafResourceHttpRequestHandler.class.isAssignableFrom(handler.getClass())) {
             // Bundle resources are cached for ten years
             BroadleafResourceHttpRequestHandler h = (BroadleafResourceHttpRequestHandler) handler;
-            if (h.isBundleRequest(request)) {
-                applyCacheSeconds(response, TEN_YEARS_SECONDS);
-            }
             return true;
         } else if (ResourceHttpRequestHandler.class.isAssignableFrom(handler.getClass())) {
             // Non-bundle resources will not specify cache parameters - we will rely on the server responding

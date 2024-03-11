@@ -55,7 +55,7 @@
     <bean id="blAdminWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/admin/" />
         <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />
+        <property name="templateMode" value="HTML" />
         <property name="cacheable" value="${cache.page.templates}"/>
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
         <property name="characterEncoding" value="UTF-8" />
@@ -65,7 +65,7 @@
     <bean id="blAdminWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
         <property name="prefix" value="open_admin_style/templates/" />
         <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />        
+        <property name="templateMode" value="HTML" />
         <property name="characterEncoding" value="UTF-8" />
         <property name="cacheable" value="${cache.page.templates}"/>
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />

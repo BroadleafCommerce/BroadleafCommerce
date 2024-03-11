@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.file.dao;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.hibernate.Session;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,7 +58,7 @@ public class StaticAssetStorageDaoImpl implements StaticAssetStorageDao {
         Long size = uploadedFile.getSize();
         InputStream inputStream = uploadedFile.getInputStream();
         //We'll work with Blob instances and streams so that the uploaded files are never read into memory
-        return ((HibernateEntityManager) em).getSession().getLobHelper().createBlob(inputStream, size);
+        return em.unwrap(Session.class).getSession().getLobHelper().createBlob(inputStream, size);
     }
 
     @Override

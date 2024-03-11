@@ -70,7 +70,7 @@
     <bean id="blWebTemplateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/" />
         <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />
+        <property name="templateMode" value="HTML" />
         <property name="characterEncoding" value="UTF-8" />
         <property name="cacheable" value="${cache.page.templates}"/>
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
@@ -80,7 +80,7 @@
     <bean id="blWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
         <property name="prefix" value="webTemplates/" />
         <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />        
+        <property name="templateMode" value="HTML" />
         <property name="characterEncoding" value="UTF-8" />
         <property name="cacheable" value="${cache.page.templates}"/>
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
@@ -94,7 +94,7 @@
     <bean id="blEmailTemplateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="/WEB-INF/emailTemplates/" />
         <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />
+        <property name="templateMode" value="HTML" />
         <property name="characterEncoding" value="UTF-8" />
         <property name="cacheable" value="${cache.page.templates}"/>
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
@@ -104,7 +104,7 @@
     <bean id="blEmailClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
         <property name="prefix" value="emailTemplates/" />
         <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />
+        <property name="templateMode" value="HTML" />
         <property name="cacheable" value="${cache.page.templates}"/>
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
         <property name="characterEncoding" value="UTF-8" />

@@ -76,7 +76,7 @@ public class PageFieldImpl implements PageField {
 
     @Column(name = "LOB_VALUE", length = Integer.MAX_VALUE-1)
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     protected String lobValue;
 
     @Override

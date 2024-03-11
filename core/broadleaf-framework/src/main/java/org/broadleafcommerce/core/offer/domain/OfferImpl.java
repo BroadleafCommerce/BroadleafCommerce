@@ -195,14 +195,14 @@ public class OfferImpl implements Offer, Status {
     @Column(name = "APPLIES_TO_RULES", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(excluded = true)
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @Deprecated
     protected String appliesToOrderRules;
 
     @Column(name = "APPLIES_WHEN_RULES", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(excluded = true)
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @Deprecated
     protected String appliesToCustomerRules;
 

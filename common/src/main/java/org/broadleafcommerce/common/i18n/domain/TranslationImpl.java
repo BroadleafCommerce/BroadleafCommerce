@@ -74,7 +74,7 @@ public class TranslationImpl implements Serializable, Translation {
 
     @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     protected String translatedValue;
 
     /* ************************ */

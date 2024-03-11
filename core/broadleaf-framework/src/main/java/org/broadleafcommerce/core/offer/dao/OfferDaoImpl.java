@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
@@ -155,7 +156,7 @@ public class OfferDaoImpl implements OfferDao {
     @Override
     public List<Offer> readOffersByAutomaticDeliveryType() {
         //TODO change this to a JPA criteria
-        Criteria criteria = ((HibernateEntityManager) em).getSession().createCriteria(OfferImpl.class);
+        Criteria criteria = em.unwrap(Session.class).getSession().createCriteria(OfferImpl.class);
 
         Date myDate = SystemTime.asDate();
         myDate = getDateFactoringInDateResolution(myDate);

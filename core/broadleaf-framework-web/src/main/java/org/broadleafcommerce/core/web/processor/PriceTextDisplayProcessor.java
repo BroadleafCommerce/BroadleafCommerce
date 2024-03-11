@@ -49,26 +49,7 @@ public class PriceTextDisplayProcessor extends AbstractAttributeTagProcessor {
 
     @Override
     protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName, String attributeValue, IElementTagStructureHandler structureHandler) {
-        Money price;
-        String result;
-        Map<String, String> attributes = tag.getAttributeMap();
-        try {
-            price = (Money) StandardExpressions.getExpressionParser(context.getConfiguration()).parseExpression(context, attributes.get(attributeName)).execute(context);
-        } catch (ClassCastException e) {
-            Number value = (Number) StandardExpressions.getExpressionParser(context.getConfiguration()).parseExpression(context, attributes.get(attributeName)).execute(context);
-            price = new Money(value.doubleValue());
-        }
-
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc.getJavaLocale() != null) {
-            NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
-            format.setCurrency(price.getCurrency());
-            result = format.format(price.getAmount());
-        } else {
-            // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
-            result = "$ " + price.getAmount().toString();
-        }
-        structureHandler.setBody(result, false);
+//        super.doProcess(context, tag, attributeName, attributeValue, structureHandler);
 
     }
 

@@ -207,7 +207,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     protected String displayTemplate;
 
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 3000,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,

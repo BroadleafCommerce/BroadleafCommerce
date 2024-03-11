@@ -324,17 +324,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>net.sf.jsr107cache</groupId>
-            <artifactId>jsr107cache</artifactId>
-        </dependency>
-
-        <!--
                 <dependency>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-ehcache</artifactId>
                 </dependency>
-        -->
         <dependency>
             <groupId>com.yahoo.platform.yui</groupId>
             <artifactId>yuicompressor</artifactId>

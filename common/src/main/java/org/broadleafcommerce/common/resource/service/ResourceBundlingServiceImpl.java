@@ -186,18 +186,6 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         
         for (String file : files) {
             boolean match = false;
-            
-            // Check to see if there is any registered handler that understands how to generate
-            // this file.
-    		if (handler.getHandlers() != null) {
-                for (AbstractGeneratedResourceHandler h : handler.getHandlers()) {
-                    if (h.canHandle(file)) {
-        				foundResources.put(file, h.getResource(file, handler.getLocations()));
-        				match = true;
-        				break;
-                    }
-                }
-    		}
     		
     		// If we didn't find a generator that could handle this file, let's see if we can 
     		// look it up from our known locations

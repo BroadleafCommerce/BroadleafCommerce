@@ -329,6 +329,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-ehcache</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
 
             <!-- Commons Libraries -->
             <dependency>
@@ -1059,15 +1064,15 @@
                 <version>1.4.5</version>
                 <scope>compile</scope>
             </dependency>
-<!--            <dependency>
+            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-annotation-processor</artifactId>
-                <version>4.1.0.Final</version>
-            </dependency>-->
+                <version>5.1.0.Final</version>
+            </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
-                <version>1.0.0.GA</version>
+                <version>1.1.0.FINAL</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

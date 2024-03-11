@@ -12,8 +12,8 @@
     </context:component-scan>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
-        <property name="xsrfProtectionEnabled" value="true" />
-        <property name="xssProtectionEnabled" value="true" />
+        <property name="xsrfProtectionEnabled" value="false" />
+        <property name="xssProtectionEnabled" value="false" />
     </bean>
     
     <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
