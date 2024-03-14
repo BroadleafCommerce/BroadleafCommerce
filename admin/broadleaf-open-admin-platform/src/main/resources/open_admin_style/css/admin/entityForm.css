@@ -326,6 +326,12 @@ button:disabled:hover, button.disabled:hover {
  ADMIN HEADER FLASH RELATED STYLES
 ****************************************/
 #headerFlashAlertBoxContainer {
+    float: right;
+    padding-right: 10px;
+    font-size: 12px;
+    color: #DE3A2E;
+}
+#headerFlashAlertErrorBoxContainer {
     float: none;
     padding-right: 10px;
     font-size: 12px;

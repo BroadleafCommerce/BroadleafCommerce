@@ -128,11 +128,11 @@
                 $headerFlashAlertBoxContainer.find('.alert-box-message').text(alertMessage);
             } else {
                 var $modalFooter = BLCAdmin.currentModal().find('.modal-footer');
-                var headerFlashAlertBoxContainer = '<div id="headerFlashAlertBoxContainer"><div id="headerFlashAlertBox" class="alert-box">' +
+                var headerFlashAlertBoxContainer = '<div id="headerFlashAlertErrorBoxContainer"><div id="headerFlashAlertBox" class="alert-box">' +
                     '<span class="alert-box-message"></span></div></div>';
                 $modalFooter.append(headerFlashAlertBoxContainer);
 
-                var $headerFlashAlertBoxContainer = $modalFooter.find('#headerFlashAlertBoxContainer');
+                var $headerFlashAlertBoxContainer = $modalFooter.find('#headerFlashAlertErrorBoxContainer');
                 $headerFlashAlertBoxContainer.find('.alert-box').removeClass('success').addClass('alert');
                 $headerFlashAlertBoxContainer.find('.alert-box-message').text(alertMessage);
             }
