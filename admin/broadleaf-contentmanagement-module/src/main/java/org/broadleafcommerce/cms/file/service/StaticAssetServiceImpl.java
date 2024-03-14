@@ -22,6 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tika.Tika;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
@@ -192,18 +195,24 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     private static String getFileExtension(MultipartFile file) {
         String tikaExtension = null;
+        String name = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
         try {
             final Tika tika = new Tika();
             final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
-            final String detectedType;
-            detectedType = tika.detect(file.getOriginalFilename());
-            if (detectedType != null && !detectedType.isEmpty()) {
-                final MimeType mimeType = allTypes.forName(detectedType);
-                tikaExtension = mimeType.getExtension().replace(".", "").toLowerCase();
+            Metadata metadata = new Metadata();
+            //let's try to detect type from the data and not just file extension
+            MediaType tikaType = tika.getDetector().detect(TikaInputStream.get(file.getBytes(), metadata), metadata);
+            if(tikaType!=null) {
+                String detectedType = tikaType.toString();
+                if (detectedType != null && !detectedType.isEmpty()) {
+                    final MimeType mimeType = allTypes.forName(detectedType);
+                    tikaExtension = mimeType.getExtension().replace(".", "").toLowerCase();
+                }
             }
-        } catch (MimeTypeException ignored) {
+        } catch (MimeTypeException | IOException ignored) {
         }
-        return (tikaExtension != null && !tikaExtension.isEmpty()) ? tikaExtension : FilenameUtils.getExtension(file.getOriginalFilename());
+        //in case something is wrong fallback to simply take extension from the file name
+        return (tikaExtension != null && !tikaExtension.isEmpty()) ? tikaExtension : FilenameUtils.getExtension(name);
     }
 
     public void validateFileExtension(MultipartFile file) throws IOException {
