@@ -30,6 +30,17 @@
             if ($stickyContainer.length) {
                 originalStickyBarOffset = $stickyContainer.offset().top;
                 originalStickyBarHeight = $stickyContainer.height();
+                if (originalStickyBarOffset < 0) {
+                    originalStickyBarOffset = 0;
+                    var $sandboxBar = $('.sandbox-bar');
+                    if ($sandboxBar !== undefined) {
+                        originalStickyBarOffset = originalStickyBarOffset + $sandboxBar.height();
+                    }
+                    var $siteBar = $('.site-bar');
+                    if ($siteBar !== undefined) {
+                        originalStickyBarOffset = originalStickyBarOffset + $siteBar.height();
+                    }
+                }
             }
 
             if ($('form.entity-form').length && !$('.oms').length) {
