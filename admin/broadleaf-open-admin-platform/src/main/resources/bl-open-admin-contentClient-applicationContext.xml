@@ -16,8 +16,8 @@
         <property name="xssProtectionEnabled" value="false" />
     </bean>
     
-    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
-    <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
+    <bean id="blPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <bean id="blAdminPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">

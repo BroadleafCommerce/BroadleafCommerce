@@ -30,7 +30,7 @@
     <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
         <property name="processors">
           <set>
-            <ref bean="blContentProcessor"/>
+<!--            <ref bean="blContentProcessor"/>-->
 <!--            <ref bean="blAddSortLinkProcessor" />-->
             <ref bean="blCategoriesProcessor" />
             <ref bean="blFormProcessor" />
@@ -74,8 +74,8 @@
         <property name="characterEncoding" value="UTF-8" />
         <property name="cacheable" value="${cache.page.templates}"/>
         <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
-        <property name="order" value="200"/>         
-    </bean>  
+        <property name="order" value="200"/>
+    </bean>
     
     <bean id="blWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
         <property name="prefix" value="webTemplates/" />
@@ -114,7 +114,7 @@
     
     <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
     
-    <bean id="blWebTemplateEngine" class="org.thymeleaf.spring5.SpringTemplateEngine">
+    <bean id="blWebTemplateEngine" class="org.thymeleaf.spring5.SpringTemplateEngine" primary="true">
         <property name="messageResolvers">
             <set>
                 <ref bean="blMessageResolver" />
