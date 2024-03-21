@@ -81,7 +81,7 @@ public class FormProcessor extends AbstractElementModelProcessor {
                     csrfAttributes.put("name", eps.getCsrfTokenParameter());
                     csrfAttributes.put("value", csrfToken);
                     IStandaloneElementTag standaloneTag = context.getModelFactory().createStandaloneElementTag("input", csrfAttributes, AttributeValueQuotes.DOUBLE , false, true);
-                    model.add(standaloneTag);
+                    mdl.add(standaloneTag);
                 }
 
             } catch (ServiceException e) {
