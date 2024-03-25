@@ -158,6 +158,11 @@ public class PhraseTranslator {
         boolean isFieldComparison = false;
         if (value.startsWith("\"") && value.endsWith("\"")) {
             value = value.substring(1, value.length()-1);
+            //in case string was wrapped in quotes(""), any internal quotes will be escaped with additional \
+            //let's restore original by removing extra \\\
+            if (value.contains("\"")) {
+                value = value.replace("\\\"", "\"");
+            }
         } else if (value.startsWith(entityKey + ".")){
             isFieldComparison = true;
             value = value.substring(entityKey.length() + 1, value.length());
