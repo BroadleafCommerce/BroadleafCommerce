@@ -65,6 +65,9 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, 
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        if (className == null) {
+            return null;
+        }
         String convertedClassName = className.replace('/', '.');
         
         if (xformTemplates.containsKey(convertedClassName)) {
