@@ -19,12 +19,15 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -74,6 +77,18 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
             return new PropertyValidationResult(succeedForNullValues, validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE));
         }
 
+        if (exploitProtectionService == null) {
+            try {
+                exploitProtectionService = this.initExploitProtectionService();
+            } catch (Exception e) {
+                LOG.error("ExploitProtectionService is missing and failed to initialize on fly so results of RegexPropertyValidator can be not accurate, please use bean name blRegexPropertyValidator in your AdminPresentation configuration instead of class name for validator implementation");
+                return new PropertyValidationResult(
+                        value.matches(expression),
+                        validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE)
+                );
+            }
+        }
+
         try {
             return new PropertyValidationResult(
                     this.exploitProtectionService.htmlDecode(value).matches(expression),
@@ -85,6 +100,23 @@ public class RegexPropertyValidator extends ValidationConfigurationBasedProperty
             LOG.error(message, e);
             return new PropertyValidationResult(!succeedForInvalidRegex, "Invalid regular expression pattern for " + propertyName);
         }
+    }
+
+    protected ExploitProtectionService initExploitProtectionService() throws ServiceException {
+        ApplicationContext applicationContext = ApplicationContextHolder.getApplicationContext();
+
+        if (applicationContext == null) {
+            throw new ServiceException("Can't access application context to initialize blExploitProtectionService bean");
+        }
+
+        ExploitProtectionService blExploitProtectionService = applicationContext.getBean(
+                "blExploitProtectionService", ExploitProtectionService.class
+        );
+
+        if (blExploitProtectionService == null) {
+            throw new ServiceException("Bean blExploitProtectionService is missing in spring application context");
+        }
+        return blExploitProtectionService;
     }
 
     public boolean isSucceedForNullValues() {

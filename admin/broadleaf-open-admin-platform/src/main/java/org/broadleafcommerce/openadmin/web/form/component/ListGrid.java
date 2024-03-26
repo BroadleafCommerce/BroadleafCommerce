@@ -47,6 +47,7 @@ public class ListGrid {
     protected String idProperty;
     protected int order;
     protected boolean isSortable;
+    protected boolean htmlEscapeMainEntityLink = false;
 
     protected boolean hideFriendlyName;
 
@@ -804,6 +805,14 @@ public class ListGrid {
 
     public String getCssClassNames() {
         return StringUtils.join(this.cssClasses, " ");
+    }
+
+    public boolean isHtmlEscapeMainEntityLink() {
+        return htmlEscapeMainEntityLink;
+    }
+
+    public void setHtmlEscapeMainEntityLink(boolean htmlEscapeMainEntityLink) {
+        this.htmlEscapeMainEntityLink = htmlEscapeMainEntityLink;
     }
 
     public String getFirstSearchableFieldFriendlyName() {

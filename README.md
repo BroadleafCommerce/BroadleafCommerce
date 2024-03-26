@@ -1,25 +1,21 @@
-## Introduction
+## Broadleaf Commerce Community Edition (CE)
 
-BroadleafCommerce is an e-commerce framework written entirely in Java and leveraging the Spring framework. It is targeted at facilitating the development of enterprise-class, commerce-driven sites by providing a robust data model, services and specialized tooling that take care of most of the "heavy lifting" work. To accomplish this goal, we have developed our platform based on the key feature sets required by world-class online retailers - and we're committed to continually expanding our feature offering. We've also taken extra steps to guarantee interoperability with today's enterprise by utilizing standards wherever possible and incorporating best-of-breed, open-source software libraries.
-
-See overview and features of Broadleaf at [www.broadleafcommerce.com](http://broadleafcommerce.com) 
+Broadleaf Commerce CE is an e-commerce framework written entirely in Java and leveraging the Spring framework. It is targeted at facilitating the development of enterprise-class, commerce-driven sites by providing a robust data model, services and specialized tooling that take care of most of the "heavy lifting" work. To accomplish this goal, we have developed the core platform based on the key feature sets required by world-class online retailers. We've also taken extra steps to guarantee interoperability with today's enterprise by utilizing standards wherever possible and incorporating best-of-breed, open-source software libraries. Broadleaf CE and EE are architected as a traditional unified codebase that share a core dependency across a `site` and `admin` deployment. If you are looking for a microservices based architecture, check out our [Microservices Edition](https://developer.broadleafcommerce.com/)
 
 ## Editions
 
-Broadleaf has a number of editions available commercially including a Marketplace Edition, B2B Edition, B2C Edition, and Multi-Teant Edition.   Each of these are described on the [Editions Page](https://www.broadleafcommerce.com/editions) of the Broadleaf website.
+There are three editions of Broadleaf:
+- Broadleaf Commerce Community Edition (CE) - open source under a dual licence format with both fair use and commercial restrictions. See dual license below for more details.
+- Broadleaf Commerce Enterprise Edition (EE) - source available under a commercial license. Built on top of Broadleaf's open core platform, this edition includes additional features and support for B2C, B2B, Multi-Tenant, and Marketplace use cases.
+- Broadleaf Commerce Microservices Edition - source available under a commercial license. This next generation platform provides a [microservice enablement framework](https://developer.broadleafcommerce.com/architecture) consisting of headless commerce APIs that support many enterprise use cases. Please [contact us](http://broadleafcommerce.com/contact) or sign up for a [Developer Evaluation](https://www.broadleafcommerce.com/developer-evaluation) for more information.
+
+## CE Dual License
+
+Broadleaf Commerce core is released under a dual license format. It may be used under the terms of the Fair Use License 1.0 (http://license.broadleafcommerce.org/fair_use_license-1.0.txt) unless the restrictions on use therein are violated and require payment to Broadleaf, in which case the Broadleaf End User License Agreement (EULA), Version 1.1 (http://license.broadleafcommerce.org/commercial_license-1.1.txt) shall apply. Alternatively, the Commercial License may be replaced with a mutually agreed upon license between you and Broadleaf Commerce.
 
 ## Getting Started
 
 Check out our [Getting Started guide](https://www.broadleafcommerce.com/docs/core/current/tutorials/getting-started-tutorials) to quickly kick off your Broadleaf-enabled website.
-
-## License
-
-Broadleaf Commerce core is released under a dual license format. It may be used under the terms of the Fair Use License 1.0 (http://license.broadleafcommerce.org/fair_use_license-1.0.txt) unless the restrictions on use therein are violated and require payment to Broadleaf, in which case the Broadleaf End User License Agreement (EULA), Version 1.1 (http://license.broadleafcommerce.org/commercial_license-1.1.txt) shall apply. Alternatively, the Commercial License may be replaced with a mutually agreed upon license between you and Broadleaf Commerce.
-
-
-## Support
-
-We also offer various levels of [enterprise support licenses](http://broadleafcommerce.com/support). Please [contact us](http://broadleafcommerce.com/contact) for information.
 
 ## Key Features and Technologies
 
@@ -112,5 +108,4 @@ BroadleafCommerce includes a robust content management system for creating and
 managing static pages and content. We also include a powerful content targeting feature that allows
 business users to dynamically drive the most appropriate content to users.
 
-
-We also offer various levels of [enterprise support licenses](http://broadleafcommerce.com/support). Please [contact us](http://broadleafcommerce.com/contact) for information.
+Please [contact us](http://broadleafcommerce.com/contact) for information.
