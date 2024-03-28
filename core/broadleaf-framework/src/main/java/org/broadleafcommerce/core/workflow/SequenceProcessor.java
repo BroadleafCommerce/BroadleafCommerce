@@ -37,7 +37,7 @@ public class SequenceProcessor extends BaseProcessor {
      */
     @Override
     public boolean supports(Activity<? extends ProcessContext> activity) {
-        return (activity instanceof BaseActivity);
+        return true;
     }
 
     @Override
