@@ -187,6 +187,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Value("${use.translation.search:false}")
     protected boolean useTranslationSearch;
 
+    @Value("${escape.html.main.link:false}")
+    protected boolean htmlEscapeMainEntityLink;
+
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
@@ -265,7 +268,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
         listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
-
+        listGrid.setHtmlEscapeMainEntityLink(htmlEscapeMainEntityLink);
         extensionManager.getProxy().modifyListGrid(listGrid.getClassName(), listGrid);
 
         return listGrid;

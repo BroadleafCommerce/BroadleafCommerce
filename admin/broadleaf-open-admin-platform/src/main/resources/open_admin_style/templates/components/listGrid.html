@@ -141,9 +141,13 @@
                             <span th:replace="~{components/partials/listGridIcon}"></span>
 
                             <a class="list-grid-primary-field"
-                               th:if="${headerField.mainEntityLink}"
+                               th:if="${headerField.mainEntityLink && !record.listGrid.htmlEscapeMainEntityLink}"
                                th:href="@{${record.path}}"
                                th:utext="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
+                            <a class="list-grid-primary-field"
+                               th:if="${headerField.mainEntityLink && record.listGrid.htmlEscapeMainEntityLink}"
+                               th:href="@{${record.path}}"
+                               th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
 
                             <th:block th:if="${!headerField.mainEntityLink and headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}">
                                 <a class="external-link" th:href="@{${headerField.foreignKeySectionPath + '/' + field.value}}" th:utext="${field.displayValue}"></a>

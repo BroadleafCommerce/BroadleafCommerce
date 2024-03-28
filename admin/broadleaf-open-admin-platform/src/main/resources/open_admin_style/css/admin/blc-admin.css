@@ -718,12 +718,12 @@ body.login .account-actions ul li a {
 }
 
 .app-content .content .section-content .main-content .content-area-title-bar {
-    width: 100%;
+    width: 100vw;
     height: 80px;
     line-height: 80px;
     background-color: white;
     border-bottom: 1px solid #E0E0E0;
-    padding: 0px 40px
+    padding: 0px 4.5rem 0px 40px
 }
 
 .app-content .content .section-content .main-content .content-area-title-bar h3,

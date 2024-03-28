@@ -260,16 +260,28 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
                 String moneyPrefix = ((DecimalFormat) nf).getPositivePrefix();
                 String moneySuffix = ((DecimalFormat) nf).getPositiveSuffix();
                 String setValue = discountValue.getValue();
-                setValue = setValue.replaceAll("\\%", "")
-                        .replaceAll("\\" + decimalSeparator, "")
+                String groupingSeparator = String.valueOf(((DecimalFormat) nf).getDecimalFormatSymbols().getGroupingSeparator());
+                setValue = setValue
                         .replaceAll(Pattern.quote(moneyPrefix), "")
-                        .replaceAll(Pattern.quote(moneySuffix), "");
+                        .replaceAll(Pattern.quote(moneySuffix), "")
+                        .replaceAll("\\%", "")
+                        .replaceAll("\\" + groupingSeparator, "");
+                if (!setValue.isEmpty()) {
+                    setValue = this.stripTrailingZeros(setValue, decimalSeparator);
+                }
                 discountValue.setValue(setValue);
             }
 
             addIsActiveStatus(helper, entity);
         }
         return resultSet;
+    }
+
+    protected String stripTrailingZeros(String value, String decimalSeparator) {
+        String replaceDecimalSeparator = value.replace(decimalSeparator, ".");
+        BigDecimal number = new BigDecimal(replaceDecimalSeparator);
+        String stripTrailingZeros = number.stripTrailingZeros().toPlainString();
+        return stripTrailingZeros.replace(".", decimalSeparator);
     }
 
     protected void addIsActiveFiltering(CriteriaTransferObject cto) {

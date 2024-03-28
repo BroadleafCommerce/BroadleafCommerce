@@ -39,21 +39,28 @@ public class URLHandlerServiceTest extends TestCase {
     
     URLHandlerServiceImpl handlerService = new URLHandlerServiceImpl();
 
-    public List<URLHandler> buildUrlHandlerList() {
+    public List<URLHandler> buildAllUrlHandlerList() {
         List<URLHandler> handlerList = new ArrayList<URLHandler>();
-
-        handlerList.add(createHandler("/simple_url", "/NewSimpleUrl"));
-        handlerList.add(createHandler("^/simple_regex$", "/NewSimpleRegex"));
-        handlerList.add(createHandler("/blogs/(.*)/(.*)$", "/newblogs/$2/$1"));
-        handlerList.add(createHandler("(.*)/shirts-tops(.*)", "$1/shirts$2"));
+        handlerList.add(createHandler("/simple_url", "/NewSimpleUrl", false));
+        handlerList.addAll(buildRegExUrlHandlerList());
         return handlerList;
     }
 
-    protected URLHandler createHandler(String incomingUrl, String newUrl) {
+    public List<URLHandler> buildRegExUrlHandlerList() {
+        List<URLHandler> handlerList = new ArrayList<URLHandler>();
+
+        handlerList.add(createHandler("^/simple_regex$", "/NewSimpleRegex", true));
+        handlerList.add(createHandler("/blogs/(.*)/(.*)$", "/newblogs/$2/$1", true));
+        handlerList.add(createHandler("(.*)/shirts-tops(.*)", "$1/shirts$2", true));
+        return handlerList;
+    }
+
+    protected URLHandler createHandler(String incomingUrl, String newUrl, Boolean isRegEx) {
         URLHandler handler = new URLHandlerImpl();
         handler.setIncomingURL(incomingUrl);
         handler.setNewURL(newUrl);
         handler.setUrlRedirectType(URLRedirectType.REDIRECT_PERM);
+        handler.setRegexHandler(isRegEx);
         return handler;
     }
 
@@ -62,14 +69,16 @@ public class URLHandlerServiceTest extends TestCase {
 
         URLHandlerDao handlerDao = EasyMock.createMock(URLHandlerDao.class);
         handlerService.urlHandlerDao = handlerDao;
-        EasyMock.expect(handlerDao.findAllURLHandlers()).andReturn(buildUrlHandlerList());
+        EasyMock.expect(handlerDao.findAllURLHandlers()).andReturn(buildAllUrlHandlerList());
+        EasyMock.expect(handlerDao.findAllRegexURLHandlers()).andReturn(buildRegExUrlHandlerList());
         EasyMock.replay(handlerDao);
     }
 
+    //checkForMatches is the RegEx test.  A non-regex URLHandler should not be found
     @Test
-    public void testFoundSimpleUrl() {
+    public void testNotFoundSimpleUrlWithCheckForMatches() {
         URLHandler h = handlerService.checkForMatches("/simple_url");
-        assertTrue(h.getNewURL().equals("/NewSimpleUrl"));
+        assertTrue(h == null);
     }
 
     @Test

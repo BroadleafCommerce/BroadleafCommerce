@@ -47,6 +47,7 @@ public class ListGrid {
     protected String idProperty;
     protected int order;
     protected boolean isSortable;
+    protected boolean htmlEscapeMainEntityLink = false;
 
     protected boolean hideFriendlyName;
 
@@ -814,4 +815,14 @@ public class ListGrid {
             return headerFields.iterator().next().getFriendlyName();
         }
     }
+
+    public boolean isHtmlEscapeMainEntityLink() {
+        return htmlEscapeMainEntityLink;
+    }
+
+    public void setHtmlEscapeMainEntityLink(boolean htmlEscapeMainEntityLink) {
+        this.htmlEscapeMainEntityLink = htmlEscapeMainEntityLink;
+    }
+
+
 }

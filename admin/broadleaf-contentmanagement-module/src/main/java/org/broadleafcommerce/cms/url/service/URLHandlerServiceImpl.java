@@ -148,7 +148,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     protected URLHandler checkForMatches(String requestURI) {
         URLHandler currentHandler = null;
         try {
-            List<URLHandler> urlHandlers = findAllURLHandlers();
+            List<URLHandler> urlHandlers = findAllRegexURLHandlers();
             for (URLHandler urlHandler : urlHandlers) {
                 currentHandler = urlHandler;
                 String incomingUrl = wrapStringsWithAnchors(currentHandler.getIncomingURL());

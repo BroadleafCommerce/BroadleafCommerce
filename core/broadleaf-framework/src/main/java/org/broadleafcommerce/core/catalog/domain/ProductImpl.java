@@ -368,7 +368,7 @@ public class ProductImpl
             joinEntityClass = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl",
             targetObjectProperty = "productOption",
             parentObjectProperty = "product",
-            gridVisibleFields = {"name", "type", "required"})
+            gridVisibleFields = {"name", "type", "required", "useInSkuGeneration"})
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
     @Column(name = "ENABLE_DEFAULT_SKU_IN_INVENTORY")

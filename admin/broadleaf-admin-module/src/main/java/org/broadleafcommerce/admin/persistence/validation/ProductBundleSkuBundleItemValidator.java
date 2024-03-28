@@ -27,7 +27,6 @@ import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
-import org.broadleafcommerce.openadmin.server.service.persistence.validation.UriPropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.ValidationConfigurationBasedPropertyValidator;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +44,7 @@ import jakarta.annotation.Resource;
 @Component("blProductBundleSkuBundleItemValidator")
 public class ProductBundleSkuBundleItemValidator extends ValidationConfigurationBasedPropertyValidator {
 
-    protected static final Log LOG = LogFactory.getLog(UriPropertyValidator.class);
+    protected static final Log LOG = LogFactory.getLog(ProductBundleSkuBundleItemValidator.class);
     private static final String ERROR_MESSAGE = "A Product Bundle's Sku Bundle Items are not allowed to include the Product Bundle's Default Sku.";
 
     @Resource(name = "blCatalogService")
