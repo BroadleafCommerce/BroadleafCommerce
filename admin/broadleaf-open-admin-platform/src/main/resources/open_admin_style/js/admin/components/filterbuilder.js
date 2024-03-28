@@ -708,10 +708,15 @@
 
             var url = $($filterFields[0]).data('action');
             var parentTable = $($filterFields[0]).closest(".list-grid-table.table.table-striped");
-            if(parentTable){
+            if (parentTable) {
                 var currentUrl = $(parentTable).data("currenturl");
-                if(currentUrl && !currentUrl.includes(url)){
-                    url=currentUrl;
+                if (currentUrl) {
+                    if (!currentUrl.startsWith("http") && !currentUrl.startsWith(BLC.servletContext)) {
+                        currentUrl = BLC.servletContext + currentUrl
+                    }
+                    if (!currentUrl.includes(url) && !url.includes(currentUrl)) {
+                        url = currentUrl;
+                    }
                 }
             }
             var urlEvent = $.Event('listGrid-filter-action-lazy-load-url');
@@ -1133,8 +1138,6 @@ $(document).ready(function() {
      * Invoked from the "Apply" button on an individual row
      */
     $('body').on('click', 'button.filter-apply-button', function () {
-        // apply the filters
-        BLCAdmin.filterBuilders.applyFilters();
 
         // mark this rule as read-only
         var el = $(this).parent().parent().parent();
@@ -1173,6 +1176,8 @@ $(document).ready(function() {
             hideError($errorContainer);
         }
 
+        // apply the filters
+        BLCAdmin.filterBuilders.applyFilters();
 
         el.find('.read-only').remove();
         el.find('.filter-text').remove();

@@ -30,6 +30,17 @@
             if ($stickyContainer.length) {
                 originalStickyBarOffset = $stickyContainer.offset().top;
                 originalStickyBarHeight = $stickyContainer.height();
+                if (originalStickyBarOffset < 0) {
+                    originalStickyBarOffset = 0;
+                    var $sandboxBar = $('.sandbox-bar');
+                    if ($sandboxBar !== undefined) {
+                        originalStickyBarOffset = originalStickyBarOffset + $sandboxBar.height();
+                    }
+                    var $siteBar = $('.site-bar');
+                    if ($siteBar !== undefined) {
+                        originalStickyBarOffset = originalStickyBarOffset + $siteBar.height();
+                    }
+                }
             }
 
             if ($('form.entity-form').length && !$('.oms').length) {
@@ -128,11 +139,11 @@
                 $headerFlashAlertBoxContainer.find('.alert-box-message').text(alertMessage);
             } else {
                 var $modalFooter = BLCAdmin.currentModal().find('.modal-footer');
-                var headerFlashAlertBoxContainer = '<div id="headerFlashAlertBoxContainer"><div id="headerFlashAlertBox" class="alert-box">' +
+                var headerFlashAlertBoxContainer = '<div id="headerFlashAlertErrorBoxContainer"><div id="headerFlashAlertBox" class="alert-box">' +
                     '<span class="alert-box-message"></span></div></div>';
                 $modalFooter.append(headerFlashAlertBoxContainer);
 
-                var $headerFlashAlertBoxContainer = $modalFooter.find('#headerFlashAlertBoxContainer');
+                var $headerFlashAlertBoxContainer = $modalFooter.find('#headerFlashAlertErrorBoxContainer');
                 $headerFlashAlertBoxContainer.find('.alert-box').removeClass('success').addClass('alert');
                 $headerFlashAlertBoxContainer.find('.alert-box-message').text(alertMessage);
             }
@@ -992,5 +1003,25 @@ $(document).ready(function() {
 
     function alignListgridColumns() {
         $(window).resize();
+    }
+
+    window.addEventListener("resize", (event) => {
+        var $sc = $('.sticky-container');
+        $sc.outerWidth($('.main-content').outerWidth());
+    });
+
+    /** * Create a MutationObserver to watch over style changes on the content title bar * @type {MutationObserver} */
+    var observer = new MutationObserver(function (mutations) {
+        var $titleBar = $(".content-area-title-bar.entity-form-actions");
+        var latestState = mutations[mutations.length - 1];
+        var newTitleBarHeight;
+        if (latestState && latestState.target) {
+            newTitleBarHeight = latestState.target.style.height;
+        }
+        // progressive button margin
+        $titleBar.children("button").css("margin-top", 8 + ((parseInt(newTitleBarHeight) - 50) / 30) * 12 + "px");
+    });
+    if(document.getElementById('content-title-bar')) {
+        observer.observe(document.getElementById('content-title-bar'), {attributes: true, attributeFilter: ['style']});
     }
 });
