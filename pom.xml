@@ -1424,7 +1424,7 @@
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.7.4</version>
+                <version>1.7.5</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -1438,6 +1438,14 @@
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1473,6 +1481,10 @@
                     <exclusion>
                         <groupId>commons-codec</groupId>
                         <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
