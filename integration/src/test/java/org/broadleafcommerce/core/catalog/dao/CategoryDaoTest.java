@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.CategoryDaoDataProvider;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
@@ -30,6 +31,7 @@ import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class CategoryDaoTest extends TestNGSiteIntegrationSetup {
         category = catalogService.saveCategory(category);
 
         Sku sku = new SkuImpl();
+        sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
+        sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku.setDescription("This thing will change your life");
         sku.setName("Test Product");
         catalogService.saveSku(sku);

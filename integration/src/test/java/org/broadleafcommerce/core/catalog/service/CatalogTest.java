@@ -36,6 +36,7 @@ import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -96,6 +97,8 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         
         Product newProduct = new ProductImpl();
         Sku newDefaultSku = new SkuImpl();
+        newDefaultSku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
+        newDefaultSku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         newDefaultSku = catalogService.saveSku(newDefaultSku);
         newProduct.setDefaultSku(newDefaultSku);
         newProduct.setName("Lavender Soap");
