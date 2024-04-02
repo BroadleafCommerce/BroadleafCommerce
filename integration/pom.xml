@@ -62,7 +62,16 @@
                         <version>3.1.2</version>
                     </dependency>
                 </dependencies>
-
+                <configuration>
+                    <parallel>none</parallel>
+                    <threadCount>1</threadCount>
+                    <properties>
+                        <property>
+                            <name>surefire.testng.verbose</name>
+                            <value>10</value>
+                        </property>
+                    </properties>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-test</id>
@@ -71,6 +80,14 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                            <properties>
+                                <property>
+                                    <name>surefire.testng.verbose</name>
+                                    <value>10</value>
+                                </property>
+                            </properties>
+                            <parallel>none</parallel>
+                            <threadCount>1</threadCount>
 <!--                            <argLine>-Dmaven.surefire.debug -Xmx1024m ${surefire.argLine}</argLine>-->
                             <argLine>-Xmx1024m ${surefire.argLine}</argLine>
 <!--                            <debugForkedProcess>true</debugForkedProcess>-->

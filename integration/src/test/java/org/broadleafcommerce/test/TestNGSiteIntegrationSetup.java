@@ -28,6 +28,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.ServletTestExecutionListener;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /**
@@ -82,6 +83,11 @@ public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringCon
         DefaultPostLoaderDao.resetApplicationContext(this.applicationContext);
         ApplicationContextHolder.resetApplicationContext(applicationContext);
         LOG.info("Staring Test Class:"+getClass());
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void logWhenDone(){
+        LOG.info("Ending Test Class:"+getClass());
     }
     
 }
