@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.test;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;
@@ -43,6 +45,8 @@ import org.testng.annotations.BeforeClass;
 // and also spring context is not started early enough, so some other code triggers loading of entities before we register our transformers
 @TestExecutionListeners({TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class, DependencyInjectionTestExecutionListener.class, ServletTestExecutionListener.class})
 public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringContextTests {
+
+    protected final Log LOG = LogFactory.getLog(getClass());
 
     /**
      * This was added as a result of update to 7.0 with new spring, hdsqldb, testng, surefire and maybe something else
@@ -77,6 +81,7 @@ public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringCon
     public void reSetApplicationContext(){
         DefaultPostLoaderDao.resetApplicationContext(this.applicationContext);
         ApplicationContextHolder.resetApplicationContext(applicationContext);
+        LOG.info("Staring Test Class:"+getClass());
     }
     
 }
