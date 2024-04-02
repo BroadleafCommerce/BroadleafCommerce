@@ -42,6 +42,10 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 @SuppressWarnings("deprecation")
 public class CatalogTest extends TestNGSiteIntegrationSetup {
 
@@ -60,6 +64,8 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         if (CollectionUtils.isNotEmpty(allCategories)) {
             allCategories.forEach(t -> catalogService.removeCategory(t));
         }
+        allCategories = catalogService.findAllCategories();
+        assertEquals(allCategories.size(), 0L, "Expect on the beginning of the test no categories exist");
         Category category = new CategoryImpl();
         category.setName("Soaps");
         category = catalogService.saveCategory(category);
@@ -90,7 +96,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         temp3.setSubCategory(category3);
         category3.getAllParentCategoryXrefs().add(temp3);
         category3 = catalogService.saveCategory(category3);
-        assert category3.getAllParentCategoryXrefs().size() == 2;
+        assertEquals(category3.getAllParentCategoryXrefs().size(), 2, "category 3 should have 2 parent categories");
         
         Product newProduct = new ProductImpl();
         Sku newDefaultSku = new SkuImpl();
@@ -118,13 +124,13 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         Long newProductId = newProduct.getId();
 
         Product testProduct = catalogService.findProductById(newProductId);
-        assert testProduct.getId().equals(testProduct.getId());
+        assertEquals(newProductId, testProduct.getId(), "Product ids of persisted and fetched by id should be equal");
 
         Category testCategory = catalogService.findCategoryByName("Soaps");
-        assert testCategory.getId().equals(category.getId());
+        assertEquals(testCategory.getId(), category.getId(), "Fetched by name category id is the same as persisted");
 
         testCategory = catalogService.findCategoryById(category.getId());
-        assert testCategory.getId().equals(category.getId());
+        assertEquals(testCategory.getId(), category.getId(), "Category ids of persisted and fetched by id should be equal");
                 
         Media media = new MediaImpl();
         media.setAltText("test");
@@ -134,10 +140,11 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         catalogService.saveCategory(testCategory);
 
         testCategory = catalogService.findCategoryById(category.getId());
-        assert(testCategory.getCategoryMediaXref().get("large") != null);
+        assertNotNull(testCategory.getCategoryMediaXref().get("large"),"Category media xref is fetched correctly");
 
         List<Category> categories = catalogService.findAllCategories();
-        assert categories != null && categories.size() == 3;
+        assertNotNull( categories,"Read all categories return not null");
+        assertEquals(3, categories.size(), "Read all categories should return all 3");
 
         List<Product> products = catalogService.findAllProducts();
         boolean foundProduct = false;
@@ -147,7 +154,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
                 foundProduct = true;
             }
         }
-        assert foundProduct == true;
+        assertTrue(foundProduct, "find all product should return correct list containing specific product");
 
 
         products = catalogService.findProductsByName(newProduct.getName());
@@ -158,7 +165,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
                 foundProduct = true;
             }
         }
-        assert foundProduct == true;
+        assertTrue(foundProduct, "find product by name should correctly find product");
 
 
         Sku newSku = new SkuImpl();
@@ -173,7 +180,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         Long skuId = newProduct.getSkus().get(0).getId();
 
         Sku testSku = catalogService.findSkuById(skuId);
-        assert testSku.getId().equals(skuId);
+        assertEquals(testSku.getId(), skuId, "find sku by id should correctly find sku");
 
         List<Sku> testSkus = catalogService.findAllSkus();
         boolean foundSku = false;
@@ -184,7 +191,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
             }
         }
 
-        assert foundSku == true;
+        assertTrue(foundSku, "find all skus should return list with a specific sku");
 
         List<Long> skuIds = new ArrayList<>();
         skuIds.add(skuId);
@@ -197,7 +204,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
             }
         }
 
-        assert foundSku == true;
+        assertTrue(foundSku, "find skus by ids should correctly return list that is requested");
 
     }
 
