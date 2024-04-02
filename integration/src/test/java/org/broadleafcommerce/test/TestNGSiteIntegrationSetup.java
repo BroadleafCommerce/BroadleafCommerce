@@ -30,6 +30,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.test.context.web.ServletTestExecutionListener;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 /**
  * Base TestNG support class used for Broadleaf Site tests. This is slightly different than the normal {@link AbstractTestNGSpringContextTests}
@@ -78,10 +79,14 @@ public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringCon
      * as in real application there is only 1 context that is created on a startup.
      *
      */
-    @BeforeClass(alwaysRun = true, dependsOnMethods = "springTestContextPrepareTestInstance")
-    public void reSetApplicationContext(){
+
+    @BeforeMethod(alwaysRun = true)
+    public void reSetApplicationContext() {
         DefaultPostLoaderDao.resetApplicationContext(this.applicationContext);
         ApplicationContextHolder.resetApplicationContext(applicationContext);
+    }
+    @BeforeClass(alwaysRun = true, dependsOnMethods = "springTestContextPrepareTestInstance")
+    public void logStart(){
         LOG.info("Staring Test Class:"+getClass());
     }
 
