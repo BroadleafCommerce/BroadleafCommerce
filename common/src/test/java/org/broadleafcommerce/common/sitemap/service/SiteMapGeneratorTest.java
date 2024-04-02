@@ -48,7 +48,7 @@ import java.util.List;
  * 
  * @author Joshua Skorton (jskorton)
  */
-public class SiteMapGeneratorTest {
+public abstract class SiteMapGeneratorTest {
 
     protected SiteMapServiceImpl siteMapService = new SiteMapServiceImpl();
     protected BroadleafFileServiceImpl fileService = new BroadleafFileServiceImpl();

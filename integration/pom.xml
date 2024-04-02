@@ -54,15 +54,14 @@
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-testng</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.2.5</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-junit-platform</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.2.5</version>
                     </dependency>
                 </dependencies>
-
                 <executions>
                     <execution>
                         <id>default-test</id>
@@ -71,12 +70,43 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                            <forkMode>never</forkMode>
+                            <properties>
+                                <property>
+                                    <name>surefire.testng.verbose</name>
+                                    <value>-1</value>
+                                </property>
+                                <property>
+                                    <name>junit</name>
+                                    <value>false</value>
+                                </property>
+                            </properties>
+                            <suiteXmlFiles>
+                                <file>src/test/resources/testng.xml</file>
+                            </suiteXmlFiles>
 <!--                            <argLine>-Dmaven.surefire.debug -Xmx1024m ${surefire.argLine}</argLine>-->
                             <argLine>-Xmx1024m ${surefire.argLine}</argLine>
 <!--                            <debugForkedProcess>true</debugForkedProcess>-->
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <forkMode>never</forkMode>
+                    <suiteXmlFiles>
+                        <file>src/test/resources/testng.xml</file>
+                    </suiteXmlFiles>
+
+                    <properties>
+                        <property>
+                            <name>surefire.testng.verbose</name>
+                            <value>10</value>
+                        </property>
+                        <property>
+                            <name>junit</name>
+                            <value>false</value>
+                        </property>
+                    </properties>
+                </configuration>
             </plugin>
             <plugin>
                 <!-- Only delete the contents of the target folder so that
@@ -172,12 +202,12 @@
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-framework</artifactId>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-framework</artifactId>
-            <version>${project.version}</version><!--$NO-MVN-MAN-VER$ -->
+            <version>${project.version}</version>&lt;!&ndash;$NO-MVN-MAN-VER$ &ndash;&gt;
             <classifier>tests</classifier>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-admin-module</artifactId>
