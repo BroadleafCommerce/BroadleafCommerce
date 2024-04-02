@@ -61,11 +61,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         //let's delete all of them...or if this will cause issue in the future, check that categories
         //created by this test exists among other categories
         List<Category> allCategories = catalogService.findAllCategories();
-        if (CollectionUtils.isNotEmpty(allCategories)) {
-            allCategories.forEach(t -> catalogService.removeCategory(t));
-        }
-        allCategories = catalogService.findAllCategories();
-        assertEquals(allCategories.size(), 0L, "Expect on the beginning of the test no categories exist");
+        int categoriesAtTheTestStart = allCategories.size();
         Category category = new CategoryImpl();
         category.setName("Soaps");
         category = catalogService.saveCategory(category);
@@ -144,7 +140,7 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
 
         List<Category> categories = catalogService.findAllCategories();
         assertNotNull( categories,"Read all categories return not null");
-        assertEquals(3, categories.size(), "Read all categories should return all 3");
+        assertEquals(categories.size(), categoriesAtTheTestStart+3, "Read all categories should return all 3, or 3+number of categories that were at the beginning of the test");
 
         List<Product> products = catalogService.findAllProducts();
         boolean foundProduct = false;
