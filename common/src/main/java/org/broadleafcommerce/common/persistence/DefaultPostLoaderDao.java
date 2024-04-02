@@ -81,8 +81,11 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     @Override
     public <T> T find(Class<T> clazz, Object id) {
         EntityManager em = getEntityManager(clazz);
-
-        return (em == null) ? null : em.find(clazz, id);
+        if(em == null) {
+            LOG.warn("EntityManager is null in DefaultPostLoaderDao returning NULL instead of doing em.find");
+            return null;
+        }
+        return em.find(clazz, id);
     }
 
     @Override
