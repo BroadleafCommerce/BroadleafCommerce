@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.test;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;
@@ -26,7 +28,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.ServletTestExecutionListener;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 /**
  * Base TestNG support class used for Broadleaf Site tests. This is slightly different than the normal {@link AbstractTestNGSpringContextTests}
@@ -43,6 +47,8 @@ import org.testng.annotations.BeforeClass;
 // and also spring context is not started early enough, so some other code triggers loading of entities before we register our transformers
 @TestExecutionListeners({TransactionalTestExecutionListener.class, SqlScriptsTestExecutionListener.class, DependencyInjectionTestExecutionListener.class, ServletTestExecutionListener.class})
 public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringContextTests {
+
+    protected final Log LOG = LogFactory.getLog(getClass());
 
     /**
      * This was added as a result of update to 7.0 with new spring, hdsqldb, testng, surefire and maybe something else
@@ -71,12 +77,26 @@ public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringCon
      * will hang forever. So this is a defensive mechanism to make sure that application code is always using the
      * lates version of the application context and doesn't have a stale static references. This happens in tests only
      * as in real application there is only 1 context that is created on a startup.
-     *
+     * <p/>
+     * This method is marked as @BeforeMethod because for some reason jenkins(can't reproduce locally) runs it in some
+     * sort of parallel way that causing issue with PostLoaderDao - seems it can run method from class A, then method
+     * from class B, and then continue to run some other method from class A, so context is bouncing between runs and
+     * this can cause that some queries(that are run through PostLoaderDao) return unexpected results - like something not found etc.
      */
-    @BeforeClass(alwaysRun = true, dependsOnMethods = "springTestContextPrepareTestInstance")
-    public void reSetApplicationContext(){
+    @BeforeMethod(alwaysRun = true)
+    public void reSetApplicationContext() {
         DefaultPostLoaderDao.resetApplicationContext(this.applicationContext);
         ApplicationContextHolder.resetApplicationContext(applicationContext);
+    }
+
+    @BeforeClass(alwaysRun = true, dependsOnMethods = "springTestContextPrepareTestInstance")
+    public void logStart(){
+        LOG.info("Staring Test Class:"+getClass());
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void logWhenDone(){
+        LOG.info("Ending Test Class:"+getClass());
     }
     
 }

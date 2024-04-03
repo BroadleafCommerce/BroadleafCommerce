@@ -44,6 +44,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -131,6 +132,8 @@ public class MVELTest extends TestNGSiteIntegrationSetup {
 
         Product product = new ProductImpl();
         Sku sku = new SkuImpl();
+        sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
+        sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku = catalogService.saveSku(sku);
         product.setDefaultSku(sku);
         product.setName("Lavender Soap");

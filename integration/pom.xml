@@ -54,15 +54,18 @@
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-testng</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.2.5</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-junit-platform</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.2.5</version>
                     </dependency>
                 </dependencies>
-
+                <configuration>
+                    <parallel>none</parallel>
+                    <threadCount>1</threadCount>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-test</id>
@@ -71,6 +74,8 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                            <parallel>none</parallel>
+                            <threadCount>1</threadCount>
 <!--                            <argLine>-Dmaven.surefire.debug -Xmx1024m ${surefire.argLine}</argLine>-->
                             <argLine>-Xmx1024m ${surefire.argLine}</argLine>
 <!--                            <debugForkedProcess>true</debugForkedProcess>-->

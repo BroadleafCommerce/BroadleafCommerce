@@ -132,8 +132,8 @@ public class CreateOfferUtility {
             offer.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
         }
         offer.setPriority(priority);
-        offer = offerService.save(offer);
         offer.setMaxUsesPerOrder(50);
+        offer = offerService.save(offer);
         return offer;
     }
 
