@@ -77,14 +77,18 @@ public abstract class TestNGSiteIntegrationSetup extends AbstractTestNGSpringCon
      * will hang forever. So this is a defensive mechanism to make sure that application code is always using the
      * lates version of the application context and doesn't have a stale static references. This happens in tests only
      * as in real application there is only 1 context that is created on a startup.
-     *
+     * <p/>
+     * This method is marked as @BeforeMethod because for some reason jenkins(can't reproduce locally) runs it in some
+     * sort of parallel way that causing issue with PostLoaderDao - seems it can run method from class A, then method
+     * from class B, and then continue to run some other method from class A, so context is bouncing between runs and
+     * this can cause that some queries(that are run through PostLoaderDao) return unexpected results - like something not found etc.
      */
-
     @BeforeMethod(alwaysRun = true)
     public void reSetApplicationContext() {
         DefaultPostLoaderDao.resetApplicationContext(this.applicationContext);
         ApplicationContextHolder.resetApplicationContext(applicationContext);
     }
+
     @BeforeClass(alwaysRun = true, dependsOnMethods = "springTestContextPrepareTestInstance")
     public void logStart(){
         LOG.info("Staring Test Class:"+getClass());

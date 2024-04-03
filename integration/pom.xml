@@ -54,23 +54,17 @@
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-testng</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.2.5</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-junit-platform</artifactId>
-                        <version>3.1.2</version>
+                        <version>3.2.5</version>
                     </dependency>
                 </dependencies>
                 <configuration>
                     <parallel>none</parallel>
                     <threadCount>1</threadCount>
-                    <properties>
-                        <property>
-                            <name>surefire.testng.verbose</name>
-                            <value>10</value>
-                        </property>
-                    </properties>
                 </configuration>
                 <executions>
                     <execution>
@@ -80,12 +74,6 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <properties>
-                                <property>
-                                    <name>surefire.testng.verbose</name>
-                                    <value>10</value>
-                                </property>
-                            </properties>
                             <parallel>none</parallel>
                             <threadCount>1</threadCount>
 <!--                            <argLine>-Dmaven.surefire.debug -Xmx1024m ${surefire.argLine}</argLine>-->
