@@ -43,8 +43,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.9.0</ehcache3.version>
-        <spring.version>5.3.31</spring.version>
-        <spring.security.version>5.8.9</spring.security.version>
+        <spring.version>5.3.33</spring.version>
+        <spring.security.version>5.8.11</spring.security.version>
         <spring.boot.version>2.7.18</spring.boot.version>
         <jackson-bom.version>2.16.1</jackson-bom.version>
         <lombok.version>1.18.30</lombok.version>
