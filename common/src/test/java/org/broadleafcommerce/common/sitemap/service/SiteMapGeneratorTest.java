@@ -144,6 +144,7 @@ public class SiteMapGeneratorTest {
         FileInputStream fin = new FileInputStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(fin));
         StringBuilder sb = new StringBuilder();
+        String line;
         while ((line = br.readLine()) != null) {
             if (line.contains("</lastmod>")) {
                 continue;
