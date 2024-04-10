@@ -81,7 +81,7 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .build());
         fields.add(new FieldData.Builder()
                 .label("rule_fulfillmentGroupState")
-                .name("address.state.name")
+                .name("address.stateProvinceRegion")
                 .operators(RuleOperatorType.TEXT)
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
