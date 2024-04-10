@@ -253,7 +253,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.setCondition(BLCOperator.AND.name());
 
         ExpressionDTO e1 = new ExpressionDTO();
-        e1.setId("address.state.name");
+        e1.setId("address.stateProvinceRegion");
         e1.setOperator(BLCOperator.EQUALS.name());
         e1.setValue("Texas");
 
@@ -266,7 +266,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.getRules().add(e2);
 
         String translated = translator.createMVEL("fulfillmentGroup", dataDTO, fulfillmentGroupFieldService);
-        String mvel = "?fulfillmentGroup.?address.?state.?name==\"Texas\"&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199))";
+        String mvel = "?fulfillmentGroup.?address.?stateProvinceRegion==\"Texas\"&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&(?fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199))";
         assert (mvel.equals(translated));
     }
 
