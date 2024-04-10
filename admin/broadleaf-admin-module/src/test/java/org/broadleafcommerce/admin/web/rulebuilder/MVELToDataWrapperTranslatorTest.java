@@ -260,7 +260,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         Property[] properties = new Property[1];
         Property mvelProperty = new Property();
         mvelProperty.setName("matchRule");
-        mvelProperty.setValue("fulfillmentGroup.address.state.name==\"Texas\"&&fulfillmentGroup.retailFulfillmentPrice.getAmount()>=99&&fulfillmentGroup.retailFulfillmentPrice.getAmount()<=199");
+        mvelProperty.setValue("fulfillmentGroup.address.stateProvinceRegion==\"Texas\"&&fulfillmentGroup.retailFulfillmentPrice.getAmount()>=99&&fulfillmentGroup.retailFulfillmentPrice.getAmount()<=199");
         properties[0] = mvelProperty;
         Entity[] entities = new Entity[1];
         Entity entity = new Entity();
@@ -276,7 +276,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
         assert(dataWrapper.getData().get(0).getRules().get(0) instanceof ExpressionDTO);
         ExpressionDTO e1 = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(0);
-        assert(e1.getId().equals("address.state.name"));
+        assert(e1.getId().equals("address.stateProvinceRegion"));
         assert(e1.getOperator().equals(BLCOperator.EQUALS.name()));
         assert(e1.getValue().equals("Texas"));
 
@@ -293,7 +293,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         Property[] properties = new Property[1];
         Property mvelProperty = new Property();
         mvelProperty.setName("matchRule");
-        mvelProperty.setValue("fulfillmentGroup.address.state.name==\"Texas\"&&(fulfillmentGroup.retailFulfillmentPrice.getAmount()>=99&&fulfillmentGroup.retailFulfillmentPrice.getAmount()<=199)");
+        mvelProperty.setValue("fulfillmentGroup.address.stateProvinceRegion==\"Texas\"&&(fulfillmentGroup.retailFulfillmentPrice.getAmount()>=99&&fulfillmentGroup.retailFulfillmentPrice.getAmount()<=199)");
         properties[0] = mvelProperty;
         Entity[] entities = new Entity[1];
         Entity entity = new Entity();
@@ -308,7 +308,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
         assert(dataWrapper.getData().get(0).getRules().get(0) instanceof ExpressionDTO);
         ExpressionDTO e1 = (ExpressionDTO) dataWrapper.getData().get(0).getRules().get(0);
-        assert(e1.getId().equals("address.state.name"));
+        assert(e1.getId().equals("address.stateProvinceRegion"));
         assert(e1.getOperator().equals(BLCOperator.EQUALS.name()));
         assert(e1.getValue().equals("Texas"));
 
