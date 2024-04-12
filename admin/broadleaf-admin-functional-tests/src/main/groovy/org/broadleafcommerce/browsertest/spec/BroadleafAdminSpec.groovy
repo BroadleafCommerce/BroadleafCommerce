@@ -17,12 +17,10 @@
  */
 package org.broadleafcommerce.browsertest.spec
 
-import spock.lang.Shared
-import spock.lang.Stepwise
-import geb.Browser
 import geb.spock.GebReportingSpec
 import groovy.json.JsonSlurper
-
+import spock.lang.Shared
+import spock.lang.Stepwise
 
 /**
  * Root spec that other specs should derive from. This gives all of the tests login functionality
