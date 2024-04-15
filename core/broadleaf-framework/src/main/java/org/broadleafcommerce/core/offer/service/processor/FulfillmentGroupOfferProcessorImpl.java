@@ -20,10 +20,12 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.apache.commons.collections4.map.LRUMap;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
@@ -37,7 +39,9 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferU
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -152,6 +156,17 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         }
 
         return appliesToItem;
+    }
+
+    @Override
+    public Boolean executeExpression(String expression, Map<String, Object> vars) {
+        Map<String, Class<?>> contextImports = new HashMap<>();
+
+        expression = usePriceBeforeAdjustments(expression);
+        contextImports.put("OfferType", OfferType.class);
+        contextImports.put("FulfillmentType", FulfillmentType.class);
+        contextImports.put("SomeUtil", SomeUtil.class);
+        return MvelHelper.evaluateRule(expression, vars, new LRUMap(1000), contextImports);
     }
 
     protected PromotableCandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer(Offer offer, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableFulfillmentGroup fulfillmentGroup) {

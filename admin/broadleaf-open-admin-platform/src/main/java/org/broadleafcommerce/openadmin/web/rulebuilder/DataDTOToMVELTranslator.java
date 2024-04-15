@@ -47,6 +47,7 @@ public class DataDTOToMVELTranslator {
     public static final String GREATER_THAN_OPERATOR = ">";
     public static final String LESS_THAN_OPERATOR = "<";
     public static final String COLLECTION_OPERATOR = "CollectionUtils.intersection";
+    public static final String COLLECTION_OPERATOR2 = "SomeUtil.someMethod";
     public static final String SIZE_GREATER_THAN_OPERATOR = ".size()>";
     public static final String SIZE_GREATER_THAN_EQUALS_OPERATOR = ".size()>=";
     public static final String SIZE_LESS_THAN_OPERATOR = ".size()<";
@@ -406,15 +407,29 @@ public class DataDTOToMVELTranslator {
             SupportedFieldType type, SupportedFieldType secondaryType, String operator,
             boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
             boolean isNegation, boolean ignoreQuotes) throws MVELTranslationException {
-        sb.append(COLLECTION_OPERATOR);
-        sb.append("(");
-        sb.append(formatField(entityKey, type, field, ignoreCase));
-        sb.append(",");
-        sb.append("[");
-        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+
+        if(field.contains("RANDOM_TEXT_NAME")) {
+//            CollectionUtils.intersection(?fulfillmentGroup.?order.?orderItems_RANDOM_TEXT_NAME,["Cool Cayenne Pepper Hot Sauce"])
+            sb.append(COLLECTION_OPERATOR2);
+            sb.append("(");
+            sb.append("?fulfillmentGroup");
+            sb.append(",");
+            sb.append("[");
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
                 ignoreCase, ignoreQuotes));
-        sb.append("])");
-        sb.append(operator);
+            sb.append("])");
+            sb.append(operator);
+        }else {
+            sb.append(COLLECTION_OPERATOR);
+            sb.append("(");
+            sb.append(formatField(entityKey, type, field, ignoreCase));
+            sb.append(",");
+            sb.append("[");
+            sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
+                ignoreCase, ignoreQuotes));
+            sb.append("])");
+            sb.append(operator);
+        }
     }
 
     protected void buildExpression(StringBuffer sb, String entityKey, String field, Object[] value,

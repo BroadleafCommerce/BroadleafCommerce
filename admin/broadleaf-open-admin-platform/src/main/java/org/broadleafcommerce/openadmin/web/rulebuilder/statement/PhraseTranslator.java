@@ -70,7 +70,7 @@ public class PhraseTranslator {
 
         boolean isIgnoreCase = false;
         boolean isCollectionCase = false;
-        if (phrase.contains(DataDTOToMVELTranslator.COLLECTION_OPERATOR)) {
+        if (phrase.contains(DataDTOToMVELTranslator.COLLECTION_OPERATOR) || phrase.contains(DataDTOToMVELTranslator.COLLECTION_OPERATOR2) ) {
             isCollectionCase = true;
         }
 
@@ -206,6 +206,11 @@ public class PhraseTranslator {
             componentsExtracted = true;
         }
 
+        if (phrase.startsWith(DataDTOToMVELTranslator.COLLECTION_OPERATOR2)) {
+            components = extractCollectionCase2(phrase);
+            componentsExtracted = true;
+        }
+
         if (!componentsExtracted) {
             for (String operator : STANDARD_OPERATORS) {
                 if (phrase.contains(operator)) {
@@ -310,6 +315,19 @@ public class PhraseTranslator {
 
         return temp;
     }
+    protected String[] extractCollectionCase2(String phrase) {
+        String[] temp = new String[3];
+        String collectionBegin = DataDTOToMVELTranslator.COLLECTION_OPERATOR2 + "(";
+        //field
+        temp[0] = phrase.substring(collectionBegin.length(), phrase.indexOf(","));
+        //value
+        temp[2] = phrase.substring(phrase.indexOf(",") + 1, phrase.lastIndexOf("]") + 1);
+        //operator
+        temp[1] = phrase.substring(phrase.indexOf(".size"));
+
+        return temp;
+    }
+
 
     protected String[] extractOldSpecialComponents(String phrase, String operator) {
         String[] temp = new String[3];
