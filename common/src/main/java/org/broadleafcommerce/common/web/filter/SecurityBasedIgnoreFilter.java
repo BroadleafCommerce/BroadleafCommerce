@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blSecurityBasedIgnoreFilter")
 public class SecurityBasedIgnoreFilter extends GenericFilterBean implements Ordered {
 
-    FilterChainProxy springSecurity = null;
+    protected FilterChainProxy springSecurity = null;
 
     @EventListener(ContextRefreshedEvent.class)
     public void init(ContextRefreshedEvent event) {
