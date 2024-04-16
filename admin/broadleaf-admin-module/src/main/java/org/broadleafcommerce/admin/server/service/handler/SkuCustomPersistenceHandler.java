@@ -126,9 +126,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     @Resource(name = "blSkuCustomPersistenceHandlerExtensionManager")
     protected SkuCustomPersistenceHandlerExtensionManager extensionManager;
 
-    @Value("${enable.weave.use.default.sku.inventory:false}")
-    protected boolean enableUseDefaultSkuInventory = false;
-
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
      * where there are a bunch of product options and displaying each option as a grid header would have everything
@@ -534,7 +531,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     ) {
         boolean hasInventory = persistencePackage.containsCriteria("owningClass=com.broadleafcommerce.inventory.advanced.domain.InventoryImpl")
                 && persistencePackage.containsCriteria("requestingField=sku");
-        if (hasInventory && enableUseDefaultSkuInventory) {
+        if (hasInventory) {
             filterMappings.add(new FilterMapping().withDirectFilterValues(new EmptyFilterValues()).withRestriction(new Restriction()
                     .withPredicateProvider(new PredicateProvider() {
                         @Override
