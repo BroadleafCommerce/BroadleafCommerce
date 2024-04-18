@@ -19,8 +19,6 @@ package org.broadleafcommerce.common.web.filter;
 
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
