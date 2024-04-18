@@ -59,6 +59,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
     public static String NO_PRODUCT_OPTIONS_GENERATED_KEY = "noProductOptionsConfigured";
     public static String FAILED_SKU_GENERATION_KEY = "errorNeedAllowedValue";
     public static String NUMBER_SKUS_GENERATED_KEY = "numberSkusGenerated";
+    public static String INCONSISTENT_PERMUTATIONS_KEY = "inconsistentPermutations";
 
     @Value("${product.sku.generation.max:400}")
     protected int skuMaxGeneration;
@@ -116,6 +117,13 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             if (!previouslyGenerated) {
                 permutationsToGenerate.add(permutation);
             }
+        }
+
+        List<List<ProductOptionValue>> inconsistentGeneratedPermutations =
+                checkForInconsistentPermutations(allPermutations, previouslyGeneratedPermutations);
+
+        if (CollectionUtils.isNotEmpty(inconsistentGeneratedPermutations)) {
+            return 0;
         }
 
         LOG.info("Total number of permutations to generate: " + permutationsToGenerate.size());
@@ -186,6 +194,14 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             }
         }
 
+        List<List<ProductOptionValue>> inconsistentGeneratedPermutations =
+                checkForInconsistentPermutations(allPermutations, previouslyGeneratedPermutations);
+
+        if (CollectionUtils.isNotEmpty(inconsistentGeneratedPermutations)) {
+            result.put("message", BLCMessageUtils.getMessage(INCONSISTENT_PERMUTATIONS_KEY));
+            return result;
+        }
+
         LOG.info("Total number of permutations to generate: " + permutationsToGenerate.size());
 
         int numPermutationsCreated = 0;
@@ -205,6 +221,25 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         result.put("message", numPermutationsCreated + " " + BLCMessageUtils.getMessage(NUMBER_SKUS_GENERATED_KEY));
         result.put("skusGenerated", numPermutationsCreated);
         return result;
+    }
+
+    protected List<List<ProductOptionValue>> checkForInconsistentPermutations(
+            List<List<ProductOptionValue>> allPermutations,
+            List<List<ProductOptionValue>> previouslyGeneratedPermutations) {
+        List<List<ProductOptionValue>> inconsistentGeneratedPermutations = new ArrayList<>();
+        for (List<ProductOptionValue> generatedPermutation : previouslyGeneratedPermutations) {
+            boolean inconsistentPermutations = true;
+            for (List<ProductOptionValue> permutation : allPermutations) {
+                if (isSamePermutation(permutation, generatedPermutation)) {
+                    inconsistentPermutations = false;
+                }
+            }
+
+            if (inconsistentPermutations) {
+                inconsistentGeneratedPermutations.add(generatedPermutation);
+            }
+        }
+        return inconsistentGeneratedPermutations;
     }
 
     protected boolean checkSkuMaxGeneration(List<ProductOption> productOptions) {

@@ -228,6 +228,13 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         return new Money(result, getCurrency());
     }
 
+    public Money multiply(BigDecimal multiplier, RoundingMode roundingMode) {
+        BigDecimal bd = getAmount();
+        BigDecimal result = bd.multiply(multiplier);
+        result = result.setScale(getCurrency().getDefaultFractionDigits(), roundingMode);
+        return new Money(result, getCurrency());
+    }
+
     public Money multiply(BigDecimal multiplier) {
         return new Money(amount.multiply(multiplier), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }

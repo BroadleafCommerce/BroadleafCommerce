@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.browsertest.spec
 
-import geb.Browser
 import geb.spock.GebReportingSpec
 import groovy.json.JsonSlurper
 import spock.lang.Shared

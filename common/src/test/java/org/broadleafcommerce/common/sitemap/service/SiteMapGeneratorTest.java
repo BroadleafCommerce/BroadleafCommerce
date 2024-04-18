@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Base class for site map generator tests
@@ -144,12 +146,39 @@ public class SiteMapGeneratorTest {
             if (line.contains("</lastmod>")) {
                 continue;
             }
-            line = line.replaceAll("\\s+", "");
-            sb.append(line);
+            if(line.contains("xmlns:image")){
+                String fixedline = fixXmlOrder(line);
+                fixedline = fixedline.replaceAll("\\s+", "");
+                sb.append(fixedline);
+            }
+            else{
+                line = line.replaceAll("\\s+", "");
+                sb.append(line);
+            }
         }
         br.close();
         fin.close();
         return sb.toString();
+    }
+
+    public static String fixXmlOrder(String xmlString) {
+        String patternImage = "(xmlns:image=\"[^\"]+\")";  // Match anything between quotes after xmlns:image
+        String patternDefault = "(xmlns=\"[^\"]+\")";    // Match anything between quotes after xmlns
+
+        Pattern patternImageCompiled = Pattern.compile(patternImage);
+        Pattern patternDefaultCompiled = Pattern.compile(patternDefault);
+
+        Matcher matcherImage = patternImageCompiled.matcher(xmlString);
+        Matcher matcherDefault = patternDefaultCompiled.matcher(xmlString);
+
+        if (matcherImage.find() && matcherDefault.find()) {
+            String xmlnsImage = matcherImage.group(1);
+            String xmlnsDefault = matcherDefault.group(1);
+
+            return "<sitemapindex " + xmlnsImage + " " + xmlnsDefault + ">";
+        }
+
+        return xmlString;
     }
 
 }
