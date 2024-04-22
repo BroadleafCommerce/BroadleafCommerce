@@ -21,7 +21,7 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * 
@@ -30,22 +30,22 @@ import org.springframework.security.access.annotation.Secured;
  */
 public interface DynamicEntityService {
     
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException;
 
-    //@Secured("PERMISSION_OTHER_DEFAULT")
+//    @PreAuthorize("isAuthenticated()")
     //public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException;
     
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
     
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public Entity add(PersistencePackage persistencePackage) throws ServiceException;
     
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public Entity update(PersistencePackage persistencePackage) throws ServiceException;
     
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public void remove(PersistencePackage persistencePackage) throws ServiceException;
     
 }

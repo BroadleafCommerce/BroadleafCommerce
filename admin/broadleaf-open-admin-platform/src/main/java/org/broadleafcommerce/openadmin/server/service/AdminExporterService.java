@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.openadmin.dto.AdminExporterDTO;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  */
 public interface AdminExporterService {
 
-    @Secured("PERMISSION_OTHER_DEFAULT")
+    @PreAuthorize("isAuthenticated()")
     public List<AdminExporterDTO> getExporters(String type);
 
 }
