@@ -79,6 +79,8 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
     protected String blPUHibernateHbm2ddlImport_files;
     @Value("${blPU.hibernate.hbm2ddl.import_files_sql_extractor}")
     protected String blPUHibernateHbm2ddlImport_files_sql_extractor;
+    @Value("${blPU.hibernate.implicit_naming_strategy}")
+    protected String blPUHibernateImplicit_naming_strategy;
 
     @Value("${blCMSStorage.hibernate.hbm2ddl.auto}")
     protected String blCMSStorageHibernateHbm2ddlAuto;
@@ -94,6 +96,8 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
     protected String blCMSStorageHibernateHbm2ddlImport_files;
     @Value("${blCMSStorage.hibernate.hbm2ddl.import_files_sql_extractor}")
     protected String blCMSStorageHibernateHbm2ddlImport_files_sql_extractor;
+    @Value("${blCMSStorage.hibernate.implicit_naming_strategy}")
+    protected String blCMSStorageHibernateImplicit_naming_strategy;
 
     @Value("${blSecurePU.hibernate.hbm2ddl.auto}")
     protected String blSecurePUHibernateHbm2ddlAuto;
@@ -109,6 +113,8 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
     protected String blSecurePUHibernateHbm2ddlImport_files;
     @Value("${blSecurePU.hibernate.hbm2ddl.import_files_sql_extractor}")
     protected String blSecurePUHibernateHbm2ddlImport_files_sql_extractor;
+    @Value("${blSecurePU.hibernate.implicit_naming_strategy}")
+    protected String blSecurePUHibernateImplicit_naming_strategy;
 
     @PostConstruct
     public void populatePresetProperties() {
@@ -119,6 +125,7 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         if (!blPUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.cache.use_query_cache", blPUHibernateCacheUse_query_cache);
         if (!blPUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", blPUHibernateHbm2ddlImport_files);
         if (!blPUHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files_sql_extractor", blPUHibernateHbm2ddlImport_files_sql_extractor);
+        if (!blPUHibernateImplicit_naming_strategy.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.implicit_naming_strategy", blPUHibernateImplicit_naming_strategy);
 
         if (!blCMSStorageHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.auto", blCMSStorageHibernateHbm2ddlAuto);
         if (!blCMSStorageHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.dialect", blCMSStorageHibernateDialect);
@@ -127,6 +134,7 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         if (!blCMSStorageHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.cache.use_query_cache", blCMSStorageHibernateCacheUse_query_cache);
         if (!blCMSStorageHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.import_files", blCMSStorageHibernateHbm2ddlImport_files);
         if (!blCMSStorageHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.import_files_sql_extractor", blCMSStorageHibernateHbm2ddlImport_files_sql_extractor);
+        if (!blCMSStorageHibernateImplicit_naming_strategy.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.implicit_naming_strategy", blCMSStorageHibernateImplicit_naming_strategy);
 
         if (!blSecurePUHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.auto", blSecurePUHibernateHbm2ddlAuto);
         if (!blSecurePUHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.dialect", blSecurePUHibernateDialect);
@@ -135,6 +143,7 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         if (!blSecurePUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.cache.use_query_cache", blSecurePUHibernateCacheUse_query_cache);
         if (!blSecurePUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.import_files", blSecurePUHibernateHbm2ddlImport_files);
         if (!blSecurePUHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.import_files_sql_extractor", blSecurePUHibernateHbm2ddlImport_files_sql_extractor);
+        if (!blSecurePUHibernateImplicit_naming_strategy.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.implicit_naming_strategy", blSecurePUHibernateImplicit_naming_strategy);
 
         persistenceUnitProperties.putAll(overrideProperties);
     }
