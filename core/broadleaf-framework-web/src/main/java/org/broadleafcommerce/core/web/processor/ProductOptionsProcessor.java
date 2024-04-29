@@ -89,12 +89,23 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
         Map<String, Object> newModelVars = new HashMap<>();
         if (product != null) {
             addAllProductOptionsToModel(newModelVars, product);
-            addProductOptionPricingToModel(newModelVars, product);
+            addProductOptionPricingToModel(newModelVars, product, null);
         }
         return newModelVars;
     }
 
-    protected void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product) {
+    @Override
+    public Map<String, Object> getDataAddOn(Long productId, Long addOnXrefId) {
+        Product product = catalogService.findProductById(productId);
+        Map<String, Object> newModelVars = new HashMap<>();
+        if (product != null) {
+            addAllProductOptionsToModel(newModelVars, product);
+            addProductOptionPricingToModel(newModelVars, product, addOnXrefId);
+        }
+        return newModelVars;
+    }
+
+    protected void addProductOptionPricingToModel(Map<String, Object> newModelVars, Product product, Long addOnXrefId) {
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<>();
         for (Sku sku : skus) {
@@ -106,13 +117,13 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
                 ProductOptionValue productOptionValue = skuProductOptionValueXref.getProductOptionValue();
                 productOptionValueIds.add(productOptionValue.getId());
             }
-            ProductOptionPricingDTO pricingDto = createPricingDto(sku, productOptionValueIds);
+            ProductOptionPricingDTO pricingDto = createPricingDto(sku, productOptionValueIds, addOnXrefId);
             skuPricing.add(pricingDto);
         }
         writeJSONToModel(newModelVars, "skuPricing", skuPricing);
     }
 
-    protected ProductOptionPricingDTO createPricingDto(Sku sku, List<Long> productOptionValueIds) {
+    protected ProductOptionPricingDTO createPricingDto(Sku sku, List<Long> productOptionValueIds, Long addOnXrefId) {
         Long[] values = new Long[productOptionValueIds.size()];
         productOptionValueIds.toArray(values);
 
@@ -122,6 +133,9 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
         // Check for Price Overrides
         ExtensionResultHolder<Money> priceHolder = new ExtensionResultHolder<>();
         priceHolder.setResult(currentPrice);
+        if (extensionManager != null) {
+            extensionManager.getProxy().modifyPriceForOverrides(sku, priceHolder, addOnXrefId);
+        }
 
         dto.setPrice(BLCMoneyFormatUtils.formatPrice(priceHolder.getResult()));
         if (sku.getRetailPrice() != null) {
