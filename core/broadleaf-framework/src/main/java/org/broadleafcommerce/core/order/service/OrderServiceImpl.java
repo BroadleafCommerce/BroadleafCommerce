@@ -94,7 +94,6 @@ import java.util.Set;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
 
 /**
@@ -413,7 +412,7 @@ public class OrderServiceImpl implements OrderService {
             status = TransactionUtils.createTransaction("saveOrder",
                                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             Session session = em.unwrap(Session.class);
-            FlushModeType current = session.getFlushMode();
+            FlushMode current = session.getHibernateFlushMode();
             try {
                 if (!autoFlushSaveCart) {
                     //Performance measure. Hibernate will sometimes perform an autoflush when performing query operations and this can
@@ -427,7 +426,7 @@ public class OrderServiceImpl implements OrderService {
                     extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
                 }
                 if (!autoFlushSaveCart) {
-                    session.setFlushMode(current);
+                    session.setHibernateFlushMode(current);
                 }
                 TransactionUtils.finalizeTransaction(status, transactionManager, false);
             } catch (RuntimeException ex) {
@@ -435,7 +434,7 @@ public class OrderServiceImpl implements OrderService {
                 throw ex;
             } finally {
                 if (!autoFlushSaveCart && !session.getFlushMode().equals(current)) {
-                    session.setFlushMode(current);
+                    session.setHibernateFlushMode(current);
                 }
             }
         }

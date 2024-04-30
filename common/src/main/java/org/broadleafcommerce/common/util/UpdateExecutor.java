@@ -97,11 +97,11 @@ public class UpdateExecutor {
                 counter++;
             }
             FlushMode mode = em.unwrap(Session.class).getHibernateFlushMode();
-            em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL.toJpaFlushMode());
+            em.unwrap(Session.class).setHibernateFlushMode(FlushMode.MANUAL);
             try {
                 response += query.executeUpdate();
             } finally {
-                em.unwrap(Session.class).setFlushMode(mode.toJpaFlushMode());
+                em.unwrap(Session.class).setHibernateFlushMode(mode);
             }
         }
         return response;
