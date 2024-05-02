@@ -29,5 +29,7 @@ public interface ProductOptionsExpression extends BroadleafVariableExpression {
 
     Map<String, Object> getData(Long productId);
 
+    Map<String, Object> getDataAddOn(Long productId, Long addOnXrefId);
+
 
 }

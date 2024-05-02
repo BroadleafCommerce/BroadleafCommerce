@@ -22,14 +22,11 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
-
-import java.util.Map;
 
 /**
  * @author Jon Fleschler (jfleschler)
  */
 public interface ProductOptionsProcessorExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType modifyPriceForOverrides(Sku targetSku, ExtensionResultHolder<Money> price, BroadleafTemplateContext context, Map<String, String> tagAttributes);
+    ExtensionResultStatusType modifyPriceForOverrides(Sku targetSku, ExtensionResultHolder<Money> price, Long addOnXrefId);
 }
