@@ -59,6 +59,15 @@
                 if (params.includes('|')) {
                     params = params.replace(/\|/g, '%7C');
                 }
+                for (let param of params.split(',')) {
+                    if (!param.includes(':')) {
+                        let position = params.indexOf(param) + param.length;
+                        if (param.endsWith('"')) {
+                            position = position - 1;
+                        }
+                        params = [params.slice(0, position), '":"', params.slice(position)].join('');
+                    }
+                }
                 paramObj = JSON.parse('{"' + params + '"}');
             }
             
