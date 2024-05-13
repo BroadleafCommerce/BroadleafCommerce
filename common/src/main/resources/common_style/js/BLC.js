@@ -384,10 +384,19 @@ var BLC = (function($) {
         var urlParams = null;
         if (indexOfQ >= 0) {
             urlParams = baseUrl.substring(indexOfQ + 1);
-            if (urlParams != null && urlParams != '') {
+            if (urlParams != null && urlParams !== '' && urlParams.indexOf("=") > 0) {
                 var params = decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g, "\":\"")));
                 if (params.includes('|')) {
                     params = params.replace(/\|/g, '%7C');
+                }
+                for (let param of params.split(',')){
+                   if(!param.includes(':')){
+                       let position = params.indexOf(param) + param.length;
+                       if (param.endsWith('"')) {
+                           position = position - 1;
+                       }
+                       params = [params.slice(0, position), '":"', params.slice(position)].join('');
+                   }
                 }
                 return JSON.parse('{"' + params + '"}');
             }
