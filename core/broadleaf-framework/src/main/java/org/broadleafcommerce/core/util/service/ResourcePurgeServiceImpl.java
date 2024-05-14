@@ -583,9 +583,9 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
         }
     }
 
-    protected class PurgeErrorCache {
+    public class PurgeErrorCache {
 
-        private Map<Long, Long> cache = new HashMap<Long, Long>();
+        protected Map<Long, Long> cache = new HashMap<Long, Long>();
         
         public Long add(Long entry) {
             if (! cache.containsKey(entry)) {
