@@ -59,9 +59,16 @@
                 if (params.includes('|')) {
                     params = params.replace(/\|/g, '%7C');
                 }
-                if(params.indexOf(":")>0) {
-                    paramObj = JSON.parse('{"' + params + '"}');
+                for (let param of params.split(',')) {
+                    if (!param.includes(':')) {
+                        let position = params.indexOf(param) + param.length;
+                        if (param.endsWith('"')) {
+                            position = position - 1;
+                        }
+                        params = [params.slice(0, position), '":"', params.slice(position)].join('');
+                    }
                 }
+                paramObj = JSON.parse('{"' + params + '"}');
             }
             
             if (value == null || value === "") {

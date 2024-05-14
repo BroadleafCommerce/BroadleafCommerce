@@ -17,11 +17,14 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -31,9 +34,17 @@ import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Component("blOfferCodeCustomPersistenceHandler")
 public class OfferCodeCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
@@ -43,6 +54,9 @@ public class OfferCodeCustomPersistenceHandler extends ClassCustomPersistenceHan
 
     @Resource(name = "blOfferCodeDao")
     protected OfferCodeDao offerCodeDao;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
@@ -107,12 +121,35 @@ public class OfferCodeCustomPersistenceHandler extends ClassCustomPersistenceHan
     }
 
     protected Entity validateOfferCode(Entity entity, OfferCode offerCode) {
+        List<Offer> offers = checkIfOfferHasAdditionStatusNew(offerCode.getOffer().getId());
+        if (CollectionUtils.isNotEmpty(offers)) {
+            entity.addGlobalValidationError("OfferCode_Not_Saved_Offer_Validation_Failure");
+            return entity;
+        }
         OfferCode existedCode = offerCodeDao.readOfferCodeByCode(offerCode.getOfferCode());
         if (existedCode != null && !offerCode.equals(existedCode)) {
             entity.addValidationError("offerCode", ERROR_MESSAGE_KEY);
             return entity;
         }
         return null;
+    }
+
+    protected List<Offer> checkIfOfferHasAdditionStatusNew(final Long id) {
+        try {
+            final CriteriaBuilder builder = em.getCriteriaBuilder();
+            final CriteriaQuery<Offer> criteria = builder.createQuery(Offer.class);
+            final Root<OfferImpl> root = criteria.from(OfferImpl.class);
+            criteria.select(root);
+
+            final List<Predicate> restrictions = new ArrayList<>();
+            restrictions.add(builder.equal(root.get("id"), id));
+            restrictions.add(root.get("embeddableAdditionStatusDiscriminator").get("additionStatus").in("NEW"));
+            criteria.where(restrictions.toArray(new Predicate[0]));
+
+            return em.createQuery(criteria).getResultList();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 
 }
