@@ -6,7 +6,7 @@
     <description>BroadleafCommerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
-    <version>7.0.1-SNAPSHOT</version>
+    <version>7.0.1-GA</version>
     <packaging>pom</packaging>
     <url>https://www.broadleafcommerce.com/</url>
 
@@ -73,7 +73,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>HEAD</tag>
+        <tag>broadleaf-7.0.1-GA</tag>
     </scm>
     <build>
         <pluginManagement>
@@ -346,8 +346,8 @@
                         <id>default-cli</id>
                         <configuration>
                             <rules>
-                                <dependencyConvergence/>
-                                <banDuplicatePomDependencyVersions/>
+                                <dependencyConvergence />
+                                <banDuplicatePomDependencyVersions />
                             </rules>
                         </configuration>
                         <goals>
