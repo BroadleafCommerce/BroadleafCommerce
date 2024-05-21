@@ -48,6 +48,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.ClassCustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -87,6 +88,7 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     protected static final String IS_ACTIVE = "isActive";
     protected static final String IS_TIERED_OFFER = "embeddableAdvancedOffer.isTieredOffer";
     protected static final String OFFER_VALUE = "value";
+    protected static final String DISCOUNT_TYPE = "discountType";
 
     @Value("${admin.offer.isactive.filter:false}")
     protected boolean isActiveFilter = false;
@@ -409,6 +411,8 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
             }
         }
 
+        validateOfferValue(entity);
+
         if (!sandBoxHelper.isPromote()) {
             extensionManager.getProxy().clearHiddenQualifiers(entity);
         }
@@ -433,6 +437,27 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
 
         OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
         return helper.getCompatibleModule(updateType).update(persistencePackage);
+    }
+
+    protected void validateOfferValue(Entity entity) throws ValidationException {
+        final Property discountTypeProperty = entity.findProperty(DISCOUNT_TYPE);
+        if (discountTypeProperty != null && discountTypeProperty.getValue() != null) {
+            final String discountType = discountTypeProperty.getValue();
+            if ("AMOUNT_OFF".equals(discountType) || "FIX_PRICE".equals(discountType)) {
+                final Property valueProperty = entity.findProperty(OFFER_VALUE);
+                if (valueProperty != null && StringUtils.isNotEmpty(valueProperty.getValue())) {
+                    try {
+                        final BigDecimal value = BigDecimal.valueOf(Double.valueOf(valueProperty.getValue()));
+                        if (value.scale() > 2) {
+                            entity.addValidationError(OFFER_VALUE, "offerValueFieldValidationMessage");
+                            throw new ValidationException(entity);
+                        }
+                    } catch (NumberFormatException e) {
+                        //do nothing
+                    }
+                }
+            }
+        }
     }
 
     protected Property buildOfferItemQualifierRuleTypeProperty(Property qualifiersCanBeQualifiers, Property qualifiersCanBeTargets) {
