@@ -39,9 +39,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
@@ -192,7 +194,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 while(itr.hasNext()) {
                     Class<?> entity = itr.next();
                     checkitem: {
-                        if (ArrayUtils.contains(entity.getInterfaces(), stageItem) || entity.equals(stageItem)) {
+                        if (getAllExtendedOrImplementedInterfacesRecursively(entity).contains(stageItem) || entity.equals(stageItem)) {
                             topLevelClassFound = true;
                             break checkitem;
                         }
@@ -220,6 +222,21 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
         ArrayUtils.reverse(sortedEntities);
         return sortedEntities;
+    }
+
+    static Set<Class<?>> getAllExtendedOrImplementedInterfacesRecursively(Class<?> clazz) {
+        Set<Class<?>> res = new HashSet<>();
+        Class<?>[] interfaces = clazz.getInterfaces();
+
+        if (interfaces.length > 0) {
+            res.addAll(Arrays.asList(interfaces));
+
+            for (Class<?> interfaze : interfaces) {
+                res.addAll(getAllExtendedOrImplementedInterfacesRecursively(interfaze));
+            }
+        }
+
+        return res;
     }
 
     @Override

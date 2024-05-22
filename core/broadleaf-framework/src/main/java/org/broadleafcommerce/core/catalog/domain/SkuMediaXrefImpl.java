@@ -59,7 +59,7 @@ import jakarta.persistence.Table;
                 skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneable<SkuMediaXrefImpl> {
+public class SkuMediaXrefImpl implements SkuMediaXref, MultiTenantCloneable<SkuMediaXrefImpl> {
 
     /**
      * The Constant serialVersionUID.

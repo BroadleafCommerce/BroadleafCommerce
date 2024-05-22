@@ -17,29 +17,15 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.media.domain.Media;
-
-import java.io.Serializable;
+import org.broadleafcommerce.common.media.domain.MediaXref;
 
 /**
  * @author Jeff Fischer
  */
-public interface SkuMediaXref extends Serializable{
-
-    Long getId();
-
-    void setId(Long id);
+public interface SkuMediaXref extends MediaXref {
 
     Sku getSku();
 
     void setSku(Sku sku);
-
-    Media getMedia();
-
-    void setMedia(Media media);
-
-    String getKey();
-
-    void setKey(String key);
 
 }
